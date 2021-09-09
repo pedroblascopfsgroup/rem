@@ -22,16 +22,18 @@ public class OfertaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	
-	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idOfertaWebcom;
 	private Long idOfertaRem;
+	private Long idOfertaHayaHome;
+	@NotNull(groups = { Insert.class, Update.class })
+	private String entidadOrigen;
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
 	@Lista(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
 			Update.class },foreingField="idClienteRem")
 	private Long idClienteRem;
+	private Long idClienteRemRepresentante;
+	private Long idClienteContacto;
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
 	private Double importe;
@@ -86,6 +88,27 @@ public class OfertaDto implements Serializable {
 	private Boolean docResponsabilidadPrescriptor;
 	private String porcentajeDescuento;
 	private String justificacionOferta;
+	private String origenOferta;
+	private String mesesCarencia;
+	private Boolean contratoReserva;
+	private String motivoCongelacion;
+	private Boolean ibi;
+	private Double importeIbi;
+	private Boolean otrasTasas;
+	private Double importeOtrasTasas;
+	private Boolean ccpp;
+	private Double importeCcpp;
+	private Double porcentaje1anyo;
+	private Double porcentaje2anyo;
+	private Double porcentaje3anyo;
+	private Double porcentaje4anyo;
+	private String mesesCarenciaContraoferta;
+	private Double porcentaje1anyoContraoferta;
+	private Double porcentaje2anyoContraoferta;
+	private Double porcentaje3anyoContraoferta;
+	private Double porcentaje4anyoContraoferta;
+	private String estadoOferta;
+	private String subestadoOferta;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -98,6 +121,18 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdOfertaRem(Long idOfertaRem) {
 		this.idOfertaRem = idOfertaRem;
+	}
+	public Long getIdOfertaHayaHome() {
+		return idOfertaHayaHome;
+	}
+	public void setIdOfertaHayaHome(Long idOfertaHayaHome) {
+		this.idOfertaHayaHome = idOfertaHayaHome;
+	}
+	public String getEntidadOrigen() {
+		return entidadOrigen;
+	}
+	public void setEntidadOrigen(String entidadOrigen) {
+		this.entidadOrigen = entidadOrigen;
 	}
 	public Double getImporteContraoferta() {
 		return importeContraoferta;
@@ -116,6 +151,18 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdClienteRem(Long idClienteRem) {
 		this.idClienteRem = idClienteRem;
+	}
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
 	}
 	public Long getIdActivoHaya() {
 		return idActivoHaya;
@@ -304,7 +351,6 @@ public class OfertaDto implements Serializable {
 	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
 		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
 	}
-
 	public String getNumeroBulkAdvisoryNote() {
 		return numeroBulkAdvisoryNote;
 	}
@@ -352,5 +398,131 @@ public class OfertaDto implements Serializable {
 	}
 	public void setJustificacionOferta(String justificacionOferta) {
 		this.justificacionOferta = justificacionOferta;
+	}
+	public String getOrigenOferta() {
+		return origenOferta;
+	}
+	public void setOrigenOferta(String origenOferta) {
+		this.origenOferta = origenOferta;
+	}
+	public String getMesesCarencia() {
+		return mesesCarencia;
+	}
+	public void setMesesCarencia(String mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+	public Boolean getContratoReserva() {
+		return contratoReserva;
+	}
+	public void setContratoReserva(Boolean contratoReserva) {
+		this.contratoReserva = contratoReserva;
+	}
+	public String getMotivoCongelacion() {
+		return motivoCongelacion;
+	}
+	public void setMotivoCongelacion(String motivoCongelacion) {
+		this.motivoCongelacion = motivoCongelacion;
+	}
+	public Boolean getIbi() {
+		return ibi;
+	}
+	public void setIbi(Boolean ibi) {
+		this.ibi = ibi;
+	}
+	public Double getImporteIbi() {
+		return importeIbi;
+	}
+	public void setImporteIbi(Double importeIbi) {
+		this.importeIbi = importeIbi;
+	}
+	public Boolean getOtrasTasas() {
+		return otrasTasas;
+	}
+	public void setOtrasTasas(Boolean otrasTasas) {
+		this.otrasTasas = otrasTasas;
+	}
+	public Double getImporteOtrasTasas() {
+		return importeOtrasTasas;
+	}
+	public void setImporteOtrasTasas(Double importeOtrasTasas) {
+		this.importeOtrasTasas = importeOtrasTasas;
+	}
+	public Boolean getCcpp() {
+		return ccpp;
+	}
+	public void setCcpp(Boolean ccpp) {
+		this.ccpp = ccpp;
+	}
+	public Double getImporteCcpp() {
+		return importeCcpp;
+	}
+	public void setImporteCcpp(Double importeCcpp) {
+		this.importeCcpp = importeCcpp;
+	}
+	public Double getPorcentaje1anyo() {
+		return porcentaje1anyo;
+	}
+	public void setPorcentaje1anyo(Double porcentaje1anyo) {
+		this.porcentaje1anyo = porcentaje1anyo;
+	}
+	public Double getPorcentaje2anyo() {
+		return porcentaje2anyo;
+	}
+	public void setPorcentaje2anyo(Double porcentaje2anyo) {
+		this.porcentaje2anyo = porcentaje2anyo;
+	}
+	public Double getPorcentaje3anyo() {
+		return porcentaje3anyo;
+	}
+	public void setPorcentaje3anyo(Double porcentaje3anyo) {
+		this.porcentaje3anyo = porcentaje3anyo;
+	}
+	public Double getPorcentaje4anyo() {
+		return porcentaje4anyo;
+	}
+	public void setPorcentaje4anyo(Double porcentaje4anyo) {
+		this.porcentaje4anyo = porcentaje4anyo;
+	}
+	public String getMesesCarenciaContraoferta() {
+		return mesesCarenciaContraoferta;
+	}
+	public void setMesesCarenciaContraoferta(String mesesCarenciaContraoferta) {
+		this.mesesCarenciaContraoferta = mesesCarenciaContraoferta;
+	}
+	public Double getPorcentaje1anyoContraoferta() {
+		return porcentaje1anyoContraoferta;
+	}
+	public void setPorcentaje1anyoContraoferta(Double porcentaje1anyoContraoferta) {
+		this.porcentaje1anyoContraoferta = porcentaje1anyoContraoferta;
+	}
+	public Double getPorcentaje2anyoContraoferta() {
+		return porcentaje2anyoContraoferta;
+	}
+	public void setPorcentaje2anyoContraoferta(Double porcentaje2anyoContraoferta) {
+		this.porcentaje2anyoContraoferta = porcentaje2anyoContraoferta;
+	}
+	public Double getPorcentaje3anyoContraoferta() {
+		return porcentaje3anyoContraoferta;
+	}
+	public void setPorcentaje3anyoContraoferta(Double porcentaje3anyoContraoferta) {
+		this.porcentaje3anyoContraoferta = porcentaje3anyoContraoferta;
+	}
+	public Double getPorcentaje4anyoContraoferta() {
+		return porcentaje4anyoContraoferta;
+	}
+	public void setPorcentaje4anyoContraoferta(Double porcentaje4anyoContraoferta) {
+		this.porcentaje4anyoContraoferta = porcentaje4anyoContraoferta;
+	}
+	public String getEstadoOferta() {
+		return estadoOferta;
+	}
+	public void setEstadoOferta(String estadoOferta) {
+		this.estadoOferta = estadoOferta;
+	}
+	public String getSubestadoOferta() {
+		return subestadoOferta;
+	}
+	public void setSubestadoOferta(String subestadoOferta) {
+		this.subestadoOferta = subestadoOferta;
 	}
 }

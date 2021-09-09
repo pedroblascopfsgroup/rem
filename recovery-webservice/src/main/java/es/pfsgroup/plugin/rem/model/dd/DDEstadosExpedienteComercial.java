@@ -76,6 +76,11 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_CONTRASTE_LISTAS = "42";
 	public static final String PDTE_RESPUESTA_OFERTANTE_CES = "43";
 	
+	//Estados Alquiler
+	public static final String PENDIENTE_SANCION = "44";
+	public static final String CONGELADA = "45";
+	public static final String DESCARTADA = "46";
+	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";
 
 	@Id

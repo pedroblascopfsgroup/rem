@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
@@ -1854,7 +1855,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setFechaAlta(new Date());
 		nuevaOferta.setTipoOferta(oferta.getTipoOferta());
 		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
-		nuevaOferta.setOrigen(OfertaApi.ORIGEN_REM);
+		
+		DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+		if (sistemaOrigen != null)
+			nuevaOferta.setOrigen(sistemaOrigen);
+		
 		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());

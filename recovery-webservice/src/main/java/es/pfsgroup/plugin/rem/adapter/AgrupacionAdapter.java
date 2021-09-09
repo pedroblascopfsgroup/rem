@@ -136,6 +136,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -2416,7 +2417,9 @@ public class AgrupacionAdapter {
 
 			Oferta oferta = new Oferta();
 			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-				oferta.setOrigen(OfertaApi.ORIGEN_REM);
+				DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+				if (sistemaOrigen != null)
+					oferta.setOrigen(sistemaOrigen);
 			}
 
 			oferta.setNumOferta(numOferta);

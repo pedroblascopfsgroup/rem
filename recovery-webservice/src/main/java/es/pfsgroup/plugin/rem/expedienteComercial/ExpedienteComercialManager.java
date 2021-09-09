@@ -1406,7 +1406,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
 
-				dto.setOrigen(oferta.getOrigen());
+				if (oferta.getOrigen() != null)
+					dto.setOrigen(oferta.getOrigen().getDescripcion());
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 					if (!Checks.esNulo(expediente.getMotivoAnulacion())) {

@@ -110,7 +110,7 @@ public class GenericAdapter {
 			Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 			if (clase.equals(DDCartera.class) || clase.equals(DDSubcartera.class)) {				
 				usuarioCartera = genericDao.getList(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
-				if (!usuarioCartera.isEmpty() || usuarioCartera != null) {
+				if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
 					for (UsuarioCartera usu : usuarioCartera) {
 						if (DDCartera.class.equals(clase) && !lista.contains(usu.getCartera().getCodigo())) {
 							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
@@ -121,7 +121,7 @@ public class GenericAdapter {
 				}				
 			}
 			
-			if(usuarioCartera.isEmpty() || usuarioCartera == null) {
+			if(usuarioCartera == null || usuarioCartera.isEmpty()) {
 				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
 		}

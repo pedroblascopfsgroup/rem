@@ -163,9 +163,9 @@ public class DtoModificarCompradores{
 	
 	private boolean visualizar;
 	
-	private Integer compradorPrp;
+	private boolean compradorPrp;
 	
-	private Integer representantePrp;
+	private boolean representantePrp;
 	
 	private Date fechaNacimientoConstitucion;
 	
@@ -827,19 +827,19 @@ public class DtoModificarCompradores{
 		this.visualizar = visualizar;
 	}
 
-	public Integer getCompradorPrp() {
+	public boolean getCompradorPrp() {
 		return compradorPrp;
 	}
 
-	public void setCompradorPrp(Integer compradorPrp) {
+	public void setCompradorPrp(boolean compradorPrp) {
 		this.compradorPrp = compradorPrp;
 	}
 
-	public Integer getRepresentantePrp() {
+	public boolean getRepresentantePrp() {
 		return representantePrp;
 	}
 
-	public void setRepresentantePrp(Integer representantePrp) {
+	public void setRepresentantePrp(boolean representantePrp) {
 		this.representantePrp = representantePrp;
 	}
 

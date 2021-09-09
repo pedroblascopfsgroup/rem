@@ -99,10 +99,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			}
 		},
 		
-		comboSiNoRem: {
+		comboSiNoBoolean: {
 			data : [	        	
-	        	{"codigo":"0", "descripcion":"No"},
-	        	{"codigo":"1", "descripcion":"Si"}
+	        	{"codigo":"false", "descripcion":"No"},
+	        	{"codigo":"true", "descripcion":"Si"}
 	    	]
 		},
 		

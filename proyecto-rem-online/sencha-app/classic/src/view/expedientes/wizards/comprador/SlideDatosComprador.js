@@ -422,7 +422,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'compradorPrp',
 						padding: '5px',
 						bind: {
-							store: '{comboSiNoRem}',
+							store: '{comboSiNoBoolean}',
 							hidden: '{!comprador.esCarteraBankia}'
 						}
 					}
@@ -817,7 +817,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'representantePrp',
 						padding: '5px',
 						bind: {
-							store: '{comboSiNoRem}',
+							store: '{comboSiNoBoolean}',
 							hidden: '{!comprador.esCarteraBankia}'
 						}
 					}

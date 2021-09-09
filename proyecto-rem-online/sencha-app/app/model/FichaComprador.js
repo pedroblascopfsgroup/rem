@@ -257,10 +257,12 @@ Ext.define('HreRem.model.FichaComprador', {
 			name:'nombreConyugeURSUS'
 		},
 		{
-			name:'compradorPrp'
+			name:'compradorPrp',
+			type:'boolean'
 		},
 		{
-			name:'representantePrp'
+			name:'representantePrp',
+			type:'boolean'
 		},
 		{
 			name:'fechaNacimientoConstitucion',

@@ -4802,15 +4802,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
 			
-			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
+			if (dto.getCompradorPrp() != null && "false".equals(dto.getCompradorPrp().toString())) {
 				comprador.setCompradorPrp(false);
-			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
+			} else if (dto.getCompradorPrp() != null && "true".equals(dto.getCompradorPrp().toString())) {
 				comprador.setCompradorPrp(true);
 			}
 			
-			if (dto.getRepresentantePrp() != null && "0".equals(dto.getRepresentantePrp().toString())) {
+			if (dto.getRepresentantePrp() != null && "false".equals(dto.getRepresentantePrp().toString())) {
 				compradorExpediente.setPrp(false);
-			} else if (dto.getRepresentantePrp() != null && "1".equals(dto.getRepresentantePrp().toString())) {
+			} else if (dto.getRepresentantePrp() != null && "true".equals(dto.getRepresentantePrp().toString())) {
 				compradorExpediente.setPrp(true);
 			}
 			

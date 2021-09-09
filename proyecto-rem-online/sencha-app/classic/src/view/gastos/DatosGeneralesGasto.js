@@ -150,19 +150,19 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							    		bind: {
 							    			value: '{gasto.numeroContratoAlquiler}'
 							    		},
-							    		maxLength: 13,
+							    		maxLength: 15,
 							    		validator: function(value){
 							    			if (value.length == 0) {
 							    				return true;
 							    			}else{
-							    				return value.match(/^[0-9]{4}-[0-9]{8}$/) ? true : 'Formato nº contrato: XXXX-XXXXXXXX donde X debe ser numérico';
+							    				return value.match(/^[0-9]{4}-[0-9]{10}$/) ? true : 'Formato nº contrato: XXXX-XXXXXXXXXX donde X debe ser numérico';
 							    			}							    			
 							    		},
 							    		listeners:{
 							    			change:  
 							    				function(field, newValue, oldValue, eOpts){
-     												if(newValue.length >= 4 && newValue.length < 12 && !newValue.includes("-")){
-     													field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,12)); 										         		
+     												if(newValue.length >= 4 && newValue.length < 14 && !newValue.includes("-")){
+     													field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,14)); 										         		
 										     		}
 													field.validate();
      											}

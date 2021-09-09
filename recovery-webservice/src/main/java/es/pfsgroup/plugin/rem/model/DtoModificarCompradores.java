@@ -163,6 +163,38 @@ public class DtoModificarCompradores{
 	
 	private boolean visualizar;
 	
+	private Integer compradorPrp;
+	
+	private Integer representantePrp;
+	
+	private Date fechaNacimientoConstitucion;
+	
+	private Date fechaNacimientoRepresentante;
+	
+	private String paisNacimientoCompradorCodigo;
+	
+	private String paisNacimientoCompradorDescripcion;
+	
+	private String paisNacimientoRepresentanteCodigo;
+	
+	private String paisNacimientoRepresentanteDescripcion;
+	
+	private String provinciaNacimientoCompradorCodigo;
+	
+	private String provinciaNacimientoCompradorDescripcion;
+
+	private String provinciaNacimientoRepresentanteCodigo;
+	
+	private String provinciaNacimientoRepresentanteDescripcion;
+	
+	private String localidadNacimientoCompradorCodigo;
+
+	private String localidadNacimientoCompradorDescripcion;
+	
+	private String localidadNacimientoRepresentanteCodigo;
+	
+	private String localidadNacimientoRepresentanteDescripcion;
+	
 	
 	public Long getId() {
 		return id;
@@ -795,6 +827,132 @@ public class DtoModificarCompradores{
 		this.visualizar = visualizar;
 	}
 
-	
+	public Integer getCompradorPrp() {
+		return compradorPrp;
+	}
 
+	public void setCompradorPrp(Integer compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public Integer getRepresentantePrp() {
+		return representantePrp;
+	}
+
+	public void setRepresentantePrp(Integer representantePrp) {
+		this.representantePrp = representantePrp;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+
+	public String getPaisNacimientoCompradorDescripcion() {
+		return paisNacimientoCompradorDescripcion;
+	}
+
+	public void setPaisNacimientoCompradorDescripcion(String paisNacimientoCompradorDescripcion) {
+		this.paisNacimientoCompradorDescripcion = paisNacimientoCompradorDescripcion;
+	}
+
+	public String getPaisNacimientoRepresentanteCodigo() {
+		return paisNacimientoRepresentanteCodigo;
+	}
+
+	public void setPaisNacimientoRepresentanteCodigo(String paisNacimientoRepresentanteCodigo) {
+		this.paisNacimientoRepresentanteCodigo = paisNacimientoRepresentanteCodigo;
+	}
+
+	public String getPaisNacimientoRepresentanteDescripcion() {
+		return paisNacimientoRepresentanteDescripcion;
+	}
+
+	public void setPaisNacimientoRepresentanteDescripcion(String paisNacimientoRepresentanteDescripcion) {
+		this.paisNacimientoRepresentanteDescripcion = paisNacimientoRepresentanteDescripcion;
+	}
+
+	public String getProvinciaNacimientoCompradorCodigo() {
+		return provinciaNacimientoCompradorCodigo;
+	}
+
+	public void setProvinciaNacimientoCompradorCodigo(String provinciaNacimientoCompradorCodigo) {
+		this.provinciaNacimientoCompradorCodigo = provinciaNacimientoCompradorCodigo;
+	}
+
+	public String getProvinciaNacimientoCompradorDescripcion() {
+		return provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setProvinciaNacimientoCompradorDescripcion(String provinciaNacimientoCompradorDescripcion) {
+		this.provinciaNacimientoCompradorDescripcion = provinciaNacimientoCompradorDescripcion;
+	}
+
+	public String getProvinciaNacimientoRepresentanteCodigo() {
+		return provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public void setProvinciaNacimientoRepresentanteCodigo(String provinciaNacimientoRepresentanteCodigo) {
+		this.provinciaNacimientoRepresentanteCodigo = provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public String getProvinciaNacimientoRepresentanteDescripcion() {
+		return provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public void setProvinciaNacimientoRepresentanteDescripcion(String provinciaNacimientoRepresentanteDescripcion) {
+		this.provinciaNacimientoRepresentanteDescripcion = provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+
+	public String getLocalidadNacimientoRepresentanteCodigo() {
+		return localidadNacimientoRepresentanteCodigo;
+	}
+
+	public void setLocalidadNacimientoRepresentanteCodigo(String localidadNacimientoRepresentanteCodigo) {
+		this.localidadNacimientoRepresentanteCodigo = localidadNacimientoRepresentanteCodigo;
+	}
+
+	public String getLocalidadNacimientoRepresentanteDescripcion() {
+		return localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public void setLocalidadNacimientoRepresentanteDescripcion(String localidadNacimientoRepresentanteDescripcion) {
+		this.localidadNacimientoRepresentanteDescripcion = localidadNacimientoRepresentanteDescripcion;
+	}
+	
 }

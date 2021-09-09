@@ -15,7 +15,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 	},
 	requires: [
 		'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorController',
-		'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel'
+		'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
+		'HreRem.model.FichaComprador'
 	],
 
 	listeners: {
@@ -208,6 +209,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						allowBlank: false
 					},
+					{ 
+			        	xtype:'datefieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.fecha.nacimiento.constitucion'),
+			        	name: 'fechaNacimientoConstitucion',
+			        	reference: 'fechaNacimientoConstitucion',
+			        	padding: '5px',
+			        	maxValue: null,
+			        	bind: {
+			        		hidden: '{!comprador.esCarteraBankia}'
+			        	}
+			        },
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.direccion'),
 						name: 'direccion',
@@ -263,6 +275,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px'
 					},
 					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+						reference: 'provinciaNacimientoCompradorCodigo',
+						name: 'provinciaNacimientoCompradorCodigo',
+						padding: '5px',
+						allowBlank: false,
+						chainedStore: 'comboMunicipioComprador',
+						chainedReference: 'localidadNacimientoCompradorCodigo',
+						bind: {
+							store: '{comboProvincia}',
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						displayField: 'descripcion',
+						valueField: 'codigo',
+						listeners: {
+							change: 'onChangeComboProvincia'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
+						reference: 'localidadNacimientoCompradorCodigo',
+						name: 'localidadNacimientoCompradorCodigo',
+						padding: '5px',
+						bind: {
+							store: '{comboMunicipioComprador}',
+							hidden: '{!comprador.esCarteraBankia}',
+							disabled: '{!comprador.provinciaNacimientoCompradorCodigo}'
+						}
+					},
+					{
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						name: 'codigoPostal',
@@ -289,6 +332,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadRte'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
+						reference: 'paisNacimientoCompradorCodigo',
+						name: 'paisNacimientoCompradorCodigo',
+						allowBlank: false,
+						padding: '5px',
+						bind: {
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
 						}
 					},
 					{
@@ -359,6 +414,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							readOnly: true
 						},
 						editable: true
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.prp'),
+						reference: 'compradorPrp',
+						name: 'compradorPrp',
+						padding: '5px',
+						bind: {
+							store: '{comboSiNoRem}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
 					}
 				]
 			},
@@ -619,6 +685,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'apellidosRte',
 						padding: '5px'
 					},
+					{ 
+			        	xtype:'datefieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.fecha.nacimiento.representante'),
+			        	name: 'fechaNacimientoRepresentante',
+			        	reference: 'fechaNacimientoRepresentante',
+			        	padding: '5px',
+			        	maxValue: null,
+			        	bind: {
+			        		hidden: '{!comprador.esCarteraBankia}'
+			        	}
+			        },
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.direccion'),
 						name: 'direccionRte',
@@ -664,6 +741,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px'
 					},
 					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
+						reference: 'provinciaNacimientoRepresentanteCodigo',
+						name: 'provinciaNacimientoRepresentanteCodigo',
+						padding: '5px',
+						allowBlank: false,
+						chainedStore: 'comboMunicipioRepresentante',
+						chainedReference: 'localidadNacimientoRepresentanteCodigo',
+						bind: {
+							store: '{comboProvincia}',
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						displayField: 'descripcion',
+						valueField: 'codigo',
+						listeners: {
+							change: 'onChangeComboProvincia'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
+						reference: 'localidadNacimientoRepresentanteCodigo',
+						name: 'localidadNacimientoRepresentanteCodigo',
+						padding: '5px',
+						bind: {
+							store: '{comboMunicipioRepresentante}',
+							hidden: '{!comprador.esCarteraBankia}',
+							disabled: '{!comprador.provinciaNacimientoRepresentanteCodigo}'
+						}
+					},
+					{
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						reference: 'codigoPostalRte',
@@ -688,6 +796,29 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadRte'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
+						reference: 'paisNacimientoRepresentanteCodigo',
+						name: 'paisNacimientoRepresentanteCodigo',
+						allowBlank: false,
+						padding: '5px',
+						bind: {
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.prp'),
+						reference: 'representantePrp',
+						name: 'representantePrp',
+						padding: '5px',
+						bind: {
+							store: '{comboSiNoRem}',
+							hidden: '{!comprador.esCarteraBankia}'
 						}
 					}
 				]

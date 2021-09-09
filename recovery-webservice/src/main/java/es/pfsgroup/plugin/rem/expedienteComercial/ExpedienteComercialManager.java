@@ -5225,13 +5225,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setLocalidadNacimientoRepresentante(null);
 			}
 			
+			if (dto.getCompradorPrp() != null && "0".equals(dto.getCompradorPrp().toString())) {
+				comprador.setCompradorPrp(false);
+			} else if (dto.getCompradorPrp() != null && "1".equals(dto.getCompradorPrp().toString())) {
+				comprador.setCompradorPrp(true);
+			}
+			
+			if (dto.getRepresentantePrp() != null && "0".equals(dto.getRepresentantePrp().toString())) {
+				compradorExpediente.setPrp(false);
+			} else if (dto.getRepresentantePrp() != null && "1".equals(dto.getRepresentantePrp().toString())) {
+				compradorExpediente.setPrp(true);
+			}
+			
+			if (dto.getFechaNacimientoConstitucion() != null) {
+				comprador.setFechaNacimientoConstitucion(dto.getFechaNacimientoConstitucion());
+			} else {
+				comprador.setFechaNacimientoConstitucion(null);
+			}
+			
 			if (dto.getFechaNacimientoRepresentante() != null) {
 				compradorExpediente.setFechaNacimientoRepresentante(dto.getFechaNacimientoRepresentante());
 			} else {
 				compradorExpediente.setFechaNacimientoRepresentante(null);
 			}
 			
-			if (!Checks.esNulo(dto.getPaisNacimientoRepresentanteCodigo())) {
+			if (dto.getPaisNacimientoCompradorCodigo() != null) {
+				Filter filtroPaisComprador = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoCompradorCodigo());
+				DDPaises paisComprador = genericDao.get(DDPaises.class, filtroPaisComprador);
+				comprador.setPaisNacimientoComprador(paisComprador);
+			} else {
+				comprador.setPaisNacimientoComprador(null);
+			}
+			
+			if (dto.getPaisNacimientoRepresentanteCodigo() != null) {
 				Filter filtroPaisRepresentante = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoRepresentanteCodigo());
 				DDPaises paisRepresentante = genericDao.get(DDPaises.class, filtroPaisRepresentante);
 				compradorExpediente.setPaisNacimientoRepresentante(paisRepresentante);
@@ -5260,10 +5286,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				comprador.setPaisNacimientoComprador(pais);		
 			}
 			
+				
+			if (dto.getProvinciaNacimientoCompradorCodigo() != null) {
+				Filter filtroNuevosCamposCom = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaNacimientoCompradorCodigo());
+				DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtroNuevosCamposCom);
+				comprador.setProvinciaNacimiento(provinciaNueva);
+			}
+			
+			if (dto.getProvinciaNacimientoRepresentanteCodigo() != null) {
+				Filter filtroNuevosCamposRep = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaNacimientoRepresentanteCodigo());
+				DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtroNuevosCamposRep);
+				compradorExpediente.setProvinciaNacimientoRep(provinciaNueva);
+			}
+			
+			if (dto.getLocalidadNacimientoCompradorCodigo() != null) {
+				Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoCompradorCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
+				comprador.setLocalidadNacimientoComprador(localidad);
+			} else {
+				comprador.setLocalidad(null);
+			}
+			
+			if (dto.getLocalidadNacimientoRepresentanteCodigo() != null) {
+				Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoRepresentanteCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
+				compradorExpediente.setLocalidadNacimientoRepresentante(localidad);
+			} else {
+				compradorExpediente.setLocalidadNacimientoRepresentante(null);
+			}
+			
 			DDVinculoCaixa vinculoCaixa = null;
 			if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
-				
 			}
 
 			assignIAPCompradorRepresentante(compradorExpediente,expedienteComercial.getId(),comprador);

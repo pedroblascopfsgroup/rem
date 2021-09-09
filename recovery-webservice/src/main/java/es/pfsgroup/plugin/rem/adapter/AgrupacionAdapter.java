@@ -2446,6 +2446,12 @@ public class AgrupacionAdapter {
 				clienteComercial.setLocalidadNacimiento(municipioNuevo);
 			}
 			
+			if (dto.getProvinciaNacimiento() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaNacimiento());
+				DDProvincia provinciNacimiento = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+				clienteComercial.setProvinciaNacimiento(provinciNacimiento);
+			}
+			
 			if(dto.getCodigoPais() != null) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
 				DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtro);

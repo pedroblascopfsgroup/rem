@@ -943,9 +943,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
 			compradorBusqueda.setLocalidadNacimientoComprador(cliente.getLocalidadNacimiento());
 			compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
-			
-		
-			
+			compradorBusqueda.setProvinciaNacimiento(cliente.getProvinciaNacimiento());
 
 			String dir = "";
 			if (!Checks.esNulo(cliente.getTipoVia()))
@@ -1017,6 +1015,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setLocalidadRepresentante(cliente.getMunicipioRepresentante());
 			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
+			compradorExpedienteNuevo.setFechaNacimientoRepresentante(cliente.getFechaNacimientoRep());
+			compradorExpedienteNuevo.setPaisNacimientoRepresentante(cliente.getPaisNacimientoRep());
+			compradorExpedienteNuevo.setProvinciaNacimientoRep(cliente.getProvinciaNacimientoRep());
+			compradorExpedienteNuevo.setLocalidadNacimientoRepresentante(cliente.getLocalidadNacimientoRep());
 			compradorExpedienteNuevo.setEstadoContrasteListas(estadoNoSolicitado);
 			compradorExpedienteNuevo.setFechaContrasteListas(new Date());
 			

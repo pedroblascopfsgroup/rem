@@ -90,6 +90,12 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name: 'tipologivaVentaCod'
+            },
+            {
+            	name:'provinciaNacimiento'
+            },
+            {
+            	name:'provinciaNacimientoDescripcion'
             }
             
     ],

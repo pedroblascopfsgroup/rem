@@ -122,6 +122,30 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			},
 			//session: true,
 			autoLoad: true
-	    }
+	    },		
+		comboSiNoRem: {
+			data : [	        	
+	        	{"codigo":"0", "descripcion":"No"},
+	        	{"codigo":"1", "descripcion":"Si"}
+	    	]
+		},
+		
+		comboMunicipioRepresentante: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaNacimientoRepresentanteCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioComprador: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaNacimientoCompradorCodigo}'}
+			}
+    	}
 	}
 });

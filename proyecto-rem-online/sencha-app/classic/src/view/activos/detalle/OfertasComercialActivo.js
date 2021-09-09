@@ -213,9 +213,75 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										readOnly: true,
 										width: 410,
 					    				colspan: 2
+					    			},
+					    			{
+					                    xtype: 'fieldsettable',
+					                    title: HreRem.i18n('fieldlabel.deposito.reserva'), 
+					                    bind: {
+					                    	hidden: '{!esBankia}'
+					                    },
+					                    colspan: 3,
+					                    items: [
+				                    		{
+												xtype: "numberfieldbase",
+												reference: 'importeIngresoDeposito',
+												fieldLabel: HreRem.i18n('header.importe'),
+												bind: {
+													value: '{detalleOfertaModel.dtoDeposito.importeDeposito}'
+												},
+							    				width: 410
+							    			},
+							    			{
+												xtype: "datefieldbase",
+												reference: 'fechaIngresoDeposito',
+												formatter: 'date("d/m/Y")',
+												fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso'),
+												bind: {
+													value: '{detalleOfertaModel.dtoDeposito.fechaIngresoDeposito}'
+												},
+							    				width: 410
+							    			},
+							    			{
+							    				xtype : 'comboboxfieldbase',
+												fieldLabel : HreRem.i18n('fieldlabel.estado'),
+												reference: 'estadoDeposito',
+												bind : {
+													store : '{comboEstadoDeposito}',
+													value : '{detalleOfertaModel.dtoDeposito.estadoCodigo}'
+												},
+												width: 410
+							    			},
+							    			{
+												xtype: "datefieldbase",
+												reference: 'fechaDevolucionDeposito',
+												fieldLabel: HreRem.i18n('header.situacion.posesoria.llaves.fechaDevolucion'),
+												bind: {
+													value: '{detalleOfertaModel.dtoDeposito.fechaDevolucionDeposito}'
+												},
+							    				width: 410
+							    			},
+							    			{
+												xtype: "textfieldbase",
+												fieldLabel: HreRem.i18n('fieldlabel.deposito.iban.devolucion'),
+												formatter: 'date("d/m/Y")',
+												bind: {
+													value: '{detalleOfertaModel.dtoDeposito.ibanDevolucionDeposito}'
+												},
+							    				width: 410
+							    			},
+							    			{
+							    				text :  HreRem.i18n('fieldlabel.modificar.deposito'),
+							                	xtype: 'button',
+							                	reference: 'modificarDeposito',
+							                	handler: 'onClickModificarDeposito',
+							                	margin: '0 0 6 -5',
+							                	bind: {
+							                		disabled: '{!detalleOfertaModel.id}'
+							                	}
+							                }
+							    			
+							    		]
 					    			}
-					    			
-					    			
 		                    ]
                 		},
 		    		// Fila 4 - Solo Cajamar

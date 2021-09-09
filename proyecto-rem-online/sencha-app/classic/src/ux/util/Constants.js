@@ -1002,5 +1002,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	COD_MERCADO: 'MER',
 	 	COD_IPCMERCADO: 'IPM',
 	 	COD_NINGUNO: 'NIN'
+	 },
+	 
+	 ESTADO_DEPOSITO:{
+	 	COD_PENDIENTE: 'PDT',
+	 	COD_INGRESADO: 'ING',
+	 	COD_DEVUELTO: 'DEV',
+	 	COD_INCAUTADO: 'INC'
 	 }
 });

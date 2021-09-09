@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -823,4 +824,6 @@ public interface OfertaApi {
     void pbcFlush(LlamadaPbcDto dto);
 
     public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
+
+	boolean updateDepositoOferta(Long idOferta, DtoDeposito dto) throws ParseException;
 }

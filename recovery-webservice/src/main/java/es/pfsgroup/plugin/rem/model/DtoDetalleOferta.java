@@ -19,6 +19,7 @@ public class DtoDetalleOferta {
 	private String observaciones;
 	private Date fechaEntradaCRMSF;
 	private Boolean empleadoCaixa;
+	DtoDeposito dtoDeposito;
 
 
 	public String getId() {
@@ -105,6 +106,12 @@ public class DtoDetalleOferta {
 	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
 		this.empleadoCaixa = empleadoCaixa;
 	}
-
+	public DtoDeposito getDtoDeposito() {
+		return dtoDeposito;
+	}
+	public void setDtoDeposito(DtoDeposito dtoDeposito) {
+		this.dtoDeposito = dtoDeposito;
+	}
+	
 	
 }

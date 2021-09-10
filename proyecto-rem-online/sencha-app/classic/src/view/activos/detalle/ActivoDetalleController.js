@@ -8572,12 +8572,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickModificarDeposito: function(btn){
-    	var me = this; 
+    	var me = this;
     	var activo = me.getViewModel().get('activo');
     	var deposito = me.getViewModel().get('detalleOfertaModel').get('dtoDeposito');
+    	var cuentaBancariaVirtual = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaVirtual');
+    	var cuentaBancariaCliente = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaCliente');
     	var parent = btn.up('ofertascomercialactivo');
 		var ventana = Ext.create("HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito", {	
-			deposito: deposito, activo: activo, parent: parent
+			deposito: deposito, activo: activo, parent: parent, cuentaBancariaVirtual: cuentaBancariaVirtual,cuentaBancariaCliente: cuentaBancariaCliente
 		});
     	
 		 ventana.show();

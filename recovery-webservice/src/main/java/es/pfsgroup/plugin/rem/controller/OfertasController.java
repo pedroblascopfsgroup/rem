@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -1045,9 +1046,9 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, ModelMap model) {
+	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto));
+			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto, dtoBancario));
 
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

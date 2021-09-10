@@ -270,6 +270,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 							    				width: 410
 							    			},
 							    			{
+												xtype: "displayfieldbase",
+												fieldLabel: HreRem.i18n('fieldlabel.cuenta.virtual'),
+												//formatter: 'date("d/m/Y")',
+												bind: {
+													value: '{detalleOfertaModel.cuentaBancariaVirtual}'
+												},
+							    				width: 410
+							    			},
+							    			{
+												xtype: "displayfieldbase",
+												fieldLabel: HreRem.i18n('fieldlabel.cuenta.cliente'),
+												//formatter: 'date("d/m/Y")',
+												bind: {
+													value: '{detalleOfertaModel.cuentaBancariaCliente}'
+												},
+							    				width: 410
+							    			},
+							    			{
 							    				text :  HreRem.i18n('fieldlabel.modificar.deposito'),
 							                	xtype: 'button',
 							                	reference: 'modificarDeposito',

@@ -23,8 +23,8 @@ public class OfertaDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long idOfertaWebcom;
-	private Long idOfertaRem;
 	private Long idOfertaHayaHome;
+	private Long idOfertaRem;
 	@NotNull(groups = { Insert.class, Update.class })
 	private String entidadOrigen;
 	private Long idVisitaRem;

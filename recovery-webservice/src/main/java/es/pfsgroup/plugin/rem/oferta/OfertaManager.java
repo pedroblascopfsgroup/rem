@@ -2513,8 +2513,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 				map.put("success", false);
-
-				map.put("invalidFields", errorsList);
+				
+				if (errorsList.containsKey("disponible") && errorsList.containsKey("codMotivoIndisponibilidad")) {
+					map.put("disponible", errorsList.get("disponible"));
+					map.put("codMotivoIndisponibilidad", errorsList.get("codMotivoIndisponibilidad"));
+				} else {
+					map.put("invalidFields", errorsList);
+				}
+				
 			}
 			listaRespuesta.add(map);
 		}
@@ -7144,7 +7150,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							&& !DDEstadosExpedienteComercial.DESCARTADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())) {
 						DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
 								genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));
-						error.put("motivoIndisponibilidad", motivoIndisponibilidad.getDescripcion());
+						error.put("disponible", "false");
+						error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
 						return error;
 					}
 				}
@@ -7155,7 +7162,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))) {
 				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OKUPADO));
-				error.put("motivoIndisponibilidad", motivoIndisponibilidad.getDescripcion());
+				error.put("disponible", "false");
+				error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
 			}
 		}
 		

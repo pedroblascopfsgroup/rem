@@ -791,6 +791,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}			
 			}
 		}
+		
+		if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+			DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+			if (!Checks.esNulo(motivoJustificacionOferta)) {
+				if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(ofertaDto.getCodMotivoJustificacionOferta()) 
+						&& Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+					errorsList.put("justificacionOferta", RestApi.REST_MSG_MISSING_REQUIRED);
+				} else if(!DDMotivoJustificacionOferta.CODIGO_OTRO.equals(ofertaDto.getCodMotivoJustificacionOferta()) 
+						&& !Checks.esNulo(ofertaDto.getJustificacionOferta())){
+					errorsList.put("justificacionOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+				} 
+			}else {
+				errorsList.put("codMotivoJustificacionOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta()) && Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+			errorsList.put("codMotivoJustificacionOferta", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
 
 		return errorsList;
 	}
@@ -1115,20 +1133,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(ofertaDto.getJustificacionOferta() != null) {
 						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
 							texto += ": " + ofertaDto.getJustificacionOferta();						
-						}else {
-							errorsList.put("Justificación de oferta no puede tener valor si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
-						}
-					}else {
-						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
-							errorsList.put("Justificación de oferta es obligatorio si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
 						}
 					}
 					
 					dto.setTexto(texto);
 					
 					saveTextoOfertaWS(dto, oferta);
-				}else {
-					errorsList.put("Motivo justificación oferta con código: '" + ofertaDto.getCodMotivoJustificacionOferta() +"' no encontrado.", RestApi.CODE_ERROR);
 				}
 			}
 			
@@ -1625,20 +1635,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(ofertaDto.getJustificacionOferta() != null) {
 						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
 							texto += ": " + ofertaDto.getJustificacionOferta();						
-						}else {
-							errorsList.put("Justificación de oferta no puede tener valor si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
-						}
-					}else {
-						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
-							errorsList.put("Justificación de oferta es obligatorio si el motivo justificación oferta es 'Otros'.", RestApi.CODE_ERROR);
 						}
 					}
 					
 					dto.setTexto(texto);
 					
 					saveTextoOfertaWS(dto, oferta);
-				}else {
-					errorsList.put("Motivo justificación oferta con código: '" + ofertaDto.getCodMotivoJustificacionOferta() +"' no encontrado.", RestApi.CODE_ERROR);
 				}
 			}
 			

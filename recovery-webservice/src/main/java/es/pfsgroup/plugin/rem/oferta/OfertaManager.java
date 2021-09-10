@@ -41,6 +41,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -224,6 +225,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
+import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -421,6 +424,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+    private UsuarioManager usuarioManager;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -2504,6 +2510,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
 				}
 
+				if (DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) && activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
+					Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+					llamadaAsincrona.start();
+				}
+				
 				map.put("success", true);
 			} else {
 				if(ofertaDto.getEntidadOrigen() != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(ofertaDto.getEntidadOrigen())) {

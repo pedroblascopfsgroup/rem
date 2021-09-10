@@ -231,5 +231,67 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 		
 	
 	}
+	
+	@SuppressWarnings("unchecked")
+	public ComunicacionBoardingResponse enviarOfertaHayaHome(Long numOferta, ModelMap model,int segundosTimeout) {
+		
+		Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json");
+
+        model.put("numOferta", numOferta);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+		try {
+			json = mapper.writeValueAsString(model);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			json = "{}";
+		}
+	
+		String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
+		        ? appProperties.getProperty("rem3.base.url") : "";
+		String urlEnviarOferta = !Checks.esNulo(appProperties.getProperty("rem3.enviar.oferta.haya.home"))
+		        ? appProperties.getProperty("rem3.enviar.oferta.haya.home") : "";
+		
+		StringBuilder urlEnviarOfertaHayaHome = new StringBuilder();
+		urlEnviarOfertaHayaHome.append(urlBase);
+		urlEnviarOfertaHayaHome.append(urlEnviarOferta);
+
+		JSONObject respuesta = null;
+		String ex = null;		
+    	String mensaje = null;
+    	boolean resultadoOK;
+    	
+        logger.debug("[ENVIAR OFERTA HAYA HOME] BODY: "+json.toString());
+		
+		try{			
+			respuesta = procesarPeticion(this.httpClientFacade, urlEnviarOfertaHayaHome.toString(), POST_METHOD, headers, json, BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS, "UTF-8");	
+			resultadoOK = true;
+		}catch (HttpClientException e1) {
+			e1.printStackTrace();
+			ex = e1.getMessage();
+			resultadoOK = false;
+		}catch (Exception e) {
+			logger.error("Error al enviar oferta a Haya Home", e);
+			logger.error(e.getMessage());
+			resultadoOK = false;
+		}
+		
+		if (resultadoOK == true) {
+			logger.debug("[ENVIAR OFERTA HAYA HOME] MENSAJE: "+ mensaje);
+			logger.debug("[ENVIAR OFERTA HAYA HOME] RESULTADO: "+ resultadoOK);
+		} else {
+			logger.error("[ENVIAR OFERTA HAYA HOME] BODY: "+json.toString());
+			logger.error("[ENVIAR OFERTA HAYA HOME] MENSAJE: "+ mensaje);
+			logger.error("[ENVIAR OFERTA HAYA HOME] RESULTADO: "+ resultadoOK);
+		}
+		
+				
+		registrarLlamada(urlEnviarOfertaHayaHome.toString(), json.toString(), respuesta != null ? respuesta.toString() : null, ex);
+		return new ComunicacionBoardingResponse(resultadoOK,mensaje);
+
+	}
 
 }

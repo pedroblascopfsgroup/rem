@@ -290,6 +290,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
  	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SEC_ID")
 	private DDSubestadosExpedienteComercial subestadoExpediente;  
+ 	
+ 	
+ 	@Column(name="RESERVADO_ALQUILER")
+ 	private Boolean reservadoAlquiler;
 
     @Version   
 	private Long version;
@@ -886,5 +890,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setSubestadoExpediente(DDSubestadosExpedienteComercial subestadoExpediente) {
 		this.subestadoExpediente = subestadoExpediente;
+	}
+	
+	public Boolean getReservadoAlquiler() {
+		return reservadoAlquiler;
+	}
+
+	public void setReservadoAlquiler(Boolean reservadoAlquiler) {
+		this.reservadoAlquiler = reservadoAlquiler;
 	}
 }

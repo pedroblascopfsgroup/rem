@@ -1467,4 +1467,6 @@ public interface ActivoApi {
 	boolean esActivoAlquiler(Long idActivo);
 
 	Activo activoByIdAgrupacion(Long idAgrupacion);
+
+	boolean isActivoConReservaAlquiler(Activo activo);
 }

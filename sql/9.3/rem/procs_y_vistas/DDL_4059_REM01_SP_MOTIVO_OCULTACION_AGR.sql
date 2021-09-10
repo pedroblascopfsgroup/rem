@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20200114
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5469
+--## INCIDENCIA_LINK=HREOS-14935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##		0.3 Sergio B -HREOS-4931- Optimización de tiempos
 --##		0.4 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.5 REMVIP-4622 - Ocultación alquilado
+--##		0.6 HREOS-14935 - Añadir motivo ocultación Reserva Alquiler
 --########################################## 
 --*/
 
@@ -154,6 +155,19 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
 									 AND RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'')
 									 AND ECO.DD_EEC_ID <> (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'')
 									 AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+                                     AND EXISTS '||vQUERY||
+                         ' UNION
+                          SELECT ACT.ACT_ID
+                               , 1 OCULTO /*Reservado Alquiler*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+									JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+									JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''20'' AND MTO.BORRADO = 0 /*Reservado*/
+                                   WHERE ACT.BORRADO = 0
+									 AND ECO.RESERVADO_ALQUILER = 1
                                      AND EXISTS '||vQUERY||
                          ' UNION
                           SELECT ACT.ACT_ID

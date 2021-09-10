@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200318
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6642
+--## INCIDENCIA_LINK=HREOS-14935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.7 REMVIP-4622 - Ocultación alquilado
 --##		0.8 HREOS-9509 - Ocultacion Adecuacion DD_ADA 05
 --##		0.9 REMVIP-6642 - Ocultacion Adecuacion DD_ADA 06
+--##		0.10 HREOS-14935 - Añadir motivo ocultacion Reserva Alquiler
 --##########################################
 --*/
 
@@ -160,6 +161,19 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
 									 AND RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'')
 									 AND ECO.DD_EEC_ID <> (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'')
 									 AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+                                     AND ACT.ACT_ID= '||pACT_ID||
+                         ' UNION
+                          SELECT ACT.ACT_ID
+                               , 1 OCULTO /*Reservado Alquiler*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+									JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+									JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''20'' AND MTO.BORRADO = 0 /*Reservado Alquiler*/
+                                   WHERE ACT.BORRADO = 0
+									 AND ECO.RESERVADO_ALQUILER = 1
                                      AND ACT.ACT_ID= '||pACT_ID||
                          ' UNION
                           SELECT APU.ACT_ID

@@ -9279,6 +9279,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return activo;
 	}
+	
+	@Override
+	public boolean isActivoConReservaAlquiler(Activo activo) {
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta activoOferta : activo.getOfertas()) {
+				if(activoOferta.getPrimaryKey().getOferta().getExpedienteComercial() != null) {
+					if (activoOferta.getPrimaryKey().getOferta().getExpedienteComercial().getReservadoAlquiler() != null) {
+						if (activoOferta.getPrimaryKey().getOferta().getExpedienteComercial().getReservadoAlquiler()){
+							return true;
+						}
+					}
+				}
+				
+			}
+		}
+
+		return false;
+	}
 
 }
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210908
+--## FECHA_CREACION=20210910
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15064
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('T015_ScoringBC','valores[''''T015_ScoringBC''''][''''comboResultado''''] == DDSiNo.SI ? ''''OK'''' : ''''Anular'''''),
-        T_TIPO_DATA('T015_SancionBC','valores[''''T015_SancionBC''''][''''comboResultado''''] == DDSiNo.SI ? ''''isOfertaContraOfertaMayor10K()'''' ? ''''OKirPBC'''' : ''''OKirEnvioContrato'''' :''''Anular'''''),
+        T_TIPO_DATA('T015_SancionBC','valores[''''T015_SancionBC''''][''''comboResultado''''] == DDSiNo.SI ? isOfertaContraOfertaMayor10K() ? ''''OKirPBC'''' : ''''OKirEnvioContrato'''' :''''Anular'''''),
         T_TIPO_DATA('T015_SancionPatrimonio','valores[''''T015_SancionPatrimonio''''][''''comboResultado''''] == DDSiNo.SI ? ''''OK'''' : ''''Anulada'''''),
         T_TIPO_DATA('T015_PBC','valores[''''T015_PBC''''][''''comboResultado''''] == DDSiNo.SI ? ''''OK'''' : ''''Anular''''')
                     ); 

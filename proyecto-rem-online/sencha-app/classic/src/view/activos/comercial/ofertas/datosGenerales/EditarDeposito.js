@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito'
     xtype		: 'editarDepositoWindow',
     layout	: 'fit',
     width	: Ext.Element.getViewportWidth() / 5,    
-    height	: Ext.Element.getViewportHeight() > 320 ? 320 : Ext.Element.getViewportHeight() - 50 ,
+    height	: Ext.Element.getViewportHeight() > 380 ? 380 : Ext.Element.getViewportHeight() - 50 ,
 
     controller: 'activodetalle',
     viewModel: {
@@ -14,6 +14,8 @@ Ext.define('HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito'
     
     deposito: null,
     parent:null,
+    cuentaBancariaVirtual:null,
+    cuentaBancariaCliente:null,
     
     listeners: {
     	
@@ -27,7 +29,7 @@ Ext.define('HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito'
     initComponent: function() {
     	
     	var me = this;
-    	me.setTitle("fieldlabel.modificar.deposito");
+    	me.setTitle(HreRem.i18n('fieldlabel.modificar.deposito'));
     	
     	if(me.deposito == undefined){
     		me.deposito=[];
@@ -100,6 +102,34 @@ Ext.define('HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito'
 							width: '80%',
 							bind: {
 								value: me.deposito.ibanDevolucionDeposito
+							}
+		    			},
+						{
+							xtype: "textfield",
+							reference: 'cuentaBancariaVirtual',
+							fieldLabel: HreRem.i18n('fieldlabel.cuenta.virtual'),
+							margin: '10 10 10 10',
+							width: '80%',
+							allowBlank: false,
+							minLength: 20,
+							maxLength: 20,
+							minLengthText: 'Debe tener 20 digitos',
+							bind: {
+								value: me.cuentaBancariaVirtual
+							}
+		    			},
+						{
+							xtype: "textfield",
+							reference: 'cuentaBancariaCliente',
+							fieldLabel: HreRem.i18n('fieldlabel.cuenta.cliente'),
+							margin: '10 10 10 10',
+							width: '80%',
+							allowBlank: false,
+							minLength: 20,
+							maxLength: 20,
+							minLengthText: 'Debe tener 20 digitos',
+							bind: {
+								value: me.cuentaBancariaCliente
 							}
 		    			}
 					]

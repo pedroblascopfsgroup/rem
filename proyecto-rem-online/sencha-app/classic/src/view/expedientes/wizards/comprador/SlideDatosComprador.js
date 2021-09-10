@@ -477,17 +477,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							readOnly: true
 						},
 						editable: true
-					},
-					{
-						xtype: 'comboboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.prp'),
-						reference: 'compradorPrp',
-						name: 'compradorPrp',
-						padding: '5px',
-						bind: {
-							store: '{comboSiNoBoolean}',
-							hidden: '{!comprador.esCarteraBankia}'
-						}
 					}
 				]
 			},

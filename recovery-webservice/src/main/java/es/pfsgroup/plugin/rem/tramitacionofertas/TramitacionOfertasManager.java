@@ -1051,7 +1051,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorExpedienteNuevo.setVinculoCaixa(iap.getVinculoCaixa());
 					}
 					if (iap.getPrp() != null) {
-						compradorExpedienteNuevo.setPrp(iap.getPrp());
+						compradorBusqueda.setCompradorPrp(iap.getPrp());
 					}
 					if (iap.getOficinaTrabajo() != null) {
 						compradorExpedienteNuevo.setOficinaTrabajo(iap.getOficinaTrabajo());

@@ -3302,20 +3302,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var idTramite = me.up('tramitesdetalle').getViewModel().get('tramite.idTramite');
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var comboRespuestaComprador = me.down('[name=respuestaComprador]');
-		var haPasadoSeguroRentas = false;
-		
 		comboRespuestaComprador.setDisabled(true);
+		
+		comboRespuesta.addListener('change', function() {
+			if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
+				me.desbloquearCampo(comboRespuestaComprador);
+				me.campoObligatorio(comboRespuestaComprador);
 
-		if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
-			me.desbloquearCampo(comboRespuestaComprador);
-			me.campoObligatorio(comboRespuestaComprador);
+			}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
+				comboRespuestaComprador.clearValue();
+				comboRespuestaComprador.setDisabled(true);
+				me.campoNoObligatorio(comboRespuestaComprador);
+				comboRespuestaComprador.validate();
+			}
+		});	
 
-		}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
-			comboRespuestaComprador.clearValue();
-			comboRespuestaComprador.setDisabled(true);
-			me.campoNoObligatorio(comboRespuestaComprador);
-			comboRespuestaComprador.validate();
-		}		
 	},
 	T017_InstruccionesReservaValidacion: function() {		
 		var me = this;

@@ -66,6 +66,12 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name: 'ibanDevolucionDeposito'
+		},
+		{
+			name: 'cuentaBancariaVirtual'
+		},
+		{
+			name: 'cuentaBancariaCliente'
 		}
     ],
 

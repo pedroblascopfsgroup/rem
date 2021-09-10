@@ -20,6 +20,8 @@ public class DtoDetalleOferta {
 	private Date fechaEntradaCRMSF;
 	private Boolean empleadoCaixa;
 	DtoDeposito dtoDeposito;
+	private String cuentaBancariaVirtual;
+	private String cuentaBancariaCliente;
 
 
 	public String getId() {
@@ -111,6 +113,18 @@ public class DtoDetalleOferta {
 	}
 	public void setDtoDeposito(DtoDeposito dtoDeposito) {
 		this.dtoDeposito = dtoDeposito;
+	}
+	public String getCuentaBancariaVirtual() {
+		return cuentaBancariaVirtual;
+	}
+	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
+		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
+	}
+	public String getCuentaBancariaCliente() {
+		return cuentaBancariaCliente;
+	}
+	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
+		this.cuentaBancariaCliente = cuentaBancariaCliente;
 	}
 	
 	

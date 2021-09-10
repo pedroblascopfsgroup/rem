@@ -263,6 +263,12 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				}
 				
 			} 
+			
+			if (agrupacion.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agrupacion.get('perimetroMacc')){
+				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
+				me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+				return false;
+			} 
 		}
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
@@ -538,10 +544,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 
 		var me = this;
 		var agr = me.lookupController().getViewModel().get('agrupacionficha');
+		me.setTopBar(agr.get('esEditable'));
 
-		if(!agr.get('esEditable') || (agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc'))){
+		if(agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc')){
 			me.setTopBar(false);
-			me.rowEditing.clearListeners();
 		}
 		
    }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210810
+--## FECHA_CREACION=20210910
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14649
+--## INCIDENCIA_LINK=HREOS-15137
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##	    0.3 Cambios para el lanzamiento del SP de publicaciones y situación comercial - HREOS-14686
 --##	    0.4 Se añade el FLAG EN REM en la insercción de la TMP_AGR_DESTINO_COMERCIAL - HREOS-14837
 --##	    0.4 Se añade que cuando no viene DESTINO_COMERCIAL sea VR o su destino actual - HREOS-14649
+--##	    0.5 Los flags de publicación Caixa siempre se actualizan, también sacamos de la ejecución del SP de publicaciones las agrupaciones restringidas OBREM que estén incluida en otras agrupaciones restringidas - HREOS-15137
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -439,9 +440,8 @@ BEGIN
                                 WHEN AUX.PUBLICABLE_PORT_API_ALQUI IN(''N'',''0'') THEN 0
                                 ELSE 0
                             END AS CBX_PUBL_PORT_API_ALQUILER
-                            ,TMP.ACT_ID AS ACT_ID 
-                        FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
-                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
+                            ,ACT.ACT_ID AS ACT_ID 
+                        FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                         JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
                 ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
                  WHEN MATCHED THEN UPDATE SET
@@ -660,6 +660,25 @@ BEGIN
     V_NUM_FILAS := sql%rowcount;
 
     SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_AGR_DESTINO_COMERCIAL POR POR CAMBIOS DE PERÍMETRO [INFO]'|| CHR(10);
+
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP
+                WHERE TMP.AGR_ID IN (SELECT TMP_DEL.AGR_ID FROM '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL TMP_DEL
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON TMP_DEL.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL AND ACT.BORRADO = 0
+                WHERE TAG.DD_TAG_CODIGO = ''18''
+                AND EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AUX_AGR
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AUX_AGA ON AUX_AGA.AGR_ID = AUX_AGR.AGR_ID AND AUX_AGA.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION AUX_TAG ON AUX_TAG.DD_TAG_ID = AUX_AGR.DD_TAG_ID AND AUX_TAG.BORRADO = 0 
+                WHERE AUX_TAG.DD_TAG_CODIGO IN (''02'',''17'')
+                AND AUX_AGR.AGR_FECHA_BAJA IS NULL
+                AND AUX_AGA.ACT_ID = ACT.ACT_ID))';
+
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+
+    SALIDA := SALIDA || '[INFO] SE HAN BORRADO ' || V_NUM_FILAS ||' REGISTROS EN TMP_AGR_DESTINO_COMERCIAL POR ESTAR DENTRO DE UNA AGRUPACIÓN RESTRINGIDA OBREM Y DE VENTA O ALQUILER [INFO]'|| CHR(10);
 
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
                     ACT_ID

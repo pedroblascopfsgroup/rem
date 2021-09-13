@@ -49,7 +49,8 @@ Ext.define('HreRem.view.configuracion.administracion.configuracionrecomendacion.
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboSubcarteraFiltered}'
+			            	store: '{comboSubcarteraFiltered}',
+							disabled: '{!colCarteraRec.selection}'
 			            },
 						allowBlank: false,
 			            reference: 'colSubcarteraRec'

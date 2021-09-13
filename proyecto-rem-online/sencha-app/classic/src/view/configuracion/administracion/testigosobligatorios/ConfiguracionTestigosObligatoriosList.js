@@ -48,7 +48,8 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboSubcarteraFiltered}'
+			            	store: '{comboSubcarteraFiltered}',
+							disabled: '{!cbColCartera.selection}'
 			            },
 			            reference: 'cbColSubcartera'
 			        }

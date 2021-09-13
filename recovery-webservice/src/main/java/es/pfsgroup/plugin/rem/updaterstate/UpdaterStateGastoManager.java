@@ -183,6 +183,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				String codigoCartera = gasto.getPropietario().getCartera().getCodigo();
+
 				String codigoSubcartera = null;
 				
 				if (codigoCartera != null && (DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) || DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(codigoCartera))) {

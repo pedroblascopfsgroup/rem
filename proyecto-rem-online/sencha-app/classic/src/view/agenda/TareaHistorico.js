@@ -660,6 +660,63 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 							me.ocultarCampo(comboQuitar);
 						}
 					},
+					
+					 T015_DefinicionOfertaValidacion: function(){
+					    	var me = this;
+					    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');   	
+					    	me.campoObligatorio(me.down('[name=tipoTratamiento]'));
+					    	
+					    	if(CONST.CARTERA['BANKIA'] == codigoCartera){
+					    		me.ocultarCampo(me.down('[name=tipoInquilino]'));
+						    	me.ocultarCampo(me.down('[name=nMesesFianza]'));
+						    	me.ocultarCampo(me.down('[name=importeFianza]'));
+						    	me.ocultarCampo(me.down('[name=deposito]'));
+						    	me.ocultarCampo(me.down('[name=nMeses]'));
+						    	me.ocultarCampo(me.down('[name=importeDeposito]'));
+						    	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+						    	me.ocultarCampo(me.down('[name=nombreFS]'));
+						    	me.ocultarCampo(me.down('[name=documento]'));
+						    	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+						    	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+					    	}else{
+
+					    		var tratamiento = me.down('[name=tipoTratamiento]');
+					
+					    		if(tratamiento.value == '03'){
+					    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
+					    	    	me.habilitarCampo(me.down('[name=importeFianza]'));
+					    	    	me.habilitarCampo(me.down('[name=deposito]'));
+					    	    	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
+					    	    	me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+					    	    	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+					    			
+					    			me.desocultarCampo(me.down('[name=nMesesFianza]'));
+					    	    	me.desocultarCampo(me.down('[name=importeFianza]'));
+					    	    	me.desocultarCampo(me.down('[name=deposito]'));
+					    	    	me.desocultarCampo(me.down('[name=nMeses]'));
+					    	    	me.desocultarCampo(me.down('[name=importeDeposito]'));
+					    	    	me.desocultarCampo(me.down('[name=fiadorSolidario]'));
+					    	    	me.desocultarCampo(me.down('[name=nombreFS]'));
+					    	    	me.desocultarCampo(me.down('[name=documento]'));
+					    	    	me.desocultarCampo(me.down('[name=tipoImpuesto]'));
+					    	    	me.desocultarCampo(me.down('[name=porcentajeImpuesto]'));
+					    	    	me.desocultarCampo(me.down('[name=observaciones]'));
+
+					    		}else{
+					    			me.ocultarCampo(me.down('[name=nMesesFianza]'));
+					    	    	me.ocultarCampo(me.down('[name=importeFianza]'));
+					    	    	me.ocultarCampo(me.down('[name=deposito]'));
+					    	    	me.ocultarCampo(me.down('[name=nMeses]'));
+					    	    	me.ocultarCampo(me.down('[name=importeDeposito]'));
+					    	    	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+					    	    	me.ocultarCampo(me.down('[name=nombreFS]'));
+					    	    	me.ocultarCampo(me.down('[name=documento]'));
+					    	    	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+					    	    	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+					    	    	me.ocultarCampo(me.down('[name=observaciones]'));	
+					    		}
+					    	}
+					    },
 
 					ocultarCampo: function(campo) {
 				        var me = this;

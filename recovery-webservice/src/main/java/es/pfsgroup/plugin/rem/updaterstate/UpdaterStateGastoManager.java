@@ -17,10 +17,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -31,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -179,7 +183,53 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				String codigoCartera = gasto.getPropietario().getCartera().getCodigo();
-				if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+
+				String codigoSubcartera = null;
+				
+				if (codigoCartera != null && (DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) || DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(codigoCartera))) {
+					boolean existeSubcartera = false;
+					for (int i = 0; !existeSubcartera && i < gastoListaDetalleList.size(); i++) {
+							
+						for (GastoLineaDetalleEntidad lineaDetalleEntidad : gastoListaDetalleList.get(i).getGastoLineaEntidadList()) {
+							if(DDEntidadGasto.CODIGO_ACTIVO.equals(lineaDetalleEntidad.getEntidadGasto().getCodigo())) {
+								Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id",lineaDetalleEntidad.getEntidad()));
+								if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
+									codigoSubcartera = activo.getSubcartera().getCodigo();
+									existeSubcartera = true;
+									break;
+								}
+							}
+						}
+						
+					}
+					
+				}
+				
+				if (codigoSubcartera == null 
+					|| (!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
+						!DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codigoSubcartera) &&
+						!DDSubcartera.CODIGO_EGEO.equals(codigoSubcartera) &&
+						!DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(codigoSubcartera) &&
+						!DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(codigoSubcartera) &&
+						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera))) {
+				
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
+					if(gasto.getGestoria() == null) {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
+								return error;
+							}
+						}
+					}else {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
+								return error;
+							}
+						}
+					}
+				}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
 								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
@@ -201,6 +251,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							return error;
 						}
 					}	
+				}
 				}
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);

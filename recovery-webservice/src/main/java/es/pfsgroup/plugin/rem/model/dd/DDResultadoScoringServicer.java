@@ -28,7 +28,6 @@ public class DDResultadoScoringServicer implements Auditable, Dictionary{
 	public static final String COD_FAVORABLE = "10";
 	public static final String COD_DESFAVORABLE = "20";
 
-	
 	private static final long serialVersionUID = 1L;
 
 	@Id

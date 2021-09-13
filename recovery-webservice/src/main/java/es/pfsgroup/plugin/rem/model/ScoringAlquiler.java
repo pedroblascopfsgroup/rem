@@ -77,11 +77,11 @@ public class ScoringAlquiler implements Serializable, Auditable {
     private ExpedienteComercial expediente;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_RSE_ID")
+    @JoinColumn(name = "DD_RAT_ID")
 	private DDRatingScoringServicer ratingScoringServicer;  
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_RAT_ID")
+    @JoinColumn(name = "DD_RSE_ID")
 	private DDResultadoScoringServicer resultadoScoringServicer;  
 	
 	@ManyToOne(fetch = FetchType.LAZY)

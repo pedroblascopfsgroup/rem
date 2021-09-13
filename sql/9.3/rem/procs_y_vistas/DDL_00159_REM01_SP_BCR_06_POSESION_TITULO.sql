@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210902
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15059
+--## INCIDENCIA_LINK=HREOS-15133
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -26,6 +26,7 @@
 --##	      0.14 Correcciones - HREOS-14820 - Daniel Algaba
 --##        0.15 Correciones para el plan de pruebas- [HREOS-14899] - Alejandra García
 --##        0.16 Correción merge ACT_AHT_HIST_TRAM_TITULO- [HREOS-15059] - Alejandra García
+--##        0.16 Corrección Fecha de concesión - [HREOS-15133| - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -362,7 +363,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                  ,ACT2.ACT_ID AS ACT_ID
                  ,PROP.PRO_ID AS PRO_ID
                  , AUX.ANYO_CONCESION PAC_ANYO_CONCES
-                 , AUX.FEC_FIN_CONCESION PAC_FEC_FIN_CONCES
+                 , TO_DATE(AUX.FEC_FIN_CONCESION,''yyyymmdd'') PAC_FEC_FIN_CONCES
                  , PAC.PAC_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0

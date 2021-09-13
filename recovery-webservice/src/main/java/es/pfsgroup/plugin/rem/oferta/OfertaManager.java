@@ -607,7 +607,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (ofertaDto.getIdOfertaHayaHome() == null)
 					errorsList.put("idOfertaHayaHome", RestApi.REST_MSG_MISSING_REQUIRED);
 				
-				errorsList.putAll(validateMotivoIndisponibilidad(null, ofertaDto.getIdActivoHaya(), ofertaDto.getEstadoOferta(), ofertaDto.getSubestadoOferta()));
+				errorsList.putAll(validateMotivoIndisponibilidad(null, ofertaDto.getIdActivoHaya(), ofertaDto.getCodigoAgrupacionComercialRem(), ofertaDto.getEstadoOferta(), ofertaDto.getSubestadoOferta()));
 				errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(), 
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
@@ -624,7 +624,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(oferta == null) {
 					errorsList.put("idOfertaHayaHome", RestApi.REST_MSG_UNKNOWN_KEY);
 				} else {
-					errorsList.putAll(validateMotivoIndisponibilidad(oferta.getId(), ofertaDto.getIdActivoHaya(), ofertaDto.getEstadoOferta(), ofertaDto.getSubestadoOferta()));
+					errorsList.putAll(validateMotivoIndisponibilidad(oferta.getId(), ofertaDto.getIdActivoHaya(), ofertaDto.getCodigoAgrupacionComercialRem(), ofertaDto.getEstadoOferta(), ofertaDto.getSubestadoOferta()));
 					errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(), 
 							ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), false));
 				}
@@ -806,10 +806,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// ValidateAlta
 		errorsList = validateOfertaPostRequestData(ofertaDto, null, true);
 		if (errorsList.isEmpty()) {
+			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadOrigen()));
+
 			if (!Checks.esNulo(ofertaDto.getOfertaLote())
 						&& ofertaDto.getOfertaLote()
 						&& !Checks.esNulo(ofertaDto.getActivosLote())
-						&& !ofertaDto.getActivosLote().isEmpty()) {
+						&& !ofertaDto.getActivosLote().isEmpty() 
+						&& sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
 				DtoAgrupacionesCreateDelete dtoAgrupacion = new DtoAgrupacionesCreateDelete();
 				if(DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())) {
 					dtoAgrupacion.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
@@ -849,10 +852,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						return errorsList;
 					}
 				}
+			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo()) 
+					&& ofertaDto.getOfertaLote() != null && ofertaDto.getOfertaLote() && ofertaDto.getCodigoAgrupacionComercialRem() != null) {
+				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
 			}
 
 			oferta = new Oferta();
-			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadOrigen()));
+
 			if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(sistemaOrigen.getCodigo())) {
 				oferta.setOrigen(sistemaOrigen);
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
@@ -911,8 +917,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setActivosOferta(listaActOfr);
 				oferta.setAgrupacion(agrup);
 				
-				activo = genericDao.get(Activo.class,
-						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getActivosLote().get(0).getIdActivoHaya()));
+				if(sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
+					if (agrup.getActivoPrincipal() != null) {
+						activo = agrup.getActivoPrincipal();
+					} else {
+						activo = agrup.getActivos().get(0).getActivo();
+					}
+				} else {
+					activo = genericDao.get(Activo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getActivosLote().get(0).getIdActivoHaya()));
+				}
 
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 				ActivoAgrupacion agrupacion = null;
@@ -7197,7 +7211,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 	
-	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, String estadoOferta, String subestadoOferta) {
+	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String estadoOferta, String subestadoOferta) {
 		
 		HashMap<String, String> error = new HashMap<String, String>();
 		
@@ -7207,34 +7221,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return error;
 		}
 		
+		List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
 		if (numActivo != null) {
-			Activo activo = activoDao.getActivoByNumActivo(numActivo);
-			if (activo.getOfertas() != null && !activo.getOfertas().isEmpty()) {
-				for(ActivoOferta actOfr : activo.getOfertas()) {
-					if ((idOferta == null || idOferta != null && !actOfr.getPrimaryKey().getOferta().getId().equals(idOferta)) 
-							&& actOfr.getPrimaryKey().getOferta().getExpedienteComercial() != null && actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado() != null 
-							&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
-							&& !DDEstadosExpedienteComercial.PENDIENTE_SANCION.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
-							&& !DDEstadosExpedienteComercial.CONGELADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
-							&& !DDEstadosExpedienteComercial.DESCARTADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())) {
-						DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
-								genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));
-						error.put("disponible", "false");
-						error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
-						return error;
+ 			Activo activo = activoDao.getActivoByNumActivo(numActivo);
+ 			if (activo.getOfertas() != null && !activo.getOfertas().isEmpty())
+				activoOfertaList = activo.getOfertas();
+		} else if (numAgrupacion != null) {
+			Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupacion);
+			if(idAgrupacion != null) {
+				List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(idAgrupacion);
+				if (agaList != null && !agaList.isEmpty()) {
+					for(ActivoAgrupacionActivo aga : agaList) {
+						activoOfertaList.addAll(aga.getActivo().getOfertas());
 					}
 				}
 			}
-			
-			if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() == 1 
-					&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
-							|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))) {
-				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OKUPADO));
-				error.put("disponible", "false");
-				error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
-			}
 		}
+				
+		if(activoOfertaList != null && !activoOfertaList.isEmpty()) {
+			for(ActivoOferta actOfr : activoOfertaList) {
+				if ((idOferta == null || idOferta != null && !actOfr.getPrimaryKey().getOferta().getId().equals(idOferta)) 
+						&& actOfr.getPrimaryKey().getOferta().getExpedienteComercial() != null && actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado() != null 
+						&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
+						&& !DDEstadosExpedienteComercial.PENDIENTE_SANCION.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
+						&& !DDEstadosExpedienteComercial.CONGELADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo()) 
+						&& !DDEstadosExpedienteComercial.DESCARTADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())) {
+					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));
+					error.put("disponible", "false");
+					error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
+					return error;
+				}
+				
+				if (actOfr.getPrimaryKey().getActivo() != null && actOfr.getPrimaryKey().getActivo().getSituacionPosesoria() != null 
+						&& actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getOcupado() == 1 
+						&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getConTitulo().getCodigo()) 
+								|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getConTitulo().getCodigo()))) {
+					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OKUPADO));
+					error.put("disponible", "false");
+					error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
+					return error;
+ 				}
+			}
+	 	}
 		
 		return error;
 		

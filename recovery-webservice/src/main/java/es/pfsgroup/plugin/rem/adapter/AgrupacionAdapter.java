@@ -1350,6 +1350,7 @@ public class AgrupacionAdapter {
 					throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
 				}
 			}
+			
 			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
 

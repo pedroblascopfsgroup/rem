@@ -1547,7 +1547,8 @@ public class ActivoAdapter {
 						List<GestorDespacho> listaGestorDespacho = null;
 						
 						listaGestorDespacho = genericDao.getList(GestorDespacho.class, 
-								genericDao.createFilter(FilterType.EQUALS, "despachoExterno", despachoExterno));
+								genericDao.createFilter(FilterType.EQUALS, "despachoExterno", despachoExterno),
+								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 						
 						if(listaGestorDespacho != null && !listaGestorDespacho.isEmpty()) {
 							listaUsuarios = new ArrayList<Usuario>();

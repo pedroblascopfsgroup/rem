@@ -1359,7 +1359,7 @@ public class AgrupacionAdapter {
 					dto.setIdActivo(activo.getId());
 					ActivoAgrupacionActivo aga = activoApi
 							.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-					if (aga != null && !errorFlag) {
+					if (aga != null) {
 						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
 					}
 	
@@ -1412,38 +1412,6 @@ public class AgrupacionAdapter {
 	
 	}
 	
-	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
-		boolean errorFlag = false;	
-		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
-		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
-		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
-		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
-		boolean perimetroActivoPrincipalBool = false;
-		boolean perimetroActualPrincipalBool = false;
-		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
-			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
-		}
-		if(perimetroActivoActual.getCheckGestorComercial() != null) {
-			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
-		}
-		
-		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
-		
-		if(!errorFlag) {
-			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
-			if(!errorFlag) {
-				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
-					errorFlag = true;
-				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
-					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
-				}
-			}
-		}
-		return errorFlag;
-	}
-
-
-
 	@Transactional(readOnly = false)
 	public void createActivoAgrupacionMasivo(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
 			throws JsonViewerException {
@@ -1454,51 +1422,7 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
-			if (Checks.esNulo(agrupacion)) {
-				throw new JsonViewerException("La agrupación no existe");
-			}
-			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
-			if (Checks.esNulo(activo)) {
-				throw new JsonViewerException("El activo no existe");
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-				}
-			}
-
-			//Si el activo es de Liberbank, además debe ser de la misma subcartera
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
-				if(!Checks.esNulo(activo.getSubcartera())) {
-					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
-						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
-					}
-				}else{
-					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
-
-				}
-			}
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
@@ -1547,6 +1471,36 @@ public class AgrupacionAdapter {
 			logger.error(e);
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
+		boolean errorFlag = false;	
+		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
+		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
+		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
+		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
+		boolean perimetroActivoPrincipalBool = false;
+		boolean perimetroActualPrincipalBool = false;
+		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
+			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
+		}
+		if(perimetroActivoActual.getCheckGestorComercial() != null) {
+			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
+		}
+		
+		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
+		
+		if(!errorFlag) {
+			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
+			if(!errorFlag) {
+				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
+					errorFlag = true;
+				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
+					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
+				}
+			}
+		}
+		return errorFlag;
 	}
 
 	/**

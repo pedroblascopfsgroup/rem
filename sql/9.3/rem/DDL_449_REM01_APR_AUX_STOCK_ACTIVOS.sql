@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210808
+--## FECHA_CREACION=20210916
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14827
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 HREOS-15091 Añadir campos DISPONIBLE y COD_MOTIVO_INDISPONIBILIDAD
 --#########################################
 ----*/
 
@@ -69,7 +70,7 @@ BEGIN
         , CCAA	VARCHAR2(50 CHAR)
         , PROVINCIA	VARCHAR2(50 CHAR)
         ,SIGLA VARCHAR2(50 CHAR)
-        , VIAPUBLICA	VARCHAR2(50 CHAR)
+        , VIAPUBLICA	VARCHAR2(100 CHAR)
         , NUMERO	VARCHAR2(50 CHAR)
         , BLOQUE	VARCHAR2(50 CHAR)
         , PORTAL	VARCHAR2(50 CHAR)
@@ -114,8 +115,10 @@ BEGIN
         ,GARAJE VARCHAR2(50 CHAR)
         ,TRASTERO VARCHAR2(50 CHAR)
         , API_PRIMARIO	VARCHAR2(50 CHAR)
-        , API_ESPEJO	VARCHAR2(50 CHAR)       
+        , API_ESPEJO	VARCHAR2(100 CHAR)       
         ,ORIGEN_ACTIVO VARCHAR2(50 CHAR)
+        ,DISPONIBLE VARCHAR2(1 CHAR)
+        ,COD_MOTIVO_INDISPONIBILIDAD VARCHAR2(5 CHAR)
 
 	)';
 

@@ -946,6 +946,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
 								bind : {
 									value : '{activo.perimetroAdmision}'
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
 								}
 							},
 							{
@@ -1022,10 +1025,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.aplicaPublicar}'
 								},
 								listeners: {
-									change: function (get) {
-										var me = this;
-										me.lookupController('activoDetalle').checkOfertaTrabajoVivo(me.getReference());
-									}
+									change: 'onChkbxPerimetroChange'
 								}
 							},
 							{

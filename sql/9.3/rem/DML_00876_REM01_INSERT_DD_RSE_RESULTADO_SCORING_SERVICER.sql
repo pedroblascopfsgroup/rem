@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210817
+--## FECHA_CREACION=20210910
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14794
@@ -36,8 +36,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      	T_TIPO_DATA('FAV','Favorable'),
-		T_TIPO_DATA('DFAV','Desfavorable')
+      	T_TIPO_DATA('10','Favorable'),
+		T_TIPO_DATA('20','Desfavorable')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

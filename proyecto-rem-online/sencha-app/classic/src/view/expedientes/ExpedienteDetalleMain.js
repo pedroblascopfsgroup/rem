@@ -82,7 +82,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		}
 		
 		var tabScoring= me.down('scoringexpediente');
-		if(!me.getViewModel().get('expediente.definicionOfertaScoring')){				
+		if(!me.getViewModel().get('expediente.definicionOfertaScoring') || isBK){				
 			tabScoring.tab.setVisible(false);
 		}else{
 			tabScoring.tab.setVisible(true);

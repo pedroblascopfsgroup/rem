@@ -3389,6 +3389,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 
+		if (condiciones.getTipoGrupoImpuesto() != null) {
+			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+		}
+		
 		return dto;
 	}
 
@@ -3957,6 +3961,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 					
 					genericDao.save(Oferta.class, oferta);
+				}
+			}
+			
+			if (dto.getTipoGrupoImpuestoCod() != null) {
+				DDGrupoImpuesto grupo = (DDGrupoImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDGrupoImpuesto.class, dto.getTipoGrupoImpuestoCod());
+				if (grupo != null) {
+					condiciones.setTipoGrupoImpuesto(grupo);
+				}
+				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(condiciones.getTipoImpuesto().getCodigo())) {
+					condiciones.setTipoGrupoImpuesto(null);
 				}
 			}
 			

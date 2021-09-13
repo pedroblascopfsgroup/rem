@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -63,7 +64,10 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
-	private Boolean aceptacionContraoferta;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo DDRespuestaOfertante no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String aceptacionContraoferta;
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
 	private Date fechaFirma;
@@ -261,10 +265,10 @@ public class OfertaDto implements Serializable {
 	public void setCodTarea(String codTarea) {
 		this.codTarea = codTarea;
 	}
-	public Boolean getAceptacionContraoferta() {
+	public String getAceptacionContraoferta() {
 		return aceptacionContraoferta;
 	}
-	public void setAceptacionContraoferta(Boolean aceptacionContraoferta) {
+	public void setAceptacionContraoferta(String aceptacionContraoferta) {
 		this.aceptacionContraoferta = aceptacionContraoferta;
 	}
 	public Date getFechaPrevistaFirma() {

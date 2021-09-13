@@ -185,6 +185,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
@@ -633,6 +634,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)
+					&& (DDEstadoOferta.CODIGO_ACEPTADA.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo())
+							&& !ofertaHayaHome(oferta))
 					&& Checks.esNulo(ofertaDto.getCodTarea()) 
 					&& sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -1107,20 +1110,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (ofertaDto.getPorcentaje4anyo() != null) {
 				oferta.setPorcentaje4Anyo(ofertaDto.getPorcentaje4anyo());
 			}
-			if (ofertaDto.getMesesCarenciaContraoferta() != null) {
-				oferta.setMesesCarenciaContraoferta(ofertaDto.getMesesCarenciaContraoferta());
-			}
-			if (ofertaDto.getPorcentaje1anyoContraoferta() != null) {
-				oferta.setPorcentaje1AnyoContraoferta(ofertaDto.getPorcentaje1anyoContraoferta());
-			}
-			if (ofertaDto.getPorcentaje2anyoContraoferta() != null) {
-				oferta.setPorcentaje2AnyoContraoferta(ofertaDto.getPorcentaje2anyoContraoferta());
-			}
-			if (ofertaDto.getPorcentaje3anyoContraoferta() != null) {
-				oferta.setPorcentaje3AnyoContraoferta(ofertaDto.getPorcentaje3anyoContraoferta());
-			}
-			if (ofertaDto.getPorcentaje4anyoContraoferta() != null) {
-				oferta.setPorcentaje4AnyoContraoferta(ofertaDto.getPorcentaje4anyoContraoferta());
+			if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(ofertaDto.getAceptacionContraoferta())) {
+				if (ofertaDto.getMesesCarenciaContraoferta() != null) {
+					oferta.setMesesCarenciaContraoferta(ofertaDto.getMesesCarenciaContraoferta());
+				}
+				if (ofertaDto.getPorcentaje1anyoContraoferta() != null) {
+					oferta.setPorcentaje1AnyoContraoferta(ofertaDto.getPorcentaje1anyoContraoferta());
+				}
+				if (ofertaDto.getPorcentaje2anyoContraoferta() != null) {
+					oferta.setPorcentaje2AnyoContraoferta(ofertaDto.getPorcentaje2anyoContraoferta());
+				}
+				if (ofertaDto.getPorcentaje3anyoContraoferta() != null) {
+					oferta.setPorcentaje3AnyoContraoferta(ofertaDto.getPorcentaje3anyoContraoferta());
+				}
+				if (ofertaDto.getPorcentaje4anyoContraoferta() != null) {
+					oferta.setPorcentaje4AnyoContraoferta(ofertaDto.getPorcentaje4anyoContraoferta());
+				}	
+			} else if (DDRespuestaOfertante.CODIGO_ACEPTA.equals(ofertaDto.getAceptacionContraoferta())) {
+				if (!Checks.esNulo(ofertaDto.getImporteContraoferta())) {
+					oferta.setImporteOferta(ofertaDto.getImporteContraoferta());
+				} else if (!Checks.esNulo(oferta.getImporteContraOferta())) {
+					oferta.setImporteOferta(oferta.getImporteContraOferta());
+				}
+				if (!Checks.esNulo(ofertaDto.getMesesCarenciaContraoferta())) {
+					oferta.setMesesCarencia(ofertaDto.getMesesCarenciaContraoferta());
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje1anyoContraoferta())) {
+					oferta.setPorcentaje1Anyo(ofertaDto.getPorcentaje1anyoContraoferta());
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje2anyoContraoferta())) {
+					oferta.setPorcentaje2Anyo(ofertaDto.getPorcentaje2anyoContraoferta());
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje3anyoContraoferta())) {
+					oferta.setPorcentaje3Anyo(ofertaDto.getPorcentaje3anyoContraoferta());
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje4anyoContraoferta())) {
+					oferta.setPorcentaje4Anyo(ofertaDto.getPorcentaje4anyoContraoferta());
+				}	
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -1578,26 +1604,58 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setPorcentaje4Anyo(ofertaDto.getPorcentaje4anyo());
 				modificado = true;
 			}
-			if (ofertaDto.getMesesCarenciaContraoferta() != null) {
-				oferta.setMesesCarenciaContraoferta(ofertaDto.getMesesCarenciaContraoferta());
-				modificado = true;
+			if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(ofertaDto.getAceptacionContraoferta())) {
+				setearCamposNull(oferta,true);
+				if (ofertaDto.getMesesCarenciaContraoferta() != null) {
+					oferta.setMesesCarenciaContraoferta(ofertaDto.getMesesCarenciaContraoferta());
+					modificado = true;
+				}
+				if (ofertaDto.getPorcentaje1anyoContraoferta() != null) {
+					oferta.setPorcentaje1AnyoContraoferta(ofertaDto.getPorcentaje1anyoContraoferta());
+					modificado = true;
+				}
+				if (ofertaDto.getPorcentaje2anyoContraoferta() != null) {
+					oferta.setPorcentaje2AnyoContraoferta(ofertaDto.getPorcentaje2anyoContraoferta());
+					modificado = true;
+				}
+				if (ofertaDto.getPorcentaje3anyoContraoferta() != null) {
+					oferta.setPorcentaje3AnyoContraoferta(ofertaDto.getPorcentaje3anyoContraoferta());
+					modificado = true;
+				}
+				if (ofertaDto.getPorcentaje4anyoContraoferta() != null) {
+					oferta.setPorcentaje4AnyoContraoferta(ofertaDto.getPorcentaje4anyoContraoferta());
+					modificado = true;
+				}	
+			} else if (DDRespuestaOfertante.CODIGO_ACEPTA.equals(ofertaDto.getAceptacionContraoferta())) {
+				setearCamposNull(oferta,false);
+				if (!Checks.esNulo(ofertaDto.getImporteContraoferta())) {
+					oferta.setImporteOferta(ofertaDto.getImporteContraoferta());
+					modificado = true;
+				} else if (!Checks.esNulo(oferta.getImporteContraOferta())) {
+					oferta.setImporteOferta(oferta.getImporteContraOferta());
+					modificado = true;
+				}
+				if (!Checks.esNulo(ofertaDto.getMesesCarenciaContraoferta())) {
+					oferta.setMesesCarencia(ofertaDto.getMesesCarenciaContraoferta());
+					modificado = true;
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje1anyoContraoferta())) {
+					oferta.setPorcentaje1Anyo(ofertaDto.getPorcentaje1anyoContraoferta());
+					modificado = true;
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje2anyoContraoferta())) {
+					oferta.setPorcentaje2Anyo(ofertaDto.getPorcentaje2anyoContraoferta());
+					modificado = true;
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje3anyoContraoferta())) {
+					oferta.setPorcentaje3Anyo(ofertaDto.getPorcentaje3anyoContraoferta());
+					modificado = true;
+				}
+				if (!Checks.esNulo(ofertaDto.getPorcentaje4anyoContraoferta())) {
+					oferta.setPorcentaje4Anyo(ofertaDto.getPorcentaje4anyoContraoferta());
+					modificado = true;
+				}	
 			}
-			if (ofertaDto.getPorcentaje1anyoContraoferta() != null) {
-				oferta.setPorcentaje1AnyoContraoferta(ofertaDto.getPorcentaje1anyoContraoferta());
-				modificado = true;
-			}
-			if (ofertaDto.getPorcentaje2anyoContraoferta() != null) {
-				oferta.setPorcentaje2AnyoContraoferta(ofertaDto.getPorcentaje2anyoContraoferta());
-				modificado = true;
-			}
-			if (ofertaDto.getPorcentaje3anyoContraoferta() != null) {
-				oferta.setPorcentaje3AnyoContraoferta(ofertaDto.getPorcentaje3anyoContraoferta());
-				modificado = true;
-			}
-			if (ofertaDto.getPorcentaje4anyoContraoferta() != null) {
-				oferta.setPorcentaje4AnyoContraoferta(ofertaDto.getPorcentaje4anyoContraoferta());
-				modificado = true;
-			}			
 
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
@@ -4096,10 +4154,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		boolean avanzar = true;
 
 		if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-			if (ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-			} else if (!ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
+			if (DDRespuestaOfertante.CODIGO_ACEPTA.equals(ofertaDto.getAceptacionContraoferta())) {
+				valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_ACEPTA });
+			} else if (DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getAceptacionContraoferta())) {
+				valoresTarea.put("aceptacionContraoferta", new String[] { DDRespuestaOfertante.CODIGO_RECHAZA });
 			} else {
 				avanzar = false;
 			}
@@ -7228,5 +7286,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return error;
 		
+	}
+	
+	private boolean ofertaHayaHome(Oferta oferta) {
+		
+		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			if (activoApi.esActivoHayaHome(activoOferta.getActivoId())) return true;
+		}
+		
+		return false;
+	}
+	
+	private void setearCamposNull(Oferta oferta, boolean contraoferta) {
+		
+		if (contraoferta) {
+			oferta.setMesesCarenciaContraoferta(null);
+			oferta.setPorcentaje1AnyoContraoferta(null);
+			oferta.setPorcentaje2AnyoContraoferta(null);
+			oferta.setPorcentaje3AnyoContraoferta(null);
+			oferta.setPorcentaje4AnyoContraoferta(null);
+		} else {
+			oferta.setMesesCarencia(null);
+			oferta.setPorcentaje1Anyo(null);
+			oferta.setPorcentaje2Anyo(null);
+			oferta.setPorcentaje3Anyo(null);
+			oferta.setPorcentaje4Anyo(null);
+		}
 	}
 }

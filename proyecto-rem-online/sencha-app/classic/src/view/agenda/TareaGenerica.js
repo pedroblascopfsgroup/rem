@@ -2320,6 +2320,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var idActivo= me.idActivo;
     	var resolucionOferta = me.down('[name=resolucionOferta]');
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+    	var importeContraoferta = me.down('[name=importeContraoferta]');
 
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
@@ -2330,8 +2331,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.bloquearCampo(me.down('[name=fechaElevacion]'));
 			var fecha = new Date()
 			me.down('[name=fechaElevacion]').setValue(fecha);
+			me.deshabilitarCampo(importeContraoferta);
+			me.ocultaryHacerNoObligatorio(me.down('[name=refCircuitoCliente]'));
 			
+		}else{
+			me.ocultaryHacerNoObligatorio(importeContraoferta);
 		}
+		
 
     	var resolucionOferta = resolucionOferta.getStore();
     	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
@@ -2368,7 +2374,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		storeComite.load();
 			
     	me.down('[name=resolucionOferta]').addListener('change', function(){
-    		
     		var resolucionOferta = me.down('[name=resolucionOferta]');
 
     		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
@@ -2376,6 +2381,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			if(CONST.CARTERA['BANKIA'] != codigoCartera){
 					me.habilitarCampo(me.down('[name=comite]'));
 	    			me.campoObligatorio(me.down('[name=comite]'));
+    			}else{
+    				if(resolucionOferta.value == '03'){
+    					me.habilitarCampo(importeContraoferta);
+    				}else{
+    					me.deshabilitarCampo(importeContraoferta);
+    				}
     			}
     			
     			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
@@ -2399,6 +2410,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	
             	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
             	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+            	
+            	me.deshabilitarCampo(importeContraoferta);
     			
     		}
     	});
@@ -3300,28 +3313,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 	},
 	
-	T015_SolicitarGarantiasAdicionalesValidacion: function(){
-		var me = this;
-		var idTarea = me.idTarea;
-		var idTramite = me.up('tramitesdetalle').getViewModel().get('tramite.idTramite');
-		var comboRespuesta = me.down('[name=comboResultado]');
-		var comboRespuestaComprador = me.down('[name=respuestaComprador]');
-		comboRespuestaComprador.setDisabled(true);
-		
-		comboRespuesta.addListener('change', function() {
-			if(CONST.COMBO_SIN_SINO['SI'] == comboRespuesta.getValue()){
-				me.desbloquearCampo(comboRespuestaComprador);
-				me.campoObligatorio(comboRespuestaComprador);
-
-			}else if(CONST.COMBO_SIN_SINO['NO'] == comboRespuesta.getValue()){
-				comboRespuestaComprador.clearValue();
-				comboRespuestaComprador.setDisabled(true);
-				me.campoNoObligatorio(comboRespuestaComprador);
-				comboRespuestaComprador.validate();
-			}
-		});	
-
-	},
+	T015_SolicitarGarantiasAdicionalesValidacion: function(){},
+	
 	T017_InstruccionesReservaValidacion: function() {		
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
@@ -3374,6 +3367,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.habilitarCampo(motivoAplazamiento);
 					me.habilitarCampo(tipoArras);
 					me.habilitarCampo(fechaEnvio);
+					tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
+					me.bloquearCampo(tipoArras);
 	            }
         	});
 			
@@ -3587,6 +3582,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(importeFianza);
 			me.ocultarCampo(importeFianza);
 		}
+	},
+	
+	T015_AgendarFechaFirmaValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var fechaFirma = me.down('[name=fechaFirma]');
+		var lugarFirma = me.down('[name=lugarFirma]');
+
+		
+		me.deshabilitarCampo(fechaFirma);
+		me.deshabilitarCampo(lugarFirma);
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
+				me.habilitarCampo(fechaFirma);
+				me.habilitarCampo(lugarFirma);
+			}else{
+				me.deshabilitarCampo(fechaFirma);
+				me.deshabilitarCampo(lugarFirma);
+				fechaFirma.setValue('');
+				lugarFirma.setValue('');
+			}
+
+        })
 	},
 	
     habilitarCampo: function(campo) {

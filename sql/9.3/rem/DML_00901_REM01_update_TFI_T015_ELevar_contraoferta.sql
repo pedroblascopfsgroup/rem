@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Lara Pablo
---## FECHA_CREACION=20210816
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20210915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15066
+--## INCIDENCIA_LINK=HREOS-14376
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,15 +39,11 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TFI'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14585';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14376';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma'    ,'label', 		'0'		,'titulo'				,null		    ,null					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Agendar y firmar'''' </p>'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox', 	'1'		,'comboResultado'		,'false'	    ,'DDSiNo'				,'Firmado'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield', 	'2'		,'fechaFirma'		    ,'false'	    ,null					,'Fecha de la firma'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textfield', 	'3'		,'lugarFirma'	        ,'false'	    ,null		            ,'Lugar de la firma'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea', 	'4'		,'observaciones'		,null		    ,null					,'Observaciones')
+    	T_TIPO_DATA('T015_ElevarASancion'		,'numberfield', 	'7'		,'importeContraoferta'	,null 	,null			,'Importe contraoferta')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.*;
@@ -81,6 +82,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("comboResolucion", comboResolucion);
         map.put("resolucionOferta", comboResolucion);
         map.put("fechaElevacion", fechaRespuesta);
+        if (TareaProcedimientoConstants.CODIGO_SANCION_BC.equals(dto.getCodTarea()))
+        map.put("comboResultado", comboResolucion);
 
 
         return map;

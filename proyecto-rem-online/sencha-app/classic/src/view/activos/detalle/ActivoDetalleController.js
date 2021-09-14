@@ -3169,10 +3169,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var comboMotivoPerimetroComer = me
 				.lookupReference('comboMotivoPerimetroComer');
 		var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
+		var perimetroAdmision = me.lookupReference('perimetroAdmision');
+		var chkbxPerimetroPublicar = me.lookupReference('chkbxPerimetroPublicar');
 		var textFieldFormalizar = me
 				.lookupReference('textFieldPerimetroFormalizar');
 		var textFieldPerimetroGestion = me
 				.lookupReference('textFieldPerimetroGestion');
+		var textFieldPerimetroAdmision = me
+				.lookupReference('textFieldPerimetroAdmision');
+		var textFieldPerimetroPublicar = me
+				.lookupReference('textFieldPerimetroPublicar');
+
 		if (!val) {
 			switch (ref) {
 				case 'chkbxPerimetroComercializar' :
@@ -3212,6 +3219,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						textFieldFormalizar.reset();
 					}
 					break;
+					
+				case 'perimetroAdmision' :
+					textFieldPerimetroAdmision.reset();
+					break;
+					
+				case 'chkbxPerimetroPublicar' :
+					textFieldPerimetroPublicar.reset();
+					break;
+					
 				default :
 					break;
 			}

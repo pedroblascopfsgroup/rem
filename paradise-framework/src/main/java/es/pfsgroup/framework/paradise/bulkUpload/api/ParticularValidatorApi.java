@@ -368,6 +368,8 @@ public interface ParticularValidatorApi {
 	boolean existeGestorActivosByUsername(String gestorUsername);
 
 	boolean existeGestoriaDeFormalizacionByUsername(String username);
+	
+	boolean esGestoriaDeFormalizacionCorrecta(String username);
 
 	boolean existeSubCarteraByCod(String codSubCartera);
 	
@@ -1255,6 +1257,8 @@ public interface ParticularValidatorApi {
 	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
 
 	Boolean isActivoBankia(String numActivo);
+	
+	Boolean isActivoLiberbank(String numActivo);
 
 	Boolean tipoDeElemento(String tipoElemento);
 

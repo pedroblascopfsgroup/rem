@@ -106,16 +106,22 @@ public class GenericAdapter {
 		if("gestorCommiteLiberbank".equals(diccionario)) {			
 			lista.add(diccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_LIBERBANK));
 		}else {
-			UsuarioCartera usuarioCartera = null;
+			List<UsuarioCartera> usuarioCartera = null;
 			Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 			if (clase.equals(DDCartera.class) || clase.equals(DDSubcartera.class)) {				
-				usuarioCartera = genericDao.get(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
-				if (usuarioCartera != null) {
-					lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, clase.equals(DDCartera.class) ? usuarioCartera.getCartera().getCodigo() :  usuarioCartera.getSubCartera().getCodigo()));	
+				usuarioCartera = genericDao.getList(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
+				if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+					for (UsuarioCartera usu : usuarioCartera) {
+						if (DDCartera.class.equals(clase) && !lista.contains(usu.getCartera().getCodigo())) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
+						} else if (DDSubcartera.class.equals(clase)) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getSubCartera().getCodigo()));
+						}
+					}	
 				}				
 			}
 			
-			if(usuarioCartera == null) {
+			if(usuarioCartera == null || usuarioCartera.isEmpty()) {
 				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
 		}

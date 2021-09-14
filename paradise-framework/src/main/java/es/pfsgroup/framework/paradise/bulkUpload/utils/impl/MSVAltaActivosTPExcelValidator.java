@@ -140,8 +140,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String CALIFICACION_CEE_NOT_EXISTS = "El tipo de calificación energética indicado no existe";
 	public static final String GRADO_PROPIEDAD_NOT_EXISTS = "El código grado de propiedad indicado no existe";
 	public static final String CLASE_ACTIVO_NOT_EXISTS = "La clase de activo indicada no existe";
-	public static final String CLASE_ACTIVO_IS_NULL = "La clase de activo indicada no puede estar vacía";
-	
+	public static final String CLASE_ACTIVO_IS_NULL = "La clase de activo indicada no puede estar vacía"; 
+	public static final String GESTORIA_FORMALIZACION_NOT_VALID = "La gestoría de formación introducida no es correcta, debe ser de Garsa, KNB, OGF, Montalvo, Pinos o F&F";
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -355,6 +355,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(GESTOR_ACTIVOS_IS_NULL, isColumnNullByRows(exc,COL_NUM.GESTOR_ACTIVOS));
 			mapaErrores.put(GESTOR_ACTIVOS_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ACTIVOS));
 			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
+			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_VALID, esGestoriaDeFormalizacionCorrecta(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
 			
 			mapaErrores.put(PARCELA_REGISTRO_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PARCELA));
 			mapaErrores.put(PORCENTAJE_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
@@ -459,7 +460,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(CLASE_ACTIVO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(CLASE_ACTIVO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
-					|| !mapaErrores.get(USO_DOMINANTE_ACTIVO_NOT_EXISTS).isEmpty())
+					|| !mapaErrores.get(USO_DOMINANTE_ACTIVO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_VALID).isEmpty())
 				{
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -1605,6 +1607,35 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			}
 		}
 				
+		return listaFilas;
+	}
+	
+	private List<Integer> esGestoriaDeFormalizacionCorrecta(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				
+				if (!Checks.esNulo(exc.dameCelda(i, columnNumber))){
+					if (!particularValidator.esGestoriaDeFormalizacionCorrecta(exc.dameCelda(i, columnNumber))){
+						listaFilas.add(i);
+					}
+				}
+				
+			}catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			}catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			}catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+		
 		return listaFilas;
 	}
 

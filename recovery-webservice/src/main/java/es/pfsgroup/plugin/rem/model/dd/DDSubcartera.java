@@ -74,7 +74,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_LBKN_LIBERBANK = "56";
 	public static final String CODIGO_LBKN_MOSCATA = "57";
 	public static final String CODIGO_LBKN_RETAMAR = "60";
-	public static final String CODIGO_BFA_BFA = "69";
+	public static final String CODIGO_BFA_BFA = "07";
 	public static final String CODIGO_MAPFRE = "66";
 	
 	

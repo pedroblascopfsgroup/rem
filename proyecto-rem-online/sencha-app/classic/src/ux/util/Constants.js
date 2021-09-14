@@ -236,7 +236,7 @@ Ext.define('HreRem.ux.util.Constants', {
     SUBCARTERA: {
     	SAREBINMOBILIARIO: '04',
     	BH: '06',
-    	BFA: '69',
+    	BFA: '07',
     	BANKIA: '08',
     	ZEUSINMOBILIARIO: '133',
     	ZEUSFINANCIERO: '134',

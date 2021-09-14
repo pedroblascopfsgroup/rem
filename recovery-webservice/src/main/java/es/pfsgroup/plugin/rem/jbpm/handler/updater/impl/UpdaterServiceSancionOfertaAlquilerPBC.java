@@ -18,7 +18,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -31,28 +30,22 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
-public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterService {
+public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
 
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
-    
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
 	@Autowired
 	private OfertaApi ofertaApi;
 	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerPBC.class);
+    	
+	private static final String COMBO_RESULTADO = "comboResultado";
 
-    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
-    
-	private static final String RESULTADO_PBC = "comboResultado";
-
-	private static final String CODIGO_T015_SANCION_BC = "T015_SancionBC";
+	private static final String CODIGO_T015_PBC = "T015_PBC";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -61,42 +54,40 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		Oferta oferta = expedienteComercial.getOferta();
 		
 		DDEstadosExpedienteComercial estadoExp = null;
 		DDEstadoExpedienteBc estadoBc = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
-			if(RESULTADO_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.SI.equals(valor.getValor())) {
-					if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC));
-					}else {
-						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
-					}
+			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (DDSiNo.SI.equals(valor.getValor())) {					
+					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
-				}else if (DDSiNo.NO.equals(valor.getValor())) {
+				}else if (DDSiNo.NO.equals(valor.getValor())) {				
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 				}
 				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);
+				expedienteComercial.setEstadoBc(estadoBc);		
 				estadoBcModificado = true;
 			}
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);
+		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T015_SANCION_BC};
+		return new String[]{CODIGO_T015_PBC};
 	}
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
+
+
 }

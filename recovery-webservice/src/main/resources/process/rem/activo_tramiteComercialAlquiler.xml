@@ -491,7 +491,7 @@
     
     <decision name ="T015_AgendarFechaFirmaDecision" expression="#{T015_AgendarFechaFirmaDecision}">
 		<transition to="Fin" name="Anulada"></transition>
-        <transition to="T015_Firma" name="OK"></transition>
+        <transition to="T015_CierreContrato" name="OK"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
 	

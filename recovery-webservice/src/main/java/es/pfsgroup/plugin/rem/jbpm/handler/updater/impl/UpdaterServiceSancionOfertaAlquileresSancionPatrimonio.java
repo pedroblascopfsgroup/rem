@@ -66,7 +66,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
+				if(DDSiNo.SI.equals(valor.getValor())) {
 					//Cambiar estado ANULADO del expediente por el que toca en el ítem
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -81,7 +81,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 					
-				} else if(DDSiNo.SI.equals(valor.getValor())) {
+				} else if(DDSiNo.NO.equals(valor.getValor())) {
 					//Cambiar estado ANULADO del expediente por el que toca en el ítem
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

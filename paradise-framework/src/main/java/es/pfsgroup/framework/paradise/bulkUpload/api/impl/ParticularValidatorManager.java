@@ -2007,6 +2007,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	public boolean esGestoriaDeFormalizacionCorrecta(String username){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("username", username);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(username)) return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM USD_USUARIOS_DESPACHOS USD"
+				+ "			JOIN DES_DESPACHO_EXTERNO DES ON USD.DES_ID = DES.DES_ID"
+				+ "			JOIN ${master.schema}.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID"
+				+ "			WHERE USU.USU_USERNAME = :username AND DES.DES_DESPACHO = 'GESTORIAFORM' AND USD.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeProvinciaByCodigo(String codigoProvincia) {
@@ -4534,6 +4550,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		FROM ACT_ACTIVO ACT "
 					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
 					+"								WHERE DD_CRA_CODIGO IN ('03')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoLiberbank(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('08')"
 					+"								AND BORRADO = 0) "
 					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
 
@@ -8684,7 +8719,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			rawDao.addParams(params);
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM act_activo act "  
 				+ "join BIE_DATOS_REGISTRALES bie on act.bie_id = bie.bie_id and bie.BIE_DREG_TOMO =  :tomo  "
-				+ "and bie.BIE_DREG_LIBRO =  :libro  and bie.BIE_DREG_FOLIO =  :folio  and bie.BIE_DREG_NUM_FINCA =  :finca  and bie.bie_dreg_num_registro = :numRegistro"  
+				+ "and bie.BIE_DREG_LIBRO =  :libro  and bie.BIE_DREG_FOLIO =  :folio  and bie.BIE_DREG_NUM_FINCA =  :finca  and bie.bie_dreg_num_registro = :numRegistro "  
 				+ "join ACT_CAT_CATASTRO cat on act.act_id = cat.act_id and cat.cat_ref_catastral =  :refCatastral "  
 				+ "join ${master.schema}.dd_loc_localidad loc on loc.dd_loc_id = bie.dd_loc_id and loc.dd_loc_codigo = :codigoLocalidad");
 		
@@ -8915,7 +8950,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) FROM ACT_ACTIVO ACT " + 
 				" INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU on act.act_id = apu.act_id " + 
-				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_epa_id " + 
+				" INNER JOIN DD_EPA_ESTADO_PUB_ALQUILER  est on est.dd_epa_id = apu.dd_efuncionpa_id " + 
 				" INNER JOIN dd_cra_cartera car on car.dd_cra_id = act.dd_cra_id " +
 				" INNER JOIN dd_tco_tipo_comercializacion tpo on tpo.dd_tco_id = apu.dd_tco_id" +
 				" WHERE act.act_num_activo = :numActivo" + 

@@ -738,7 +738,7 @@ public class AgrupacionAdapter {
 						}
 					}
 					
-					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
+					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal) && !Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
 
 				}else{
 					 if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -752,7 +752,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", activoCero.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", activoCero.getActivoPublicacion().getTipoComercializacion().getCodigo());
 					}
-					 dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoCero.getPerimetroMacc()) && activoCero.getPerimetroMacc() == 1);
+					 dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getPerimetroMacc()) && activoCero.getPerimetroMacc() == 1);
 				}
 				
 				VCambioActivoPrecioPublicacionAgrupaciones vistaCambio = genericDao.get(VCambioActivoPrecioPublicacionAgrupaciones.class,

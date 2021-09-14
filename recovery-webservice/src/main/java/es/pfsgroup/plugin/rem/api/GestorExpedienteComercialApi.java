@@ -15,7 +15,6 @@ public interface GestorExpedienteComercialApi {
 	public static final String CODIGO_GESTOR_COMERCIAL_BACKOFFICE = "GCBO";
 	public static final String CODIGO_GESTOR_FORMALIZACION = "GFORM";
 	public static final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
-	public static final String CODIGO_GESTORIA_ADMISION = "GTOADM";
 	
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_RETAIL = "SCOMRET";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_SINGULAR = "SCOMSIN";

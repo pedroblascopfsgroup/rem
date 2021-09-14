@@ -56,8 +56,14 @@ public class RecomendacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveConfigRecomendacion(DtoConfiguracionRecomendacion dtoConfiguracionRecomendacion, ModelMap model) {
 		try {
-			boolean success = recomendacionApi.saveConfigRecomendacion(dtoConfiguracionRecomendacion);
-			model.put(RESPONSE_SUCCESS_KEY, success);
+			if((dtoConfiguracionRecomendacion.getPorcentajeDescuento() != null && dtoConfiguracionRecomendacion.getPorcentajeDescuento() < 0D)
+					|| (dtoConfiguracionRecomendacion.getImporteMinimo() != null && dtoConfiguracionRecomendacion.getImporteMinimo() < 0D)) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
+			} else {
+				boolean success = recomendacionApi.saveConfigRecomendacion(dtoConfiguracionRecomendacion);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			

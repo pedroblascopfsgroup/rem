@@ -56,8 +56,14 @@ public class TestigosController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveTestigoObligatorio(DtoTestigoObligatorio dtoTestigoObligatorio, ModelMap model) {
 		try {
-			boolean success = testigosApi.saveTestigoObligatorio(dtoTestigoObligatorio);
-			model.put(RESPONSE_SUCCESS_KEY, success);
+			if((dtoTestigoObligatorio.getPorcentajeDescuento() != null && dtoTestigoObligatorio.getPorcentajeDescuento() < 0D)
+					|| (dtoTestigoObligatorio.getImporteMinimo() != null && dtoTestigoObligatorio.getImporteMinimo() < 0D)) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
+			} else {
+				boolean success = testigosApi.saveTestigoObligatorio(dtoTestigoObligatorio);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+			}			
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			
@@ -80,8 +86,14 @@ public class TestigosController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateTestigoObligatorio(DtoTestigoObligatorio dtoTestigoObligatorio, ModelMap model) {
 		try {
-			boolean success = testigosApi.updateTestigoObligatorio(dtoTestigoObligatorio);
-			model.put(RESPONSE_SUCCESS_KEY, success);
+			if((dtoTestigoObligatorio.getPorcentajeDescuento() != null && dtoTestigoObligatorio.getPorcentajeDescuento() < 0D)
+					|| (dtoTestigoObligatorio.getImporteMinimo() != null && dtoTestigoObligatorio.getImporteMinimo() < 0D)) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
+			} else {
+				boolean success = testigosApi.updateTestigoObligatorio(dtoTestigoObligatorio);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+			}	
 		} catch (Exception e) {
 			logger.error("Error en TestigosController.updateTestigoObligatorio(dtoTestigoObligatorio, model)", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

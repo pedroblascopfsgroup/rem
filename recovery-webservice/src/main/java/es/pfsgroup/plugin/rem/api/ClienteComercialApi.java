@@ -20,13 +20,12 @@ public interface ClienteComercialApi {
 	public ClienteComercial getClienteComercialById(Long id);
 
 	/**
-	 * Devuelve un ClienteComercial por idClienteWebcom.
+	 * Devuelve un ClienteComercial por idClienteWebcom o idClienteRem almacenados en el dto.
 	 * 
-	 * @param idClienteWebcom
-	 *            a consultar
+	 * @param clienteDto
 	 * @return ClienteComercial
 	 */
-	public ClienteComercial getClienteComercialByIdClienteWebcom(Long idClienteWebcom);
+	public ClienteComercial getClienteComercialByIdClienteWebcomOrIdClienteRem(ClienteDto clienteDto);
 
 	/**
 	 * Devuelve un ClienteComercial por idClienteRem

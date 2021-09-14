@@ -92,21 +92,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	public ClienteComercial getClienteComercialByIdClienteWebcom(Long idClienteWebcom) {
+	public ClienteComercial getClienteComercialByIdClienteWebcomOrIdClienteRem(ClienteDto clienteDto) {
 		ClienteComercial cliente = null;
 		List<ClienteComercial> lista = null;
-		ClienteDto clienteDto = null;
 
 		try {
-
-			if (Checks.esNulo(idClienteWebcom)) {
-				throw new Exception("El parámetro idClienteWebcom es obligatorio.");
-
-			} else {
-
-				clienteDto = new ClienteDto();
-				clienteDto.setIdClienteWebcom(idClienteWebcom);
-
+			if (clienteDto.getIdClienteWebcom() != null || clienteDto.getIdClienteRem() != null) {
 				lista = clienteComercialDao.getListaClientes(clienteDto);
 				if (!Checks.esNulo(lista) && lista.size() > 0) {
 					cliente = lista.get(0);
@@ -902,10 +893,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			HashMap<String, String> errorsList = null;
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
-			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcomOrIdClienteRem(clienteDto);
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
-				errorsList = validatePersonaFisicaOJuridica(clienteDto);
+				errorsList.putAll(validatePersonaFisicaOJuridica(clienteDto));
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);
 				}
@@ -918,7 +909,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			}
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
+				cliente = this.getClienteComercialByIdClienteWebcomOrIdClienteRem(clienteDto);
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);

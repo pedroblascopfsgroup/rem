@@ -33,8 +33,8 @@ public class ClienteDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteWebcom;
+	@NotNull(groups = { Update.class })
 	private Long idClienteRem;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String razonSocial;

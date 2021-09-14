@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20210909
+--## FECHA_CREACION=20210914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14748
@@ -67,8 +67,8 @@ DECLARE
 	T_TIPO_DATA('28','51','Pendiente firma de inquilino (contrato de alquiler)','Pendiente firma de inquilino (contrato de alquiler)'),
 	T_TIPO_DATA('29','51','Pendiente firma apoderado hre (contrato de alquiler)','Pendiente firma apoderado hre (contrato de alquiler)'),
   T_TIPO_DATA('30','01','Enviado','Enviado'),
-  T_TIPO_DATA('31','01','No enviado','No enviado')
-
+  T_TIPO_DATA('31','01','No enviado','No enviado'),
+  T_TIPO_DATA('32','45','Desistimiento de interés','Desistimiento de interés')
     ); 
 
     V_TMP_TIPO_DATA T_TIPO_DATA;

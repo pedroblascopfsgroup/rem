@@ -83,7 +83,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 
 	     esSituacionJudicial: function(get){
-	    	 if(get('activo.unidadAlquilable')){
+	    	 var tipoTituloCodigo = get('activo.tipoTituloCodigo');
+			 var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			
+	    	 if(get('activo.unidadAlquilable') 
+	    			 || ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))){
 	    		 return true;
 	    	 }
 	    	 else{
@@ -743,14 +747,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 			var estadoReam = get('situacionPosesoria.perteneceActivoREAM');
+			var tipoTituloCodigo = get('activo.tipoTituloCodigo');			
+			
 			if(estadoReam == true){
-				if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SEGURIDAD_REAM'])){
+				if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SEGURIDAD_REAM']) 
+						|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))){
 					return false;
 				}
 				return true; 
 			}else{
 				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-				|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+					|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo)))
+					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 			}
 			
 		},
@@ -1444,7 +1453,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		tienePosesion: function(get){
 			var posesion = get('situacionPosesoria.indicaPosesion') == "1";
-			return posesion;
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			
+			if ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && subtipoClaseActivoCodigo == true) {
+				return true;
+			} else {
+				return posesion;
+			} 
 		},
 		
 		isGestorAdmisionAndSuper: function(){
@@ -1579,8 +1594,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			//Desactivamos la columna de validado en función del usuario:			
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		},
-		isGestorSeguridad:function(get){
-			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']);
+		
+		isGestorSeguridadOAssetManager:function(get){
+			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
+			
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']) 
+				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo));
+		},
+		
+		isAssetManager:function(get){
+			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			
+			return $AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true);
 		},
 		
 	    esActivoMacc: function (get) {
@@ -1673,8 +1699,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		noEditableSareb: function(get) {
 			var me = this;
 			var isCarteraSareb = get('activo.isCarteraSareb');
+			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
 			
-			if(isCarteraSareb != true){
+			if(isCarteraSareb != true 
+					&& !($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))){
 				return false;
 			}
 			return true;

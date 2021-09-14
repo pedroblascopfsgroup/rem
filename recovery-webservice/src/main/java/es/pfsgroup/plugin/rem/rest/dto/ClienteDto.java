@@ -166,9 +166,9 @@ public class ClienteDto implements Serializable{
 	private String codigoPostalRepresentante;
 	
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@Diccionary(clase = DDTipoOcupacion.class, message = "El codTipoOcupacion no existe", groups = { Insert.class,
+	@Diccionary(clase = DDTipoOcupacion.class, message = "El codOcupacion no existe", groups = { Insert.class,
 			Update.class })
-	private String codTipoOcupacion;
+	private String codOcupacion;
 	
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String nombreRepresentante;
@@ -472,11 +472,11 @@ public class ClienteDto implements Serializable{
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
-	public String getCodTipoOcupacion() {
-		return codTipoOcupacion;
+	public String getCodOcupacion() {
+		return codOcupacion;
 	}
-	public void setCodTipoOcupacion(String codTipoOcupacion) {
-		this.codTipoOcupacion = codTipoOcupacion;
+	public void setCodOcupacion(String codOcupacion) {
+		this.codOcupacion = codOcupacion;
 	}
 	public String getNombreRepresentante() {
 		return nombreRepresentante;

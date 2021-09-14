@@ -365,10 +365,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
 		
-		if (!Checks.esNulo(clienteDto.getCodTipoOcupacion()) && cliente.getTipoPersona() != null 
+		if (!Checks.esNulo(clienteDto.getCodOcupacion()) && cliente.getTipoPersona() != null 
 				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
 			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoOcupacion()));
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodOcupacion()));
 			if (!Checks.esNulo(tipoOcupacion)) {
 				cliente.setTipoOcupacion(tipoOcupacion);
 			}
@@ -695,10 +695,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
 		
-		if (!Checks.esNulo(clienteDto.getCodTipoOcupacion()) && cliente.getTipoPersona() != null 
+		if (!Checks.esNulo(clienteDto.getCodOcupacion()) && cliente.getTipoPersona() != null 
 				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
 			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoOcupacion()));
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodOcupacion()));
 			if (!Checks.esNulo(tipoOcupacion)) {
 				cliente.setTipoOcupacion(tipoOcupacion);
 			}

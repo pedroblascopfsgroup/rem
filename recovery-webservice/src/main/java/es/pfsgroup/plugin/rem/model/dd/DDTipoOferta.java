@@ -125,4 +125,8 @@ public class DDTipoOferta implements Auditable, Dictionary {
 		return isVenta;
 	}
 
+	public static boolean isTipoAlquilerNoComercial(DDTipoOferta diccionario) {
+		return CODIGO_ALQUILER_NO_COMERCIAL.equals(diccionario != null ? diccionario.getCodigo() : null);
+	}
+
 }

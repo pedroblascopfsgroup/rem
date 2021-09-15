@@ -188,6 +188,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 
 	private static final List<String> TABS_BBVA = Arrays.asList(MENU_ACTIVOS, MENU_COMERCIAL);
+	private static final List<String> TABS_USUARIOS_BC = Arrays.asList(MENU_ACTIVOS, MENU_COMERCIAL);
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 	
@@ -409,6 +410,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		
 		boolean esUsuCarteraBBVA = perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_CARTERA_BBVA, usuarioLogado.getUsername());
+		boolean esUsuBC = perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_USUARIOS_BC, usuarioLogado.getUsername());
 
 			
 		// Leemos el fichero completo
@@ -430,6 +432,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		JSONArray menuItems = (JSONArray) jsonObject.get("data");
 
 		for (Object item : menuItems) {
+			boolean anyadirTab = false;
 			String secFunPermToRender = null;
 			String nombreEntidad = null;
 			JSONObject itemObject = JSONObject.fromObject(item);
@@ -440,9 +443,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-						
-			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
-					((esUsuCarteraBBVA && TABS_BBVA.contains(secFunPermToRender)) || !esUsuCarteraBBVA)) {
+			
+			if(secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)){
+				if(esUsuCarteraBBVA) {
+					if(TABS_BBVA.contains(secFunPermToRender)) {
+						anyadirTab = true;
+					}
+				}else if(esUsuBC) {
+					if(TABS_BBVA.contains(secFunPermToRender)) {
+						anyadirTab = true;				
+					}
+				}else {
+					anyadirTab = true;
+				}
+			}
+			
+			if(anyadirTab) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {
 					beanUtilNotNull.copyProperties(menuItem, itemObject);

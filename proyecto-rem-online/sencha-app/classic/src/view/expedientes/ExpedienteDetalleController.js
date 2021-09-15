@@ -2581,7 +2581,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
 	    	var esBankia = me.getViewModel().get("expediente.esBankia");
-	    	if (esBankia) {
+	    	var tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo');
+	    	if (esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
 	    		if(newValue == true) {
 					/*operacionExenta.reset();
 					operacionExenta.setReadOnly(true);*/
@@ -2597,23 +2598,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					tipoAplicable.allowBlank = false;
 		    		renunciaExencion.setReadOnly(false);
 		    		renunciaExencion.setDisabled(false);
-		    		renunciaExencion.allowBlank = false;
+		    		renunciaExencion.allowBlank = false;					
 		    		
 				}
 	    	}else{
-	    		if(newValue == true) {
-					operacionExenta.reset();
-					operacionExenta.setReadOnly(true);
-					renunciaExencion.reset();
-		    		renunciaExencion.setReadOnly(true);
-		    		tipoAplicable.reset();
-		    		tipoAplicable.setDisabled(true);
-		    		tipoAplicable.allowBlank = true;
-				} else {
-					operacionExenta.setReadOnly(false);
-					tipoAplicable.setDisabled(false);
-					tipoAplicable.allowBlank = false;
-				}
+	    		if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
+	    			if(newValue == true) {
+						operacionExenta.reset();
+						operacionExenta.setReadOnly(true);
+						renunciaExencion.reset();
+			    		renunciaExencion.setReadOnly(true);
+			    		tipoAplicable.reset();
+			    		tipoAplicable.setDisabled(true); 
+			    		tipoAplicable.allowBlank = true;
+					} else {
+						operacionExenta.setReadOnly(false);
+						tipoAplicable.setDisabled(false);
+						tipoAplicable.allowBlank = false;
+					}
+	    		}	    		
 	    	}
 	
 			

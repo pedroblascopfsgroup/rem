@@ -910,7 +910,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
 				cliente = this.getClienteComercialByIdClienteWebcomOrIdClienteRem(clienteDto);
-				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
+				if (cliente.getIdClienteWebcom() != null)
+					map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);

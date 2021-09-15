@@ -198,10 +198,27 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.operacion.exenta'),
 										bind : {
 											value : '{condiciones.operacionExenta}',
-											readOnly : '{!esOfertaVenta}'
+											readOnly : '{!esOfertaVenta}',
+											hidden: isBK
 										},
 										listeners : {
 											change : 'onCambioOperacionExenta'
+										}
+									},
+									{
+										xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.grupo.impuesto'),
+										reference : 'grupoImpuestoRef',
+
+										bind : {
+											store : '{comboGrupoImpuesto}',
+											value : '{condiciones.tipoGrupoImpuestoCod}',
+											hidden: !isBK
+										},
+										displayField : 'descripcion',
+										valueField : 'codigo',
+										listeners : {
+											change : 'onCambioGrupoImpuesto'
 										}
 									},
 									{
@@ -234,7 +251,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 										bind : {
 											value : '{condiciones.reservaConImpuesto}',
-											readOnly : '{!esOfertaVenta}'
+											readOnly : '{!esOfertaVenta}',
+											hidden: isBK
 										}
 									},
 									{

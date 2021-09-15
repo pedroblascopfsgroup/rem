@@ -149,6 +149,8 @@ public class DtoCondiciones extends WebDto {
 	private Long periodicidadMeses;
 	private Date fechaActualizacion;
 	
+	private String tipoGrupoImpuestoCod;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -1063,6 +1065,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setFechaActualizacion(Date fechaActualizacion) {
 		this.fechaActualizacion = fechaActualizacion;
+	}
+
+	public String getTipoGrupoImpuestoCod() {
+		return tipoGrupoImpuestoCod;
+	}
+
+	public void setTipoGrupoImpuestoCod(String tipoGrupoImpuestoCod) {
+		this.tipoGrupoImpuestoCod = tipoGrupoImpuestoCod;
 	}	
 	
 }

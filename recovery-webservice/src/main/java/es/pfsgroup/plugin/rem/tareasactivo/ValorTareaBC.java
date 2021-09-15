@@ -135,6 +135,8 @@ public class ValorTareaBC implements Serializable, Auditable {
 		Field[] campos = null;
 		if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codTarea)) {
 			campos =  BloqueoScreening.class.getDeclaredFields();
+		} else if(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING.equals(codTarea)) {
+			campos =  BloqueoScreening.class.getDeclaredFields();
 		}
 		
 		if(campos !=null) {

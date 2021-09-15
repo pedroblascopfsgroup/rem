@@ -494,6 +494,28 @@
         <transition to="T015_CierreContrato" name="OK"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
+    
+    <state name="T015_BloqueoScreening">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
 	
 
 	<end-state name="Fin">

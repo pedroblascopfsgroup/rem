@@ -627,6 +627,26 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_AVANZAR_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAvanzaScoringBC>() {
+            @Override
+            public Class<DtoAvanzaScoringBC> getArgumentType() {
+                return DtoAvanzaScoringBC.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAvanzaScoringBC dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionScoringBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

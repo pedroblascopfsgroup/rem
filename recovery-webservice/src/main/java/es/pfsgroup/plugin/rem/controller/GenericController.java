@@ -156,7 +156,7 @@ public class GenericController extends ParadiseJsonController{
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
-			if(subtipoTrabajo != null) {
+			if(!Checks.esNulo(subtipoTrabajo)) {
 				out = genericApi.getDiccionarioTiposDocumentoBySubtipoTrabajo(subtipoTrabajo,entidad);
 			}
 			if(out.isEmpty()) {

@@ -3389,6 +3389,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 
+		if (condiciones.getTipoGrupoImpuesto() != null) {
+			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+		}
+		
 		return dto;
 	}
 
@@ -3957,6 +3961,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 					
 					genericDao.save(Oferta.class, oferta);
+				}
+			}
+			
+			if (dto.getTipoGrupoImpuestoCod() != null) {
+				DDGrupoImpuesto grupo = (DDGrupoImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDGrupoImpuesto.class, dto.getTipoGrupoImpuestoCod());
+				if (grupo != null) {
+					condiciones.setTipoGrupoImpuesto(grupo);
+				}
+				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(condiciones.getTipoImpuesto().getCodigo())) {
+					condiciones.setTipoGrupoImpuesto(null);
 				}
 			}
 			
@@ -13048,9 +13062,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setMotivoDesbloqueado(DDMotivosDesbloqueo.DESBLOQUEO_SCREENING);
 			}
 	
-			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
-			if(tramite != null) {
-				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramite.getId(), ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+			ActivoTramite tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+			ActivoTramite tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+
+			if(tramiteVenta != null) {
+				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteVenta.getId(), ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+				this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
+				
+				if(tarea != null) {
+					this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+					if(tarea.getTareaPadre() != null) {
+						this.avanzarTareaScreening(tarea.getId(), tarea.getTareaPadre().getId());
+					}
+				}		
+			} else if(tramiteAlquiler != null) {
+				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteAlquiler.getId(), ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
 				this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
 				
 				if(tarea != null) {
@@ -13069,23 +13095,69 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoScreening dataToDtoScreeningBloqueo(Long numOferta, String motivo, String observaciones) {
+		
+		ActivoTramite tramiteVenta = null;
+		ActivoTramite tramiteAlquiler = null;
+		
+		if (numOferta != null) {
+			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "numOferta", numOferta);
+			Oferta oferta =  genericDao.get(Oferta.class, filtroOferta);
+			
+			if (oferta != null) {
+				ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+				if (expedienteComercial != null) {
+					tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+					tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+				}
+			}
+		}
+
+		
 		DtoScreening dto = new DtoScreening();
 		dto.setNumOferta(numOferta);
 		dto.setMotivoBloqueado(motivo);
 		dto.setObservacionesBloqueado(observaciones);
 		dto.setIsTareaActiva(false);
-		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		
+		if (tramiteVenta != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		} else if (tramiteAlquiler != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
+
+		}
 
 		return dto;
 	}
 	
 	@Override
 	public DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones) {
+		
+		ActivoTramite tramiteVenta = null;
+		ActivoTramite tramiteAlquiler = null;
+		
+		if (numOferta != null) {
+			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "numOferta", numOferta);
+			Oferta oferta =  genericDao.get(Oferta.class, filtroOferta);
+			
+			if (oferta != null) {
+				ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+				if (expedienteComercial != null) {
+					tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+					tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+				}
+			}
+		}
+		
 		DtoScreening dto = new DtoScreening();
 		dto.setNumOferta(numOferta);
 		dto.setMotivoDesbloqueado(motivo);
 		dto.setObservacionesDesbloqueado(observaciones);
-		dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		
+		if (tramiteVenta != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+		} else if (tramiteAlquiler != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
+		}
 		dto.setIsTareaActiva(true);
 
 		return dto;
@@ -13095,29 +13167,61 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private TareaExterna crearTareaScreening(DtoScreening dto, ExpedienteComercial expedienteComercial) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		TareaExterna tareaNueva = null;
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+		ActivoTramite tramiteVenta = null;
+		ActivoTramite tramiteAlquiler = null;
 		
-		dto.setUsuarioLogado(usuarioLogado.getUsername());
-		tramiteDao.creaTareas(dto);
-		TareaNotificacion tarNot = null;
-		List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
-		for (TareaExterna tarea : tareasActivas2) {
-			if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
-				tareaNueva = tarea;
-				tarNot = tarea.getTareaPadre();
-				if (!Checks.esNulo(tarNot)) {
-					TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
-					if(Checks.esNulo(tac)) {
-						tac = new TareaActivo();
-						tac.setActivo(tramite.getActivo());
-						tac.setId(tarNot.getId());
-						tac.setTramite(tramite);
-						tac.setAuditoria(Auditoria.getNewInstance());
+		if (expedienteComercial != null && expedienteComercial.getTrabajo() != null) {
+			tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
+			tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+		}
+		
+		if (tramiteVenta != null) {
+			dto.setUsuarioLogado(usuarioLogado.getUsername());
+			tramiteDao.creaTareas(dto);
+			TareaNotificacion tarNot = null;
+			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramiteVenta.getId());
+			for (TareaExterna tarea : tareasActivas2) {
+				if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
+					tareaNueva = tarea;
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)) {
+						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
+						if(Checks.esNulo(tac)) {
+							tac = new TareaActivo();
+							tac.setActivo(tramiteVenta.getActivo());
+							tac.setId(tarNot.getId());
+							tac.setTramite(tramiteVenta);
+							tac.setAuditoria(Auditoria.getNewInstance());
+						}
+							tac.setUsuario(usuarioLogado);
+						genericDao.save(TareaActivo.class, tac);
 					}
-						tac.setUsuario(usuarioLogado);
-					genericDao.save(TareaActivo.class, tac);
+					break;
 				}
-				break;
+			}
+		} else if(tramiteAlquiler != null) {
+			dto.setUsuarioLogado(usuarioLogado.getUsername());
+			tramiteDao.creaTareas(dto);
+			TareaNotificacion tarNot = null;
+			List<TareaExterna> tareasActivas3 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramiteAlquiler.getId());
+			for (TareaExterna tarea : tareasActivas3) {
+				if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
+					tareaNueva = tarea;
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)) {
+						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
+						if(Checks.esNulo(tac)) {
+							tac = new TareaActivo();
+							tac.setActivo(tramiteAlquiler.getActivo());
+							tac.setId(tarNot.getId());
+							tac.setTramite(tramiteAlquiler);
+							tac.setAuditoria(Auditoria.getNewInstance());
+						}
+							tac.setUsuario(usuarioLogado);
+						genericDao.save(TareaActivo.class, tac);
+					}
+					break;
+				}
 			}
 		}
 		
@@ -13249,6 +13353,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			List<ValorTareaBC> valores = genericDao.getList(ValorTareaBC.class,  genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tar.getTareaExterna().getId()));	
 			if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codigoTarea)) {
+				dto = new DtoScreening();
+			} else if(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)) {
 				dto = new DtoScreening();
 			}
 			if(valores != null) {
@@ -13717,6 +13823,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+		}};
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(final ExpedienteComercial eco, final ScoringAlquiler scoring){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setEstadoScoringAlquilerCodigoBC(scoring != null && scoring.getResultadoScoringServicer() != null ? scoring.getResultadoScoringServicer().getCodigo() : null);
 		}};
 	}
 

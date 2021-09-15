@@ -12,6 +12,8 @@ public class DtoAccionAprobacionCaixa extends WebDto{
 
     private Long numOferta;
 
+    private String codTarea;
+
     public Long getIdTarea() {
         return idTarea;
     }
@@ -42,5 +44,13 @@ public class DtoAccionAprobacionCaixa extends WebDto{
 
     public void setNumOferta(Long numOferta) {
         this.numOferta = numOferta;
+    }
+
+    public String getCodTarea() {
+        return codTarea;
+    }
+
+    public void setCodTarea(String codTarea) {
+        this.codTarea = codTarea;
     }
 }

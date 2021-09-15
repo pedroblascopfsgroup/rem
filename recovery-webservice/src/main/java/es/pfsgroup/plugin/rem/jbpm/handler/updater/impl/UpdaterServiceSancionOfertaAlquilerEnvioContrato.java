@@ -71,18 +71,25 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
+					if(expedienteComercial.getEstadoBc() != null && !DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equalsIgnoreCase(expedienteComercial.getEstadoBc().getCodigo())) {
+						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
+						estadoBcModificado = true;
+
+					}
 				}else if (DDSiNo.NO.equals(valor.getValor())) {				
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO));
+					estadoBcModificado = true;
+
+				}
+				if(estadoBcModificado) {
+					expedienteComercial.setEstadoBc(estadoBc);	
 				}
 				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);		
-				estadoBcModificado = true;
 			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial, false);
+		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

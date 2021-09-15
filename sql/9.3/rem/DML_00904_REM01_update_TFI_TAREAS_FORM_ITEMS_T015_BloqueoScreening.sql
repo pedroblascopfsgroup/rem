@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Lara Pablo
---## FECHA_CREACION=20210816
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20210914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15066
+--## INCIDENCIA_LINK=HREOS-15155
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,15 +39,18 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TFI'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14585';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-14376';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma'    ,'label', 		'0'		,'titulo'				,null		    ,null					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Agendar y firmar'''' </p>'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox', 	'1'		,'comboResultado'		,'false'	    ,'DDSiNo'				,'Firmado'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield', 	'2'		,'fechaFirma'		    ,'false'	    ,null					,'Fecha de la firma'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textfield', 	'3'		,'lugarFirma'	        ,'false'	    ,null		            ,'Lugar de la firma'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea', 	'4'		,'observaciones'		,null		    ,null					,'Observaciones')
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'combobox', 	'1'		,'comboResultado'						,'false' 	,'DDSiNo'				,'Bloqueado:'),
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'label', 		'2'		,'hueco'								,null 		,null					,''),
+    	
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'combobox', 	'3'		,'motivoBloqueado'						,'false' 	,'DDMotivoBloqueo'		,'Motivo bloqueo'),
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'combobox', 	'4'		,'motivoDesbloqueado'					,'false' 	,'DDMotivosDesbloqueo'	,'Motivo desbloqueo'),
+    	
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'textarea', 	'5'		,'observacionesBloqueado'				,null 		,null					,'Observaciones bloqueo'),
+    	T_TIPO_DATA('T015_BloqueoScreening'		,'textarea', 	'6'		,'observacionesDesbloqueado'			,null 		,null					,'Observaciones desbloqueo')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

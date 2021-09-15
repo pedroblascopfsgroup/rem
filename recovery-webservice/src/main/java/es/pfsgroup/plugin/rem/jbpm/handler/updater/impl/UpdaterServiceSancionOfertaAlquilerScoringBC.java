@@ -98,10 +98,10 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.NO.equals(valor.getValor())) {
+				if (DDSiNo.SI.equals(valor.getValor())) {
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES));
-				} else if (DDSiNo.SI.equals(valor.getValor())) {
+				} else if (DDSiNo.NO.equals(valor.getValor())) {
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 

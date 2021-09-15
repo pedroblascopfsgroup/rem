@@ -1801,148 +1801,152 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_DefinicionOfertaValidacion: function(){
     	var me = this;
-    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-    	me.campoObligatorio(me.down('[name=tipoInquilino]'));
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');   	
     	me.campoObligatorio(me.down('[name=tipoTratamiento]'));
-
+    	
     	if(CONST.CARTERA['BANKIA'] == codigoCartera){
-	    	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
-	    	me.deshabilitarCampo(me.down('[name=importeFianza]'));
-	    	me.deshabilitarCampo(me.down('[name=deposito]'));
-	    	me.deshabilitarCampo(me.down('[name=nMeses]'));
-	    	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
-	    	me.deshabilitarCampo(me.down('[name=fiadorSolidario]'));
-	    	me.deshabilitarCampo(me.down('[name=nombreFS]'));
-	    	me.deshabilitarCampo(me.down('[name=documento]'));
-	    	me.deshabilitarCampo(me.down('[name=tipoImpuesto]'));
-	    	me.deshabilitarCampo(me.down('[name=porcentajeImpuesto]'));
+    		me.bloquearCampo(me.down('[name=tipoTratamiento]'));
+    		me.campoObligatorio(me.down('[name=tipoTratamiento]'));
+    		me.down('[name=tipoTratamiento]').setValue(CONST.TIPO_INQUILINO['NINGUNA']);
+    		me.ocultaryHacerNoObligatorio(me.down('[name=tipoInquilino]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=nMesesFianza]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=importeFianza]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=deposito]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=nMeses]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=importeDeposito]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=fiadorSolidario]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=nombreFS]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=documento]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=tipoImpuesto]'));
+	    	me.ocultaryHacerNoObligatorio(me.down('[name=porcentajeImpuesto]'));
+    	}else{
+
+	    	me.down('[name=tipoTratamiento]').addListener('change', function() {
+	    		var tratamiento = me.down('[name=tipoTratamiento]');
+	
+	    		if(tratamiento.value == '03'){
+	    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
+	    	    	me.habilitarCampo(me.down('[name=importeFianza]'));
+	    	    	me.habilitarCampo(me.down('[name=deposito]'));
+	    	    	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
+	    	    	me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+	    	    	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+	    			
+	    			me.desocultarCampo(me.down('[name=nMesesFianza]'));
+	    	    	me.desocultarCampo(me.down('[name=importeFianza]'));
+	    	    	me.desocultarCampo(me.down('[name=deposito]'));
+	    	    	me.desocultarCampo(me.down('[name=nMeses]'));
+	    	    	me.desocultarCampo(me.down('[name=importeDeposito]'));
+	    	    	me.desocultarCampo(me.down('[name=fiadorSolidario]'));
+	    	    	me.desocultarCampo(me.down('[name=nombreFS]'));
+	    	    	me.desocultarCampo(me.down('[name=documento]'));
+	    	    	me.desocultarCampo(me.down('[name=tipoImpuesto]'));
+	    	    	me.desocultarCampo(me.down('[name=porcentajeImpuesto]'));
+	    	    	me.desocultarCampo(me.down('[name=observaciones]'));
+	    	    	
+	    	    	me.down('[name=nMesesFianza]').noObligatorio=false;
+	    	    	me.down('[name=importeFianza]').noObligatorio=false;
+	    	    	
+	    	    	me.campoObligatorio(me.down('[name=nMesesFianza]'));
+	    	    	me.campoObligatorio(me.down('[name=importeFianza]'));
+	    	    	
+	    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
+	    		}else{
+	    			me.ocultarCampo(me.down('[name=nMesesFianza]'));
+	    	    	me.ocultarCampo(me.down('[name=importeFianza]'));
+	    	    	me.ocultarCampo(me.down('[name=deposito]'));
+	    	    	me.ocultarCampo(me.down('[name=nMeses]'));
+	    	    	me.ocultarCampo(me.down('[name=importeDeposito]'));
+	    	    	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
+	    	    	me.ocultarCampo(me.down('[name=nombreFS]'));
+	    	    	me.ocultarCampo(me.down('[name=documento]'));
+	    	    	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
+	    	    	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
+	    	    	me.ocultarCampo(me.down('[name=observaciones]'));
+	    	    	
+	    	    	me.down('[name=nMesesFianza]').noObligatorio=true;
+	    	    	me.down('[name=importeFianza]').noObligatorio=true;
+	    	    	
+	    	    	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
+	    	    	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+	    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
+	
+	    	    	
+	    	    	me.borrarCampo(me.down('[name=nMesesFianza]'));
+	    	    	me.borrarCampo(me.down('[name=nMeses]'));
+	    	    	me.borrarCampo(me.down('[name=importeDeposito]'));
+	    	    	me.borrarCampo(me.down('[name=fiadorSolidario]'));
+	    	    	me.borrarCampo(me.down('[name=nombreFS]'));
+	    	    	me.borrarCampo(me.down('[name=documento]'));
+	    	    	me.borrarCampo(me.down('[name=deposito]'));
+	    	    	me.borrarCampo(me.down('[name=tipoImpuesto]'));
+	    	    	me.borrarCampo(me.down('[name=porcentajeImpuesto]'));
+	    	    	me.borrarCampo(me.down('[name=observaciones]'));
+	    	    	
+	    		}
+	
+	        });
+	    	
+	    	me.down('[name=deposito]').addListener('change', function(){
+	    		var deposito = me.down('[name=deposito]');
+	    		
+	    		if(deposito.value){
+	    			me.down('[name=nMeses]').noObligatorio=false;
+	    			me.down('[name=importeDeposito]').noObligatorio=false;
+	    			
+	    			me.habilitarCampo(me.down('[name=nMeses]'));
+	            	me.habilitarCampo(me.down('[name=importeDeposito]'));
+	    		}else{
+	    			me.down('[name=nMeses]').noObligatorio=true;
+	    			me.down('[name=importeDeposito]').noObligatorio=true;
+	    			me.deshabilitarCampo(me.down('[name=nMeses]'));
+	            	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
+	            	
+	            	me.borrarCampo(me.down('[name=nMeses]'));
+	            	me.borrarCampo(me.down('[name=importeDeposito]'));
+	            	
+	            	me.campoNoObligatorio(me.down('[name=nMeses]'));
+	            	me.campoNoObligatorio(me.down('[name=importeDeposito]'));
+	    		}	
+	    	});
+	    	
+	    	me.down('[name=fiadorSolidario]').addListener('change', function(){
+	    		
+	    		var fiadorSolidario = me.down('[name=fiadorSolidario]');
+	    		
+	    		if(fiadorSolidario.value){
+	    			me.down('[name=nombreFS]').noObligatorio=false;
+	    			me.down('[name=documento]').noObligatorio=false;
+	    			
+	    			me.habilitarCampo(me.down('[name=nombreFS]'));
+	            	me.habilitarCampo(me.down('[name=documento]'));
+	    		}else{
+	    			me.down('[name=nombreFS]').noObligatorio=true;
+	    			me.down('[name=documento]').noObligatorio=true;
+	    			me.deshabilitarCampo(me.down('[name=nombreFS]'));
+	            	me.deshabilitarCampo(me.down('[name=documento]'));
+	            	
+	            	me.borrarCampo(me.down('[name=nombreFS]'));
+	            	me.borrarCampo(me.down('[name=documento]'));
+	            	
+	            	me.campoNoObligatorio(me.down('[name=nombreFS]'));
+	            	me.campoNoObligatorio(me.down('[name=documento]'));
+	    		}        	
+	    	});
+	    	
+	    	me.down('[name=tipoImpuesto]').addListener('change', function(){
+	    		
+	    		var tipoImpuesto = me.down('[name=tipoImpuesto]');
+	    		
+	    		if(tipoImpuesto.value){
+	    			me.down('[name=porcentajeImpuesto]').noObligatorio=false;
+	    		} else {
+	    			me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+	    		}
+	    		
+	    		me.campoObligatorio(me.down('[name=porcentajeImpuesto]'));
+	    	});
     	}
-
-    	me.down('[name=tipoTratamiento]').addListener('change', function() {
-    		var tratamiento = me.down('[name=tipoTratamiento]');
-
-    		if(tratamiento.value == '03' || CONST.CARTERA['BANKIA'] == codigoCartera){
-    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
-    	    	me.habilitarCampo(me.down('[name=importeFianza]'));
-    	    	me.habilitarCampo(me.down('[name=deposito]'));
-    	    	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
-    	    	me.habilitarCampo(me.down('[name=tipoImpuesto]'));
-    	    	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
-    			
-    			me.desocultarCampo(me.down('[name=nMesesFianza]'));
-    	    	me.desocultarCampo(me.down('[name=importeFianza]'));
-    	    	me.desocultarCampo(me.down('[name=deposito]'));
-    	    	me.desocultarCampo(me.down('[name=nMeses]'));
-    	    	me.desocultarCampo(me.down('[name=importeDeposito]'));
-    	    	me.desocultarCampo(me.down('[name=fiadorSolidario]'));
-    	    	me.desocultarCampo(me.down('[name=nombreFS]'));
-    	    	me.desocultarCampo(me.down('[name=documento]'));
-    	    	me.desocultarCampo(me.down('[name=tipoImpuesto]'));
-    	    	me.desocultarCampo(me.down('[name=porcentajeImpuesto]'));
-    	    	me.desocultarCampo(me.down('[name=observaciones]'));
-    	    	
-    	    	me.down('[name=nMesesFianza]').noObligatorio=false;
-    	    	me.down('[name=importeFianza]').noObligatorio=false;
-    	    	
-    	    	me.campoObligatorio(me.down('[name=nMesesFianza]'));
-    	    	me.campoObligatorio(me.down('[name=importeFianza]'));
-    	    	
-    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
-    		}else{
-    			me.ocultarCampo(me.down('[name=nMesesFianza]'));
-    	    	me.ocultarCampo(me.down('[name=importeFianza]'));
-    	    	me.ocultarCampo(me.down('[name=deposito]'));
-    	    	me.ocultarCampo(me.down('[name=nMeses]'));
-    	    	me.ocultarCampo(me.down('[name=importeDeposito]'));
-    	    	me.ocultarCampo(me.down('[name=fiadorSolidario]'));
-    	    	me.ocultarCampo(me.down('[name=nombreFS]'));
-    	    	me.ocultarCampo(me.down('[name=documento]'));
-    	    	me.ocultarCampo(me.down('[name=tipoImpuesto]'));
-    	    	me.ocultarCampo(me.down('[name=porcentajeImpuesto]'));
-    	    	me.ocultarCampo(me.down('[name=observaciones]'));
-    	    	
-    	    	me.down('[name=nMesesFianza]').noObligatorio=true;
-    	    	me.down('[name=importeFianza]').noObligatorio=true;
-    	    	
-    	    	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
-    	    	me.campoNoObligatorio(me.down('[name=importeFianza]'));
-    	    	me.campoNoObligatorio(me.down('[name=tipoImpuesto]'));
-
-    	    	
-    	    	me.borrarCampo(me.down('[name=nMesesFianza]'));
-    	    	me.borrarCampo(me.down('[name=nMeses]'));
-    	    	me.borrarCampo(me.down('[name=importeDeposito]'));
-    	    	me.borrarCampo(me.down('[name=fiadorSolidario]'));
-    	    	me.borrarCampo(me.down('[name=nombreFS]'));
-    	    	me.borrarCampo(me.down('[name=documento]'));
-    	    	me.borrarCampo(me.down('[name=deposito]'));
-    	    	me.borrarCampo(me.down('[name=tipoImpuesto]'));
-    	    	me.borrarCampo(me.down('[name=porcentajeImpuesto]'));
-    	    	me.borrarCampo(me.down('[name=observaciones]'));
-    	    	
-    		}
-
-        });
-    	
-    	me.down('[name=deposito]').addListener('change', function(){
-    		var deposito = me.down('[name=deposito]');
-    		
-    		if(deposito.value){
-    			me.down('[name=nMeses]').noObligatorio=false;
-    			me.down('[name=importeDeposito]').noObligatorio=false;
-    			
-    			me.habilitarCampo(me.down('[name=nMeses]'));
-            	me.habilitarCampo(me.down('[name=importeDeposito]'));
-    		}else{
-    			me.down('[name=nMeses]').noObligatorio=true;
-    			me.down('[name=importeDeposito]').noObligatorio=true;
-    			me.deshabilitarCampo(me.down('[name=nMeses]'));
-            	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
-            	
-            	me.borrarCampo(me.down('[name=nMeses]'));
-            	me.borrarCampo(me.down('[name=importeDeposito]'));
-            	
-            	me.campoNoObligatorio(me.down('[name=nMeses]'));
-            	me.campoNoObligatorio(me.down('[name=importeDeposito]'));
-    		}	
-    	});
-    	
-    	me.down('[name=fiadorSolidario]').addListener('change', function(){
-    		
-    		var fiadorSolidario = me.down('[name=fiadorSolidario]');
-    		
-    		if(fiadorSolidario.value){
-    			me.down('[name=nombreFS]').noObligatorio=false;
-    			me.down('[name=documento]').noObligatorio=false;
-    			
-    			me.habilitarCampo(me.down('[name=nombreFS]'));
-            	me.habilitarCampo(me.down('[name=documento]'));
-    		}else{
-    			me.down('[name=nombreFS]').noObligatorio=true;
-    			me.down('[name=documento]').noObligatorio=true;
-    			me.deshabilitarCampo(me.down('[name=nombreFS]'));
-            	me.deshabilitarCampo(me.down('[name=documento]'));
-            	
-            	me.borrarCampo(me.down('[name=nombreFS]'));
-            	me.borrarCampo(me.down('[name=documento]'));
-            	
-            	me.campoNoObligatorio(me.down('[name=nombreFS]'));
-            	me.campoNoObligatorio(me.down('[name=documento]'));
-    		}        	
-    	});
-    	
-    	me.down('[name=tipoImpuesto]').addListener('change', function(){
-    		
-    		var tipoImpuesto = me.down('[name=tipoImpuesto]');
-    		
-    		if(tipoImpuesto.value){
-    			me.down('[name=porcentajeImpuesto]').noObligatorio=false;
-    		} else {
-    			me.down('[name=porcentajeImpuesto]').noObligatorio=true;
-    		}
-    		
-    		me.campoObligatorio(me.down('[name=porcentajeImpuesto]'));
-    	});
     },
     
     T015_FirmaValidacion: function(){
@@ -2316,6 +2320,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var idActivo= me.idActivo;
     	var resolucionOferta = me.down('[name=resolucionOferta]');
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+    	var importeContraoferta = me.down('[name=importeContraoferta]');
 
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
@@ -2326,8 +2331,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.bloquearCampo(me.down('[name=fechaElevacion]'));
 			var fecha = new Date()
 			me.down('[name=fechaElevacion]').setValue(fecha);
+			me.deshabilitarCampo(importeContraoferta);
+			me.ocultaryHacerNoObligatorio(me.down('[name=refCircuitoCliente]'));
 			
+		}else{
+			me.ocultaryHacerNoObligatorio(importeContraoferta);
 		}
+		
 
     	var resolucionOferta = resolucionOferta.getStore();
     	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
@@ -2364,7 +2374,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		storeComite.load();
 			
     	me.down('[name=resolucionOferta]').addListener('change', function(){
-    		
     		var resolucionOferta = me.down('[name=resolucionOferta]');
 
     		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
@@ -2372,6 +2381,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			if(CONST.CARTERA['BANKIA'] != codigoCartera){
 					me.habilitarCampo(me.down('[name=comite]'));
 	    			me.campoObligatorio(me.down('[name=comite]'));
+    			}else{
+    				if(resolucionOferta.value == '03'){
+    					me.habilitarCampo(importeContraoferta);
+    				}else{
+    					me.deshabilitarCampo(importeContraoferta);
+    				}
     			}
     			
     			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
@@ -2395,6 +2410,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	
             	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
             	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+            	
+            	me.deshabilitarCampo(importeContraoferta);
     			
     		}
     	});
@@ -3296,6 +3313,45 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 	},
 	
+	T015_BloqueoScreeningValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreening');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	
+		
+	},
+	
 	T015_SolicitarGarantiasAdicionalesValidacion: function(){
 		var me = this;
 		var idTarea = me.idTarea;
@@ -3318,6 +3374,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		});	
 
 	},
+	
 	T017_InstruccionesReservaValidacion: function() {		
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
@@ -3370,6 +3427,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.habilitarCampo(motivoAplazamiento);
 					me.habilitarCampo(tipoArras);
 					me.habilitarCampo(fechaEnvio);
+					tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
+					me.bloquearCampo(tipoArras);
 	            }
         	});
 			
@@ -3583,6 +3642,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(importeFianza);
 			me.ocultarCampo(importeFianza);
 		}
+	},
+	
+	T015_AgendarFechaFirmaValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var fechaFirma = me.down('[name=fechaFirma]');
+		var lugarFirma = me.down('[name=lugarFirma]');
+
+		
+		me.deshabilitarCampo(fechaFirma);
+		me.deshabilitarCampo(lugarFirma);
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
+				me.habilitarCampo(fechaFirma);
+				me.habilitarCampo(lugarFirma);
+			}else{
+				me.deshabilitarCampo(fechaFirma);
+				me.deshabilitarCampo(lugarFirma);
+				fechaFirma.setValue('');
+				lugarFirma.setValue('');
+			}
+
+        })
 	},
 	
     habilitarCampo: function(campo) {

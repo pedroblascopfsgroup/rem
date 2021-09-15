@@ -23,8 +23,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -37,7 +37,10 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
@@ -60,10 +63,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
     @Autowired
     private ActivoAdapter activoAdapter;
-    
-    @Autowired
-    private ActivoApi activoApi;
-    
+        
     @Autowired
     private ApiProxyFactory proxyFactory;
     
@@ -72,17 +72,24 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
 	private static final String FECHA_FIRMA = "fechaFirma";
+	private static final String COMBO_RESULTADO= "comboResultado";
 	
 	private static final String CODIGO_T015_FIRMA = "T015_Firma";
+	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-
+		boolean anular = false;
+		boolean modificadoEstadoBC = false;
+		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
@@ -119,7 +126,12 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 					logger.error("Error insertando Fecha anulación.", e);
 				}
 			}
+			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
+				anular = true;
+			}
 
+		}
+		if(!anular) {
 			if(!Checks.esNulo(expedienteComercial.getFechaInicioAlquiler())) {
 				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 				
@@ -159,26 +171,41 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}
 			}
+			
+			activoDao.saveOrUpdate(activo);
+			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
 
-		}
-		activoDao.saveOrUpdate(activo);
-		expedienteComercialApi.update(expedienteComercial,false);
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
-		/////////////////////////////////////////////////////////////////////////////
-		if(activoDao.isActivoMatriz(activo.getId())){
-			ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-			List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
-			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
-				activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+			if(activoDao.isActivoMatriz(activo.getId())){
+				ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
+					activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+				}
 			}
+			
+			if(DDCartera.isCarteraBk(activo.getCartera())) {
+				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO));		
+				expedienteComercial.setEstado(estadoExpedienteComercial);
+			}
+		}else {
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
+			DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+			modificadoEstadoBC = true;
+			expedienteComercial.setEstado(estadoExpedienteComercial);
+			expedienteComercial.setEstadoBc(estadoBc);	
+			
 		}
-		/////////////////////////////////////////////////////////////////////////////
 		
+		expedienteComercialApi.update(expedienteComercial,false);
 		
+		if(modificadoEstadoBC) {
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		}
+				
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T015_FIRMA};
+		return new String[]{CODIGO_T015_FIRMA, CODIGO_T015_AGENDAR_FIRMA};
 	}
 
 	public String[] getKeys() {

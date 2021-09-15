@@ -1733,7 +1733,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 		}
-		return;
+
 	
 	}
 	

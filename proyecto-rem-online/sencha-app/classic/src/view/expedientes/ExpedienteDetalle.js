@@ -152,8 +152,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
 			}
 			
-	        items.push({xtype: 'scoringexpediente'});
-	        items.push({xtype: 'segurorentasexpediente'});
+			items.push({xtype: 'scoringexpediente'});
+        	items.push({xtype: 'segurorentasexpediente'});
+
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});
 	        me.callParent();

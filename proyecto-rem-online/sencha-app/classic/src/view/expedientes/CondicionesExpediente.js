@@ -209,8 +209,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'comboboxfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.grupo.impuesto'),
 										reference : 'grupoImpuestoRef',
-										
-										//disabled: isBK,
+
 										bind : {
 											store : '{comboGrupoImpuesto}',
 											value : '{condiciones.tipoGrupoImpuestoCod}',

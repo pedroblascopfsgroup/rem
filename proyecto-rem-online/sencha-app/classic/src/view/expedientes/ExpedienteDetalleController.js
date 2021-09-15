@@ -2502,39 +2502,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		});		
 	},
 
-	/*onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
-		try{
-			if(!Ext.isEmpty(oldValue)){
-				var me = this,
-		    	tipoAplicable = me.lookupReference('tipoAplicable'),
-		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-		    	
-		
-		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-		    		tipoAplicable.reset();
-		    		tipoAplicable.setDisabled(true);
-		    		tipoAplicable.allowBlank = true;
-		    		tipoAplicable.setValue(0);
-		    		operacionExenta.reset();
-		    		operacionExenta.setReadOnly(true);
-		    		inversionSujetoPasivo.reset();
-		    		inversionSujetoPasivo.setReadOnly(true);
-		    		renunciaExencion.reset();
-		    		renunciaExencion.setReadOnly(true);
-		    	} else {
-	    			tipoAplicable.setDisabled(false);
-	        		tipoAplicable.allowBlank = false;
-	    			operacionExenta.setReadOnly(false);
-	    			inversionSujetoPasivo.setReadOnly(false);		    		
-		    	}		    		    		
-			}			
-		}catch(err) {
-  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
-		}
-	},*/
-
 	onCambioOperacionExenta: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
@@ -2999,85 +2966,66 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				});
 	},
 
-	onCambioTipoImpuesto : function(combo, value, oldValue,
-			eOpts) {
+	onCambioTipoImpuesto : function(combo, value, oldValue, eOpts) {
 		try {
+			
 			if (!Ext.isEmpty(value)) {
-				var me = this, tipoAplicable = me
-						.lookupReference('tipoAplicable'), operacionExenta = me
-						.lookupReference('chkboxOperacionExenta'), inversionSujetoPasivo = me
-						.lookupReference('chkboxInversionSujetoPasivo'), renunciaExencion = me
-						.lookupReference('chkboxRenunciaExencion');
-						
-
-				var grupoImpuesto =me.lookupReference('grupoImpuestoRef');
-				var tributosPropiedad= me.lookupReference('chkboxTributosPropiedad');
+				if(!Ext.isEmpty(value.data)){
+					value = value.get('codigo');
+				}
+				var me = this, 
+				tipoAplicable = me.lookupReference('tipoAplicable'), 
+				operacionExenta = me.lookupReference('chkboxOperacionExenta'), 
+				inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'), 
+				renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+				grupoImpuesto = me.lookupReference('grupoImpuestoRef'),
+				tributosPropiedad= me.lookupReference('chkboxTributosPropiedad');
+				
 		    	var esBankia = me.getViewModel().get("expediente.esBankia");
-		    	var esDeCarteraBankia = false;
-		    	var editable = value == CONST.TIPO_IMPUESTO['ITP'];		    	
-		    	if (esBankia && CONST.TIPO_IMPUESTO['ITP'] != value) {
-	    			//inversionSujetoPasivo.setReadOnly(false);
-	    			inversionSujetoPasivo.allowBlank = false;
-	    			//tipoAplicable.setReadOnly(false);
-	    			tipoAplicable.allowBlank = false;
-	    			//grupoImpuesto.setReadOnly(false);
+		    	if(!esBankia){
+		    		grupoImpuesto.setDisabled(true);
+		    	}
+		    	
+	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
+	    			tipoAplicable.reset();	    				
+	    			inversionSujetoPasivo.reset();
+	    			tributosPropiedad.reset();
+	    			renunciaExencion.reset();
 	    			
-	    			//
-	    			grupoImpuesto.allowBlank = editable;
-	    			//grupoImpuesto.setDisabled(false);
-	    			grupoImpuesto.disabled = editable;
-	    			//grupoImpuesto.readOnly = editable; //ESTE NO FUNCIONA
-	    			//
-	    			
-	    			esDeCarteraBankia = true;
-	    		}else if(esBankia && CONST.TIPO_IMPUESTO['ITP'] == value){
-	    			//TODO ver si hacer algo aqui
-	    			//grupoImpuesto.setReadOnly(true);
-	    			grupoImpuesto.allowBlank = editable;
-	    			//grupoImpuesto.setDisabled(true);
-	    			grupoImpuesto.disabled = editable;
-	    			//grupoImpuesto.readOnly = editable; //ESTE NO FUNCIONA
-	    			//grupoImpuesto.editable = false;
-	    			tipoAplicable.reset();
-	    			tipoAplicable.setValue(0);
-	    			tipoAplicable.allowBlank = true;
-	    			//tipoAplicable.setDisabled(true);
-	    			grupoImpuesto.reset();
-	    			//grupoImpuesto.setValue('');
-	    			//inversionSujetoPasivo.setReadOnly(true);
-	    			inversionSujetoPasivo.allowBlank = true;
+	    			tipoAplicable.setDisabled(true);
+	    			renunciaExencion.setDisabled(true);
+	    			tributosPropiedad.setDisabled(true);
 	    			inversionSujetoPasivo.setDisabled(true);
-	    			/*tributosPropiedad.setReadOnly(true);
-	    			tributosPropiedad.allowBlank = true;*/
 	    			
-	    			esDeCarteraBankia = true;
+	    			if(esBankia){
+	    				grupoImpuesto.clearValue();
+	    				grupoImpuesto.setDisabled(true);
+	    			}
+	    			
+	    		}else{
+	    			
+	    			tributosPropiedad.allowBlank = false;
+	    			tipoAplicable.allowBlank = false;
+	    			renunciaExencion.allowBlank=false;
+	    			inversionSujetoPasivo.allowBlank=false;
+	    			
+	    			tributosPropiedad.validate();
+	    			renunciaExencion.validate();
+	    			inversionSujetoPasivo.validate();
+	    			
+	    			tipoAplicable.setDisabled(false);
+	    			tributosPropiedad.setDisabled(false);
+	    			renunciaExencion.setDisabled(false);
+	    			inversionSujetoPasivo.setDisabled(false);
+	    			
+	    			if(esBankia){
+		    			grupoImpuesto.allowBlank = false;
+		    			grupoImpuesto.setDisabled(false);
+	    			}
 	    		}
-
-	    		if (!esDeCarteraBankia) {
-	    			if (CONST.TIPO_IMPUESTO['ITP'] == value) {
-						tipoAplicable.reset();
-						tipoAplicable.setDisabled(true);
-						tipoAplicable.allowBlank = true;
-						tipoAplicable.setValue(0);
-						operacionExenta.reset();
-						operacionExenta.setReadOnly(true);
-						inversionSujetoPasivo.reset();
-						inversionSujetoPasivo.setReadOnly(true);
-						renunciaExencion.reset();
-						renunciaExencion.setReadOnly(true);
-					} else {
-						tipoAplicable.setDisabled(false);
-						tipoAplicable.allowBlank = false;
-						operacionExenta.setReadOnly(false);
-						inversionSujetoPasivo.setReadOnly(false);
-					}			
-	    		}
-								
 			}
 		} catch (err) {
-			Ext.global.console
-					.log('Error en onCambioTipoImpuesto: '
-							+ err)
+			Ext.global.console.log('Error en onCambioTipoImpuesto: '+ err)
 		}
 	},
 

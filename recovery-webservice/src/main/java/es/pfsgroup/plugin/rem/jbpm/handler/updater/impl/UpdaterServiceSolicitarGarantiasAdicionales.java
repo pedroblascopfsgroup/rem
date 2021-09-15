@@ -70,8 +70,11 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				if(!haPasadoScoringBC && acepta) {
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
-				}else if((haPasadoScoringBC && acepta)|| (!haPasadoScoringBC && !acepta)){
-					estadoCodigo = DDEstadosExpedienteComercial.PTE_SCORING;
+				}else if(haPasadoScoringBC && acepta){
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;//TODO pendiente de cambiar de haya
+					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC;
+				}else if(!haPasadoScoringBC && !acepta){
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;//TODO pendiente de cambiar de haya
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_VALORAR_ACUERDO_SIN_GARANTIAS_ADICIONALES;
 				}else{
 					estadoCodigo = DDEstadosExpedienteComercial.DENEGADO;

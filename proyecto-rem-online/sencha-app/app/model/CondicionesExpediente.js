@@ -447,6 +447,9 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 			name:'fechaActualizacion',
 			type:'date',
     		dateFormat: 'c'
+		},
+		{
+			name:'tipoGrupoImpuestoCod'
 		}
 	    
     ],

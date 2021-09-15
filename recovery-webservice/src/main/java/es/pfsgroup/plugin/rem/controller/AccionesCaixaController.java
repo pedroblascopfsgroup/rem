@@ -53,6 +53,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_FIRMA_CONTRATO_RECHAZADO = "016";
     public static final String ACCION_ARRAS_CONTABILIZADAS = "022";
     public static final String ACCION_COM_CONTRAOFERTA = "003";
+    public static final String ACCION_AVANZAR_SCORING = "031";
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -475,6 +476,20 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionContraoferta(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionScoringBC(DtoAvanzaScoringBC dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionScoringBC(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

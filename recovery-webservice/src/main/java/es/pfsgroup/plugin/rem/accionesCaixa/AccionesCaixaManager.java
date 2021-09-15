@@ -439,4 +439,25 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
         adapter.save(createRequestAccionAprobacion(dto));
     }
+
+    @Override
+    @Transactional
+    public void accionScoringBC(DtoAvanzaScoringBC dto) throws Exception {
+        adapter.save(createRequestAccionScoringBC(dto));
+    }
+
+    public Map<String, String[]> createRequestAccionScoringBC(DtoAvanzaScoringBC dto){
+        Map<String,String[]> map = new HashMap<String,String[]>();
+
+        String[] idTarea = {dto.getIdTarea().toString()};
+        String[] observaciones = {dto.getObservaciones()};
+        String[] comboResultado = {dto.getComboResultado()};
+
+        map.put("idTarea", idTarea);
+        map.put("observaciones", observaciones);
+        map.put("comboResultado", comboResultado);
+
+
+        return map;
+    }
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 
@@ -57,4 +58,6 @@ public interface AccionesCaixaApi {
     void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException;
 
     void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception;
+
+    void accionScoringBC(DtoAvanzaScoringBC dto) throws Exception;
 }

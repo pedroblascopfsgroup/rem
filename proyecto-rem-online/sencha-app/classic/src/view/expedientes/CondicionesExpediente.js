@@ -216,7 +216,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											hidden: !isBK
 										},
 										displayField : 'descripcion',
-										valueField : 'codigo'
+										valueField : 'codigo',
+										listeners : {
+											change : 'onCambioGrupoImpuesto'
+										}
 									},
 									{
 										xtype : 'checkboxfieldbase',

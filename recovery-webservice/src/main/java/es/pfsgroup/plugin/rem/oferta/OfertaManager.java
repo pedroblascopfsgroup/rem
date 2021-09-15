@@ -596,7 +596,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, String> errorsList = null;
 		Oferta oferta = null;
 
-		DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadOrigen()));
+		DDSistemaOrigen sistemaOrigen = null;
+		if(ofertaDto != null && ofertaDto.getEntidadOrigen() != null) {
+			sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadOrigen()));
+		}
 		
 		if (alta) {
 			// Validación para el alta de ofertas
@@ -656,9 +659,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		}
 		if (!Checks.esNulo(ofertaDto.getIdClienteRem())) {
-			Filter webcomIdNotNull = genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom");
-			ClienteComercial cliente = genericDao.get(ClienteComercial.class,
-					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
+			ClienteComercial cliente = null;
+			if (sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
+				Filter webcomIdNotNull = genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom");
+				cliente = genericDao.get(ClienteComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()), webcomIdNotNull);
+			} else {
+				cliente = genericDao.get(ClienteComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()));
+			}
 			if (Checks.esNulo(cliente)) {
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
@@ -7275,19 +7284,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		HashMap<String, String> error = new HashMap<String, String>();
 		
-		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", idClienteRem));
+		ClienteComercial clienteCom = null;
+		if (idClienteRem != null) {
+			clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", idClienteRem));
+		}
 		
 		if(nuevaOferta) {
 			if (idClienteRemRepresentante != null) {
 				if (clienteCom != null && (clienteCom.getIdClienteRemRepresentante() == null 
 						|| clienteCom.getIdClienteRemRepresentante() != null && !clienteCom.getIdClienteRemRepresentante().equals(idClienteRemRepresentante))) {
-					error.put("idClienteRemRepresentante", RestApi.REST_MSG_UNKNOWN_KEY.concat("- Puede modificarlo en el servicio de /clientes"));
+					error.put("idClienteRemRepresentante", RestApi.REST_MSG_UNKNOWN_KEY.concat(" - Puede modificarlo en el servicio de /clientes"));
 				}	
 			}
 			if (idClienteContacto != null) {
 				if (clienteCom != null && (clienteCom.getIdClienteContacto() == null 
 						|| clienteCom.getIdClienteContacto() != null && !clienteCom.getIdClienteContacto().equals(idClienteContacto))) {
-					error.put("idClienteContacto", RestApi.REST_MSG_UNKNOWN_KEY.concat("- Puede modificarlo en el servicio de /clientes"));
+					error.put("idClienteContacto", RestApi.REST_MSG_UNKNOWN_KEY.concat(" - Puede modificarlo en el servicio de /clientes"));
 				}	
 			}
 		} else if (!nuevaOferta) {

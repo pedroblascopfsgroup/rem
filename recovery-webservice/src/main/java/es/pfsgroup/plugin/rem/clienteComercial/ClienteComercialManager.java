@@ -110,6 +110,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		return cliente;
 	}
+	
+	@Override
+	public ClienteComercial getClienteComercialByDocumento(String documento) {
+		ClienteComercial cliente = null;
+		List<ClienteComercial> lista = null;
+
+		try {
+			if (documento != null) {
+				lista = clienteComercialDao.getListaClientesByDocumento(documento);
+				if (!Checks.esNulo(lista) && lista.size() > 0) {
+					cliente = lista.get(0);
+				}
+			}
+
+		} catch (Exception ex) {
+			logger.error("Error clientecomercialmanager ",ex);
+		}
+
+		return cliente;
+	}
 
 	@Override
 	public ClienteComercial getClienteComercialByIdClienteRem(Long idClienteRem) {
@@ -909,14 +929,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			}
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				cliente = this.getClienteComercialByIdClienteWebcomOrIdClienteRem(clienteDto);
+				cliente = this.getClienteComercialByDocumento(clienteDto.getDocumento());
 				if (cliente.getIdClienteWebcom() != null)
 					map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
-				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
+				if (clienteDto.getIdClienteWebcom() != null)
+					map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 				map.put("idClienteRem", clienteDto.getIdClienteRem());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);

@@ -118,4 +118,6 @@ public interface ClienteComercialApi {
 	 */
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception;
 
+	public ClienteComercial getClienteComercialByDocumento(String documento);
+
 }

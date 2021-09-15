@@ -4194,6 +4194,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					DDTributacionPropuestaVenta tipoTributPropVenta = (DDTributacionPropuestaVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTributacionPropuestaVenta.class, dto.getTributacionPropuestaVentaCod());
 					activoCaixa.setTributacionPropuestaVenta(tipoTributPropVenta);
 				}
+				if(dto.getCanalPublicacionAlquilerCodigo() != null){
+					DDTipoComercializar canalDistAlq = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dto.getCanalPublicacionAlquilerCodigo());
+					activoCaixa.setCanalDistribucionAlquiler(canalDistAlq);
+				}
+				if(dto.getCanalPublicacionVentaCodigo() != null){
+					DDTipoComercializar canalDistVent = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dto.getCanalPublicacionVentaCodigo());
+					activoCaixa.setCanalDistribucionVenta(canalDistVent);
+				}
+				
 				genericDao.update(ActivoCaixa.class, activoCaixa);
 			}
 		

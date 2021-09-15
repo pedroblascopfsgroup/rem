@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210820
+--## FECHA_CREACION=20210914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14914
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Bautista Alfonso - REMVIP-10428 Cambiar subcartera bfa
 --##########################################
 --*/
 
@@ -42,8 +43,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- DD_COS_CODIGO  DD_COS_DESCRIPCION  DD_COS_DESCRIPCION_LARGA  DD_CRA_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('49', 'HRE',  'HRE',  '17', '69'),
-        T_TIPO_DATA('50', 'BFA', 'BFA', '17', '69')
+        T_TIPO_DATA('49', 'HRE',  'HRE',  '17', '07'),
+        T_TIPO_DATA('50', 'BFA', 'BFA', '17', '07')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

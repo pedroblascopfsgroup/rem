@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210818
+--## FECHA_CREACION=20210914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14884
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Bautista Alfonso - REMVIP-10428 Cambiar subcartera bfa
 --##########################################
 --*/
 
@@ -45,7 +46,6 @@ BEGIN
                         ) T2
 						ON (T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
-                        T1.DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''69''),
                         T1.DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''17''),
 						T1.USUARIOMODIFICAR = '''||V_USU||''',
                         T1.FECHAMODIFICAR = SYSDATE';

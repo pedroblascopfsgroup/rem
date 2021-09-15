@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210820
+--## FECHA_CREACION=20210915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14884
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Bautista Alfonso - REMVIP-10428 Cambiar subcartera bfa
 --##########################################
 --*/
 
@@ -33,12 +34,13 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
 
+     V_CRA_VIEJA VARCHAR2(25 CHAR):='03';
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
           -- CRA_CODIGO --SCR_CODIGO --SCR_DESCRIPCION
-        T_TIPO_DATA('03','07', 'BFA')
+        T_TIPO_DATA('17','07', 'BFA')
     ); 
 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -54,18 +56,18 @@ BEGIN
         --Comprobamos el dato
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA 
         WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' 
-        AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+        AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_CRA_VIEJA||''')';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN                                
           
           V_MSQL := ' UPDATE '||V_ESQUEMA||'.DD_SCR_SUBCARTERA 
-                      SET USUARIOBORRAR = ''HREOS-14884'' 
-                      , FECHABORRAR = SYSDATE
-                      , BORRADO = 1
+                      SET USUARIOMODIFICAR = ''HREOS-14884'' 
+                      , FECHAMODIFICAR = SYSDATE
+                      , DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')
                       WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' 
-                      AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+                      AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_CRA_VIEJA||''')';
           EXECUTE IMMEDIATE V_MSQL;
   
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');       

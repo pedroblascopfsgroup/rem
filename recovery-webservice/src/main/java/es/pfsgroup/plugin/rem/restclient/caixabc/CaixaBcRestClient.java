@@ -150,6 +150,9 @@ public class CaixaBcRestClient {
                     if (dto.getEstadoExpedienteBcCodigoBC()!= null){
                         params.put("estadoExpedienteBcCodigoBC", dto.getEstadoExpedienteBcCodigoBC());
                     }
+                    if (dto.getEstadoScoringAlquilerCodigoBC()!= null){
+                        params.put("estadoScoringAlquilerCodigoBC", dto.getEstadoScoringAlquilerCodigoBC());
+                    }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);
                 } else {

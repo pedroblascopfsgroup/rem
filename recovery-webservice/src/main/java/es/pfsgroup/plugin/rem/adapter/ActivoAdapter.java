@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
@@ -293,6 +294,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private PerfilApi perfilApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -2689,9 +2693,15 @@ public class ActivoAdapter {
 	public List<VPreciosVigentes> getPreciosVigentesById(Long idActivo) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-		Order order = new Order(OrderType.ASC, "orden");
+		
+		List<Filter> filters = new ArrayList<Filter>();
+		filters.add(filtro);
 
-		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro);
+		Order order = new Order(OrderType.ASC, "orden");
+		filters = this.anyadirFiltroPrecioMinimoPorPerfil(filters);
+		List<VPreciosVigentes> precios = genericDao.getListOrdered(VPreciosVigentes.class, order, filters);
+		
+		return precios;
 
 	}
 
@@ -5212,6 +5222,17 @@ public class ActivoAdapter {
 				}
 			}
 		}
+	}
+	
+	private List<Filter> anyadirFiltroPrecioMinimoPorPerfil(List<Filter>filters){
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		if(perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_USUARIO_BC, usuarioLogado.getUsername())) {
+			Filter tipoPrecio = genericDao.createFilter(FilterType.NOT_EQUALS, "codigoTipoPrecio", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+			filters.add(tipoPrecio);
+		}
+		
+		return filters;
 	}
 }
 

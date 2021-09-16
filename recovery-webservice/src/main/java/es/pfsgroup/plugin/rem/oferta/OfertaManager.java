@@ -683,7 +683,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoPropietario propietario = null;
 			Integer geolocalizacion = 0;
 
-			if (!Checks.esNulo(numActivos) && !numActivos.isEmpty()) {
+			if (sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo()) 
+					&& !Checks.esNulo(numActivos) && !numActivos.isEmpty()) {
 				for (int i=0; i<numActivos.size(); i++) {
 					Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
 
@@ -704,6 +705,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
+			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo()) 
+					&& ofertaDto.getCodigoAgrupacionComercialRem() != null) {
+				ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, 
+						genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
+				if (agr == null)
+					errorsList.put("codigoAgrupacionComercialRem", RestApi.REST_MSG_UNKNOWN_KEY);
+			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo()) 
+					&& ofertaDto.getCodigoAgrupacionComercialRem() == null) {
+				errorsList.put("codigoAgrupacionComercialRem", RestApi.REST_MSG_MISSING_REQUIRED);
 			} else {
 				errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 			}

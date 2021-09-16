@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMedioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaFondosPropios;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 
 @Entity
@@ -128,6 +129,10 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TVB_ID")
 	private DDTipologiaVentaBc tipologiaVentaBc;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_CANAL_DIST_VEN_ALQ")
+	private DDTipoComercializar canalDistribucionBc;
 	
     @Version
     private Integer version;
@@ -360,7 +365,13 @@ public class OfertaCaixa implements Serializable, Auditable {
 	public void setTipologiaVentaBc(DDTipologiaVentaBc tipologiaVentaBc) {
 		this.tipologiaVentaBc = tipologiaVentaBc;
 	}
+
+	public DDTipoComercializar getCanalDistribucionBc() {
+		return canalDistribucionBc;
+	}
+
+	public void setCanalDistribucionBc(DDTipoComercializar canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
+	}
 	
-
-
 }

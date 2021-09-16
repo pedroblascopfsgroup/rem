@@ -848,7 +848,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) || $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']),
+				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
 				items :
 					[
 					{

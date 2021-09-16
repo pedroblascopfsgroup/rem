@@ -154,24 +154,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	public List<DtoProveedorFilter> getProveedores(DtoProveedorFilter dtoProveedorFiltro) {		
 		
-		
 		// Usuario logado, proveedor o gestoria
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		Boolean esProveedor = genericAdapter.isProveedorHayaOrCee(usuarioLogado);
 		Boolean esGestoria = genericAdapter.isGestoria(usuarioLogado);
 		Boolean esExterno = gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId());
-		
-		// HREOS-2179 - Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
-				dtoProveedorFiltro.setSubCartera(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
-			}
-		}
 		
 		return proveedoresDao.getProveedoresList(dtoProveedorFiltro, usuarioLogado, esProveedor, esGestoria, esExterno);
 	}

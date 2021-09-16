@@ -93,7 +93,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 										valueField: 'codigo',
 										forceSelection	: true,
 							        	bind: {
-							            		store: '{comboSubcarteraFiltered}',
+							            		store: '{comboSubcartera}',
 							            		disabled: '{!comboCarteraSearch.selection}',
 							                    filters: {
 								                        property: 'carteraCodigo',

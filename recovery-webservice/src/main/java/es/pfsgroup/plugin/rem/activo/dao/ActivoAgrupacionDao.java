@@ -53,7 +53,7 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	
 	ActivoAgrupacion getAgrupacionById(Long idAgrupacion);
 
-	Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto);
+	Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto, Long usuarioId);
 	
 	Long getIdByNumAgrupacion(Long numAgrupacion);
 

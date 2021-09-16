@@ -841,15 +841,9 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}
-		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto);		
+		Long usuarioId = genericAdapter.getUsuarioLogado().getId();
+		
+		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto, usuarioId);		
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {

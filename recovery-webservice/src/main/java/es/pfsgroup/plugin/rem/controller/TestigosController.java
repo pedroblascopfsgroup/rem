@@ -60,6 +60,9 @@ public class TestigosController extends ParadiseJsonController {
 					|| (dtoTestigoObligatorio.getImporteMinimo() != null && dtoTestigoObligatorio.getImporteMinimo() < 0D)) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
+			}else if(dtoTestigoObligatorio.getPorcentajeDescuento() != null && dtoTestigoObligatorio.getPorcentajeDescuento() > 100) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, "Campo porcentaje mayor que 100");
 			} else {
 				boolean success = testigosApi.saveTestigoObligatorio(dtoTestigoObligatorio);
 				model.put(RESPONSE_SUCCESS_KEY, success);
@@ -90,6 +93,9 @@ public class TestigosController extends ParadiseJsonController {
 					|| (dtoTestigoObligatorio.getImporteMinimo() != null && dtoTestigoObligatorio.getImporteMinimo() < 0D)) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
+			}else if(dtoTestigoObligatorio.getPorcentajeDescuento() != null && dtoTestigoObligatorio.getPorcentajeDescuento() > 100) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, "Campo porcentaje mayor que 100");
 			} else {
 				boolean success = testigosApi.updateTestigoObligatorio(dtoTestigoObligatorio);
 				model.put(RESPONSE_SUCCESS_KEY, success);

@@ -4328,18 +4328,17 @@ public class ActivoAdapter {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
-			OfertaCaixa ofertaCaixa = null;
+			boolean esOfertaCaixa = particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null);
 
-			if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null))
-				ofertaCaixa = createOfertaCaixa(ofertaCreada, dto);
-
-
-			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado) && ofertaCaixa != null){
-				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
-				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
-				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
-				dtoPbc.setCodAccion("997");
-				ofertaApi.pbcFlush(dtoPbc);
+			if (esOfertaCaixa) {
+				createOrUpdateOfertaCaixa(ofertaCreada, dto.getTipologivaVentaCod());
+				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
+					LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+					dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
+					dtoPbc.setNumOferta(oferta.getNumOferta());
+					dtoPbc.setCodAccion("997");
+					ofertaApi.pbcFlush(dtoPbc);
+				}
 			}
 			
 			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
@@ -4359,23 +4358,24 @@ public class ActivoAdapter {
 
 
 	@Transactional(readOnly = false)
-	public OfertaCaixa createOfertaCaixa(final Oferta oferta,DtoOfertasFilter dto) {
+	public void createOrUpdateOfertaCaixa(final Oferta oferta,String codigoTipologia) {
 
-			if(genericDao.get(OfertaCaixa.class,genericDao.createFilter(FilterType.EQUALS,"oferta.numOferta",oferta.getNumOferta())) != null){
-				return null;
-			}else {
-				OfertaCaixa ofertaCaixa = new OfertaCaixa();
-				ofertaCaixa.setOferta(oferta);
-				if (dto.getTipologivaVentaCod() != null) {
-					Filter codigo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipologivaVentaCod());
+		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+
+		if (ofertaCaixa == null){
+			ofertaCaixa = new OfertaCaixa();
+			ofertaCaixa.setOferta(oferta);
+			ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
+		}
+
+				if (codigoTipologia != null) {
+					Filter codigo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipologia);
 					DDTipologiaVentaBc tipologia = genericDao.get(DDTipologiaVentaBc.class, codigo);
 					if (tipologia != null) {
 						ofertaCaixa.setTipologiaVentaBc(tipologia);
 					}
-				}				
-				oferta.setOfertaCaixa(ofertaCaixa);				
-				return genericDao.save(OfertaCaixa.class,ofertaCaixa);
-			}
+				}
+				genericDao.save(OfertaCaixa.class,ofertaCaixa);
 	}
 
 

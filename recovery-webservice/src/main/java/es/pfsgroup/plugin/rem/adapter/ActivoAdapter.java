@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
@@ -139,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
@@ -296,6 +298,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private PerfilApi perfilApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -2703,9 +2708,15 @@ public class ActivoAdapter {
 	public List<VPreciosVigentes> getPreciosVigentesById(Long idActivo) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-		Order order = new Order(OrderType.ASC, "orden");
+		
+		List<Filter> filters = new ArrayList<Filter>();
+		filters.add(filtro);
 
-		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro);
+		Order order = new Order(OrderType.ASC, "orden");
+		filters = this.anyadirFiltroPrecioMinimoPorPerfil(filters);
+		List<VPreciosVigentes> precios = genericDao.getListOrdered(VPreciosVigentes.class, order, filters);
+		
+		return precios;
 
 	}
 
@@ -4330,6 +4341,13 @@ public class ActivoAdapter {
 				dtoPbc.setCodAccion("997");
 				ofertaApi.pbcFlush(dtoPbc);
 			}
+			
+			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
+				if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null)) {
+					anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getNumOferta(), ofertaCreada.getId(), dto.getTipoOferta());
+				}
+			}
+			
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
@@ -5212,6 +5230,38 @@ public class ActivoAdapter {
 		}
 		
 		return activosAdicionalesSinRepetidos;
+	}
+	
+	@Transactional(readOnly = false)
+	public void anyadirCanalDistribucionOfertaCaixa(Long idActivo, Long numOferta ,Long idOferta, String tipoOferta) {
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (numOferta != null) {
+			Filter filtroOfertaCaixa = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+			OfertaCaixa ofertaCaixa2 = genericDao.get(OfertaCaixa.class, filtroOfertaCaixa);
+			
+			if (activoCaixa != null && ofertaCaixa2 != null) {
+				if (tipoOferta != null) {
+					if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
+						ofertaCaixa2.setCanalDistribucionBc(activoCaixa.getCanalDistribucionVenta());
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+						ofertaCaixa2.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
+					}
+				}
+			}
+		}
+	}
+	
+	private List<Filter> anyadirFiltroPrecioMinimoPorPerfil(List<Filter>filters){
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		if(perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_USUARIO_BC, usuarioLogado.getUsername())) {
+			Filter tipoPrecio = genericDao.createFilter(FilterType.NOT_EQUALS, "codigoTipoPrecio", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+			filters.add(tipoPrecio);
+		}
+		
+		return filters;
 	}
 }
 

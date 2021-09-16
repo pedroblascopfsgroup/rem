@@ -124,13 +124,8 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');
 		}
 	    
-	    if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
-	    	me.tabsDeBBVA(me,editable); 
-
-	    }else if($AU.userIsRol(CONST.PERFILES['USUARIOS_BC'])){
-	    	me.tabsDeBC(me,editable); 
-
-	    }else{
+	    
+	    if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 
 		    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tramitesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ACTUACIONES');
@@ -162,8 +157,11 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    	}
 	    			
 	    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
-	
-	    	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+	    	
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')})}, 'EDITAR_TAB_ACTIVO_PLUSVALIA');
+
+	    }else{
+	    	me.tabsDeBBVA(me,editable); 
 	    }
 
     	
@@ -187,16 +185,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     },
     
     tabsDeBBVA: function(me, editable){
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable})}, 'TAB_ACTIVO_COMERCIAL');    			
-    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
-    },
-    
-    tabsDeBC: function(me, editable){
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');

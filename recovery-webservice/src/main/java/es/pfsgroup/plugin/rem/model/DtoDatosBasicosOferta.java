@@ -159,6 +159,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Long numeroContacto;
 	
+	private String canalDistribucionBc;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -727,6 +729,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setNumeroContacto(Long numeroContacto) {
 		this.numeroContacto = numeroContacto;
+	}
+
+	public String getCanalDistribucionBc() {
+		return canalDistribucionBc;
+	}
+
+	public void setCanalDistribucionBc(String canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
 	}
 	
 }

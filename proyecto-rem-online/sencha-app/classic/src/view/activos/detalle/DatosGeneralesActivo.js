@@ -142,9 +142,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    var items = [];
 	    if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 	    	items = me.tabsBBVA(items, ocultarDatosbasicosactivo, ocultarTituloinformacionregistralactivo, ocultarInformacionadministrativaactivo);
-	    }else if($AU.userIsRol(CONST.PERFILES['USUARIOS_BC'])){
-	    	items = me.tabsBC(items, ocultarDatosbasicosactivo, ocultarTituloinformacionregistralactivo, ocultarInformacionadministrativaactivo);
-	    }else {
+	    }else{
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
@@ -184,14 +182,6 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     },
     
     tabsBBVA: function(items, ocultarDatosbasicosactivo, ocultarTituloinformacionregistralactivo, ocultarInformacionadministrativaactivo ){
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
-		
-		return items;
-    }, 
-    
-    tabsBC: function(items, ocultarDatosbasicosactivo, ocultarTituloinformacionregistralactivo, ocultarInformacionadministrativaactivo ){
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);

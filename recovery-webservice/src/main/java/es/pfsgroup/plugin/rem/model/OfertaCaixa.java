@@ -132,7 +132,7 @@ public class OfertaCaixa implements Serializable, Auditable {
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_CANAL_DIST_VEN_ALQ")
-	private DDTipoComercializar canalDistribucion;
+	private DDTipoComercializar canalDistribucionBc;
 	
     @Version
     private Integer version;
@@ -366,12 +366,12 @@ public class OfertaCaixa implements Serializable, Auditable {
 		this.tipologiaVentaBc = tipologiaVentaBc;
 	}
 
-	public DDTipoComercializar getCanalDistribucion() {
-		return canalDistribucion;
+	public DDTipoComercializar getCanalDistribucionBc() {
+		return canalDistribucionBc;
 	}
 
-	public void setCanalDistribucion(DDTipoComercializar canalDistribucion) {
-		this.canalDistribucion = canalDistribucion;
+	public void setCanalDistribucionBc(DDTipoComercializar canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
 	}
 	
 }

@@ -158,6 +158,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						},
 						{
 							xtype : 'comboboxfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.canal.distribucion.bc'),
+							reference: 'canalDistribucionBcRef',
+							bind : {
+								store : '{comboCanalDistribucionBc}',
+								value : '{datosbasicosoferta.canalDistribucionBc}',
+								hidden: '{!esBankia}',
+								readOnly: true
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.alquiler.documentacion.completa'),
 							reference: 'checkDocumentacionCompletaRef',
 							bind : {

@@ -26,6 +26,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDGarantiasAdicionales;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoringServicer;
 
 
@@ -90,6 +91,13 @@ public class ScoringAlquiler implements Serializable, Auditable {
 	
 	@Column(name = "SCO_IMPORTE_GARANTIAS_AD")
     private Double importeGarantiasAdicionales;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RSB_ID")
+	private DDResultadoScoring resultadoScoringBc;
+	
+	@Column(name = "SCO_FECHA_SANCION_BC")
+	private Date fechaSancionBc;
 	
 	@Version   
 	private Long version;
@@ -199,6 +207,22 @@ public class ScoringAlquiler implements Serializable, Auditable {
 
 	public void setImporteGarantiasAdicionales(Double importeGarantiasAdicionales) {
 		this.importeGarantiasAdicionales = importeGarantiasAdicionales;
+	}
+
+	public DDResultadoScoring getResultadoScoringBc() {
+		return resultadoScoringBc;
+	}
+
+	public void setResultadoScoringBc(DDResultadoScoring resultadoScoringBc) {
+		this.resultadoScoringBc = resultadoScoringBc;
+	}
+
+	public Date getFechaSancionBc() {
+		return fechaSancionBc;
+	}
+
+	public void setFechaSancionBc(Date fechaSancionBc) {
+		this.fechaSancionBc = fechaSancionBc;
 	}
 	
 }

@@ -205,7 +205,13 @@ public class CaixaBcRestClient {
                 String endpoint = getRem3Endpoint(REM3_URL,PBC_ENDPOINT);
                 if (endpoint != null) {
                     Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("dto", JSONObject.fromObject(dto));
+                    params.put("numOferta", dto.getNumOferta());
+                    params.put("codAccion", dto.getCodAccion());
+                    params.put("descripcionAccion", dto.getDescripcionAccion());
+                    params.put("motivo", dto.getMotivo());
+                    params.put("riesgoOperacion", dto.getRiesgoOperacion());
+                    params.put("fechaReal", dto.getFechaReal());
+                    params.put("numInterlocutor", dto.getNumInterlocutor());
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);
                 } else {

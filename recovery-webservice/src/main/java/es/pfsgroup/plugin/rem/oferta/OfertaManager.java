@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -417,6 +418,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private HibernateUtils hibernateUtils;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
@@ -1163,14 +1167,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				notificationOfertaManager.sendNotification(oferta);
 			}
 
-			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+			boolean esOfertaCaixa = particularValidatorApi.esOfertaCaixa(oferta.getNumOferta().toString());
 
-			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
-				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
-				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
-				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
-				dtoPbc.setCodAccion("997");
-				pbcFlush(dtoPbc);
+			if (esOfertaCaixa){
+
+				if (oferta.getOfertaCaixa() == null ){
+					OfertaCaixa ofertaCaixa = new OfertaCaixa();
+					ofertaCaixa.setOferta(oferta);
+					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(OfertaCaixa.class,ofertaCaixa);
+				}
+
+				if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())){
+					LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+					dtoPbc.setFechaReal(oferta.getFechaAlta() != null ? oferta.getFechaAlta().toString() : null);
+					dtoPbc.setNumOferta(oferta.getNumOferta());
+					dtoPbc.setCodAccion("997");
+					pbcFlush(dtoPbc);
+				}
+
 			}
 
 		}
@@ -1361,6 +1376,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		oferta.setTitularesAdicionales(listaTit);
+	}
+
+	private boolean tieneDocumentoGDPRAsociado(Oferta oferta){
+		if (oferta != null){
+			ClienteComercial clc = oferta.getCliente();
+			if (clc != null){
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "cliente.id", clc.getId()));
+				return clienteGDPR != null && clienteGDPR.getAdcomIdDocumentoIdentificativo() != null;
+			}
+		}
+		return false;
 	}
 	
 	@Transactional(readOnly = false)

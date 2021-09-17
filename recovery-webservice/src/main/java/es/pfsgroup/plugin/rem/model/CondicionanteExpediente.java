@@ -423,6 +423,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="COE_SEG_RENTAS_BC")
     private Boolean seguroRentasBc;
     
+    @Column(name="ALQ_FECHA_VENC_AVAL")
+    private Date fechaVencimientoAvalBc;
+    
+	@Column(name="ALQ_MESES_AVAL")
+    private Integer mesesAval;
+    
 	@Version   
 	private Long version;
 
@@ -1346,6 +1352,22 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setSeguroRentasBc(Boolean seguroRentasBc) {
 		this.seguroRentasBc = seguroRentasBc;
+	}
+
+	public Date getFechaVencimientoAvalBc() {
+		return fechaVencimientoAvalBc;
+	}
+
+	public void setFechaVencimientoAvalBc(Date fechaVencimientoAvalBc) {
+		this.fechaVencimientoAvalBc = fechaVencimientoAvalBc;
+	}
+
+	public Integer getMesesAval() {
+		return mesesAval;
+	}
+
+	public void setMesesAval(Integer mesesAval) {
+		this.mesesAval = mesesAval;
 	}
 
 }

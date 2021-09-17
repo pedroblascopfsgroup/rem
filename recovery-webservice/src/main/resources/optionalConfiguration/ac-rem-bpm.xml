@@ -46,6 +46,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="200"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="200"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="200"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -738,6 +739,22 @@
 			def isMetodoActualizacionRelleno = {
 				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.isMetodoActualizacionRelleno(tareaExterna);
+			}
+			def aprobarAnalisisBc = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.aprobarAnalisisBc(idTramite);
+			}
+			def aprobarPbcAlquiler = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.aprobarPbcAlquiler(idTramite);
+			}
+			def aprobarScoringBc = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.aprobarScoringBc(idTramite);
+			}
+			def aprobarRevisionBcYCondiciones = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(idTramite);
 			}
 			
   			 ]]></value>

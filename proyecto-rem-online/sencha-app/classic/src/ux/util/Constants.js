@@ -38,7 +38,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		VENTA:'Venta',
 		ALQUILER: 'Alquiler',
 		ALQUILER_VENTA: 'Alquiler y venta',
-		ALQUILER_OPCION_COMPRA: 'Alquiler con opci�n a compra'
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opci�n a compra',
+		ALQUILER_NO_COMERCIAL: 'Alquiler no comercial'		
 	},
 
 	TIPOS_AGRUPACION: {

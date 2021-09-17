@@ -44,6 +44,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_COMERCIAL_ALQUILER = "T015";
 	public static final String CODIGO_TAREA_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE = "T017";
+	public static final String CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL = "T018";
 	
 	/**
 	 * Recupera un trámite pasándole su id.

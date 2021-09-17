@@ -2129,7 +2129,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(oferta.getOfertaCaixa() != null) {
 				dto.setCheckListDocumentalCompleto(oferta.getOfertaCaixa().getCheckListDocumentalCompleto());
 				dto.setCheckSubasta(oferta.getOfertaCaixa().getCheckSubasta());
-				dto.setCanalDistribucionBc(oferta.getOfertaCaixa().getCanalDistribucionBc().getCodigo());
+				if (oferta.getOfertaCaixa().getCanalDistribucionBc() != null) {
+					dto.setCanalDistribucionBc(oferta.getOfertaCaixa().getCanalDistribucionBc().getCodigo());
+				}
 			}
 		}
 

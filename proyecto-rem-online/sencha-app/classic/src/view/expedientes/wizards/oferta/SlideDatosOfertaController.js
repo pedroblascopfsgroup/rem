@@ -166,8 +166,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                 }
             }
            
-            if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
-            	if(wizard.lookupController().getView().getViewModel().get('isCarteraBankia')){
+			if(destinoComercialActivo === valueDestComercial 
+				|| destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"] 
+				|| (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){            	if(wizard.lookupController().getView().getViewModel().get('isCarteraBankia')){
 	            	 var tipoComercializacionCodigo = wizard.down('[xtype=slidedatosoferta]').down('[name=tipoOferta]').value;
 	                 if(CONST.TIPOS_OFERTA["VENTA"] === tipoComercializacionCodigo){
 	                 	if(Ext.isEmpty(wizard.lookupController().getView().getViewModel().get('canalVentaBC').selection)){

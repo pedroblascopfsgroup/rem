@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
+--## AUTOR=Sergio Gomez
 --## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3

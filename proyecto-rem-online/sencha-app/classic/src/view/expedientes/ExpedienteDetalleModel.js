@@ -1674,7 +1674,41 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposComercializarActivo'}
 			}
-		}
+		},
+		comboResultadoHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResultadoScoring'}
+			}
+    	},
+    	comboResultadoPropiedad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResultadoCampo'}
+			}
+    	},
+    	comboResultadoRatingScoring: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRatingScoring'}
+			}
+    	},
+    	comboEntidadBancariaAvalista: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesAvalistas'}
+			}
+    	}
+    	
+    	
 
     }
 });

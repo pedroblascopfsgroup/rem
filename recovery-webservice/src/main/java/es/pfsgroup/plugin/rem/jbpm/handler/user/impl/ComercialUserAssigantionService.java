@@ -85,6 +85,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
 	public static final String CODIGO_T015_BLOQUEOSCREENING = "T015_BloqueoScreening";
 	public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
+	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
+	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
+	public static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
 	
 	private static final Integer CODIGO_SI = 1;
 	

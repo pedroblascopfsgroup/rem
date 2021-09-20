@@ -10,7 +10,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas','HreRem.model.DatosBasicosOferta',
-				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente'],
+				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente',
+				'HreRem.view.expedientes.GarantiasExpediente'],
 
 	bloqueado: false,
 	procesado: false,
@@ -117,6 +118,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
+	        if (me.lookupController().getViewModel().get('expediente').get('esBankia')) {
+	        	var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+	        	if (dataExpediente.esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == dataExpediente.tipoExpedienteCodigo/*&& $AU.userIsRol(CONST.PERFILES['HAYASUPER'])*/) {
+	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'garantiasexpediente', ocultarBotonesEdicion: false})}, ['TAB_GARANTIAS_EXPEDIENTE']); //TAB_OFERTA_EXPEDIENTES
+	        		//items.push({xtype: 'garantiasexpediente'});
+	        	}
+	        	
+	        }
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosexpediente', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES']);
 
 	        if(me.lookupController().getViewModel().get('expediente').get('isSubcarteraApple')){

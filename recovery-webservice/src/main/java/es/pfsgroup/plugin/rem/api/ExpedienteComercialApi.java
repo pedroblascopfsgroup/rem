@@ -1370,4 +1370,6 @@ public interface ExpedienteComercialApi {
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;
+	
+	boolean saveGarantiasExpediente(DtoGarantiasExpediente dto, Long idExpediente);
 }

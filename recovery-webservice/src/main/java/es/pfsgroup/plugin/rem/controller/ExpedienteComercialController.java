@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
+import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
@@ -2817,6 +2818,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveGarantiasExpediente(DtoGarantiasExpediente dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveGarantiasExpediente(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("error", false);
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

@@ -706,9 +706,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							{
 								xtype : 'button',
 								reference : 'btnGenerarHojaDatos',
-								bind : {
-									disabled : '{!resolucion.generacionHojaDatos}'
-								},
 								text : HreRem.i18n('btn.generar.hoja.datos'),
 								handler : 'onClickGenerarHojaExcel',
 								margin : '10 10 10 10'

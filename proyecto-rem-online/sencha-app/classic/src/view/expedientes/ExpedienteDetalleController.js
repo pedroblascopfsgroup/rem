@@ -217,8 +217,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-		var tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
+		var tipoBulkAdvisoryNote;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
+		if(!Ext.isEmpty(me.getViewModel().data.datosbasicosoferta)){
+			tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
+		}
 
 		if(form.isFormValid() || form.disableValidation) {
 			var cumplenCondicionesCampos = this.hacerCamposObligatorios(form);

@@ -17,6 +17,8 @@ public interface TramiteAlquilerApi {
 	boolean isOfertaContraOfertaMayor10K(TareaExterna tareaExterna);
 
 	boolean isMetodoActualizacionRelleno(TareaExterna tareaExterna);
+
+	boolean haPasadoAceptacionCliente(Long idTramite);
 	
 	
 }

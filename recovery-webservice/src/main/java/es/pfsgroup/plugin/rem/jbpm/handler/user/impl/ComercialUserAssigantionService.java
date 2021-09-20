@@ -84,6 +84,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	
 	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
 	public static final String CODIGO_T015_BLOQUEOSCREENING = "T015_BloqueoScreening";
+	public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
 	
 	private static final Integer CODIGO_SI = 1;
 	

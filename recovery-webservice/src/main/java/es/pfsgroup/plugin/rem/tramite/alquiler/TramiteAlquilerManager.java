@@ -27,6 +27,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_ScoringBC = "T015_ScoringBC";
 	private static final String T015_DefinicionOferta = "T015_DefinicionOferta";
 	private static final String T015_VerificarSeguroRentas = "T015_VerificarSeguroRentas";
+	private static final String T015_AceptacionCliente = "T015_AceptacionCliente";
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	
@@ -166,6 +167,20 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 		
 		return isRelleno;
+	}
+	
+	@Override
+	public boolean haPasadoAceptacionCliente(Long idTramite) {
+		boolean haPasadoScoringBC = false;
+		List<TareaProcedimiento> tareas = activoTramiteApi.getTareasByIdTramite(idTramite);
+		for (TareaProcedimiento tareaProcedimiento : tareas) {
+			if(T015_AceptacionCliente.equals(tareaProcedimiento.getCodigo())) {
+				haPasadoScoringBC = true;
+				break;
+			}
+		}
+
+		return haPasadoScoringBC;
 	}
 	
 }

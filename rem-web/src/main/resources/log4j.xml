@@ -432,6 +432,14 @@
 		<level value="debug" />
 		<appender-ref ref="oauth2" />
 	</logger>
+	<logger name="es.pfsgroup.plugin.rem.security.jupiter.IntegracionJupiter" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="oauth2" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.security.jupiter.IntegracionJupiterDaoImpl" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="oauth2" />
+	</logger>
 	<!-- Fin PBO -->
 
 	<!--Descomentar para Ver las SQL-->

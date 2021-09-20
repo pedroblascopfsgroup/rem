@@ -3905,15 +3905,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			formalizacionDto = formalizacionToDto(listaResolucionFormalizacion.get(0));
 		}
 
-		// Comprobar si se habilita el botón de 'generación hoja de datos'.
-		boolean permitirGenerarHoja = true;
-		// Se permitie hoja de datos si el expediente está bloqueado.
-		if (expediente.getBloqueado() == null || expediente.getBloqueado().equals(0)) {
-			permitirGenerarHoja = false;
-		}
-
-		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
-
 		return formalizacionDto;
 	}
 

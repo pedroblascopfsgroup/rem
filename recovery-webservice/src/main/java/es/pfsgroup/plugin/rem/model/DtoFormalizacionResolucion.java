@@ -36,7 +36,6 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private Double importe;
 	private Date fechaVenta;
 	private String numProtocolo;
-	private Boolean generacionHojaDatos;
 	
 	
 	public Long getIdFormalizacion() {
@@ -128,12 +127,6 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setNumProtocolo(String numProtocolo) {
 		this.numProtocolo = numProtocolo;
-	}
-	public Boolean getGeneracionHojaDatos() {
-		return generacionHojaDatos;
-	}
-	public void setGeneracionHojaDatos(Boolean generacionHojaDatos) {
-		this.generacionHojaDatos = generacionHojaDatos;
 	}
 	
 	

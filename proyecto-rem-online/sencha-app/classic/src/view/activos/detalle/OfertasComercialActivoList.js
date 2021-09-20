@@ -5,7 +5,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         store: '{storeOfertasActivo}'
     },
     requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm', 'HreRem.view.expedientes.wizards.oferta.SlideDatosOferta'],
-    topBar		: true,
 	removeButton: false,
     listeners	: {    	
     	select: 'onSelectedRow',
@@ -556,6 +555,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    evaluarEdicion: function() {
 
 		var me = this;
+		me.setTopBar(true);
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
@@ -565,7 +565,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.rowEditing.clearListeners();
 		} else if(activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1"){
 			me.setTopBar(false);
-		}
+		} 
 		
    },
 

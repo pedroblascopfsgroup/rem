@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jbpm.jpdl.el.impl.Coercions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -168,6 +169,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_TANTEO_Y_RETRACTO_OFERTA = "ofertatanteoyretracto";
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
+	private static final String PESTANA_GARANTIAS = "garantias";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
 	private static final String PESTANA_SEGURO_RENTAS = "segurorentasexpediente";
 	private static final String PESTANA_PLUSVALIA = "plusvalia";
@@ -436,6 +438,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoScoring(expediente);
 		} else if (PESTANA_DOCUMENTOS.equals(tab)) {
 			dto = expedienteToDtoDocumentos(expediente);
+		} else if (PESTANA_GARANTIAS.equals(tab)) {
+			dto = expedienteToDtoGarantias(expediente);
 		}
 
 		return dto;
@@ -13842,4 +13846,202 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}};
 	}
 
+	private DtoGarantiasExpediente expedienteToDtoGarantias(ExpedienteComercial expediente) {
+		DtoGarantiasExpediente dto = new DtoGarantiasExpediente();
+		if (expediente != null) {
+			/*if (expediente.getNumExpediente() != null) {
+				dto.setNumeroExpediente(expediente.getNumExpediente());
+			}*/
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+			ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
+			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
+			SeguroRentasAlquiler sra = genericDao.get(SeguroRentasAlquiler.class, filter);
+			if (scoring != null) {
+				
+				if (scoring.getRatingScoringServicer() != null) {
+					dto.setRatingHayaCod(scoring.getRatingScoringServicer().getCodigo());
+					dto.setRatingHayaDesc(scoring.getRatingScoringServicer().getDescripcion());
+				}
+				if (scoring.getMotivoRechazo() != null) {
+					dto.setMotivoRechazo(scoring.getMotivoRechazo());
+				}
+				if (scoring.getFechaSancionBc() != null) {
+					dto.setFechaSancion(scoring.getFechaSancionBc());
+				}
+				if (scoring.getResultadoScoringBc() != null) {
+					dto.setResultadoHayaCod(scoring.getResultadoScoringBc().getCodigo());
+					dto.setResultadoHayaDesc(scoring.getResultadoScoringBc().getDescripcion());
+				}
+				if (scoring.getResultadoScoring() != null) {
+					dto.setResultadoPropiedadCod(scoring.getResultadoScoring().getCodigo());
+					dto.setResultadoPropiedadDesc(scoring.getResultadoScoring().getDescripcion());
+				}
+				if (scoring.getNumeroExpedienteBc() != null) {
+					dto.setNumeroExpediente(Long.valueOf(scoring.getNumeroExpedienteBc()));
+				}
+			}
+			if (coe != null) {
+				if (coe.getScoringBc() != null) {
+					dto.setScoring(coe.getScoringBc());
+				}
+				if (coe.getAvalBc()!= null) {
+					dto.setAval(coe.getAvalBc());
+				}
+				if (coe.getSeguroRentasBc() != null) {
+					dto.setSeguroRentas(coe.getSeguroRentasBc());
+				}
+				if (coe.getEntidadBancariaFiador() != null) {
+					dto.setEntidadBancariaCod(coe.getEntidadBancariaFiador().getCodigo());
+					dto.setEntidadBancariaDesc(coe.getEntidadBancariaFiador().getDescripcion());
+				}
+				if (coe.getMesesAval() != null) {
+					dto.setMesesAval(coe.getMesesAval().longValue());
+				}
+				if (coe.getFechaVencimientoAvalBc() != null) {
+					dto.setFechaVencimiento(coe.getFechaVencimientoAvalBc());
+				}
+				if (coe.getDocumentoFiador() != null) {
+					dto.setDocumento(coe.getDocumentoFiador());
+				}
+				if (coe.getAvalista() != null) {
+					dto.setAvalista(coe.getAvalista());
+				}
+				if (coe.getImporteAval() != null) {
+					dto.setImporteAval(coe.getImporteAval());
+				}
+			}
+			if (sra != null) {
+				if (sra.getFechaVencimientoRentaslBc() != null) {
+					dto.setFechaSancionRentas(sra.getFechaVencimientoRentaslBc());
+				}
+				if (sra.getMesesAval() != null) {
+					dto.setMesesRentas(sra.getMesesAval().longValue());
+				}
+				if (sra.getImporteRentasBc() != null) {
+					dto.setImporteRentas(sra.getImporteRentasBc());
+				}
+			}
+			boolean completada = false;
+			//
+			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
+			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
+							|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
+			
+			if (completada) {
+				dto.setScoringEditable(false);
+			}else {
+				List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+				for (TareaProcedimiento tarea : tareasActivas) {
+					if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
+							|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+						dto.setScoringEditable(true);
+						break;
+					} else {
+						dto.setScoringEditable(false);						
+					}
+				}
+			}
+			
+			
+		}
+		return dto;
+	}
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveGarantiasExpediente(DtoGarantiasExpediente dto, Long id) {
+		ExpedienteComercial expediente = findOne(id);
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+		ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
+		CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
+		SeguroRentasAlquiler sra = genericDao.get(SeguroRentasAlquiler.class, filter);
+		
+		if (scoring == null && (dto.getScoring() != null && Boolean.TRUE.equals(dto.getScoring()))) {
+			scoring = new ScoringAlquiler();
+			scoring.setAuditoria(Auditoria.getNewInstance());
+			scoring.setExpediente(expediente);			
+		}
+		if (sra == null && (dto.getSeguroRentas() != null && Boolean.TRUE.equals(dto.getSeguroRentas()))) {
+			sra = new SeguroRentasAlquiler();
+			sra.setAuditoria(Auditoria.getNewInstance());
+			sra.setExpediente(expediente);
+		}
+		
+		if (coe != null) {
+			if (dto.getScoring() != null) {
+				coe.setScoringBc(dto.getScoring());
+			}
+			if (dto.getAval() != null) {
+				coe.setAvalBc(dto.getAval());
+			}
+			if (dto.getSeguroRentas() != null) {
+				coe.setSeguroRentasBc(dto.getSeguroRentas());
+			}
+			if (dto.getEntidadBancariaCod() != null) {
+				DDEntidadesAvalistas entidadAval = (DDEntidadesAvalistas) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadesAvalistas.class, dto.getEntidadBancariaCod());
+				coe.setEntidadBancariaFiador(entidadAval);
+			}
+			if (dto.getMesesAval() != null) {
+				coe.setMesesAval(dto.getMesesAval().intValue());
+			}
+			if (dto.getFechaVencimiento() != null) {
+				coe.setFechaVencimientoAvalBc(dto.getFechaVencimiento());
+			}			
+			if (dto.getDocumento() != null) {
+				coe.setDocumentoFiador(dto.getDocumento());
+			}			
+			if (dto.getAvalista() != null) {
+				coe.setAvalista(dto.getAvalista());
+			}
+			if (dto.getImporteAval() != null) {
+				coe.setImporteAval(dto.getImporteAval());
+			}
+			genericDao.save(CondicionanteExpediente.class, coe);
+			
+		}
+		
+		if (sra != null) {
+			if (dto.getFechaSancionRentas()!= null) {
+				sra.setFechaVencimientoRentaslBc(dto.getFechaSancionRentas());
+			}			
+			if (dto.getMesesAval() != null) {
+				sra.setMesesAval(dto.getMesesAval().intValue());
+			}			
+			if (dto.getImporteRentas() != null) {
+				sra.setImporteRentasBc(dto.getImporteRentas());
+			}
+			genericDao.save(SeguroRentasAlquiler.class, sra);
+		}
+		
+		if (scoring != null) {
+			
+			if (dto.getRatingHayaCod() != null) {
+				DDRatingScoringServicer rating = (DDRatingScoringServicer) utilDiccionarioApi.dameValorDiccionarioByCod(DDRatingScoringServicer.class, dto.getRatingHayaCod());
+				scoring.setRatingScoringServicer(rating);
+			}
+			
+			if (dto.getMotivoRechazo() != null) {
+				scoring.setMotivoRechazo(dto.getMotivoRechazo());
+			}
+			if (dto.getFechaSancion() != null) {
+				scoring.setFechaSancionBc(dto.getFechaSancion());
+			}
+			if (dto.getResultadoPropiedadCod() != null) {
+				DDResultadoCampo resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, dto.getResultadoPropiedadCod());
+				scoring.setResultadoScoring(resultadoCampo);
+			}
+			if (dto.getResultadoHayaCod() != null) {
+				DDResultadoScoring resultadoScoring = (DDResultadoScoring) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoScoring.class, dto.getResultadoHayaCod());
+				scoring.setResultadoScoringBc(resultadoScoring);
+			}
+			if (dto.getNumeroExpediente() != null) {
+				scoring.setNumeroExpedienteBc(String.valueOf(dto.getNumeroExpediente()));
+			}
+			genericDao.save(ScoringAlquiler.class, scoring);
+		}
+		
+		
+		return true;
+	}
+	
+	
 }

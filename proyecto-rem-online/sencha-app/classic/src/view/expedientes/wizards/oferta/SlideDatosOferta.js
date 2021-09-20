@@ -154,11 +154,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								
 	    								if (viewModelSlide.data.esBankia && CONST.TIPOS_OFERTA['VENTA'] == value) {
 	    									tipologivaVenta.setDisabled(false);
-	    									tipologivaVenta.setAllowBlank(false);
-
 	    								}else{
 	    									tipologivaVenta.setDisabled(true);
-	    									tipologivaVenta.setAllowBlank(true);
 	    								}
 	    							}
 	    						},
@@ -402,7 +399,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
 								name: 		'tipologivaVentaCod',
 								reference: 		'tipologivaVentaCodRef',
-								allowBlank: !isBk,
+								allowBlank: true,
 								hidden: !isBk,
 								disabled: true,
 								bind: {

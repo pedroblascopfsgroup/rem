@@ -756,6 +756,19 @@
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(idTramite);
 			}
+			def checkAvalCondiciones = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkAvalCondiciones(tareaExterna);
+			}
+			def checkSeguroRentasCondiciones = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkSeguroRentasCondiciones(tareaExterna);
+			}
+			def validarMesesImporteDeposito = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.validarMesesImporteDeposito(tareaExterna);
+			}
+			
 			
   			 ]]></value>
   		</list>

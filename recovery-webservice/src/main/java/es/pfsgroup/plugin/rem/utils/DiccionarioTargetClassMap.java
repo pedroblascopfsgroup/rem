@@ -348,6 +348,12 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipologiaVentaBc",  DDTipologiaVentaBc.class);
 		mapa.put("estadoDeposito",  DDEstadoDeposito.class);		 
 		mapa.put("tipoGrupoImpuesto",  DDGrupoImpuesto.class);
+		mapa.put("tipoResultadoScoring",  DDResultadoScoring.class);
+		mapa.put("tipoResultadoCampo",  DDResultadoCampo.class);
+		mapa.put("tipoRatingScoring",  DDRatingScoringServicer.class);
+		
+		
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -183,4 +183,45 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return haPasadoScoringBC;
 	}
 	
+
+	@Override
+	public boolean checkAvalCondiciones(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getAvalBc() != null && coe.getAvalBc()) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+
+	@Override
+	public boolean checkSeguroRentasCondiciones(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getSeguroRentasBc() != null && coe.getSeguroRentasBc()) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+	@Override
+	public boolean validarMesesImporteDeposito(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && (coe.getImporteDeposito() != null || coe.getMesesDeposito() != null)) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}	
 }

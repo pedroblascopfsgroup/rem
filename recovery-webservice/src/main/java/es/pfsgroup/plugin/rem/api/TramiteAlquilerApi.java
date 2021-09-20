@@ -20,6 +20,12 @@ public interface TramiteAlquilerApi {
 
 	boolean haPasadoAceptacionCliente(Long idTramite);
 	
+	boolean checkAvalCondiciones(TareaExterna tareaExterna);
+	
+	boolean checkSeguroRentasCondiciones(TareaExterna tareaExterna);
+
+	boolean validarMesesImporteDeposito(TareaExterna tareaExterna);
+	
 	
 }
 

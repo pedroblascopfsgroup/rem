@@ -1026,5 +1026,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_REDUCIDO:'30',
 		CODIGO_SUPERREDUCIDO: '40',
 		CODIGO_TASA_CERO: '50'
-	 }
+	 },
+	TIPO_GASTO: {
+	    SERVICIOS_PROFESIONALES_INDEPE: '11'
+	}
 });

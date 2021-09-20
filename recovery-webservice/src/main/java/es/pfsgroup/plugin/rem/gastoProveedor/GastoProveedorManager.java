@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -4342,5 +4343,4 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
-
 }

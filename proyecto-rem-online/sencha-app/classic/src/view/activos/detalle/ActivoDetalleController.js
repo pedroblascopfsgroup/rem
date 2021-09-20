@@ -8656,7 +8656,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickAbrirGastoTasacion : function(grid, rowIndex, colIndex) {
 		var me = this, record = grid.getStore().getAt(rowIndex);
 		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
-
 	},/*,
     onChangePublicarCaixa: function(get){
     	var me = this;    	

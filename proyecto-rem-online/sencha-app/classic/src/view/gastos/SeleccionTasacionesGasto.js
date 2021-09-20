@@ -32,7 +32,7 @@ Ext.define('HreRem.view.gastos.SeleccionTasacionesGasto', {
     	
     	var me = this;
     	
-    	me.setTitle(HreRem.i18n('title.seleccion.trabajos'));
+    	me.setTitle(HreRem.i18n('title.seleccion.tasaciones'));
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Añadir selección', handler: 'asignarSeleccionTasacionesGasto', disabled: true},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'cancelarSeleccionTasacionesGasto'}];
     	

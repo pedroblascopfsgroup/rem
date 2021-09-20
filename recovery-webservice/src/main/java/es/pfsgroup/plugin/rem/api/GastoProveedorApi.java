@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
 import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 

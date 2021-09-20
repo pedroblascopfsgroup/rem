@@ -64,12 +64,7 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     			name:'fechaVenta',
     			type:'date',
     			dateFormat: 'c'
-    		},
-    	    {
-    	    	name: 'generacionHojaDatos',
-    	    	type: 'boolean',
-    	    	defaultValue: false
-    	    }
+    		}
     ],
     
 	proxy: {

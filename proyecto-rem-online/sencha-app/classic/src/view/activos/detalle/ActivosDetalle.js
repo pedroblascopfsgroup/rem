@@ -157,8 +157,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    	}
 	    			
 	    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
-	
-	    	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+	    	
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')})}, 'EDITAR_TAB_ACTIVO_PLUSVALIA');
+
 	    }else{
 	    	me.tabsDeBBVA(me,editable); 
 	    }

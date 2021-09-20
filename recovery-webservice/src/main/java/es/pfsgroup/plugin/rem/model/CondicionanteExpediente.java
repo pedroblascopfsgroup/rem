@@ -413,6 +413,22 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_GRI_ID")
 	private DDGrupoImpuesto tipoGrupoImpuesto;
     
+    
+    @Column(name="COE_SCORING_BC")
+    private Boolean scoringBc;
+    
+    @Column(name="COE_AVAL_BC")
+    private Boolean avalBc;
+    
+    @Column(name="COE_SEG_RENTAS_BC")
+    private Boolean seguroRentasBc;
+    
+    @Column(name="ALQ_FECHA_VENC_AVAL")
+    private Date fechaVencimientoAvalBc;
+    
+	@Column(name="ALQ_MESES_AVAL")
+    private Integer mesesAval;
+    
 	@Version   
 	private Long version;
 
@@ -1312,6 +1328,46 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setTipoGrupoImpuesto(DDGrupoImpuesto tipoGrupoImpuesto) {
 		this.tipoGrupoImpuesto = tipoGrupoImpuesto;
+	}
+
+	public Boolean getScoringBc() {
+		return scoringBc;
+	}
+
+	public void setScoringBc(Boolean scoringBc) {
+		this.scoringBc = scoringBc;
+	}
+
+	public Boolean getAvalBc() {
+		return avalBc;
+	}
+
+	public void setAvalBc(Boolean avalBc) {
+		this.avalBc = avalBc;
+	}
+
+	public Boolean getSeguroRentasBc() {
+		return seguroRentasBc;
+	}
+
+	public void setSeguroRentasBc(Boolean seguroRentasBc) {
+		this.seguroRentasBc = seguroRentasBc;
+	}
+
+	public Date getFechaVencimientoAvalBc() {
+		return fechaVencimientoAvalBc;
+	}
+
+	public void setFechaVencimientoAvalBc(Date fechaVencimientoAvalBc) {
+		this.fechaVencimientoAvalBc = fechaVencimientoAvalBc;
+	}
+
+	public Integer getMesesAval() {
+		return mesesAval;
+	}
+
+	public void setMesesAval(Integer mesesAval) {
+		this.mesesAval = mesesAval;
 	}
 
 }

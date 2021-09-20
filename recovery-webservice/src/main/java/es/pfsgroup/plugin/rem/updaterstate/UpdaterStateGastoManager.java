@@ -241,7 +241,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 								error = messageServices.getMessage(VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO);
 								return error;
 							}
-						}
+						}					
+					}else if (DDCartera.CODIGO_CARTERA_BFA.equals(codigoCartera)) {
+						//BFA no necesita CCC ni CPP para poderse autorizar
+						return error;
 					}else{
 						for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
@@ -250,17 +253,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							}
 						}
 					}
-				}else if (DDCartera.CODIGO_CARTERA_BFA.equals(codigoCartera)) {
-					//BFA no necesita CCC ni CPP para poderse autorizar
-					return error;
-				}else{
-					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
-							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
-							return error;
-						}
-					}
-				}
 				}
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);

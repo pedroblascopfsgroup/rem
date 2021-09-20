@@ -13303,6 +13303,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		genericDao.update(ExpedienteComercial.class, expediente);
 	}
 
+	@Override
 	@Transactional(readOnly = false)
 	public void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea) throws IllegalArgumentException, IllegalAccessException {
 		List<String> camposGuardar = ValorTareaBC.getCampoByTarea(codigoTarea);
@@ -13359,6 +13360,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto = new DtoScreening();
 			} else if(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)) {
 				dto = new DtoScreening();
+			}else if(ComercialUserAssigantionService.CODIGO_T015_ELEVAR_SANCION.equals(codigoTarea)) {
+				dto = new DtoAccionAprobacionCaixa();
 			}
 			if(valores != null) {
 				for (ValorTareaBC valorTareaBC : valores) {

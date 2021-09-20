@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200322
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20210917
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14586
+--## INCIDENCIA_LINK=HREOS-15227
 --## PRODUCTO=SI
 --##
 --## Finalidad: 
@@ -31,8 +31,8 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_DECISION = ''valores[''''T015_AceptacionCliente''''][''''aceptacionContraoferta''''] == ''''02''''   ? ''''No'''' : checkBankia() ? ''''SiScoring'''' :tipoTratamientoAlquiler()  '',
-	USUARIOMODIFICAR = ''HREOS-14586'', 
+	SET TAP_SCRIPT_DECISION = ''valores[''''T015_AceptacionCliente''''][''''aceptacionContraoferta''''] == ''''02''''   ? ''''No'''' : checkBankia() ? ''''SiNnguna'''' :tipoTratamientoAlquiler()  '',
+	USUARIOMODIFICAR = ''HREOS-15227'', 
 	FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_CODIGO = ''T015_AceptacionCliente''';
 

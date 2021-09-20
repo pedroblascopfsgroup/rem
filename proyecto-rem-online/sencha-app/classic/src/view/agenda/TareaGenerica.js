@@ -2321,6 +2321,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var resolucionOferta = me.down('[name=resolucionOferta]');
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	var importeContraoferta = me.down('[name=importeContraoferta]');
+    	var observacionesBC = me.down('[name=observacionesBC]');
 
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
@@ -2329,92 +2330,118 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.ocultaryHacerNoObligatorio(me.down('[name=comite]'));
 			me.bloquearCampo(me.down('[name=fechaElevacion]'));
-			var fecha = new Date()
+			var fecha = new Date();
 			me.down('[name=fechaElevacion]').setValue(fecha);
 			me.deshabilitarCampo(importeContraoferta);
 			me.ocultaryHacerNoObligatorio(me.down('[name=refCircuitoCliente]'));
+			me.bloquearObligatorio(resolucionOferta);
+			me.bloquearCampo(observacionesBC);
+			var idTarea = me.idTarea; 
+				
+			var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaElevarSancion');
+			Ext.Ajax.request({
+				url: url,
+				params: {idTarea : idTarea},
+			    success: function(response, opts) {
+			    	var data = Ext.decode(response.responseText);
+			    	var dto = data.data;
+			    	
+			    	if(!Ext.isEmpty(dto)){			    		
+			    		observacionesBC.setValue(dto.observacionesBC);
+			    		resolucionOferta.setValue(dto.comboResolucion);
+			    		if(dto.comboResolucion == '03'){
+			    			me.habilitarCampo(importeContraoferta);
+			    			me.campoObligatorio(importeContraoferta);
+			    			importeContraoferta.allowBlank = fals
+			    		}
+			    	}
+			    }
+			});
 			
 		}else{
 			me.ocultaryHacerNoObligatorio(importeContraoferta);
+			me.ocultaryHacerNoObligatorio(observacionesBC);
+			
+			var resolucionOferta = resolucionOferta.getStore();
+	    	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
+				var data = store.getData().items; 
+				if(CONST.CARTERA['BANKIA'] != codigoCartera){
+					var indexContraoferta;
+					for( var i = 0 ; i < data.length; i++) { 
+						if(data[i].getData().codigo == '03'){  
+							indexContraoferta = i; 
+							break;
+						}
+					}
+					store.splice(indexContraoferta, 1);
+				}
+			});
+			
+			me.down('[name=refCircuitoCliente]').maxLength=20;
+			
+			var storeComite = Ext.create('Ext.data.Store', {
+			     model:Ext.create('HreRem.model.ComiteAlquilerModel'),
+			     proxy: {
+			         type: 'uxproxy',
+			         remoteUrl: 'generic/getComitesAlquilerByCartera',
+			         extraParams: {idActivo: idActivo},
+			         reader: {
+			             type: 'json',
+			             rootProperty: 'data'
+			         }
+			     },
+			     autoLoad: false
+			 });
+			me.down('[name=comite]').setStore(storeComite);
+			
+			storeComite.load();
+				
+	    	me.down('[name=resolucionOferta]').addListener('change', function(){
+	    		var resolucionOferta = me.down('[name=resolucionOferta]');
+
+	    		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
+
+	    			if(CONST.CARTERA['BANKIA'] != codigoCartera){
+						me.habilitarCampo(me.down('[name=comite]'));
+		    			me.campoObligatorio(me.down('[name=comite]'));
+	    			}else{
+	    				if(resolucionOferta.value == '03'){
+	    					me.habilitarCampo(importeContraoferta);
+	    				}else{
+	    					me.deshabilitarCampo(importeContraoferta);
+	    				}
+	    			}
+	    			
+	    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+	    			me.habilitarCampo(me.down('[name=fechaElevacion]'));
+	    			
+	    			me.campoNoObligatorio(me.down('[name=motivoAnulacion]'));
+	    			me.campoObligatorio(me.down('[name=fechaElevacion]'));
+	    			me.setFechaActual(me.down('[name=fechaElevacion]'));
+	    			
+	    		}else{
+	    			
+	    			me.down('[name=motivoAnulacion]').noObligatorio=false;
+	    			me.down('[name=fechaElevacion]').noObligatorio=true;
+	    			
+	    			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+	            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+	            	me.deshabilitarCampo(me.down('[name=comite]'));
+	            	
+	            	me.borrarCampo(me.down('[name=comite]'));
+	            	me.borrarCampo(me.down('[name=fechaElevacion]'));
+	            	
+	            	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
+	            	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+	            	
+	            	me.deshabilitarCampo(importeContraoferta);
+	    			
+	    		}
+	    	});
 		}
 		
 
-    	var resolucionOferta = resolucionOferta.getStore();
-    	resolucionOferta.addListener('load', function(store, records, successful, operation, eOpts){
-			var data = store.getData().items; 
-			if(CONST.CARTERA['BANKIA'] != codigoCartera){
-				var indexContraoferta;
-				for( var i = 0 ; i < data.length; i++) { 
-					if(data[i].getData().codigo == '03'){  
-						indexContraoferta = i; 
-						break;
-					}
-				}
-				store.splice(indexContraoferta, 1);
-			}
-		});
-		
-		me.down('[name=refCircuitoCliente]').maxLength=20;
-		
-		var storeComite = Ext.create('Ext.data.Store', {
-		     model:Ext.create('HreRem.model.ComiteAlquilerModel'),
-		     proxy: {
-		         type: 'uxproxy',
-		         remoteUrl: 'generic/getComitesAlquilerByCartera',
-		         extraParams: {idActivo: idActivo},
-		         reader: {
-		             type: 'json',
-		             rootProperty: 'data'
-		         }
-		     },
-		     autoLoad: false
-		 });
-		me.down('[name=comite]').setStore(storeComite);
-		
-		storeComite.load();
-			
-    	me.down('[name=resolucionOferta]').addListener('change', function(){
-    		var resolucionOferta = me.down('[name=resolucionOferta]');
-
-    		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
-
-    			if(CONST.CARTERA['BANKIA'] != codigoCartera){
-					me.habilitarCampo(me.down('[name=comite]'));
-	    			me.campoObligatorio(me.down('[name=comite]'));
-    			}else{
-    				if(resolucionOferta.value == '03'){
-    					me.habilitarCampo(importeContraoferta);
-    				}else{
-    					me.deshabilitarCampo(importeContraoferta);
-    				}
-    			}
-    			
-    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
-    			me.habilitarCampo(me.down('[name=fechaElevacion]'));
-    			
-    			me.campoNoObligatorio(me.down('[name=motivoAnulacion]'));
-    			me.campoObligatorio(me.down('[name=fechaElevacion]'));
-    			me.setFechaActual(me.down('[name=fechaElevacion]'));
-    			
-    		}else{
-    			
-    			me.down('[name=motivoAnulacion]').noObligatorio=false;
-    			me.down('[name=fechaElevacion]').noObligatorio=true;
-    			
-    			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
-            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
-            	me.deshabilitarCampo(me.down('[name=comite]'));
-            	
-            	me.borrarCampo(me.down('[name=comite]'));
-            	me.borrarCampo(me.down('[name=fechaElevacion]'));
-            	
-            	me.campoObligatorio(me.down('[name=motivoAnulacion]'));
-            	me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
-            	
-            	me.deshabilitarCampo(importeContraoferta);
-    			
-    		}
-    	});
+    	
     	
     },
     
@@ -3720,5 +3747,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var me = this;
         campo.setHidden(true);
         campo.allowBlank = true;
+    },
+    
+    bloquearObligatorio: function(campo){
+    	var me = this;
+        campo.setReadOnly(true);
+        campo.allowBlank = false;
     }
 });

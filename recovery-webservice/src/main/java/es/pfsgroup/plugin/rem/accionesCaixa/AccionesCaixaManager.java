@@ -1,11 +1,13 @@
 package es.pfsgroup.plugin.rem.accionesCaixa;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
@@ -56,6 +58,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private OfertaApi ofertaApi;
+    
+    @Autowired
+    private ActivoTareaExternaApi activoTareaExternaApi;
 
     @Override
     public String managerName() {
@@ -437,7 +442,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
-        adapter.save(createRequestAccionAprobacion(dto));
+    	this.createRequestAccionAprobacion(dto);
+    	TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+    	expedienteComercialManager.setValoresTEB(dto, tarea, dto.getCodTarea());
     }
 
     @Override

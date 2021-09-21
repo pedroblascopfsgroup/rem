@@ -175,8 +175,8 @@ public class ClienteDto implements Serializable{
 	private String codMunicipioNacimientoRepresentante;
 	private Date fechaNacimiento;
 	private Date fechaNacimientoRepresentante;	
-	private Boolean prp;
-	private Boolean prpRepresentante;
+	private Boolean esPRP;
+	private Boolean esPRPRepresentante;
 	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimiento no existe")
 	private String codProvinciaNacimiento;
 	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
@@ -485,17 +485,17 @@ public class ClienteDto implements Serializable{
 	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
 		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
 	}
-	public Boolean getPrp() {
-		return prp;
+	public Boolean getEsPRP() {
+		return esPRP;
 	}
-	public void setPrp(Boolean prp) {
-		this.prp = prp;
+	public void setEsPRP(Boolean esPRP) {
+		this.esPRP = esPRP;
 	}
-	public Boolean getPrpRepresentante() {
-		return prpRepresentante;
+	public Boolean getEsPRPRepresentante() {
+		return esPRPRepresentante;
 	}
-	public void setPrpRepresentante(Boolean prpRepresentante) {
-		this.prpRepresentante = prpRepresentante;
+	public void setEsPRPRepresentante(Boolean esPRPRepresentante) {
+		this.esPRPRepresentante = esPRPRepresentante;
 	}
 	public String getCodProvinciaNacimiento() {
 		return codProvinciaNacimiento;

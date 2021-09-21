@@ -77,7 +77,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	TIPOS_EXPEDIENTE_COMERCIAL: {
 		VENTA: '01',
-		ALQUILER: '02'
+		ALQUILER: '02',
+		ALQUILER_NO_COMERCIAL: '03'
 	},
 
 	TIPOS_TRABAJO: {
@@ -1030,5 +1031,17 @@ Ext.define('HreRem.ux.util.Constants', {
 	 },
 	TIPO_GASTO: {
 	    SERVICIOS_PROFESIONALES_INDEPE: '11'
+	},
+	 
+	 TIPO_OFERTA_ALQUILER_NO_COMERCIAL:{
+		CODIGO_RENOVACION : 'REN',
+		CODIGO_SUBROGACION : 'SUB',
+		CODIGO_ALQUILER_SOCIAL : 'ALS'
+	 },
+	 
+	 TIPO_RESOLUCION_DUDAS: {
+		APRUEBA: '01',
+		RECHAZA: '02',
+		DUDAS: '03'
 	}
 });

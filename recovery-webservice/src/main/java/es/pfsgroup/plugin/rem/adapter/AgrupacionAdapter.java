@@ -2685,6 +2685,22 @@ public class AgrupacionAdapter {
 				clienteComercial.setMunicipio(municipioNuevo);
 			}
 			
+			if (dto.getCodigoPostalNacimiento() != null) {
+				clienteComercial.setCodigoPostal(dto.getCodigoPostalNacimiento());
+			}
+			
+			if (dto.getEmailNacimiento() != null) {
+				clienteComercial.setEmail(dto.getEmailNacimiento());
+			}
+			
+			if (dto.getTelefonoNacimiento1() != null) {
+				clienteComercial.setTelefono1(dto.getTelefonoNacimiento1());
+			}
+			
+			if (dto.getTelefonoNacimiento2() != null) {
+				clienteComercial.setTelefono2(dto.getTelefonoNacimiento2());
+			}
+			
 			clienteComercial.setDireccion(dto.getDireccion());
 			if(clienteComercial.getInfoAdicionalPersona() != null) {
 				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());

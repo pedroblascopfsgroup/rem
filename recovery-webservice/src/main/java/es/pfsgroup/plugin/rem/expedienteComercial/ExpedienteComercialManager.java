@@ -13845,6 +13845,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			setEstadoScoringAlquilerCodigoBC(scoring != null && scoring.getResultadoScoringServicer() != null ? scoring.getResultadoScoringServicer().getCodigo() : null);
 		}};
 	}
+	
+	@Override
+	public Formalizacion formalizacionPorExpedienteComercial(Long idExpediente) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+
+		return genericDao.get(Formalizacion.class, filtro);
+	}
 
 	private DtoGarantiasExpediente expedienteToDtoGarantias(ExpedienteComercial expediente) {
 		DtoGarantiasExpediente dto = new DtoGarantiasExpediente();

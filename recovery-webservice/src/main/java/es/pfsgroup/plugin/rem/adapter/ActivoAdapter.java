@@ -2300,7 +2300,7 @@ public class ActivoAdapter {
 						&& !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 				}
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+				if (!activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) && !activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucionAlquiler", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
@@ -2374,7 +2374,7 @@ public class ActivoAdapter {
 						if(isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
-							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+							if (!activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) && !activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())) {
 								dtoTramite.setOcultarBotonResolucion(false);
 							}
 						}
@@ -4071,7 +4071,7 @@ public class ActivoAdapter {
 				
 			Filter filtroNuevosCamposClc = null;
 			
-			if(dto.getFechaNacimientoConstitucion() != null) {
+			if(dto.getFechaNacimientoConstitucion() != null && !dto.getFechaNacimientoConstitucion().equals("")) {
 				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
 			}
 			
@@ -4111,12 +4111,27 @@ public class ActivoAdapter {
 				clienteComercial.setMunicipio(municipioNuevo);
 			}
 			
+			if (dto.getCodigoPostalNacimiento() != null) {
+				clienteComercial.setCodigoPostal(dto.getCodigoPostalNacimiento());
+			}
+			
+			if (dto.getEmailNacimiento() != null) {
+				clienteComercial.setEmail(dto.getEmailNacimiento());
+			}
+			
+			if (dto.getTelefonoNacimiento1() != null) {
+				clienteComercial.setTelefono1(dto.getTelefonoNacimiento1());
+			}
+			
+			if (dto.getTelefonoNacimiento2() != null) {
+				clienteComercial.setTelefono2(dto.getTelefonoNacimiento2());
+			}
+			
 			clienteComercial.setDireccion(dto.getDireccion());
 			
 			if(clienteComercial.getInfoAdicionalPersona() != null){
 				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
 			}
-			
 			
 			genericDao.save(InfoAdicionalPersona.class, iap);
 			

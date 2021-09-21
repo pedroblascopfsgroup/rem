@@ -25,6 +25,7 @@
 			</action>
 		</event>
 		<transition to="T018_AnalisisBc" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
 	<state name="T018_AnalisisBc">
@@ -47,6 +48,7 @@
 			</action>
 		</event>
 		<transition to="T018_AnalisisBcDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_AnalisisBcDecision" expression="#{T018_AnalisisBcDecision}">
         <transition to="Fin" name="rechaza"></transition>
@@ -77,6 +79,7 @@
 			</action>
 		</event>
 		<transition to="T018_ScoringDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_ScoringDecision" expression="#{T018_ScoringDecision}">
         <transition to="T018_PbcAlquiler" name="resultadoOk"></transition>
@@ -103,6 +106,7 @@
 			</action>
 		</event>
 		<transition to="T018_PbcAlquilerDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_PbcAlquilerDecision" expression="#{T018_PbcAlquilerDecision}">
 		<transition to="Fin" name="rechaza"></transition>
@@ -131,6 +135,7 @@
 			</action>
 		</event>
 		<transition to="T018_ScoringBcDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_ScoringBcDecision" expression="#{T018_ScoringBcDecision}">
 		<transition to="Fin" name="rechaza"></transition>
@@ -158,6 +163,7 @@
 			</action>
 		</event>
 		<transition to="T018_ResolucionComite" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
    
    <state name="T018_ResolucionComite">
@@ -180,6 +186,7 @@
 			</action>
 		</event>
 		<transition to="T018_ResolucionComiteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_ResolucionComiteDecision" expression="#{T018_ResolucionComiteDecision}">
 		<transition to="Fin" name="rechaza"></transition>
@@ -206,6 +213,7 @@
 			</action>
 		</event>
 		<transition to="T018_TrasladarOfertaCliente" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
 	<state name="T018_PteClRod">
@@ -228,6 +236,7 @@
 			</action>
 		</event>
 		<transition to="T018_PteClRodDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_PteClRodDecision" expression="#{T018_PteClRodDecision}">
 		<transition to="Fin" name="rechaza"></transition>
@@ -254,6 +263,7 @@
 			</action>
 		</event>
 		<transition to="T018_TrasladarOfertaClienteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_TrasladarOfertaClienteDecision" expression="#{T018_TrasladarOfertaClienteDecision}">
 		<transition to="T018_RevisionBcYCondiciones" name="rechaza"></transition>
@@ -280,6 +290,7 @@
 			</action>
 		</event>
 		<transition to="T018_RevisionBcYCondicionesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_RevisionBcYCondicionesDecision" expression="#{T018_RevisionBcYCondicionesDecision}">
 		<transition to="Fin" name="rechaza"></transition>
@@ -307,6 +318,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	
 	<end-state name="Fin">

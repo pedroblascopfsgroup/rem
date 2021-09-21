@@ -968,4 +968,26 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 
 		return tareaExterna;
 	}
+	
+	@Override 
+	public boolean isTramiteAlquiler(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
+	
+	@Override 
+	public boolean isTramiteAlquilerNoComercial(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
 }

@@ -411,8 +411,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			
 		}
 		if(iap != null) {
-			if(clienteDto.getPrp() != null) {
-				iap.setPrp(clienteDto.getPrp());
+			if(clienteDto.getEsPRP() != null) {
+				iap.setPrp(clienteDto.getEsPRP());
 			}
 			cliente.setInfoAdicionalPersona(iap);	
 			genericDao.save(InfoAdicionalPersona.class, iap);
@@ -433,8 +433,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		}
 		
 		if(iapRep != null) {
-			if(clienteDto.getPrpRepresentante() != null) {
-				iapRep.setPrp(clienteDto.getPrp());
+			if(clienteDto.getEsPRPRepresentante() != null) {
+				iapRep.setPrp(clienteDto.getEsPRPRepresentante());
 			}
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
@@ -766,8 +766,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		}
 			
 		
-		if(clienteDto.getPrp() != null) {
-			iap.setPrp(clienteDto.getPrp());
+		if(clienteDto.getEsPRP() != null) {
+			iap.setPrp(clienteDto.getEsPRP());
 		}
 		
 		cliente.setInfoAdicionalPersona(iap);	
@@ -786,8 +786,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 		
-		if(clienteDto.getPrpRepresentante() != null) {
-			iapRep.setPrp(clienteDto.getPrp());
+		if(clienteDto.getEsPRPRepresentante() != null) {
+			iapRep.setPrp(clienteDto.getEsPRPRepresentante());
 		}
 		
 		cliente.setInfoAdicionalPersonaRep(iapRep);	

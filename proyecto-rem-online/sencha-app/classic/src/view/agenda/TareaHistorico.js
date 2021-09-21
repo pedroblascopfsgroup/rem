@@ -717,6 +717,18 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 					    		}
 					    	}
 					    },
+						T017_T017_DocsPosVentaValidacion: function() {
+							var me = this;
+							var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+							
+							var comboVentaSupensiva = me.down('[name=comboVentaSupensiva]');
+							
+							if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+								me.desocultarCampo(comboVentaSupensiva);
+							}else{
+								me.ocultarCampo(comboVentaSupensiva);
+							}
+						},
 
 					ocultarCampo: function(campo) {
 				        var me = this;

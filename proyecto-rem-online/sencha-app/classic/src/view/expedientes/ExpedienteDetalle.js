@@ -120,9 +120,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
 	        if (me.lookupController().getViewModel().get('expediente').get('esBankia')) {
 	        	var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
-	        	if (dataExpediente.esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == dataExpediente.tipoExpedienteCodigo/*&& $AU.userIsRol(CONST.PERFILES['HAYASUPER'])*/) {
+	        	var tipoExpediente = dataExpediente.tipoExpedienteCodigo;
+	        	if (dataExpediente.esBankia && (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpediente || CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'] == tipoExpediente)) {
 	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'garantiasexpediente', ocultarBotonesEdicion: false})}, ['TAB_GARANTIAS_EXPEDIENTE']); //TAB_OFERTA_EXPEDIENTES
-	        		//items.push({xtype: 'garantiasexpediente'});
 	        	}
 	        	
 	        }

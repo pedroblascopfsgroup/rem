@@ -195,7 +195,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		}
 		return valorAprobacionRevisionBcYCondiciones;
 	}
-	
+		
 	private enum T018_AnalisisBcDecisiones{
 		renovacionNovacion, subrogacion, alquilerSocialNoVulnerable, alquilerSocialSiVulnerableNoAnalisis, alquilerSocialSiVulnerableSiAnalisis;
 	}

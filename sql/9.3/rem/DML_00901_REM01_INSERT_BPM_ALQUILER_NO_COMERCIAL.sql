@@ -1931,40 +1931,7 @@ begin
   TFI_MAP(11).tfi_field_row(2).tfi_field('USUARIOBORRAR') := NULL;
   TFI_MAP(11).tfi_field_row(2).tfi_field('FECHABORRAR') := NULL;
   TFI_MAP(11).tfi_field_row(2).tfi_field('BORRADO') := 0;
-  
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_TIPO') := 'textinf';
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'tipoArras';
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Tipo de arras';
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('VERSION') := 1;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('USUARIOCREAR') := USUARIOCREAR;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('FECHACREAR') := SYSDATE;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('USUARIOMODIFICAR') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('FECHAMODIFICAR') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('USUARIOBORRAR') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('FECHABORRAR') := NULL;
-  TFI_MAP(11).tfi_field_row(3).tfi_field('BORRADO') := 0;
-  
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_ORDEN') := 4;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_TIPO') := 'combobox';
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_NOMBRE') := 'motivoAnulacion';
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Motivo anulación';
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_VALOR_INICIAL') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('TFI_BUSINESS_OPERATION') := 'DDMotivoAnulacionExpediente';
-  TFI_MAP(11).tfi_field_row(4).tfi_field('VERSION') := 1;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('USUARIOCREAR') := USUARIOCREAR;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('FECHACREAR') := SYSDATE;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('USUARIOMODIFICAR') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('FECHAMODIFICAR') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('USUARIOBORRAR') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('FECHABORRAR') := NULL;
-  TFI_MAP(11).tfi_field_row(4).tfi_field('BORRADO') := 0;
+   
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 ---------------------------CREACION DEL BPM---------------------------------

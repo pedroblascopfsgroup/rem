@@ -38,6 +38,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		var bloqueado;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		var tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
 		var isBK = me.lookupController().getViewModel().get('expediente').get('esBankia');
 		
     	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
@@ -56,7 +57,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
 
 		// HREOS-4366 - HREOS 4374
-		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){				
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler || me.getViewModel().get('expediente.tipoExpedienteCodigo') ===  tipoExpedienteAlquilerNoComercial){				
 			var tabReserva = me.down('reservaexpediente'),
 			tabFormalizacionVenta = me.down('formalizacionexpediente');
 

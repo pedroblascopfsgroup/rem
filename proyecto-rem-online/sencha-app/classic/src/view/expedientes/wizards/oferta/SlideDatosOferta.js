@@ -614,7 +614,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind:{
 									value: '{oferta.telefonoNacimiento1}'
 								},
-								name: 'telefonoNacimiento1',
+								name: 'telefonoNacimiento1'
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.telefono2'),
@@ -622,7 +622,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind:{
 									value: '{oferta.telefonoNacimiento2}'
 								},
-								name: 'telefonoNacimiento2',
+								name: 'telefonoNacimiento2'
 							},
 							{
 								xtype: 'comboboxfieldbase',

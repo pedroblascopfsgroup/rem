@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210910
+--## FECHA_CREACION=20210921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15137
+--## INCIDENCIA_LINK=HREOS-15254
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##	    0.4 Se añade el FLAG EN REM en la insercción de la TMP_AGR_DESTINO_COMERCIAL - HREOS-14837
 --##	    0.4 Se añade que cuando no viene DESTINO_COMERCIAL sea VR o su destino actual - HREOS-14649
 --##	    0.5 Los flags de publicación Caixa siempre se actualizan, también sacamos de la ejecución del SP de publicaciones las agrupaciones restringidas OBREM que estén incluida en otras agrupaciones restringidas - HREOS-15137
+--##	    0.6 Correciones perímetros- HREOS-15137
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

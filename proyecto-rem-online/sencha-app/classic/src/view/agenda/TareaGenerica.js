@@ -2999,9 +2999,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var fechaIngreso = me.down('[name=fechaIngreso]');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+		var comboVentaSupensiva = me.down('[name=comboVentaSupensiva]');
+		comboVentaSupensiva.setValue('02');
+		me.ocultarCampo(me.down('[name=comboVentaSupensiva]'));
+		me.deshabilitarCampo(me.down('[name=comboVentaSupensiva]'));
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
+			me.down('[name=comboVentaSupensiva]').setDisabled(false);
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
+			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
@@ -3012,6 +3019,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}else if(CONST.CARTERA['CAJAMAR'] == codigoCartera) {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] == codigoSubcartera) {
+			me.down('[name=comboVentaSupensiva]').setDisabled(false);
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
+			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
@@ -3735,5 +3745,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var me = this;
         campo.setReadOnly(true);
         campo.allowBlank = false;
+    },
+    editableyNoObligatorio: function(campo){
+    	var me = this;
+        campo.setReadOnly(false);
+        campo.allowBlank = true;
     }
 });

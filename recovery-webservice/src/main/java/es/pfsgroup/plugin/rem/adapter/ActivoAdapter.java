@@ -4050,7 +4050,7 @@ public class ActivoAdapter {
 				
 			Filter filtroNuevosCamposClc = null;
 			
-			if(dto.getFechaNacimientoConstitucion() != null) {
+			if(dto.getFechaNacimientoConstitucion() != null && !dto.getFechaNacimientoConstitucion().equals("")) {
 				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
 			}
 			

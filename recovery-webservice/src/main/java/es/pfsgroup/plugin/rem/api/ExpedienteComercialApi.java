@@ -1372,4 +1372,11 @@ public interface ExpedienteComercialApi {
 			throws IllegalArgumentException, IllegalAccessException;
 	
 	boolean saveGarantiasExpediente(DtoGarantiasExpediente dto, Long idExpediente);
+	/**
+	 * Método que obtiene la Formalizacion relacionado con un determinado expediente
+	 *
+	 * @param idExpediente
+	 * @return
+	 */
+	Formalizacion formalizacionPorExpedienteComercial(Long idExpediente);
 }

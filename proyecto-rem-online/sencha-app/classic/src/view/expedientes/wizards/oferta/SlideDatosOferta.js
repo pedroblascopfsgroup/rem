@@ -508,7 +508,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
 								reference: 'provinciaNacimientoCompradorComboRef',
 								name: 'provinciaNacimiento',
-								allowBlank: false,
+								allowBlank: !isBk,
 								chainedStore: 'comboMunicipioNacimientoOfr',
 								chainedReference: 'localidadNacimientoCompradorCodigoRef',
 								hidden: !isBk,

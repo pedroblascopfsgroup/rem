@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -61,6 +62,7 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
 	private static final String FECHA_INGRESO = "fechaIngreso";
 	private static final String CHECKBOX_VENTA_DIRECTA = "checkboxVentaDirecta";
+	private static final String COMBO_VENTA_SUPENSIVA = "comboVentaSupensiva";
 	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
 	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
 
@@ -92,6 +94,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 				Activo activo = oferta.getActivoPrincipal();
 				activo.setVentaDirectaBankia("true".equals(valor.getValor()) ? true : false);
 				genericDao.save(Activo.class, activo);
+			}
+			
+			if (COMBO_VENTA_SUPENSIVA.equals(valor.getNombre()) && valor.getValor() != null) {
+				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				Formalizacion formalizacion = expedienteComercialApi.formalizacionPorExpedienteComercial(expediente.getId());
+				formalizacion.setVentaCondicionSupensiva("true".equals(valor.getValor()) ? true : false);
+				genericDao.save(Formalizacion.class, formalizacion);
 			}
 		}
 

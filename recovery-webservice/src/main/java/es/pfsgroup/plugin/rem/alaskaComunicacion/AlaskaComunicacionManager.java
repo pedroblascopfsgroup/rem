@@ -72,10 +72,10 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 		Map<String, String> headers = new HashMap<String, String>();
         headers.put("Content-Type", "application/json");
 
-        ArrayList<Map<String, Object>> listaBien = new ArrayList<Map<String, Object>>();
+        Map<String, Object> listaBien = bienInfo(activo);
 
         String json = null;
-        
+
         try {
            
             model.put("bienes", listaBien);
@@ -102,22 +102,23 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
     }
     
-    private ArrayList<Map<String, Object>> bienInfo(Activo idActivo) {
-
-        Filter activoIdFilter = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-		Activo activo = genericDao.get(Activo.class, activoIdFilter);
+    private Map<String, Object> bienInfo(Activo activo) {
+    	
+        Filter cartera = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"cartera.codigo", activo.getCartera().getCodigo());
+        Filter subcartera = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"subcartera.codigo", activo.getSubcartera().getCodigo());
+        
         ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
         ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
         ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
         ActivoMaestroActivos activoMaestroActivos = genericDao.get(ActivoMaestroActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
         ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
+        CarteraMaestro carteraMaestro = genericDao.get(CarteraMaestro.class, cartera, subcartera);
 
         ArrayList<Map<String, Object>> listaTasaciones = new ArrayList<Map<String, Object>>();
         ArrayList<Map<String, Object>> listaValoraciones = new ArrayList<Map<String, Object>>();
         ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
-        ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
-        Map<String, Object> map = null;
+        Map<String, Object> map = new HashMap<String, Object>();;
 
         listaCargas = this.cargasInfo(activo);
         listaTasaciones = this.tasacionesInfo(activo);
@@ -151,7 +152,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("numExpediente", null);
         }
         map.put("numActivo", activo.getNumActivo());
-        map.put("carteraRem", activo.getCartera().getCodigo());
+        if (!Checks.esNulo(carteraMaestro)) {
+        	map.put("carteraRem", carteraMaestro.getDeCartera());
+        } else {        	
+        	map.put("carteraRem", "");
+        }
         map.put("subcarteraRem", activo.getSubcartera().getCodigo());
         if(activo.getSubtipoActivo() != null){
         	map.put("subtipoActivo", activo.getSubtipoActivo().getCodigo());
@@ -272,7 +277,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("notas1", "");
         map.put("notas2", "");
 
-        return listaRespuesta;
+        return map;
 
     }
 

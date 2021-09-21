@@ -90,6 +90,18 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name:'provinciaNacimientoDescripcion'
+            },
+            {
+            	name: 'codigoPostalNacimiento'
+            },
+            {
+            	name: 'emailNacimiento'
+            },
+            {
+            	name: 'telefonoNacimiento1'
+            },
+            {
+            	name: 'telefonoNacimiento2'
             }
             
     ],

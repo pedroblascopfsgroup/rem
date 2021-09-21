@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-
 public interface TramiteAlquilerNoComercialApi {
 
 	String aprobarAnalisisBc(Long idTramite);
@@ -10,7 +8,6 @@ public interface TramiteAlquilerNoComercialApi {
 
 	String aprobarScoringBc(Long idTramite);
 	
-	String aprobarRevisionBcYCondiciones(Long idTramite);	
-	
+	String aprobarRevisionBcYCondiciones(Long idTramite);
 }
 

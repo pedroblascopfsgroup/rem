@@ -768,8 +768,7 @@
 				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.validarMesesImporteDeposito(tareaExterna);
 			}
-			
-			
+	
   			 ]]></value>
   		</list>
   	</property>

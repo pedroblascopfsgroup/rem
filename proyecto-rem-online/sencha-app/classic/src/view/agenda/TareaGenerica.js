@@ -3686,6 +3686,112 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         })
 	},
 	
+	
+	T018_AnalisisBcValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
+		var comboIsVulnerable = me.down('[name=isVulnerable]');
+		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
+		
+		
+		me.deshabilitarCampo(comboTipoOferta);
+		me.deshabilitarCampo(comboIsVulnerable);
+		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
+
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
+				me.habilitarCampo(comboTipoOferta);
+				me.campoObligatorio(comboTipoOferta);
+
+			}else{
+				me.deshabilitarCampo(comboTipoOferta);
+				me.deshabilitarCampo(comboIsVulnerable);
+				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
+				me.borrarCampo(comboTipoOferta);
+				me.borrarCampo(comboIsVulnerable);
+				me.borrarCampo(comboIsVulnerableAnalisisT);
+			}
+
+        });
+		
+		comboTipoOferta.addListener('change', function(combo) {
+			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue()){
+				me.habilitarCampo(comboIsVulnerable);
+				me.campoObligatorio(comboIsVulnerable);
+			}else{
+				me.deshabilitarCampo(comboIsVulnerable);
+				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
+				me.borrarCampo(comboIsVulnerable);
+				me.borrarCampo(comboIsVulnerableAnalisisT); 
+			}
+
+        }); 
+		
+		comboIsVulnerable.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['SI'] === comboIsVulnerable.getValue()){
+				me.habilitarCampo(comboIsVulnerableAnalisisT);
+				me.campoObligatorio(comboIsVulnerableAnalisisT);
+			}else{
+				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
+				me.borrarCampo(comboIsVulnerableAnalisisT);
+			}
+
+        });
+	},
+	
+	T018_ScoringValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
+	
+		me.deshabilitarCampo(comboMotivoAnulacion);
+
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.TIPO_RESOLUCION_DUDAS['APRUEBA'] !== comboRespuesta.getValue()){
+				me.habilitarCampo(comboMotivoAnulacion);
+				me.campoObligatorio(comboMotivoAnulacion);
+
+			}else{
+				me.deshabilitarCampo(comboMotivoAnulacion);
+			}
+        });
+	},
+	
+	T018_ScoringBcValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
+	
+		me.deshabilitarCampo(comboMotivoAnulacion);
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['NO'] === comboRespuesta.getValue()){
+				me.habilitarCampo(comboMotivoAnulacion);
+				me.campoObligatorio(comboMotivoAnulacion);
+
+			}else{
+				me.deshabilitarCampo(comboMotivoAnulacion);
+			}
+        });
+	},
+	
+	T018_ResolucionComiteValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
+	
+		me.deshabilitarCampo(comboMotivoAnulacion);
+		comboRespuesta.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['NO'] === comboRespuesta.getValue()){
+				me.habilitarCampo(comboMotivoAnulacion);
+				me.campoObligatorio(comboMotivoAnulacion);
+
+			}else{
+				me.deshabilitarCampo(comboMotivoAnulacion);
+			}
+        });
+	},
+	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

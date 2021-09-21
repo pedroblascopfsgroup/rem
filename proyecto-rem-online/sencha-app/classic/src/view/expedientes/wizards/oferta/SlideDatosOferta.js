@@ -480,7 +480,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							},
 							{ 
 					        	xtype:'datefieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.fechaNacimientoConstitucion'),
+					        	fieldLabel:  HreRem.i18n('fieldlabel.fecha.nacimiento.constitucion'),
 					        	name: 'fechaNacimientoConstitucion',
 					        	reference: 'fechaNacimientoConstitucion',
 					        	allowBlank: !isBk,
@@ -588,6 +588,41 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								name: 'direccionTodos',
 								reference: 'direccionTodos',
 								allowBlank: false
+							},
+			                {
+								fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+								bind:{
+									value: '{oferta.codigoPostalNacimiento}'
+								},
+								name: 'codigoPostalNacimiento',
+								vtype: 'codigoPostal',
+								maskRe: /^\d*$/, 
+			                	maxLength: 5		                	
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.email'),
+								reference: 'emailNacimiento',
+								bind:{
+									value: '{oferta.emailNacimiento}'
+								},
+								name: 'emailNacimiento',
+								vtype: 'email'
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.telefono1'),
+								reference: 'telefonoNacimiento1',
+								bind:{
+									value: '{oferta.telefonoNacimiento1}'
+								},
+								name: 'telefonoNacimiento1',
+							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.telefono2'),
+								reference: 'telefonoNacimiento2',
+								bind:{
+									value: '{oferta.telefonoNacimiento2}'
+								},
+								name: 'telefonoNacimiento2',
 							},
 							{
 								xtype: 'comboboxfieldbase',

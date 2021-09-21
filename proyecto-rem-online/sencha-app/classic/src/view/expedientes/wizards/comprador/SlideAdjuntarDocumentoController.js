@@ -771,8 +771,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            tipologivaVentaCod:bindRecord.tipologivaVentaCod,
 	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
 	            provinciaNacimiento:bindRecord.provinciaNacimiento,
-	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion
-	            
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion,
+	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
+	            emailNacimiento:bindRecord.emailNacimiento,
+	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -809,7 +812,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
 	            tipologivaVentaCod:bindRecord.tipologivaVentaCod,
 	            provinciaNacimiento:bindRecord.provinciaNacimiento,
-	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion,
+	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
+	            emailNacimiento:bindRecord.emailNacimiento,
+	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2
 			});
 		}
  

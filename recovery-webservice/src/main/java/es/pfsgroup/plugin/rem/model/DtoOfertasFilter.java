@@ -107,6 +107,10 @@ public class DtoOfertasFilter extends WebDto {
     private String tipologivaVentaCod;
     private String provinciaNacimiento;
     private String provinciaNacimientoDescripcion;
+    private String codigoPostalNacimiento;
+    private String emailNacimiento;
+    private String telefonoNacimiento1;
+    private String telefonoNacimiento2;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -604,7 +608,6 @@ public class DtoOfertasFilter extends WebDto {
 	public void setTipologivaVentaCod(String tipologivaVentaCod) {
 		this.tipologivaVentaCod = tipologivaVentaCod;
 	}
-
 	public String getProvinciaNacimiento() {
 		return provinciaNacimiento;
 	}
@@ -616,5 +619,30 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setProvinciaNacimientoDescripcion(String provinciaNacimientoDescripcion) {
 		this.provinciaNacimientoDescripcion = provinciaNacimientoDescripcion;
-	}	
+	}
+	public String getCodigoPostalNacimiento() {
+		return codigoPostalNacimiento;
+	}
+	public void setCodigoPostalNacimiento(String codigoPostalNacimiento) {
+		this.codigoPostalNacimiento = codigoPostalNacimiento;
+	}
+	public String getEmailNacimiento() {
+		return emailNacimiento;
+	}
+	public void setEmailNacimiento(String emailNacimiento) {
+		this.emailNacimiento = emailNacimiento;
+	}
+	public String getTelefonoNacimiento1() {
+		return telefonoNacimiento1;
+	}
+	public void setTelefonoNacimiento1(String telefonoNacimiento1) {
+		this.telefonoNacimiento1 = telefonoNacimiento1;
+	}
+	public String getTelefonoNacimiento2() {
+		return telefonoNacimiento2;
+	}
+	public void setTelefonoNacimiento2(String telefonoNacimiento2) {
+		this.telefonoNacimiento2 = telefonoNacimiento2;
+	}
+	
 }

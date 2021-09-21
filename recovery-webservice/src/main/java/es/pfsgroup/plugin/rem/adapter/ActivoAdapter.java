@@ -2285,7 +2285,7 @@ public class ActivoAdapter {
 						&& !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 				}
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+				if (!activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) && !activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucionAlquiler", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
@@ -2359,7 +2359,7 @@ public class ActivoAdapter {
 						if(isGestorBoarding && expedienteComercialNoAprobado) {
 							dtoTramite.setOcultarBotonResolucion(true);
 						} else {
-							if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+							if (!activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) && !activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())) {
 								dtoTramite.setOcultarBotonResolucion(false);
 							}
 						}

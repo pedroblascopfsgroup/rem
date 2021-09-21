@@ -330,5 +330,9 @@ public interface ActivoTramiteApi {
 	boolean isTramiteVentaApple(TipoProcedimiento procedimiento);
 
 	TareaExterna getTareaActivaByCodigoAndTramite(Long idTramite, String codigoTarea);
+
+	boolean isTramiteAlquilerNoComercial(TipoProcedimiento procedimiento);
+
+	boolean isTramiteAlquiler(TipoProcedimiento procedimiento);
 }
 

@@ -914,7 +914,7 @@ public class AgendaAdapter {
 			if (!Checks.estaVacio(tareas)) {
 				for (TareaExterna t : tareas) {
 					if (t != null) {
-						if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())){
+						if(activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) || activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())){
 							tareaActivoApi.saltoFinAlquileres(t.getId());
 						}else{
 							tareaActivoApi.saltoFin(t.getId());

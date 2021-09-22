@@ -70,22 +70,23 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				/* Falta respuesta de BC para decidir estados
-				if(DDResultadoScoring.RESULTADO_APROBADO.equals(valor.getValor())) {
+				if(DDSiNo.SI.equals(valor.getValor())) {
+					/* Falta respuesta de BC para decidir estados
+
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_PBC_ARRAS));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS));
+								*/
+
 				}else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING));
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
+					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+					ofertaApi.rechazarOferta(oferta);
 				}
-				*/
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 				expedienteComercial.setEstadoBc(estadoExpedienteBc);
 
 			}
 		}
-
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);				
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		

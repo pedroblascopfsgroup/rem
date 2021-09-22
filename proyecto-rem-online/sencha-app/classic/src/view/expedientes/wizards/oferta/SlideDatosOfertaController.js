@@ -169,6 +169,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 
             if(destinoComercialActivo === valueDestComercial 
             || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"] 
+            || (destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"]) 
             || (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){
             	if (me.view.up().lookupController().getViewModel().get('activo.isCarteraLiberbank') && valueDestComercial == "Venta"){
             		var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');

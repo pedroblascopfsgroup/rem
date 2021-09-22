@@ -110,7 +110,6 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
         ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
         ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
-        ActivoMaestroActivos activoMaestroActivos = genericDao.get(ActivoMaestroActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
         ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
         CarteraMaestro carteraMaestro = genericDao.get(CarteraMaestro.class, cartera, subcartera);
 
@@ -125,8 +124,8 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         listaValoraciones = this.valoracionesInfo(activo);
 
         map.put("cartera", "");
-        if(activoMaestroActivos != null) {
-        	map.put("idMaestroActivo", activoMaestroActivos.getId());
+        if(!Checks.esNulo(carteraMaestro)) {
+        	map.put("idMaestroActivo", carteraMaestro.getDeCartera());
         }
         map.put("expediente", "");
         map.put("idHaya", activo.getNumActivo());

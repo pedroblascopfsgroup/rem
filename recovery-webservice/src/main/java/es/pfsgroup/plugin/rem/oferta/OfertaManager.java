@@ -1839,10 +1839,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 
 						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
-								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)))) {
+								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
-							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)) {
+							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
 								oferta.setFechaAlta(null);
 								oferta.setFechaEntradaCRMSF(fechaAccion);
 							}else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) {
@@ -1879,7 +1879,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
 					} else{
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO)));
 					}
 					oferta.setFechaAlta(fechaAccion);
 				}				

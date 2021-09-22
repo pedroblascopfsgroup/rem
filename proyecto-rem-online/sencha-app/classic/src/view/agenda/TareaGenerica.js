@@ -3693,51 +3693,38 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
 		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
+		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		
-		me.deshabilitarCampo(comboTipoOferta);
-		me.deshabilitarCampo(comboIsVulnerable);
+		me.bloquearObligatorio(comboTipoOferta);
+		me.bloquearObligatorio(comboIsVulnerable);
 		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
 
+		var url =  $AC.getRemoteUrl('expedientecomercial/getInfoCaminosAlquilerNoComercial');
+		Ext.Ajax.request({
+			url: url,
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){			    		
+		    		comboTipoOferta.setValue(dto.codigoTipoAlquiler);
+		    		comboIsVulnerable.setValue(dto.isVulnerable);
+		    	}
+		    }
+		});
+		
 		comboRespuesta.addListener('change', function(combo) {
 			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
-				me.habilitarCampo(comboTipoOferta);
-				me.campoObligatorio(comboTipoOferta);
-
-			}else{
-				me.deshabilitarCampo(comboTipoOferta);
-				me.deshabilitarCampo(comboIsVulnerable);
-				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-				me.borrarCampo(comboTipoOferta);
-				me.borrarCampo(comboIsVulnerable);
-				me.borrarCampo(comboIsVulnerableAnalisisT);
-			}
-
-        });
-		
-		comboTipoOferta.addListener('change', function(combo) {
-			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue()){
-				me.habilitarCampo(comboIsVulnerable);
-				me.campoObligatorio(comboIsVulnerable);
-			}else{
-				me.deshabilitarCampo(comboIsVulnerable);
-				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-				me.borrarCampo(comboIsVulnerable);
-				me.borrarCampo(comboIsVulnerableAnalisisT); 
-			}
-
-        }); 
-		
-		comboIsVulnerable.addListener('change', function(combo) {
-			if(CONST.COMBO_SIN_SINO['SI'] === comboIsVulnerable.getValue()){
-				me.habilitarCampo(comboIsVulnerableAnalisisT);
-				me.campoObligatorio(comboIsVulnerableAnalisisT);
+				if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue() && CONST.COMBO_SIN_SINO['SI'] === comboIsVulnerable.getValue()){
+					me.habilitarCampo(comboIsVulnerableAnalisisT);
+					me.campoObligatorio(comboIsVulnerableAnalisisT);
+				}
 			}else{
 				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-				me.borrarCampo(comboIsVulnerableAnalisisT);
+				me.borrarCampo(comboIsVulnerableAnalisisT)
 			}
 
-        });
+        });				
 	},
 	
 	T018_ScoringValidacion: function(){
@@ -3788,6 +3775,28 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
 			}else{
 				me.deshabilitarCampo(comboMotivoAnulacion);
+			}
+        });
+	},
+	
+	T018_DefinicionOfertaValidacion: function(){
+		var me = this;
+		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
+		var comboIsVulnerable = me.down('[name=isVulnerable]');
+		var textExpedienteAnterior = me.down('[name=expedienteAnterior]');
+		
+		me.deshabilitarCampo(textExpedienteAnterior);
+		me.deshabilitarCampo(comboIsVulnerable);
+
+		comboTipoOferta.addListener('change', function(combo) {
+			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue()){
+				me.habilitarCampo(comboIsVulnerable);
+				me.campoObligatorio(comboIsVulnerable);
+				me.deshabilitarCampo(textExpedienteAnterior);
+			}else if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === comboTipoOferta.getValue()){
+				me.habilitarCampo(textExpedienteAnterior);
+				textExpedienteAnterior.allowBlank = false;	
+				me.deshabilitarCampo(comboIsVulnerable);
 			}
         });
 	},

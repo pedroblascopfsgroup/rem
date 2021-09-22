@@ -820,7 +820,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         viewPortWidth = Ext.Element.getViewportWidth(),
         viewPortHeight = Ext.Element.getViewportHeight(),
         tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
-        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'],
+		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'];
         var viewModel = me.getViewModel();
 
 
@@ -833,7 +834,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
 		}
 
-		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
+		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))
+				|| (tipoExpedienteCodigo === tipoExpedienteAlquilerNoComercial)) {
 			var idCliente = record.get('id'),
 				expediente= me.getViewModel().get('expediente'),
 				storeProblemasVenta = me.getViewModel().get('storeProblemasVenta'),

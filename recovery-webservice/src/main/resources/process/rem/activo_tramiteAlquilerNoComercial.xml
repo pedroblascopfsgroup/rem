@@ -55,8 +55,8 @@
         <transition to="T018_Scoring" name="renovacionNovacion"></transition>
         <transition to="T018_PbcAlquiler" name="subrogacion"></transition>
         <transition to="T018_PteClRod" name="alquilerSocialNoVulnerable"></transition>
-        <transition to="T018_AnalisisTecnico" name="alquilerSocialSiVulnerableNoAnalisis"></transition>
-        <transition to="T018_SolicitarGarantiasAdicionales" name="alquilerSocialSiVulnerableSiAnalisis"></transition>
+        <transition to="T018_AnalisisTecnico" name="alquilerSocialSiVulnerableSiAnalisis"></transition>
+        <transition to="T018_SolicitarGarantiasAdicionales" name="alquilerSocialSiVulnerableNoAnalisis"></transition>
 	</decision>
 	
 	<state name="T018_Scoring">

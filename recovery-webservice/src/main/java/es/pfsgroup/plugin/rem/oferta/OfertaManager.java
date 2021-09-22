@@ -7569,7 +7569,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		InfoAdicionalPersona iapRep = tit.getInfoAdicionalPersonaRep();
 		
 		
-		if(iapRep == null) {
+		if(iapRep == null && tit.getDocumentoRepresentante() != null) {
 			String idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(tit.getDocumentoRepresentante()); 
 			
 			iapRep = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHayaRep));

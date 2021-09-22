@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20210914
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20210922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14748
+--## INCIDENCIA_LINK=HREOS-15264
 --## PRODUCTO=NO
 --## Finalidad:  Script que añade en DD_SEC_SUBEST_EXP_COMERCIAL los datos añadidos en T_ARRAY_DATA.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 HREOS-14964 - Añadimos subestado 'Enviado' y 'No enviado' relacionado al estado 'En tramitacion'
+--##        0.3 HREOS-15264 - Modificar codigos
 --##########################################
 --*/
 
@@ -37,39 +38,41 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-	T_TIPO_DATA('01','44','Pendiente sanción hre','Pendiente sanción hre'),
-	T_TIPO_DATA('02','44','Pendiente de la propiedad hre','Pendiente de la propiedad hre'),
-	T_TIPO_DATA('03','44','Pendiente aceptación contraoferta','Pendiente aceptación contraoferta'),
-	T_TIPO_DATA('04','44','Pendiente confirmación oferta','Pendiente confirmación oferta'),
-	T_TIPO_DATA('05','45','Congelada','Congelada'),
-	T_TIPO_DATA('06','45','Rechazada por el inquilino','Rechazada por el inquilino'),
-	T_TIPO_DATA('07','45','Rechazada económicamente','Rechazada económicamente'),
-	T_TIPO_DATA('08','45','Rechazada contraste de lista','Rechazada contraste de lista'),
-	T_TIPO_DATA('09','45','No se entrega documentación','No se entrega documentación'),
-	T_TIPO_DATA('10','45','Scoring ko','Scoring ko'),
-	T_TIPO_DATA('11','45','Activo no disponible','Activo no disponible'),
-	T_TIPO_DATA('12','45','Activo okupado','Activo okupado'),
+	T_TIPO_DATA('47','44','Pendiente sanción hre','Pendiente sanción hre'),
+	T_TIPO_DATA('48','44','Pendiente de la propiedad hre','Pendiente de la propiedad hre'),
+	T_TIPO_DATA('49','44','Pendiente aceptación contraoferta','Pendiente aceptación contraoferta'),
+	T_TIPO_DATA('50','44','Pendiente confirmación oferta','Pendiente confirmación oferta'),
+	T_TIPO_DATA('54','45','Congelada','Congelada'),
+	T_TIPO_DATA('38','54','Rechazada por el inquilino','Rechazada por el inquilino'),
+	T_TIPO_DATA('37','54','Rechazada económicamente','Rechazada económicamente'),
+	T_TIPO_DATA('36','54','Rechazada contraste de lista','Rechazada contraste de lista'),
+	T_TIPO_DATA('40','54','No se entrega documentación','No se entrega documentación'),
+	T_TIPO_DATA('39','54','Activo no disponible','Activo no disponible'),
+	T_TIPO_DATA('41','54','Activo okupado','Activo okupado'),
 	T_TIPO_DATA('13','46','Descartada','Descartada'),
-	T_TIPO_DATA('14','47','Pendiente pago de reserva','Pendiente pago de reserva'),
-	T_TIPO_DATA('15','47','Pendiente envio contrato a firma','Pendiente envio contrato a firma'),
-	T_TIPO_DATA('16','47','Pendiente firma de inquilino (contrato de reserva)','Pendiente firma de inquilino (contrato de reserva)'),
-	T_TIPO_DATA('17','47','Pendiente apoderado hre (contrato de reserva)','Pendiente apoderado hre (contrato de reserva)'),
-	T_TIPO_DATA('18','48','Pendiente obtención de documentación','Pendiente obtención de documentación'),
-	T_TIPO_DATA('19','48','Pendiente envio documentación a scoring','Pendiente envio documentación a scoring'),
-	T_TIPO_DATA('20','48','Pendiente sanción scoring','Pendiente sanción scoring'),
-	T_TIPO_DATA('21','48','Pendiente aportación garantias adicionales (avalista)','Pendiente aportación garantias adicionales (avalista)'),
-	T_TIPO_DATA('22','48','Pendiente sanción de la propiedad','Pendiente sanción de la propiedad'),
-	T_TIPO_DATA('23','48','Pendiente aportación garantias adicionales (depósito)','Pendiente aportación garantias adicionales (depósito)'),
-	T_TIPO_DATA('24','49','Pendiente trámites previos','Pendiente trámites previos'),
-	T_TIPO_DATA('25','49','Pendiente fecha de firma','Pendiente fecha de firma'),
-	T_TIPO_DATA('26','50','Pendiente elaboración contrato','Pendiente elaboración contrato'),
-	T_TIPO_DATA('27','50','Pendiente validación api','Pendiente validación api'),
-	T_TIPO_DATA('28','51','Pendiente firma de inquilino (contrato de alquiler)','Pendiente firma de inquilino (contrato de alquiler)'),
-	T_TIPO_DATA('29','51','Pendiente firma apoderado hre (contrato de alquiler)','Pendiente firma apoderado hre (contrato de alquiler)'),
-  T_TIPO_DATA('30','01','Enviado','Enviado'),
-  T_TIPO_DATA('31','01','No enviado','No enviado'),
-  T_TIPO_DATA('32','45','Desistimiento de interés','Desistimiento de interés')
-    ); 
+	T_TIPO_DATA('19','47','Pendiente pago de reserva','Pendiente pago de reserva'),
+	T_TIPO_DATA('20','47','Pendiente envio contrato a firma','Pendiente envio contrato a firma'),
+	T_TIPO_DATA('21','47','Pendiente firma de inquilino (contrato de reserva)','Pendiente firma de inquilino (contrato de reserva)'),
+	T_TIPO_DATA('22','47','Pendiente apoderado hre (contrato de reserva)','Pendiente apoderado hre (contrato de reserva)'),
+	T_TIPO_DATA('23','48','Pendiente obtención de documentación','Pendiente obtención de documentación'),
+	T_TIPO_DATA('24','48','Pendiente envio documentación a scoring','Pendiente envio documentación a scoring'),
+	T_TIPO_DATA('25','48','Pendiente sanción scoring','Pendiente sanción scoring'),
+  T_TIPO_DATA('27','48','Pendiente aportación garantias adicionales','Pendiente aportación garantias adicionales'),
+  T_TIPO_DATA('26','48','Pendiente sanción de la propiedad','Pendiente sanción de la propiedad'),
+  T_TIPO_DATA('28','49','Pendiente trámites previos','Pendiente trámites previos'),
+	T_TIPO_DATA('29','49','Pendiente fecha de firma','Pendiente fecha de firma'),
+	T_TIPO_DATA('30','50','Pendiente elaboración contrato','Pendiente elaboración contrato'),
+	T_TIPO_DATA('31','50','Pendiente validación api','Pendiente validación api'),
+	T_TIPO_DATA('32','51','Pendiente firma de inquilino (contrato de alquiler)','Pendiente firma de inquilino (contrato de alquiler)'),
+	T_TIPO_DATA('33','51','Pendiente firma apoderado hre (contrato de alquiler)','Pendiente firma apoderado hre (contrato de alquiler)'),
+  T_TIPO_DATA('34','52','Pendiente envío contrato a seguro de rentas','Pendiente envío contrato a seguro de rentas'),
+  T_TIPO_DATA('35','52','Pendiente registro de póliza seguro de rentas','Pendiente registro de póliza seguro de rentas'),
+  T_TIPO_DATA('42','01','Enviado','Enviado'),
+  T_TIPO_DATA('43','01','No enviado','No enviado'),
+  T_TIPO_DATA('52','54','Desistimiento de interés','Desistimiento de interés'),
+  T_TIPO_DATA('55','55','Borrador','Borrador')
+
+  ); 
 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -102,7 +105,7 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO DD_EEC_ID;
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'DD_SEC_ID ,DD_SEC_CODIGO, DD_EEC_ID, DD_SEC_DESCRIPCION, DD_SEC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','|| DD_EEC_ID || ','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''' ,0, ''HREOS-7795'',SYSDATE,0 FROM DUAL';
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','|| DD_EEC_ID || ','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''' ,0, ''HREOS-15264'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

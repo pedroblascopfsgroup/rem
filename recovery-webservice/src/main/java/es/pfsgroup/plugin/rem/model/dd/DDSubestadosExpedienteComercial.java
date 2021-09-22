@@ -35,37 +35,42 @@ public class DDSubestadosExpedienteComercial implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static final String PDTE_SANCION_HRE = "01";
-	public static final String PDTE_PROPIEDAD_HRE = "02";
-	public static final String PDTE_ACEPTACION_CONTRAOFERTA = "03";
-	public static final String PDTE_CONFIRMACION_OFERTA = "04";
-	public static final String CONGELADA = "05";
-	public static final String RECHAZA_INQUILINO = "06";
-	public static final String RECHAZA_ECONOMICAMENTE = "07";
-	public static final String RECHAZA_CONTRASTE_LISTA = "08";
-	public static final String NO_ENTREGA_DOCUMENTOS = "09";
-	public static final String SCORING_KO = "10";
-	public static final String ACTIVO_NO_DISPONIBLE = "11";
-	public static final String ACTIVO_OKUPADO = "12";
+	public static final String PDTE_SANCION_HRE = "47";
+	public static final String PDTE_PROPIEDAD_HRE = "48";
+	public static final String PDTE_ACEPTACION_CONTRAOFERTA = "49";
+	public static final String PDTE_CONFIRMACION_OFERTA = "50";
+	public static final String CONGELADA = "54";
+	public static final String RECHAZA_INQUILINO = "38";
+	public static final String RECHAZA_ECONOMICAMENTE = "37";
+	public static final String RECHAZA_CONTRASTE_LISTA = "36";
+	public static final String NO_ENTREGA_DOCUMENTOS = "40";
+	public static final String ACTIVO_NO_DISPONIBLE = "39";
+	public static final String ACTIVO_OKUPADO = "41";
 	public static final String DESCARTADA = "13";
-	public static final String PDTE_PAGO_RESERVA = "14";
-	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "15";
-	public static final String PDTE_INQUILINO_RESERVA = "16";
-	public static final String PDTE_APODERADO_HRE_RESERVA = "17";
-	public static final String PDTE_OBT_DOCUMENTACION = "18";
-	public static final String PDTE_ENVIO_DOCUMENTACION_SCORING = "19";
-	public static final String PDTE_SANCION_SCORING = "20";
-	public static final String PDTE_APORTACION_AVALISTA = "21";
-	public static final String PDTE_SANCION_PROPIEDAD = "22";
-	public static final String PDTE_APORTACION_DEPOSITO = "23";
-	public static final String PDTE_TRAMITES_PREVIOS = "24";
-	public static final String PDTE_FECHA_FIRMA = "25";
-	public static final String PDTE_ELABORACION_CONTRATO = "26";
-	public static final String PDTE_VALIDACION_API = "27";
-	public static final String PDTE_INQUILINO_ALQUILER = "28";
-	public static final String PDTE_APODERADO_HRE_ALQUILER = "29";
-	public static final String ENVIADO = "30";
-	public static final String NO_ENVIADO = "31";
+	public static final String PDTE_PAGO_RESERVA = "19";
+	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "20";
+	public static final String PDTE_INQUILINO_RESERVA = "21";
+	public static final String PDTE_APODERADO_HRE_RESERVA = "22";
+	public static final String PDTE_OBT_DOCUMENTACION = "23";
+	public static final String PDTE_ENVIO_DOCUMENTACION_SCORING = "24";
+	public static final String PDTE_SANCION_SCORING = "25";
+	public static final String PDTE_APORTACION_GARANTIAS = "27";
+	public static final String PDTE_SANCION_PROPIEDAD = "26";
+	public static final String PDTE_TRAMITES_PREVIOS = "28";
+	public static final String PDTE_FECHA_FIRMA = "29";
+	public static final String PDTE_ELABORACION_CONTRATO = "30";
+	public static final String PDTE_VALIDACION_API = "31";
+	public static final String PDTE_INQUILINO_ALQUILER = "32";
+	public static final String PDTE_APODERADO_HRE_ALQUILER = "33";
+	public static final String PDTE_ENVIO_CONTRATO_SEGURO_RENTAS = "34";
+	public static final String PDTE_REGISTRO_POLIZA_SEGURO_RENTAS = "35";
+	public static final String ENVIADO = "42";
+	public static final String NO_ENVIADO = "43";
+	public static final String DESISTIMIENTO_INTERES = "52";
+	public static final String BORRADOR = "55";
+	
+	
+	
 	
 	@Id
 	@Column(name = "DD_SEC_ID")

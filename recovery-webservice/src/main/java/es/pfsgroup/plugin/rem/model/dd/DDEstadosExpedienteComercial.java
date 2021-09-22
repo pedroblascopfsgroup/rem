@@ -51,7 +51,7 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String ALQUILADO = "15";
 	public static final String EN_DEVOLUCION = "16";
 	public static final String ANULADO_PDTE_DEVOLUCION = "17";
-	public static final String PTE_SCORING = "18";
+	
 	public static final String PTE_SEGURO_RENTAS = "19";
 	public static final String PTE_ELEVAR_SANCION = "20";
 	public static final String ELEVAR_A_SANCION = "21";
@@ -80,6 +80,17 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PENDIENTE_SANCION = "44";
 	public static final String CONGELADA = "45";
 	public static final String DESCARTADA = "46";
+	
+	public static final String PDTE_FIRMA_CONTRATO_RESERVA = "47";
+	public static final String PTE_SCORING = "48";
+	public static final String PDTE_POSICIONAMIENTO_FIRMA = "49";
+	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "50";
+	public static final String PDTE_FIRMA = "51";
+	public static final String PDTE_REGISTRO_FIRMAS_SISTEMA = "52";
+	public static final String FINALIZADA = "53";
+	public static final String CANCELADA = "54";
+	public static final String BORRADOR = "55";
+	
 	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";
 

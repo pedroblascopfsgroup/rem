@@ -1,13 +1,21 @@
 package es.pfsgroup.plugin.rem.api;
 
-public interface TramiteAlquilerNoComercialApi {
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 
-	String aprobarAnalisisBc(Long idTramite);
+public interface TramiteAlquilerNoComercialApi {
 
 	String aprobarPbcAlquiler(Long idTramite);
 
 	String aprobarScoringBc(Long idTramite);
 	
-	String aprobarRevisionBcYCondiciones(Long idTramite);
+	String aprobarRevisionBcYCondiciones(TareaExterna tareaExterna);
+
+	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
+
+	String getCodigoSubtipoOfertaByIdExpediente(Long idExpediente);
+
+	DtoTiposAlquilerNoComercial getInfoCaminosAlquilerNoComercial(Long idExpediente);
+	
 }
 

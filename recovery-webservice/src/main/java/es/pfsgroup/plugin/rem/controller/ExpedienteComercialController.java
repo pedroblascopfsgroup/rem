@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -185,6 +186,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private TramiteAlquilerApi tramiteAlquilerApi;
+	
+	@Autowired
+	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2833,7 +2837,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView saveGarantiasExpediente(DtoGarantiasExpediente dto, @RequestParam Long id, ModelMap model,
 			HttpServletRequest request) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveGarantiasExpediente(dto, id));
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.saveGarantiasExpediente(dto, id));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -2846,4 +2850,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getInfoCaminosAlquilerNoComercial(Long idExpediente, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerNoComercialApi.getInfoCaminosAlquilerNoComercial(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

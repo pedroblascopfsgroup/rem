@@ -754,7 +754,7 @@
 			}
 			def aprobarRevisionBcYCondiciones = {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(idTramite);
+				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(tareaExterna);
 			}
 			def checkAvalCondiciones = {
 				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
@@ -768,6 +768,11 @@
 				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.validarMesesImporteDeposito(tareaExterna);
 			}
+			def avanzaAprobarPbcAlquiler = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaAprobarPbcAlquiler(tareaExterna);
+			}
+			
 	
   			 ]]></value>
   		</list>

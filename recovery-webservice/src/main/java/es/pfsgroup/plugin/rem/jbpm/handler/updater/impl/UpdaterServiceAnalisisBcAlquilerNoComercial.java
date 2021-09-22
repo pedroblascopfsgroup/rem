@@ -77,6 +77,7 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 				}else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+					ofertaApi.rechazarOferta(oferta);
 				}
 				
 				expedienteComercial.setEstado(estadoExpedienteComercial);
@@ -84,8 +85,6 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 
 			}
 		}
-
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);				
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		

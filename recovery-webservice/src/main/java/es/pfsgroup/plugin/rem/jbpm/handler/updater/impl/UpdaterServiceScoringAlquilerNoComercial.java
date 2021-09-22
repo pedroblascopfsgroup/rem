@@ -84,8 +84,6 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 			}
 		}
 
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);				
-
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
 		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

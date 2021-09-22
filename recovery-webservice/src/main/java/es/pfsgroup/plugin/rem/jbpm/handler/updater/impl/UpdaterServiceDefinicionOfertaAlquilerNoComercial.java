@@ -69,8 +69,6 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
 
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);				
-
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
 		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

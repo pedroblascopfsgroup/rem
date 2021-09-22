@@ -78,8 +78,6 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 			}
 		}
 
-		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);				
-
 		if (estadoOfertaBcMod){
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}

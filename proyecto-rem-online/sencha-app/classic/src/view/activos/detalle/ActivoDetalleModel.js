@@ -1740,6 +1740,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				readOnly = true;
 			}	
 			return readOnly;
+		},
+		
+		tieneGestionDnd: function(get){
+			var tieneGestionDnd = get('activo.tieneGestionDndCodigo');
+			//var tieneGestionDndCombo = this.getView().lookupReference('gestionDndCodigo');
+
+			if (tieneGestionDnd === '01') {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	 },
     

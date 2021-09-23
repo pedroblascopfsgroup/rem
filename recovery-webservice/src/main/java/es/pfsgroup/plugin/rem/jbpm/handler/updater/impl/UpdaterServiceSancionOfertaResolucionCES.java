@@ -131,11 +131,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 							for (Oferta oferta : listaOfertas) {
 								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-									if(DDCartera.isCarteraBk(activo.getCartera())) {
-										ofertaApi.finalizarOferta(oferta);
-									}else {
-										ofertaApi.congelarOferta(oferta);
-									}
+									ofertaApi.congelarOferta(oferta);
 								}
 							}
 							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
@@ -188,9 +184,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								}
 
 								try {
-									if(!DDCartera.isCarteraBk(activo.getCartera())) {
-										ofertaApi.descongelarOfertas(expediente);
-									}
+									ofertaApi.descongelarOfertas(expediente);
 									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);

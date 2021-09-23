@@ -54,6 +54,11 @@ public class DDTipoOfertaAcciones implements Auditable, Dictionary {
 	public static final String CODIGO_ARRAS_CONTABILIZADAS = "022";
 	public static final String CODIGO_VENTA_CONTABILIZADA = "023";
 	public static final String CODIGO_PLUSVALIA_CONTABILIZADA = "024";
+	public static final String CODIGO_PENDIENTE_SCORING = "037";
+	public static final String CODIGO_PDTE_ANALISIS_TECNICO = "038";
+	public static final String CODIGO_PENDIENTE_NEGOCIACION = "039";
+	public static final String CODIGO_PDTE_CL_ROD = "040";
+	public static final String CODIGO_RECHAZO_PBC = "041";
 	
 	private static final long serialVersionUID = 1L;
 

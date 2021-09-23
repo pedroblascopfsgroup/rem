@@ -1947,9 +1947,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
 			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
 				listaDDEstadoOferta.add(ddEstadoOferta);
-				if (DDEstadoOferta.CODIGO_CONGELADA.equals(ddEstadoOferta.getCodigo())) {
-					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroCongelada));
-				}
 				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
 					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
 				}

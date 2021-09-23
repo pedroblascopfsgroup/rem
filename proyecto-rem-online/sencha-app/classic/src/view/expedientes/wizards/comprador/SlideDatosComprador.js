@@ -323,7 +323,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						name: 'codigoPostal',
 						reference: 'codigoPostal',
-						padding: '5px'
+						padding: '5px',
+						vtype: 'codigoPostal',
+						maskRe: /^\d*$/, 
+	                	maxLength: 5
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.email'),
@@ -812,12 +815,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'provinciaNacimientoRepresentanteCodigo',
 						name: 'provinciaNacimientoRepresentanteCodigo',
 						padding: '5px',
-						allowBlank: false,
 						chainedStore: 'comboMunicipioRepresentante',
 						chainedReference: 'localidadNacimientoRepresentanteCodigo',
 						bind: {
 							store: '{comboProvincia}',
-							hidden: '{!comprador.esCarteraBankia}'
+							hidden: '{!comprador.esCarteraBankia}',
+							allowBlank: '{esObligatorioPersonaJuridica}'
 						},
 						displayField: 'descripcion',
 						valueField: 'codigo',
@@ -834,7 +837,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboMunicipioRepresentante}',
 							hidden: '{!comprador.esCarteraBankia}',
-							disabled: '{!comprador.provinciaNacimientoRepresentanteCodigo}'
+							disabled: '{!comprador.provinciaNacimientoRepresentanteCodigo}',
+							allowBlank: '{esObligatorioPersonaJuridica}'
 						}
 					},
 					{
@@ -842,7 +846,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						reference: 'codigoPostalRte',
 						name: 'codigoPostalRte',
-						padding: '5px'
+						padding: '5px',
+						vtype: 'codigoPostal',
+						maskRe: /^\d*$/, 
+	                	maxLength: 5
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.email'),
@@ -869,11 +876,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 						reference: 'paisNacimientoRepresentanteCodigo',
 						name: 'paisNacimientoRepresentanteCodigo',
-						allowBlank: false,
 						padding: '5px',
 						bind: {
 							store: '{comboPaises}',
-							hidden: '{!comprador.esCarteraBankia}'
+							hidden: '{!comprador.esCarteraBankia}',
+							allowBlank: '{esObligatorioPersonaJuridica}'
 						}
 					},
 					{

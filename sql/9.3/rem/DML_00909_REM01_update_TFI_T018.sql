@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210932
+--## FECHA_CREACION=20210933
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15248
@@ -46,7 +46,7 @@ DECLARE
     
     	T_TIPO_DATA('T018_DefinicionOferta'		,'combobox', 			'1'		,'tipoOfertaAlquiler'		,'false' 	,'DDTipoOfertaAlquiler'	,'Tipo de oferta'),
     	T_TIPO_DATA('T018_DefinicionOferta'		,'combobox', 			'2'		,'isVulnerable'				,null 		,'DDSiNo'				,'Es vulnerable'),
-    	T_TIPO_DATA('T018_DefinicionOferta'		,'textfield', 			'3'		,'expedienteAnterior'		,null 		,null					,'Expediente anterior'),
+    	T_TIPO_DATA('T018_DefinicionOferta'		,'numberfield', 			'3'		,'expedienteAnterior'		,null 		,null					,'Expediente anterior'),
     	T_TIPO_DATA('T018_DefinicionOferta'		,'textarea', 			'5'		,'observaciones'			,null		,null					,'Observaciones'),
     
 		T_TIPO_DATA('T018_AnalisisBc'		,'comboboxinicialedi', 	'1'		,'comboResultado'			,'false' 	,'DDSiNo'				,'Aprobado'),

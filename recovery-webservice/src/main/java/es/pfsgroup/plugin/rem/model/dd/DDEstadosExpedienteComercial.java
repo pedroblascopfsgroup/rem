@@ -185,5 +185,13 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public void setEstadoAlquiler(Boolean estadoAlquiler) {
 		this.estadoAlquiler = estadoAlquiler;
 	}
+	
+	public static boolean isFirmado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && FIRMADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

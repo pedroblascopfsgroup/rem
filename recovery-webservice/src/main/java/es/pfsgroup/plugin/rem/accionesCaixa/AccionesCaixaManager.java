@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.accionesCaixa;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
@@ -25,10 +24,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -98,7 +94,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
-        if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta())) {
+        if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
             ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
             adapter.anularTramiteAlquiler(acTra.getId(), "905");
@@ -467,4 +463,31 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         return map;
     }
+
+    @Override
+    @Transactional
+    public void avanzarTareaGenerico(net.sf.json.JSONObject dto) throws Exception {
+        adapter.save(createRequestAvanzarTareaGenerico(dto));
+    }
+
+    public Map<String, String[]> createRequestAvanzarTareaGenerico(net.sf.json.JSONObject dto) throws ParseException {
+        Map<String,String[]> map = new HashMap<String,String[]>();
+
+        Iterator<String> keys = dto.keys();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            Object value = dto.get(key);
+            if (key.toLowerCase().contains("fecha") && value != null){
+                map.put(key,new String[]{sdf.format(sdfEntrada.parse(value.toString()))});
+            }
+            else if (value != null){
+                map.put(key,new String[]{value.toString()});
+            }
+        }
+        return map;
+    }
+
+
+
+
 }

@@ -429,7 +429,7 @@ BEGIN
                             WHERE ACT.ACT_NUM_ACTIVO = '''||(V_TMP_FUNCION(1))||''' AND ACT.BORRADO = 0 AND ICO.BORRADO = 0';
 			        EXECUTE IMMEDIATE V_SQL INTO V_ID;    
 
-                    IF  V_TMP_FUNCION(2) != '-1' THEN
+                    IF  V_TMP_FUNCION(2) != '0' THEN
 
                         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION (
                                     DIS_ID, DIS_NUM_PLANTA, DD_TPH_ID, DIS_CANTIDAD, USUARIOCREAR, FECHACREAR, BORRADO,ICO_ID
@@ -437,7 +437,7 @@ BEGIN
                                     '||V_ESQUEMA||'.S_ACT_DIS_DISTRIBUCION.NEXTVAL,
                                     0,
                                     (SELECT DD_TPH_ID FROM '||V_ESQUEMA||'.DD_TPH_TIPO_HABITACULO WHERE DD_TPH_CODIGO = ''12''),
-                                    '''||(V_TMP_FUNCION(2))||''',
+                                    NULL,
                                     '''||V_USUARIO||''',
                                     SYSDATE,
                                     0,
@@ -446,7 +446,7 @@ BEGIN
 
                     END IF;
 
-                    IF V_TMP_FUNCION(3) != '-1' THEN
+                    IF V_TMP_FUNCION(3) != '0' THEN
 
                         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION (
                                     DIS_ID, DIS_NUM_PLANTA, DD_TPH_ID, DIS_CANTIDAD, USUARIOCREAR, FECHACREAR, BORRADO,ICO_ID
@@ -454,7 +454,7 @@ BEGIN
                                     '||V_ESQUEMA||'.S_ACT_DIS_DISTRIBUCION.NEXTVAL,
                                     0,
                                     (SELECT DD_TPH_ID FROM '||V_ESQUEMA||'.DD_TPH_TIPO_HABITACULO WHERE DD_TPH_CODIGO = ''11''),
-                                    '''||(V_TMP_FUNCION(3))||''',
+                                    NULL,
                                     '''||V_USUARIO||''',
                                     SYSDATE,
                                     0,

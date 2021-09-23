@@ -65,8 +65,8 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 						estado = DDEstadosExpedienteComercial.PTE_CL_ROD;
 						estadoBc = DDEstadoExpedienteBc.PTE_CL_ROD;
 					}else {
-						estado = DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
-						estadoBc = DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE;
+						estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC;
 					}
 				}else {
 					estado = DDEstadosExpedienteComercial.ANULADO;

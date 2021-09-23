@@ -3695,6 +3695,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			me.bloquearObligatorio(comboRespuesta);
+		}
+		
 		me.bloquearObligatorio(comboTipoOferta);
 		me.bloquearCampo(comboIsVulnerable);
 		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
@@ -3740,6 +3744,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				me.campoObligatorio(comboMotivoAnulacion);
 
 			}else{
+				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);
 			}
         });
@@ -3749,6 +3754,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
+		var fecha = me.down('[name=fechaResolucion]');
+		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+		}
 	
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		comboRespuesta.addListener('change', function(combo) {
@@ -3757,6 +3768,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				me.campoObligatorio(comboMotivoAnulacion);
 
 			}else{
+				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);
 			}
         });
@@ -3766,6 +3778,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
+		var fecha = me.down('[name=fechaResolucion]');
+		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+		}
 	
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		comboRespuesta.addListener('change', function(combo) {
@@ -3774,6 +3792,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				me.campoObligatorio(comboMotivoAnulacion);
 
 			}else{
+				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);
 			}
         });
@@ -3787,18 +3806,65 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		me.deshabilitarCampo(textExpedienteAnterior);
 		me.deshabilitarCampo(comboIsVulnerable);
-
+		
 		comboTipoOferta.addListener('change', function(combo) {
 			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(comboIsVulnerable);
 				me.campoObligatorio(comboIsVulnerable);
+				textExpedienteAnterior.setValue('');
 				me.deshabilitarCampo(textExpedienteAnterior);
 			}else if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(textExpedienteAnterior);
 				textExpedienteAnterior.allowBlank = false;	
+				comboIsVulnerable.setValue('');
 				me.deshabilitarCampo(comboIsVulnerable);
+			}else{
+				textExpedienteAnterior.setValue('');
+				comboIsVulnerable.setValue('');
+				me.deshabilitarCampo(comboIsVulnerable);
+				me.deshabilitarCampo(textExpedienteAnterior);
 			}
         });
+	},
+	
+	T018_TrasladarOfertaClienteValidacion: function(){
+		var me = this;
+		var comboResultado = me.down('[name=comboResultado]');
+		var fecha = me.down('[name=fechaResolucion]');
+		
+		comboResultado.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['NO'] === comboResultado.getValue()){
+				me.deshabilitarCampo(fecha);
+				fecha.setValue('');
+			}else{
+				me.habilitarCampo(fecha);
+				me.campoObligatorio(fecha);
+			}
+        });
+	},
+	
+	T018_RevisionBcYCondicionesValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var fecha = me.down('[name=fechaResolucion]');
+		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+		}
+
+	},
+	
+	T018_PteClRodValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResultado]');
+		var fecha = me.down('[name=fechaResolucion]');
+		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+		}
+
 	},
 	
     habilitarCampo: function(campo) {

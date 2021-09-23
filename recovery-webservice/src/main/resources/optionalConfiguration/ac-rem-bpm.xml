@@ -711,6 +711,7 @@
             def esDespuesElevar = {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
             	return tramiteAlquilerManager.esDespuesElevar(idTramite);
+
             }
              def haPasadoScoringBC = {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
@@ -764,7 +765,21 @@
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.avanzaScoringBC(tareaExterna);
 			}
+
+			def existeExpedienteComercialByNumExpediente(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.existeExpedienteComercialByNumExpediente(tareaExterna, expedienteAnterior);
+            }  
 			
+			def isExpedienteTipoAlquilerNoComercial(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isExpedienteTipoAlquilerNoComercial(tareaExterna, expedienteAnterior);
+            }  
+            
+            def isExpedienteFirmado(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isExpedienteFirmado(tareaExterna, expedienteAnterior);
+            }  
 	
   			 ]]></value>
   		</list>

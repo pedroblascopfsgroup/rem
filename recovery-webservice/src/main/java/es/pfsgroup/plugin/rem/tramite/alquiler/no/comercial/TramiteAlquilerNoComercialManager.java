@@ -10,7 +10,9 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Service("tramiteAlquilerNoComercialManager")
@@ -130,7 +132,38 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 			
 		return dto;
 	}
-
 	
+	@Override
+	public boolean existeExpedienteComercialByNumExpediente(TareaExterna tareaExterna, String expedienteAnterior)  {
+		boolean existeExpediente = false;
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+		if(expediente != null) {
+			existeExpediente = true;
+		}
+		
+		return existeExpediente;
+	}
+	
+	@Override
+	public boolean isExpedienteTipoAlquilerNoComercial(TareaExterna tareaExterna, String expedienteAnterior) {
+		boolean is = false;
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+		if(expediente != null && expediente.getOferta() != null && DDTipoOferta.isTipoAlquilerNoComercial(expediente.getOferta().getTipoOferta())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	@Override
+	public boolean isExpedienteFirmado(TareaExterna tareaExterna, String expedienteAnterior) {
+		boolean isFirmado = false;
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+		if(expediente != null && expediente.getEstado() != null && DDEstadosExpedienteComercial.isFirmado(expediente.getEstado())) {
+			isFirmado = true;
+		}
+		return isFirmado;
+	}
+	
+
 	
 }

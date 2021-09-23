@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.*;
+import net.sf.json.JSONObject;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
@@ -60,4 +61,6 @@ public interface AccionesCaixaApi {
     void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception;
 
     void accionScoringBC(DtoAvanzaScoringBC dto) throws Exception;
+
+    void avanzarTareaGenerico(JSONObject dto) throws Exception;
 }

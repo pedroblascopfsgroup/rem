@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.*;
+import net.sf.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -641,6 +642,107 @@ class AccionesCaixaControllerDispachableMethods {
                             && !Checks.esNulo(mm.getModel().get("msgError"))) {
                         throw new JsonViewerException(mm.getModel().get("msgError").toString());
                     }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PENDIENTE_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PDTE_ANALISIS_TECNICO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PENDIENTE_NEGOCIACION, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PDTE_CL_ROD, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_RECHAZO_PBC, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionRechazo(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
                 }
 
                 return false;

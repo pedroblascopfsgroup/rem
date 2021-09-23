@@ -55,6 +55,9 @@ public class AccionesCaixaDispatcher {
         T dto;
         try {
             dto = clazz.newInstance();
+            if (dto instanceof JSONObject){
+                return (T) json;
+            }
             for (Field f : getAllFields(new LinkedList<Field>(), clazz)) {
                 if (json.containsKey(f.getName())) {
 //					if ("idsMotivo".equals(f.getName()))

@@ -17,20 +17,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
-import es.pfsgroup.plugin.rem.model.dd.DDFinalidadOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMedioPago;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaFondosPropios;
-import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 
 @Entity
 @Table(name = "OFR_OFERTAS_CAIXA", schema = "${entity.schema}")
@@ -133,6 +126,10 @@ public class OfertaCaixa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_CANAL_DIST_VEN_ALQ")
 	private DDTipoComercializar canalDistribucionBc;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="OFR_SANCION_PBC")
+	private DDSancionPBC sancionPbc;
 	
     @Version
     private Integer version;
@@ -373,5 +370,12 @@ public class OfertaCaixa implements Serializable, Auditable {
 	public void setCanalDistribucionBc(DDTipoComercializar canalDistribucionBc) {
 		this.canalDistribucionBc = canalDistribucionBc;
 	}
-	
+
+	public DDSancionPBC getSancionPbc() {
+		return sancionPbc;
+	}
+
+	public void setSancionPbc(DDSancionPBC sancionPbc) {
+		this.sancionPbc = sancionPbc;
+	}
 }

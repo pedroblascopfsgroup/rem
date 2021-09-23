@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210922
+--## FECHA_CREACION=20210923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15254
@@ -23,6 +23,7 @@
 --##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
 --##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
 --##	      0.12 Correcciones gestores - [HREOS-15254] - Daniel Algaba
+--##	      0.12 Correcciones gestores v2 - [HREOS-15254] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -573,7 +574,7 @@ BEGIN
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.GEH_GESTOR_ENTIDAD_HIST GEH
       USING (
          SELECT 
-         GEH.GEH_ID 
+         DISTINCT GEH.GEH_ID 
          FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
          JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = APR.NUM_INMUEBLE AND ACT.BORRADO = 0
          JOIN '|| V_ESQUEMA ||'.GAH_GESTOR_ACTIVO_HISTORICO GAH ON GAH.ACT_ID = ACT.ACT_ID
@@ -624,7 +625,7 @@ BEGIN
    V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.GEH_GESTOR_ENTIDAD_HIST GEH
       USING (
          SELECT 
-         GEH.GEH_ID 
+         DISTINCT GEH.GEH_ID 
          FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
          JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = APR.NUM_INMUEBLE AND ACT.BORRADO = 0
          JOIN '|| V_ESQUEMA ||'.GAH_GESTOR_ACTIVO_HISTORICO GAH ON GAH.ACT_ID = ACT.ACT_ID

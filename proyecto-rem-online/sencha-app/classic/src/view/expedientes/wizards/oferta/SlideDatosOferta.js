@@ -577,8 +577,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind:{
 									value: '{oferta.telefonoNacimiento2}'
 								},
-								name: 'telefonoNacimiento2',
-								allowBlank: false
+								name: 'telefonoNacimiento2'
 							},
 							{
 								xtype: 'comboboxfieldbase',

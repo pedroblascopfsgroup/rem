@@ -236,6 +236,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
 				campoTipoPersona = me.lookupReference('tipoPersona'),
 				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+		   	 	campoProvinciaRpr = me.lookupReference('provinciaNacimientoRepresentanteCodigo'),
+		   	 	campoMunicipioRpr = me.lookupReference('localidadNacimientoRepresentanteCodigo'),
+		   	 	campoPaisRpr = me.lookupReference('paisNacimientoRepresentanteCodigo'),
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
 				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge');
 
@@ -292,6 +295,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = true;
 						}
+						if (!Ext.isEmpty(campoProvinciaRpr)) {
+							campoProvinciaRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)) {
+							campoMunicipioRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoPaisRpr)) {
+							campoPaisRpr.allowBlank = false;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -315,6 +327,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoProvinciaRpr)) {
+							campoProvinciaRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)) {
+							campoMunicipioRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoPaisRpr)) {
+							campoPaisRpr.allowBlank = true;
 						}
 					}
 				}

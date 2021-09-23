@@ -549,7 +549,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								name: 'codigoPostalNacimiento',
 								vtype: 'codigoPostal',
 								maskRe: /^\d*$/, 
-			                	maxLength: 5		                	
+			                	maxLength: 5,
+			                	allowBlank: false
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.email'),
@@ -558,7 +559,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.emailNacimiento}'
 								},
 								name: 'emailNacimiento',
-								vtype: 'email'
+								vtype: 'email',
+								allowBlank: false
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.telefono1'),
@@ -567,6 +569,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.telefonoNacimiento1}'
 								},
 								name: 'telefonoNacimiento1',
+								allowBlank: false
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.telefono2'),
@@ -575,6 +578,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.telefonoNacimiento2}'
 								},
 								name: 'telefonoNacimiento2',
+								allowBlank: false
 							},
 							{
 								xtype: 'comboboxfieldbase',

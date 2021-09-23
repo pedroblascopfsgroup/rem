@@ -324,6 +324,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	@JoinColumn(name = "ECO_ID")
 	private List<InterlocutorExpediente> interlocutoresExpediente;
     
+    @OneToOne
+    @JoinColumn(name = "ECO_ID_ANTERIOR")
+    private ExpedienteComercial expedienteAnterior;
+    
     @Version   
 	private Long version;
 
@@ -991,6 +995,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
 		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
+
+	public ExpedienteComercial getExpedienteAnterior() {
+		return expedienteAnterior;
+	}
+
+	public void setExpedienteAnterior(ExpedienteComercial expedienteAnterior) {
+		this.expedienteAnterior = expedienteAnterior;
 	}
 
 	public List<InterlocutorExpediente> getInterlocutoresExpediente() {

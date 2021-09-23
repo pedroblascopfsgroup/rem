@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210949
+--## FECHA_CREACION=20210951
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15248
@@ -34,7 +34,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T018_AnalisisBc','valores[''''T018_AnalisisBc''''][''''comboResultado''''] == DDSiNo.SI ? valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_RENOVACION ? ''''renovacionNovacion'''' : valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_SUBROGACION ? ''''subrogacion'''' : valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL ? valores[''''T018_AnalisisBc''''][''''isVulnerable''''] == DDSiNo.SI ? valores[''''T018_AnalisisBc''''][''''isVulnerableAnalisisT''''] == DDSiNo.SI ? ''''alquilerSocialSiVulnerableSiAnalisis''''  : ''''alquilerSocialSiVulnerableNoAnalisis'''' : ''''alquilerSocialNoVulnerable'''' : ''''rechaza'''' : ''''rechaza'''' ' )
+        T_TIPO_DATA('T018_AnalisisBc','valores[''''T018_AnalisisBc''''][''''comboResultado''''] == DDSiNo.SI ? valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_RENOVACION ? ''''renovacionNovacion'''' : valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_SUBROGACION ? ''''subrogacion'''' : valores[''''T018_AnalisisBc''''][''''tipoOfertaAlquiler''''] == DDTipoOfertaAlquiler.CODIGO_ALQUILER_SOCIAL ? valores[''''T018_AnalisisBc''''][''''isVulnerable''''] == DDSiNo.SI ? valores[''''T018_AnalisisBc''''][''''isVulnerableAnalisisT''''] == DDSiNo.SI ? ''''alquilerSocialSiVulnerableSiAnalisis''''  : ''''alquilerSocialSiVulnerableNoAnalisis'''' : ''''alquilerSocialNoVulnerable'''' : ''''rechaza'''' : ''''rechaza'''' ' ),
+   		T_TIPO_DATA('T018_ScoringBc' ,'valores[''''T018_ScoringBc''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechaza'''' : avanzaScoringBC()'),
+   		T_TIPO_DATA('T018_PbcAlquiler' ,'valores[''''T018_PbcAlquiler''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechaza'''' : avanzaAprobarPbcAlquiler()')
     );
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	

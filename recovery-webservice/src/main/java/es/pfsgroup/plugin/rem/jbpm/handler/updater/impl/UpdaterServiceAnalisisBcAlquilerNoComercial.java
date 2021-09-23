@@ -75,23 +75,23 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 
 		if(aprueba) {
 			if(DDTipoOfertaAlquiler.isRenovacion(oferta.getTipoOfertaAlquiler())) {
-				estadoExpediente=  DDEstadosExpedienteComercial.PTE_AGENDAR;
-				estadoBc = DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
+				estadoExpediente=  DDEstadosExpedienteComercial.PTE_SCORING;
+				estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING;
 			}else if(DDTipoOfertaAlquiler.isSubrogacion(oferta.getTipoOfertaAlquiler())){
-				estadoExpediente =  DDEstadosExpedienteComercial.PTE_AGENDAR;
-				estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
+				estadoExpediente =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+				estadoBc =  DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
 			}else if(DDTipoOfertaAlquiler.isAlquilerSocial(oferta.getTipoOfertaAlquiler())) {
 				if(coe.getVulnerabilidadDetectada() != null && coe.getVulnerabilidadDetectada()) {
 					if(requiereAnalisisT) {
-						estadoExpediente =  DDEstadosExpedienteComercial.PTE_AGENDAR;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
+						estadoExpediente =  DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+						estadoBc =  DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
 					}else {
 						estadoExpediente =  DDEstadosExpedienteComercial.PTE_AGENDAR;
 						estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
 					}
 				}else {
-					estadoExpediente =  DDEstadosExpedienteComercial.PTE_AGENDAR;
-					estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
+					estadoExpediente =  DDEstadosExpedienteComercial.PTE_CL_ROD;
+					estadoBc =  DDEstadoExpedienteBc.PTE_CL_ROD;
 				}
 			}
 		}else {

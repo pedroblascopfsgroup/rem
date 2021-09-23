@@ -65,7 +65,8 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 				Boolean vulnerabilidadDetectada = DDSinSiNo.cambioStringtoBooleano(valor.getValor());
 				coe.setVulnerabilidadDetectada(vulnerabilidadDetectada);
 			}else if(EXPEDIENTE_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-
+				ExpedienteComercial expedienteAnterior = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(valor.getValor()));
+				expedienteComercial.setExpedienteAnterior(expedienteAnterior);
 			}
 		}
 		

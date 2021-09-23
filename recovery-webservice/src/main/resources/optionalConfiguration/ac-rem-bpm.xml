@@ -740,18 +740,6 @@
 				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.isMetodoActualizacionRelleno(tareaExterna);
 			}
-			def aprobarAnalisisBc = {
-				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-				return tramiteAlquilerNoComercialManager.aprobarAnalisisBc(idTramite);
-			}
-			def aprobarPbcAlquiler = {
-				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-				return tramiteAlquilerNoComercialManager.aprobarPbcAlquiler(idTramite);
-			}
-			def aprobarScoringBc = {
-				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-				return tramiteAlquilerNoComercialManager.aprobarScoringBc(idTramite);
-			}
 			def aprobarRevisionBcYCondiciones = {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(tareaExterna);
@@ -771,6 +759,10 @@
 			def avanzaAprobarPbcAlquiler = {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.avanzaAprobarPbcAlquiler(tareaExterna);
+			}
+			def avanzaScoringBC = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaScoringBC(tareaExterna);
 			}
 			
 	

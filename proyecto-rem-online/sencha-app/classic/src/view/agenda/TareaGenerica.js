@@ -3696,7 +3696,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		me.bloquearObligatorio(comboTipoOferta);
-		me.bloquearObligatorio(comboIsVulnerable);
+		me.bloquearCampo(comboIsVulnerable);
 		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
 
 		var url =  $AC.getRemoteUrl('expedientecomercial/getInfoCaminosAlquilerNoComercial');

@@ -273,25 +273,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					me.fireEvent("errorToast", HreRem.i18n("msg.crear.oferta.estado.error"));
 					return;
 				}
-			}
-			
-			if(activo.get('incluyeDestinoComercialAlquiler') && !activo.get('incluyeDestinoComercialVenta')){
-				if(Ext.isEmpty(me.lookupController().getViewModel().get('canalAlquilerBC').selection)){
-					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.alquiler.bc"));
-					return;
-				}
-			}else if(!activo.get('incluyeDestinoComercialAlquiler') && activo.get('incluyeDestinoComercialVenta')){
-				if(Ext.isEmpty(me.lookupController().getViewModel().get('canalVentaBC').selection)){
-					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.venta.bc"));
-					return;
-				}
-			}else if(activo.get('incluyeDestinoComercialAlquiler') && activo.get('incluyeDestinoComercialVenta')){
-				if(Ext.isEmpty(me.lookupController().getViewModel().get('canalVentaBC').selection) && Ext.isEmpty(me.lookupController().getViewModel().get('canalAlquilerBC').selection)){
-					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.bc"));
-					return;
-				}
-			}			
-			
+			}		
 		}
 		
 		if (activo.get('incluyeDestinoComercialAlquiler')) {

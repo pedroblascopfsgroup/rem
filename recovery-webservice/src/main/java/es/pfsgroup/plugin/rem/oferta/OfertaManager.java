@@ -635,9 +635,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
-			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCodEstadoExpediente())
-					&& !oferta.getCodEstadoExpediente().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)
-					&& (DDEstadoOferta.CODIGO_ACEPTADA.equalsIgnoreCase(oferta.getCodEstadoExpediente().getCodigo())
+			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
+					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)
+					&& (DDEstadoOferta.CODIGO_ACEPTADA.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo())
 							&& !ofertaHayaHome(oferta))
 					&& Checks.esNulo(ofertaDto.getCodTarea()) 
 					&& sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
@@ -1709,7 +1709,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) || (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) 
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodEstadoExpediente().getCodigo()))) {
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))) {
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
@@ -1772,15 +1772,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		if (!Checks.esNulo(ofertaAcepted)) {
 			if (oferta.getAgrupacion() != null) {
-				oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class,
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 			} else {
-				oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class,
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 			}
 		} else {
 			if (oferta.getOfertaExpress() || DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo())) {
-				oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class,
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
 
 				// Congelar resto de ofertas
@@ -1788,9 +1788,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 					if (!Checks.esNulo(actOfer.getPrimaryKey().getOferta())
 							&& !actOfer.getPrimaryKey().getOferta().equals(oferta) && DDEstadoOferta.CODIGO_PENDIENTE
-									.equals(actOfer.getPrimaryKey().getOferta().getCodEstadoExpediente().getCodigo())) {
+									.equals(actOfer.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
 						Oferta ofercongelada = actOfer.getPrimaryKey().getOferta();
-						ofercongelada.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class,
+						ofercongelada.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 						ofertaDao.saveOrUpdate(ofercongelada);
 					}
@@ -1842,7 +1842,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && estadoExpCom != null && DDEstadosExpedienteComercial.DESCARTADA.equals(estadoExpCom.getCodigo()) 
 						&& subestadoExpCom != null && DDSubestadosExpedienteComercial.DESCARTADA.equals(subestadoExpCom.getCodigo())) {
-					oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 					oferta.setFechaRechazoOferta(fechaAccion);
 				}
 				
@@ -1866,7 +1866,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{
-				oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 			}
 		}
 
@@ -1884,14 +1884,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								.equals(DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE))
 						|| (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo()
 								.equals(DDSituacionComercial.CODIGO_TRASPASADO))) {
-					oferta.setCodEstadoExpediente(genericDao.get(DDEstadoOferta.class,
+					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 				}
 
 			}
 		}
 
-		if (oferta.getCodEstadoExpediente().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);
@@ -2046,7 +2046,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo())){
+				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,true);
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
@@ -2085,7 +2085,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setCodEstadoExpediente(estado);
+			oferta.setEstadoOferta(estado);
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			oferta.setUsuarioBaja(usu.getApellidoNombre());
 			updateStateDispComercialActivosByOferta(oferta);
@@ -2117,7 +2117,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				for (Oferta oferta : listaOfertas) {
 					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
 					descongelar = gencatApi.descongelaExpedienteGencat(exp);
-					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodEstadoExpediente().getCodigo())) && descongelar) {
+					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) && descongelar) {
 						// HREOS-1937 - Si tiene expediente poner oferta
 						// ACEPTADA. Si no tiene poner oferta PENDIENTE
 						if (!Checks.esNulo(exp)) {
@@ -2128,7 +2128,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 									DDEstadoOferta.CODIGO_PENDIENTE);
 						}
 							estado = genericDao.get(DDEstadoOferta.class, filtro);
-							oferta.setCodEstadoExpediente(estado);
+							oferta.setEstadoOferta(estado);
 							updateStateDispComercialActivosByOferta(oferta);
 							genericDao.save(Oferta.class, oferta);
 
@@ -2169,13 +2169,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				for (Oferta ofr : listaOfertas) {
 					if (!ofr.getId().equals(expediente.getOferta().getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getCodEstadoExpediente().getCodigo())) {
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())) {
 
 						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
-						ofr.setCodEstadoExpediente(estado);
+						ofr.setEstadoOferta(estado);
 						updateStateDispComercialActivosByOferta(ofr);
 						genericDao.save(Oferta.class, ofr);
 
@@ -2203,7 +2203,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setCodEstadoExpediente(estado);
+			oferta.setEstadoOferta(estado);
 			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
@@ -2234,7 +2234,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setCodEstadoExpediente(estado);
+			oferta.setEstadoOferta(estado);
 			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
@@ -2292,7 +2292,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		for (ActivoOferta activoOferta : listaOfertas) {
 			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo()))
+			if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))
 				return oferta;
 		}
 		return null;
@@ -2305,7 +2305,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.estaVacio(listaOfertas)) {
 			for (ActivoOferta activoOferta : listaOfertas) {
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-				if (oferta.getCodEstadoExpediente() != null && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo())) {
+				if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 					if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())){
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
@@ -3328,8 +3328,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = genericDao.get(Oferta.class, filterOfertaID);
 		Activo activo = genericDao.get(Activo.class, filterActivoID);
 		if (!Checks.esNulo(oferta)) {
-			if (!Checks.esNulo(oferta.getCodEstadoExpediente())
-					&& oferta.getCodEstadoExpediente().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
+			if (!Checks.esNulo(oferta.getEstadoOferta())
+					&& oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
 				// Si la oferta está aceptada, tendremos expediente y los
 				// honorarios guardados....
 				listaHonorarios = expedienteComercialApi.getHonorariosActivoByOfertaAceptada(oferta, activo);
@@ -3698,8 +3698,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public Boolean isOfertaAceptadaConExpedienteBlocked(Oferta of) {
-		if (!Checks.esNulo(of) && !Checks.esNulo(of.getCodEstadoExpediente())
-				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getCodEstadoExpediente().getCodigo())) {
+		if (!Checks.esNulo(of) && !Checks.esNulo(of.getEstadoOferta())
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(of.getEstadoOferta().getCodigo())) {
 			// Si la oferta esta aceptada, se comprueba que el expediente esté
 			// con alguno de los siguientes estados..., para pasar la nueva
 			// oferta a Congelada.
@@ -4020,7 +4020,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							congelarOferta(ofr);
 
 						}
-					} else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getCodEstadoExpediente().getCodigo())) {
+					} else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo())) {
 						congelarOferta(ofr);
 					}
 
@@ -4152,9 +4152,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		for (ActivoAgrupacion agr : agrupaciones) {
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agr.getTipoAgrupacion().getCodigo())) {
 				for (Oferta oferta : agr.getOfertas()) {
-					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo())
-							|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodEstadoExpediente().getCodigo())
-							|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodEstadoExpediente().getCodigo())) {
+					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
+							|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())
+							|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
 						loteComercialVivo = true;
 					}
 				}
@@ -4168,9 +4168,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		} else {
 			for (Oferta oferta : ofertas) {
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo())
-						|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodEstadoExpediente().getCodigo())
-						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodEstadoExpediente().getCodigo())) {
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
+						|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())
+						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
 					errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
@@ -4178,7 +4178,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	public boolean estaViva(Oferta oferta){
-		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getCodEstadoExpediente().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodEstadoExpediente().getCodigo()))		{
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))		{
 			return true;
 		}
 		return false;
@@ -5185,7 +5185,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				Oferta ofrAgrupada = agrupada.getOfertaDependiente();
 				
-				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrAgrupada.getCodEstadoExpediente().getCodigo())
+				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrAgrupada.getEstadoOferta().getCodigo())
 						&& !agrupada.getAuditoria().isBorrado()) {
 					
 					dto = rellenaDtoWithOfertaLBK(dto, ofrAgrupada);
@@ -6332,8 +6332,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
 						}
 						
-						if(!Checks.esNulo(ofertaActivo.getCodEstadoExpediente())) {
-							historicoOfertas.setEstado(ofertaActivo.getCodEstadoExpediente().getDescripcion());
+						if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
+							historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
 						}
 						if(!Checks.esNulo(ofertaActivo.getMotivoRechazo())) {
 							historicoOfertas.setMotivoDesestimiento(ofertaActivo.getMotivoRechazo().getDescripcion());
@@ -6393,8 +6393,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
 					}
 					
-					if(!Checks.esNulo(ofertaActivo.getCodEstadoExpediente())) {
-						historicoOfertas.setEstado(ofertaActivo.getCodEstadoExpediente().getDescripcion());
+					if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
+						historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
 					}
 					if(!Checks.esNulo(ofertaActivo.getMotivoRechazo())) {
 						historicoOfertas.setMotivoDesestimiento(ofertaActivo.getMotivoRechazo().getDescripcion());

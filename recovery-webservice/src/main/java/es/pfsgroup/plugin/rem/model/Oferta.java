@@ -366,7 +366,7 @@ public class Oferta implements Serializable, Auditable {
     private Boolean tieneIBI;
 	
 	@Column(name = "OFR_IMPORTE_IBI")
-    private Double importeIbi;
+    private Double importeIBI;
 	
 	@Column(name = "OFR_OTRAS_TASAS")
     private Boolean tieneOtrasTasas;
@@ -1166,12 +1166,12 @@ public class Oferta implements Serializable, Auditable {
 		this.tieneIBI = tieneIBI;
 	}
 
-	public Double getImporteIbi() {
-		return importeIbi;
+	public Double getImporteIBI() {
+		return importeIBI;
 	}
 
-	public void setImporteIbi(Double importeIbi) {
-		this.importeIbi = importeIbi;
+	public void setImporteIBI(Double importeIBI) {
+		this.importeIBI = importeIBI;
 	}
 
 	public Boolean getTieneOtrasTasas() {

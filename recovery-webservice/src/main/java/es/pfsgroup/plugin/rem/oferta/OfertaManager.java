@@ -893,7 +893,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							iap.setAuditoria(Auditoria.getNewInstance());
 							iap.setIdPersonaHaya(idPersonaHaya);
 						}
-						
+						if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
+							DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
+							iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
+						}
 						
 					}
 					if(iap != null) {
@@ -1182,6 +1185,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					OfertaCaixa ofertaCaixa = new OfertaCaixa();
 					ofertaCaixa.setOferta(oferta);
 					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
+					if(oferta.getActivoPrincipal() != null && oferta.getTipoOferta() != null) {
+						activoApi.anyadirCanalDistribucionOfertaCaixa(oferta.getActivoPrincipal().getId(), ofertaCaixa, oferta.getTipoOferta().getCodigo());
+					}
+					
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
 				}
 
@@ -1842,7 +1849,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
-							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
+
+							
+							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
+
 								oferta.setFechaAlta(null);
 								oferta.setFechaEntradaCRMSF(fechaAccion);
 							}else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) {
@@ -7557,6 +7567,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				iap.setIdPersonaHaya(idPersonaHaya);
 			}
 			
+			if(ofr.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())){
+				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
+				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
+			}
+			
 		}
 		
 		if(iap != null) {
@@ -7592,6 +7607,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				iapRep = new InfoAdicionalPersona();
 				iapRep.setAuditoria(Auditoria.getNewInstance());
 				iapRep.setIdPersonaHaya(idPersonaHayaRep);	
+			}
+			
+			if(ofr.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())){
+				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
+				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
 			}
 			
 		}

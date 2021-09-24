@@ -9480,5 +9480,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDao.findTasaciones(dto);
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta) {
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (activoCaixa != null && ofertaCaixa != null && tipoOferta != null) {
+			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
+				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionVenta());
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
+			}
+		}
+	}
 }
 

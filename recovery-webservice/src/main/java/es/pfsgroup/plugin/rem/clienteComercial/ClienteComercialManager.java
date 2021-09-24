@@ -396,9 +396,25 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
 			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
 		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante2())) {
+			cliente.setTelefonoRepresentante2(clienteDto.getTelefonoRepresentante2());
+		}
 	    
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante3())) {
+			cliente.setTelefonoRepresentante3(clienteDto.getTelefonoRepresentante3());
+		}
+
 		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
 			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante2())) {
+			cliente.setEmailRepresentante2(clienteDto.getEmailRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante3())) {
+			cliente.setEmailRepresentante3(clienteDto.getEmailRepresentante3());
 		}
 
 		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
@@ -425,8 +441,24 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
 		}
 
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto2())) {
+			cliente.setTelefonoContacto2(clienteDto.getTelefonoContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto3())) {
+			cliente.setTelefonoContacto3(clienteDto.getTelefonoContacto3());
+		}
+
 		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
 			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto2())) {
+			cliente.setEmailContacto2(clienteDto.getEmailContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto3())) {
+			cliente.setEmailContacto3(clienteDto.getEmailContacto3());
 		}
 
 		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {
@@ -521,8 +553,17 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (((JSONObject) jsonFields).containsKey("telefono2")) {
 			cliente.setTelefono2(clienteDto.getTelefono2());
 		}
+		if (((JSONObject) jsonFields).containsKey("telefono3")) {
+			cliente.setTelefono3(clienteDto.getTelefono3());
+		}
 		if (((JSONObject) jsonFields).containsKey("email")) {
 			cliente.setEmail(clienteDto.getEmail());
+		}
+		if (((JSONObject) jsonFields).containsKey("email2")) {
+			cliente.setEmail2(clienteDto.getEmail2());
+		}
+		if (((JSONObject) jsonFields).containsKey("email3")) {
+			cliente.setEmail3(clienteDto.getEmail3());
 		}
 		if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
@@ -726,9 +767,25 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
 			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
 		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante2())) {
+			cliente.setTelefonoRepresentante2(clienteDto.getTelefonoRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante3())) {
+			cliente.setTelefonoRepresentante3(clienteDto.getTelefonoRepresentante3());
+		}
 	    
 		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
 			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante2())) {
+			cliente.setEmailRepresentante2(clienteDto.getEmailRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante3())) {
+			cliente.setEmailRepresentante3(clienteDto.getEmailRepresentante3());
 		}
 
 		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
@@ -755,8 +812,24 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
 		}
 
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto2())) {
+			cliente.setTelefonoContacto2(clienteDto.getTelefonoContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto3())) {
+			cliente.setTelefonoContacto3(clienteDto.getTelefonoContacto3());
+		}
+
 		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
 			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto2())) {
+			cliente.setEmailContacto2(clienteDto.getEmailContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto3())) {
+			cliente.setEmailContacto3(clienteDto.getEmailContacto3());
 		}
 
 		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {

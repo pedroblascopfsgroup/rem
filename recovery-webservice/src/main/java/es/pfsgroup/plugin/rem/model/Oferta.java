@@ -351,61 +351,64 @@ public class Oferta implements Serializable, Auditable {
     private Long idOfertaHayaHome;
 	
 	@Column(name = "OFR_ORIGEN_OFERTA")
-    private String origenOferta;
+    private String codOrigenOferta;
 	
 	@Column(name = "OFR_MESES_CARENCIA")
     private Double mesesCarencia;
 	
 	@Column(name = "OFR_CONTRATO_RESERVA")
-    private Boolean contratoReserva;
+    private Boolean tieneContratoReserva;
 	
 	@Column(name = "OFR_MOTIVO_CONGELACION")
     private String motivoCongelacion;
 	
 	@Column(name = "OFR_IBI")
-    private Boolean ibi;
+    private Boolean tieneIBI;
 	
 	@Column(name = "OFR_IMPORTE_IBI")
     private Double importeIbi;
 	
 	@Column(name = "OFR_OTRAS_TASAS")
-    private Boolean otrasTasas;
+    private Boolean tieneOtrasTasas;
 	
 	@Column(name = "OFR_IMPORTE_OTRAS_TASAS")
     private Double importeOtrasTasas;
 	
 	@Column(name = "OFR_CCPP")
-    private Boolean ccpp;
+    private Boolean tieneCCPP;
 	
 	@Column(name = "OFR_IMPORTE_CCPP")
     private Double importeCCPP;
 	
 	@Column(name = "OFR_PORCENTAJE_1_ANYO")
-    private Double porcentaje1Anyo;
+    private Double bonificacionAnyo1;
 	
 	@Column(name = "OFR_PORCENTAJE_2_ANYO")
-    private Double porcentaje2Anyo;
+    private Double bonificacionAnyo2;
 	
 	@Column(name = "OFR_PORCENTAJE_3_ANYO")
-    private Double porcentaje3Anyo;
+    private Double bonificacionAnyo3;
 	
 	@Column(name = "OFR_PORCENTAJE_4_ANYO")
-    private Double porcentaje4Anyo;
+    private Double bonificacionAnyo4;
 	
 	@Column(name = "OFR_MESES_CARENCIA_CTRAOFR")
     private Double mesesCarenciaContraoferta;
 
 	@Column(name = "OFR_PORCENTAJE_1_ANYO_CTRAOFR")
-    private Double porcentaje1AnyoContraoferta;
+    private Double bonificacionAnyo1Contraoferta;
 	
 	@Column(name = "OFR_PORCENTAJE_2_ANYO_CTRAOFR")
-    private Double porcentaje2AnyoContraoferta;
+    private Double bonificacionAnyo2Contraoferta;
 	
 	@Column(name = "OFR_PORCENTAJE_3_ANYO_CTRAOFR")
-    private Double porcentaje3AnyoContraoferta;
+    private Double bonificacionAnyo3Contraoferta;
 	
 	@Column(name = "OFR_PORCENTAJE_4_ANYO_CTRAOFR")
-    private Double porcentaje4AnyoContraoferta;
+    private Double bonificacionAnyo4Contraoferta;
+	
+	@Column(name = "OFR_SALESFORCE_COD")
+    private String codOfertaSalesforce;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1123,12 +1126,12 @@ public class Oferta implements Serializable, Auditable {
 		this.idOfertaHayaHome = idOfertaHayaHome;
 	}
 
-	public String getOrigenOferta() {
-		return origenOferta;
+	public String getCodOrigenOferta() {
+		return codOrigenOferta;
 	}
 
-	public void setOrigenOferta(String origenOferta) {
-		this.origenOferta = origenOferta;
+	public void setCodOrigenOferta(String codOrigenOferta) {
+		this.codOrigenOferta = codOrigenOferta;
 	}
 
 	public Double getMesesCarencia() {
@@ -1139,12 +1142,12 @@ public class Oferta implements Serializable, Auditable {
 		this.mesesCarencia = mesesCarencia;
 	}
 
-	public Boolean getContratoReserva() {
-		return contratoReserva;
+	public Boolean getTieneContratoReserva() {
+		return tieneContratoReserva;
 	}
 
-	public void setContratoReserva(Boolean contratoReserva) {
-		this.contratoReserva = contratoReserva;
+	public void setTieneContratoReserva(Boolean tieneContratoReserva) {
+		this.tieneContratoReserva = tieneContratoReserva;
 	}
 
 	public String getMotivoCongelacion() {
@@ -1155,12 +1158,12 @@ public class Oferta implements Serializable, Auditable {
 		this.motivoCongelacion = motivoCongelacion;
 	}
 
-	public Boolean getIbi() {
-		return ibi;
+	public Boolean getTieneIBI() {
+		return tieneIBI;
 	}
 
-	public void setIbi(Boolean ibi) {
-		this.ibi = ibi;
+	public void setTieneIBI(Boolean tieneIBI) {
+		this.tieneIBI = tieneIBI;
 	}
 
 	public Double getImporteIbi() {
@@ -1171,12 +1174,12 @@ public class Oferta implements Serializable, Auditable {
 		this.importeIbi = importeIbi;
 	}
 
-	public Boolean getOtrasTasas() {
-		return otrasTasas;
+	public Boolean getTieneOtrasTasas() {
+		return tieneOtrasTasas;
 	}
 
-	public void setOtrasTasas(Boolean otrasTasas) {
-		this.otrasTasas = otrasTasas;
+	public void setTieneOtrasTasas(Boolean tieneOtrasTasas) {
+		this.tieneOtrasTasas = tieneOtrasTasas;
 	}
 
 	public Double getImporteOtrasTasas() {
@@ -1187,12 +1190,12 @@ public class Oferta implements Serializable, Auditable {
 		this.importeOtrasTasas = importeOtrasTasas;
 	}
 
-	public Boolean getCcpp() {
-		return ccpp;
+	public Boolean getTieneCCPP() {
+		return tieneCCPP;
 	}
 
-	public void setCcpp(Boolean ccpp) {
-		this.ccpp = ccpp;
+	public void setTieneCCPP(Boolean tieneCCPP) {
+		this.tieneCCPP = tieneCCPP;
 	}
 
 	public Double getImporteCCPP() {
@@ -1203,36 +1206,36 @@ public class Oferta implements Serializable, Auditable {
 		this.importeCCPP = importeCCPP;
 	}
 
-	public Double getPorcentaje1Anyo() {
-		return porcentaje1Anyo;
+	public Double getBonificacionAnyo1() {
+		return bonificacionAnyo1;
 	}
 
-	public void setPorcentaje1Anyo(Double porcentaje1Anyo) {
-		this.porcentaje1Anyo = porcentaje1Anyo;
+	public void setBonificacionAnyo1(Double bonificacionAnyo1) {
+		this.bonificacionAnyo1 = bonificacionAnyo1;
 	}
 
-	public Double getPorcentaje2Anyo() {
-		return porcentaje2Anyo;
+	public Double getBonificacionAnyo2() {
+		return bonificacionAnyo2;
 	}
 
-	public void setPorcentaje2Anyo(Double porcentaje2Anyo) {
-		this.porcentaje2Anyo = porcentaje2Anyo;
+	public void setBonificacionAnyo2(Double bonificacionAnyo2) {
+		this.bonificacionAnyo2 = bonificacionAnyo2;
 	}
 
-	public Double getPorcentaje3Anyo() {
-		return porcentaje3Anyo;
+	public Double getBonificacionAnyo3() {
+		return bonificacionAnyo3;
 	}
 
-	public void setPorcentaje3Anyo(Double porcentaje3Anyo) {
-		this.porcentaje3Anyo = porcentaje3Anyo;
+	public void setBonificacionAnyo3(Double bonificacionAnyo3) {
+		this.bonificacionAnyo3 = bonificacionAnyo3;
 	}
 
-	public Double getPorcentaje4Anyo() {
-		return porcentaje4Anyo;
+	public Double getBonificacionAnyo4() {
+		return bonificacionAnyo4;
 	}
 
-	public void setPorcentaje4Anyo(Double porcentaje4Anyo) {
-		this.porcentaje4Anyo = porcentaje4Anyo;
+	public void setBonificacionAnyo4(Double bonificacionAnyo4) {
+		this.bonificacionAnyo4 = bonificacionAnyo4;
 	}
 
 	public Double getMesesCarenciaContraoferta() {
@@ -1243,36 +1246,44 @@ public class Oferta implements Serializable, Auditable {
 		this.mesesCarenciaContraoferta = mesesCarenciaContraoferta;
 	}
 
-	public Double getPorcentaje1AnyoContraoferta() {
-		return porcentaje1AnyoContraoferta;
+	public Double getBonificacionAnyo1Contraoferta() {
+		return bonificacionAnyo1Contraoferta;
 	}
 
-	public void setPorcentaje1AnyoContraoferta(Double porcentaje1AnyoContraoferta) {
-		this.porcentaje1AnyoContraoferta = porcentaje1AnyoContraoferta;
+	public void setBonificacionAnyo1Contraoferta(Double bonificacionAnyo1Contraoferta) {
+		this.bonificacionAnyo1Contraoferta = bonificacionAnyo1Contraoferta;
 	}
 
-	public Double getPorcentaje2AnyoContraoferta() {
-		return porcentaje2AnyoContraoferta;
+	public Double getBonificacionAnyo2Contraoferta() {
+		return bonificacionAnyo2Contraoferta;
 	}
 
-	public void setPorcentaje2AnyoContraoferta(Double porcentaje2AnyoContraoferta) {
-		this.porcentaje2AnyoContraoferta = porcentaje2AnyoContraoferta;
+	public void setBonificacionAnyo2Contraoferta(Double bonificacionAnyo2Contraoferta) {
+		this.bonificacionAnyo2Contraoferta = bonificacionAnyo2Contraoferta;
 	}
 
-	public Double getPorcentaje3AnyoContraoferta() {
-		return porcentaje3AnyoContraoferta;
+	public Double getBonificacionAnyo3Contraoferta() {
+		return bonificacionAnyo3Contraoferta;
 	}
 
-	public void setPorcentaje3AnyoContraoferta(Double porcentaje3AnyoContraoferta) {
-		this.porcentaje3AnyoContraoferta = porcentaje3AnyoContraoferta;
+	public void setBonificacionAnyo3Contraoferta(Double bonificacionAnyo3Contraoferta) {
+		this.bonificacionAnyo3Contraoferta = bonificacionAnyo3Contraoferta;
 	}
 
-	public Double getPorcentaje4AnyoContraoferta() {
-		return porcentaje4AnyoContraoferta;
+	public Double getBonificacionAnyo4Contraoferta() {
+		return bonificacionAnyo4Contraoferta;
 	}
 
-	public void setPorcentaje4AnyoContraoferta(Double porcentaje4AnyoContraoferta) {
-		this.porcentaje4AnyoContraoferta = porcentaje4AnyoContraoferta;
+	public void setBonificacionAnyo4Contraoferta(Double bonificacionAnyo4Contraoferta) {
+		this.bonificacionAnyo4Contraoferta = bonificacionAnyo4Contraoferta;
+	}
+	
+	public String getCodOfertaSalesforce() {
+		return codOfertaSalesforce;
+	}
+
+	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
+		this.codOfertaSalesforce = codOfertaSalesforce;
 	}
 	
 }

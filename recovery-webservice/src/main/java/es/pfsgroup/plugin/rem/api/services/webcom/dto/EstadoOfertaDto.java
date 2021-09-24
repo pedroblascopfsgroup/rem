@@ -34,26 +34,27 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DateDataType fechaReserva;
 	private DateDataType fechaAlquiler;
 	private DoubleDataType importe;
-	private StringDataType origenOferta;
+	private StringDataType codOrigenOferta;
 	private DoubleDataType mesesCarencia;
-	private BooleanDataType contratoReserva;
+	private BooleanDataType tienecontratoReserva;
 	private StringDataType motivoCongelacion;
-	private BooleanDataType ibi;
-	private DoubleDataType importeIbi;
-	private BooleanDataType otrasTasas;
+	private BooleanDataType tieneIBI;
+	private DoubleDataType importeIBI;
+	private BooleanDataType tieneOtrasTasas;
 	private DoubleDataType importeOtrasTasas;
-	private BooleanDataType ccpp;
+	private BooleanDataType tieneCCPP;
 	private DoubleDataType importeCcpp;
-	private DoubleDataType porcentaje1Anyo;
-	private DoubleDataType porcentaje2Anyo;
-	private DoubleDataType porcentaje3Anyo;
-	private DoubleDataType porcentaje4Anyo;
+	private DoubleDataType bonificacionAnyo1;
+	private DoubleDataType bonificacionAnyo2;
+	private DoubleDataType bonificacionAnyo3;
+	private DoubleDataType bonificacionAnyo4;
 	private DoubleDataType mesesCarenciaCtraofr;
-	private DoubleDataType porcentaje1AnyoCtraofr;
-	private DoubleDataType porcentaje2AnyoCtraofr;
-	private DoubleDataType porcentaje3AnyoCtraofr;
-	private DoubleDataType porcentaje4AnyoCtraofr;
-	
+	private DoubleDataType bonificacionAnyo1Contraoferta;
+	private DoubleDataType bonificacionAnyo2Contraoferta;
+	private DoubleDataType bonificacionAnyo3Contraoferta;
+	private DoubleDataType bonificacionAnyo4Contraoferta;
+	private String codSubestadoExpediente;
+	private String codOfertaSalesforce;
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
 	}
@@ -162,11 +163,11 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setImporte(DoubleDataType importe) {
 		this.importe = importe;
 	}
-	public StringDataType getOrigenOferta() {
-		return origenOferta;
+	public StringDataType getCodOrigenOferta() {
+		return codOrigenOferta;
 	}
-	public void setOrigenOferta(StringDataType origenOferta) {
-		this.origenOferta = origenOferta;
+	public void setCodOrigenOferta(StringDataType codOrigenOferta) {
+		this.codOrigenOferta = codOrigenOferta;
 	}
 	public DoubleDataType getMesesCarencia() {
 		return mesesCarencia;
@@ -174,11 +175,11 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setMesesCarencia(DoubleDataType mesesCarencia) {
 		this.mesesCarencia = mesesCarencia;
 	}
-	public BooleanDataType getContratoReserva() {
-		return contratoReserva;
+	public BooleanDataType getTienecontratoReserva() {
+		return tienecontratoReserva;
 	}
-	public void setContratoReserva(BooleanDataType contratoReserva) {
-		this.contratoReserva = contratoReserva;
+	public void setTienecontratoReserva(BooleanDataType tienecontratoReserva) {
+		this.tienecontratoReserva = tienecontratoReserva;
 	}
 	public StringDataType getMotivoCongelacion() {
 		return motivoCongelacion;
@@ -186,23 +187,23 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setMotivoCongelacion(StringDataType motivoCongelacion) {
 		this.motivoCongelacion = motivoCongelacion;
 	}
-	public BooleanDataType getIbi() {
-		return ibi;
+	public BooleanDataType getTieneIBI() {
+		return tieneIBI;
 	}
-	public void setIbi(BooleanDataType ibi) {
-		this.ibi = ibi;
+	public void setTieneIBI(BooleanDataType tieneIBI) {
+		this.tieneIBI = tieneIBI;
 	}
-	public DoubleDataType getImporteIbi() {
-		return importeIbi;
+	public DoubleDataType getImporteIBI() {
+		return importeIBI;
 	}
-	public void setImporteIbi(DoubleDataType importeIbi) {
-		this.importeIbi = importeIbi;
+	public void setImporteIBI(DoubleDataType importeIBI) {
+		this.importeIBI = importeIBI;
 	}
-	public BooleanDataType getOtrasTasas() {
-		return otrasTasas;
+	public BooleanDataType getTieneOtrasTasas() {
+		return tieneOtrasTasas;
 	}
-	public void setOtrasTasas(BooleanDataType otrasTasas) {
-		this.otrasTasas = otrasTasas;
+	public void setTieneOtrasTasas(BooleanDataType tieneOtrasTasas) {
+		this.tieneOtrasTasas = tieneOtrasTasas;
 	}
 	public DoubleDataType getImporteOtrasTasas() {
 		return importeOtrasTasas;
@@ -210,11 +211,11 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setImporteOtrasTasas(DoubleDataType importeOtrasTasas) {
 		this.importeOtrasTasas = importeOtrasTasas;
 	}
-	public BooleanDataType getCcpp() {
-		return ccpp;
+	public BooleanDataType getTieneCCPP() {
+		return tieneCCPP;
 	}
-	public void setCcpp(BooleanDataType ccpp) {
-		this.ccpp = ccpp;
+	public void setTieneCCPP(BooleanDataType tieneCCPP) {
+		this.tieneCCPP = tieneCCPP;
 	}
 	public DoubleDataType getImporteCcpp() {
 		return importeCcpp;
@@ -222,29 +223,29 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setImporteCcpp(DoubleDataType importeCcpp) {
 		this.importeCcpp = importeCcpp;
 	}
-	public DoubleDataType getPorcentaje1Anyo() {
-		return porcentaje1Anyo;
+	public DoubleDataType getBonificacionAnyo1() {
+		return bonificacionAnyo1;
 	}
-	public void setPorcentaje1Anyo(DoubleDataType porcentaje1Anyo) {
-		this.porcentaje1Anyo = porcentaje1Anyo;
+	public void setBonificacionAnyo1(DoubleDataType bonificacionAnyo1) {
+		this.bonificacionAnyo1 = bonificacionAnyo1;
 	}
-	public DoubleDataType getPorcentaje2Anyo() {
-		return porcentaje2Anyo;
+	public DoubleDataType getBonificacionAnyo2() {
+		return bonificacionAnyo2;
 	}
-	public void setPorcentaje2Anyo(DoubleDataType porcentaje2Anyo) {
-		this.porcentaje2Anyo = porcentaje2Anyo;
+	public void setBonificacionAnyo2(DoubleDataType bonificacionAnyo2) {
+		this.bonificacionAnyo2 = bonificacionAnyo2;
 	}
-	public DoubleDataType getPorcentaje3Anyo() {
-		return porcentaje3Anyo;
+	public DoubleDataType getBonificacionAnyo3() {
+		return bonificacionAnyo3;
 	}
-	public void setPorcentaje3Anyo(DoubleDataType porcentaje3Anyo) {
-		this.porcentaje3Anyo = porcentaje3Anyo;
+	public void setBonificacionAnyo3(DoubleDataType bonificacionAnyo3) {
+		this.bonificacionAnyo3 = bonificacionAnyo3;
 	}
-	public DoubleDataType getPorcentaje4Anyo() {
-		return porcentaje4Anyo;
+	public DoubleDataType getBonificacionAnyo4() {
+		return bonificacionAnyo4;
 	}
-	public void setPorcentaje4Anyo(DoubleDataType porcentaje4Anyo) {
-		this.porcentaje4Anyo = porcentaje4Anyo;
+	public void setBonificacionAnyo4(DoubleDataType bonificacionAnyo4) {
+		this.bonificacionAnyo4 = bonificacionAnyo4;
 	}
 	public DoubleDataType getMesesCarenciaCtraofr() {
 		return mesesCarenciaCtraofr;
@@ -252,29 +253,43 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setMesesCarenciaCtraofr(DoubleDataType mesesCarenciaCtraofr) {
 		this.mesesCarenciaCtraofr = mesesCarenciaCtraofr;
 	}
-	public DoubleDataType getPorcentaje1AnyoCtraofr() {
-		return porcentaje1AnyoCtraofr;
+	public DoubleDataType getBonificacionAnyo1Contraoferta() {
+		return bonificacionAnyo1Contraoferta;
 	}
-	public void setPorcentaje1AnyoCtraofr(DoubleDataType porcentaje1AnyoCtraofr) {
-		this.porcentaje1AnyoCtraofr = porcentaje1AnyoCtraofr;
+	public void setBonificacionAnyo1Contraoferta(DoubleDataType bonificacionAnyo1Contraoferta) {
+		this.bonificacionAnyo1Contraoferta = bonificacionAnyo1Contraoferta;
 	}
-	public DoubleDataType getPorcentaje2AnyoCtraofr() {
-		return porcentaje2AnyoCtraofr;
+	public DoubleDataType getBonificacionAnyo2Contraoferta() {
+		return bonificacionAnyo2Contraoferta;
 	}
-	public void setPorcentaje2AnyoCtraofr(DoubleDataType porcentaje2AnyoCtraofr) {
-		this.porcentaje2AnyoCtraofr = porcentaje2AnyoCtraofr;
+	public void setBonificacionAnyo2Contraoferta(DoubleDataType bonificacionAnyo2Contraoferta) {
+		this.bonificacionAnyo2Contraoferta = bonificacionAnyo2Contraoferta;
 	}
-	public DoubleDataType getPorcentaje3AnyoCtraofr() {
-		return porcentaje3AnyoCtraofr;
+	public DoubleDataType getBonificacionAnyo3Contraoferta() {
+		return bonificacionAnyo3Contraoferta;
 	}
-	public void setPorcentaje3AnyoCtraofr(DoubleDataType porcentaje3AnyoCtraofr) {
-		this.porcentaje3AnyoCtraofr = porcentaje3AnyoCtraofr;
+	public void setBonificacionAnyo3Contraoferta(DoubleDataType bonificacionAnyo3Contraoferta) {
+		this.bonificacionAnyo3Contraoferta = bonificacionAnyo3Contraoferta;
 	}
-	public DoubleDataType getPorcentaje4AnyoCtraofr() {
-		return porcentaje4AnyoCtraofr;
+	public DoubleDataType getBonificacionAnyo4Contraoferta() {
+		return bonificacionAnyo4Contraoferta;
 	}
-	public void setPorcentaje4AnyoCtraofr(DoubleDataType porcentaje4AnyoCtraofr) {
-		this.porcentaje4AnyoCtraofr = porcentaje4AnyoCtraofr;
+	public void setBonificacionAnyo4Contraoferta(DoubleDataType bonificacionAnyo4Contraoferta) {
+		this.bonificacionAnyo4Contraoferta = bonificacionAnyo4Contraoferta;
 	}
+	public String getCodSubestadoExpediente() {
+		return codSubestadoExpediente;
+	}
+	public void setCodSubestadoExpediente(String codSubestadoExpediente) {
+		this.codSubestadoExpediente = codSubestadoExpediente;
+	}
+	public String getCodOfertaSalesforce() {
+		return codOfertaSalesforce;
+	}
+	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
+		this.codOfertaSalesforce = codOfertaSalesforce;
+	}
+	
+	
 
 }

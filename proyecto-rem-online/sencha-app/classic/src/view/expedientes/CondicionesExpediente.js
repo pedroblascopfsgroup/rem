@@ -579,7 +579,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							columns : 2
 						},
 						bind:{
-							hidden: '{!esBankiaAlquiler}'
+							hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 						},
 						margin: '0 0 0 10',
 						colspan: 3,
@@ -656,7 +656,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.fianza.exonerada'),
 										bind : {
 											value : '{condiciones.fianzaExonerada}',
-											hidden: '{!esBankiaAlquiler}'
+											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 										}
 									},
 									{
@@ -665,7 +665,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.ingreso'),
 										bind : {
 											value : '{condiciones.fechaIngresoFianzaArrendatario}',
-											hidden: '{!esBankiaAlquiler}'
+											hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 										}
 									}
 								]
@@ -718,7 +718,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							columns : 1
 						},
 						bind:{
-							hidden: '{esBankiaAlquiler}'
+							hidden: '{esBankiaAlquilerOAlquilerNoComercial}'
 						},
 						defaultType : 'displayfieldbase',
 						items : [
@@ -791,7 +791,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							columns : 1
 						},
 						bind:{
-							hidden: '{!esBankiaAlquiler}'
+							hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 						},
 						defaultType : 'displayfieldbase',
 						items : [
@@ -888,7 +888,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						defaultType : 'textfieldbase',
 						title : HreRem.i18n("fieldlabel.no.comercial"),
 						bind:{
-							hidden : '{!esBankiaAlquiler}'
+							hidden : '{!esBankiaAlquilerOAlquilerNoComercial}'
 						},
 						items : [
 							{
@@ -898,6 +898,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									store : '{comboSiNoBoolean}',
 									value : '{condiciones.vulnerabilidadDetectada}'
 								},
+								readOnly: true,
 								displayField : 'descripcion',
 								valueField : 'codigo'
 							},
@@ -907,16 +908,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								bind : {
 									store : '{storeRegimenFianzaCCAA}',
 									value : '{condiciones.regimenFianzaCCAACodigo}'
-								},
-								displayField : 'descripcion',
-								valueField : 'codigo'
-							},
-							{
-								xtype : 'comboboxfieldbase',
-								fieldLabel : HreRem.i18n('fieldlabel.certificaciones'),
-								bind : {
-									store : '{comboSiNoBoolean}',
-									value : '{condiciones.certificaciones}'
 								},
 								displayField : 'descripcion',
 								valueField : 'codigo'
@@ -943,16 +934,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							},
 							{
 								xtype : 'comboboxfieldbase',
-								fieldLabel : HreRem.i18n('fieldlabel.adecuaciones'),
-								bind : {
-									store : '{comboSiNoBoolean}',
-									value : '{condiciones.adecuaciones}'
-								},
-								displayField : 'descripcion',
-								valueField : 'codigo'
-							},
-							{
-								xtype : 'comboboxfieldbase',
 								fieldLabel : HreRem.i18n('fieldlabel.cnt.suscrito.post.adj'),
 								bind : {
 									store : '{comboSiNoBoolean}',
@@ -970,6 +951,28 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								},
 								displayField : 'descripcion',
 								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.certificaciones'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.certificaciones}'
+								},
+								readOnly: true,
+								displayField : 'descripcion',
+								valueField : 'codigo'
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.adecuaciones'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{condiciones.adecuaciones}'
+								},
+								readOnly: true,
+								displayField : 'descripcion',
+								valueField : 'codigo'
 							}
 						]
 					}
@@ -984,7 +987,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				defaultType : 'textfieldbase',
 				title : HreRem.i18n("fieldlabel.renta.contrato"),
 				bind:{
-					hidden : '{!esBankiaAlquiler}'
+					hidden : '{!esBankiaAlquilerOAlquilerNoComercial}'
 				},
 				items : [
 					{
@@ -1231,7 +1234,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					columns : 3
 				},
 				bind: {
-					hidden : '{!esBankiaAlquiler}'
+					hidden : '{!esBankiaAlquilerOAlquilerNoComercial}'
 				},
 			
 				defaultType : 'textfieldbase',

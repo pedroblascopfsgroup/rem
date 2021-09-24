@@ -2137,6 +2137,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setCanalDistribucionBc(oferta.getOfertaCaixa().getCanalDistribucionBc().getCodigo());
 				}
 			}
+
+			DDTipoOfertaAlquiler tipoOfertaAlquiler = oferta.getTipoOfertaAlquiler();
+			if(tipoOfertaAlquiler != null) {
+				dto.setTipoOfertaAlquilerCodigo(tipoOfertaAlquiler.getCodigo());
+			}
 		}
 
 		return dto;

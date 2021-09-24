@@ -276,6 +276,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'canalDistribucionBc'
+    		},
+    		{
+    			name: 'tipoOfertaAlquilerCodigo'
     		}
     		
     ],

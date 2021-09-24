@@ -334,6 +334,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoResultadoScoring",  DDResultadoScoring.class);
 		mapa.put("tipoResultadoCampo",  DDResultadoCampo.class);
 		mapa.put("tipoRatingScoring",  DDRatingScoringServicer.class);
+		mapa.put("tipoOfertaAlquiler",  DDTipoOfertaAlquiler.class);
 		
 		
 		

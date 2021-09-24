@@ -731,6 +731,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
 			
 			 return isAlquiler && !isBK;
+		 },
+	     esBankiaAlquilerOAlquilerNoComercial: function(get){
+			 var me = this;
+
+			 return this.get('esBankiaAlquiler') || this.get('esAlquilerNoComercial');
+		 },
+	     esAlquilerNoComercial: function(get){
+			 var me = this;
+
+			 return get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];;
 		 }
 	 },
 	
@@ -1706,7 +1716,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadesAvalistas'}
 			}
-    	}
+    	},
+		storeTipoOfertaAlquiler:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoOfertaAlquiler'}
+	    	}	  
+		}
     	
     	
 

@@ -19,9 +19,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 		me.setTitle(HreRem.i18n('title.condiciones'));
 		var isBK = me.lookupController().getViewModel().get('expediente.esBankia');
 		var isAlquiler = me.lookupController().getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var isAlquilerNoComercial = me.lookupController().getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
 		var tamanyo1 = 100;
 		
-		if(isBK && isAlquiler){
+		if(isBK && (isAlquiler || isAlquilerNoComercial)){
 			 tamanyo1 = 130;
 		}		
 

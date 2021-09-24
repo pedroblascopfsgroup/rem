@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.accionesCaixa;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -179,9 +180,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         DDMotivosEstadoBC motivoEstado = genericDao.get(DDMotivosEstadoBC.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APROBADA_BC));
         fae.setValidacionBC(motivoEstado);
+        fae.setFechaRespuestaBC(new Date());
 
         genericDao.save(FechaArrasExpediente.class, fae);
         genericDao.save(ExpedienteComercial.class, expediente);
+
+        adapter.save(createRequestAccionFirmaArras(dto));
+
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
@@ -191,7 +196,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         String[] idTarea = {dto.getIdTarea().toString()};
         String[] comboValidacionBC = {dto.getComboValidacionBC()};
         String[] observacionesBC = {dto.getObservacionesBC()};
-        String[] fechaPropuesta = {sdf.format(sdf.parse(dto.getFechaPropuesta()))};
+        String[] fechaPropuesta = {dto.getFechaPropuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaPropuesta())) : null};
 
         map.put("idTarea", idTarea);
         map.put("comboValidacionBC", comboValidacionBC);
@@ -204,14 +209,23 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     @Override
     public void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaContrato(dto));
 
         ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO));
         expediente.setEstadoBc(estadoExpedienteBc);
+
+        Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class,
+                genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento()));
+
+        posicionamiento.setValidacionBCPos(genericDao.get(DDMotivosEstadoBC.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APROBADA_BC)));
+        posicionamiento.setFechaValidacionBCPos(new Date());
+
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+        genericDao.save(Posicionamiento.class,posicionamiento);
+
+        adapter.save(createRequestAccionFirmaContrato(dto));
+        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaContrato(DtoFirmaContratoCaixa dto) throws ParseException {
@@ -228,6 +242,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("observacionesBC", observacionesBC);
         map.put("fechaPropuesta", fechaPropuesta);
         map.put("fechaRespuesta", fechaRespuesta);
+        map.put("comboArras", new  String[]{DDSiNo.NO});
 
         return map;
     }
@@ -402,7 +417,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
 
+        FechaArrasExpediente fae = genericDao.get(FechaArrasExpediente.class,
+                genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdFae()));
+        DDMotivosEstadoBC motivoEstado = genericDao.get(DDMotivosEstadoBC.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_RECHAZADA_BC));
+        fae.setValidacionBC(motivoEstado);
+        fae.setFechaRespuestaBC(new Date());
+
         genericDao.save(ExpedienteComercial.class, expediente);
+        genericDao.save(FechaArrasExpediente.class,fae);
+
+        adapter.save(createRequestAccionFirmaArras(dto));
+
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
@@ -415,7 +441,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
+
+        Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class,
+                genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento()));
+
+        posicionamiento.setValidacionBCPos(genericDao.get(DDMotivosEstadoBC.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_RECHAZADA_BC)));
+        posicionamiento.setFechaValidacionBCPos(new Date());
+
+        genericDao.save(Posicionamiento.class,posicionamiento);
         genericDao.save(ExpedienteComercial.class, expediente);
+
+        adapter.save(createRequestAccionFirmaContrato(dto));
+
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 

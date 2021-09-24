@@ -1003,6 +1003,51 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		return mgd.getClienteGestorDocumental();
 	}
+	
+	@Override
+	public String getMaestroPersonasByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+		if(Checks.esNulo(subcartera)) {
+			return "";
+		}
+
+		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
+		if(Checks.esNulo(actPro)){
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					return "";
+				}
+			}
+		} else {
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
+						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
+			}
+		}
+		
+		return mgd.getClienteMaestroActivos();
+	}
 
 	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);

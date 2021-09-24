@@ -139,7 +139,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         genericDao.save(OfertaCaixa.class, ofrCaixa);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -150,7 +150,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Transactional
@@ -182,7 +182,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         genericDao.save(FechaArrasExpediente.class, fae);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaArras(DtoFirmaArrasCaixa dto) throws ParseException {
@@ -211,7 +211,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaContrato(DtoFirmaContratoCaixa dto) throws ParseException {
@@ -246,7 +246,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstado(eec);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -259,7 +259,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -272,7 +272,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -285,7 +285,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -298,7 +298,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -326,7 +326,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -339,7 +339,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -352,7 +352,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -365,7 +365,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -403,7 +403,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -416,7 +416,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlush(expediente.getOferta());
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override

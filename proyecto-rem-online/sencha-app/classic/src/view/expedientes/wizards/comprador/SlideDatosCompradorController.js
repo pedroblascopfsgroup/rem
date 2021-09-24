@@ -304,6 +304,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if (!Ext.isEmpty(campoPaisRpr)) {
 							campoPaisRpr.allowBlank = false;
 						}
+						if (!Ext.isEmpty(campoNombre)) {
+							campoNombre.setDisabled(false);
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -336,6 +339,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr)) {
 							campoPaisRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoNombre)) {
+							campoNombre.setDisabled(true);
 						}
 					}
 				}

@@ -231,14 +231,27 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var form = combo.up('form');
 	    								var estadoCivil = form.down('field[name=estadoCivil]');
 	    								var regimen = form.down('field[name=regimenMatrimonial]');
+	    								var apellidos = form.down('field[name=apellidosCliente]');
+	    								var nombre = form.down('field[name=nombreCliente]');
+	    								var razonSocial = form.down('field[name=razonSocialCliente]');
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
+	    									apellidos.setDisabled(false);
+	    									nombre.setDisabled(false)
+	    									razonSocial.setDisabled(true);
 	    									estadoCivil.allowBlank = false;
+	    									
+	    									razonSocial.reset();
 	    								}else{
-	    									estadoCivil.setDisabled(true);
+	    									apellidos.setDisabled(true);
+	    									nombre.setDisabled(true)
+	    									razonSocial.setDisabled(false);
+	    									estadoCivil.setDisabled(true)
 	    									regimen.setDisabled(true);
 	    									estadoCivil.allowBlank = true;
 	    									
+	    									apellidos.reset();
+	    									nombre.reset();
 	    									estadoCivil.reset();
 	    									regimen.reset();
 	    								}

@@ -733,9 +733,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 return isAlquiler && !isBK;
 		 },
 	     esBankiaAlquilerOAlquilerNoComercial: function(get){
-			 var me = this;
-
-			 return this.get('esBankiaAlquiler') || this.get('esAlquilerNoComercial');
+	    	 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+	    	 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			 
+			 return (isAlquiler || isAlquilerNoComercial) && isBK;
 		 },
 	     esAlquilerNoComercial: function(get){
 			 var me = this;

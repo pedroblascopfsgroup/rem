@@ -356,6 +356,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name:'detalleAnulacionCntAlquiler'
+    		},
+    		{
+    			name:'tipoOfertaAlquilerCodigo'
     		}
     		
     ],

@@ -161,6 +161,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String canalDistribucionBc;
 	
+	private String tipoOfertaAlquilerCodigo; 
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -737,6 +739,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setCanalDistribucionBc(String canalDistribucionBc) {
 		this.canalDistribucionBc = canalDistribucionBc;
+	}
+
+	public String getTipoOfertaAlquilerCodigo() {
+		return tipoOfertaAlquilerCodigo;
+	}
+
+	public void setTipoOfertaAlquilerCodigo(String tipoOfertaAlquilerCodigo) {
+		this.tipoOfertaAlquilerCodigo = tipoOfertaAlquilerCodigo;
 	}
 	
 }

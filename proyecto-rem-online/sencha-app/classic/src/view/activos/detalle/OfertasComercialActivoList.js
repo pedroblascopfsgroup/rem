@@ -624,8 +624,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
 
-		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite') 
+		if(((activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('isVendido') || activo.get('isActivoEnTramite')) 
+			&& !activo.get('isCarteraBankia'))  || activo.get('pertenceAgrupacionRestringida') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')   
 			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();

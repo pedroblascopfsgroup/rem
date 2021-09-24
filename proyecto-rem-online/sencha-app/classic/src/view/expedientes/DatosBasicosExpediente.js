@@ -132,11 +132,21 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							},
 							
 		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{storeTipoOfertaAlquiler}',
+								value: '{datosbasicosoferta.tipoOfertaAlquilerCodigo}',
+								hidden: '{!esAlquilerNoComercial}'
+							},
+							readOnly: true,
+		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion')
 		                }
 						
 					]
            },
-           {   
+           {    
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('title.titulo.alquiler'),

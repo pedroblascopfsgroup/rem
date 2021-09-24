@@ -65,6 +65,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String PTE_PBC_ALQUILER_HRE = "043";
 	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "044";
 	public static final String PTE_AGENDAR = "045";
+	public static final String PTE_REVISAR_CONDICIONES_BC = "046";
 	
 	private static final long serialVersionUID = 1L;
 

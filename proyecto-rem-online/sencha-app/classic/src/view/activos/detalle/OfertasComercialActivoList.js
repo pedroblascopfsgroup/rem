@@ -256,7 +256,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	onAddClick: function (btn) {
 
 		var me = this;
-		debugger;
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
 		numActivo= activo.get('numActivo'),
@@ -608,7 +607,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    evaluarEdicion: function() {
 
 		var me = this;
-		debugger;
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(((activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('isVendido') || activo.get('isActivoEnTramite')) 

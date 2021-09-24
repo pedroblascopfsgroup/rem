@@ -4337,7 +4337,7 @@ public class ActivoAdapter {
 			
 			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
 				if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null)) {
-					anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getNumOferta(), ofertaCreada.getId(), dto.getTipoOferta());
+					activoApi.anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getOfertaCaixa(), dto.getTipoOferta());
 				}
 			}
 			
@@ -5216,27 +5216,6 @@ public class ActivoAdapter {
 		}
 		
 		return activosAdicionalesSinRepetidos;
-	}
-	
-	@Transactional(readOnly = false)
-	public void anyadirCanalDistribucionOfertaCaixa(Long idActivo, Long numOferta ,Long idOferta, String tipoOferta) {
-		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
-		
-		if (numOferta != null) {
-			Filter filtroOfertaCaixa = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
-			OfertaCaixa ofertaCaixa2 = genericDao.get(OfertaCaixa.class, filtroOfertaCaixa);
-			
-			if (activoCaixa != null && ofertaCaixa2 != null) {
-				if (tipoOferta != null) {
-					if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
-						ofertaCaixa2.setCanalDistribucionBc(activoCaixa.getCanalDistribucionVenta());
-					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
-						ofertaCaixa2.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
-					}
-				}
-			}
-		}
 	}
 	
 	private List<Filter> anyadirFiltroPrecioMinimoPorPerfil(List<Filter>filters){

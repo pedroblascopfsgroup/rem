@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -140,6 +141,9 @@ public class OfertasController {
 
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Autowired 
+	private OfertaManager ofertaManager;
 	
 	@Resource
 	private Properties appProperties;
@@ -477,9 +481,18 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
-
+		String clienteGD = null;
 		try {
-			ofertaApi.llamadaMaestroPersonas(dniComprador, OfertaApi.CLIENTE_HAYA);
+			if (!Checks.esNulo(idExpediente)) {
+				clienteGD = ofertaManager.getClienteByidExpedienteGD(idExpediente);
+			}
+			
+			if(!Checks.esNulo(clienteGD)) {
+				ofertaApi.llamadaMaestroPersonas(dniComprador, clienteGD);
+			}else {
+				ofertaApi.llamadaMaestroPersonas(dniComprador, OfertaApi.CLIENTE_HAYA);
+			}
+			
 			//model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("data", false);
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));

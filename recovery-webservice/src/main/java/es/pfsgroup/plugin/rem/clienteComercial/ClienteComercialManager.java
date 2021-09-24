@@ -461,7 +461,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		genericDao.save(ClienteGDPR.class, clienteGDPR);
 
-		ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), OfertaApi.CLIENTE_HAYA);
+		//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), OfertaApi.CLIENTE_HAYA);
 
 
 	}

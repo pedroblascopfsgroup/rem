@@ -29,6 +29,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -59,11 +60,13 @@ import es.pfsgroup.plugin.rem.excel.PlantillaDistribucionPrecios;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
@@ -189,6 +192,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+	
+	@Autowired
+	private GestorDocumentalAdapterManager gestorDocumentalAdapterManager;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -955,6 +961,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getCompradorById(DtoModificarCompradores dto, ModelMap model) {
 		try {
 			DtoModificarCompradores comprador = null;
+			String clienteGD = null;
 			if (!Checks.esNulo(dto.getId())) {
 				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
@@ -964,8 +971,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						comprador.setNumeroConyugeUrsus(null);
 					}
 					if (!Checks.esNulo(vistaConExp.getIdExpedienteComercial())) {
-						ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(),
-								OfertaApi.CLIENTE_HAYA);
+						ExpedienteComercial expediente =genericDao.get(ExpedienteComercial.class,
+								genericDao.createFilter(FilterType.EQUALS, "id", vistaConExp.getIdExpedienteComercial()));
+						
+						if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())
+								&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+							Activo activo = expediente.getOferta().getActivoPrincipal();
+							clienteGD = gestorDocumentalAdapterManager.getClienteByCarteraySubcarterayPropietario(activo.getCartera(), activo.getSubcartera(), activo.getPropietarioPrincipal());
+						}
+						
+						if (!Checks.esNulo(clienteGD)) {
+							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), clienteGD);
+						}else {
+							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
+						}
+
 					}
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi

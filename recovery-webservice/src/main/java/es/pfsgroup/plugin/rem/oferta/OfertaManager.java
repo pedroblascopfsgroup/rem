@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -406,6 +407,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private TramitacionOfertasManager tramitacionOfertasManager;
+	
+	@Autowired
+	private GestorDocumentalAdapterManager gestorDocumentalAdapterManager;
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
@@ -917,8 +921,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						cliente.setInfoAdicionalPersona(iap);	
 						genericDao.save(InfoAdicionalPersona.class, iap);
 					}
+					String clienteGD = null;
 					
-					llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
+					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())) {
+						Activo activo2 = oferta.getActivoPrincipal();
+						clienteGD = gestorDocumentalAdapterManager.getMaestroPersonasByCarteraySubcarterayPropietario(activo2.getCartera(), activo2.getSubcartera(), activo2.getPropietarioPrincipal());
+					}
+					
+					if (!Checks.esNulo(clienteGD)) {
+						llamadaMaestroPersonasRestSync(cliente.getDocumento(),clienteGD);
+					}else {
+						llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
+					}
+					
+					
+					
+					
 					oferta.setCliente(cliente);
 					genericDao.save(ClienteComercial.class, cliente);
 				}
@@ -1378,7 +1396,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
-				llamadaMaestroPersonasTitularesRestSync(titAdi.getDocumento(),OfertaApi.ORIGEN_REM);
+				
+				String clienteGD = null;
+				
+				if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())){			
+					Activo activo = oferta.getActivoPrincipal();
+					clienteGD = gestorDocumentalAdapterManager.getMaestroPersonasByCarteraySubcarterayPropietario(activo.getCartera(), activo.getSubcartera(), activo.getPropietarioPrincipal());
+				}
+				
+				if (!Checks.esNulo(clienteGD)) {
+					llamadaMaestroPersonasTitularesRestSync(titAdi.getDocumento(),clienteGD);	
+				}else {
+					llamadaMaestroPersonasTitularesRestSync(titAdi.getDocumento(),OfertaApi.ORIGEN_REM);
+				}
+				
 			}
 		}
 		
@@ -7687,6 +7718,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return true;
 		
+	}
+	
+	@Override
+	public String getClienteByidExpedienteGD(Long idexpediente) {
+		String clienteGD = null;
+		ExpedienteComercial expediente =genericDao.get(ExpedienteComercial.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", idexpediente));
+		
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())
+				&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+			Activo activo = expediente.getOferta().getActivoPrincipal();
+			clienteGD = gestorDocumentalAdapterManager.getMaestroPersonasByCarteraySubcarterayPropietario(activo.getCartera(), activo.getSubcartera(), activo.getPropietarioPrincipal());
+		}
+		
+		return clienteGD;
 	}
 		
 }

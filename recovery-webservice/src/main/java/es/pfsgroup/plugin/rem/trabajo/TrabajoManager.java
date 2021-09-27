@@ -481,8 +481,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override	
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado) {
 		Long idUsuario = usuarioLogado.getId();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
-		if (usuarioCartera != null) dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());					
+			
 		if(this.gestorActivoDao.isUsuarioGestorExterno(idUsuario)) {
 			dto.setEsGestorExterno(true);						
 			for (Perfil perfil : usuarioLogado.getPerfiles()) {

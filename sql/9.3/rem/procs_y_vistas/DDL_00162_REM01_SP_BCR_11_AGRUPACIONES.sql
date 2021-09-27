@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210923
+--## FECHA_CREACION=20210924
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15254
@@ -17,6 +17,7 @@
 --##	      0.5 Modificaión validación OB-REM al incluirse en conjunta venta/alquiler - HREOS-15059 - Alejandra García
 --##	      0.6 Corrección fecha de baja para que sea campo de referencia - HREOS-15137 - Daniel Algaba
 --##	      0.7 Se crea el campo AGR_NUM_AGRUP_BC para almacenar el ID de BC - HREOS-15254 - Daniel Algaba
+--##	      0.8 Se añaden fechas de inicio y fin de vigencia - HREOS-15254 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -787,6 +788,7 @@ BEGIN
                   , AGR_NUM_AGRUP_REM
                   , AGR_NUM_AGRUP_UVEM
                   , AGR_FECHA_ALTA
+                  , AGR_INI_VIGENCIA
                   , AGR_ACT_PRINCIPAL
                   , AGR_SEG_VISITAS
                   , USUARIOCREAR
@@ -800,6 +802,7 @@ BEGIN
                   , '|| V_ESQUEMA ||'.S_AGR_NUM_AGRUP_REM.NEXTVAL AGR_NUM_AGRUP_REM
                   , AUX.COD_AGRUPACION AGR_NUM_AGRUP_UVEM
                   , SYSDATE AGR_FECHA_ALTA
+                  , SYSDATE AGR_INI_VIGENCIA
                   , CASE WHEN AUX.TIPO IN (''02'',''17'',''18'') THEN ACT.ACT_ID ELSE NULL END AGR_ACT_PRINCIPAL
                   , 0 AGR_SEG_VISITAS
                   , ''STOCK_BC'' USUARIOCREAR
@@ -959,6 +962,7 @@ BEGIN
                   ON (AGR.AGR_ID = AUX.AGR_ID)
                   WHEN MATCHED THEN
                      UPDATE SET AGR.AGR_FECHA_BAJA = SYSDATE
+                     , AGR.AGR_FIN_VIGENCIA = SYSDATE
                      , AGR.USUARIOMODIFICAR = ''STOCK_BC''
                      , AGR.FECHAMODIFICAR = SYSDATE';
                      
@@ -983,6 +987,7 @@ BEGIN
                   ON (AGR.AGR_ID = AUX.AGR_ID)
                   WHEN MATCHED THEN
                      UPDATE SET AGR.AGR_FECHA_BAJA = SYSDATE
+                     , AGR.AGR_FIN_VIGENCIA = SYSDATE
                      , AGR.USUARIOMODIFICAR = ''STOCK_BC''
                      , AGR.FECHAMODIFICAR = SYSDATE';
                      

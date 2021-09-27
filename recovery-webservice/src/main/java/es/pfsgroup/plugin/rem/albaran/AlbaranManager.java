@@ -170,7 +170,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	@Override
 	public Boolean getEsUsuarioCliente() {
 		Usuario usuariologado = adapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
-		return usuarioCartera != null;
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
+		return usuarioCartera != null && !usuarioCartera.isEmpty();
 	}
 }

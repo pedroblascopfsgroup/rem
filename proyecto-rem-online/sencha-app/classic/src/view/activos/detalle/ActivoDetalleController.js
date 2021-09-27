@@ -8550,9 +8550,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, record = grid.getStore().getAt(rowIndex);
 		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
 
-	}/*,
+	},/*,
     onChangePublicarCaixa: function(get){
     	var me = this;    	
     	var carteraCaixa;
     }*/
+    
+    onChangeComboGestionDnd: function(combo){
+    	var me = this;
+		var comboEstadoFisico = me.lookupReference('estadoActivoCodigoRef');
+
+		if (combo.getValue() === '01') {
+			comboEstadoFisico.setDisabled(false);
+		} else {
+			comboEstadoFisico.setDisabled(true);
+		}
+    }
 });

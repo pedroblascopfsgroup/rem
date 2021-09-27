@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 
 /**
@@ -387,7 +388,9 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name = "OFR_FECHA_ALTA_WEBCOM")
 	private Date fechaAltaWebcom;
 	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TOA_ID")
+	private DDTipoOfertaAlquiler tipoOfertaAlquiler;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1194,5 +1197,12 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaAltaWebcom(Date fechaAltaWebcom) {
 		this.fechaAltaWebcom = fechaAltaWebcom;
 	}
-	
+
+	public DDTipoOfertaAlquiler getTipoOfertaAlquiler() {
+		return tipoOfertaAlquiler;
+	}
+
+	public void setTipoOfertaAlquiler(DDTipoOfertaAlquiler tipoOfertaAlquiler) {
+		this.tipoOfertaAlquiler = tipoOfertaAlquiler;
+	}
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -19,12 +20,15 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -34,15 +38,32 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 @Repository("ProveedoresDao")
 public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long> implements ProveedoresDao {
 
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno) {
-
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder(
 				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
 
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCartera(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubCartera() == null) {
+				for (UsuarioCartera usu : usuarioCartera) {
+					if (usu.getSubCartera() != null) {
+						subcarteras.add(usu.getSubCartera().getCodigo());
+					}
+				}
+			}
+		}
+		
 		if (!Checks.esNulo(dto.getCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoProveedorRem", Long.valueOf(dto.getCodigo()));
 		}
@@ -65,8 +86,12 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nifProveedor", dto.getNifProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoPersonaProveedorCodigo", dto.getTipoPersonaCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);
-		// HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.subCartera",
-		// dto.getSubCartera());// TODO: falta por definir en la vista
+		// TODO: falta por definir en la vista
+		/*if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubCartera());
+		}*/
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.provinciaProveedor", dto.getProvinciaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.municipioProveedor", dto.getMunicipioCodigo());

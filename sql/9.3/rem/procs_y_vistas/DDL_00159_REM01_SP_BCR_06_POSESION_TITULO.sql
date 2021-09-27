@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210909
+--## FECHA_CREACION=20210921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15133
+--## INCIDENCIA_LINK=HREOS-15254
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -26,7 +26,8 @@
 --##	      0.14 Correcciones - HREOS-14820 - Daniel Algaba
 --##        0.15 Correciones para el plan de pruebas- [HREOS-14899] - Alejandra García
 --##        0.16 Correción merge ACT_AHT_HIST_TRAM_TITULO- [HREOS-15059] - Alejandra García
---##        0.16 Corrección Fecha de concesión - [HREOS-15133| - Daniel Algaba
+--##        0.17 Corrección Fecha de concesión - [HREOS-15133] - Daniel Algaba
+--##        0.18 Corrección Propietarios - [HREOS-15254] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -372,7 +373,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
                                                             AND EQV2.DD_NOMBRE_REM=''ACT_PRO_PROPIETARIO'' and eqv2.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PROP ON PROP.PRO_DOCIDENTIF=eqv2.DD_CODIGO_REM
-            LEFT JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT2.ACT_ID = PAC.ACT_ID AND PROP.PRO_ID = PAC.PRO_ID AND PAC.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT2.ACT_ID = PAC.ACT_ID AND PAC.BORRADO = 0
             WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
             ) US ON (US.PAC_ID = ACT.PAC_ID)
             WHEN MATCHED THEN UPDATE SET

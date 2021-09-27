@@ -110,7 +110,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
@@ -297,19 +296,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
-		// HREOS-2179 - Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-			}
-		}
-		
-		
 		// Comprobar si el usuario es externo y de tipo proveedor y, en tal caso, seteamos proveedores contacto del
 		// usuario logado para filtrar los gastos en los que esté como emisor
 		// Ademas si es un tipo de gestoria concreto, se filtrará los gastos que le pertenezcan como gestoria.
@@ -320,26 +306,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, false);
 		}
 
-		return gastoDao.getListGastos(dtoGastosFilter);
+		return gastoDao.getListGastos(dtoGastosFilter, usuarioLogado.getId());
 	}
 	
 	@Override
 	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		
-		// HREOS-2179 - Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-			}
-		}
-		
 		
 		// Comprobar si el usuario es externo y de tipo proveedor y, en tal caso, seteamos proveedores contacto del
 		// usuario logado para filtrar los gastos en los que esté como emisor
@@ -351,7 +324,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, true);
 		}
 
-		return gastoDao.getListGastosExcel(dtoGastosFilter);
+		return gastoDao.getListGastosExcel(dtoGastosFilter, usuarioLogado.getId());
 	}
 
 	@SuppressWarnings("unused")

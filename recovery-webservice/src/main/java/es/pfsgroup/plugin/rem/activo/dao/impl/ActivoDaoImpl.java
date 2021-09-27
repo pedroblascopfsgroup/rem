@@ -816,14 +816,33 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto) {
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto, Long usuarioId) {
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class ,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaPublicaciones vgrid");
 
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubcarteraCodigo() == null) {
+				for (UsuarioCartera usu : usuarioCartera) {
+					if (usu.getSubCartera() != null) {
+						subcarteras.add(usu.getSubCartera().getCodigo());
+					}
+				}
+			}
+		}		
+		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionVentaCodigo", dto.getEstadoPublicacionVentaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.motivosOcultacionVentaCodigo", dto.getMotivosOcultacionVentaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoPublicacionAlquilerCodigo", dto.getEstadoPublicacionAlquilerCodigo());

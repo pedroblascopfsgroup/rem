@@ -1902,15 +1902,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public Page getPublicacionGrid(DtoPublicacionGridFilter dto) {		
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class ,genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {			
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}		
-		return activoDao.getBusquedaPublicacionGrid(dto);
+	public Page getPublicacionGrid(DtoPublicacionGridFilter dto) {	
+		Long usuarioId = adapter.getUsuarioLogado().getId();
+
+		return activoDao.getBusquedaPublicacionGrid(dto, usuarioId);
 	}
 
 	@Override

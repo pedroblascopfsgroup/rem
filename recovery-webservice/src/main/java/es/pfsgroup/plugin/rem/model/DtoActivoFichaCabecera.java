@@ -396,6 +396,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String disponibleTecnicoDescripcion;
 	private String motivoTecnicoCodigo;
 	private String motivoTecnicoDescripcion;
+	private String tieneGestionDndCodigo;
+	private String tieneGestionDndDescripcion;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2965,6 +2967,23 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setMotivoTecnicoDescripcion(String motivoTecnicoDescripcion) {
 		this.motivoTecnicoDescripcion = motivoTecnicoDescripcion;
 	}
+	
+	public String getTieneGestionDndCodigo() {
+		return tieneGestionDndCodigo;
+	}
+
+	public void setTieneGestionDndCodigo(String tieneGestionDndCodigo) {
+		this.tieneGestionDndCodigo = tieneGestionDndCodigo;
+	}
+	
+	public String getTieneGestionDndDescripcion() {
+		return tieneGestionDndDescripcion;
+	}
+
+	public void setTieneGestionDndDescripcion(String tieneGestionDndDescripcion) {
+		this.tieneGestionDndDescripcion = tieneGestionDndDescripcion;
+	}
+
 
 	public String getDescuentoPublicadoAlquiler() {
 		return descuentoPublicadoAlquiler;

@@ -1798,7 +1798,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				ActivoValoraciones valoracion = getValoracionAprobadoVenta(activo);
 
 				Double importeActivoOferta = activoOferta.getImporteActivoOferta();
-				Double importePublicado = valoracion.getImporte();
+				Double importePublicado;
+				
+				if (valoracion == null) {
+					importePublicado = 0.0;
+				} else {
+					importePublicado = valoracion.getImporte();
+				}
 
 				if (importeActivoOferta < importePublicado) {
 					Date fechaPublicacionVenta = activoPublicacionHist != null ? 
@@ -1820,7 +1826,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (diasPublicacion.compareTo(fechaPublicacionVenta) <= 0) {
 						comite = DDComiteSancion.CODIGO_BBVA;
 					} else {	
-						Date fechaPrecioVenta = valoracion.getFechaAprobacion() == null ? new Date() : valoracion.getFechaAprobacion();
+						Date fechaPrecioVenta;
+						
+						if (valoracion == null) {
+							fechaPrecioVenta = new Date();
+						} else {
+							fechaPrecioVenta = valoracion.getFechaAprobacion() == null ? new Date() : valoracion.getFechaAprobacion();
+						}
+						
 						if (diasPublicacion.compareTo(fechaPrecioVenta) <= 0) {
 							comite = DDComiteSancion.CODIGO_BBVA;
 						} else {

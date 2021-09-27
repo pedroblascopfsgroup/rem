@@ -23,16 +23,18 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
@@ -52,19 +54,22 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
-	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
-
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false);
+	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter, Long usuarioId) {
+		
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false, usuarioId);
 
 		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
 	}
 
 	@Override
-	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter) {
+	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter, Long usuarioId) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true, usuarioId);
 
 		hb.orderBy("vgasto.numGastoHaya", HQLBuilder.ORDER_ASC);
 
@@ -75,7 +80,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	public DtoPage getListGastosFilteredByProveedorContactoAndGestoria(DtoGastosFilter dtoGastosFilter, Long idUsuario,
 			Boolean isGestoria, Boolean isGenerateExcel) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel, idUsuario);
 
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
@@ -151,11 +156,25 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		return new DtoPage(gastos, pageGastos.getTotalCount());
 	}
 
-	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel) {
+	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel, Long usuarioId) {
 		String select = "select vgasto ";
-
-		
 		String from;
+		
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
+		List<String> subcarteras = new ArrayList<String>();
+		
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()){
+			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if(dtoGastosFilter.getSubentidadPropietariaCodigo() == null){
+				for (UsuarioCartera usu : usuarioCartera) {
+					if (usu.getSubCartera() != null) {
+						subcarteras.add(usu.getSubCartera().getCodigo());
+					}
+				}
+			}
+		}
+		
 		if (isGenerateExcel) {
 			from = "from VGastosProveedorExcel vgasto";
 		} else {
@@ -166,17 +185,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		HQLBuilder hb = null;
 
 		// Por si es necesario filtrar por datos de los activos del gasto
-		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
+		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter, subcarteras);
 		if (!Checks.esNulo(fromGastoActivos)) {
 			from = from + fromGastoActivos;
-				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere, subcarteras);
 				hasWhere = true;
 		}
 
-		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null) {
-			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter);
+		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null || !subcarteras.isEmpty()) {
+			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter, subcarteras);
 			from = from + fromGastoActivosSubcartera;
-			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere);
+			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere, subcarteras);
 			hasWhere = true;
 		}
 		
@@ -225,6 +244,14 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			hb.setHasWhere(true);
 		}
 		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo", dtoGastosFilter.getEntidadPropietariaCodigo());
+		
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcartera.codigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
+		}
+		
 		if(dtoGastosFilter.getNumActivo() != null) {
 			Activo activo = activoDao.getActivoByNumActivo(dtoGastosFilter.getNumActivo());
 			if(activo != null) {
@@ -251,8 +278,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		if(dtoGastosFilter.getNumTrabajo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "trabajo.numTrabajo", dtoGastosFilter.getNumTrabajo());
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
 	
 		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision",
@@ -261,8 +286,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.idProvision", dtoGastosFilter.getIdProvision());
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.entidadPropietariaCodigo",
-				dtoGastosFilter.getEntidadPropietariaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.codigoProveedorRem", dtoGastosFilter.getCodigoProveedorRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.nifProveedor", dtoGastosFilter.getNifProveedor());
 

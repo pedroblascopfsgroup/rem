@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
+import es.capgemini.pfs.users.domain.Usuario;
 
 public interface VisitaDao extends AbstractDao<Visita, Long>{
 	
@@ -18,7 +19,7 @@ public interface VisitaDao extends AbstractDao<Visita, Long>{
 	
 	public List<Visita> getListaVisitas(VisitaDto visitaDto);
 	
-	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter);
+	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter, Usuario usuario);
 
 	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter);
 		

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200826
+--## FECHA_CREACION=20210921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7935
+--## INCIDENCIA_LINK=REMVIP-10481
 --## PRODUCTO=NO
 --## Finalidad: vista para alertas de publicacion y fases de activos
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##	    0.2 REMVIP-7722 - Se quita tipo alquiler "No definido" de la alerta de ALERTA_TIPO_ALQUILER
 --##        0.3 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
+--##        0.4 Juan Bautista Alfonso - - REMVIP-10481 - Añadido distinct para quitar duplicados en la consulta
 --##########################################
 --*/
 
@@ -63,7 +64,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ALERTAS_PUBLICACION...');
   EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_ALERTAS_PUBLICACION 
 	AS 
-	SELECT ACT.ACT_NUM_ACTIVO AS NUM_ACTIVO, 
+	SELECT DISTINCT ACT.ACT_NUM_ACTIVO AS NUM_ACTIVO, 
 	ACT.ACT_ID AS ID_ACTIVO,
 	 CASE WHEN (ACT.DD_CRA_ID = 21 AND ACT.DD_SCR_ID <> 9 AND STA.DD_STA_ID = 4 AND TRUNC(ADN.ADN_FECHA_TITULO) > TRUNC(TO_DATE(''01/01/2019'',''DD/MM/YYYY''))) 
             THEN ''BANKIA DACION''

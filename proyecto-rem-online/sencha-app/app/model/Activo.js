@@ -1285,6 +1285,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'motivoTecnicoDescripcion'
+			},
+			{
+				name: 'tieneGestionDndCodigo'
+			},
+			{
+				name: 'tieneGestionDndDescripcion'
 			}
     ],
     

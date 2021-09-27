@@ -13,7 +13,7 @@ import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 
 public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
-    DtoPage getListGastos(DtoGastosFilter dtoGastosFilter);
+    DtoPage getListGastos(DtoGastosFilter dtoGastosFilter, Long usuarioId);
 
     Long getNextNumGasto();
     
@@ -34,7 +34,7 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
     DtoPage getListGastosProvision(DtoGastosFilter dtoGastosFilter);
 
-    DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
+    DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter, Long usuarioId);
 
     /**
      * Este método obtiene un GastoProveedor por el número de gasto en Haya pasado por parámetro.

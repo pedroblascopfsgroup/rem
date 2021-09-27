@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -16,26 +17,16 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 @Service("gastoManager")
 public class GastoManager extends BusinessOperationOverrider<GastoApi> implements  GastoApi {
 	
 	
 	protected static final Log logger = LogFactory.getLog(GastoManager.class);
-	
-	
-	@Autowired
-	private RestApi restApi;
-	
-	@Autowired
-	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -55,9 +46,6 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 	}
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-	
-	
-	
 	
 	@Override
 	public GastoProveedor getGastoById(Long id){		
@@ -95,12 +83,11 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 		}
 	}
 	
-	
-	
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
-
-		return gastoDao.getListGastos(dtoGastosFilter);
+		Usuario usuarioId = genericAdapter.getUsuarioLogado();
+		
+		return gastoDao.getListGastos(dtoGastosFilter, usuarioId.getId());
 	}
 	
 	@Override
@@ -109,8 +96,5 @@ public class GastoManager extends BusinessOperationOverrider<GastoApi> implement
 		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return genericDao.get(GastoProveedor.class, filter,filterBorrado);
 	}
-	
-	
-	
 	
 }

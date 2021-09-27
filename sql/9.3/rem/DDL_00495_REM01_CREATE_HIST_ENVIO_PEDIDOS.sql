@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210917
+--## FECHA_CREACION=20210921
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11982
@@ -46,10 +46,10 @@ IF TABLE_COUNT > 0 THEN
 
     
 ELSE
-
-    EXECUTE IMMEDIATE 
-    'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||
-    '(
+ 
+    V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||
+    '(  
+        HIST_ID                     NUMBER(16,0),
         GPV_ID	                    NUMBER(16,0),
         FECHA_ENVIO_PRPTRIO	        DATE,
         VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
@@ -62,8 +62,25 @@ ELSE
         BORRADO 					NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE			
     )'
     ;
-
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  
+
+    -- Creamos indice	
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TABLA||'(HIST_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... Indice creado.');
+	
+	
+	-- Creamos primary key
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (HIST_ID) USING INDEX)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
+
+
+	-- Creamos sequence
+	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+	EXECUTE IMMEDIATE V_MSQL;		
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
 
 END IF;
 

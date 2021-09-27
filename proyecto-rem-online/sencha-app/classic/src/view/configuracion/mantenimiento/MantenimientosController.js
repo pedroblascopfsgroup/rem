@@ -93,14 +93,8 @@ Ext.define('HreRem.view.configuracion.mantenimiento.MantenimientosController', {
 		onSelectComboCodCartera: function(cmb, value){
 			var me = this;
 			var comboPropietario = me.lookupReference('codPropietarioRef');
-			var comboSubcartera = me.lookupReference('codSubCarteraRef');
-			comboSubcartera.value=null;
 			comboPropietario.value=null;
 			
-			if (comboSubcartera != null || comboSubcartera != undefined) {
-				comboSubcartera.getStore().getProxy().setExtraParams({'codCartera':value});
-				comboSubcartera.getStore().load();
-			}
 			if (comboPropietario != null || comboPropietario != undefined) {
 				
 				comboPropietario.getStore().getProxy().setExtraParams({'codCartera':value});

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -97,18 +98,26 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
-		
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", genericAdapter.getUsuarioLogado().getId()));
+	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter, Usuario usuarioLogeado) {
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogeado.getId()));
+		List<String> subcarteras = new ArrayList<String>();
 				
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
 		
-		if(!Checks.esNulo(usuarioCartera)) {
-			HQLBuilder.addFiltroIgualQue(hb, "vvisita.idCartera", usuarioCartera.getCartera().getId().toString());
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())) {
-				HQLBuilder.addFiltroIgualQue(hb, "vvisita.idSubcartera", usuarioCartera.getSubCartera().getId().toString());
+		if (!Checks.esNulo(usuarioCartera) && !usuarioCartera.isEmpty()) {
+			dtoVisitasFilter.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dtoVisitasFilter.getSubcarteraCodigo() == null) {
+				for (UsuarioCartera uca : usuarioCartera) {
+					if (uca.getSubCartera() != null)
+						subcarteras.add(uca.getSubCartera().getCodigo());
+				}
 			}
+		}
+		
+		if(!Checks.esNulo(subcarteras) && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.subcarteraCodigo", subcarteras);
 		}
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){

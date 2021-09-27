@@ -361,7 +361,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					remoteUrl : 'activo/getComboTipoSegmento',
 					extraParams:  {codSubcartera: '{comboSubcarteraRef.value}'}
 				}
-			}
+			},
+			
+            comboGestionDnd: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'DDSiNo'}
+					}
+    		}
      }
 
 });

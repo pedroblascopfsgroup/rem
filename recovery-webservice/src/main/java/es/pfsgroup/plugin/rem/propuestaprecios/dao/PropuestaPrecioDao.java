@@ -18,7 +18,7 @@ public interface PropuestaPrecioDao extends AbstractDao<PropuestaPrecio, Long>{
 
 	public Long getNextNumPropuestaPrecio();
 	
-	public Page getListHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro);
+	public Page getListHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro, Long usuarioId);
 	
 	public boolean existePropuestaEnTrabajo(Long idTrabajo);
 	

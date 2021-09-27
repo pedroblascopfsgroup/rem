@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajosGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -378,6 +379,11 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Long idUsuario) {
 		HQLBuilder hb = new HQLBuilder(" from VGridBusquedaTrabajos vgrid");
+		
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+		}
 
 		if (Boolean.TRUE.equals(dto.getEsGestorExterno())) {
 			List<Long> proveedorIds = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);

@@ -23,6 +23,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
@@ -36,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionDao")
@@ -52,6 +55,9 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
 	public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado) {
@@ -568,14 +574,34 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	}
 	
 	@Override
-	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {		
+	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto, Long usuarioId) {		
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaAgrupaciones vgrid ");
+		
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubcarteraCodigo() == null) {
+				for (UsuarioCartera usu : usuarioCartera) {
+					if (usu.getSubCartera() != null) {
+						subcarteras.add(usu.getSubCartera().getCodigo());
+					}
+				}
+			}
+		}
+		
 		if (dto.getNumAgrupacionRem() != null && StringUtils.isNumeric(dto.getNumAgrupacionRem()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionRem", Long.valueOf(dto.getNumAgrupacionRem()));
 		if (dto.getNumAgrupacionUvem() != null && StringUtils.isNumeric(dto.getNumAgrupacionUvem()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numAgrupacionUvem", Long.valueOf(dto.getNumAgrupacionUvem()));
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());	
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAgrupacionCodigo", dto.getTipoAgrupacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoAlquilerCodigo", dto.getTipoAlquilerCodigo());
 		

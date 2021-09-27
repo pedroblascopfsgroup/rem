@@ -8,8 +8,8 @@ public class EstadosAutorizacionHqlHelper {
 	
 
 	
-	public static final String ALIAS_EAH = "estAutHaya";
-	public static final String ALIAS_EAP = "estAutProp";
+	public static final String ALIAS_EAH = " estAutHaya";
+	public static final String ALIAS_EAP = " estAutProp";
 	public static final String FROM_EAH = ",DDEstadoAutorizacionHaya " + ALIAS_EAH;
 	public static final String FROM_EAP = ",DDEstadoAutorizacionPropietario " + ALIAS_EAP;
 	public static final String WHERE_JOIN_EAH = ALIAS_EAH + ".id = vgasto.idEstAutHaya ";

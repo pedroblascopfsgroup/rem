@@ -1215,6 +1215,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if(activo.getTieneGestionDnd() != null) {
+			activoDto.setTieneGestionDndCodigo(activo.getTieneGestionDnd().getCodigo());
+			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
+		}
+		
 		return activoDto;
 	}
 	
@@ -1401,6 +1406,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDEstadoActivo estadoActivo = (DDEstadoActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class,  dto.getEstadoActivoCodigo());
 				activo.setEstadoActivo(estadoActivo);
 				activo.setFechaUltCambioTipoActivo(new Date());
+			}
+			
+			if (!Checks.esNulo(dto.getTieneGestionDndCodigo())) {
+				DDSinSiNo tieneGestionDnd = (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class,  dto.getTieneGestionDndCodigo());
+				activo.setTieneGestionDnd(tieneGestionDnd);
 			}
 			
 			// Se genera un registro en el histórico por la modificación de los datos en el apartado de 'Datos Admisión' de informe comercial.

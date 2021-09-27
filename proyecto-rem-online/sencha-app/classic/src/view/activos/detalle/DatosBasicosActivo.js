@@ -285,16 +285,30 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
 							            	hidden: true
 										},
-										
 								        {
 								        	xtype: 'comboboxfieldbasedd',
 								        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 								        	name: 'estadoActivoCodigo',
+								        	reference: 'estadoActivoCodigoRef',
 								        	bind: {
-								        		readOnly : true,
+								        		disabled: '{!tieneGestionDnd}',
 							            		store: '{comboEstadoActivo}',
 							            		value: '{activo.estadoActivoCodigo}',
 												rawValue: '{activo.estadoActivoDescripcion}'
+								        	}
+								        },
+								        {
+								        	xtype: 'comboboxfieldbasedd',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.gestion.dnd'),
+								        	name: 'gestionDndCodigo',
+								        	reference: 'gestionDndCodigoRef',
+								        	bind: {
+							            		store: '{comboGestionDnd}',
+							            		value: '{activo.tieneGestionDndCodigo}',
+												rawValue: '{activo.tieneGestionDndDescripcion}'
+								        	},
+								        	listeners: {
+								        		change: 'onChangeComboGestionDnd'
 								        	}
 								        },
 						                {

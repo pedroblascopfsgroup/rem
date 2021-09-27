@@ -12,6 +12,6 @@ public interface ProvisionAgrupacionGastosDao extends AbstractDao<VBusquedaProvi
  * @param dto
  * @return
  */
-	Page findAll (DtoProvisionGastosFilter dto);
+	Page findAll (DtoProvisionGastosFilter dto, Long usuarioId);
 	
 }

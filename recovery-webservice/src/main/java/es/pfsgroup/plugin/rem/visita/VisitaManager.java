@@ -28,7 +28,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
@@ -608,20 +607,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
-
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogeado.getId()));
-		if (!Checks.esNulo(usuarioCartera)){
-			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
-				dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-				dtoVisitasFilter.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}else{
-				dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			}
-		}
-		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
 
+		return visitaDao.getListVisitasDetalle(dtoVisitasFilter, usuarioLogeado);
 	}
 
 	@Override

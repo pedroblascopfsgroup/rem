@@ -56,6 +56,15 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubcartera'
 				}
+		},
+		
+		comboSubcartera: {
+		model: 'HreRem.model.ComboBase',
+		proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subentidadesPropietarias'}
+			}
 		}
 		
         

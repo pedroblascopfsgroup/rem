@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210903
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15078
+--## INCIDENCIA_LINK=HREOS-15254
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -17,6 +17,7 @@
 --##	    0.5: 20210421 Viorel Remus Ovidiu. Añadir campos PISO_PILOTO, AGR_VISITABLE, AGR_EMPRESA_PROMOTORA, AGR_EMPRESA_COMERCIALIZADORA
 --##	    0.6: 20210720 Daniel Algaba. Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM - HREOS-14686
 --##		0.7: 20210903 Javier Esbri. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15078
+--##		0.7: 20210923 Daniel Algaba. Se cambiañ el campo de ID_AGRUPACION_BC para apuntar a AGR_NUM_AGRUP_BC de la ACT_AGR - HREOS-15254
 --##########################################
 --*/
 
@@ -162,7 +163,7 @@ BEGIN/*Versión 0.6*/
         	CAST(AGR.AGR_VISITABLE AS NUMBER(1,0))                                             	 AS AGR_VISITABLE,
         	CAST(AGR.AGR_EMPRESA_PROMOTORA AS VARCHAR2(250 CHAR))                              	 AS AGR_EMPRESA_PROMOTORA,
         	CAST(AGR.AGR_EMPRESA_COMERCIALIZADORA AS VARCHAR2(250 CHAR))                       	 AS AGR_EMPRESA_COMERCIALIZADORA,
-		CAST(AGR.AGR_UVEM_COAGIW AS NUMBER(16,0))										AS ID_AGRUPACION_BC
+		CAST(AGR.AGR_NUM_AGRUP_BC AS NUMBER(16,0))										AS ID_AGRUPACION_BC
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
 		JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID AND DDTAG.DD_TAG_CODIGO IN (''01'', ''13'',''14'',''15'',''16'',''02'',''17'',''18'')  
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID

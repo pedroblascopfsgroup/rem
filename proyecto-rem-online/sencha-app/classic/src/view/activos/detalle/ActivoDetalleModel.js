@@ -1838,7 +1838,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}	
 			return readOnly;
 		},
-
+		
 		 esSuperUsuarioCaixa: function(get){
 		 	var isBankia = get('activo.isCarteraBankia');
 	    	if (isBankia) {
@@ -1924,6 +1924,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			var destinoComercial = get('!activo.esEditableDestinoComercial');
 			if(destinoComercial == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		
+		 tieneGestionDnd: function(get){
+			var tieneGestionDnd = get('activo.tieneGestionDndCodigo');
+			//var tieneGestionDndCombo = this.getView().lookupReference('gestionDndCodigo');
+
+			if (tieneGestionDnd === '01') {
 				return true;
 			} else {
 				return false;

@@ -8598,5 +8598,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			grid.getStore().load();
 		}
 		
+    },
+    
+    onChangeComboGestionDnd: function(combo){
+    	var me = this;
+		var comboEstadoFisico = me.lookupReference('estadoActivoCodigoRef');
+
+		if (combo.getValue() === '01') {
+			comboEstadoFisico.setDisabled(false);
+		} else {
+			comboEstadoFisico.setDisabled(true);
+		}
     }
 });

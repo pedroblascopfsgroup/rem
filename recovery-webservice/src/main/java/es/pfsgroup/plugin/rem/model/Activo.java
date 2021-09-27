@@ -571,6 +571,10 @@ public class Activo implements Serializable, Auditable {
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private ActivoAdmisionRevisionTitulo admisionRevisionTitulo;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_GESTION_DND")
+    private DDSinSiNo tieneGestionDnd;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2177,6 +2181,12 @@ public class Activo implements Serializable, Auditable {
 		this.admisionRevisionTitulo = admisionRevisionTitulo;
 	}
 	
-	
+	public DDSinSiNo getTieneGestionDnd() {
+		return tieneGestionDnd;
+	}
+
+	public void setTieneGestionDnd(DDSinSiNo tieneGestionDnd) {
+		this.tieneGestionDnd = tieneGestionDnd;
+	}
 	
 }

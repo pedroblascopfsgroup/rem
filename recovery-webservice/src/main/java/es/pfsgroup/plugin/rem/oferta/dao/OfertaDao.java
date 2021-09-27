@@ -105,7 +105,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 
 	public Boolean tieneTareaFinalizada(String tarea, String numOferta);
 	
-	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto);
+	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto, Long usuarioId);
 
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
 

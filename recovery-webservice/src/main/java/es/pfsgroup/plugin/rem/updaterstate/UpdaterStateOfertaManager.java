@@ -37,6 +37,8 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
     private ActivoApi activoApi;
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);

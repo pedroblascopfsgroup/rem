@@ -844,15 +844,9 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}
-		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto);		
+		Long usuarioId = genericAdapter.getUsuarioLogado().getId();
+		
+		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto, usuarioId);		
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
@@ -3172,8 +3166,6 @@ public class AgrupacionAdapter {
 
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
-
 				Boolean ofertaViva = false;
 
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
@@ -3226,20 +3218,24 @@ public class AgrupacionAdapter {
 				}
 
 				if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
-
+					List<ActivoAgrupacionActivo> activosAgrupacion = agrupacion.getActivos();
+					Activo activo = new Activo();
+					
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
 					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) genericDao.get(DDTipoAlquiler.class, filtro);
+					
+					for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+						activo = activoAgrupacion.getActivo();
+						activo.setTipoAlquiler(tipoAlquiler);
+					}
 
 					loteComercial.setTipoAlquiler(tipoAlquiler);
 				}
-
 
 				if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
 					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
 					loteComercial.setUsuarioGestorComercial(usuario);
 				}
-
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
 
 				Boolean ofertaViva = false;
 

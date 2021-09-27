@@ -159,7 +159,6 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
@@ -7142,14 +7141,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				// Pendiente definir filtro para gestoria y usuario gestor
 				// DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
 				// dto.setGestoriaBag(gestoria != null ? gestoria.getId() : null);
-				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (usuarioCartera != null) {
-					dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-					if (usuarioCartera.getSubCartera() != null) {			
-						dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-					}
-				}		
-				return ofertaDao.getBusquedaOfertasGrid(dto);
+	
+				return ofertaDao.getBusquedaOfertasGrid(dto, usuarioLogado.getId());
 	}
 	
 	@Override 

@@ -384,7 +384,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isPublicadoVentaByFechaValoracion(Long idActivo, Date fechaValoracion);
 
-	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto, Long usuarioId);
 
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 

@@ -46,15 +46,18 @@ Ext.define('HreRem.view.configuracion.mantenimiento.tiposmantenimiento.Mantenimi
 					},
 					{ 
 		        		xtype: 'comboboxfieldbase',
-			        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 			        	name: 'codSubCartera',
+			        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 			        	reference: 'codSubCarteraRef',
 			        	bind: {
-		            		store: '{comboSubcarteraFilter}',
-		            		disabled: '{!codCarteraRef.selection}'
+		            		store: '{comboSubcartera}',
+		            		disabled: '{!codCarteraRef.selection}',
+		            		filters: {
+		            			property: 'carteraCodigo',
+		                        value: '{codCarteraRef.value}'
+		            		}
 			        	},
-			        	displayField: 'descripcion',
-			        	valueField: 'codigo'			
+			        	publishes: 'value'		
 					},				
 					{
 						xtype: 'comboboxfieldbase',

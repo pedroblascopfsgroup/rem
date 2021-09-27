@@ -99,6 +99,9 @@ public class ScoringAlquiler implements Serializable, Auditable {
 	@Column(name = "SCO_FECHA_SANCION_BC")
 	private Date fechaSancionBc;
 	
+	@Column(name = "SCO_NUM_EXPEDIENTE")
+	private String numeroExpedienteBc;
+	
 	@Version   
 	private Long version;
 	
@@ -223,6 +226,14 @@ public class ScoringAlquiler implements Serializable, Auditable {
 
 	public void setFechaSancionBc(Date fechaSancionBc) {
 		this.fechaSancionBc = fechaSancionBc;
+	}
+
+	public String getNumeroExpedienteBc() {
+		return numeroExpedienteBc;
+	}
+
+	public void setNumeroExpedienteBc(String numeroExpedienteBc) {
+		this.numeroExpedienteBc = numeroExpedienteBc;
 	}
 	
 }

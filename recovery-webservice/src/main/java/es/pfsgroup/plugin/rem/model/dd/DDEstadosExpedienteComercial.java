@@ -85,6 +85,14 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_AGENDAR = "51"; 
 	public static final String PTE_ENVIO = "52"; 
 	
+	public static final String PTE_SCREENING_Y_ANALISIS_BC = "53";
+	public static final String PTE_CL_ROD = "54";
+	public static final String PTE_ANALISIS_TECNICO = "55";
+	public static final String PTE_NEGOCIACION = "56";
+	public static final String PTE_PBC_ALQUILER_HRE = "57";
+	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "58";
+	public static final String PTE_REVISAR_CONDICIONES_BC = "59";
+	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";
 
 	@Id

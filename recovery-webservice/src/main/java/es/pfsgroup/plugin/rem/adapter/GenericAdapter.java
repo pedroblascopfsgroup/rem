@@ -112,12 +112,21 @@ public class GenericAdapter {
 				usuarioCartera = genericDao.getList(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
 				if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
 					for (UsuarioCartera usu : usuarioCartera) {
-						if (DDCartera.class.equals(clase) && !lista.contains(usu.getCartera().getCodigo())) {
+						if (DDCartera.class.equals(clase) && !lista.contains(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()))) {
 							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
-						} else if (DDSubcartera.class.equals(clase)) {
+						} else if (DDSubcartera.class.equals(clase) && usu.getSubCartera() != null) {
 							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getSubCartera().getCodigo()));
 						}
 					}	
+					if (DDSubcartera.class.equals(clase) && lista.isEmpty()) {
+						Filter f1 = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", usuarioCartera.get(0).getCartera().getCodigo());
+						Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+						List<DDSubcartera> subcarteras = genericDao.getList(DDSubcartera.class, f1, f2);
+						
+						for (DDSubcartera subcartera : subcarteras) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, subcartera.getCodigo()));
+						}
+					}
 				}				
 			}
 			

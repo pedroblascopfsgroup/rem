@@ -397,7 +397,17 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						remoteUrl: 'generic/getDiccionario',
 						extraParams: {diccionario: 'estadoComercialAlquiler'} 
 					}
-			}
+			},
+			
+			comboGestionDnd: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'DDSiNo'}
+					}
+    		}
+    		
      }
 
 });

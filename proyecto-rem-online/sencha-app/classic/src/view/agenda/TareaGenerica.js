@@ -3251,11 +3251,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		me.bloquearCampo(fechaPropuesta);
 		me.campoObligatorio(fechaPropuesta);
-		me.bloquearCampo(fechaValidacionBc);
+		if(!$AU.userHasFunction('AV_CONF_F_ESC')){
+			me.bloquearCampo(fechaValidacionBc);	
+			me.bloquearCampo(comboValidacionBC);  
+			me.bloquearCampo(observacionesBC);
+
+		}
 		me.campoObligatorio(fechaValidacionBc);
-		me.bloquearCampo(comboValidacionBC);
 		me.campoObligatorio(comboValidacionBC);
-		me.bloquearCampo(observacionesBC);
 
 		
 		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');

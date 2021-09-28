@@ -722,12 +722,12 @@
             	return tramiteAlquilerManager.tipoTratamientoAlquiler(idTramite);
             }
              def checkAprobadoRechazadoBC = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkAprobadoRechazadoBC(tareaExterna);
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkAprobadoRechazadoBC(tareaExterna);
             }
             def checkAprobadoRechazadoBCPosicionamiento = {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
-            	return expedienteComercialManager.checkAprobadoRechazadoBCPosicionamiento(tareaExterna);
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkAprobadoRechazadoBCPosicionamiento(tareaExterna);
             }
             def actualizarOfertaBoarding = {
 				def ofertaManager = ctx.getBean("ofertaManager");
@@ -780,6 +780,11 @@
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.isExpedienteFirmado(tareaExterna, expedienteAnterior);
             }  
+             def userHasPermisoParaAvanzarTareas = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.userHasPermisoParaAvanzarTareas(tareaExterna);
+            }
+            
 	
   			 ]]></value>
   		</list>

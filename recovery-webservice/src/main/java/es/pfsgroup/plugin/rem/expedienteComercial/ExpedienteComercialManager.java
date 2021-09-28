@@ -4058,6 +4058,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaEnvioPos", posicionamiento.getFechaEnvioPos());
 				beanUtilNotNull.copyProperty(posicionamientoDto, "fechaValidacionBCPos", posicionamiento.getFechaValidacionBCPos());
 				beanUtilNotNull.copyProperty(posicionamientoDto, "observacionesBcPo", posicionamiento.getObservacionesBcPos());
+				beanUtilNotNull.copyProperty(posicionamientoDto, "observacionesRem", posicionamiento.getObservacionesRem());
 				
 				if (posicionamiento.getMotivoAnulacionBc() != null) {
 					posicionamientoDto.setMotivoAnulacionBc(posicionamiento.getMotivoAnulacionBc().getDescripcion());
@@ -12933,14 +12934,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public void createOrUpdateUltimoPosicionamiento(Long idExpediente, DtoPosicionamiento dto) {
+		Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(idExpediente, null, true);
+		
+		if(posicionamiento == null) {
+			posicionamiento = new Posicionamiento();
+			ExpedienteComercial eco = this.findOne(idExpediente);
+			posicionamiento.setExpediente(eco);
+		}
+		
+		this.dtoToPosicionamiento(posicionamiento, dto);
+		
+		genericDao.save(Posicionamiento.class, posicionamiento);
+
+	}
+
 	
 	private Posicionamiento dtoToPosicionamiento (Posicionamiento posicionamiento, DtoPosicionamiento dto) {
 		
 		try {
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaPosicionamiento());
-			beanUtilNotNull.copyProperty(posicionamiento, "fechaRespuestaBC", dto.getFechaValidacionBCPos());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaValidacionBCPos", dto.getFechaValidacionBCPos());
 			beanUtilNotNull.copyProperty(posicionamiento, "comentariosBC", dto.getObservacionesBcPos());
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaEnvio", dto.getFechaEnvioPos());
+			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "fechaFinPosicionamiento", dto.getFechaFinPosicionamiento());
+			beanUtilNotNull.copyProperty(posicionamiento, "observacionesBcPos", dto.getObservacionesBcPos());
+			beanUtilNotNull.copyProperty(posicionamiento, "observacionesRem", dto.getObservacionesRem());
+			
+			
+			
 			
 			if(dto.getValidacionBCPosi() != null) {
 				DDMotivosEstadoBC dd = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBCPosi()));
@@ -13456,38 +13481,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return listaAux;
 	}
-	
-	@Override
-	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna) {
-		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		if (expedienteComercial != null) {
-			FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(expedienteComercial.getId(),null);
-			if (fechaArrasExpediente != null && isAprobadoRechazadoBC(fechaArrasExpediente.getValidacionBC())){
-				return true;
-			}				
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean checkAprobadoRechazadoBCPosicionamiento(TareaExterna tareaExterna) {
-		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		if (expedienteComercial != null) {
-			Posicionamiento posicionamiento =  this.getUltimoPosicionamiento(expedienteComercial.getId(), null, false);
-			if (posicionamiento != null && isAprobadoRechazadoBC(posicionamiento.getValidacionBCPos())) {
-				return true;
-			}				
-		}
-		return false;
-	}
-	
-	private boolean isAprobadoRechazadoBC(DDMotivosEstadoBC estado) {
-		boolean is = false;
-		if(DDMotivosEstadoBC.isAprobado(estado) || DDMotivosEstadoBC.isRechazado(estado)) {
-			is = true;
-		}
-		return is;
-	}
+		
+
 	
 	private String tieneNumeroInmuebleBC(String cuerpo, ActivoTramite tramite) {
 		if ((tramite.getTipoTramite() == null || CODIGO_TRAMITE_T015.equals(tramite.getTipoTramite().getCodigo())) 

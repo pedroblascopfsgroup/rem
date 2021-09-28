@@ -1331,13 +1331,8 @@ public interface ExpedienteComercialApi {
 
 	DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
 
-	
 	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto);
 	
-	public boolean checkAprobadoRechazadoBC(TareaExterna tareaExterna);
-
-	boolean checkAprobadoRechazadoBCPosicionamiento(TareaExterna tareaExterna);
-
 	ExpedienteComercial getExpedienteByIdTramite(Long idTramite);
 
 	Posicionamiento getUltimoPosicionamiento(Long idExpediente, Filter filter, boolean noMostrarAnulados);
@@ -1379,4 +1374,6 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	Formalizacion formalizacionPorExpedienteComercial(Long idExpediente);
+
+	void createOrUpdateUltimoPosicionamiento(Long idExpediente, DtoPosicionamiento dto);
 }

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
@@ -41,11 +43,20 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 	private OfertaApi ofertaApi;
 
 	private static final String CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA = "T017_ConfirmarFechaEscritura";
-	private static final String COMBO_VALIDACION_BC = "comboValidacionBC";
-    private static final String COMBO_ARRAS = "comboArras";
-    private static final String MESES_FIANZA = "mesesFianza";
-    private static final String IMPORTE_FIANZA = "importeFianza";
+	
     private static final String MOTIVO_APLAZAMIENTO = "Firma forzada de arras";
+    
+
+    
+    private class CamposConfirmarFechaFirmaEscritura{
+    	private static final String OBSERVACIONES_BC = "observacionesBC";
+        private static final String FECHA_RESPUESTA = "fechaRespuesta";
+        private static final String COMBO_VALIDACION_BC = "comboValidacionBC";
+        private static final String COMBO_ARRAS = "comboArras";
+        private static final String MESES_FIANZA = "mesesFianza";
+        private static final String IMPORTE_FIANZA = "importeFianza";
+        private static final String OBSERVACIONES_REM = "observaciones";
+    }
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -53,67 +64,55 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-		String codigoValidacionBC = null;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		ExpedienteComercial eco = null;
+		ExpedienteComercial eco = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());	
 		boolean vuelveArras = false;
 		Double importe = null;
 		Integer mesesFianza = null;
-
-		if (ofertaAceptada != null) {
-			for(TareaExternaValor valor :  valores){
-				if(COMBO_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					codigoValidacionBC = valor.getValor();
-					break;
-				}
-				if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					if(DDSiNo.SI.equals(valor.getValor())) {
-						vuelveArras = true;
+		DtoPosicionamiento dto = new DtoPosicionamiento();
+		try {
+			if (ofertaAceptada != null && eco != null) {
+				for(TareaExternaValor valor :  valores){
+					if(CamposConfirmarFechaFirmaEscritura.COMBO_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setValidacionBCPosi(valor.getValor());
+					}else if (CamposConfirmarFechaFirmaEscritura.COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							vuelveArras = true;
+						}
+					} else if (CamposConfirmarFechaFirmaEscritura.MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						mesesFianza = Integer.valueOf(valor.getValor());
+					} else if (CamposConfirmarFechaFirmaEscritura.IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (valor.getValor().contains(",")) {
+							String valorCambiado = valor.getValor().replaceAll(",", ".");
+							importe = Double.valueOf(valorCambiado).doubleValue();
+						}else {
+							importe = Double.valueOf(valor.getValor());
+						}
+					}else if(CamposConfirmarFechaFirmaEscritura.FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setFechaValidacionBCPos(ft.parse(valor.getValor()));
+					} else if(CamposConfirmarFechaFirmaEscritura.OBSERVACIONES_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setObservacionesBcPos(valor.getValor());
+					}
+					else if(CamposConfirmarFechaFirmaEscritura.OBSERVACIONES_REM.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dto.setObservacionesRem(valor.getValor());
 					}
 				}
-				if (MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					mesesFianza = Integer.valueOf(valor.getValor());
-				}
-				if (IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					if (valor.getValor().contains(",")) {
-						String valorCambiado = valor.getValor().replaceAll(",", ".");
-						importe = Double.valueOf(valorCambiado).doubleValue();
-					}else {
-						importe = Double.valueOf(valor.getValor());
-					}
-					
-				}
-			}
-			if (vuelveArras) {
-				eco = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());
 				
-				
-				if(eco != null) {
+				if (vuelveArras) {
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(eco, importe, mesesFianza, ofertaAceptada);
-					Posicionamiento pos = expedienteComercialApi.getUltimoPosicionamiento(eco.getId(), null, false);
-					if(pos != null) {
-						if (DDMotivosEstadoBC.isAprobado(pos.getValidacionBCPos())) {
-							DDMotivosEstadoBC estado = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
-							pos.setValidacionBCPos(estado);
-						}else if(DDMotivosEstadoBC.isRechazado(pos.getValidacionBCPos())) {
-							pos.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
-						}
-						pos.setFechaFinPosicionamiento(new Date());
-						genericDao.save(Posicionamiento.class, pos);
+					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())){
+						dto.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+					}
+									
+				}else {
+					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())) {
+						dto.setFechaFinPosicionamiento(new Date());
 					}
 				}
-			}else {
-				if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(codigoValidacionBC)) {
-					eco = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());
-					if(eco != null) {
-						Posicionamiento pos = expedienteComercialApi.getUltimoPosicionamiento(eco.getId(), null, false);
-						if(pos != null) {
-							pos.setFechaFinPosicionamiento(new Date());
-							genericDao.save(Posicionamiento.class, pos);
-						}
-					}
-				}
+				expedienteComercialApi.createOrUpdateUltimoPosicionamiento(eco.getId(), dto);
 			}
+		}catch(ParseException e) {
+			e.printStackTrace();
 		}
 	}
 

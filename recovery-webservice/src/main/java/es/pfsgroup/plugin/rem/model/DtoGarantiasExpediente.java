@@ -48,6 +48,7 @@ public class DtoGarantiasExpediente extends WebDto {
 	private Long mesesRentas;
 	private Double importeRentas;
 	private Boolean scoringEditable;
+	private Boolean bloqueEditable;
 	
 	public Long getIdGarantias() {
 		return idGarantias;
@@ -210,6 +211,12 @@ public class DtoGarantiasExpediente extends WebDto {
 	}
 	public void setScoringEditable(Boolean scoringEditable) {
 		this.scoringEditable = scoringEditable;
+	}
+	public Boolean getBloqueEditable() {
+		return bloqueEditable;
+	}
+	public void setBloqueEditable(Boolean bloqueEditable) {
+		this.bloqueEditable = bloqueEditable;
 	}
 	
 	

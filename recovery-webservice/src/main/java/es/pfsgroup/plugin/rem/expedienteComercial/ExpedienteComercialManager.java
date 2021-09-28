@@ -3400,9 +3400,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaFinCnt(oferta.getFechaFinContrato());
 		}
 		
-
 		if (condiciones.getTipoGrupoImpuesto() != null) {
 			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+		}
+		
+		boolean completada = false;
+		
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
+		if(tramite != null) {
+			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+			
+			if(completada) {
+				dto.setBloqueDepositoEditable(false);
+			}else {
+				dto.setBloqueDepositoEditable(true);
+			}	
+		}else {
+			dto.setBloqueDepositoEditable(false);
 		}
 		
 		return dto;
@@ -13931,24 +13945,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			boolean completada = false;
 			//
 			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
-			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
-							|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
-			
-			if (completada) {
-				dto.setScoringEditable(false);
-			}else {
-				List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
-				for (TareaProcedimiento tarea : tareasActivas) {
-					if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
-							|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
-						dto.setScoringEditable(true);
-						break;
-					} else {
-						dto.setScoringEditable(false);						
+			if(tramite != null) {
+				completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
+						|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
+		
+				if (completada) {
+					dto.setScoringEditable(false);
+				}else {
+					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+					for (TareaProcedimiento tarea : tareasActivas) {
+						if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
+								|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+							dto.setScoringEditable(true);
+							break;
+						} else {
+							dto.setScoringEditable(false);						
+						}
 					}
 				}
+				
+				completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+				
+				if(completada) {
+					dto.setBloqueEditable(false);
+				}else{
+					dto.setBloqueEditable(true);
+				}
+			}else {
+				dto.setScoringEditable(false);
+				dto.setBloqueEditable(false);
 			}
-			
 			
 		}
 		return dto;

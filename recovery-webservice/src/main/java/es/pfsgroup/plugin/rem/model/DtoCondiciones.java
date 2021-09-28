@@ -2,10 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-
 import es.capgemini.devon.dto.WebDto;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 
 
 /**
@@ -150,6 +147,8 @@ public class DtoCondiciones extends WebDto {
 	private Date fechaActualizacion;
 	
 	private String tipoGrupoImpuestoCod;
+	
+	private Boolean bloqueDepositoEditable;
 	
 	public Integer getMesesFianza() {
 		return mesesFianza;
@@ -1073,6 +1072,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setTipoGrupoImpuestoCod(String tipoGrupoImpuestoCod) {
 		this.tipoGrupoImpuestoCod = tipoGrupoImpuestoCod;
+	}
+
+	public Boolean getBloqueDepositoEditable() {
+		return bloqueDepositoEditable;
+	}
+
+	public void setBloqueDepositoEditable(Boolean bloqueDepositoEditable) {
+		this.bloqueDepositoEditable = bloqueDepositoEditable;
 	}	
 	
 }

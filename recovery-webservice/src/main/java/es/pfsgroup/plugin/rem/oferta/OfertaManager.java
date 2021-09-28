@@ -1085,6 +1085,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
 			
+			if (!Checks.esNulo(ofertaDto.getCodOfertaSalesforce())) {
+				oferta.setCodOfertaSalesforce(ofertaDto.getCodOfertaSalesforce());
+			}
+			
 			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())) {
 				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
 			} else {
@@ -1520,9 +1524,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
-					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getCodOfertaSalesforce())
+					&& !ofertaDto.getCodOfertaSalesforce().equals(oferta.getCodOfertaSalesforce())) {
+				oferta.setCodOfertaSalesforce(ofertaDto.getCodOfertaSalesforce());
 				modificado = true;
 			}
 			

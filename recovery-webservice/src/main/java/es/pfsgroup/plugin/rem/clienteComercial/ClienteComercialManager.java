@@ -1005,8 +1005,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente = this.getClienteComercialByDocumento(clienteDto.getDocumento());
 				if (cliente.getIdClienteWebcom() != null)
 					map.put("idClienteWebcom", cliente.getIdClienteWebcom());
-				map.put("idClienteRem", cliente.getIdClienteRem());
-				map.put("success", true);
+					map.put("idClienteRem", cliente.getIdClienteRem());
+					map.put("success", true);
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				if (clienteDto.getIdClienteWebcom() != null)

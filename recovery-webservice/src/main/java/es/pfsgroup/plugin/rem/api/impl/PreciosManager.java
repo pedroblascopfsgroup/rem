@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 import es.pfsgroup.plugin.rem.model.VDatosPropuestaEntidad01;
@@ -154,15 +153,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	public Page getHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro) {
-		
-		// HREOS-2179 - Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", genericAdapter.getUsuarioLogado().getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoPropuestaFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
-		}
-		
-		return propuestaPrecioDao.getListHistoricoPropuestasPrecios(dtoPropuestaFiltro);
+		Long usuarioId = genericAdapter.getUsuarioLogado().getId();
+
+		return propuestaPrecioDao.getListHistoricoPropuestasPrecios(dtoPropuestaFiltro, usuarioId);
 	}
 	
 	@Override

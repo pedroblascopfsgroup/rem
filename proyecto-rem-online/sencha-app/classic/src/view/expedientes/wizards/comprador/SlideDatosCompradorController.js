@@ -359,6 +359,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(campoProvincia)) campoProvincia.validate();
 			if(!Ext.isEmpty(campoMunicipio)) campoMunicipio.validate();
 			if(!Ext.isEmpty(campoPais)) campoPais.validate();
+			if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
+			if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
+			if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);

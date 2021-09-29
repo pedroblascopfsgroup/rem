@@ -192,8 +192,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     @Override
     public void accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaArras(dto));
-
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_ARRAS_AGENDADAS));
@@ -234,15 +232,22 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception {
 
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
+        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO));
+        expediente.setEstadoBc(estadoExpedienteBc);
+
         Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class,
                 genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPosicionamiento()));
 
         posicionamiento.setValidacionBCPos(genericDao.get(DDMotivosEstadoBC.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APROBADA_BC)));
         posicionamiento.setFechaValidacionBCPos(new Date());
 
+        genericDao.save(ExpedienteComercial.class, expediente);
         genericDao.save(Posicionamiento.class,posicionamiento);
 
         adapter.save(createRequestAccionFirmaContrato(dto));
+        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaContrato(DtoFirmaContratoCaixa dto) throws ParseException {
@@ -251,8 +256,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         String[] idTarea = {dto.getIdTarea().toString()};
         String[] comboValidacionBC = {dto.getComboValidacionBC()};
         String[] observacionesBC = {dto.getObservacionesBC()};
-        String[] fechaPropuesta = {sdf.format(sdfEntrada.parse(dto.getFechaPropuesta()))};
-        String[] fechaRespuesta = {sdf.format(sdfEntrada.parse(dto.getFechaRespuesta()))};
+        String[] fechaPropuesta = {dto.getFechaPropuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaPropuesta())) : null};
+        String[] fechaRespuesta = {dto.getFechaRespuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaRespuesta())) : null};
 
         map.put("idTarea", idTarea);
         map.put("comboValidacionBC", comboValidacionBC);
@@ -427,8 +432,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaArras(dto));
-
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
@@ -452,8 +455,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaContrato(dto));
-
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));

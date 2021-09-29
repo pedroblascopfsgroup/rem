@@ -103,6 +103,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		String estadoArras = null;
 		try {
 			if (ofertaAceptada != null) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -224,6 +225,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					if (!Checks.esNulo(reserva) && !quitarArras && !aplazarArras) {
 						
 						DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
+						estadoArras = estadoReserva.getCodigoC4C();
 						reserva.setEstadoReserva(estadoReserva);
 						if(Checks.isFechaNula(fechaFirma)) {
 							reserva.setFechaFirma(fechaFirma);
@@ -270,7 +272,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				}
 				
 				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndEstadoArras(expediente,estadoArras));
 				}
 			}
 		} catch (ParseException e) {

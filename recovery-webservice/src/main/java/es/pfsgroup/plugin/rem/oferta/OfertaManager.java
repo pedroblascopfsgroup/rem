@@ -1690,7 +1690,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					modificado = true;
 				}
 				if (!Checks.esNulo(ofertaDto.getBonificacionAnyo3Contraoferta())) {
-					oferta.setBonificacionAnyo2Contraoferta(ofertaDto.getBonificacionAnyo2Contraoferta());
+					oferta.setBonificacionAnyo3Contraoferta(ofertaDto.getBonificacionAnyo3Contraoferta());
 					modificado = true;
 				}
 				if (!Checks.esNulo(ofertaDto.getBonificacionAnyo4Contraoferta())) {

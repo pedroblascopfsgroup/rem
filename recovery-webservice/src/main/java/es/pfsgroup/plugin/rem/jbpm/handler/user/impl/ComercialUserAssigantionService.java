@@ -92,6 +92,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public class TramiteVentaAppleT017{
 		public static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";
 		public static final String CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA = "T017_ConfirmarFechaEscritura";
+		public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
 	}
 	
 	private static final Integer CODIGO_SI = 1;

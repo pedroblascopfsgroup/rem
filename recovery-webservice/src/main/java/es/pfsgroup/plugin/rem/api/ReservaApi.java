@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.Date;
 import java.util.HashMap;
 
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
 
@@ -40,5 +41,8 @@ public interface ReservaApi {
 	 * @return
 	 */
 	public Date getFechaFirmaByIdExpediente(String idExpediente);
+
+
+	boolean tieneReservaFirmada(ExpedienteComercial eco);
 
 }

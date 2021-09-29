@@ -851,7 +851,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							bind : {
 								value: '{resolucion.fechaContabilizacion}',
 								visible: '{expediente.isCarteraBankia}',
-								hidden: '{esBankia}'
+								hidden: '{!esBankia}'
 							},
 							formatter: 'date("d/m/Y")',
 							readOnly: true

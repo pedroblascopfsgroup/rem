@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa'],
 
     data: {
     	activo: null,
@@ -1972,6 +1972,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		return true;
 	    	}
 	    	return false;
+		},
+		
+		esUsuarioTasadorayVpo: function(get){
+			var me = this;
+			var vpo = get('infoAdministrativa.vpo');
+			
+			if ($AU.userIsRol(CONST.PERFILES["TASADORA"]) || !vpo) {
+				return true;
+			}
+			return false;
+		},
+		
+		esUsuarioTasadora: function(get){
+			var me = this;
+			
+			return $AU.userIsRol(CONST.PERFILES["TASADORA"]);
 		}
 	 },
     

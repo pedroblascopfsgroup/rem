@@ -28,6 +28,8 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
@@ -69,6 +71,9 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 		boolean vuelveArras = false;
 		Double importe = null;
 		Integer mesesFianza = null;
+		String estadoBC = null;
+		String estadoExpediente = null;
+		
 		DtoPosicionamiento dto = new DtoPosicionamiento();
 		try {
 			if (ofertaAceptada != null && eco != null) {
@@ -105,12 +110,26 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					}
 									
 				}else {
+
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())) {
 						dto.setFechaFinPosicionamiento(new Date());
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+						estadoBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+					}else {
+						estadoExpediente = DDEstadosExpedienteComercial.POSICIONADO;
+						estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 					}
 				}
 				expedienteComercialApi.createOrUpdateUltimoPosicionamiento(eco.getId(), dto);
 			}
+			
+			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
+			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+			
+			genericDao.save(ExpedienteComercial.class, eco);
+			
+	        ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+
 		}catch(ParseException e) {
 			e.printStackTrace();
 		}

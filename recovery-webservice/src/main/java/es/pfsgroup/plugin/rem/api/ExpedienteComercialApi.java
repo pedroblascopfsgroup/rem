@@ -1361,6 +1361,11 @@ public interface ExpedienteComercialApi {
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco);
 
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndArras(ExpedienteComercial eco, String fechaPropuesta);
+
+	@Transactional(readOnly = true)
+	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(ExpedienteComercial eco, String estadoArras);
+
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)

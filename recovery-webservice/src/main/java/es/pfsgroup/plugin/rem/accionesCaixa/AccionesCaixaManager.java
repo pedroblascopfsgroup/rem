@@ -9,10 +9,13 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
@@ -51,13 +54,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public ActivoTramiteApi activoTramiteApi;
 
     @Autowired
-    public ExpedienteComercialManager expedienteComercialManager;
+    public ExpedienteComercialApi expedienteComercialApi;
 
     @Autowired
     private OfertaApi ofertaApi;
     
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaApi;
+    
+	 @Autowired
+	 private ReservaApi reservaApi;
 
     @Override
     public String managerName() {
@@ -100,7 +106,25 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
             adapter.anularTramiteAlquiler(acTra.getId(), "905");
         }else {
-            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+        	TareaExterna tareaExternaActual = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+        	ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
+        	
+        	if(tareaExternaActual != null && expediente != null) {
+        		String estadoBc = null;
+	        	String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
+				if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN.equals(codigoTarea)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				}else if(reservaApi.tieneReservaFirmada(expediente)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+				}else {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+				}
+				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
+				genericDao.save(ExpedienteComercial.class, expediente);
+				
+	            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+	        }
         }
     }
 
@@ -129,7 +153,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto){
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
         DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
 
@@ -140,37 +164,35 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         genericDao.save(OfertaCaixa.class, ofrCaixa);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionArrasAprobadas(DtoOnlyExpedienteYOfertaCaixa dto){
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionIngresoFinalAprobado(DtoOnlyExpedienteYOfertaCaixa dto){
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Transactional
     @Override
     public void accionFirmaArrasAprobadas(DtoFirmaArrasCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaArras(dto));
-
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_ARRAS_AGENDADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
@@ -187,7 +209,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         adapter.save(createRequestAccionFirmaArras(dto));
 
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaArras(DtoFirmaArrasCaixa dto) throws ParseException {
@@ -210,7 +232,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public void accionFirmaContratoAprobada(DtoFirmaContratoCaixa dto) throws Exception {
 
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO));
         expediente.setEstadoBc(estadoExpedienteBc);
@@ -225,7 +247,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(Posicionamiento.class,posicionamiento);
 
         adapter.save(createRequestAccionFirmaContrato(dto));
-        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaContrato(DtoFirmaContratoCaixa dto) throws ParseException {
@@ -234,8 +256,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         String[] idTarea = {dto.getIdTarea().toString()};
         String[] comboValidacionBC = {dto.getComboValidacionBC()};
         String[] observacionesBC = {dto.getObservacionesBC()};
-        String[] fechaPropuesta = {sdf.format(sdfEntrada.parse(dto.getFechaPropuesta()))};
-        String[] fechaRespuesta = {sdf.format(sdfEntrada.parse(dto.getFechaRespuesta()))};
+        String[] fechaPropuesta = {dto.getFechaPropuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaPropuesta())) : null};
+        String[] fechaRespuesta = {dto.getFechaRespuesta() != null ? sdf.format(sdfEntrada.parse(dto.getFechaRespuesta())) : null};
 
         map.put("idTarea", idTarea);
         map.put("comboValidacionBC", comboValidacionBC);
@@ -250,7 +272,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto){
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_VENTA_FORMALIZADA));
@@ -261,59 +283,59 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstado(eec);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionArrasRechazadas(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionArrasPteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_PTE_DOCUMENTACION));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionIngresoFinalPdteDoc(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -334,53 +356,53 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
         expediente.setEstadoBc(estadoExpedienteBc);
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -410,9 +432,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaArras(dto));
-
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
@@ -429,15 +449,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         adapter.save(createRequestAccionFirmaArras(dto));
 
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionFirmaContratoRechazada(DtoFirmaContratoCaixa dto) throws Exception {
-        adapter.save(createRequestAccionFirmaContrato(dto));
-
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
@@ -453,23 +471,26 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         adapter.save(createRequestAccionFirmaContrato(dto));
 
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialManager.buildReplicarOfertaDtoFromExpediente(expediente));
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
     @Transactional
     public void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException {
-        ExpedienteComercial expediente = expedienteComercialManager.findOne(dto.getIdExpediente());
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS));
+        genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS));
         expediente.setEstadoBc(estadoExpedienteBc);
+        expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_VENTAS)));
 
         Reserva res = expediente.getReserva();
         res.setFechaContArras(sdfEntrada.parse(dto.getFechaContArras()));
 
         genericDao.save(Reserva.class, res);
         genericDao.save(ExpedienteComercial.class, expediente);
+        
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -477,7 +498,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
     	this.createRequestAccionAprobacion(dto);
     	TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
-    	expedienteComercialManager.setValoresTEB(dto, tarea, dto.getCodTarea());
+    	expedienteComercialApi.setValoresTEB(dto, tarea, dto.getCodTarea());
     }
 
     @Override

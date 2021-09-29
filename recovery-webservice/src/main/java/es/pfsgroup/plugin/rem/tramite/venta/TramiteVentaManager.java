@@ -29,6 +29,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	
 	public class AvanzaTareaFuncion{
 		public static final String FUNCION_AVANZA_POSICIONAMIENTO = "AV_CONF_F_ESC";
+		public static final String FUNCION_AVANZA_PDTE_FIRMA_ARRAS = "AV_CONF_FF_ARRAS";
 	}
 	
 	@Override
@@ -62,6 +63,9 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(tareaExterna.getTareaProcedimiento() != null) {
 			if(ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
 				descripcionFuncion = AvanzaTareaFuncion.FUNCION_AVANZA_POSICIONAMIENTO;
+			}
+			if(ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+				descripcionFuncion = AvanzaTareaFuncion.FUNCION_AVANZA_PDTE_FIRMA_ARRAS;
 			}
 		}
 		

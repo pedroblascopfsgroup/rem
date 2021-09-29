@@ -118,10 +118,21 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 								store: '{comboEstadoExpedienteBc}',
 								value: '{expediente.codigoEstadoBc}',
 								readOnly: '{expediente.noEsOfertaFinalGencat}',
-								hidden: !$AU.userIsRol("HAYASUPER")	|| '{!esBankia}'
+								hidden: '{!esBankia}'
 							},
 							
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.bc')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	readOnly: true,
+		                	bind: {
+								store: '{comboEstadoComunicacionC4C}',
+								value: '{expediente.codigoEstadoComunicacionC4C}',
+								hidden: '{!esBankia}'
+							},
+							
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.comunicacion.c4c')
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',

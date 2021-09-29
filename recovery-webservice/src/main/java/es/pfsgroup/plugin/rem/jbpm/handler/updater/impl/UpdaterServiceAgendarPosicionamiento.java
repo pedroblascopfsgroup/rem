@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,21 +14,18 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
-import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
 @Component
 public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
@@ -39,9 +35,6 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-		
-	@Autowired
-	private ReservaDao reservaDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -67,6 +60,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 		boolean vuelveArras = false;
 		Double importe = null;
 		Integer mesesFianza = null;
+		String estadoBC = null;
 		try {
 			if (ofertaAceptada != null) {
 				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -99,15 +93,17 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 
 				if (vuelveArras) {					
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+
 				}else {
 					DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());	
 					dtoPosicionamiento.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_PDTE_VALIDACION);
 					expedienteComercialApi.createOrUpdateUltimoPosicionamientoEnviado(dto.getId(), dtoPosicionamiento);
-					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC));
-					expediente.setEstadoBc(estadoBc);
-					genericDao.save(ExpedienteComercial.class, expediente);
+					estadoBC = DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC;
 				}
 				
+				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
+				genericDao.save(ExpedienteComercial.class, expediente);
+
 				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 			}
 		}catch(ParseException e) {

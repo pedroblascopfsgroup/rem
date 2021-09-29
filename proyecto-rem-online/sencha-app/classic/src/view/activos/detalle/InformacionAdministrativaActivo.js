@@ -39,7 +39,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        hidden: true,
 				bind: 
 					{
-			        	hidden: '{!infoAdministrativa.vpo}',
+			        	hidden: '{esUsuarioTasadorayVpo}',
 			        	disabled: '{!infoAdministrativa.vpo}'
 			        },
 				defaultType: 'textfieldbase',
@@ -714,6 +714,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
            {
         	   xtype:'fieldset',
 			   title: HreRem.i18n('title.expropiacion.forzosa'),
+			   bind: {
+					hidden: '{esUsuarioTasadora}'
+			   },
         	   layout: {
 	                type: 'vbox'
 	            },
@@ -795,6 +798,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 //        	   layout: {
 //	                type: 'hbox'
 //	            },
+			   bind: {
+					hidden: '{esUsuarioTasadora}'
+			   	},
 	            items: [
 				        { 
 						    xtype: 'comboboxfieldbasedd',
@@ -845,7 +851,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				width: '100%',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeDocumentacionAdministrativa}'
+					store: '{storeDocumentacionAdministrativa}',
+					hidden: '{esUsuarioTasadora}'
 				},
 				
 				columns: [

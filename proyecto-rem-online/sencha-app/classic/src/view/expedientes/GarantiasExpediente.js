@@ -45,7 +45,7 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 								defaultType : 'displayfieldbase',
 								title : HreRem.i18n('title.bloque.scoring'),
 								reference: 'bloqueScoringRef',
-								editable: '{garantias.scoringEditable}',
+								
 								colspan:4,
 								//height : 145,
 								//margin : '0 10 10 0',
@@ -53,9 +53,10 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									//hidden : '{!esOfertaVenta}'
+									disabled: '{!garantias.scoringEditable}'
+								},
 								items : [
 											{
 												xtype : 'checkboxfieldbase',
@@ -133,13 +134,15 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 								title : HreRem.i18n('title.bloque.aval'),
 								reference: 'bloqueAvalRef',
 								colspan:4,
+								disabled: '{!garantias.bloqueEditable}',
 								layout : {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									//hidden : '{!esOfertaVenta}'
+									disabled: '{!garantias.bloqueEditable}'
+								},
 								items : [
 											{
 												xtype : 'checkboxfieldbase',
@@ -213,13 +216,15 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 								title : HreRem.i18n('title.bloque.seguro.rentas'),
 								reference: 'bloqueSeguroRentasRef',
 								colspan:4,
+								
 								layout : {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									//hidden : '{!esOfertaVenta}'
+									disabled: '{!garantias.bloqueEditable}'
+								},
 								items : [
 								
 											{

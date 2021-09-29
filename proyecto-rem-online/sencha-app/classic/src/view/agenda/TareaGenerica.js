@@ -3055,7 +3055,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
 		var fechaEnvio = me.down('[name=fechaEnvio]');
-		var fechaEnvioPropuesta = me.down('[name=fechaEnvioPropuesta]');
+		var fechaEnvioPropuesta = me.down('[name=fechaPropuesta]');
 		var comboQuitar = me.down('[name=comboQuitar]');
 		
         var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaFechaPropuesta');
@@ -3068,7 +3068,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	
 		    	if(!Ext.isEmpty(dto.fechaPropuesta)){		
 		    		var fechaFirma = new Date(dto.fechaPropuesta);
-			    	var campoFirma = me.down('[name=fechaEnvioPropuesta]');
+			    	var campoFirma = me.down('[name=fechaPropuesta]');
 			    	campoFirma.setValue(Ext.Date.format(fechaFirma, 'd/m/Y'));
 			    	me.bloquearCampo(campoFirma);
 					me.campoObligatorio(campoFirma);

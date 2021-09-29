@@ -57,7 +57,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		DtoGridFechaArras dtoArras = new DtoGridFechaArras();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		ExpedienteComercial expediente = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());	
+		ExpedienteComercial expediente = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());
+		String fechaPropuesta = null;
 		boolean comboQuitar = false;
 		try {
 			if (ofertaAceptada != null && expediente != null) {
@@ -68,6 +69,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				for(TareaExternaValor valor :  valores){
 					if(COMBO_FECHA_ENVIO_PROPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoArras.setFechaPropuesta(ft.parse(valor.getValor()));
+						fechaPropuesta = valor.getValor();
 					}
 					if(COMBO_FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoArras.setFechaEnvio(ft.parse(valor.getValor()));	
@@ -109,7 +111,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
-				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndArras(expediente, fechaPropuesta));
 
 			}
 		}catch(ParseException e) {

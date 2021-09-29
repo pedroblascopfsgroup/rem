@@ -1361,7 +1361,10 @@ public interface ExpedienteComercialApi {
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco);
 
-	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
+    @Transactional(readOnly = true)
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndArras(ExpedienteComercial eco, String fechaPropuesta);
+
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;

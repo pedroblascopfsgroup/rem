@@ -153,6 +153,9 @@ public class CaixaBcRestClient {
                     if (dto.getEstadoScoringAlquilerCodigoBC()!= null){
                         params.put("estadoScoringAlquilerCodigoBC", dto.getEstadoScoringAlquilerCodigoBC());
                     }
+                    if (dto.getFechaPropuesta()!= null){
+                        params.put("fechaRespuesta", dto.getFechaPropuesta());
+                    }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);
                 } else {

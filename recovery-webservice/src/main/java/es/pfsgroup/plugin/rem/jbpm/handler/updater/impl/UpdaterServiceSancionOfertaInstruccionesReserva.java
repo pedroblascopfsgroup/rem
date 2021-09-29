@@ -11,26 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -57,9 +51,6 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     @Autowired
   	private ActivoTramiteApi activoTramiteApi;
     
-    @Autowired
-    private ReservaApi reservaApi;
-    
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -78,7 +69,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		boolean comboQuitar = false;
-		boolean aprueba = false;
+		boolean reagendar = false;
 		String tipoArras = "";
 		Date fechaEnvio = null;
 		DtoGridFechaArras dtoArras = new DtoGridFechaArras();
@@ -98,9 +89,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						tipoArras = valor.getValor();
 					}else if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 						if (DDSiNo.SI.equals(valor.getValor())) {			
-							aprueba = true;
+							reagendar = true;
 						}
 					}else if(MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_APLAZADA);
 						dtoArras.setMotivoAnulacion(valor.getValor());
 					}else if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDSiNo.SI.equals(valor.getValor())) {
@@ -109,33 +101,28 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					}
 				}
 				Reserva reserva = expediente.getReserva();
-				if(comboQuitar) {
-					estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
-			
-					if (reserva != null) {
-						Auditoria.delete(reserva);
-						genericDao.save(Reserva.class, reserva);
-					}
-					
-					dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
-					dtoArras.setMotivoAnulacion(motivoAplazamiento);
-					
-					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);
-				}else {
-					if(aprueba) {
-						if(reserva != null) {
-							reserva.setFechaEnvio(fechaEnvio);
-							reserva.setTipoArras( genericDao.get(DDTiposArras.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoArras)));
+				if(comboQuitar || reagendar) {
+					if(comboQuitar) {
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
+				
+						if (reserva != null) {
+							Auditoria.delete(reserva);
 							genericDao.save(Reserva.class, reserva);
 						}
+						
+						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
+						dtoArras.setMotivoAnulacion(motivoAplazamiento);
 					}else {
-						estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
-						if(reservaApi.tieneReservaFirmada(expediente)) {
-							estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-						}else {
-							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-						}
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
+					}
+					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);
+				}else {
+					if(reserva != null) {
+						reserva.setFechaEnvio(fechaEnvio);
+						reserva.setTipoArras( genericDao.get(DDTiposArras.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoArras)));
+						genericDao.save(Reserva.class, reserva);
 					}
 				}
 				

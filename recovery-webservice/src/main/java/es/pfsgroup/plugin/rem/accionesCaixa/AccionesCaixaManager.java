@@ -11,9 +11,11 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
@@ -59,6 +61,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaApi;
+    
+	 @Autowired
+	 private ReservaApi reservaApi;
 
     @Override
     public String managerName() {
@@ -101,7 +106,25 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
             adapter.anularTramiteAlquiler(acTra.getId(), "905");
         }else {
-            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+        	TareaExterna tareaExternaActual = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+        	ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
+        	
+        	if(tareaExternaActual != null && expediente != null) {
+        		String estadoBc = null;
+	        	String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
+				if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN.equals(codigoTarea)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				}else if(reservaApi.tieneReservaFirmada(expediente)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+				}else {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+				}
+				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
+				genericDao.save(ExpedienteComercial.class, expediente);
+				
+	            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+	        }
         }
     }
 

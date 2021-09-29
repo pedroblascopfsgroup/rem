@@ -136,7 +136,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 									
 					if(CamposObtencionContrato.COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 						if (DDSiNo.SI.equals(valor.getValor())) {	
-							aprueba = true;
+							aplazarArras = true;
 						}
 					}
 					
@@ -159,8 +159,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 						
-						
-						
 						if (reserva != null) {
 							Auditoria.delete(reserva);
 							genericDao.save(Reserva.class, reserva);
@@ -176,22 +174,10 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);		
 					
 				}else if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())){
+					estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
+					estadoBc =  DDEstadoExpedienteBc.CODIGO_ARRAS_FIRMADAS;
 					
-					if(aprueba) {
-						estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_ARRAS_FIRMADAS;
-					}else {
-						estadoExpedienteComercial =  DDEstadosExpedienteComercial.ANULADO;
-						if(reservaApi.tieneReservaFirmada(expediente)) {
-							estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-						}else {
-							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-							ofertaApi.finalizarOferta(ofertaAceptada);
-						}
-						
-					}
 				}else {
-	
 					if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && (proManzanaFinalizada))) {
 						estadoExpedienteComercial =  DDEstadosExpedienteComercial.RESERVADO;
 					}else if(T017.equals(tramite.getTipoTramite().getCodigo())){

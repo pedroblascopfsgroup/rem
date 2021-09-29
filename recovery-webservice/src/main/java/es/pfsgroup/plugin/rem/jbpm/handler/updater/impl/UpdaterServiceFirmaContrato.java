@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
@@ -40,6 +41,9 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private ReservaApi reservaApi;
 
 	private static final String CODIGO_T017_FIRMA_CONTRATO = "T017_FirmaContrato";
 	private static final String COMBO_FECHA_FIRMA = "fechaFirma";
@@ -132,7 +136,12 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+							if(reservaApi.tieneReservaFirmada(expediente)) {
+								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+							}else {
+								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+								ofertaApi.finalizarOferta(ofertaAceptada);
+							}
 						}
 					}
 					

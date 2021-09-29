@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -72,6 +73,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		
 	@Autowired
 	private NotificatorServiceContabilidadBbva notificatorServiceContabilidadBbva;
+	
+	@Autowired
+    private ReservaApi reservaApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -178,8 +182,13 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						estadoBc =  DDEstadoExpedienteBc.CODIGO_ARRAS_FIRMADAS;
 					}else {
 						estadoExpedienteComercial =  DDEstadosExpedienteComercial.ANULADO;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-						ofertaApi.finalizarOferta(ofertaAceptada);
+						if(reservaApi.tieneReservaFirmada(expediente)) {
+							estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+						}else {
+							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+							ofertaApi.finalizarOferta(ofertaAceptada);
+						}
+						
 					}
 				}else {
 	

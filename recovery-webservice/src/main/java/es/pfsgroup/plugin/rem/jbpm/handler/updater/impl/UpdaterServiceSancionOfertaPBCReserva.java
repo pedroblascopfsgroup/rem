@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -61,6 +62,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
+	@Autowired
+    private ReservaApi reservaApi;
+	
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
@@ -123,7 +127,12 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
 								
 							}
-							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+							if(reservaApi.tieneReservaFirmada(expediente)) {
+								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+							}else {
+								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+								ofertaApi.finalizarOferta(ofertaAceptada);
+							}
 
 							try {
 								ofertaApi.descongelarOfertas(expediente);

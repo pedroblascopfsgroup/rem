@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -74,8 +75,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
-	private ReservaDao reservaDao;
-
+    private ReservaApi reservaApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -122,7 +123,14 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							expediente.setEstado(estado);
 							
 							if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
-								filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
+								String estadoBcString = null;
+								if(reservaApi.tieneReservaFirmada(expediente)) {
+									estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+								}else {
+									estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+									ofertaApi.finalizarOferta(ofertaAceptada);
+								}
+								filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
 								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstado);
 								expediente.setEstadoBc(estadoBc);
 								estadoBcModificado = true;

@@ -17,6 +17,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.plugin.rem.model.Reserva;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de estado de una reserva
@@ -128,7 +129,13 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 	}
 
 	 
-	
+	public static final boolean tieneReservaFirmada(Reserva reserva) {
+		boolean is = false;
+		if(reserva != null && reserva.getEstadoReserva() != null && CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 	
 	
 }

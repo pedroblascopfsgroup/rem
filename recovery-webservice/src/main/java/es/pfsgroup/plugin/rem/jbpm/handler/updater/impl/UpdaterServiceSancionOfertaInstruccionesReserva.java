@@ -24,6 +24,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -57,7 +58,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
   	private ActivoTramiteApi activoTramiteApi;
     
     @Autowired
-	private ApiProxyFactory proxyFactory;
+    private ReservaApi reservaApi;
     
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
@@ -130,7 +131,11 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						}
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+						if(reservaApi.tieneReservaFirmada(expediente)) {
+							estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+						}else {
+							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+						}
 					}
 				}
 				

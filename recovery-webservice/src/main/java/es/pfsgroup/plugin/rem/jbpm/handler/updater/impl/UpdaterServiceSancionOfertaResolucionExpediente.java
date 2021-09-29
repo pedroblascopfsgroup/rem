@@ -35,8 +35,10 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
@@ -100,6 +102,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
+	 @Autowired
+	 private ReservaApi reservaApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
     private static final String COMBO_PROCEDE = "comboProcede";
@@ -145,10 +150,21 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
 									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
 				}
+				
+				String estadoBc = null;
+				
+				String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
+				if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN.equals(codigoTarea)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				}else if(reservaApi.tieneReservaFirmada(expediente)) {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+				}else {
+					estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+					ofertaApi.finalizarOferta(ofertaAceptada);
+				}
 
-				DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
-				expediente.setEstadoBc(estadoExpedienteBc);
+				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 				estadoBcModificado = true;
 
 				for(TareaExternaValor valor :  valores) {

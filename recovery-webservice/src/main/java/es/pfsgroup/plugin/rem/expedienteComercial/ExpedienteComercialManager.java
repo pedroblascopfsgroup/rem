@@ -12360,21 +12360,44 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
                 && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
                 && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
                 	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
-                		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null && comprador.getNombreRazonSocial() != null) {
-                			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
-                				return true;
-                			}else {
-                				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
-                					return true;
-                				}
+                		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
+                			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+                				if (comprador.getPaisNacimientoCompradorCodigo() != null && comprador.getProvinciaNacimientoCompradorCodigo() != null 
+                						&& comprador.getLocalidadNacimientoCompradorCodigo() != null && comprador.getFechaNacimientoConstitucion() != null) {
+                					if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
+    	                				return true;
+    	                			}else {
+    	                				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
+    	                					return true;
+    	                				}
+    	                			}
+								}
+							} else {
+	                			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
+	                				return true;
+	                			}else {
+	                				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
+	                					return true;
+	                				}
+	                			}
                 			}
                 		}
                 	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
-                		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
-                			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
-                			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
-                			return true;
-                		}
+                		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+                			if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
+                        			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null && comprador.getPaisNacimientoRepresentanteCodigo() != null
+                        			&& comprador.getProvinciaNacimientoRepresentanteCodigo() != null && comprador.getLocalidadNacimientoRepresentanteCodigo() != null
+                        			&& comprador.getFechaNacimientoRepresentante() != null
+                        			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
+                        			return true;
+    	                    }
+						} else {
+	                		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
+                    			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
+                    			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
+                    			return true;
+	                    	}
+						}
                 	}
                 }
 			}

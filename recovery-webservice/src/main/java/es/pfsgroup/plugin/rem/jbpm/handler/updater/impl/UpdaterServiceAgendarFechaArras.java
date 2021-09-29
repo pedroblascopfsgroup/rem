@@ -45,7 +45,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 
 	private static final String CODIGO_T017_AGENDAR_FECHA_ARRAS = "T017_AgendarFechaFirmaArras";
 	private static final String COMBO_QUITAR = "comboQuitar";
-	private static final String COMBO_FECHA_ENVIO_PROPUESTA = "fechaEnvioPropuesta";
+	private static final String COMBO_FECHA_ENVIO_PROPUESTA = "fechaPropuesta";
 	private static final String COMBO_FECHA_ENVIO = "fechaEnvio";
 	private static final String MOTIVO_APLAZAMIENTO = "Suspensión proceso arras";
 

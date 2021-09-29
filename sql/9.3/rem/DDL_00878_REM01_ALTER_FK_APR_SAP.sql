@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20191201
+--## FECHA_CREACION=20210929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8672
+--## INCIDENCIA_LINK=HREOS-15081
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla ACT_ICO_INFO_COMERCIAL
+--## Finalidad: Alterar la tabla OFR_OFERTAS_CAIXA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:

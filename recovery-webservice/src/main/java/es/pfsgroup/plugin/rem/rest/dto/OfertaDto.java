@@ -101,7 +101,7 @@ public class OfertaDto implements Serializable {
 	private Boolean tieneOtrasTasas;
 	private Double importeOtrasTasas;
 	private Boolean tieneCCPP;
-	private Double importeCcpp;
+	private Double importeCCPP;
 	private Double bonificacionAnyo1;
 	private Double bonificacionAnyo2;
 	private Double bonificacionAnyo3;
@@ -458,11 +458,11 @@ public class OfertaDto implements Serializable {
 	public void setTieneCCPP(Boolean tieneCCPP) {
 		this.tieneCCPP = tieneCCPP;
 	}
-	public Double getImporteCcpp() {
-		return importeCcpp;
+	public Double getImporteCCPP() {
+		return importeCCPP;
 	}
-	public void setImporteCcpp(Double importeCcpp) {
-		this.importeCcpp = importeCcpp;
+	public void setImporteCCPP(Double importeCCPP) {
+		this.importeCCPP = importeCCPP;
 	}
 	public Double getBonificacionAnyo1() {
 		return bonificacionAnyo1;

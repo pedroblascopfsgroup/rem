@@ -43,7 +43,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private BooleanDataType tieneOtrasTasas;
 	private DoubleDataType importeOtrasTasas;
 	private BooleanDataType tieneCCPP;
-	private DoubleDataType importeCcpp;
+	private DoubleDataType importeCCPP;
 	private DoubleDataType bonificacionAnyo1;
 	private DoubleDataType bonificacionAnyo2;
 	private DoubleDataType bonificacionAnyo3;
@@ -217,11 +217,11 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setTieneCCPP(BooleanDataType tieneCCPP) {
 		this.tieneCCPP = tieneCCPP;
 	}
-	public DoubleDataType getImporteCcpp() {
-		return importeCcpp;
+	public DoubleDataType getImporteCCPP() {
+		return importeCCPP;
 	}
-	public void setImporteCcpp(DoubleDataType importeCcpp) {
-		this.importeCcpp = importeCcpp;
+	public void setImporteCCPP(DoubleDataType importeCCPP) {
+		this.importeCCPP = importeCCPP;
 	}
 	public DoubleDataType getBonificacionAnyo1() {
 		return bonificacionAnyo1;

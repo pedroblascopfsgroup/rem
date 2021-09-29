@@ -1137,8 +1137,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (ofertaDto.getTieneCCPP() != null) {
 				oferta.setTieneCCPP(ofertaDto.getTieneCCPP());
 			}
-			if (ofertaDto.getImporteCcpp() != null) {
-				oferta.setImporteCCPP(ofertaDto.getImporteCcpp());
+			if (ofertaDto.getImporteCCPP() != null) {
+				oferta.setImporteCCPP(ofertaDto.getImporteCCPP());
 			}
 			if (ofertaDto.getBonificacionAnyo1() != null) {
 				oferta.setBonificacionAnyo1(ofertaDto.getBonificacionAnyo1());
@@ -1626,8 +1626,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setTieneCCPP(ofertaDto.getTieneCCPP());
 				modificado = true;
 			}
-			if (ofertaDto.getImporteCcpp() != null) {
-				oferta.setImporteCCPP(ofertaDto.getImporteCcpp());
+			if (ofertaDto.getImporteCCPP() != null) {
+				oferta.setImporteCCPP(ofertaDto.getImporteCCPP());
 				modificado = true;
 			}
 			if (ofertaDto.getBonificacionAnyo1() != null) {

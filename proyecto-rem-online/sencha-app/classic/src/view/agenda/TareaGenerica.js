@@ -2639,13 +2639,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
   	  		me.desocultarCampo(observacionesBC);
 	  	  	me.ocultarCampo(comboContraoferta);
 	        me.campoNoObligatorio(comboContraoferta);
-	        if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
-	    		comboResolucion.setReadOnly(true);
-	        	fechaRespuesta.setReadOnly(true);
-	    	}
+	        
 	        comboResolucion.setReadOnly(false);
         	fechaRespuesta.setReadOnly(false);
         	
+        	if(!$AU.userHasFunction('AV_RES_COMITE_BC')){
+	    		comboResolucion.setReadOnly(true);
+	        	fechaRespuesta.setReadOnly(true);
+	    	}
 	        observacionesBC.setReadOnly(true);
 	        necesidadArras.setReadOnly(true); 
 	        
@@ -3110,11 +3111,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
 		
+		if(!$AU.userHasFunction('AV_CONF_FF_ARRAS')){
+			me.bloquearCampo(fechaValidacionBc);	
+			me.bloquearCampo(comboValidacionBC);  
+		}
+		
 		me.bloquearCampo(fechaPropuesta);
 		me.campoObligatorio(fechaPropuesta);
-		me.bloquearCampo(fechaValidacionBc);
 		me.campoObligatorio(fechaValidacionBc);
-		me.bloquearCampo(comboValidacionBC);
 		me.campoObligatorio(comboValidacionBC);
 		me.bloquearCampo(observacionesBC);
 

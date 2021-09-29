@@ -112,9 +112,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			// Expediente se marca a vendido.
 			Filter filtro = null;
 			boolean pasaAVendido = false;
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+			if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-			} else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+			} else if (ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())) {
 				if (expediente != null && expediente.getFechaContabilizacion() != null) {
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 				} else {

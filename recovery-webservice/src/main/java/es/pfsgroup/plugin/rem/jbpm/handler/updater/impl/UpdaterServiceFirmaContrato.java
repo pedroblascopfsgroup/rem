@@ -14,18 +14,14 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
@@ -53,7 +49,6 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
     private static final String COMBO_ARRAS = "comboArras";
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
-    private static final String MOTIVO_APLAZAMIENTO = "Firma forzada de arras";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -66,12 +61,15 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 		boolean vuelveArras = false;
 		Double importe = null;
 		Integer mesesFianza = null;
+		boolean aplaza = false;
+		boolean aprueba = false;
+		DtoPosicionamiento dtoPos = new DtoPosicionamiento();
 		try {
 			if (ofertaAceptada != null) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 				Posicionamiento pos = null;
-				DDEstadosExpedienteComercial estadoExp = null;
-				DDEstadoExpedienteBc estadoBc = null;
+				String estadoExp = null;
+				String estadoBc = null;
 				
 				if (expediente != null) {
 					for(TareaExternaValor valor :  valores){
@@ -83,23 +81,12 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						}
 						if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							if(DDSiNo.SI.equals(valor.getValor())) {
-								estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO));
-								estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO));
-								expediente.setEstado(estadoExp);
-								expediente.setEstadoBc(estadoBc);
+								aprueba = true;
 							}
 						}
 						if(COMBO_MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(),null,false);
-							if(pos != null) {
-								DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APLAZADA));
-								if (motivo != null) {
-									pos.setValidacionBCPos(motivo);
-								}
-								pos.setFechaFinPosicionamiento(new Date());
-								pos.setMotivoAplazamiento(valor.getValor());
-							}
-							genericDao.save(Posicionamiento.class, pos);
+							aplaza = false;
+							dtoPos.setMotivoAplazamiento(valor.getValor());
 						}
 						if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							if(DDSiNo.SI.equals(valor.getValor())) {
@@ -125,19 +112,37 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(), null, false);
 							if(pos != null) {
 								if (DDMotivosEstadoBC.isAprobado(pos.getValidacionBCPos())) {
-									DDMotivosEstadoBC estado = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA));
-									pos.setValidacionBCPos(estado);
+									pos.setValidacionBCPos(genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA)));
 								}else if(DDMotivosEstadoBC.isRechazado(pos.getValidacionBCPos())) {
-									//pos.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
-									DDMotivoAnulacionBC motivo = genericDao.get(DDMotivoAnulacionBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivoAnulacionBC.CODIGO_FIRMA_FORZADA_ARRAS));
-									pos.setMotivoAnulacionBc(motivo);
+									pos.setMotivoAnulacionBc(genericDao.get(DDMotivoAnulacionBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivoAnulacionBC.CODIGO_FIRMA_FORZADA_ARRAS)));
 								}
 								pos.setFechaFinPosicionamiento(new Date());
 								genericDao.save(Posicionamiento.class, pos);
 							}
 						}
+					}else if(aplaza){
+						estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
+						dtoPos.setMotivoAnulacionBc(DDMotivosEstadoBC.CODIGO_APLAZADA);
+						dtoPos.setFechaFinPosicionamiento(new Date());
+						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
+					}else {
+						if(aprueba) {
+							estadoExp = DDEstadosExpedienteComercial.FIRMADO;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+						}else {
+							estadoExp = DDEstadosExpedienteComercial.ANULADO;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+						}
 					}
+					
+					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
+
 					genericDao.save(ExpedienteComercial.class, expediente);
+					
+			        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+
 				}				
 			}
 		}catch(ParseException e) {

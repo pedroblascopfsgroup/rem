@@ -1755,6 +1755,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaContabilizacionReserva(expediente.getReserva().getFechaContabilizacionReserva());
 				}
 				
+				if(oferta.getOfertaCaixa() != null) {
+					OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+					if(ofertaCaixa.getEstadoComunicacionC4C() != null) {
+						dto.setCodigoEstadoComunicacionC4C(ofertaCaixa.getEstadoComunicacionC4C().getCodigo());
+					}
+				}
+				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
 			}
 			
@@ -1789,6 +1796,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getMotivoRechazoAntiguoDeud() != null) {
 				dto.setMotivoRechazoAntiguoDeudCod(expediente.getMotivoRechazoAntiguoDeud().getCodigo());
 			}
+			
+			
 		}
 		return dto;
 	}
@@ -3400,23 +3409,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaFinCnt(oferta.getFechaFinContrato());
 		}
 		
+
 		if (condiciones.getTipoGrupoImpuesto() != null) {
 			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
-		}
-		
-		boolean completada = false;
-		
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
-		if(tramite != null) {
-			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
-			
-			if(completada) {
-				dto.setBloqueDepositoEditable(false);
-			}else {
-				dto.setBloqueDepositoEditable(true);
-			}	
-		}else {
-			dto.setBloqueDepositoEditable(false);
 		}
 		
 		return dto;
@@ -12354,53 +12349,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
             Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
 
             VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular);
-
-			//Campos comunes sin que dependa del tipo de persona						Campos del titular
+            
             if(comprador.getPorcentajeCompra() != null && comprador.getCodTipoDocumento() != null && comprador.getNombreRazonSocial() != null
-                && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
-                && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
-                	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
-                		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
-                			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-                				if (comprador.getPaisNacimientoCompradorCodigo() != null && comprador.getProvinciaNacimientoCompradorCodigo() != null 
-                						&& comprador.getLocalidadNacimientoCompradorCodigo() != null && comprador.getFechaNacimientoConstitucion() != null) {
-                					if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
-    	                				return true;
-    	                			}else {
-    	                				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
-    	                					return true;
-    	                				}
-    	                			}
-								}
-							} else {
-	                			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
-	                				return true;
-	                			}else {
-	                				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
-	                					return true;
-	                				}
-	                			}
-                			}
-                		}
-                	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
-                		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-                			if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
-                        			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null && comprador.getPaisNacimientoRepresentanteCodigo() != null
-                        			&& comprador.getProvinciaNacimientoRepresentanteCodigo() != null && comprador.getLocalidadNacimientoRepresentanteCodigo() != null
-                        			&& comprador.getFechaNacimientoRepresentante() != null
-                        			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
-                        			return true;
-    	                    }
-						} else {
-	                		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
-                    			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
-                    			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
-                    			return true;
-	                    	}
-						}
-                	}
-                }
-			}
+            && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
+            && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
+            	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
+            		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
+            			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
+            				return true;
+            			}else {
+            				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
+            					return true;
+            				}
+            			}
+            		}
+            	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+            		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
+            			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
+            			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
+            			return true;
+            		}
+            	}
+            }
+		}
+		
 		return false;
 	}
 	
@@ -12754,6 +12726,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
 	}
+	
+	
 	
 	private DtoGridFechaArras propuestaToDto(FechaArrasExpediente fechaArrasExpediente) {
 		DtoGridFechaArras dto = new DtoGridFechaArras();
@@ -13940,36 +13914,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			boolean completada = false;
 			//
 			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
-			if(tramite != null) {
-				completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
-						|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
-		
-				if (completada) {
-					dto.setScoringEditable(false);
-				}else {
-					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
-					for (TareaProcedimiento tarea : tareasActivas) {
-						if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
-								|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
-							dto.setScoringEditable(true);
-							break;
-						} else {
-							dto.setScoringEditable(false);						
-						}
+			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
+							|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
+			
+			if (completada) {
+				dto.setScoringEditable(false);
+			}else {
+				List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+				for (TareaProcedimiento tarea : tareasActivas) {
+					if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
+							|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+						dto.setScoringEditable(true);
+						break;
+					} else {
+						dto.setScoringEditable(false);						
 					}
 				}
-				
-				completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
-				
-				if(completada) {
-					dto.setBloqueEditable(false);
-				}else{
-					dto.setBloqueEditable(true);
-				}
-			}else {
-				dto.setScoringEditable(false);
-				dto.setBloqueEditable(false);
 			}
+			
 			
 		}
 		return dto;

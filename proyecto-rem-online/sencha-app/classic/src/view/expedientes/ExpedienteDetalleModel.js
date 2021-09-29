@@ -1726,9 +1726,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoOfertaAlquiler'}
 	    	}	  
-		}
-    	
-    	
-
+		},
+    	comboEstadoComunicacionC4C: {
+  	    	model: 'HreRem.model.ComboBase',
+  			proxy: {
+  				type: 'uxproxy',
+  				remoteUrl: 'generic/getDiccionario',
+  				extraParams: {diccionario: 'estadoComunicacionC4C'}
+  			}
+  	    }
     }
 });

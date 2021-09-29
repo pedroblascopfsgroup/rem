@@ -359,6 +359,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name:'tipoOfertaAlquilerCodigo'
+    		},
+    		{
+    			name: 'codigoEstadoComunicacionC4C'
     		}
     		
     ],

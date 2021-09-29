@@ -176,6 +176,7 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String detalleAnulacionCntAlquiler;
 	
+	private String codigoEstadoComunicacionC4C;
 	
 	public Long getId() {
 		return id;
@@ -896,6 +897,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
 		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
+
+	public String getCodigoEstadoComunicacionC4C() {
+		return codigoEstadoComunicacionC4C;
+	}
+
+	public void setCodigoEstadoComunicacionC4C(String codigoEstadoComunicacionC4C) {
+		this.codigoEstadoComunicacionC4C = codigoEstadoComunicacionC4C;
 	}
 	
 }

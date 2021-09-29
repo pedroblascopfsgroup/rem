@@ -26,7 +26,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         var me = this;
 
         var activo = me.lookupController().getViewModel().get('activo').getData();
-
+        var isBk = activo.isCarteraBankia;
+        
         me.columns= [
 		        {
 		        	dataIndex: 'numOferta',
@@ -198,6 +199,45 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            dataIndex: 'fechaEntradaCRMSF',
 		            text: HreRem.i18n('header.oferta.fechaEntradaCRMSF'),
 		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        },
+		        //codigoEstadoC4C
+		        
+		        {
+		            dataIndex: 'codigoEstadoC4C',
+		            text: HreRem.i18n('fieldlabel.estado.comunicacion.c4c'),
+		            reference: 'codigoEstadoC4C',
+		            hidden: !isBk,
+					editor: {
+						xtype: 'combobox',
+						reference:'codigoEstadoC4CCo',
+						disabled:true,
+						store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+				  				remoteUrl: 'generic/getDiccionario',
+				  				extraParams: {diccionario: 'estadoComunicacionC4C'}
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+					},
+					renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {								        		
+			        		var me = this,
+			        		comboEditor = me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null,
+			        		store, record;
+			        		if(!Ext.isEmpty(comboEditor)) {
+				        		store = comboEditor.getStore(),							        		
+				        		record = store.findRecord("codigo", value);
+				        		if(!Ext.isEmpty(record)) {								        			
+				        			return record.get("descripcion");								        		
+				        		} else {
+				        			comboEditor.setValue(value);	
+				        		}
+			        		}
+			        },
 		            flex: 1
 		        }
 		        

@@ -680,9 +680,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								},
 								defaultType : 'textfieldbase',
 								title : HreRem.i18n("fieldlabel.deposito"),
-								bind:{
-									disabled: '{!condiciones.bloqueDepositoEditable}'
-								},
 								items : [
 									{
 										xtype : 'numberfieldbase',

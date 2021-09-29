@@ -92,9 +92,6 @@ Ext.define('HreRem.model.GarantiasExpedienteModel', {
 		},{
 			name:'scoringEditable',
 	    	type: 'boolean'
-		},{
-			name:'bloqueEditable',
-	    	type: 'boolean'
 		}
 	    	    
     ],

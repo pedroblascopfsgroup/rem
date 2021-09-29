@@ -72,7 +72,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 		Map<String, String> headers = new HashMap<String, String>();
         headers.put("Content-Type", "application/json");
 
-        Map<String, Object> listaBien = bienInfo(activo);
+        ArrayList<Map<String, Object>> listaBien = bienInfo(activo);
 
         String json = null;
 
@@ -83,8 +83,10 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
             json = mapper.writeValueAsString(model);
             System.out.println("ResultingJSONstring = " + json);
             
-            urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.alaska"))
-                    ? appProperties.getProperty("rest.client.convivencia.alaska") : "";
+//            urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.alaska"))
+//                    ? appProperties.getProperty("rest.client.convivencia.alaska") : "";
+            
+            urlEnvio = "http://192.168.80.4:9090/convivenciaAlaska";
             	
             llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 
@@ -102,7 +104,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
     }
     
-    private Map<String, Object> bienInfo(Activo activo) {
+    private ArrayList<Map<String, Object>> bienInfo(Activo activo) {
     	
         Filter cartera = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"cartera.codigo", activo.getCartera().getCodigo());
         Filter subcartera = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"subcartera.codigo", activo.getSubcartera().getCodigo());
@@ -117,7 +119,9 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         ArrayList<Map<String, Object>> listaValoraciones = new ArrayList<Map<String, Object>>();
         ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
 
-        Map<String, Object> map = new HashMap<String, Object>();;
+        Map<String, Object> map = new HashMap<String, Object>();
+        
+        ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
         listaCargas = this.cargasInfo(activo);
         listaTasaciones = this.tasacionesInfo(activo);
@@ -275,8 +279,10 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("anejoOtros", "");
         map.put("notas1", "");
         map.put("notas2", "");
+        
+        listaRespuesta.add(map);
 
-        return map;
+        return listaRespuesta;
 
     }
 

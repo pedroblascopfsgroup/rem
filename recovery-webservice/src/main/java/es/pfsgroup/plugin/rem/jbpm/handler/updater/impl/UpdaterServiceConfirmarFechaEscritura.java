@@ -114,7 +114,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())) {
 						dto.setFechaFinPosicionamiento(new Date());
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-						estadoBC = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
+						estadoBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.POSICIONADO;
 						estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;

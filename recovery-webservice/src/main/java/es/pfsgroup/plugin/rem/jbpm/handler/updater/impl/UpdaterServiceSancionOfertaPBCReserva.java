@@ -123,7 +123,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
 								
 							}
-							
+							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 
 							try {
 								ofertaApi.descongelarOfertas(expediente);

@@ -122,7 +122,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						}
 					}else if(aplaza){
 						estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 						dtoPos.setMotivoAnulacionBc(DDMotivosEstadoBC.CODIGO_APLAZADA);
 						dtoPos.setFechaFinPosicionamiento(new Date());
 						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
@@ -132,7 +132,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 						}
 					}
 					

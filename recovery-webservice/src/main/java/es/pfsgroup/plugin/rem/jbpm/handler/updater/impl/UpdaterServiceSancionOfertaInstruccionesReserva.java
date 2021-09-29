@@ -129,8 +129,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 							genericDao.save(Reserva.class, reserva);
 						}
 					}else {
-						estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
+						estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
+						estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 					}
 				}
 				

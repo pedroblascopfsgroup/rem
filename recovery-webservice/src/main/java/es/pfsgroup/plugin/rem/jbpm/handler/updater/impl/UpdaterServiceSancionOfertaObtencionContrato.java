@@ -178,7 +178,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						estadoBc =  DDEstadoExpedienteBc.CODIGO_ARRAS_FIRMADAS;
 					}else {
 						estadoExpedienteComercial =  DDEstadosExpedienteComercial.ANULADO;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+						estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 						ofertaApi.finalizarOferta(ofertaAceptada);
 					}
 				}else {

@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -101,6 +102,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 		Double importe = null;
 		Integer mesesFianza = null;
 		DecimalFormat num = new DecimalFormat("###.##");
+		boolean estadoBcModificado = false;
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -115,12 +117,20 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
 							expediente.setEstadoPbc(0);
+							Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroEstado);
+							expediente.setEstado(estado);
+							
+							if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
+								filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
+								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstado);
+								expediente.setEstadoBc(estadoBc);
+								estadoBcModificado = true;
+							}
+							
 							if(!ofertaApi.checkReserva(ofertaAceptada) || 
 							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
 							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
-								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-								expediente.setEstado(estado);
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 								expediente.setFechaVenta(null);
@@ -258,7 +268,11 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 				
 				if (vuelveArras) {					
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+				}
+				
+				if(estadoBcModificado) {
 					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+
 				}
 			}
 		}

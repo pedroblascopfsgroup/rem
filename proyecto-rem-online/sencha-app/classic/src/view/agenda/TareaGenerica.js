@@ -3114,13 +3114,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(!$AU.userHasFunction('AV_CONF_FF_ARRAS')){
 			me.bloquearCampo(fechaValidacionBc);	
 			me.bloquearCampo(comboValidacionBC);  
+			me.bloquearCampo(observacionesBC);
 		}
 		
 		me.bloquearCampo(fechaPropuesta);
 		me.campoObligatorio(fechaPropuesta);
 		me.campoObligatorio(fechaValidacionBc);
 		me.campoObligatorio(comboValidacionBC);
-		me.bloquearCampo(observacionesBC);
 
 		
 		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');

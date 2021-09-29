@@ -148,13 +148,14 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						}
 					}
 				}
+				Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId()));
 				
 				if(quitarArras || aplazarArras) {
 					if(quitarArras) {
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 						
-						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId()));
+						
 						
 						if (reserva != null) {
 							Auditoria.delete(reserva);
@@ -224,10 +225,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						}
 					}
 				
-					// actualizamos el estado de la reserva a firmada
-					if (!Checks.esNulo(expediente.getReserva()) && !quitarArras && !aplazarArras) {
-						Reserva reserva = expediente.getReserva();
-
+					
+					if (!Checks.esNulo(reserva) && !quitarArras && !aplazarArras) {
+						
 						DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
 						reserva.setEstadoReserva(estadoReserva);
 						if(Checks.isFechaNula(fechaFirma)) {

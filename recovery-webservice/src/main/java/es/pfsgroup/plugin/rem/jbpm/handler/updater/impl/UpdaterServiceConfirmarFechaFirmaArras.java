@@ -113,8 +113,8 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 						estadoBc = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_ARRAS_AGENDADAS;
 					}
 					else {
-						estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
 				}
 				

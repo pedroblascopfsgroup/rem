@@ -456,14 +456,17 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS));
+        genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS));
         expediente.setEstadoBc(estadoExpedienteBc);
+        expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC_VENTAS)));
 
         Reserva res = expediente.getReserva();
         res.setFechaContArras(sdfEntrada.parse(dto.getFechaContArras()));
 
         genericDao.save(Reserva.class, res);
         genericDao.save(ExpedienteComercial.class, expediente);
+        
+		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override

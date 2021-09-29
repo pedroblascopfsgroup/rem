@@ -104,8 +104,6 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 				}
 				
 				if (vuelveArras) {
-					estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_ARRAS;
-					estadoBC = DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(eco, importe, mesesFianza, ofertaAceptada);
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())){
 						dto.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);

@@ -187,7 +187,12 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									expediente.setEstadoPbc(2);
 								}
 								
-							} else {
+							} else if(DDCartera.isCarteraBk(activo.getCartera())){
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA);
+								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+								expediente.setEstado(estado);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+							}else {
 								String codSubCartera = null;
 								if (!Checks.esNulo(activo.getSubcartera())) {
 									codSubCartera = activo.getSubcartera().getCodigo();
@@ -196,7 +201,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 									expediente.setEstado(estado);
-									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 									Oferta oferta = expediente.getOferta();
 									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -205,9 +209,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 											ofertaApi.congelarOferta(ofertaAux);
 										}
 									}
+									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 								}
 								expediente.setEstadoPbc(1);
+								
 							}
+							
+
 							genericDao.save(ExpedienteComercial.class, expediente);
 							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
@@ -250,6 +258,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 				
 				if (vuelveArras) {					
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
 			}
 		}

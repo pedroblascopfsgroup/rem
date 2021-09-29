@@ -61,7 +61,6 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 		Double importe = null;
 		Integer mesesFianza = null;
 		String estadoBC = null;
-		String estadoExpediente = null;
 		try {
 			if (ofertaAceptada != null) {
 				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -94,9 +93,6 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 
 				if (vuelveArras) {					
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
-					estadoBC= DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
-					estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_ARRAS;
-					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
 
 				}else {
 					DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());	

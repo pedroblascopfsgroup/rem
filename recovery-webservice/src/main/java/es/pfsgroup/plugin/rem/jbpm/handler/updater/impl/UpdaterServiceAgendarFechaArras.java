@@ -70,12 +70,9 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 					if(COMBO_FECHA_ENVIO_PROPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoArras.setFechaPropuesta(ft.parse(valor.getValor()));
 						fechaPropuesta = valor.getValor();
-					}
-					if(COMBO_FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					}else if(COMBO_FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoArras.setFechaEnvio(ft.parse(valor.getValor()));	
-					}
-					
-					if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					}else if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDSiNo.SI.equals(valor.getValor())) {
 							comboQuitar = true;
 						}
@@ -99,8 +96,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 						genericDao.save(Reserva.class, reserva);
 					}
 					
-					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 				}else {
+					estadoExp =  DDEstadosExpedienteComercial.PTE_FIRMA_ARRAS;
 					estadoBc =  DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_ARRAS_POR_BC;
 					estadoArras = DDMotivosEstadoBC.CODIGO_PDTE_VALIDACION;
 				}
@@ -108,6 +105,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				dtoArras.setValidacionBC(estadoArras);
 				expedienteComercialApi.createOrUpdateUltimaPropuestaEnviada(dto.getId(), dtoArras);		
 				
+				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				

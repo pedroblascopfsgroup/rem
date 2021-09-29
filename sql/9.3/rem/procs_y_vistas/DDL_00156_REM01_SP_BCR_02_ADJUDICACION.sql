@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210804
+--## FECHA_CREACION=20210928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-15244
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.4 Se añade el truncado de la tabla TMP_ACT_SCM y se inserta si un activo pasa a tener Fecha de posesión o al contrario - [HREOS-14686] - Daniel Algaba
 --##	      0.5 Se añade el FLAG EN REM en la insercción de la TMP_ACT_SCM - [HREOS-14837] - Daniel Algaba
+--##	      0.6 Se añade un control en la AJD para activo - [HREOS-15244] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -137,7 +138,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION BIE_ADJ ON BIE_ADJ.BIE_ID = BIE.BIE_ID AND BIE_ADJ.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND AJD.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND AJD.ACT_ID = ACT.ACT_ID AND AJD.BORRADO = 0
                   WHERE TTA.DD_TTA_CODIGO = ''01''
                   AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX

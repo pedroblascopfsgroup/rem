@@ -99,6 +99,10 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
 	@Column(name = "IOC_EMAIL")
 	private String email;
 
+	@ManyToOne
+	@JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+
 	@Version
 	private Long version;
 
@@ -273,5 +277,13 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
 	}
 }

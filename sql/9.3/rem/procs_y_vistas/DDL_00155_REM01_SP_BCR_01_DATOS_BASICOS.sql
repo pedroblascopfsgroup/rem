@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210923
+--## FECHA_CREACION=20210929
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15254
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -23,7 +23,7 @@
 --##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
 --##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
 --##	      0.12 Correcciones gestores - [HREOS-15254] - Daniel Algaba
---##	      0.12 Correcciones gestores v2 - [HREOS-15254] - Daniel Algaba
+--##	      0.12 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -278,10 +278,12 @@ BEGIN
                   WHEN aux.IND_FUERZA_PUBLICA IN (''N'',''0'') THEN 0
                END as CBX_NEC_FUERZA_PUBL,
                CASE
-                  WHEN aux.FLAG_EN_REM=0 THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E01'')
+                  WHEN CAIXA.DD_EAT_ID IS NULL THEN (SELECT DD_EAT_ID FROM '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO WHERE DD_EAT_CODIGO=''E01'')
+                  ELSE CAIXA.DD_EAT_ID
                END AS DD_EAT_ID,
                CASE
-                  WHEN aux.FLAG_EN_REM=0 THEN SYSDATE
+                  WHEN CAIXA.DD_EAT_ID IS NULL THEN SYSDATE
+                  ELSE CAIXA.FECHA_EAT_EST_TECNICO
                END AS FECHA_EAT_EST_TECNICO,
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,

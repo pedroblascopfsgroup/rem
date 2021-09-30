@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
+--## AUTOR=Vicente Martinez Cifre
 --## FECHA_CREACION=20210922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15157
+--## INCIDENCIA_LINK=HREOS-15275
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade los datos del array en DD_TRL_TIPO_ROLES_MEDIADOR
@@ -32,12 +32,14 @@ DECLARE
     V_TABLA VARCHAR2(50 CHAR):= 'TCP_TAREA_CONFIG_PETICION';
     V_TABLA_AUX VARCHAR2(50 CHAR):= 'TAP_TAREA_PROCEDIMIENTO';
     V_CHARS VARCHAR2(3 CHAR):= 'TCP';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-11968';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-15275';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             --            CODIGO TAREA  			     TCP_ACTIVADA     TCP_PERMITIDA
-      T_TIPO_DATA('T017_PBC_CN',			     1,			         1)
+      T_TIPO_DATA('T017_AgendarFechaFirmaArras',			  1,			        1),
+      T_TIPO_DATA('T017_AgendarPosicionamiento',        1,              1),
+      T_TIPO_DATA('T017_FirmaContrato',                 1,              1)
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

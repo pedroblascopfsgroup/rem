@@ -101,8 +101,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
@@ -193,13 +191,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 		}
 		/////////////////////////////////////////////////////////////////////////////
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 		
 	}
 

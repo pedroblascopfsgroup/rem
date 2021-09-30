@@ -395,8 +395,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		DtoActivoInformeComercial activoInformeDto = (DtoActivoInformeComercial) webDto;
 		ActivoInfoComercial actInfoComercial = null;
 		ActivoVivienda vivienda = null;
@@ -777,13 +775,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 				genericDao.update(ActivoPlazaAparcamiento.class, plazaAparcamiento);
 			genericDao.save(ActivoInfoComercial.class, actInfoComercial);
 			activoApi.saveOrUpdate(activo);
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 			
 		} catch (IllegalAccessException e) {

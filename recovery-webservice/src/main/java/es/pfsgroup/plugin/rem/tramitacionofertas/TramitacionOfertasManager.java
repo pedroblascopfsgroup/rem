@@ -587,8 +587,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
 			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
 		if (!Checks.esNulo(oferta.getVisita())) {
@@ -623,13 +621,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 
 		return nuevoExpediente;
 	}

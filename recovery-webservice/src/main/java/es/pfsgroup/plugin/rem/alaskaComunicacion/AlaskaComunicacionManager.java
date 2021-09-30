@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +61,8 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         return null;
     }
 
-    @Transactional(readOnly = false)
+    @SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
     public void datosCliente(Long idActivo, ModelMap model) {
 
     	String urlEnvio = null;
@@ -384,7 +384,8 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 
     }
 
-    private void throwException(String error) throws RestClientException {
+    @SuppressWarnings("unused")
+	private void throwException(String error) throws RestClientException {
         if (error.equals(ResponseGestorDocumentalFotos.ACCESS_DENIED)) {
             throw new AccesDeniedException();
         } else if (error.equals(ResponseGestorDocumentalFotos.FILE_ERROR)) {

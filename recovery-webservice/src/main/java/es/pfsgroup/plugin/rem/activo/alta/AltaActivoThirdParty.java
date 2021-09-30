@@ -150,8 +150,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	@Transactional()
 	public Boolean procesarAlta(DtoAltaActivoThirdParty dtoAATP) throws Exception {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		// Asignar los datos del DTO al nuevo activo y almacenarlo en la DB.
 		Activo activo = this.dtoToEntityActivo(dtoAATP);
 
@@ -198,21 +196,12 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			return false;
 		}
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
-
 		return true;
 	}
 
 	//crea un activo a partir del DtoAltaActivoThirdParty que recibe
 	@Transactional(readOnly = false)
 	private Activo dtoToEntityActivo(DtoAltaActivoThirdParty dtoAATP) throws Exception{
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		DDSubtipoTituloActivo subTipoTitulo = (DDSubtipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAATP.getSubtipoTituloCodigo());
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
@@ -241,19 +230,11 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		
 		activo = genericDao.save(Activo.class, activo);
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 		return activo;
 	}
 	
 	@Transactional(readOnly = false)
 	private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		NMBBien bien = new NMBBien();
 		genericDao.save(NMBBien.class, bien);
@@ -713,11 +694,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 
-		transactionManager.commit(transaction);
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
 
 

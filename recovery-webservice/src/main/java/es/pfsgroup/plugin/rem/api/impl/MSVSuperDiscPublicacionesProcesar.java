@@ -105,8 +105,6 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		final String FILTRO_CODIGO = "codigo";
 		final String ARROBA = "@";
 		final String[] LISTA_SI = { "SI", "S" };
@@ -234,12 +232,6 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 				genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);
 			}
 		
-		}
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 
 		return new ResultadoProcesarFila();

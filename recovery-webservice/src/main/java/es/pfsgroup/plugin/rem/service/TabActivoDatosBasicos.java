@@ -1241,7 +1241,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		boolean borrarMotivoExcluirValidaciones = false;
@@ -2119,13 +2118,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId()) && (dto.getCheckGestorComercial()!=null 
 					|| dto.getExcluirValidacionesBool()!=null || dto.getMotivoGestionComercialCodigo()!=null)){
 				modificarCheckVisibleGestionComercialRestringida(activo,dto);
-			}
-
-			transactionManager.commit(transaction);
-
-			if(activo != null){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-				llamadaAsincrona.start();
 			}
 
 			Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());

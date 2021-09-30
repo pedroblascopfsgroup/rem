@@ -417,8 +417,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 	
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		DtoActivoSaneamiento activoDto = (DtoActivoSaneamiento) webDto;
 		
@@ -566,12 +564,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 
-			transactionManager.commit(transaction);
-
-			if(activo != null){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-				llamadaAsincrona.start();
-			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

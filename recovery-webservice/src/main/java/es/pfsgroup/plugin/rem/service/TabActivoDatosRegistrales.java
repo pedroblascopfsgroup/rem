@@ -1154,8 +1154,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Transactional(readOnly = false)
 	public void comprobacionSuperficiePA(DtoActivoDatosRegistrales activoDto, Long id) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		Activo activoActual = activoApi.get(id);
 		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(id);
 		boolean isUA = activoDao.isUnidadAlquilable(id);
@@ -1255,11 +1253,5 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 		}
 
-		transactionManager.commit(transaction);
-
-		if(activoMatriz != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activoMatriz.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
 }

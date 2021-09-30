@@ -144,8 +144,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	@Override
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		//-----Usuariocrear, Fechacrear
 		Auditoria auditoria = new Auditoria();
@@ -939,13 +937,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
 		listaActivos.add(unidadAlquilable);
-
-		transactionManager.commit(transaction);
-
-		if(unidadAlquilable != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(unidadAlquilable.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 
 		return new ResultadoProcesarFila();
 	}

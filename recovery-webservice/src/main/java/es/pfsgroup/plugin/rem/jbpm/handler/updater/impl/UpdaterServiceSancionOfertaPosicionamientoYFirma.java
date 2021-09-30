@@ -103,8 +103,6 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		Activo activo = null;
 		
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
@@ -305,18 +303,6 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion, true);
 
-		transactionManager.commit(transaction);
-
-		for (ActivoOferta activoOferta : ofertaAceptada.getActivosOferta()) {
-
-			activo = activoOferta.getPrimaryKey().getActivo();
-
-			if(activo != null){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-				llamadaAsincrona.start();
-			}
-
-		}
 	}
 
 	public String[] getCodigoTarea() {

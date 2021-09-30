@@ -288,7 +288,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
-
+		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 	
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
@@ -484,10 +484,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activo.setServicerActivo(servicerActivo);
 			}
 		}
-
+		
 		transactionManager.commit(transaction);
 
-		if(activo != null){
+		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada())){
 			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}

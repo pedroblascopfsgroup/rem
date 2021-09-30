@@ -65,8 +65,6 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		// TODO Código que guarda las tareas.
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
 
 		Filter tituloActivo;
@@ -115,13 +113,7 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 			HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
 			genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
 		}
-		
-		transactionManager.commit(transaction);
 
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
 
 	public String[] getCodigoTarea() {

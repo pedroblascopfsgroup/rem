@@ -4523,8 +4523,6 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public boolean createTasacion(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idActivo) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		Activo activo = activoApi.get(idActivo);
 		NMBBien bienActivo = activo.getBien();
 		NMBValoracionesBien valoracionBienActivo = new NMBValoracionesBien();
@@ -4563,20 +4561,12 @@ public class ActivoAdapter {
 		activo.getTasacion().add(activoTasacionNuevo);
 		activoApi.saveOrUpdate(activo);
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 
 		return true;
 	}
 	
 	@Transactional(readOnly = false)
 	public boolean saveTasacion(DtoTasacion dtoTasacion) {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
 		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
@@ -4608,13 +4598,6 @@ public class ActivoAdapter {
 
 		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
 		genericDao.save(ActivoTasacion.class, activoTasacion);
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 
 		return true;
 	}

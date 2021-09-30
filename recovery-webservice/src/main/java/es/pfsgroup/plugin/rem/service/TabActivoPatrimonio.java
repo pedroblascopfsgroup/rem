@@ -200,8 +200,6 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Transactional()
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
@@ -462,13 +460,6 @@ public class TabActivoPatrimonio implements TabActivoService {
 		//updaterState.updaterStateDisponibilidadComercialAndSave(activo, false);
 		if (activoDao.isUnidadAlquilable(activo.getId())) {
 			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 
 		return activo;

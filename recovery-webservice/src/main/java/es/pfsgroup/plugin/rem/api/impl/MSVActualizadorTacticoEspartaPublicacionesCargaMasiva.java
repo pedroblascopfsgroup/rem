@@ -203,8 +203,6 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	
 	@Transactional(readOnly = false)
 	private void actualizaDependientesActivo(MSVHojaExcel exc, int fila, Activo activo) throws IOException, ParseException {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		Filter filtroActivoSitPosesoria  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoSituacionPosesoria sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoSitPosesoria);
@@ -270,19 +268,10 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 
 		}
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
 	
 	@Transactional(readOnly = false)
 	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria,Activo activo) throws IOException, ParseException {
-
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		if(sitPosesoria != null ) {
 			Usuario usu = usuarioApi.getUsuarioLogado();
@@ -336,13 +325,6 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 				}
 			
 			}
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 	}
 	

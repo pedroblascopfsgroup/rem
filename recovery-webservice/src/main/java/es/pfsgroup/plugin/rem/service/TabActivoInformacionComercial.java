@@ -207,8 +207,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 		
 		try {
@@ -305,13 +303,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 
 		return activo;

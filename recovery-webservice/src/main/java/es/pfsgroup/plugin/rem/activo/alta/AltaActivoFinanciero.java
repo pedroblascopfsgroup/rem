@@ -150,8 +150,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	@Transactional(readOnly = false)
 	public Boolean procesarAlta(DtoAltaActivoFinanciero dtoAAF) throws Exception {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		// Asignar los datos del DTO al nuevo activo y almacenarlo en la DB.
 		Activo activo = this.dtoToEntityActivo(dtoAAF);
 
@@ -192,13 +190,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			
 		} else {
 			return false;
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 
 		return true;
@@ -244,8 +235,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	@Transactional(readOnly = false)
 	private void dtoToEntitiesOtras(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		// NMBien.
 		NMBBien bien = new NMBBien();
@@ -592,12 +581,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
 	
 	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){

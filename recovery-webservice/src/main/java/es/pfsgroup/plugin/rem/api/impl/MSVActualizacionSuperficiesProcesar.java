@@ -75,8 +75,6 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	@Override
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
-
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		Activo activo = null;
 		NMBInformacionRegistralBien infoRegBien = null;
@@ -131,13 +129,6 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 			genericDao.update(NMBInformacionRegistralBien.class, infoRegBien);
 			genericDao.update(ActivoInfoRegistral.class, infoRegistral);
 			genericDao.update(Activo.class, activo);
-
-			transactionManager.commit(transaction);
-
-			if(activo != null){
-				Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-				llamadaAsincrona.start();
-			}
 
 			return new ResultadoProcesarFila();
 			

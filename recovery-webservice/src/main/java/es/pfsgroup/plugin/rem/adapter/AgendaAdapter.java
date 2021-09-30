@@ -827,8 +827,6 @@ public class AgendaAdapter {
 	@Transactional(readOnly = false)
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		Activo activo = null;
 		if (idTramite != null) {
 			ActivoTramite tramite = activoTramiteApi.get(idTramite);
@@ -923,13 +921,6 @@ public class AgendaAdapter {
 				
 				
 			}
-		}
-
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 
 		return true;

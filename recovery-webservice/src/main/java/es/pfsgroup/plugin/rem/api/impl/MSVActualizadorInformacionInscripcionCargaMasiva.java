@@ -188,13 +188,6 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 			}
 		}
 
-		transactionManager.commit(transaction);
-
-		if(activo != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
-
 		return new ResultadoProcesarFila();
 	}
 

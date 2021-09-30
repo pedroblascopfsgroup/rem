@@ -98,8 +98,6 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
 		String username = genericAdapter.getUsuarioLogado().getUsername();
 		String identificador = exc.dameCelda(fila, COL_NUM.COL_NUM_IDENTIFICADOR);
 		String campo = exc.dameCelda(fila, COL_NUM.COL_NUM_CAMPO);
@@ -215,13 +213,6 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 		default:
 			activoDao.actualizaDatoCDC(cdc, obtenerFormatoValor(cdc, valor), identificador, username);		
 			break;
-		}
-
-		transactionManager.commit(transaction);
-
-		if(act != null){
-			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(act.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
 		}
 		
 		return new ResultadoProcesarFila();

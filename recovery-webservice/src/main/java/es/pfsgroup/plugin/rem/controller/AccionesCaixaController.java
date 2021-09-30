@@ -211,7 +211,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto){
+    public ModelAndView accionVentaContabilizada(DtoAccionVentaContabilizada dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionVentaContabilizada(dto);

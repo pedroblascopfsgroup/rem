@@ -192,14 +192,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_VENTA_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_VENTA_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionVentaContabilizada>() {
             @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
+            public Class<DtoAccionVentaContabilizada> getArgumentType() {
+                return DtoAccionVentaContabilizada.class;
             }
 
             @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+            public Boolean execute(DtoAccionVentaContabilizada dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionVentaContabilizada(dto);
                     if ("false".equals(mm.getModel().get("success").toString())

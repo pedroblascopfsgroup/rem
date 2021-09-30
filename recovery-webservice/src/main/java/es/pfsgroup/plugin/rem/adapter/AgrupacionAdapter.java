@@ -3158,8 +3158,6 @@ public class AgrupacionAdapter {
 
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
-
 				Boolean ofertaViva = false;
 
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
@@ -3212,20 +3210,24 @@ public class AgrupacionAdapter {
 				}
 
 				if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
-
+					List<ActivoAgrupacionActivo> activosAgrupacion = agrupacion.getActivos();
+					Activo activo = new Activo();
+					
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
 					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) genericDao.get(DDTipoAlquiler.class, filtro);
+					
+					for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+						activo = activoAgrupacion.getActivo();
+						activo.setTipoAlquiler(tipoAlquiler);
+					}
 
 					loteComercial.setTipoAlquiler(tipoAlquiler);
 				}
-
 
 				if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
 					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
 					loteComercial.setUsuarioGestorComercial(usuario);
 				}
-
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
 
 				Boolean ofertaViva = false;
 

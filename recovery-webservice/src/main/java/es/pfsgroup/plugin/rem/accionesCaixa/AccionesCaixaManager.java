@@ -271,7 +271,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto){
+    public void accionVentaContabilizada(DtoAccionVentaContabilizada dto) throws ParseException{
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
@@ -281,6 +281,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         DDEstadosExpedienteComercial eec = genericDao.get(DDEstadosExpedienteComercial.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO));
         expediente.setEstado(eec);
+        
+        expediente.setFechaContabilizacion(sdfEntrada.parse(dto.getFechaReal()));
 
         genericDao.save(ExpedienteComercial.class, expediente);
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));

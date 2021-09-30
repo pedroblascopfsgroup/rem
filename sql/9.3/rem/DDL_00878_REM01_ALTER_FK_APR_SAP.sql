@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20191201
+--## FECHA_CREACION=20210928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8672
+--## INCIDENCIA_LINK=HREOS-15081
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla ACT_ICO_INFO_COMERCIAL
+--## Finalidad: Alterar la tabla OFR_OFERTAS_CAIXA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -75,7 +75,7 @@ BEGIN
 			-- Verificar si la fk existe. Si existe, se borra
 			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_ALTER(1)||'''';
 			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 0 THEN
+			IF V_NUM_TABLAS > 0 THEN
 				
 				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
 				V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 

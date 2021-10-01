@@ -87,6 +87,9 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@Column(name = "IAP_ES_USUFRUCTUARIO")
 	private Boolean esUsufructuario;
 
+	@Column(name = "IAP_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
 
 	@Embedded
 	private Auditoria auditoria;
@@ -241,4 +244,11 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 		this.esUsufructuario = esUsufructuario;
 	}
 
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
 }

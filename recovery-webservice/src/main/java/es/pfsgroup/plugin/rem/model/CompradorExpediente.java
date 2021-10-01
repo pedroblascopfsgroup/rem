@@ -200,7 +200,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECL_ID")
     private DDEstadoContrasteListas estadoContrasteListas;
-    
+
     @Column(name="ECO_ECL_FECHA")
     private Date fechaContrasteListas;
 
@@ -242,7 +242,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Column(name = "CEX_ID_PERSONA_HAYA_REPR")
 	private Long idPersonaHayaRepresentante;
-	
+
 	@Column(name = "CEX_PRP")
 	private Boolean prp;
 	
@@ -256,7 +256,10 @@ public class CompradorExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_EIC_ID")
 	private DDEstadoInterlocutor estadoInterlocutor;
- 
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
 	@Version   
 	private Long version;
 	
@@ -711,7 +714,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;	
+		this.auditoria = auditoria;
 	}
 
 	public DDEstadoContrasteListas getEstadoContrasteListas() {
@@ -729,7 +732,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setFechaContrasteListas(Date fechaContrasteListas) {
 		this.fechaContrasteListas = fechaContrasteListas;
 	}
-	
+
 	public Long getIdC4c() {
 		return idC4c;
 	}
@@ -849,6 +852,13 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setEstadoInterlocutor(DDEstadoInterlocutor estadoInterlocutor) {
 		this.estadoInterlocutor = estadoInterlocutor;
 	}
-   
 
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
 }

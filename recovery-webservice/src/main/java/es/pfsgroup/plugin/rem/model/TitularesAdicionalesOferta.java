@@ -182,11 +182,11 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_DOC_IDENT")
     private AdjuntoComprador adcomIdDocumentoIdentificativo;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_GDPR")
     private AdjuntoComprador adcomIdDocumentoGDPR;
-    
+
     @Column(name = "FECHA_ACEP_GDPR")
     private Date fechaAcepGdpr;
 
@@ -223,7 +223,13 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRV_NAC_ID_REP")
 	private DDProvincia provinciaNacimientoRep;
-    
+
+	@Column(name = "TIA_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
     @Version   
 	private Long version;
 
@@ -545,7 +551,7 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
 		this.fechaAcepGdpr = fechaAcepGdpr;
 	}
-	
+
 	public Long getIdC4c() {
 		return idC4c;
 	}
@@ -641,5 +647,20 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
 		this.provinciaNacimientoRep = provinciaNacimientoRep;
 	}
-	
+
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
 }

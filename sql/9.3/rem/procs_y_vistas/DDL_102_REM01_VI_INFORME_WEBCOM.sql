@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20210202
+--## AUTOR=Juan José Sanjuan
+--## FECHA_CREACION=20211001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7935
+--## INCIDENCIA_LINK=HREOS-14606
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de los informes enviadas a webcom.
 --##           
@@ -17,6 +17,7 @@
 --##	    0.5: 20200826 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##        0.6: 20201210 Carlos Santos Vílchez. REMVIP-8448
 --##		0.7: 20210202 Carlos Santos Vílchez. REMVIP-8542
+--##		0.8: 20210202 Juan José Sanjuan. HREOS-14606 -- GD-1106: Informe Mediador- Enviar siempre ID_INFORME_MEDIADOR_WEBCOM
 --##########################################
 --*/
 
@@ -529,8 +530,7 @@ BEGIN
 			LEFT JOIN '||V_ESQUEMA||'.DD_SINI_SINOINDIFERENTE DDSINI ON DDSINI.DD_SINI_ID = ICO.ICO_ADMITE_MASCOTAS		
 			LEFT JOIN REFERENCIA_CATASTRAL CAT ON CAT.ACT_ID = ACT.ACT_ID
 			LEFT JOIN ACCION ACC ON ACC.ICO_ID = ICO.ICO_ID
-			LEFT JOIN PROVEEDOR_ANTERIOR PVE_ANT ON PVE_ANT.ACT_ID = ACT.ACT_ID
-			WHERE ICO.ICO_WEBCOM_ID IS NOT NULL';
+			LEFT JOIN PROVEEDOR_ANTERIOR PVE_ANT ON PVE_ANT.ACT_ID = ACT.ACT_ID';
    
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

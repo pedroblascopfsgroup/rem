@@ -6541,7 +6541,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 				if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-					logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV");
+					logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en ofertaManager.java linea 6544");
 				}
 				
 			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 

@@ -1988,6 +1988,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
 				&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+			logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 1991");
 		}
 		
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -2040,8 +2041,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
 			
-			if(oferta != null && ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) && oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial() && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
+					&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
 				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+				logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 2047");
 			}
 		
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

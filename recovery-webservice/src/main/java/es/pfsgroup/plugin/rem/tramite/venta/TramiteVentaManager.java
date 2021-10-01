@@ -1,11 +1,16 @@
 package es.pfsgroup.plugin.rem.tramite.venta;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
@@ -26,6 +31,9 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	
 	@Autowired
 	private FuncionesApi funcionesApi;
+	
+	@Autowired 
+	private ActivoTramiteApi activoTramiteApi;
 	
 	public class AvanzaTareaFuncion{
 		public static final String FUNCION_AVANZA_POSICIONAMIENTO = "AV_CONF_F_ESC";
@@ -80,4 +88,16 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		return is;
 	}
 	
+	@Override
+	public boolean isTramiteT017Aprobado(List<String> tareasActivas){
+		boolean isAprobado = false;
+		String[] tareasParaAprobado = {ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, 
+				ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN};
+		if(!Collections.disjoint(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+			isAprobado = true;
+		}
+		
+		return isAprobado;
+	}
+
 }

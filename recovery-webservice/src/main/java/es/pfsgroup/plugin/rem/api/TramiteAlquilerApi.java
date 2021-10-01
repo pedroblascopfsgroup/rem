@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 
 public interface TramiteAlquilerApi {
@@ -25,6 +27,8 @@ public interface TramiteAlquilerApi {
 	boolean checkSeguroRentasCondiciones(TareaExterna tareaExterna);
 
 	boolean validarMesesImporteDeposito(TareaExterna tareaExterna);
+
+	boolean isTramiteT015Aprobado(List<String> tareasActivas);
 	
 	
 }

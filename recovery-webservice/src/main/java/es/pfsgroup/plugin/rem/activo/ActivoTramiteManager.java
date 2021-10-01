@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -989,5 +990,26 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 		
 		return isTramiteVenta;
+	}
+	
+	@Override
+	public Set<TareaExterna> getTareasActivasByExpediente(ExpedienteComercial eco){
+		Trabajo trabajo = eco.getTrabajo();
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+		Set<TareaExterna> tareasActivas = tramite.getTareasExternasActivas();
+		
+		return tareasActivas;
+	}
+	
+	@Override
+	public TipoProcedimiento getTipoTramiteByExpediente(ExpedienteComercial eco){
+		Trabajo trabajo = eco.getTrabajo();
+		TipoProcedimiento tp = null;
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+		if(tramite != null) {
+			tp = tramite.getTipoTramite();
+		}
+		
+		return tp;
 	}
 }

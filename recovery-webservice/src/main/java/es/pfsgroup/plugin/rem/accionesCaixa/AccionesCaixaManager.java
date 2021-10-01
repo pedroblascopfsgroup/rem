@@ -346,13 +346,46 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         List<InterlocutorExpediente> iexList = genericDao.getList(InterlocutorExpediente.class,
                 genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", dto.getIdExpediente()));
 
-        DDEstadoInterlocutor eic = genericDao.get(DDEstadoInterlocutor.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_ACTIVO));
+        DDEstadoInterlocutor eicActivo = genericDao.get(DDEstadoInterlocutor.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_ACTIVO));
+        DDEstadoInterlocutor eicInActivo = genericDao.get(DDEstadoInterlocutor.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_INACTIVO));
 
         for(InterlocutorExpediente iex: iexList){
-            iex.setEstadoInterlocutor(eic);
+        	if(DDEstadoInterlocutor.isSolicitudBaja(iex.getEstadoInterlocutor())) {
+                iex.setEstadoInterlocutor(eicInActivo);
+        	}else {
+                iex.setEstadoInterlocutor(eicActivo);
+
+        	}
             genericDao.save(InterlocutorExpediente.class, iex);
         }
+        
+        List<CompradorExpediente> cex = genericDao.getList(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente", dto.getIdExpediente()));
+        
+        for(CompradorExpediente compradorExpediente: cex){
+        	if(DDEstadoInterlocutor.isSolicitudBaja(compradorExpediente.getEstadoInterlocutor())) {
+        		compradorExpediente.setEstadoInterlocutor(eicInActivo);
+        	}else {
+        		compradorExpediente.setEstadoInterlocutor(eicActivo);
+
+        	}
+            genericDao.update(CompradorExpediente.class, compradorExpediente);
+        }
+        
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
+       
+        
+        if(expediente != null) {
+        	 expediente.setBloqueado(0);
+	        if(expediente.getOferta() != null && expediente.getOferta().getOfertaCaixa() != null) {
+	        	OfertaCaixa ofrCaixa = expediente.getOferta().getOfertaCaixa();
+	        	ofrCaixa.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_VALIDADO)));
+	        	genericDao.save(OfertaCaixa.class, ofrCaixa);
+	        }
+	        genericDao.save(ExpedienteComercial.class, expediente);
+			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+
+    	}
+
     }
 
     @Override

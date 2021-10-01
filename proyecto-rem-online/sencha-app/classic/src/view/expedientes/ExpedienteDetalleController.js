@@ -821,9 +821,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         viewPortHeight = Ext.Element.getViewportHeight(),
         tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
         tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'],
-		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'];
+		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'],
+		bloqueado =  me.getViewModel().get('expediente.bloqueado');
         var viewModel = me.getViewModel();
-
+        if(bloqueado){
+        	me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
+        	return;
+        }
 
         var editarCompradores;
 

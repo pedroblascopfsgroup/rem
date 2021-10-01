@@ -101,30 +101,17 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
+        ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
         if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
-            ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
             adapter.anularTramiteAlquiler(acTra.getId(), "905");
         }else {
-        	TareaExterna tareaExternaActual = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
-        	ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-        	
-        	if(tareaExternaActual != null && expediente != null) {
-        		String estadoBc = null;
-	        	String codigoTarea = tareaExternaActual.getTareaProcedimiento().getCodigo();
-				if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
-					|| ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN.equals(codigoTarea)) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-				}else if(reservaApi.tieneReservaFirmada(expediente)) {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-				}else {
-					estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-				}
-				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
-				genericDao.save(ExpedienteComercial.class, expediente);
-				
-	            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
-	        }
+            eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
+            genericDao.save(ExpedienteComercial.class, eco);
+
+            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+            ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
         }
     }
 

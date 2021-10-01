@@ -16,6 +16,8 @@ public class DtoAccionRechazoCaixa extends WebDto {
 
     private Long idTarea;
 
+    private String estadoBc;
+
     public Long getIdExpediente() {
         return idExpediente;
     }
@@ -62,5 +64,13 @@ public class DtoAccionRechazoCaixa extends WebDto {
 
     public void setIdTarea(Long idTarea) {
         this.idTarea = idTarea;
+    }
+
+    public String getEstadoBc() {
+        return estadoBc;
+    }
+
+    public void setEstadoBc(String estadoBc) {
+        this.estadoBc = estadoBc;
     }
 }

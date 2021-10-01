@@ -413,7 +413,7 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 			name:'importeEntregasCuenta'
 		},
 		{
-			name:'obligadoCumplimiento'
+			name:'obligadoCumplimientoac56b6334c00c42d7dccbad5d00b3a693f5dd986'
 		},
 		{
 			name:'fechaPreavisoVencimientoCnt',
@@ -450,6 +450,10 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name:'tipoGrupoImpuestoCod'
+		},
+		{
+			name: 'bloqueDepositoEditable',
+			type: 'boolean'
 		}
 	    
     ],

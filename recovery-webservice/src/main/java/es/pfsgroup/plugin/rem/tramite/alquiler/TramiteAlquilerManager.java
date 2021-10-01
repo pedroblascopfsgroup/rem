@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -14,6 +16,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -225,5 +228,15 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return isRelleno;
 	}	
 
+	@Override
+	public boolean isTramiteT015Aprobado(List<String> tareasActivas){
+		boolean isAprobado = false;
+		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_DEFINICION_OFERTA};
+		if(!Collections.disjoint(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+			isAprobado = true;
+		}
+		
+		return isAprobado;
+	}
 	
 }

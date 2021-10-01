@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
@@ -334,5 +335,9 @@ public interface ActivoTramiteApi {
 	boolean isTramiteAlquilerNoComercial(TipoProcedimiento procedimiento);
 
 	boolean isTramiteAlquiler(TipoProcedimiento procedimiento);
+	
+	Set<TareaExterna> getTareasActivasByExpediente(ExpedienteComercial eco);
+
+	TipoProcedimiento getTipoTramiteByExpediente(ExpedienteComercial eco);
 }
 

@@ -28,7 +28,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
 		var isAlquiler = false;
 		var tipoDelExpediente = me.lookupViewModel().get('expediente.tipoExpedienteCodigo');
-			
+		var bloqueado = me.lookupViewModel().get('expediente.bloqueado');
 		if(tipoDelExpediente === tipoExpedienteAlquiler || tipoDelExpediente === tipoExpedienteAlquilerNoComercial ){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
@@ -110,7 +110,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					},
                 	{
 					    xtype		: 'gridBase',
-					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),
+					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']) && !bloqueado,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						activateButton: true,

@@ -1,11 +1,16 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -164,6 +169,15 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return isFirmado;
 	}
 	
-
+	@Override
+	public boolean isTramiteT018Aprobado(List<String> tareasActivas){
+		boolean isAprobado = false;
+		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_DEFINICION_OFERTA};
+		if(!Collections.disjoint(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+			isAprobado = true;
+		}
+		
+		return isAprobado;
+	}
 	
 }

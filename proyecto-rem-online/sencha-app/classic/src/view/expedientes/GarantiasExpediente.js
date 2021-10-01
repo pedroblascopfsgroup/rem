@@ -17,13 +17,6 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 		var me = this;
 		me.setTitle(HreRem.i18n('title.garantias'));
 		var isBK = me.lookupController().getViewModel().get('expediente.esBankia');
-//		var isAlquiler = me.lookupController().getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
-//		var tamanyo1 = 100;
-//		
-//		if(isBK && isAlquiler){
-//			 tamanyo1 = 130;
-//		}		
-
 		var items = [
 			{
 				xtype : 'fieldset',
@@ -47,15 +40,13 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 								reference: 'bloqueScoringRef',
 								editable: '{garantias.scoringEditable}',
 								colspan:4,
-								//height : 145,
-								//margin : '0 10 10 0',
 								layout : {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									disabled: '{!garantias.scoringEditable}'
+								},
 								items : [
 											{
 												xtype : 'checkboxfieldbase',
@@ -64,7 +55,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												colspan:3,
 												bind : {
 													value : '{garantias.scoring}'
-												}
+												},
+												handler:'onClickCheckboxScoring'
 											},
 											{
 												xtype : 'comboboxfieldbase',
@@ -75,7 +67,11 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												},
 												displayField : 'descripcion',
 												valueField : 'codigo',
-												reference : 'resultadoHayaRef'
+												reference : 'resultadoHayaRef',
+												listeners:{
+													select: 'onChangeComboResultadoHaya'
+												},
+												disabled: true
 											},
 											{
 												xtype : 'datefieldbase',
@@ -84,16 +80,17 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												maxValue: null,
 												bind : {
 													value : '{garantias.fechaSancion}'
-												}
+												},
+												disabled: true
 											},
 											{
 												xtype : 'numberfieldbase',
 												reference : 'numeroExpedienteRef',
-												//symbol : HreRem.i18n("symbol.porcentaje"),
 												fieldLabel : HreRem.i18n('fieldlabel.num.expediente'),												
 												bind : {
 													value : '{garantias.numeroExpediente}'
-												}
+												},
+												disabled: true
 											},
 											{
 												xtype : 'comboboxfieldbase',
@@ -104,7 +101,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												},
 												displayField : 'descripcion',
 												valueField : 'codigo',
-												reference : 'resultadoPropiedadRef'
+												reference : 'resultadoPropiedadRef',
+												disabled: true
 											},
 											{
 												xtype : 'textfieldbase',
@@ -112,7 +110,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												bind : {													
 													value : '{garantias.motivoRechazo}'
 												},
-												reference : 'motivoRechazoRef'
+												reference : 'motivoRechazoRef',
+												disabled: true
 											},
 											{
 												xtype : 'comboboxfieldbase',
@@ -123,7 +122,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												},
 												displayField : 'descripcion',
 												valueField : 'codigo',
-												reference : 'ratingHayaRef'
+												reference : 'ratingHayaRef',
+												disabled: true
 											}
 										]
 							},{
@@ -137,9 +137,9 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									disabled: '{!garantias.bloqueEditable}'
+								},
 								items : [
 											{
 												xtype : 'checkboxfieldbase',
@@ -148,37 +148,38 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												colspan:3,
 												bind : {
 													value : '{garantias.aval}'
-												}
+												},
+												handler:'onClickCheckboxAval'
 											},
 											{
 												xtype : 'textfieldbase',
 												reference : 'avalistaRef',
-												//symbol : HreRem.i18n("symbol.porcentaje"),
 												fieldLabel : HreRem.i18n('fieldlabel.avalista'),
 												bind : {
 													value : '{garantias.avalista}'
-												}
+												},
+												disabled: true
 											},
 											{
 												xtype : 'numberfieldbase',
 												reference : 'documentoRef',
-												//symbol : HreRem.i18n("symbol.porcentaje"),
 												fieldLabel : HreRem.i18n('header.documento'),
 												bind : {
 													value : '{garantias.documento}'
-												}
+												},
+												disabled: true
 											},
 											{
 												xtype : 'comboboxfieldbase',
 												reference : 'entidadBancariaRef',
-												//symbol : HreRem.i18n("symbol.porcentaje"),
 												fieldLabel : HreRem.i18n('fieldlabel.entidad.bancaria'),
 												bind : {
 													store : '{comboEntidadBancariaAvalista}',
 													value : '{garantias.entidadBancariaCod}'
 												},
 												displayField : 'descripcion',
-												valueField : 'codigo'
+												valueField : 'codigo',
+												disabled: true
 											},
 											{
 												xtype : 'numberfieldbase',
@@ -187,14 +188,22 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												fieldLabel : HreRem.i18n('fieldlabel.meses'),
 												bind : '{garantias.mesesAval}',
 												maxLength: 2,
-												maxValue: 12
+												maxValue: 12,
+												listeners:{
+													change:'onChangeMesesGarantiasAval'
+												},
+												disabled: true
 											}, 											
 											{
 												xtype : 'numberfieldbase',
 												reference : 'importeAvalRef',
 												symbol : HreRem.i18n("symbol.euro"),
 												fieldLabel : HreRem.i18n('fieldlabel.importe'),
-												bind : '{garantias.importeAval}'
+												bind : '{garantias.importeAval}',
+												listeners:{
+													change: 'onChangeImporteGarantiasAval'
+												},
+												disabled: true
 											},
 											{
 												xtype : 'datefieldbase',
@@ -203,7 +212,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												maxValue: null,
 												bind : {
 													value : '{garantias.fechaVencimiento}'
-												}
+												},
+												disabled: true
 											}
 										]
 							},{
@@ -217,9 +227,9 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 									type : 'table',
 									columns : 3
 								},
-								/*bind : {
-									hidden : '{!esOfertaVenta}'
-								},*/
+								bind : {
+									disabled: '{!garantias.bloqueEditable}'
+								},
 								items : [
 								
 											{
@@ -229,19 +239,20 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												colspan:3,
 												bind : {
 													value : '{garantias.seguroRentas}'
-												}
+												},
+												handler:'onClickCheckBoxSeguroRentas'
 											},
 											{
 												xtype : 'comboboxfieldbase',
 												reference : 'aseguradoraRef',
-												//symbol : HreRem.i18n("symbol.porcentaje"),
 												fieldLabel : HreRem.i18n('fieldlabel.aseguradora'),
 												bind : {
 													store : '{comboTiposPorCuenta}',
 													value : '{garantias.aseguradoraCod}'
 												},
 												displayField : 'descripcion',
-												valueField : 'codigo'
+												valueField : 'codigo',
+												disabled: true
 											},
 											{
 												xtype : 'datefieldbase',
@@ -251,7 +262,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												maxValue: null,
 												bind : {
 													value : '{garantias.fechaSancionRentas}'
-												}
+												},
+												disabled: true
 											},
 											{
 												xtype : 'numberfieldbase',
@@ -260,14 +272,22 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												fieldLabel : HreRem.i18n('fieldlabel.meses'),
 												bind : '{garantias.mesesRentas}',
 												maxLength: 2,
-												maxValue: 12
+												maxValue: 12,
+												listeners:{
+													change:'onChangeMesesGarantiasRentas'
+												},
+												disabled: true
 											}, 											
 											{
 												xtype : 'numberfieldbase',
 												reference : 'importeRentasRef',
 												symbol : HreRem.i18n("symbol.euro"),
 												fieldLabel : HreRem.i18n('fieldlabel.importe'),
-												bind : '{garantias.importeRentas}'
+												bind : '{garantias.importeRentas}',
+												listeners:{
+													change:'onChangeImporteGarantiasRentas'
+												},
+												disabled: true
 											}
 										]
 							}

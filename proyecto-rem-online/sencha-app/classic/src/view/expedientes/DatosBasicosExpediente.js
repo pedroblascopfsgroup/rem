@@ -152,7 +152,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 								hidden: '{!esAlquilerNoComercial}'
 							},
 							readOnly: true,
-		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion')
+		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.subtipo.oferta')
 		                }
 						
 					]

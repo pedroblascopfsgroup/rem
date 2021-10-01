@@ -821,9 +821,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         viewPortHeight = Ext.Element.getViewportHeight(),
         tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
         tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'],
-		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'];
+		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'],
+		bloqueado =  me.getViewModel().get('expediente.bloqueado');
         var viewModel = me.getViewModel();
-
+        if(bloqueado){
+        	me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
+        	return;
+        }
 
         var editarCompradores;
 
@@ -1453,13 +1457,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var tipoCalculo = me.lookupReference('tipoCalculo');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
 		if(!esCarteraGaleonOZeus && value==1){
-			me.lookupReference('tipoCalculo').setDisabled(false);
+			tipoCalculo.setDisabled(false);
+			tipoCalculo.allowBlank = false;
 		}else{
-			
-			me.lookupReference('tipoCalculo').setDisabled(true);		
-			me.lookupReference('tipoCalculo').setValue(null);
+			tipoCalculo.setDisabled(true);		
+			tipoCalculo.setValue(null);
+			tipoCalculo.allowBlank = true;
 		}
 	},
 	
@@ -5476,5 +5482,188 @@ comprobarFormatoModificar: function() {
 			labelAlquiler.setTitle(HreRem.i18n('title.generales'));
 			labelVenta.setTitle(HreRem.i18n('title.generales'));
 		}
+	},
+	
+	changeOpcionCompra: function (combo, value, oldValue, eOpts, recarga){
+		var me = this;
+		var form = combo.up('form');
+		var valorOpcionCompra = form.down('field[name=valorOpcionCompra]');
+		var fechaOpcionCompra = form.down('field[name=fechaOpcionCompra]');
+		
+		if(value == "true"){
+			valorOpcionCompra.setDisabled(false);
+			fechaOpcionCompra.setDisabled(false);
+		}else{
+			valorOpcionCompra.setDisabled(true);
+			fechaOpcionCompra.setDisabled(true);
+		}
+	},
+
+	onClickCheckboxAval: function(checkbox, newValue, oldValue, eOpts){
+		var me = this;
+		var avalista= me.lookupReference('avalistaRef');
+		var documento= me.lookupReference('documentoRef');
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		var entidadBancaria= me.lookupReference('entidadBancariaRef');
+		var fechaVencimiento=me.lookupReference('fechaVencimientoRef');
+		if(checkbox.checked){
+			avalista.allowBlank=false;
+			avalista.setDisabled(false);
+			documento.allowBlank=false;
+			documento.setDisabled(false);
+			meses.setDisabled(false);
+			importe.setDisabled(false);
+			entidadBancaria.setDisabled(false);
+			fechaVencimiento.setDisabled(false);
+		}else{
+			avalista.allowBlank=true;
+			avalista.setValue("");
+			avalista.setDisabled(true);
+			documento.allowBlank=true;
+			documento.setValue(null);
+			documento.setDisabled(true);
+			meses.setDisabled(true);
+			avalista.setValue("");
+			importe.setDisabled(true);
+			importe.setValue(null);
+			entidadBancaria.setDisabled(true);
+			entidadBancaria.setValue(null);
+			fechaVencimiento.setDisabled(true);
+			fechaVencimiento.setValue(null);
+		}
+	},
+	
+	onChangeMesesGarantiasAval: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		if(Ext.isEmpty(meses.value)){
+			importe.setDisabled(false);
+		}else{
+			importe.setDisabled(true);
+		}
+	},
+	
+	onChangeImporteGarantiasAval: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		if(Ext.isEmpty(importe.value)){
+			meses.setDisabled(false);
+		}else{
+			meses.setDisabled(true);
+			meses.setValue(null);
+		}
+	},
+	
+	onChangeComboResultadoHaya: function(combo, value){
+		var me = this;
+		var motivoRechazo = me.lookupReference('motivoRechazoRef');
+		if(combo.value == "02"){
+			motivoRechazo.allowBlank=false;
+			motivoRechazo.setDisabled(false);
+		}else{
+			motivoRechazo.allowBlank=true;
+			motivoRechazo.setDisabled(true);
+			motivoRechazo.setValue(null);
+		}
+	},
+	
+	onChangeMesesGarantiasRentas: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesRentasRef');
+		var importe = me.lookupReference('importeRentasRef');
+		if(Ext.isEmpty(meses.value)){
+			importe.setDisabled(false);
+		}else{
+			importe.setDisabled(true);
+			importe.setValue(null);
+		}
+	},
+	
+	onChangeImporteGarantiasRentas: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesRentasRef');
+		var importe = me.lookupReference('importeRentasRef');
+		if(Ext.isEmpty(importe.value)){
+			meses.setDisabled(false);
+		}else{
+			meses.setDisabled(true);
+			meses.setValue(null);
+		}
+	},
+	
+	onClickCheckBoxSeguroRentas: function(checkbox){
+		var me = this;
+		var aseguradora= me.lookupReference('aseguradoraRef');
+		var fechaSancionRentas= me.lookupReference('fechaSancionRentasRef');
+		var mesesRentas= me.lookupReference('mesesRentasRef');
+		var importeRentas= me.lookupReference('importeRentasRef');
+		
+		if(checkbox.checked){
+			aseguradora.allowBlank=false;
+			aseguradora.setDisabled(false);
+			fechaSancionRentas.allowBlank=false;
+			fechaSancionRentas.setDisabled(false);
+			mesesRentas.setDisabled(false);
+			importeRentas.setDisabled(false);
+		}else{
+			aseguradora.allowBlank=true;
+			aseguradora.setValue("");
+			aseguradora.setDisabled(true);
+			fechaSancionRentas.allowBlank=true;
+			fechaSancionRentas.setValue(null);
+			fechaSancionRentas.setDisabled(true);
+			mesesRentas.allowBlank=true;
+			mesesRentas.setDisabled(true);
+			mesesRentas.setValue(null);
+			importeRentas.allowBlank=true;
+			importeRentas.setDisabled(true);
+			importeRentas.setValue(null);
+		}
+	},
+	
+	onClickCheckboxScoring: function(checkbox){
+		var me = this;
+		var resultadoHaya= me.lookupReference('resultadoHayaRef');
+		var fechaSancion= me.lookupReference('fechaSancionRef');
+		var	numeroExpediente =  me.lookupReference('numeroExpedienteRef');
+		var resultadoPropiedad= me.lookupReference('resultadoPropiedadRef');
+		var ratingHaya= me.lookupReference('ratingHayaRef');
+		var motivoRechazo= me.lookupReference('motivoRechazoRef');
+		if(checkbox.checked){
+			resultadoHaya.allowBlank=false;
+			resultadoHaya.setDisabled(false);
+			fechaSancion.allowBlank=false;
+			fechaSancion.setDisabled(false);
+			numeroExpediente.allowBlank=false;
+			numeroExpediente.setDisabled(false);
+			resultadoPropiedad.allowBlank=false;
+			resultadoPropiedad.setDisabled(false);
+			ratingHaya.allowBlank=false;
+			ratingHaya.setDisabled(false);
+		}else{
+			resultadoHaya.allowBlank=true;
+			resultadoHaya.setValue("");
+			resultadoHaya.setDisabled(true);
+			fechaSancion.allowBlank=true;
+			fechaSancion.setValue(null);
+			fechaSancion.setDisabled(true);
+			numeroExpediente.allowBlank=true;
+			numeroExpediente.setValue(null);
+			numeroExpediente.setDisabled(true);
+			resultadoPropiedad.allowBlank=true;
+			resultadoPropiedad.setValue(null);
+			resultadoPropiedad.setDisabled(true);
+			ratingHaya.allowBlank=true;
+			ratingHaya.setValue(null);
+			ratingHaya.setDisabled(true);
+			motivoRechazo.allowBlank=true;
+			motivoRechazo.setDisabled(true);
+			motivoRechazo.setValue("");
+		}
 	}
+	
+	
 });

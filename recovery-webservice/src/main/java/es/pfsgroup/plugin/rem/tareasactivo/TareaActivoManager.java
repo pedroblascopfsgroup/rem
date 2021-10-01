@@ -523,6 +523,22 @@ public class TareaActivoManager implements TareaActivoApi {
 		return !tareaCompletada.isEmpty();
 	}
 	
+	@Override
+	public boolean getSiTareaCompletada(Long idTramite, String nombreTarea) {
+		List<TareaActivo> tareasTramite = getTareasActivoByIdTramite(idTramite);
+		List <String>  tareaCompletada = new ArrayList<String>() ;
+		for (TareaActivo tareaActivo : tareasTramite) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
+			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
+			if (!Checks.esNulo(tareaExterna) 
+					&& !Checks.esNulo(tareaExterna.getTareaProcedimiento())
+					&& nombreTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& (!Checks.esNulo(tareaActivo.getFechaFin()) || !Checks.esNulo(tareaActivo.getFechaFin())))
+				tareaCompletada.add(tareaExterna.getTareaProcedimiento().getCodigo());
+		}
+		return !tareaCompletada.isEmpty();
+	}
+	
 	@Transactional
 	@Override
 	public TareaActivo tareaOfertaDependiente(Oferta oferta) {

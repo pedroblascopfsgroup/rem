@@ -279,6 +279,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name: 'tipoOfertaAlquilerCodigo'
+    		},
+		    {
+    			name:'numOfertaCaixa'
     		}
     		
     ],

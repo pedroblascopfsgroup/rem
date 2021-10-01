@@ -72,6 +72,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name: 'cuentaBancariaCliente'
+		},
+		{
+			name: 'numOfertaCaixa'
 		}
     ],
 

@@ -50,6 +50,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				readOnly: true,
 		    				colspan: 3
 						},
+	    				{
+		    				xtype: "textfield",
+		    				fieldLabel: HreRem.i18n('fieldlabel.numero.oferta.caixa'),
+							bind: {
+								value: '{detalleOfertaModel.numOfertaCaixa}',
+								hidden: '{!esBankia}'
+							},
+							width: 410,
+		    				readOnly: true,
+		    				colspan: 3
+		    			},
 						{
 		    				xtype: "textfield",
 		    				fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.usuAlta'),

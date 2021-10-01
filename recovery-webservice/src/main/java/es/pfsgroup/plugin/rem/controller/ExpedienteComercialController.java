@@ -2837,7 +2837,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getValoresTareaElevarSancion(ModelMap model, Long idTarea) {
 		try {
-			DtoAccionAprobacionCaixa dto = (DtoAccionAprobacionCaixa) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T015_ELEVAR_SANCION);
+			DtoAccionAprobacionCaixa dto = (DtoAccionAprobacionCaixa) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION);
 			model.put(RESPONSE_DATA_KEY, dto);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 

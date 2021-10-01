@@ -92,6 +92,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							formatter : 'date("d/m/Y")',
 							fieldLabel : HreRem.i18n('fieldlabel.fecha.alta'),
 							bind : '{datosbasicosoferta.fechaAlta}'
+						},
+							{
+							fieldLabel : HreRem.i18n('fieldlabel.numero.oferta.caixa'),
+							bind : {
+								value: '{datosbasicosoferta.numOfertaCaixa}',
+								hidden: '{!esBankia}'
+							},
+							readOnly: true
+	
 						}, {
 							xtype : 'comboboxfieldbase',
 							bind : {

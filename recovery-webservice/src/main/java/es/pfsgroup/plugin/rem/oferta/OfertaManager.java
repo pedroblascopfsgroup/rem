@@ -3130,6 +3130,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (oferta.getOfertaCaixa().getCuentaBancariaVirtual() != null) {
 						dtoResponse.setCuentaBancariaVirtual(oferta.getOfertaCaixa().getCuentaBancariaVirtual());
 					}
+					if(oferta.getOfertaCaixa().getNumOfertaCaixa() != null) {
+						dtoResponse.setNumOfertaCaixa(oferta.getOfertaCaixa().getNumOfertaCaixa().toString());						
+					}
 				}
 			}
 		}

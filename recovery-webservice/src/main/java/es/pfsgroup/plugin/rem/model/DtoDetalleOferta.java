@@ -22,6 +22,7 @@ public class DtoDetalleOferta {
 	DtoDeposito dtoDeposito;
 	private String cuentaBancariaVirtual;
 	private String cuentaBancariaCliente;
+	private String numOfertaCaixa;
 
 
 	public String getId() {
@@ -125,6 +126,12 @@ public class DtoDetalleOferta {
 	}
 	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
 		this.cuentaBancariaCliente = cuentaBancariaCliente;
+	}
+	public String getNumOfertaCaixa() {
+		return numOfertaCaixa;
+	}
+	public void setNumOfertaCaixa(String numOfertaCaixa) {
+		this.numOfertaCaixa = numOfertaCaixa;
 	}
 	
 	

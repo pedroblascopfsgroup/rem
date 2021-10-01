@@ -2152,6 +2152,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setTipoOfertaAlquilerCodigo(tipoOfertaAlquiler.getCodigo());
 			}
 		}
+		
+		if(oferta.getOfertaCaixa() != null) {
+			dto.setNumOfertaCaixa(oferta.getOfertaCaixa().getNumOfertaCaixa());
+		}
 
 		return dto;
 	}

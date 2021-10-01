@@ -23,20 +23,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
-import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.jpdl.el.impl.Coercions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -55,7 +47,6 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -78,6 +69,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -95,7 +87,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -125,6 +116,81 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.BulkOferta.BulkOfertaPk;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDGrupoImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -140,6 +206,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -212,6 +280,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
 	private static final String CODIGO_TRAMITE_T015 = "T015";
+	private static final String CODIGO_TRAMITE_T018 = "T018";
 
 	private final String PERFIL_HAYASUPER = "HAYASUPER";
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
@@ -336,18 +405,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
-	
-	@Autowired
-	private ExpedienteAdapter expedienteAdapter;
 
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
 	@Autowired
 	private AgendaAdapter agendaAdapter;
-
-	@Autowired
-	private HibernateUtils hibernateUtils;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -3416,6 +3479,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (condiciones.getTipoGrupoImpuesto() != null) {
 			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+		}
+		
+		boolean completada = false;
+		dto.setBloqueDepositoEditable(false);
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T015);
+		if(tramite != null) {
+			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+			
+			if(completada) {
+				dto.setBloqueDepositoEditable(false);
+			}else {
+				dto.setBloqueDepositoEditable(true);
+			}	
+		}
+		
+		tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
+		if(tramite != null) {
+			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
+			
+			if(completada) {
+				dto.setBloqueDepositoEditable(false);
+			}else{
+				dto.setBloqueDepositoEditable(true);
+			}
 		}
 		
 		return dto;
@@ -13863,9 +13950,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoGarantiasExpediente expedienteToDtoGarantias(ExpedienteComercial expediente) {
 		DtoGarantiasExpediente dto = new DtoGarantiasExpediente();
 		if (expediente != null) {
-			/*if (expediente.getNumExpediente() != null) {
-				dto.setNumeroExpediente(expediente.getNumExpediente());
-			}*/
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
 			ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
 			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
@@ -13936,27 +14020,58 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			boolean completada = false;
-			//
-			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expediente.getTrabajo().getId());
-			completada = tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES)
-							|| tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SCORING_BC);
+			dto.setScoringEditable(false);
+			dto.setBloqueEditable(false);
 			
-			if (completada) {
-				dto.setScoringEditable(false);
-			}else {
-				List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
-				for (TareaProcedimiento tarea : tareasActivas) {
-					if (!ComercialUserAssigantionService.CODIGO_T015_SCORING_BC.equals(tarea.getCodigo())
-							|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
-						dto.setScoringEditable(true);
-						break;
-					} else {
-						dto.setScoringEditable(false);						
+			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T015);
+			if(tramite != null) {
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+		
+				if (completada) {
+					dto.setScoringEditable(false);
+				}else {
+					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+					for (TareaProcedimiento tarea : tareasActivas) {
+						if (!ComercialUserAssigantionService.CODIGO_T015_VERIFICAR_SCORING.equals(tarea.getCodigo())
+								|| !ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+							dto.setScoringEditable(true);
+							dto.setBloqueEditable(true);
+							break;
+						} else {
+							dto.setScoringEditable(false);						
+						}
 					}
+				}
+				
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+				
+				if(completada) {
+					dto.setBloqueEditable(false);
+				}else{
+					dto.setBloqueEditable(true);
 				}
 			}
 			
-			
+			tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
+			if(tramite != null) {
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
+				
+				if(completada) {
+					dto.setBloqueEditable(false);
+				}else{
+					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+					for (TareaProcedimiento tarea : tareasActivas) {
+						if (!ComercialUserAssigantionService.CODIGO_T018_SCORING.equals(tarea.getCodigo())
+								|| !ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+							dto.setScoringEditable(true);
+							dto.setBloqueEditable(true);
+							break;
+						} else {
+							dto.setScoringEditable(false);						
+						}
+					}
+				}
+			}
 		}
 		return dto;
 	}

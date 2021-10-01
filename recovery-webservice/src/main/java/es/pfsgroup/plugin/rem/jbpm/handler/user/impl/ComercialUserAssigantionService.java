@@ -88,6 +88,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
 	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 	public static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
+	public static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
+	public static final String CODIGO_T018_SCORING = "T018_Scoring";
 	
 	public class TramiteVentaAppleT017{
 		public static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";

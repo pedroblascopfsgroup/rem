@@ -35,19 +35,19 @@ public class InterlocutorExpediente implements Serializable, Auditable {
     @SequenceGenerator(name = "InterlocutorExpediente", sequenceName = "S_IEX_INTERLOCUTOR_EXPEDIENTE")
     private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "IOC_ID")
     private InterlocutorPBCCaixa interlocutorPBCCaixa;
     
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expedienteComercial;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_FIO_ID")
 	private DDInterlocutorOferta interlocutorOferta;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_EIC_ID")
 	private DDEstadoInterlocutor estadoInterlocutor;
 

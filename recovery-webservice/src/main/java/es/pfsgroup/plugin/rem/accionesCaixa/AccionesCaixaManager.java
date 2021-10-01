@@ -362,7 +362,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         List<CompradorExpediente> cex = genericDao.getList(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS, "expediente", dto.getIdExpediente()));
         
         for(CompradorExpediente compradorExpediente: cex){
-        	if(DDEstadoInterlocutor.isSolicitudBaja(compradorExpediente.getEstadoInterlocutor())) {
+        	if(DDEstadoInterlocutor.isSolicitudBaja(compradorExpediente.getEstadoInterlocutor()) || DDEstadoInterlocutor.isBaja(compradorExpediente.getEstadoInterlocutor())) {
         		compradorExpediente.setEstadoInterlocutor(eicInActivo);
         	}else {
         		compradorExpediente.setEstadoInterlocutor(eicActivo);

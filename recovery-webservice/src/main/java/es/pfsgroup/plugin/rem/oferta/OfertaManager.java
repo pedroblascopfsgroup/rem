@@ -6530,7 +6530,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-			logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV");
+			logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java linea 6533");
 		}
 		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {

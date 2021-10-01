@@ -1987,8 +1987,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
 				&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java linea 1990");
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
-			logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 1991");
+			logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 1992");
 		}
 		
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -2043,8 +2044,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			
 			if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
 					&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+				logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java linea 2046");
 				boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
-				logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 2047");
+				logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 2048");
 			}
 		
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

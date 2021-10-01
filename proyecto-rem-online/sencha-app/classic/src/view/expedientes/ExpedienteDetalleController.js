@@ -5478,5 +5478,20 @@ comprobarFormatoModificar: function() {
 			labelAlquiler.setTitle(HreRem.i18n('title.generales'));
 			labelVenta.setTitle(HreRem.i18n('title.generales'));
 		}
+	},
+	
+	changeOpcionCompra: function (combo, value, oldValue, eOpts, recarga){
+		var me = this;
+		var form = combo.up('form');
+		var valorOpcionCompra = form.down('field[name=valorOpcionCompra]');
+		var fechaOpcionCompra = form.down('field[name=fechaOpcionCompra]');
+		
+		if(value == "true"){
+			valorOpcionCompra.setDisabled(false);
+			fechaOpcionCompra.setDisabled(false);
+		}else{
+			valorOpcionCompra.setDisabled(true);
+			fechaOpcionCompra.setDisabled(true);
+		}
 	}
 });

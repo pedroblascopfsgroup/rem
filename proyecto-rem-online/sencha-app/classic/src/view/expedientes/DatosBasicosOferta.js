@@ -742,13 +742,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									xtype : "comboboxfieldbase",
 									fieldLabel : HreRem.i18n('fieldlabel.detalle.oferta.opcionCompra'),
 									colspan: 2,
+									name : 'opcionCompra',
 									bind : {
 										store : '{comboSiNoBoolean}',
 										value : '{datosbasicosoferta.opcionACompra}'
-									}
+									},
+									listeners: {
+		    							change: 'changeOpcionCompra'
+				    				}
 								}, {
 									xtype: "numberfieldbase",
 									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.valor.opcionCompra'),
+									name : 'valorOpcionCompra',
 									bind: {
 										value: '{datosbasicosoferta.valorCompra}'
 									}
@@ -757,6 +762,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 				    				xtype : 'datefieldbase',
 									formatter : 'date("d/m/Y")',
 									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.fecha.vencimiento.opcionCompra'),
+									name : 'fechaOpcionCompra',
 									bind: {
 										value: '{datosbasicosoferta.fechaVencimientoOpcionCompra}'
 									}

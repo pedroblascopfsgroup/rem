@@ -614,7 +614,7 @@ public class MaestroDePersonas implements Runnable {
 					String today = df.format(new Date());
 					logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
 					personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
-					personaDto.setIdCliente(ID_CLIENTE_HAYA);
+					personaDto.setIdCliente(cartera);
 					personaDto.setIdPersonaOrigen(documento);
 					personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
 					personaDto.setIdOrigen(ID_ORIGEN_REM);

@@ -2248,10 +2248,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				
 		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
 		cex.setInterlocutorOferta(interlocutor);
-		
-		interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
-		cex.setInterlocutorOfertaRepresentante(interlocutor);
-		
+
+		if(cex.getDocumentoRepresentante() != null){
+			interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+			cex.setInterlocutorOfertaRepresentante(interlocutor);
+		}
+
+
 		return cex;
 	}
 }

@@ -13910,12 +13910,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
 				}
 
-				compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
-
 
 			}else {
 				System.out.println("No se ha podido obtener idPersonaHayaCaixa para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
 			}
+
+			compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
+
 		}
 	}
 	@Override

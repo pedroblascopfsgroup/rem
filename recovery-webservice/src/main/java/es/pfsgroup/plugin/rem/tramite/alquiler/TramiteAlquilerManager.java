@@ -1,8 +1,8 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +10,8 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
@@ -34,18 +31,13 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	
-	@Autowired
-	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired 
 	private ActivoTramiteApi activoTramiteApi;
-	
-	@Autowired
-	private ActivoTareaExternaApi activoTareaExternaApi;
-	
+		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
 		boolean haPasadoScoring = false;
@@ -232,7 +224,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	public boolean isTramiteT015Aprobado(List<String> tareasActivas){
 		boolean isAprobado = false;
 		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_DEFINICION_OFERTA};
-		if(!Collections.disjoint(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+		if(!CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
 			isAprobado = true;
 		}
 		

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.DtoInterlocutorBC;
-import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -393,8 +388,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente.setProvinciaNacimientoRep(provincia);
 			}
 		}
-		
-		InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+
 		if(iap == null) {
 			String idPersonaHaya = cliente.getIdPersonaHaya();
 			if(idPersonaHaya == null ) {
@@ -419,7 +415,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
 
-		InfoAdicionalPersona iapRep = cliente.getInfoAdicionalPersonaRep();
+		InfoAdicionalPersona iapRep = null;
+
+		if (cliente.getDocumentoRepresentante() != null)
+		interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
+
 		if(iapRep == null && cliente.getDocumentoRepresentante() != null) {
 			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
 			String idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumentoRepresentante()); 
@@ -440,7 +440,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
 		}
-		
+
 		clienteComercialDao.save(cliente);
 		
 		// HREOS-4937 GDPR
@@ -754,7 +754,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 
-		InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+		cliente.setIdPersonaHaya(interlocutorCaixaService.getIdPersonaHayaCaixa(null,null,cliente.getDocumento()));
+		cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,null,cliente.getDocumentoRepresentante()));
+
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHayaCaixa());
 		if(iap == null) {
 			if (cliente.getIdPersonaHaya() == null){
 				MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
@@ -777,9 +781,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		cliente.setInfoAdicionalPersona(iap);	
 		genericDao.save(InfoAdicionalPersona.class, iap);
+
+
 		
-		
-		InfoAdicionalPersona iapRep = cliente.getInfoAdicionalPersonaRep();
+		InfoAdicionalPersona iapRep = null;
+
+		if (cliente.getDocumentoRepresentante() != null){
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
+
+		}
 		if(iapRep == null && cliente.getDocumentoRepresentante() != null) {
 			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
 			String idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumentoRepresentante()); 
@@ -800,9 +810,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
 		}
-		
 
-		
+
+
 		clienteComercialDao.saveOrUpdate(cliente);
 		
 		// HREOS-4937

@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -227,6 +228,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -904,6 +908,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 				compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
+				compradorBusqueda.setIdPersonaHayaCaixa(cliente.getInfoAdicionalPersona() != null ? cliente.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 			}
 			if (!Checks.esNulo(cliente.getTipoPersona())
 					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
@@ -1047,7 +1052,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, filtroEstadoC4C);
 						iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
 					}									
-					compradorExpedienteNuevo.setInfoAdicionalRepresentante(iap);
+					//compradorExpedienteNuevo.setInfoAdicionalRepresentante(iap);
 					
 					if (iap.getVinculoCaixa() != null) {
 						compradorExpedienteNuevo.setVinculoCaixa(iap.getVinculoCaixa());
@@ -1111,7 +1116,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (Checks.esNulo(compradorBusquedaAdicional)) {
 						compradorBusquedaAdicional = new Comprador();
 						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
-						compradorBusquedaAdicional.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
+						compradorBusquedaAdicional.setInfoAdicionalPersona(titularAdicional.getInfoAdicionalPersona());
+						compradorBusquedaAdicional.setIdPersonaHayaCaixa(titularAdicional.getInfoAdicionalPersona() != null ? titularAdicional.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 					}
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA

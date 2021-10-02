@@ -38,7 +38,7 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
     @SequenceGenerator(name = "InterlocutorPBCCaixa", sequenceName = "S_IOC_INTERLOCUTOR_PBC_CAIXA")
     private Long id;
     
-    @Column(name = "IOC_ID_PERSONA_HAYA")
+    @Column(name = "IOC_ID_PERSONA_HAYA_CAIXA")
     private String idPersonaHaya;
 
 	@ManyToOne

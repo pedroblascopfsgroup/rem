@@ -88,8 +88,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
 	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 	public static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
-	public static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
-	public static final String CODIGO_T018_SCORING = "T018_Scoring";
 	
 	public class TramiteVentaAppleT017{
 		public static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";
@@ -100,6 +98,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public class TramiteAlquilerT015{
 		public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
 		public static final String CODIGO_T015_DEFINICION_OFERTA = "T015_DefinicionOferta";
+	}
+	
+	public class TramiteAlquilerNoComercialT018{
+		public static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
+		public static final String CODIGO_T018_SCORING = "T018_Scoring";
+		public static final String CODIGO_T018_DEFINICION_OFERTA = "T015_DefinicionOferta";
+		public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
 	}
 	
 	private static final Integer CODIGO_SI = 1;

@@ -1,8 +1,8 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler.no.comercial;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -172,8 +172,8 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean isTramiteT018Aprobado(List<String> tareasActivas){
 		boolean isAprobado = false;
-		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_DEFINICION_OFERTA};
-		if(!Collections.disjoint(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_DEFINICION_OFERTA, ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_ANALISIS_BC};
+		if(!CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
 			isAprobado = true;
 		}
 		

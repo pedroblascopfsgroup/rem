@@ -3510,7 +3510,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
 		if(tramite != null) {
-			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
+			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
 			
 			if(completada) {
 				dto.setBloqueDepositoEditable(false);
@@ -14091,15 +14091,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
 			if(tramite != null) {
-				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
 				
 				if(completada) {
 					dto.setBloqueEditable(false);
 				}else{
 					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
 					for (TareaProcedimiento tarea : tareasActivas) {
-						if (!ComercialUserAssigantionService.CODIGO_T018_SCORING.equals(tarea.getCodigo())
-								|| !ComercialUserAssigantionService.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
+						if (!ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING.equals(tarea.getCodigo())
+								|| !ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES.equals(tarea.getCodigo())) {
 							dto.setScoringEditable(true);
 							dto.setBloqueEditable(true);
 							break;
@@ -14220,11 +14220,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		TipoProcedimiento tp = activoTramiteApi.getTipoTramiteByExpediente(eco);
 		if(tp != null) {
-			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tp.getCodigo())) {
+			String codigoTp = tp.getCodigo();
+			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codigoTp)) {
 				isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas);
-			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tp.getCodigo())){
+			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codigoTp)){
 				isAprobado = tramiteAlquilerApi.isTramiteT015Aprobado(codigoTareasActivas);
-			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(tp.getCodigo())){
+			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codigoTp)){
 				isAprobado = tramiteAlquilerNoComercialApi.isTramiteT018Aprobado(codigoTareasActivas);
 			}
 		}

@@ -1477,7 +1477,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this;
-
+		
+		if(me.getViewModel().get('expediente.esBankia') && me.getViewModel().get('expediente.bloqueado')){
+			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
+			return;
+		}
+		
 		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
 			return;

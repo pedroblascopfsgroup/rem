@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -1028,6 +1029,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setLocalidadNacimientoRepresentante(cliente.getLocalidadNacimientoRep());
 			compradorExpedienteNuevo.setEstadoContrasteListas(estadoNoSolicitado);
 			compradorExpedienteNuevo.setFechaContrasteListas(new Date());
+			DDEstadoInterlocutor interlocutorActivo = genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_ACTIVO));
+			compradorExpedienteNuevo.setEstadoInterlocutor(interlocutorActivo);
 			
 			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
@@ -1105,6 +1108,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			// diferencia de que los campos
 			// TitularReserva y TitularContratacion estan al contrario. Por
 			// decirlo de alguna forma son "Compradores secundarios"
+			
 			for (TitularesAdicionalesOferta titularAdicional : listaTitularesAdicionalesSinRepetirDocumento) {
 
 				if (!Checks.esNulo(titularAdicional.getDocumento())) {
@@ -1216,7 +1220,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					compradorExpedienteAdicionalNuevo.setPaisRte(titularAdicional.getPaisRepresentante());
 					compradorExpedienteAdicionalNuevo
 							.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
-					
+					compradorExpedienteAdicionalNuevo.setEstadoInterlocutor(interlocutorActivo);
+
 					if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 						this.setInterlocutorOferta(compradorExpedienteAdicionalNuevo, false, oferta);
 					}
@@ -2248,10 +2253,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				
 		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
 		cex.setInterlocutorOferta(interlocutor);
-		
-		interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
-		cex.setInterlocutorOfertaRepresentante(interlocutor);
-		
+
+		if(cex.getDocumentoRepresentante() != null){
+			interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+			cex.setInterlocutorOfertaRepresentante(interlocutor);
+		}
+
+
 		return cex;
 	}
 }

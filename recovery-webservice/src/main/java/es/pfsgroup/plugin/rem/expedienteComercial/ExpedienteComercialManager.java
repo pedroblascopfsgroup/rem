@@ -14233,6 +14233,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(isAprobado) {
 			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor);
+		}else {
+			if(DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA.equals(codigoEstadoInterlocutor)) {
+				codigoEstadoInterlocutor = DDEstadoInterlocutor.CODIGO_INACTIVO;
+			}else {
+				codigoEstadoInterlocutor = DDEstadoInterlocutor.CODIGO_ACTIVO;
+			}
+			compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
+			genericDao.update(CompradorExpediente.class, compradorExpediente);
+
 		}
 		
 	}

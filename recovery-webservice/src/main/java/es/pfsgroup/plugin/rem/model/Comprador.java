@@ -174,6 +174,9 @@ public class Comprador implements Serializable, Auditable {
     @JoinColumn(name = "DD_PRV_NAC_ID")
 	private DDProvincia provinciaNacimiento;
 
+	@Column(name = "COM_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
 
 	public Long getId() {
 		return id;
@@ -478,4 +481,11 @@ public class Comprador implements Serializable, Auditable {
 		this.provinciaNacimiento = provinciaNacimiento;
 	}
 	
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
 }

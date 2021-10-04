@@ -245,6 +245,9 @@ public class CompradorExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_EIC_ID")
 	private DDEstadoInterlocutor estadoInterlocutor;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
  
 	@Version   
 	private Long version;
@@ -815,5 +818,13 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setEstadoInterlocutor(DDEstadoInterlocutor estadoInterlocutor) {
 		this.estadoInterlocutor = estadoInterlocutor;
 	}
-   
+
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
 }

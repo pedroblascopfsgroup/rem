@@ -4,19 +4,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     bind		: {
         store: '{storeOfertasActivo}'
     },
+	topBar: true,
     requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm', 'HreRem.view.expedientes.wizards.oferta.SlideDatosOferta'],
 	removeButton: false,
     listeners	: {    	
     	select: 'onSelectedRow',
     	deselect: 'onDeselectedRow',
-    	focusenter: function() {
-    		var me = this;
-    		me.evaluarEdicion();
-    	},
     	boxReady: function() {
     		var me = this;
     		me.evaluarEdicion();
     		me.calcularMostrarBotonClonarExpediente();
+    	},
+		focusenter: function() {
+    		var me = this;
+    		me.evaluarEdicion();
     	},
     	rowclick: 'onOfertaListClick'    		
     },
@@ -555,7 +556,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    evaluarEdicion: function() {
 
 		var me = this;
-		me.setTopBar(true);
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')

@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14714
 --## PRODUCTO=NO
---## Finalidad: Alter coe
+--## Finalidad: Delete gar_gastos_repercutidos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -37,20 +37,8 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'GAR_GASTOS_REPERCUTIDOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	
-
-    
-    /* -- ARRAY CON NUEVAS COLUMNAS */
-    TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
-    V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			--   NOMBRE CAMPO						TIPO CAMPO			DESCRIPCION
-    	T_ALTER('COE_FIANZA_EXONERADA',					'NUMBER(1,0)',		'Fianza exonerada'),
-      	T_ALTER('COE_OBLIGADO_CUMPLIMIENTO',			'NUMBER(16,2)',		'Obligado cumplimiento'),
-     	T_ALTER('COE_VENCIMIENTO_AVAL',					'DATE',				'Vencimiento Aval')
-		);
-    V_T_ALTER T_ALTER;
 
 
 BEGIN
@@ -59,37 +47,17 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
 	
-	-- Bucle que CREA las nuevas columnas 
-	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
-	LOOP
-
-		V_T_ALTER := V_ALTER(I);
-
 		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN
+		IF V_NUM_TABLAS = 1 THEN
 			--No existe la columna y la creamos
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
-			';
+			
+		    EXECUTE IMMEDIATE ' DROP TABLE '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA ||' CASCADE CONSTRAINTS';
+			DBMS_OUTPUT.PUT_LINE('[1] Eliminada la tabla '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA);
 
-			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
-
-			-- Creamos comentario	
-			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
-			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 		END IF;
 
-	END LOOP;
-
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS... OK *************************************************');
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	

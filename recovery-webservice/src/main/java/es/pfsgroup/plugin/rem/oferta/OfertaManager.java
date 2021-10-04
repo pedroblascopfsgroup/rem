@@ -882,6 +882,57 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setFechaAltaWebcom(ofertaDto.getFechaAltaWC());
 			}
 			
+			if (!Checks.esNulo(ofertaDto.getImporte())) {
+				oferta.setImporteOferta(ofertaDto.getImporte());
+			}
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)) {
+				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+			
+				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
+				oferta.setActivosOferta(listaActOfr);
+				oferta.setAgrupacion(agrup);
+				
+				activo = genericDao.get(Activo.class,
+						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getActivosLote().get(0).getIdActivoHaya()));
+
+			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
+				ActivoAgrupacion agrupacion = null;
+				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+				List<ActivoAgrupacionActivo> listaAgrups = null;
+
+				activo = genericDao.get(Activo.class,
+						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
+				if (!Checks.esNulo(activo)) {
+
+					// Verificamos si el activo pertenece a una agrupación
+					// restringida
+					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+					dtoAgrupActivo.setActId(activo.getId());
+					dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+					if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
+						ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
+						if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
+							// Seteamos la agrupación restringida a la oferta
+							agrupacion = agrAct.getAgrupacion();
+							oferta.setAgrupacion(agrupacion);
+						}
+					}
+
+					if (!Checks.esNulo(agrupacion)) {
+						// Oferta sobre 1 lote restringido de n activos
+						listaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
+					} else {
+						// Oferta sobre 1 único activo
+						listaActOfr = buildListaActivoOferta(activo, null, oferta);
+					}
+
+					// Seteamos la lista de ActivosOferta
+					oferta.setActivosOferta(listaActOfr);
+
+				}
+			}
+
 			if (!Checks.esNulo(ofertaDto.getIdClienteRem())) {
 				Filter webcomIdNotNull = genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom");
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
@@ -940,71 +991,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						llamadaMaestroPersonasRestSync(cliente.getDocumento(),OfertaApi.ORIGEN_REM);
 					}
 
-
-
-
 					oferta.setCliente(cliente);
 					genericDao.save(ClienteComercial.class, cliente);
 				}
 			}
-			if (!Checks.esNulo(ofertaDto.getImporte())) {
-				oferta.setImporteOferta(ofertaDto.getImporte());
-			}
-			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)) {
-				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 			
-				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
-				oferta.setActivosOferta(listaActOfr);
-				oferta.setAgrupacion(agrup);
-				
-				activo = genericDao.get(Activo.class,
-						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getActivosLote().get(0).getIdActivoHaya()));
-
-			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
-				ActivoAgrupacion agrupacion = null;
-				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
-				List<ActivoAgrupacionActivo> listaAgrups = null;
-
-				activo = genericDao.get(Activo.class,
-						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
-				if (!Checks.esNulo(activo)) {
-					// Verificamos si el activo pertenece a una agrupación
-					// restringida
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoAgrupacionActivo activoAgrupacion = genericDao.get(ActivoAgrupacionActivo.class, filtro);
-					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-					dtoAgrupActivo.setActId(activo.getId());
-					if (activoAgrupacion != null) {
-						if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())
-								|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo()) 
-								|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(activoAgrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-						}
-					}
-					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-					if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
-						ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
-						if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-							// Seteamos la agrupación restringida a la oferta
-							agrupacion = agrAct.getAgrupacion();
-							oferta.setAgrupacion(agrupacion);
-						}
-					}
-
-					if (!Checks.esNulo(agrupacion)) {
-						// Oferta sobre 1 lote restringido de n activos
-						listaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-					} else {
-						// Oferta sobre 1 único activo
-						listaActOfr = buildListaActivoOferta(activo, null, oferta);
-					}
-
-					// Seteamos la lista de ActivosOferta
-					oferta.setActivosOferta(listaActOfr);
-
-				}
-			}
-
 			if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 				Usuario user = genericDao.get(Usuario.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));

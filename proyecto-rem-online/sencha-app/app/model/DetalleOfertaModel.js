@@ -75,6 +75,10 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name: 'numOfertaCaixa'
+		},
+		{
+			name: 'checkSubasta',
+			type: 'boolean'
 		}
     ],
 

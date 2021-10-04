@@ -3125,19 +3125,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
 				
 				if(oferta.getOfertaCaixa() != null) {
+					OfertaCaixa ofrCaixa = oferta.getOfertaCaixa();
 					Filter filterOfertaCaixaID = genericDao.createFilter(FilterType.EQUALS, "ofertaCaixa.id", oferta.getOfertaCaixa().getId());
 					Deposito deposito = genericDao.get(Deposito.class, filterOfertaCaixaID);
 					dtoResponse.setDtoDeposito(this.depositoToDto(deposito));
 					
-					if (oferta.getOfertaCaixa().getCuentaBancariaCliente() != null) {
-						dtoResponse.setCuentaBancariaCliente(oferta.getOfertaCaixa().getCuentaBancariaCliente());
+					if (ofrCaixa.getCuentaBancariaCliente() != null) {
+						dtoResponse.setCuentaBancariaCliente(ofrCaixa.getCuentaBancariaCliente());
 					}
-					if (oferta.getOfertaCaixa().getCuentaBancariaVirtual() != null) {
-						dtoResponse.setCuentaBancariaVirtual(oferta.getOfertaCaixa().getCuentaBancariaVirtual());
+					if (ofrCaixa.getCuentaBancariaVirtual() != null) {
+						dtoResponse.setCuentaBancariaVirtual(ofrCaixa.getCuentaBancariaVirtual());
 					}
-					if(oferta.getOfertaCaixa().getNumOfertaCaixa() != null) {
-						dtoResponse.setNumOfertaCaixa(oferta.getOfertaCaixa().getNumOfertaCaixa().toString());						
+					if(ofrCaixa.getNumOfertaCaixa() != null) {
+						dtoResponse.setNumOfertaCaixa(ofrCaixa.getNumOfertaCaixa().toString());						
 					}
+					dtoResponse.setCheckSubasta(ofrCaixa.getCheckSubasta());						
 				}
 			}
 		}
@@ -6979,20 +6981,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-			logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java linea 6533");
-		}
-		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
 			
 			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
 					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-				if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-					logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en ofertaManager.java linea 6544");
-				}
 				
 			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
 					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {

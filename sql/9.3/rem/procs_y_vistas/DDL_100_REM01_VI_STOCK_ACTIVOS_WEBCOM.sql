@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210727
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20211001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14686

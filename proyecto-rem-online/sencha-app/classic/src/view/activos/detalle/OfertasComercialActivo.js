@@ -236,7 +236,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 											hidden: '{!esBankia}'
 										},
 										readOnly: true,
-										width: 410,
+										width: 410
 					    				//colspan: 2
 					    			},
 					    			{

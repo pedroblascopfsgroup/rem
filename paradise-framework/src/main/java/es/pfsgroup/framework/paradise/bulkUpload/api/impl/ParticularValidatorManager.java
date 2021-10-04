@@ -2475,7 +2475,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(!Checks.esNulo(numActivo)){
 			params.put("numActivo", numActivo);
 			rawDao.addParams(params);
-			query= "SELECT DISTINCT(act.DD_CRA_ID) "
+			query= "SELECT DISTINCT(ACT.DD_CRA_ID) "
 				+ "		 FROM ACT_ACTIVO act ";
 			query= query.concat(" WHERE act.ACT_NUM_ACTIVO = :numActivo ");
 			cartera= rawDao.getExecuteSQL(query);
@@ -2483,10 +2483,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else if(!Checks.esNulo(numAgrupacion)){
 			params.put("numAgrupacion", numAgrupacion);
 			rawDao.addParams(params);
-			query= "SELECT DISTINCT(act.DD_CRA_ID) "
-				+ "		 FROM ACT_AGR_AGRUPACION agr ";
-			query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion ");
-			cartera= rawDao.getExecuteSQL(query);
+			cartera= rawDao.getExecuteSQL("SELECT DISTINCT(act.DD_CRA_ID) "
+					+ "		 FROM ACT_AGR_AGRUPACION AGR "
+					+ "		 INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+					+ "		 INNER JOIN ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID "
+					+ "		 WHERE AGR.AGR_NUM_AGRUP_REM = :numAgrupacion ");
 		}
 
 		else if(!Checks.esNulo(numExpediente)){

@@ -785,6 +785,11 @@
             	return tramiteVentaManager.userHasPermisoParaAvanzarTareas(tareaExterna);
             }
             
+            def checkExpedienteBloqueadoPorFuncion = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteBloqueadoPorFuncion(idTramite);
+            }
+            
 	
   			 ]]></value>
   		</list>

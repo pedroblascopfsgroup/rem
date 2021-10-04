@@ -23,7 +23,7 @@ public class DtoDetalleOferta {
 	private String cuentaBancariaVirtual;
 	private String cuentaBancariaCliente;
 	private String numOfertaCaixa;
-
+	private Boolean checkSubasta;
 
 	public String getId() {
 		return id;
@@ -132,6 +132,12 @@ public class DtoDetalleOferta {
 	}
 	public void setNumOfertaCaixa(String numOfertaCaixa) {
 		this.numOfertaCaixa = numOfertaCaixa;
+	}
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
 	}
 	
 	

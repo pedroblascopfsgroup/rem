@@ -223,7 +223,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										},
 										readOnly: true,
 										width: 410,
-					    				colspan: 2
+					    				colspan: 1
+					    			},
+					    			{	
+
+					    				xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.oferta.subasta'),
+										reference: 'subastaRef',
+										bind : {
+											store : '{comboSiNoBoolean}',
+											value : '{detalleOfertaModel.checkSubasta}',
+											hidden: '{!esBankia}'
+										},
+										readOnly: true,
+										width: 410
+					    				//colspan: 2
 					    			},
 					    			{
 					                    xtype: 'fieldsettable',

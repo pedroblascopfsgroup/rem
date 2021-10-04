@@ -290,7 +290,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private final String PERFIL_HAYASUPER = "HAYASUPER";
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
 	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
-	
+	private final String FUNCION_AV_ECO_BLOQ = "AV_ECO_BLOQ";
 
 	@Resource
 	private MessageService messageServices;
@@ -14254,4 +14254,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
 		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
 	}
+	
+	@Override
+	public Boolean checkExpedienteBloqueadoPorFuncion(Long idTramite) {
+		Boolean bloqueado = checkExpedienteBloqueado(idTramite);
+		
+		if(bloqueado) {
+			Usuario usuario = genericAdapter.getUsuarioLogado();	
+			
+			if(!funcionApi.elUsuarioTieneFuncion(FUNCION_AV_ECO_BLOQ, usuario)) {
+				bloqueado = true;
+			}
+		}
+
+		return bloqueado;
+	}
+	
 }

@@ -3050,6 +3050,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			boolean esApple = false;
 			boolean esDivarian = false;
 			boolean esBBVA = false;
+			boolean esJaguar = false;
 			if(expedienteComercial == null) {
 				expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			}
@@ -3070,8 +3071,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 						esBBVA = true;
 					}
+					esJaguar = DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+								DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()) ? true : false;
 					
-					if (!esApple && !esDivarian && !esBBVA) {
+					if (!esApple && !esDivarian && !esBBVA && !esJaguar) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);

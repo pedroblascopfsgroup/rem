@@ -517,11 +517,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Override
  	@Transactional(readOnly = false)
-	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna) {
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, Boolean isActivoJaguar, TareaExterna tareaExterna) {
 		Usuario userTarea = null;
 		Filter filtro = null;
 
-		if (esApple && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
+		if ((esApple || isActivoJaguar) && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
 				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
 				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))) {
 			
@@ -534,7 +534,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
 				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_COMITE_ARROW);
-		} else if(esApple) {
+		} else if(esApple || isActivoJaguar) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_PROMONTORIA_MANZANA);
 		} else if(esArrow || esRemaining) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_DIVARIAN);

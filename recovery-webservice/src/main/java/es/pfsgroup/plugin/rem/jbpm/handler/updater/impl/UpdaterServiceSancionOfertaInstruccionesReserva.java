@@ -125,9 +125,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						genericDao.save(Reserva.class, reserva);
 					}
 				}
-				
-				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
-				
+
+				if(estadoExpediente != null) {
+					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
+				}
 				if(estadoBc != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())){
 					estadoBcModificado = true;
 					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));

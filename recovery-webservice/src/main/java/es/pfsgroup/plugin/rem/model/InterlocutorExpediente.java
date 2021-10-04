@@ -44,6 +44,10 @@ public class InterlocutorExpediente implements Serializable, Auditable {
     private ExpedienteComercial expedienteComercial;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "IEX_OFR_ID")
+	private Oferta oferta;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_FIO_ID")
 	private DDInterlocutorOferta interlocutorOferta;
 
@@ -113,5 +117,13 @@ public class InterlocutorExpediente implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Oferta getOferta() {
+		return oferta;
+	}
+
+	public void setOferta(Oferta oferta) {
+		this.oferta = oferta;
 	}
 }

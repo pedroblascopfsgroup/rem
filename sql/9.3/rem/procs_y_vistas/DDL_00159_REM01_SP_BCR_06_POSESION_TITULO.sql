@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210921
+--## FECHA_CREACION=2021104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15254
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -28,6 +28,7 @@
 --##        0.16 Correción merge ACT_AHT_HIST_TRAM_TITULO- [HREOS-15059] - Alejandra García
 --##        0.17 Corrección Fecha de concesión - [HREOS-15133] - Daniel Algaba
 --##        0.18 Corrección Propietarios - [HREOS-15254] - Daniel Algaba
+--##        0.19 Corrección Propietarios para se actualice el PRO_ID - [HREOS-15423] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -383,6 +384,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 ,ACT.FECHAMODIFICAR = SYSDATE
                 , ACT.PAC_ANYO_CONCES = US.PAC_ANYO_CONCES
                 , ACT.PAC_FEC_FIN_CONCES = US.PAC_FEC_FIN_CONCES
+                , ACT.PRO_ID = US.PRO_ID
             WHEN NOT MATCHED THEN INSERT (
                  PAC_ID
                 ,PRO_ID

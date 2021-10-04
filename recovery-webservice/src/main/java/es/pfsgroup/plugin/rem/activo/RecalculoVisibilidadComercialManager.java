@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -84,19 +85,20 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 	@Transactional
 	public Map<Long, List<String>> recalcularVisibilidadComercial(Activo[] activos, DDEstadosExpedienteComercial nuevoEstadoExpediente) {
 		Map<Long, List<String>> mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivos(activos, nuevoEstadoExpediente);
-		
+		List<String> erroresActivo = null;
 		Boolean tieneErrores = false;
 		
-		for (Map.Entry<Long, List<String>> entry : mapaErrores.entrySet()) {
-		
-			if(entry.getValue() != null && !entry.getValue().isEmpty()) {
-				tieneErrores = true;
-				break;
-			}
-	    }
 		DDSinSiNo diccionarioNo = (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 		
 		for (Activo activo : activos) {
+			
+			if (!Checks.esNulo(activo.getNumActivo())) {
+				erroresActivo = mapaErrores.get(activo.getNumActivo());
+				if(erroresActivo != null && !erroresActivo.isEmpty()) {
+					tieneErrores = true;
+				}
+				
+			}
 			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 			
@@ -105,16 +107,17 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 				if(tieneErrores && (perimetroActivo.getExcluirValidaciones() == null || !DDSinSiNo.cambioDiccionarioaBooleano(perimetroActivo.getExcluirValidaciones()))) {
 					perimetroActivo.setCheckGestorComercial(false);	
 					perimetroActivo.setFechaGestionComercial(new Date());	
-					genericDao.update(PerimetroActivo.class,perimetroActivo);
+					genericDao.save(PerimetroActivo.class,perimetroActivo);
 				}
 				if(!tieneErrores) {
 					perimetroActivo.setCheckGestorComercial(true);	
 					perimetroActivo.setFechaGestionComercial(new Date());
 					perimetroActivo.setExcluirValidaciones(diccionarioNo);
 					perimetroActivo.setMotivoGestionComercial(null);
-					genericDao.update(PerimetroActivo.class,perimetroActivo);
+					genericDao.save(PerimetroActivo.class,perimetroActivo);
 				}
 			}
+			tieneErrores = false;
 		
 		}
 		

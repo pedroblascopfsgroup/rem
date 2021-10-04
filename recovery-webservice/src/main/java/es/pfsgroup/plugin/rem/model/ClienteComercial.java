@@ -804,5 +804,4 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
 		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
 	}
-
 }

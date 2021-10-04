@@ -480,8 +480,7 @@ public class Comprador implements Serializable, Auditable {
 	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
 		this.provinciaNacimiento = provinciaNacimiento;
 	}
-
-
+	
 	public String getIdPersonaHayaCaixa() {
 		return idPersonaHayaCaixa;
 	}

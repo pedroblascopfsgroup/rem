@@ -6991,12 +6991,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
+		if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
+			logger.error("Oferta Express numero" + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java linea 6533");
+		}
+		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
 			
 			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
 					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
+				
+				if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
+					logger.error("Oferta Express numero" + oferta.getNumOferta() + " enviada a CFV en ofertaManager.java linea 6544");
+				}
 				
 			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
 					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {

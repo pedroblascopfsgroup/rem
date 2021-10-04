@@ -261,36 +261,38 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				FileItem f2 = null;
 				FileItem f3 = null;
 				
-				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					if (!Checks.esNulo(oferta.getPrescriptor())) {
-						if (DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())) {
-							f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_oficinas.docx");
-						} else {
-							f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_apis.docx");
-						}
+				// ADJUNTOS SI ES CAJAMAR
+				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getPrescriptor()) && DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo())) {
+						f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Oficinas.docx");
 					} else {
-						f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_express_apis.docx");
+						f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_Cajamar_Apis.docx");
 					}
-					
+
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
 					
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
-					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
-					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
-
-					if(!Checks.esNulo(buzonBoarding)){
+					if (f1 != null) {
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
+					}
+					if (f2 != null) {
+						adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+					}
+					if (f3 != null) {
+						adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
+					}
+					if (!Checks.esNulo(buzonBoarding)) {
 						mailsPara.add(buzonBoarding.getEmail());
 					}
 				}
 				//ADJUNTOS SI ES SAREB
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva_v3.docx");
+					f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v4.docx");
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v7.docx");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_CaixaBank_v11.docx");
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_CaixaBank.docx"));
 				}
 				//ADJUNTOS SI ES TANGO

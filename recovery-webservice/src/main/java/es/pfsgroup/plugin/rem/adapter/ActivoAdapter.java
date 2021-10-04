@@ -320,6 +320,16 @@ public class ActivoAdapter {
     private static final String T017_TRAMITE_VENTA_DESCRIPCION = "Trámite comercial de venta";
 	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yy");
 
+	private static final String PERFIL_TASADORA = "TASADORA";
+	private static final List<String> MATRICULAS_TASADORA = Arrays.asList(
+			"AI-01-NOTS-01", //Nota simple actualizada
+			"AI-02-CNCV-04", //Alquiler: contrato
+			"AI-02-CNCV-05", //Alquiler: contrato con opción a compra
+			"AI-02-DOCJ-23", //Usurpación: denuncia
+			"AI-01-CERA-16", //Impuesto sobre bienes inmuebles (IBI): recibo
+			"AI-04-TASA-11", //Tasación adjudicación
+			"OP-13-TASA-11" //Tasación: informe activo
+			);
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2813,6 +2823,9 @@ public class ActivoAdapter {
 	public List<DtoAdjunto> getAdjuntosActivo(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Boolean esTasadora = genericAdapter.tienePerfil(PERFIL_TASADORA, usuarioLogado);
 
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
@@ -2847,12 +2860,22 @@ public class ActivoAdapter {
 			listaAdjuntos = getAdjuntosActivo(id, listaAdjuntos);
 		}
 		
+		if(esTasadora) {
+			for(int i = 0; i < listaAdjuntos.size();i++) {
+				DtoAdjunto adjunto = listaAdjuntos.get(i);
+				if(!MATRICULAS_TASADORA.contains(adjunto.getMatricula())) {
+					listaAdjuntos.remove(adjunto);
+				}
+			}
+		}
+		
 		return listaAdjuntos;
 	}
 
 	private List<DtoAdjunto> getAdjuntosActivo(Long id, List<DtoAdjunto> listaAdjuntos)
 			throws IllegalAccessException, InvocationTargetException {
 		Activo activo = activoApi.get(id);
+		
 
 		for (ActivoAdjuntoActivo adjunto : activo.getAdjuntos()) {
 			DtoAdjunto dto = new DtoAdjunto();

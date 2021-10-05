@@ -205,7 +205,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	
 	@Override
-	public void saveClienteComercial(ClienteDto clienteDto)  throws Exception{
+	public ClienteComercial saveClienteComercial(ClienteDto clienteDto)  throws Exception{
 		ClienteComercial cliente = null; 
 		ClienteGDPR clienteGDPR = null; //HREOS-4937
 		cliente = new ClienteComercial();			
@@ -489,7 +489,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		genericDao.save(ClienteGDPR.class, clienteGDPR);
 
-
+		return cliente;
 	}
 
 	@Override
@@ -991,7 +991,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
 				errorsList.putAll(validatePersonaFisicaOJuridica(clienteDto));
 				if (errorsList.size() == 0) {
-					this.saveClienteComercial(clienteDto);
+					cliente = this.saveClienteComercial(clienteDto);
 				}
 
 			} else {
@@ -1002,7 +1002,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			}
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				cliente = this.getClienteComercialByDocumento(clienteDto.getDocumento());
+				
 				if (cliente.getIdClienteWebcom() != null)
 					map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 					map.put("idClienteRem", cliente.getIdClienteRem());

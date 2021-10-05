@@ -64,9 +64,9 @@ public interface ClienteComercialApi {
 	 * 
 	 * @param clienteDto
 	 *            con la información del clienteComercial a dar de alta
-	 * @return void
+	 * @return ClienteComercial
 	 */
-	public void saveClienteComercial(ClienteDto clienteDto) throws Exception;
+	public ClienteComercial saveClienteComercial(ClienteDto clienteDto) throws Exception;
 
 	/**
 	 * Actualiza un ClienteComercial a partir de la información pasada por

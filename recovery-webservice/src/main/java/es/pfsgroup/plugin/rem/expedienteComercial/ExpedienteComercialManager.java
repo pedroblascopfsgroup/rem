@@ -14304,16 +14304,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public Boolean checkExpedienteBloqueadoPorFuncion(Long idTramite) {
 		Boolean bloqueado = checkExpedienteBloqueado(idTramite);
-		
+		Boolean respuesta = false;
 		if(bloqueado) {
 			Usuario usuario = genericAdapter.getUsuarioLogado();	
 			
 			if(!funcionApi.elUsuarioTieneFuncion(FUNCION_AV_ECO_BLOQ, usuario)) {
-				bloqueado = true;
+				respuesta = true;
 			}
 		}
 
-		return bloqueado;
+		return respuesta;
 	}
 	
 }

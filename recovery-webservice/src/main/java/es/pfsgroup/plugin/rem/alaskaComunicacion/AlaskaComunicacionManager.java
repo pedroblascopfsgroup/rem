@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import javax.annotation.Resource;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service("alassManager")
@@ -60,6 +62,9 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
     public String managerName() {
         return null;
     }
+    
+    private static final String strDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";  
+    private static final SimpleDateFormat objSDF = new SimpleDateFormat(strDateFormat);
 
     @SuppressWarnings("unchecked")
 	@Transactional(readOnly = false)
@@ -120,7 +125,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         Map<String, Object> map = new HashMap<String, Object>();
         
         ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-
+        
         listaCargas = this.cargasInfo(activo);
         listaTasaciones = this.tasacionesInfo(activo);
         listaValoraciones = this.valoracionesInfo(activo);
@@ -185,7 +190,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("libro", null);
         	map.put("folio", null);
         }
-        map.put("fechaInscripcionReg", actTitulo.getFechaInscripcionReg());
+        if(actTitulo.getFechaInscripcionReg() != null) {
+            map.put("fechaInscripcionReg", objSDF.format(actTitulo.getFechaInscripcionReg().getTime()));
+        }else {
+            map.put("fechaInscripcionReg", null);
+        }
         if(activo.getInfoComercial() != null){
         	map.put("longitud", activo.getInfoComercial().getLongitud());
         	map.put("latitud", activo.getInfoComercial().getLatitud());
@@ -303,7 +312,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
                 map.put("tipoTasacion", null);
             }
             map.put("importe", tasaciones.getImporteTasacionFin());
-            map.put("fecha", tasaciones.getFechaInicioTasacion());
+            if(tasaciones.getFechaInicioTasacion() != null) {
+                map.put("fecha", objSDF.format(tasaciones.getFechaInicioTasacion().getTime()));
+            }else {
+            	map.put("fecha", null);
+            }
 
             listaRespuesta.add(map);
 
@@ -336,7 +349,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
                 map.put("tipoValoracion", null);
             }
             map.put("importe", valoraciones.getImporte());
-            map.put("fecha", valoraciones.getFechaAprobacion());
+            if(valoraciones.getFechaAprobacion() != null) {
+                map.put("fecha", objSDF.format(valoraciones.getFechaAprobacion().getTime()));
+            }else {
+                map.put("fecha", null);
+            }
             map.put("liquidez", valoraciones.getLiquidez());
 
             listaRespuesta.add(map);
@@ -373,7 +390,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
                 map.put("importe", null);
             }
             map.put("incluidaOtrosColaterales", 0);
-            map.put("fechaVencimiento", cargas.getFechaCancelacionRegistral());
+            if(cargas.getFechaCancelacionRegistral() != null) {
+                map.put("fechaVencimiento", objSDF.format(cargas.getFechaCancelacionRegistral().getTime()));
+            }else {
+                map.put("fechaVencimiento", null);
+            }
 
             listaRespuesta.add(map);
 

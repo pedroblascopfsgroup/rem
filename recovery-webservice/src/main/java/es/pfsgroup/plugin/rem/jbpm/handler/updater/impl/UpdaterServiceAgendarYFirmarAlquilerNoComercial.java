@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,17 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 		
 		expedienteComercialApi.update(expedienteComercial,false);
 
+		List<ActivoOferta> activosOferta = expedienteComercial.getOferta().getActivosOferta();
+
+		if(activosOferta != null && !activosOferta.isEmpty()){
+			for(ActivoOferta activoOferta : activosOferta){
+				Activo act = activoOferta.getPrimaryKey().getActivo();
+				if(act != null){
+					act.setSituacionComercial(genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO)));
+					genericDao.save(Activo.class, act);
+				}
+			}
+		}
 		
 		if (estadoOfertaBcMod){
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

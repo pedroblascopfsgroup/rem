@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
+import es.pfsgroup.plugin.rem.expediente.condiciones.GastoRepercutido;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
@@ -179,6 +180,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoRepercutido;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -14316,4 +14318,58 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return respuesta;
 	}
 	
+	@Override
+	@Transactional(readOnly = false)
+	public void createGastoRepercutido(DtoGastoRepercutido dto, Long idExpediente) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		
+		if(eco != null) {
+			GastoRepercutido gr = new GastoRepercutido();
+
+			gr.setCondicionanteExpediente(eco.getCondicionante());
+			gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			gr.setImporte(dto.getImporte());
+			if(!Checks.isFechaNula(dto.getFechaAlta())) {
+				gr.setFechaAlta(dto.getFechaAlta());
+			}
+			gr.setMeses(dto.getMeses());
+			gr.setAuditoria(Auditoria.getNewInstance());
+			
+			genericDao.save(GastoRepercutido.class, gr);
+		}
+	}
+	
+	@Override
+	public List<DtoGastoRepercutido> getGastosRepercutidosList(Long idExpediente) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		List<DtoGastoRepercutido> dtoList = new ArrayList<DtoGastoRepercutido>();
+		
+		if(eco != null && eco.getCondicionante() != null) {
+			List<GastoRepercutido> grList = genericDao.getList(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "condicionanteExpediente.id", eco.getCondicionante().getId()));
+			
+			if(grList != null && !grList.isEmpty()) {
+				for (GastoRepercutido gastoRepercutido : grList) {
+					DtoGastoRepercutido dto = new DtoGastoRepercutido();
+					dto.setId(gastoRepercutido.getId());
+					dto.setTipoGastoCodigo(gastoRepercutido.getTipoGastoRepercutido().getCodigo());
+					dto.setImporte(gastoRepercutido.getImporte());
+					dto.setFechaAlta(gastoRepercutido.getFechaAlta());
+					dto.setMeses(gastoRepercutido.getMeses());
+					dtoList.add(dto);
+				}
+			}
+		}
+		return dtoList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteGastoRepercutido(Long idGastoRepercutido) {
+		GastoRepercutido gr = genericDao.get(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "id", idGastoRepercutido));
+		
+		if(gr != null) {
+			Auditoria.delete(gr);
+			genericDao.save(GastoRepercutido.class, gr);
+		}
+	}
 }

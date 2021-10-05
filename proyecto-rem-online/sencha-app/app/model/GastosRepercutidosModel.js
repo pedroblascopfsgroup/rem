@@ -14,6 +14,11 @@ Ext.define('HreRem.model.GastosRepercutidosModel', {
     		},
     		{
     			name:'meses'
+    		},
+    		{
+    			name:'fechaAlta',
+    			type:'date',
+    			dateFormat: 'c'
     		}
     ],
 	proxy: {
@@ -21,7 +26,9 @@ Ext.define('HreRem.model.GastosRepercutidosModel', {
 		localUrl: 'adjuntos.json',
 		remoteUrl: 'expedientecomercial/getGastosRepercutidosList',
 		api: {
-            read: 'expedientecomercial/getGastosRepercutidosList'
+            read: 'expedientecomercial/getGastosRepercutidosList',
+            create: 'expedientecomercial/createGastoRepercutido',
+            destroy: 'expedientecomercial/deleteGastoRepercutido'
         }
     }
 });

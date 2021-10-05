@@ -1734,6 +1734,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
   				remoteUrl: 'generic/getDiccionario',
   				extraParams: {diccionario: 'estadoComunicacionC4C'}
   			}
-  	    }
+  	    },
+  	  storeTipoGastoRepercutido:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoGastoRepercutido'}
+	    	},
+	    	autoLoad: true
+		}
     }
 });

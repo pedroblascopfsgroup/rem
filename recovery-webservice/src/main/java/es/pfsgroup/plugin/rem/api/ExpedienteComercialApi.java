@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
@@ -1445,4 +1446,10 @@ public interface ExpedienteComercialApi {
 	void createOrUpdateUltimoPosicionamiento(Long idExpediente, DtoPosicionamiento dto);
 
 	Boolean checkExpedienteBloqueadoPorFuncion(Long idTramite);
+
+	void createGastoRepercutido(DtoGastoRepercutido dto, Long idExpediente);
+
+	List<DtoGastoRepercutido> getGastosRepercutidosList(Long idExpediente);
+
+	void deleteGastoRepercutido(Long idGastoRepercutido);
 }

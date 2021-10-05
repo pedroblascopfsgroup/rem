@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20211005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10554
+--## INCIDENCIA_LINK=REMVIP-10556
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -26,7 +26,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USU VARCHAR2(30 CHAR) := 'REMVIP-10554'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-10556'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
 	V_COUNT NUMBER(16);
 	V_ACT_ID NUMBER(16);
 	V_ICO_ID NUMBER(16);

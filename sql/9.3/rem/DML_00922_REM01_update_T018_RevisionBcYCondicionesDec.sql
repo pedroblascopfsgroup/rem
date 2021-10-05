@@ -1,23 +1,20 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20211005
+--## FECHA_CREACION=202101007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15248
---## PRODUCTO=NO
+--## INCIDENCIA_LINK=HREOS-15488
+--## PRODUCTO=SI
 --##
---## Finalidad:
---## INSTRUCCIONES: 
+--## Finalidad: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
+SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
 
@@ -34,8 +31,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-   		T_TIPO_DATA('T018_DefinicionOferta' ,'(valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] != DDTipoOfertaAlquiler.CODIGO_RENOVACION) ? null : existeExpedienteComercialByNumExpediente(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? isExpedienteFirmado(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? null : ''''El expediente anterior no tiene un contrato firmado'''' : ''''El expediente anterior no existe''''  ' )
-    );
+        T_TIPO_DATA('T018_RevisionBcYCondiciones', ' valores[''''T018_RevisionBcYCondiciones''''][''''comboResultado''''] == DDApruebaDeniega.CODIGO_DENIEGA ? ''''rechaza'''' : ''''aprueba'''' ' )
+       
+    ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	
 	
@@ -53,13 +51,17 @@ BEGIN
 		  
 	        DBMS_OUTPUT.PUT_LINE(' LA FILA  YA EXISTE EN [TAP_TAREA_PROCEDIMIENTO] ACTUALIZARLA');
 	        V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-		    		SET TAP_SCRIPT_VALIDACION_JBPM =  '''||V_TMP_TIPO_DATA(2)||''' 
-					,USUARIOMODIFICAR = ''HREOS-15248''                    
+		    		SET TAP_SCRIPT_DECISION	 =  '''||V_TMP_TIPO_DATA(2)||''' 
+					,USUARIOMODIFICAR = ''HREOS-15488''
 		            ,FECHAMODIFICAR = SYSDATE
-		            WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' ';
+		            WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' 
+		        ';
 			EXECUTE IMMEDIATE V_MSQL;
 	    END IF;
-
+	
+	
+	
+	
 	    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA TAP_TAREA_PROCEDIMIENTO ACTUALIZADA CORRECTAMENTE ');
 	END LOOP;
 	COMMIT;
@@ -81,4 +83,4 @@ END;
 
 /
 
-EXIT;
+EXIT

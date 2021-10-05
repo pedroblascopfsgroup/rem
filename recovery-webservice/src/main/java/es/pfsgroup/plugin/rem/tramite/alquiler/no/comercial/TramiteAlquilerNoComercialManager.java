@@ -35,39 +35,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		origenSubrogacion, origenNoSubrogacion;
 	}
 	
-	private enum T018_RevisionBcYCondicionesDecisiones{
-		apruebaNoVulnerable, apruebaSiVulnerable;
-	}
-	
-	
-	@Override
-	public String aprobarRevisionBcYCondiciones(TareaExterna tareaExterna) {
-		String valorAprobacionRevisionBcYCondiciones = null;
-		
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-							
-		if(eco != null) {
-			Oferta ofr = eco.getOferta();
-			CondicionanteExpediente coe = eco.getCondicionante();
-			if(ofr != null) {
-				if(DDTipoOfertaAlquiler.isAlquilerSocial(ofr.getTipoOfertaAlquiler())) {
-					if(coe != null) {
-						if(coe.getVulnerabilidadDetectada() != null && coe.getVulnerabilidadDetectada()) {
-							return T018_RevisionBcYCondicionesDecisiones.apruebaSiVulnerable.name();
-						}else {
-							return T018_RevisionBcYCondicionesDecisiones.apruebaNoVulnerable.name();
-						}
-					}
-				}else{
-					return T018_RevisionBcYCondicionesDecisiones.apruebaSiVulnerable.name();
-				}
-			}
-			
-		}	
-			
-		
-		return valorAprobacionRevisionBcYCondiciones;
-	}
+
 		
 	@Override
 	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {

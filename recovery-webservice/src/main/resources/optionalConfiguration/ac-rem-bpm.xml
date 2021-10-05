@@ -770,12 +770,7 @@
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.existeExpedienteComercialByNumExpediente(tareaExterna, expedienteAnterior);
             }  
-			
-			def isExpedienteTipoAlquilerNoComercial(String expedienteAnterior) {
-            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-            	return tramiteAlquilerNoComercialManager.isExpedienteTipoAlquilerNoComercial(tareaExterna, expedienteAnterior);
-            }  
-            
+			            
             def isExpedienteFirmado(String expedienteAnterior) {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.isExpedienteFirmado(tareaExterna, expedienteAnterior);

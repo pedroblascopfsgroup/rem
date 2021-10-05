@@ -1,0 +1,83 @@
+--/*
+--##########################################
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20211004
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15236
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script para el sp
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_TABLA VARCHAR2(200) := 'TGP_TIPO_GESTOR_PROPIEDAD';
+    V_VALOR VARCHAR2(20) := 'GTAS';
+    V_USU_USER VARCHAR2(200);
+    V_USU_MAIL VARCHAR2(200);
+    V_USU_GRUP VARCHAR2(200);
+    V_DES_DESP VARCHAR2(200);
+    V_COD_TDES VARCHAR2(200);
+    V_TDE_DESC VARCHAR2(200);
+    V_COD_PERF VARCHAR2(200);
+    V_PEF_DESC VARCHAR2(200);
+    V_COD_GEST VARCHAR2(200);
+    V_GES_DESC VARCHAR2(200);
+    V_COD_CART VARCHAR2(200);
+    V_SQL VARCHAR2(32000 CHAR);
+    V_MSQL VARCHAR2(32000 CHAR);
+    MSQL VARCHAR2(32000 CHAR);
+    V_CNF_GEST NUMBER;
+    PL_OUTPUT VARCHAR2(32000 CHAR);
+    SP_OUTPUT VARCHAR2(32000 CHAR);
+    TYPE T_LISTA IS TABLE OF VARCHAR2(240 CHAR);
+    TYPE T_ARRAY IS TABLE OF T_LISTA;
+    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-15236';
+
+BEGIN
+
+	V_SQL := 'SELECT count(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE TGP_VALOR = '''||V_VALOR||'''' ;
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	IF V_NUM_TABLAS = 0 THEN
+
+	    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS REGISTRO EN TGP_TIPO_GESTOR_PROPIEDAD ' );    
+
+	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'' ||
+							' (TGP_ID, DD_TGE_ID, TGP_CLAVE, TGP_VALOR,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' || 
+							' SELECT '||V_ESQUEMA||'.S_TGP_TIPO_GESTOR_PROPIEDAD.NEXTVAL' ||
+							',(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_VALOR||''')' ||
+							',''DES_VALIDOS'' ' ||
+							', '''||V_VALOR||''',0, '''||V_USUARIO||''', SYSDATE, 0 FROM DUAL';
+				EXECUTE IMMEDIATE V_MSQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla TGP_TIPO_GESTOR_PROPIEDAD insertados correctamente.');
+
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[ INFO ]: El TIPO GESTOR PROPIEDAD EXISTE.');
+	END IF;	
+
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        PL_OUTPUT := PL_OUTPUT || '[ERROR] Se ha producido un error en la ejecución: ' || TO_CHAR(SQLCODE) || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '-----------------------------------------------------------' || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || SQLERRM || CHR(10);
+        DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

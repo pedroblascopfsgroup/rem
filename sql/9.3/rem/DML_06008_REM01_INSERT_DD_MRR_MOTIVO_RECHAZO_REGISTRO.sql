@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20210922
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=2021105
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15275
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade los datos del array en DD_TRL_TIPO_ROLES_MEDIADOR
+--## Finalidad: Script que añade los datos del array en DD_MRR_MOTIVO_RECHAZO_REGISTRO
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -29,18 +29,13 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
     V_ID NUMBER(16);
-    V_TABLA VARCHAR2(50 CHAR):= 'TCP_TAREA_CONFIG_PETICION';
-    V_TABLA_AUX VARCHAR2(50 CHAR):= 'TAP_TAREA_PROCEDIMIENTO';
-    V_CHARS VARCHAR2(3 CHAR):= 'TCP';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-15275';
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    V_TABLA VARCHAR2(50 CHAR):= 'DD_MRR_MOTIVO_RECHAZO_REGISTRO';
+    V_CHARS VARCHAR2(3 CHAR):= 'MRR';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-15423';
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-            --            CODIGO TAREA  			     TCP_ACTIVADA     TCP_PERMITIDA
-      T_TIPO_DATA('T017_AgendarFechaFirmaArras',			  1,			        1),
-      T_TIPO_DATA('T017_AgendarPosicionamiento',        1,              1),
-      T_TIPO_DATA('T017_FirmaContrato',                 1,              1)
-
+        T_TIPO_DATA('F70','Activos duplicados en la tabla auxiliar','Activos duplicados en la tabla auxiliar',1,'WHERE AUX.NUM_IDENTIFICATIVO IN (SELECT AUX_GRU.NUM_IDENTIFICATIVO FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX_GRU GROUP BY AUX_GRU.NUM_IDENTIFICATIVO HAVING COUNT(*)>1)')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    
@@ -56,7 +51,7 @@ BEGIN
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     	
       --Comprobamos el dato a insertar
-      V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE TAP_ID = (SELECT TAP_ID FROM '|| V_ESQUEMA ||'.'||V_TABLA_AUX||' WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''')';
+      V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       
       --Si existe lo modificamos
@@ -66,11 +61,13 @@ BEGIN
         V_MSQL := '
           UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
           SET 
-            '||V_CHARS||'_ACTIVADA = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-            '||V_CHARS||'_PERMITIDA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-	    USUARIOMODIFICAR = '''||V_USUARIO||''',
-            FECHAMODIFICAR = SYSDATE
-			    WHERE TAP_ID = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+            DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+            DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||'''
+            , PROCESO_VALIDAR = '||TRIM(V_TMP_TIPO_DATA(4))||'
+            , QUERY_ITER = '''||TRIM(V_TMP_TIPO_DATA(5))||'''
+            , USUARIOMODIFICAR = '''||V_USUARIO||'''
+            , FECHAMODIFICAR = SYSDATE
+			    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
         
@@ -82,14 +79,26 @@ BEGIN
         
         V_MSQL := '
           	INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
-				'||V_CHARS||'_ID, TAP_ID, '||V_CHARS||'_ACTIVADA, '||V_CHARS||'_PERMITIDA, 
-				USUARIOCREAR, FECHACREAR)
+				DD_'||V_CHARS||'_ID
+        , DD_'||V_CHARS||'_CODIGO
+        , DD_'||V_CHARS||'_DESCRIPCION
+        , DD_'||V_CHARS||'_DESCRIPCION_LARGA
+        , PROCESO_VALIDAR
+        , QUERY_ITER
+        ,	VERSION
+        , USUARIOCREAR
+        , FECHACREAR)
           	SELECT 
 	            '|| V_ID || ',
-	            (SELECT TAP_ID FROM '|| V_ESQUEMA ||'.'||V_TABLA_AUX||' WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''),
-	            '''||V_TMP_TIPO_DATA(2)||''',
-	            '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-	            '''||V_USUARIO||''', SYSDATE FROM DUAL';
+	            '''||V_TMP_TIPO_DATA(1)||'''
+              ,	'''||V_TMP_TIPO_DATA(2)||'''
+              ,	'''||V_TMP_TIPO_DATA(3)||'''
+              ,	'||V_TMP_TIPO_DATA(4)||'
+              , '''||V_TMP_TIPO_DATA(5)||'''
+              , 0
+              , '''||V_USUARIO||'''
+              , SYSDATE 
+              FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
       

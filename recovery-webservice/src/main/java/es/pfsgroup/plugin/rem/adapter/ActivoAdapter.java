@@ -4389,14 +4389,15 @@ public class ActivoAdapter {
 			ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
 		}
 
-				if (codigoTipologia != null) {
-					Filter codigo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipologia);
-					DDTipologiaVentaBc tipologia = genericDao.get(DDTipologiaVentaBc.class, codigo);
-					if (tipologia != null) {
-						ofertaCaixa.setTipologiaVentaBc(tipologia);
-					}
-				}
-				genericDao.save(OfertaCaixa.class,ofertaCaixa);
+		if (codigoTipologia != null) {
+			Filter codigo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipologia);
+			DDTipologiaVentaBc tipologia = genericDao.get(DDTipologiaVentaBc.class, codigo);
+			if (tipologia != null) {
+				ofertaCaixa.setTipologiaVentaBc(tipologia);
+			}
+		}
+		genericDao.save(OfertaCaixa.class,ofertaCaixa);
+		oferta.setOfertaCaixa(ofertaCaixa);
 	}
 
 

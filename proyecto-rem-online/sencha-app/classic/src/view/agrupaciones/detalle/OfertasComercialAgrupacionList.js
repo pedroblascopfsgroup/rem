@@ -546,7 +546,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var agr = me.lookupController().getViewModel().get('agrupacionficha');
 		me.setTopBar(agr.get('esEditable'));
 
-		if(agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc')){
+		if(agr.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agr.get('perimetroMacc')
+				&& activo.get('codSubcartera') != CONST.SUBCARTERA['ONETOONE']){
 			me.setTopBar(false);
 		}
 		

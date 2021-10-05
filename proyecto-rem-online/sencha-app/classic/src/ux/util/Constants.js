@@ -270,7 +270,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		CX:'155',
 		GAT:'156',
 		EDT:'157',
-		USGAI:'158'
+		USGAI:'158',
+		ONETOONE:'68'
     },
 
     NOMBRE_SUBCARTERA: {

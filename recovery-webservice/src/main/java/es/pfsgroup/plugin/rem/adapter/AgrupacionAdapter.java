@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -279,6 +280,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
+
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -2315,16 +2319,24 @@ public class AgrupacionAdapter {
 				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
 			}else {
 				tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));			
-			
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+				List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumentoCliente()),
+						genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya"));
+
 				if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya())) {
 					clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
+				}else if (!Checks.esNulo(clientes) && !clientes.isEmpty()) {
+					clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 				}
 			}
-			
-			InfoAdicionalPersona iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", clienteComercial.getIdPersonaHaya()));
 
-			
+			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+			clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+
+			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
+
 			if(iap == null) {
 				iap = new InfoAdicionalPersona();
 				iap.setAuditoria(Auditoria.getNewInstance());

@@ -3945,15 +3945,6 @@ public class ActivoAdapter {
 			
 			ClienteComercial clienteComercial = new ClienteComercial();
 
-			/*
-			 * if(!Checks.esNulo(activo.getAgrupaciones()) &&
-			 * activo.getAgrupaciones().size()!=0){ for(ActivoAgrupacionActivo
-			 * agrupaciones: activo.getAgrupaciones()){ ActivoAgrupacion
-			 * agrupacion = agrupaciones.getAgrupacion();
-			 * if(agrupacion.getActivoPrincipal().getId().equals(activo.getId())
-			 * ){ oferta.setAgrupacion(agrupacion); } } }
-			 */
-
 			String codigoEstado = this.getEstadoNuevaOferta(activo);
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
@@ -3971,10 +3962,7 @@ public class ActivoAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-			
-			
-	
- 
+
 			if (!Checks.esNulo(dto.getTipoPersona())) {
 				//Fleco malformación en envio de datos. 
 				String tipo = "";
@@ -4029,7 +4017,6 @@ public class ActivoAdapter {
 			} else if (!Checks.esNulo(clientes) && !clientes.isEmpty()) {
 				clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 			}
-
 
 			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
 			clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));

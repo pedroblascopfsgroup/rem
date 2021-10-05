@@ -2701,16 +2701,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 			
 			
-		comboEstadoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
-			},
-			autoLoad: true
-
-	    },
+		comboEstadoOferta: function () {
+		 	estadosDeOferta = new Ext.data.Store({
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosOfertas'}
+				}
+			});
+            	tiposDeOferta.filter([{
+		    	filterFn: function(rec){
+			console.log(rec.getData())
+			    		if (rec.getData().codigo != '05') return true; 
+			    		else return false;
+			    	
+		    	}
+			}]);
+				
+				return tiposDeOferta;
+		},
 	    comboTipoRechazoOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

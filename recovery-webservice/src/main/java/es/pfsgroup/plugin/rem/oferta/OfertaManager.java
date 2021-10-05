@@ -730,7 +730,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && ofertaDto.getTitularesAdicionales().size() != 0) {
 			for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
 				OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
 				if (!Checks.esNulo(titDto)) {
@@ -740,6 +740,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
+			}
+		} else {
+			if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(ofertaDto.getCodEstadoOferta())) {
+				errorsList.put("codEstadoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getCodTarea())) {

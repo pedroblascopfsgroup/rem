@@ -293,9 +293,9 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
 	<decision name ="T018_RevisionBcYCondicionesDecision" expression="#{T018_RevisionBcYCondicionesDecision}">
-		<transition to="Fin" name="rechaza"></transition>
-		<transition to="T018_PteClRod" name="apruebaNoVulnerable"></transition>
-        <transition to="T018_SolicitarGarantiasAdicionales" name="apruebaSiVulnerable"></transition>
+
+		<transition to="T018_PteClRod" name="rechaza"></transition>
+        <transition to="T018_SolicitarGarantiasAdicionales" name="aprueba"></transition>
 	</decision>
 	
 	<state name="T018_AgendarYFirmar">

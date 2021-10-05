@@ -117,8 +117,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'estadosOfertas'}
+								remoteUrl: 'generic/getEstadosOfertaWeb'
 							},
 							autoLoad: true,
 							bind: {

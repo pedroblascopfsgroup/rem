@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1932,4 +1933,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				
 		return errorsList;
 	}	
+	
+	@Override
+	public List<DDEstadoOferta> getEstadosOfertaWeb() {
+		
+		List<DDEstadoOferta> listaDD = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaTiposFiltered = new ArrayList<DDEstadoOferta>();
+	
+		
+		for (DDEstadoOferta estado : listaDD) {
+			if (!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estado.getCodigo()))
+				listaTiposFiltered.add(estado);
+		}
+
+		return listaTiposFiltered;
+	}
 }

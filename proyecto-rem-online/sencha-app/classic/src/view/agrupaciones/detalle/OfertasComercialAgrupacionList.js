@@ -77,8 +77,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'estadosOfertas'}
+								remoteUrl: 'generic/getEstadosOfertaWeb'
 							},
 							autoLoad: true
 						}),

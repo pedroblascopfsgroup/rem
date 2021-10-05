@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -389,5 +390,7 @@ public interface GenericApi {
 	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
 
 	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera);
+	
+	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo);
 
 }

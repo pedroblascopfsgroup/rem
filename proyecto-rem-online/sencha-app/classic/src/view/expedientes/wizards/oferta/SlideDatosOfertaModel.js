@@ -119,6 +119,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 				extraParams: {codigoProvincia: '{oferta.provinciaNacimiento}'} 
 			},
 			autoLoad: true
-		}
+		},
+    	
+    	comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioTipoOfertas'
+			}
+    	}
 	}
 });

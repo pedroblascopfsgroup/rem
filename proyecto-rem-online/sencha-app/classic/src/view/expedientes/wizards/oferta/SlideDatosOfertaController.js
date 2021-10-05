@@ -532,6 +532,35 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 					}
 				}
 			});
+		},
+		
+		getComboTipoOferta: function(combo){
+			var me = this;
+			
+			combo.getStore().getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("activo.entidadPropietariaCodigo"),
+				'idActivo': me.getViewModel().get("activo.id")
+			});
+					
+			combo.getStore().load({
+				callback : function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						if (combo.selectFirst == true) {
+							combo.setSelection(1);
+						};
+						combo.setDisabled(false);
+					} else {
+						combo.setDisabled(true);
+					}
+				}
+			});
+			/*
+			combo.bindStore(storeTipoOferta);
+			
+			storeTipoOferta.getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("oferta.entidadPropietariaCodigo")
+			});
+			*/
 		}
 
 });

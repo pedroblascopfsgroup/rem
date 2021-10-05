@@ -1417,7 +1417,7 @@ BEGIN
 		        SELECT aux1.act_id, aux1.CHECK_VISIBILIDAD 
                 from '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial aux1 
                 inner join '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = aux1.act_id 
-                where pac.PAC_CHECK_GESTION_COMERCIAL <> aux1.CHECK_VISIBILIDAD
+                where pac.PAC_CHECK_GESTION_COMERCIAL <> aux1.CHECK_VISIBILIDAD or PAC.PAC_CHECK_GESTION_COMERCIAL IS NULL
 		    ) aux
 		ON (pac.act_id = aux.act_id)
 		WHEN MATCHED THEN UPDATE SET 

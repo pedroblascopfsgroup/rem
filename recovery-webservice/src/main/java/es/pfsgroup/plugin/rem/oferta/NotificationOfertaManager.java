@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -711,6 +712,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario supervisor= null;
 		String emailPrescriptor = null;
 		Usuario buzonOfertaApple = null;
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		limpiarMails();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
@@ -737,7 +739,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		if (activo != null && (gcom != null || supervisor != null)) {
 			
-			String titulo = "Oferta para venta en estado pendiente Titulares Secundarios del inmueble: " + activo.getNumActivo();
+			String titulo = "Oferta para venta en estado Pdte Titulares Secundarios del inmueble: " + activo.getNumActivo();
 			String tipoDocIndentificacion= "";
 			String docIdentificacion="";
 			String codigoPrescriptor="";
@@ -843,15 +845,70 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			String contenido = 
 					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
 							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+						
+			if (!Checks.esNulo(oferta.getCliente())) {
+				boolean gdpr = !Checks.esNulo(oferta.getCliente().getCesionDatos()) 
+						&& !Checks.esNulo(oferta.getCliente().getTransferenciasInternacionales())
+						&& !Checks.esNulo(oferta.getCliente().getComunicacionTerceros());
+				contenido += "<br><p>Titulares: <br><ul>";
+				contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getCliente().getNombreCompleto(),gdpr ? "" : "No");
+				if(!Checks.esNulo(oferta.getTitularesAdicionales()) && !oferta.getTitularesAdicionales().isEmpty()) {
+					for (int i = 0;i < oferta.getTitularesAdicionales().size() && i < 3; i++) {
+						gdpr = !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosPropietario())
+								&& !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosProveedores())
+								&& !Checks.esNulo(oferta.getTitularesAdicionales().get(i).getRechazarCesionDatosPublicidad());
+						contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto(),gdpr ? "" : "No");
+					}
+				}
+				contenido += "</ul></p>";
+			}
 			
-			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pdte Titulares Secundarios", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			
+			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
+			
+			if (!Checks.esNulo(oferta.getAgrupacion())) contenido += String.format(", Agrupación: %s.</p>",oferta.getAgrupacion().getNumAgrupRem());
+			else contenido += ".</p>";
+			
+			contenido += String.format("<br><p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), activo.getSubcartera().getDescripcion());
+			
+			contenido += String.format("<br><p>Prescriptor: %s %s.</p>",codigoPrescriptor,nombrePrescriptor);
+			
+			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
+				contenido += "<br><p>Testigos: <br><ul>";
+				for (int i = 0;i < testigos.size() && i < 3; i++) {
+					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+				}
+				contenido += "</ul></p>";
+			}
+			
+			if(!Checks.esNulo(gcom) && !Checks.esNulo(gcom.getApellidoNombre())){	
+				contenido += String.format("<br><p>Gestor comercial: %s", gcom.getApellidoNombre());
+				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
+					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				} else contenido += ".</p>";
+			} else {
+				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
+					contenido += String.format("Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				}
+			}
+			
+			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
 			TextosOferta textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Justificación API: " + textoOferta.getTexto() + "</p>";  
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Recomendación RC: " + textoOferta.getTexto() + "</p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Recomendación DC: " + textoOferta.getTexto() + "</p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Justificación API: " + textoOferta.getTexto() + "</p>";  
 			
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Observaciones: " + textoOferta.getTexto() + "</p>";  
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Observaciones: " + textoOferta.getTexto() + "</p>";
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
@@ -1003,6 +1060,210 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(respuestaContraoferta.getCodigo())) 
 					contenido += "<p>Importe de la contraoferta: " + dtoOferta.getImporteContraoferta() + "</p>";
 			}
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
+	}
+	
+	public void notificationOfrPdteAfterPdteTitSec(Oferta oferta) {
+
+		Usuario gcom = null;
+		Activo activo = oferta.getActivoPrincipal();
+		Usuario gboinm = null;
+		Usuario supervisor= null;
+		String emailPrescriptor = null;
+		Usuario buzonOfertaApple = null;
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		limpiarMails();
+
+		if (!Checks.esNulo(oferta.getAgrupacion()) 
+		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
+		        && DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(oferta.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+
+			ActivoLoteComercial activoLoteComercial = genericDao.get(ActivoLoteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", oferta.getAgrupacion().getId()));
+			gcom = activoLoteComercial.getUsuarioGestorComercial();
+			if(!Checks.estaVacio(oferta.getAgrupacion().getActivos())){
+				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			}
+
+		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
+			// por activo
+			gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			emailPrescriptor = oferta.getPrescriptor().getEmail();
+			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		} else {
+			if(!Checks.esNulo(activo)) {
+				gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+			}
+		}
+
+		if (activo != null && (gcom != null || supervisor != null)) {
+			
+			String titulo = "Solicitud de oferta para venta del inmueble con referencia: " + activo.getNumActivo();
+			String tipoDocIndentificacion= "";
+			String docIdentificacion="";
+			String codigoPrescriptor="";
+			String nombrePrescriptor="";
+			
+			DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+			dtoSendNotificator.setNumActivo(activo.getNumActivo());
+			dtoSendNotificator.setDireccion(generateDireccion(activo));
+			dtoSendNotificator.setTitulo(titulo);
+
+			if(!Checks.esNulo(oferta.getAgrupacion())) {
+				dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+			}
+
+			List<String> mailsPara 		= new ArrayList<String>();
+			List<String> mailsCC 		= new ArrayList<String>();	
+
+			if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(gboinm)){						
+						if(Checks.estaVacio(mailsSustituto)){
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+						}else {
+							mailsSustituto.clear();
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
+						}						
+						if (!Checks.estaVacio(mailsSustituto)){
+							mailsPara.addAll(mailsSustituto);
+							mailsCC.add(gboinm.getEmail());
+						}else{
+							mailsPara.add(gboinm.getEmail());
+						}
+					}	
+				}
+			}
+			
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(gcom)){		
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
+				}
+			}
+			
+			if(!Checks.esNulo(supervisor)){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(emailPrescriptor)) {
+				mailsPara.add(emailPrescriptor);
+			}
+			
+			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+				usuarioRemApiImpl.rellenaListaCorreosPorDefecto(GestorActivoApi.USUARIO_FICTICIO_OFERTA_CAJAMAR, mailsPara);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR, mailsPara, mailsCC, false);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, mailsPara, mailsCC, false);
+			}					
+				
+			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+
+			if (!Checks.esNulo(buzonRem)) {
+				mailsPara.add(buzonRem.getEmail());
+			}
+			if (!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
+			}
+			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaApple.getEmail());
+			}
+
+			mailsCC.add(this.getCorreoFrom());
+			
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente()) && !Checks.esNulo(oferta.getCliente().getTipoDocumento())){
+				tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
+				docIdentificacion= oferta.getCliente().getDocumento();
+			}
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getPrescriptor())){
+				if(!Checks.esNulo(oferta.getPrescriptor().getCodigoProveedorRem())){
+					codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
+				}
+				nombrePrescriptor= oferta.getPrescriptor().getNombre();
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					mailsPara.add(oferta.getPrescriptor().getEmail());
+				}
+				
+			}
+			
+			String contenido = 
+					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+						
+			if (!Checks.esNulo(oferta.getCliente())) {
+				contenido += "<br><p>Titulares: <br><ul>";
+				contenido += String.format("<li>%sç</li>", oferta.getCliente().getNombreCompleto());
+				if(!Checks.esNulo(oferta.getTitularesAdicionales()) && !oferta.getTitularesAdicionales().isEmpty()) {
+					for (int i = 0;i < oferta.getTitularesAdicionales().size() && i < 3; i++) {
+						contenido += String.format("<li>%s</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto());
+					}
+				}
+				contenido += "</ul></p>";
+			}
+			
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pdte Titulares Secundarios", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			
+			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
+			
+			if (!Checks.esNulo(oferta.getAgrupacion())) contenido += String.format(", Agrupación: %s.</p>",oferta.getAgrupacion().getNumAgrupRem());
+			else contenido += ".</p>";
+			
+			contenido += String.format("<br><p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), activo.getSubcartera().getDescripcion());
+			
+			contenido += String.format("<br><p>Prescriptor: %s %s.</p>",codigoPrescriptor,nombrePrescriptor);
+			
+			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
+				contenido += "<br><p>Testigos: <br><ul>";
+				for (int i = 0;i < testigos.size() && i < 3; i++) {
+					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+				}
+				contenido += "</ul></p>";
+			}
+			
+			if(!Checks.esNulo(gcom) && !Checks.esNulo(gcom.getApellidoNombre())){	
+				contenido += String.format("<br><p>Gestor comercial: %s", gcom.getApellidoNombre());
+				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
+					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				} else contenido += ".</p>";
+			} else {
+				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
+					contenido += String.format("Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				}
+			}
+			
+			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+			TextosOferta textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Recomendación RC: " + textoOferta.getTexto() + "</p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Recomendación DC: " + textoOferta.getTexto() + "</p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Justificación API: " + textoOferta.getTexto() + "</p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Observaciones: " + textoOferta.getTexto() + "</p>";
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}

@@ -1466,6 +1466,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
 			boolean modificado = false;
+			boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, true);
 				modificado = true;
@@ -1704,6 +1705,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
 			} else if ("01".equals(ofertaDto.getCodTarea())) {
 				notificationOfertaManager.notificationSancionContraoferta(oferta, ofertaDto);
+			} else if (eraPdteTitulares && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
+				notificationOfertaManager.notificationOfrPdteAfterPdteTitSec(oferta);
 			}
 
 		}

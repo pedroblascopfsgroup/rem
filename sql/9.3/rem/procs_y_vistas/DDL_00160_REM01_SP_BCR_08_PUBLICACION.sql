@@ -792,7 +792,22 @@ BEGIN
 
     END IF;
 
---9º Llamar al SP para cada activo guardado en la tabla temporal
+--9º Llamar al SP de SCM para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+
+    SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
+
+    SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+
+    SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+
+    SP_ASC_ACT_SIT_COM_VACIOS(0,1);
+
+    SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+
+--10º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
     SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
@@ -810,7 +825,7 @@ BEGIN
 
     SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
 
---10º Llamar al SP para cada activo guardado en la tabla temporal
+--11º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
     SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
@@ -827,21 +842,6 @@ BEGIN
         END LOOP;
 
     SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
-
---11º Llamar al SP de SCM para cada activo guardado en la tabla temporal
---Ejecutamos el Sp por cada activo de la tabla temporal
-
-    SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
-
-    SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
-
-    SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
-
-    SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
-
-    SP_ASC_ACT_SIT_COM_VACIOS(0,1);
-
-    SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
 
 COMMIT;
 

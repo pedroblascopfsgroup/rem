@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210909
+--## FECHA_CREACION=20211006
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15133
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15133';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15423';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -173,10 +173,10 @@ DECLARE
         T_TIPO_DATA('ESTADO_COMERCIAL_ALQUILER','AA5','Alquilado','DD_ECA_EST_COM_ALQUILER','AA5'),
         T_TIPO_DATA('ESTADO_COMERCIAL_ALQUILER','AA6','Alquilado en trámite de renovación','DD_ECA_EST_COM_ALQUILER','AA6'),
       --Estado comercial venta 
-        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V01','No en proceso comercial','DD_ECV_EST_COM_VENTA','V01'),
-        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V02','Retirado de la comercialización','DD_ECV_EST_COM_VENTA','V02'),
-        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V03','En trámite de venta','DD_ECV_EST_COM_VENTA','V03'),
-        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','V04','Venta realizada','DD_ECV_EST_COM_VENTA','V04'),
+        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA1','No en proceso comercial','DD_ECV_EST_COM_VENTA','VA1'),
+        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA2','Retirado de la comercialización','DD_ECV_EST_COM_VENTA','VA2'),
+        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA3','En trámite de venta','DD_ECV_EST_COM_VENTA','VA3'),
+        T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA4','Venta realizada','DD_ECV_EST_COM_VENTA','VA4'),
       --Estado técnico
         T_TIPO_DATA('ESTADO_TECNICO','E01','Pendiente actuación técnica','DD_EAT_EST_TECNICO','E01'),
         T_TIPO_DATA('ESTADO_TECNICO','E02','En Gestión entrada','DD_EAT_EST_TECNICO','E02'),

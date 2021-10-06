@@ -1267,6 +1267,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			
+			if (oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) && activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
+				Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
+			}
 
 		}
 
@@ -1719,6 +1724,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
+			}
+			
+			if (oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) && activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
+				Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+				llamadaAsincrona.start();
 			}
 
 		}
@@ -2608,11 +2618,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(oferta != null && !Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem())
 						&& (ofertaDto.getOfertaLote() != null  && ofertaDto.getOfertaLote())) {
 					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
-				}
-
-				if (DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) && activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
-					Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-					llamadaAsincrona.start();
 				}
 				
 				map.put("success", true);
@@ -7305,12 +7310,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		HashMap<String, String> error = new HashMap<String, String>();
 		
+		Oferta oferta = null;
+		ExpedienteComercial expediente = null;
 		ClienteComercial clienteCom = null;
+		
 		if (idClienteRem != null) {
 			clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", idClienteRem));
 		}
 		
-		if(nuevaOferta) {
+		oferta = getOfertaByIdOfertaHayaHomeNumOfertaRem(idOfertaHayaHome, idOfertaRem);
+		if (oferta != null)
+			expediente = oferta.getExpedienteComercial();
+		
+		if(nuevaOferta || (!nuevaOferta && oferta != null && expediente == null)) {
 			if (idClienteRemRepresentante != null) {
 				if (clienteCom != null && (clienteCom.getIdClienteRemRepresentante() == null 
 						|| clienteCom.getIdClienteRemRepresentante() != null && !clienteCom.getIdClienteRemRepresentante().equals(idClienteRemRepresentante))) {
@@ -7324,11 +7336,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}	
 			}
 		} else if (!nuevaOferta) {
-			Oferta oferta = getOfertaByIdOfertaHayaHomeNumOfertaRem(idOfertaHayaHome, idOfertaRem);
 
-			if (oferta != null) {
-				Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id", oferta.getExpedienteComercial().getId());
-				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "primaryKey.comprador.id", oferta.getExpedienteComercial().getCompradorPrincipal().getId());
+			if (oferta != null && expediente != null) {
+				Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id", expediente.getId());
+				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "primaryKey.comprador.id", expediente.getCompradorPrincipal().getId());
 	
 				CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador);
 				

@@ -3397,7 +3397,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	},
 	
 	T015_SolicitarGarantiasAdicionalesValidacion: function(){
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		
+		var idTarea = me.idTarea;
+		var comboResultado = me.down('[name=comboResultado]');
+		var respuestaComprador = me.down('[name=respuestaComprador]');
+		
+		respuestaComprador.setDisabled(false);
 
 	},
 	

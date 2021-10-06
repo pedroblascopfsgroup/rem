@@ -1031,6 +1031,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setFechaContrasteListas(new Date());
 			DDEstadoInterlocutor interlocutorActivo = genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInterlocutor.CODIGO_ACTIVO));
 			compradorExpedienteNuevo.setEstadoInterlocutor(interlocutorActivo);
+			compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(cliente.getIdPersonaHayaCaixaRepresentante());
 			
 			if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 				this.setInterlocutorOferta(compradorExpedienteNuevo, true, oferta);
@@ -1123,6 +1124,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setInfoAdicionalPersona(titularAdicional.getInfoAdicionalPersona());
 						compradorBusquedaAdicional.setIdPersonaHayaCaixa(titularAdicional.getInfoAdicionalPersona() != null ? titularAdicional.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 					}
+
+					compradorExpedienteNuevo.setIdPersonaHayaCaixaRepresentante(titularAdicional.getIdPersonaHayaCaixaRepresentante());
 
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 							.equals(titularAdicional.getTipoPersona().getCodigo())) {

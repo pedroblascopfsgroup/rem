@@ -351,7 +351,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	RECHAZADA: '02',
     	CONGELADA: '03',
     	PENDIENTE: '04',
-    	PDTE_CONSENTIMIENTO: '05',
+    	PDTE_TITULARES: '05',
     	CADUCADA: '06'
     },
 

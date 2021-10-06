@@ -77,7 +77,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getEstadosOfertaWeb'
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'estadosOfertas'}
 							},
 							autoLoad: true
 						}),
@@ -234,6 +235,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
+				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
+				me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+				return false;
+			}
 			var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 			if (agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] && (agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'] 
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))

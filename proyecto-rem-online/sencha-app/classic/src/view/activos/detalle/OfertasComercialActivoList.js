@@ -117,7 +117,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getEstadosOfertaWeb'
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'estadosOfertas'}
 							},
 							autoLoad: true,
 							bind: {
@@ -302,6 +303,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
+				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
+				me.up('activosdetalle').lookupController().refrescarActivo(true);
+				return false;
+			}
 			var activo = me.lookupController().getViewModel().get('activo');
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
 				if(activo.get('cambioEstadoActivo')){

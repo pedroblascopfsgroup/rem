@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210929
+--## FECHA_CREACION=20211005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15423
@@ -22,8 +22,9 @@
 --##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
 --##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
 --##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
---##	      0.12 Correcciones gestores - [HREOS-15254] - Daniel Algaba
---##	      0.12 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
+--##	      0.13 Correcciones gestores - [HREOS-15254] - Daniel Algaba
+--##	      0.14 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
+--##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -99,7 +100,9 @@ BEGIN
                   CASE 
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
-                     ELSE sac_uso.DD_SAC_ID
+                     WHEN sac_uso.DD_SAC_ID IS NOT NULL THEN sac_uso.DD_SAC_ID
+                     WHEN TPA.DD_TPA_ID IS NOT NULL AND TPA.DD_TPA_ID = ACT.DD_TPA_ID THEN ACT.DD_SAC_ID
+                     ELSE NULL
                   END DD_SAC_ID,
                   COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
@@ -145,7 +148,7 @@ BEGIN
                                  ) us ON (us.act_id = act.act_id)
                                  when matched then update set
                                     act.DD_TPA_ID = NVL(us.DD_TPA_ID,act.DD_TPA_ID)
-                                    ,act.DD_SAC_ID = NVL(us.DD_SAC_ID,act.DD_SAC_ID)
+                                    ,act.DD_SAC_ID = us.DD_SAC_ID
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)
                                     ,act.DD_PRP_ID = us.DD_PRP_ID

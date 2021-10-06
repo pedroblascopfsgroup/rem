@@ -38,11 +38,15 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DoubleDataType mesesCarencia;
 	private BooleanDataType tienecontratoReserva;
 	private StringDataType motivoCongelacion;
+	@MappedColumn("TIENE_IBI")
 	private BooleanDataType tieneIBI;
+	@MappedColumn("IMPORTE_IBI")
 	private DoubleDataType importeIBI;
 	private BooleanDataType tieneOtrasTasas;
 	private DoubleDataType importeOtrasTasas;
+	@MappedColumn("TIENE_CCPP")
 	private BooleanDataType tieneCCPP;
+	@MappedColumn("IMPORTE_CCPP")
 	private DoubleDataType importeCCPP;
 	private DoubleDataType bonificacionAnyo1;
 	private DoubleDataType bonificacionAnyo2;
@@ -53,8 +57,9 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DoubleDataType bonificacionAnyo2Contraoferta;
 	private DoubleDataType bonificacionAnyo3Contraoferta;
 	private DoubleDataType bonificacionAnyo4Contraoferta;
-	private String codSubestadoExpediente;
-	private String codOfertaSalesforce;
+	private StringDataType codSubestadoExpediente;
+	private StringDataType codOfertaSalesforce;
+
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
 	}
@@ -277,19 +282,17 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setBonificacionAnyo4Contraoferta(DoubleDataType bonificacionAnyo4Contraoferta) {
 		this.bonificacionAnyo4Contraoferta = bonificacionAnyo4Contraoferta;
 	}
-	public String getCodSubestadoExpediente() {
+	public StringDataType getCodSubestadoExpediente() {
 		return codSubestadoExpediente;
 	}
-	public void setCodSubestadoExpediente(String codSubestadoExpediente) {
+	public void setCodSubestadoExpediente(StringDataType codSubestadoExpediente) {
 		this.codSubestadoExpediente = codSubestadoExpediente;
 	}
-	public String getCodOfertaSalesforce() {
+	public StringDataType getCodOfertaSalesforce() {
 		return codOfertaSalesforce;
 	}
-	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
+	public void setCodOfertaSalesforce(StringDataType codOfertaSalesforce) {
 		this.codOfertaSalesforce = codOfertaSalesforce;
 	}
-	
-	
 
 }

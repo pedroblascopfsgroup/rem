@@ -224,9 +224,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
-	
-	@Autowired
-	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -288,8 +285,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
 		
-		boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
-
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
@@ -326,10 +321,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 		transactionManager.commit(transaction);
-		
-		if (eraPdteTitulares && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
-			notificationOfertaManager.notificationOfrPdteAfterPdteTitSec(oferta);
-		}
 		
 		return oferta;
 	}

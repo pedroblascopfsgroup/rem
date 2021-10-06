@@ -384,9 +384,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-	
-	@Autowired
-	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -667,7 +664,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDClaseOferta claseOferta = null;
 		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
-		boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
+		if(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(dto.getEstadoCodigo())) {
+			return false;
+		}
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
 			claseOferta = genericDao.get(DDClaseOferta.class, f);
@@ -1384,10 +1383,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			expedienteComercial.setComitePropuesto(comite);
 			expedienteComercial.setComiteSancion(comite);
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
-		}
-		
-		if (eraPdteTitulares && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
-			notificationOfertaManager.notificationOfrPdteAfterPdteTitSec(oferta);
 		}
 
 		return true;

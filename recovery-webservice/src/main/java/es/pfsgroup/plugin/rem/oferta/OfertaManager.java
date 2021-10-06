@@ -558,7 +558,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public Oferta getOfertaByIdOfertaHayaHomeNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem) throws Exception {
 		
 		if (idOfertaHayaHome == null && numOfertaRem == null) {
-			throw new Exception("Faltan datos para el filtro");
+			return null;
 		} else {
 			return ofertaDao.getOfertaByIdOfertaHayaHomeOrNumOfertaRem(idOfertaHayaHome, numOfertaRem);
 		}

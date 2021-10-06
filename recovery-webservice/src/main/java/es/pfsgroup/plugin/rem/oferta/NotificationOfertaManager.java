@@ -1209,7 +1209,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						
 			if (!Checks.esNulo(oferta.getCliente())) {
 				contenido += "<br><p>Titulares: <br><ul>";
-				contenido += String.format("<li>%sç</li>", oferta.getCliente().getNombreCompleto());
+				contenido += String.format("<li>%s</li>", oferta.getCliente().getNombreCompleto());
 				if(!Checks.esNulo(oferta.getTitularesAdicionales()) && !oferta.getTitularesAdicionales().isEmpty()) {
 					for (int i = 0;i < oferta.getTitularesAdicionales().size() && i < 3; i++) {
 						contenido += String.format("<li>%s</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto());

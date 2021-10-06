@@ -618,8 +618,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.latitud'),
-							readOnly	: true,
-							bind:		'{activo.latitud}'
+							bind: {
+								value: '{activo.latitud}',
+			            		readOnly:'{!activo.isCarteraBankia}'	
+							}
 		                },		
 						{							
 							xtype: 'comboboxfieldbase',
@@ -686,8 +688,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.longitud'),
-							readOnly: true,
-							bind:		'{activo.longitud}'
+							bind: {
+								value: '{activo.longitud}',
+			            		readOnly:'{!activo.isCarteraBankia}'	
+							}
 		                }, 
 						{ 
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.via.oe'),

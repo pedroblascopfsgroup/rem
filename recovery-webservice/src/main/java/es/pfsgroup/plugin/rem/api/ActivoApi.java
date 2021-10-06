@@ -1469,4 +1469,6 @@ public interface ActivoApi {
 	Activo activoByIdAgrupacion(Long idAgrupacion);
 
 	boolean isActivoConReservaAlquiler(Activo activo);
+
+	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
 }

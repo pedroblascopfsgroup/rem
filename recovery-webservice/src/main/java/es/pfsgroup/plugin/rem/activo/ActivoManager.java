@@ -9233,6 +9233,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public boolean esActivoHayaHomeToModel(Activo activo, ActivoAgrupacion agrupacion) {
+		boolean esMacc = false;
+		boolean esActivoAlquiler = false;	
+		boolean es1to1 = false;
+		
+		Activo activoFinal = null;
+		if (!Checks.esNulo(agrupacion)) {
+			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+				activoFinal = agrupacion.getActivoPrincipal();
+			} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()) {
+				activoFinal = agrupacion.getActivos().get(0).getActivo();
+			}
+		}
+		if (!Checks.esNulo(activo)) activoFinal = activo;
+		
+		if (!Checks.esNulo(activoFinal)) {
+			esMacc = !Checks.esNulo(activoFinal.getPerimetroMacc()) && activoFinal.getPerimetroMacc() == 1;
+			esActivoAlquiler = !Checks.esNulo(activoFinal.getActivoPublicacion()) 
+					&& !Checks.esNulo(activoFinal.getActivoPublicacion().getTipoComercializacion())
+					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
+		}		
+		
+		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
+
+		return esActivoHayaHome;
+	}
+	
+	@Override
 	public boolean esActivoHayaHome(Long idActivo) {
 		boolean esMacc = false;
 		boolean esActivoAlquiler = false;	

@@ -563,8 +563,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
-		} else if(activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1" 
-			&& activo.get('subcarteraCodigo') != CONST.SUBCARTERA['ONETOONE']){
+		} else if(activo.get('esHayaHome')){
 			me.setTopBar(false);
 		} 
 		

@@ -782,6 +782,7 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHomeToModel(null, agrupacion));
 			}
 
 		} catch (IllegalAccessException e) {

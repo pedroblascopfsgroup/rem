@@ -1218,7 +1218,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				contenido += "</ul></p>";
 			}
 			
-			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pdte Titulares Secundarios", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pendiente", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
 			
 			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
 			

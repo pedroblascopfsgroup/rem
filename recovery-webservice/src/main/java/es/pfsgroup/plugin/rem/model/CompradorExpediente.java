@@ -26,6 +26,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
@@ -199,7 +200,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECL_ID")
     private DDEstadoContrasteListas estadoContrasteListas;
-    
+
     @Column(name="ECO_ECL_FECHA")
     private Date fechaContrasteListas;
 
@@ -231,7 +232,34 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_FIO_REPR_ID")
 	private DDInterlocutorOferta interlocutorOfertaRepresentante;
- 
+	
+	@Column(name = "CEX_SOCIEDAD")
+	private String sociedad;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_VIC_ID")
+	private DDVinculoCaixa vinculoCaixa;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_REPR")
+	private Long idPersonaHayaRepresentante;
+
+	@Column(name = "CEX_PRP")
+	private Boolean prp;
+	
+	@Column(name = "CEX_OFICINA_TRABAJO")
+	private String oficinaTrabajo;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EIC_ID")
+	private DDEstadoInterlocutor estadoInterlocutor;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
 	@Version   
 	private Long version;
 	
@@ -686,7 +714,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;	
+		this.auditoria = auditoria;
 	}
 
 	public DDEstadoContrasteListas getEstadoContrasteListas() {
@@ -704,7 +732,7 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setFechaContrasteListas(Date fechaContrasteListas) {
 		this.fechaContrasteListas = fechaContrasteListas;
 	}
-	
+
 	public Long getIdC4c() {
 		return idC4c;
 	}
@@ -768,5 +796,69 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
 		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
 	}
-   
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public DDVinculoCaixa getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+
+	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
+	}
+
+	public Long getIdPersonaHayaRepresentante() {
+		return idPersonaHayaRepresentante;
+	}
+
+	public void setIdPersonaHayaRepresentante(Long idPersonaHayaRepresentante) {
+		this.idPersonaHayaRepresentante = idPersonaHayaRepresentante;
+	}
+
+	public Boolean getPrp() {
+		return prp;
+	}
+
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+	public DDEstadoInterlocutor getEstadoInterlocutor() {
+		return estadoInterlocutor;
+	}
+
+	public void setEstadoInterlocutor(DDEstadoInterlocutor estadoInterlocutor) {
+		this.estadoInterlocutor = estadoInterlocutor;
+	}
+
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
 }

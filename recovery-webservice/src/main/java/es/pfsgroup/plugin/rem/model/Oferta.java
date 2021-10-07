@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 
 /**
@@ -313,6 +314,18 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
 	
+	@Column(name = "OFR_OFERTA_ESPECIAL")
+    private Boolean ofertaEspecial;
+	
+	@Column(name = "OFR_VENTA_CARTERA")
+    private Boolean ventaCartera;
+    
+	@Column(name = "OFR_VENTA_SOBRE_PLANO")
+    private Boolean ventaSobrePlano;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ROP_ID")
+    private DDRiesgoOperacion riesgoOperacion;
+	
 	@Column(name = "ID_OFERTA_ORIGEN")
     private Long idOfertaOrigen;
 	
@@ -333,11 +346,6 @@ public class Oferta implements Serializable, Auditable {
 
 	@Column(name = "OFR_DOC_RESP_PRESCRIPTOR")
     private Boolean ofrDocRespPrescriptor;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ROP_ID")
-	private DDRiesgoOperacion tipoRiesgoOperacion;  
-	
 	@Column(name = "OFR_SOSPECHOSA")
     private Boolean ofertaSospechosa;
 	
@@ -375,6 +383,15 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAL_ID")
 	private DDClasificacionContratoAlquiler clasificacion;  
 	
+	@Column(name = "OFR_CHECK_DOCUMENTACION")
+    private Boolean checkDocumentacion;
+	
+	@Column(name = "OFR_FECHA_ALTA_WEBCOM")
+	private Date fechaAltaWebcom;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TOA_ID")
+	private DDTipoOfertaAlquiler tipoOfertaAlquiler;
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -989,6 +1006,14 @@ public class Oferta implements Serializable, Auditable {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
 	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	
 	public Long getIdOfertaOrigen() {
 		return this.idOfertaOrigen;
 	}
@@ -1053,6 +1078,33 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaSospechosa = ofertaSospechosa;
 	}
 
+	public Boolean getVentaCartera() {
+		return ventaCartera;
+	}
+
+	public void setVentaCartera(Boolean ventaCartera) {
+		this.ventaCartera = ventaCartera;
+	}
+
+	public DDRiesgoOperacion getRiesgoOperacion() {
+		return riesgoOperacion;
+	}
+
+	public void setRiesgoOperacion(DDRiesgoOperacion riesgoOperacion) {
+		this.riesgoOperacion = riesgoOperacion;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
 	public DDResponsableDocumentacionCliente getRespDocCliente() {
 		return respDocCliente;
 	}
@@ -1061,13 +1113,7 @@ public class Oferta implements Serializable, Auditable {
 		this.respDocCliente = respDocCliente;
 	}
 
-	public DDRiesgoOperacion getTipoRiesgoOperacion() {
-		return tipoRiesgoOperacion;
-	}
 
-	public void setTipoRiesgoOperacion(DDRiesgoOperacion tipoRiesgoOperacion) {
-		this.tipoRiesgoOperacion = tipoRiesgoOperacion;
-	}
 
 	public OfertaCaixa getOfertaCaixa() {
 		return ofertaCaixa;
@@ -1156,5 +1202,28 @@ public class Oferta implements Serializable, Auditable {
 	public void setClasificacion(DDClasificacionContratoAlquiler clasificacion) {
 		this.clasificacion = clasificacion;
 	}
-	
+
+	public Boolean getCheckDocumentacion() {
+		return checkDocumentacion;
+	}
+
+	public void setCheckDocumentacion(Boolean checkDocumentacion) {
+		this.checkDocumentacion = checkDocumentacion;
+	}
+
+	public Date getFechaAltaWebcom() {
+		return fechaAltaWebcom;
+	}
+
+	public void setFechaAltaWebcom(Date fechaAltaWebcom) {
+		this.fechaAltaWebcom = fechaAltaWebcom;
+	}
+
+	public DDTipoOfertaAlquiler getTipoOfertaAlquiler() {
+		return tipoOfertaAlquiler;
+	}
+
+	public void setTipoOfertaAlquiler(DDTipoOfertaAlquiler tipoOfertaAlquiler) {
+		this.tipoOfertaAlquiler = tipoOfertaAlquiler;
+	}
 }

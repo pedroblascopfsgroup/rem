@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente MArtinez
---## FECHA_CREACION=20210610
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20210828
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13272
+--## INCIDENCIA_LINK=HREOS-15400
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        HREOS-13272 - 0.1 Versión inicial
 --##        HREOS-14246 - 0.2 Se añaden nuevos estados cartera Caixa
+--##        HREOS-14789 - 0.3 Se añaden nuevos estado (08) cartera Caixa
 --##########################################
 --*/
 
@@ -73,7 +74,9 @@ BEGIN
 				TPR.DD_TPR_CODIGO AS CANAL,
 				TPR.DD_TPR_DESCRIPCION AS CANAL_DESCRIPCION,
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
-				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT
+				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT,
+			C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C
+
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
         	INNER JOIN '|| V_ESQUEMA ||'.ACT_OFR AOF 					ON OFR.OFR_ID = AOF.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = AOF.ACT_ID and act.borrado = 0
@@ -86,7 +89,9 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.CLC_CLIENTE_COMERCIAL CLC 			ON CLC.CLC_ID = OFR.CLC_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 				ON AGR.AGR_ID = OFR.AGR_ID and agr.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN 		ON GEN.ACT_ID = ACT.ACT_ID
-		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'',''07'',''05'')';
+		LEFT JOIN '|| V_ESQUEMA ||'.OFR_OFERTAS_CAIXA CBX				ON OFR.OFR_ID = CBX.OFR_ID 
+		LEFT JOIN '|| V_ESQUEMA ||'.DD_ECC_ESTADO_COMUNICACION_C4C C4C	ON CBX.DD_ECC_ID = C4C.DD_ECC_ID
+		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'',''07'',''05'',''08'')';
 
   EXECUTE IMMEDIATE	V_MSQL;
     

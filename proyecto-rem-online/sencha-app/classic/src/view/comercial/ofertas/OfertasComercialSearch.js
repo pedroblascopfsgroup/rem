@@ -271,7 +271,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
     				        		store: '{comboCartera}'
     			            	},
     			            	reference: 'comboCarteraSearch',
-    			            	chainedStore: 'comboSubcarteraFiltered',
+    			            	chainedStore: 'comboSubcartera',
     							chainedReference: 'comboSubcarteraOfertaSearch',
     							publishes: 'value',
     							listeners: {
@@ -283,8 +283,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 					        	name: 'subcarteraCodigo',
 					        	bind: {
-				            		store: '{comboSubcarteraFiltered}',
-//					        		store: '{comboSubcartera}',
+//				            		store: '{comboSubcarteraFiltered}',
+					        		store: '{comboSubcartera}',
 					        		disabled: '{!comboCarteraSearch.selection}',
 					        		filters: {
 					        			property: 'carteraCodigo',
@@ -303,16 +303,18 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						 		}
 							},
 							{
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'comboboxfieldbasedd',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.gestoria'),
 					        	emptyText: HreRem.i18n('txt.seleccione.gestoria'),
 					        	displayField: 'apellidoNombre',
 	    						valueField: 'id',
 					        	bind: {
 				            		store: '{comboUsuariosGestoria}',
-				            		readOnly: $AU.userTipoGestor()=="GIAFORM"
+				            		disabled: $AU.userTipoGestor()!="GIAFORM"
 				            	},
-								name: 'gestoria'
+								name: 'gestoria',
+								emptyText: 'Introduzca un usuario de gestoría formalización',
+								filtradoEspecial2: true
 							},
 							{
 								fieldLabel:  HreRem.i18n('fieldlabel.email'),

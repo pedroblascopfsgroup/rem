@@ -89,7 +89,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	       	}
 		});	
 		var panelTanteo = tabPanel.down('activoexpedientetanteo');
-		if(!Ext.isEmtpy(panelTanteo)){
+		if(!Ext.isEmpty(panelTanteo)){
 			var grid = panelTanteo.down('gridBaseEditableRow');
 			if(grid != undefined){
 				var store = grid.getStore();
@@ -217,11 +217,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-		var tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
+		var tipoBulkAdvisoryNote;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		
+		if(!Ext.isEmpty(me.getViewModel().data.datosbasicosoferta)){
+			tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
+		}
+
 		if(form.isFormValid() || form.disableValidation) {
-			
+			var cumplenCondicionesCampos = this.hacerCamposObligatorios(form);
+			if(!cumplenCondicionesCampos){
+				me.getView().unmask();
+				return;
+			}
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -476,14 +483,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    		
 			    	} else if (data.success == "false" && data.error == "false") {
 			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-			    		activeTab.funcionRecargar();
 			    	} else if (data.success == "false" && data.error == "true") {
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
 					 	me.getView().unmask();		    		
 			    	}
 			    	} else {
 				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-				        activeTab.funcionRecargar();
 				    }
 	            },
 	            
@@ -815,9 +820,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         viewPortWidth = Ext.Element.getViewportWidth(),
         viewPortHeight = Ext.Element.getViewportHeight(),
         tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
-        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'],
+		tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'],
+		bloqueado =  me.getViewModel().get('expediente.bloqueado');
         var viewModel = me.getViewModel();
-
+        if(bloqueado){
+        	me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
+        	return;
+        }
 
         var editarCompradores;
 
@@ -828,7 +838,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
 		}
 
-		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
+		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))
+				|| (tipoExpedienteCodigo === tipoExpedienteAlquilerNoComercial)) {
 			var idCliente = record.get('id'),
 				expediente= me.getViewModel().get('expediente'),
 				storeProblemasVenta = me.getViewModel().get('storeProblemasVenta'),
@@ -1446,13 +1457,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var tipoCalculo = me.lookupReference('tipoCalculo');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
 		if(!esCarteraGaleonOZeus && value==1){
-			me.lookupReference('tipoCalculo').setDisabled(false);
+			tipoCalculo.setDisabled(false);
+			tipoCalculo.allowBlank = false;
 		}else{
-			
-			me.lookupReference('tipoCalculo').setDisabled(true);		
-			me.lookupReference('tipoCalculo').setValue(null);
+			tipoCalculo.setDisabled(true);		
+			tipoCalculo.setValue(null);
+			tipoCalculo.allowBlank = true;
 		}
 	},
 	
@@ -1464,7 +1477,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this;
-
+		
+		if(me.getViewModel().get('expediente.esBankia') && me.getViewModel().get('expediente.bloqueado')){
+			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
+			return;
+		}
+		
 		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
 			return;
@@ -2065,12 +2083,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	numVisitaIsEditable: function() {
 		var me = this,
 		campoNumVisita = me.lookupReference('numVistaFromOfertaRef');
+		campoNumContacto = me.lookupReference('numContactoFromOfertaRef');
 		// Si el estado de la visita no es REALIZADA, no debe haber numVisita relacionada
-		if(me.lookupReference('comboEstadosVisita').getValue() == "03" )
+		if(me.lookupReference('comboEstadosVisita').getValue() == "03" ){
 			campoNumVisita.setDisabled(false);
-		else {
+			campoNumContacto.setDisabled(false);
+		}else {
 			campoNumVisita.setValue();
 			campoNumVisita.setDisabled(true);
+			campoNumContacto.setValue();
+			campoNumContacto.setDisabled(true);
 		}
 	},
 	comprobarObligatoriedadRte: function(){
@@ -2496,39 +2518,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		});		
 	},
 
-	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
-		try{
-			if(!Ext.isEmpty(oldValue)){
-				var me = this,
-		    	tipoAplicable = me.lookupReference('tipoAplicable'),
-		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-		
-		
-		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-		    		tipoAplicable.reset();
-		    		tipoAplicable.setDisabled(true);
-		    		tipoAplicable.allowBlank = true;
-		    		tipoAplicable.setValue(0);
-		    		operacionExenta.reset();
-		    		operacionExenta.setReadOnly(true);
-		    		inversionSujetoPasivo.reset();
-		    		inversionSujetoPasivo.setReadOnly(true);
-		    		renunciaExencion.reset();
-		    		renunciaExencion.setReadOnly(true);
-		    	} else {
-		    		tipoAplicable.setDisabled(false);
-		        	tipoAplicable.allowBlank = false;
-		    		operacionExenta.setReadOnly(false);
-		    		inversionSujetoPasivo.setReadOnly(false);
-		    	}
-			}
-		}catch(err) {
-  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
-		}
-	},
-
 	onCambioOperacionExenta: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
@@ -2602,28 +2591,70 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
-		if(!Ext.isEmpty(oldValue)){
+		//if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			operacionExenta = me.lookupReference('chckboxOperacionExenta'),
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
+	    	var esBankia = me.getViewModel().get("expediente.esBankia");
+	    	var tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo');
+	    	if (esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
+	    		if(newValue == true) {
+					/*operacionExenta.reset();
+					operacionExenta.setReadOnly(true);*/
+					renunciaExencion.reset();
+		    		renunciaExencion.setReadOnly(true);
+		    		renunciaExencion.setDisabled(true);
+		    		tipoAplicable.reset();
+		    		tipoAplicable.setDisabled(true);
+		    		tipoAplicable.allowBlank = true;
+				} else {
+					//operacionExenta.setReadOnly(false);
+					tipoAplicable.setDisabled(false);
+					tipoAplicable.allowBlank = false;
+		    		renunciaExencion.setReadOnly(false);
+		    		renunciaExencion.setDisabled(false);
+		    		renunciaExencion.allowBlank = false;					
+		    		
+				}
+	    	}else{
+	    		if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
+	    			if(newValue == true) {
+						operacionExenta.reset();
+						operacionExenta.setReadOnly(true);
+						renunciaExencion.reset();
+			    		renunciaExencion.setReadOnly(true);
+			    		tipoAplicable.reset();
+			    		tipoAplicable.setDisabled(true); 
+			    		tipoAplicable.allowBlank = true;
+					} else {
+						operacionExenta.setReadOnly(false);
+						tipoAplicable.setDisabled(false);
+						tipoAplicable.allowBlank = false;
+					}
+	    		}	    		
+	    	}
 	
-			if(newValue == true) {
-				operacionExenta.reset();
-				operacionExenta.setReadOnly(true);
-				renunciaExencion.reset();
-	    		renunciaExencion.setReadOnly(true);
-	    		tipoAplicable.reset();
-	    		tipoAplicable.setDisabled(true);
-	    		tipoAplicable.allowBlank = true;
-			} else {
-				operacionExenta.setReadOnly(false);
-				tipoAplicable.setDisabled(false);
-				tipoAplicable.allowBlank = false;
-			}
-		}
+			
+		//}
 	},
-	
+	onCambioGrupoImpuesto: function(combo, value, oldValue, eOpts){
+			var me = this,			
+	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+	    	tipoAplicable = me.lookupReference('tipoAplicable');
+	    	var esBankia = me.getViewModel().get("expediente.esBankia");
+	    	if (esBankia) {
+	    		renunciaExencion.setDisabled(true);
+	    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == value) {
+	    			renunciaExencion.setDisabled(false);
+	    			renunciaExencion.reset();
+	    		}else{
+	    			tipoAplicable.setDisabled(false);
+	    			tipoAplicable.allowBlank = false;
+	    		}
+	    	}
+	    	
+	},
 	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
     	var me = this;
     	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
@@ -2842,105 +2873,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				});
 	},
-
-	onClickBloquearExpediente : function(btn) {
-
-		var me = this;
-		var idExpediente = me.getViewModel().get(
-				"expediente.id");
-		var url = $AC
-				.getRemoteUrl('expedientecomercial/bloqueoExpediente');
-		var parametros = {
-			idExpediente : idExpediente
-		};
-		me.getView().mask();
-		Ext.Ajax
-				.request({
-
-					url : url,
-					params : parametros,
-
-					success : function(response, opts) {
-						if (Ext.decode(response.responseText).success == "false") {
-							me
-									.fireEvent(
-											"errorToast",
-											HreRem
-													.i18n(Ext
-															.decode(response.responseText).errorCode));
-							me.getView().unmask();
-						} else if (Ext
-								.decode(response.responseText).success == "true") {
-							me.getView().unmask();
-							me.fireEvent("infoToast", HreRem
-									.i18n("msg.operacion.ok"));
-							me.refrescarExpediente(true);
-						}
-					}
-				});
-	},
-	sendDesbloquearExpediente : function(btn) {
-		var me = this;
-		var window = btn.up().up();
-		var form = window.down("formBase").getForm();
-		var idExpediente = btn.up('desbloquearwindow').idExpediente;
-		var url = $AC
-				.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
-		if (me.validarActivarForm(form)) {
-			var parametros = {
-				idExpediente : idExpediente,
-				motivoCodigo : form.findField("motivo")
-						.getValue(),
-				motivoDescLibre : form.findField(
-						"motivoDescLibre").getValue()
-			};
-			me.getView().mask();
-			Ext.Ajax
-					.request({
-
-						url : url,
-						params : parametros,
-
-						success : function(response, opts) {
-							if (Ext
-									.decode(response.responseText).success == "false") {
-								me
-										.fireEvent(
-												"errorToast",
-												HreRem
-														.i18n(Ext
-																.decode(response.responseText).errorCode));
-								me.getView().unmask();
-							} else if (Ext
-									.decode(response.responseText).success == "true") {
-								me.getView().unmask();
-								me
-										.fireEvent(
-												"infoToast",
-												HreRem
-														.i18n("msg.operacion.ok"));
-								window.parent
-										.funcionReloadExp();
-								window.hide();
-
-							}
-						}
-					});
-		} else {
-			me.fireEvent("errorToast", HreRem
-					.i18n("msg.form.invalido"));
-		}
-	},
-	onClickDesbloquearExpediente : function(btn) {
-		var me = this;
-		var idExpediente = me.getViewModel().get(
-				"expediente.id");
-		var ventanaFormalizacion = btn.up().up();
-		Ext.create('HreRem.view.expedientes.Desbloquear', {
-			idExpediente : idExpediente,
-			parent : ventanaFormalizacion
-		}).show();
-	},
 	validarActivarForm : function(form) {
 		var motivoCodigo = form.findField("motivo").getValue();
 		var motivoDescLibre = form.findField("motivoDescLibre")
@@ -3085,38 +3017,70 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				});
 	},
 
-	onCambioTipoImpuesto : function(combo, value, oldValue,
-			eOpts) {
+	onCambioTipoImpuesto : function(combo, value, oldValue, eOpts) {
 		try {
-			if (!Ext.isEmpty(oldValue)) {
-				var me = this, tipoAplicable = me
-						.lookupReference('tipoAplicable'), operacionExenta = me
-						.lookupReference('chkboxOperacionExenta'), inversionSujetoPasivo = me
-						.lookupReference('chkboxInversionSujetoPasivo'), renunciaExencion = me
-						.lookupReference('chkboxRenunciaExencion');
-
-				if (CONST.TIPO_IMPUESTO['ITP'] == value) {
-					tipoAplicable.reset();
-					tipoAplicable.setDisabled(true);
-					tipoAplicable.allowBlank = true;
-					tipoAplicable.setValue(0);
-					operacionExenta.reset();
-					operacionExenta.setReadOnly(true);
-					inversionSujetoPasivo.reset();
-					inversionSujetoPasivo.setReadOnly(true);
-					renunciaExencion.reset();
-					renunciaExencion.setReadOnly(true);
-				} else {
-					tipoAplicable.setDisabled(false);
-					tipoAplicable.allowBlank = false;
-					operacionExenta.setReadOnly(false);
-					inversionSujetoPasivo.setReadOnly(false);
+			
+			if (!Ext.isEmpty(value)) {
+				if(!Ext.isEmpty(value.data)){
+					value = value.get('codigo');
 				}
+				var me = this, 
+				tipoAplicable = me.lookupReference('tipoAplicable'), 
+				operacionExenta = me.lookupReference('chkboxOperacionExenta'), 
+				inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'), 
+				renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+				grupoImpuesto = me.lookupReference('grupoImpuestoRef'),
+				tributosPropiedad= me.lookupReference('chkboxTributosPropiedad');
+				
+		    	var esBankia = me.getViewModel().get("expediente.esBankia");
+		    	if(!esBankia){
+		    		grupoImpuesto.setDisabled(true);
+		    	}
+	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
+	    			tipoAplicable.reset();	    				
+	    			inversionSujetoPasivo.reset();
+	    			tributosPropiedad.reset();
+	    			renunciaExencion.reset();
+	    			
+	    			tipoAplicable.setDisabled(true);
+	    			renunciaExencion.setDisabled(true);
+	    			//tributosPropiedad.setDisabled(true);
+	    			inversionSujetoPasivo.setDisabled(true);
+	    			
+	    			if(esBankia){
+	    				grupoImpuesto.clearValue();
+	    				grupoImpuesto.setDisabled(true);
+	    			}
+	    			
+	    		}else{
+	    			
+	    			tributosPropiedad.allowBlank = false;
+	    			tipoAplicable.allowBlank = false;
+	    			renunciaExencion.allowBlank=false;
+	    			inversionSujetoPasivo.allowBlank=false;
+	    			
+	    			tributosPropiedad.validate();
+	    			renunciaExencion.validate();
+	    			inversionSujetoPasivo.validate();
+	    			
+	    			tipoAplicable.setDisabled(false);
+	    			tributosPropiedad.setDisabled(false);
+	    			renunciaExencion.setDisabled(false);
+	    			inversionSujetoPasivo.setDisabled(false);
+	    			
+	    			if(esBankia){
+		    			grupoImpuesto.allowBlank = false;
+		    			grupoImpuesto.setDisabled(false);
+		    			tipoAplicable.setDisabled(false);
+		    			tipoAplicable.setDisabled(false);
+		    			inversionSujetoPasivo.setDisabled(false);
+		    			renunciaExencion.setDisabled(false);
+		    			tributosPropiedad.setDisabled(false);
+	    			}
+	    		}
 			}
 		} catch (err) {
-			Ext.global.console
-					.log('Error en onCambioTipoImpuesto: '
-							+ err)
+			Ext.global.console.log('Error en onCambioTipoImpuesto: '+ err)
 		}
 	},
 
@@ -3144,17 +3108,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onCambioRenunciaExencion : function(checkbox, newValue,
 			oldValue, eOpts) {
 		if (!Ext.isEmpty(oldValue)) {
-			var me = this, tipoAplicable = me
-					.lookupReference('tipoAplicable');
-
-			if (newValue == false) {
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-			} else {
-				tipoAplicable.setDisabled(false);
-				tipoAplicable.allowBlank = false;
+			var me = this, 
+			tipoAplicable = me.lookupReference('tipoAplicable');
+			var esBankia = me.getViewModel().get("expediente.esBankia");
+			
+			if (esBankia) {
+				if (newValue == true) {
+					tipoAplicable.reset();
+					tipoAplicable.allowBlank = false;
+					tipoAplicable.setDisabled(false);
+				}else{
+					tipoAplicable.reset();
+					tipoAplicable.allowBlank = true;
+					tipoAplicable.setDisabled(true);
+				}
+			}else{
+				if (newValue == false) {
+					tipoAplicable.reset();
+					tipoAplicable.allowBlank = true;
+					tipoAplicable.setDisabled(true);
+				} else {
+					tipoAplicable.setDisabled(false);
+					tipoAplicable.allowBlank = false;
+				}
 			}
+
+			
 		}
 	},
 	onCambioCheckPorcentual : function(checkbox, newValue,
@@ -3465,8 +3444,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
-			meses = me.lookupReference('mesesCarencia'),
-			importe = me.lookupReference('importeCarencia');
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesCarencia]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeCarencia]');
 	
 			if(newValue == true) {
 				meses.setDisabled(false);
@@ -3967,9 +3946,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
 			var me = this,
-			meses = me.lookupReference('mesesBonificacion'),
-			importe = me.lookupReference('importeBonificacion');
+
+			meses = checkbox.up('[xtype=fieldset]').down('[name=mesesBonificacion]');
+			importe = checkbox.up('[xtype=fieldset]').down('[name=importeBonificacion]');
 	
+			
+			
 			if(newValue == true) {
 				meses.setDisabled(false);
 				importe.setDisabled(false);
@@ -4971,6 +4953,7 @@ comprobarFormatoModificar: function() {
 	
 	comprobarProcesoAsincrono: function(tabPanel, view) {			
 		var me= this;
+		view.mask("Cargando...");
 		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
 		var idExpediente = me.getViewModel().getData().expediente.id;	
 		Ext.Ajax.request({
@@ -4978,11 +4961,23 @@ comprobarFormatoModificar: function() {
 	    		params: {idExpediente: idExpediente},
 	    		success: function(response, opts){
 	    			var data = Ext.decode(response.responseText);
+					Ext.suspendLayouts();
+					if(tabPanel.getActiveTab().xtype == 'ofertaexpediente'){
+						tabPanel = tabPanel.getActiveTab();
+					}
 	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
 						view.procesado = true;
-						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
-	    			}					
-	    		}	    		
+						tabPanel.down("[itemId=botoneditar]").enable();	
+						tabPanel.getActiveTab().unmask();				
+						
+	    			}else{
+						view.procesado = false;	
+						tabPanel.down("[itemId=botoneditar]").disable();
+						tabPanel.getActiveTab().mask("...Tramitando...");
+					}
+					Ext.resumeLayouts();
+					view.unmask();
+	    		}
 	   	});	   	
 	},
 	
@@ -5035,9 +5030,11 @@ comprobarFormatoModificar: function() {
 	onClickGeneraFichaComercialHojaExcel: function(btn) {
 				var me = this, config = {};
 		
-				config.params = {};
-				config.params.idExpediente = me.getViewModel().get("expediente.id");
-				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				config.params = {
+						"id" : [ me.getViewModel().get("expediente.numExpediente") ],
+						"reportCode" : 'FichaComercial'
+				};
+				config.url= $AC.getRemoteUrl("ofertas/generateReport");
 				
 				me.fireEvent("downloadFile", config);
 			},
@@ -5054,15 +5051,16 @@ comprobarFormatoModificar: function() {
 		    icon: Ext.Msg.INFO,
 		    fn: function(btn) {
 		        if (btn === 'ok') {
-					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
+					var url = $AC.getRemoteUrl("ofertas/enviarCorreoFichaComercialThread");
 					var parametros = {
-							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
-							idExpediente : me.getViewModel().data.expediente.id
+							id : [ me.getViewModel().get("expediente.numExpediente") ],
+							reportCode : 'FichaComercial'
 					};
 					
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					Ext.Ajax.request({
 			    	     url: url,
+			    	     method: 'POST',
 			    	     params: parametros,
 			    	     success: function(response, opts) {
 			    	    	 if(Ext.decode(response.responseText).success == "false") {
@@ -5073,6 +5071,10 @@ comprobarFormatoModificar: function() {
 			    	        	me.getView().unmask();
 			    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							 }
+			    	     },
+			    	     failure: function (a, operation) {
+			    	    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	    	 me.getView().unmask();
 			    	     }
 			    	 });
 		        }
@@ -5259,7 +5261,49 @@ comprobarFormatoModificar: function() {
 			}
 		});
 	},
-	
+		lanzarDatosPbc: function(btn){
+    		//TODO
+    		var me= this;
+    		var url =  $AC.getRemoteUrl('expedientecomercial/lanzarDatosPbc');
+    		var numOferta = me.getViewModel().data.datosbasicosoferta.getData().numOferta;
+    		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+
+    		Ext.Ajax.request({
+    			     url: url,
+    			     params:  {numOferta : numOferta},
+    			     success: function(response, opts) {
+    			    	 data = Ext.decode(response.responseText);
+    			    	 if ( data.data )
+    			    		 data = data.data;
+
+    			    	 statusMessage = {
+    			    			 "status" : null,
+    			    			 "message": null
+    			    	 };
+
+    			    	 if ("true" == data.success) {
+    			    		 statusMessage.status = "infoToast";
+    			    		 statusMessage.message = HreRem.i18n("msg.operacion.ok");
+    			    	 } else {
+    			    		 statusMessage.status = "errorToast";
+    			    		 statusMessage.message = data.descripcion
+    			    		 							&& data.descripcion.length > 0 ?
+    			    		 									data.descripcion : HreRem.i18n("msg.operacion.ko");
+    			    	 }
+
+    			    	 me.fireEvent(statusMessage.status ,statusMessage.message);
+    			     },
+    	        failure: function(response, opts) {
+    					me.fireEvent("errorToast",data.msg);
+    			},
+    			callback : function() {
+    				me.getView().unmask();
+    				me.refrescarExpediente(true);
+    			}
+
+    		});
+    	},
+
 	recalcularHonorarios : function(btn) {
 		var form = btn.up('formBase');
 		var me = this;
@@ -5376,5 +5420,266 @@ comprobarFormatoModificar: function() {
 			}
 		}
 		
+	},
+	
+	onChangeMetodoActualizacion: function (combo, value){
+		var me = this;
+		
+		var periodicidad = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=periodicidadBk]');
+		var checkboxIPC = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=checkboxIPC]');
+		var checkIGC = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=checkIGC]');
+		var fechaActualizacionRenta = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=fechaActualizacionRenta]');
+		var actualizacionRentaGridRef = combo.up('[reference=fieldsetActualizacionRenta]').down('[reference=actualizacionRentaGridRef]');
+		
+		periodicidad.setDisabled(true);
+		checkboxIPC.setDisabled(true);
+		checkIGC.setDisabled(true);
+		fechaActualizacionRenta.setDisabled(true);
+		actualizacionRentaGridRef.setDisabled(true);
+		checkboxIPC.setReadOnly(false);
+		
+		
+
+		
+		if(value == CONST.METODO_ATUALIZACION_RENTA['COD_LIBRE']){
+			actualizacionRentaGridRef.setDisabled(false);
+			periodicidad.setValue("");
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
+			fechaActualizacionRenta.setValue("");
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
+			checkboxIPC.setDisabled(false);
+			checkIGC.setDisabled(false);
+			periodicidad.setValue("");
+			fechaActualizacionRenta.setValue("");
+			
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_MERCADO']){
+			periodicidad.setDisabled(false);
+			fechaActualizacionRenta.setDisabled(false);
+			checkboxIPC.setValue("");
+			checkIGC.setValue("");
+		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_IPCMERCADO']){
+			periodicidad.setDisabled(false);
+			fechaActualizacionRenta.setDisabled(false);
+			checkboxIPC.setDisabled(false);
+			checkboxIPC.setValue(true);
+			checkboxIPC.setReadOnly(true);
+
+			checkIGC.setValue("");
+		}
+
+	},
+	
+	hacerCamposObligatorios: function (form){
+		var me = this;
+		var view = me.getView();
+		var isOk = true;
+		if(form.xtype == "condicionesexpediente"){
+			var valorMetodoActualizacion = view.down('[reference=comboMetodoActualizacionRentaRef]').value;
+			if(valorMetodoActualizacion == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
+				var checkboxIPC = view.down('[reference=checkboxIPC]').getValue();
+				var checkIGC = view.down('[reference=checkIGC]').getValue();
+				if(checkboxIPC =="" && checkIGC ==""){
+					isOk = false;
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ipc.o.igp.marcado"));
+				}
+			}
+		} 
+		
+		return isOk;
+	},
+	evaluarLabelCaixa: function (form){
+		var me = this;
+		var labelAlquiler = me.lookupReference('tituloAlquilerRef');
+		var labelVenta = me.lookupReference('tituloVentaRef');
+		
+		var viewModel = me.getViewModel();
+		if(viewModel.get('esCarteraBankia')){
+			labelAlquiler.setTitle(HreRem.i18n('title.generales'));
+			labelVenta.setTitle(HreRem.i18n('title.generales'));
+		}
+	},
+	
+	changeOpcionCompra: function (combo, value, oldValue, eOpts, recarga){
+		var me = this;
+		var form = combo.up('form');
+		var valorOpcionCompra = form.down('field[name=valorOpcionCompra]');
+		var fechaOpcionCompra = form.down('field[name=fechaOpcionCompra]');
+		
+		if(value == "true"){
+			valorOpcionCompra.setDisabled(false);
+			fechaOpcionCompra.setDisabled(false);
+		}else{
+			valorOpcionCompra.setDisabled(true);
+			fechaOpcionCompra.setDisabled(true);
+		}
+	},
+
+	onClickCheckboxAval: function(checkbox, newValue, oldValue, eOpts){
+		var me = this;
+		var avalista= me.lookupReference('avalistaRef');
+		var documento= me.lookupReference('documentoRef');
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		var entidadBancaria= me.lookupReference('entidadBancariaRef');
+		var fechaVencimiento=me.lookupReference('fechaVencimientoRef');
+		if(checkbox.checked){
+			avalista.allowBlank=false;
+			avalista.setDisabled(false);
+			documento.allowBlank=false;
+			documento.setDisabled(false);
+			meses.setDisabled(false);
+			importe.setDisabled(false);
+			entidadBancaria.setDisabled(false);
+			fechaVencimiento.setDisabled(false);
+		}else{
+			avalista.allowBlank=true;
+			avalista.setValue("");
+			avalista.setDisabled(true);
+			documento.allowBlank=true;
+			documento.setValue(null);
+			documento.setDisabled(true);
+			meses.setDisabled(true);
+			avalista.setValue("");
+			importe.setDisabled(true);
+			importe.setValue(null);
+			entidadBancaria.setDisabled(true);
+			entidadBancaria.setValue(null);
+			fechaVencimiento.setDisabled(true);
+			fechaVencimiento.setValue(null);
+		}
+	},
+	
+	onChangeMesesGarantiasAval: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		if(Ext.isEmpty(meses.value)){
+			importe.setDisabled(false);
+		}else{
+			importe.setDisabled(true);
+		}
+	},
+	
+	onChangeImporteGarantiasAval: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesAvalRef');
+		var importe = me.lookupReference('importeAvalRef');
+		if(Ext.isEmpty(importe.value)){
+			meses.setDisabled(false);
+		}else{
+			meses.setDisabled(true);
+			meses.setValue(null);
+		}
+	},
+	
+	onChangeComboResultadoHaya: function(combo, value){
+		var me = this;
+		var motivoRechazo = me.lookupReference('motivoRechazoRef');
+		if(combo.value == "02"){
+			motivoRechazo.allowBlank=false;
+			motivoRechazo.setDisabled(false);
+		}else{
+			motivoRechazo.allowBlank=true;
+			motivoRechazo.setDisabled(true);
+			motivoRechazo.setValue(null);
+		}
+	},
+	
+	onChangeMesesGarantiasRentas: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesRentasRef');
+		var importe = me.lookupReference('importeRentasRef');
+		if(Ext.isEmpty(meses.value)){
+			importe.setDisabled(false);
+		}else{
+			importe.setDisabled(true);
+			importe.setValue(null);
+		}
+	},
+	
+	onChangeImporteGarantiasRentas: function(combo, value){
+		var me = this;
+		var meses = me.lookupReference('mesesRentasRef');
+		var importe = me.lookupReference('importeRentasRef');
+		if(Ext.isEmpty(importe.value)){
+			meses.setDisabled(false);
+		}else{
+			meses.setDisabled(true);
+			meses.setValue(null);
+		}
+	},
+	
+	onClickCheckBoxSeguroRentas: function(checkbox){
+		var me = this;
+		var aseguradora= me.lookupReference('aseguradoraRef');
+		var fechaSancionRentas= me.lookupReference('fechaSancionRentasRef');
+		var mesesRentas= me.lookupReference('mesesRentasRef');
+		var importeRentas= me.lookupReference('importeRentasRef');
+		
+		if(checkbox.checked){
+			aseguradora.allowBlank=false;
+			aseguradora.setDisabled(false);
+			fechaSancionRentas.allowBlank=false;
+			fechaSancionRentas.setDisabled(false);
+			mesesRentas.setDisabled(false);
+			importeRentas.setDisabled(false);
+		}else{
+			aseguradora.allowBlank=true;
+			aseguradora.setValue("");
+			aseguradora.setDisabled(true);
+			fechaSancionRentas.allowBlank=true;
+			fechaSancionRentas.setValue(null);
+			fechaSancionRentas.setDisabled(true);
+			mesesRentas.allowBlank=true;
+			mesesRentas.setDisabled(true);
+			mesesRentas.setValue(null);
+			importeRentas.allowBlank=true;
+			importeRentas.setDisabled(true);
+			importeRentas.setValue(null);
+		}
+	},
+	
+	onClickCheckboxScoring: function(checkbox){
+		var me = this;
+		var resultadoHaya= me.lookupReference('resultadoHayaRef');
+		var fechaSancion= me.lookupReference('fechaSancionRef');
+		var	numeroExpediente =  me.lookupReference('numeroExpedienteRef');
+		var resultadoPropiedad= me.lookupReference('resultadoPropiedadRef');
+		var ratingHaya= me.lookupReference('ratingHayaRef');
+		var motivoRechazo= me.lookupReference('motivoRechazoRef');
+		if(checkbox.checked){
+			resultadoHaya.allowBlank=false;
+			resultadoHaya.setDisabled(false);
+			fechaSancion.allowBlank=false;
+			fechaSancion.setDisabled(false);
+			numeroExpediente.allowBlank=false;
+			numeroExpediente.setDisabled(false);
+			resultadoPropiedad.allowBlank=false;
+			resultadoPropiedad.setDisabled(false);
+			ratingHaya.allowBlank=false;
+			ratingHaya.setDisabled(false);
+		}else{
+			resultadoHaya.allowBlank=true;
+			resultadoHaya.setValue("");
+			resultadoHaya.setDisabled(true);
+			fechaSancion.allowBlank=true;
+			fechaSancion.setValue(null);
+			fechaSancion.setDisabled(true);
+			numeroExpediente.allowBlank=true;
+			numeroExpediente.setValue(null);
+			numeroExpediente.setDisabled(true);
+			resultadoPropiedad.allowBlank=true;
+			resultadoPropiedad.setValue(null);
+			resultadoPropiedad.setDisabled(true);
+			ratingHaya.allowBlank=true;
+			ratingHaya.setValue(null);
+			ratingHaya.setDisabled(true);
+			motivoRechazo.allowBlank=true;
+			motivoRechazo.setDisabled(true);
+			motivoRechazo.setValue("");
+		}
 	}
+	
+	
 });

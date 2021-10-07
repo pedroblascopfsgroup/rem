@@ -169,6 +169,13 @@ public class Comprador implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IAP_ID")
 	private InfoAdicionalPersona infoAdicionalPersona;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+
+	@Column(name = "COM_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
 
 
 	public Long getId() {
@@ -465,5 +472,20 @@ public class Comprador implements Serializable, Auditable {
 	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
 		this.infoAdicionalPersona = infoAdicionalPersona;
 	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
 	
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
 }

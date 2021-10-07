@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=20210928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-15244
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,9 @@
 --##        0.1 Versión inicial - [HREOS-14197] - Daniel Algaba
 --##        0.2  Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
+--##        0.4 Se añade el truncado de la tabla TMP_ACT_SCM y se inserta si un activo pasa a tener Fecha de posesión o al contrario - [HREOS-14686] - Daniel Algaba
+--##	      0.5 Se añade el FLAG EN REM en la insercción de la TMP_ACT_SCM - [HREOS-14837] - Daniel Algaba
+--##	      0.6 Se añade un control en la AJD para activo - [HREOS-15244] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -40,6 +43,29 @@ CREATE OR REPLACE PROCEDURE SP_BCR_02_ADJUDICACION
 
 BEGIN
       SALIDA := '[INICIO]'||CHR(10);
+
+      SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_ACT_SCM  [INFO]'|| CHR(10);
+
+      #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_ACT_SCM');
+
+      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                    ACT_ID
+                    , FECHA_CALCULO
+                  )
+                  SELECT
+                     DISTINCT ACT.ACT_ID
+                     , SYSDATE
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION ADJ ON ACT.BIE_ID = ADJ.BIE_ID AND ADJ.BORRADO = 0
+                  WHERE APR.FEC_POSESION IS NULL AND ADJ.BIE_ADJ_F_REA_POSESION IS NOT NULL
+                  OR APR.FEC_POSESION IS NOT NULL AND ADJ.BIE_ADJ_F_REA_POSESION IS NULL 
+                  OR TO_DATE(APR.FEC_POSESION,''yyyymmdd'') <> ADJ.BIE_ADJ_F_REA_POSESION
+                  AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
+
+      EXECUTE IMMEDIATE V_MSQL;
+
+      SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM [INFO]'|| CHR(10);
 
       SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS DE ADJUDICACIÓN.'|| CHR(10);
 
@@ -112,7 +138,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION BIE_ADJ ON BIE_ADJ.BIE_ID = BIE.BIE_ID AND BIE_ADJ.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND AJD.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON BIE_ADJ.BIE_ADJ_ID = AJD.BIE_ADJ_ID AND AJD.ACT_ID = ACT.ACT_ID AND AJD.BORRADO = 0
                   WHERE TTA.DD_TTA_CODIGO = ''01''
                   AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'
                   ) AUX

@@ -143,6 +143,8 @@ public class Visita implements Serializable, Auditable {
     private Integer realizaVisitaApiCustodio;*/
     
     
+    @Column(name = "VIS_NUMERO_CONTACTO")
+    private Long numeroContacto;
     
 	@Version   
 	private Long version;
@@ -373,6 +375,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
 		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
+	}
+
+	public Long getNumeroContacto() {
+		return numeroContacto;
+	}
+
+	public void setNumeroContacto(Long numeroContacto) {
+		this.numeroContacto = numeroContacto;
 	}
    
 }

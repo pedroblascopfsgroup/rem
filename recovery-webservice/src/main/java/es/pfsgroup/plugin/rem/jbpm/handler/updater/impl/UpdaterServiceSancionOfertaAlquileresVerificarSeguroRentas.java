@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -16,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -24,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.SeguroRentasAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
@@ -44,6 +47,10 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+		
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas.class);
 		
@@ -68,12 +75,13 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
 		Oferta oferta = expedienteComercial.getOferta();
 		
+		boolean estadoBcModificado = false;
 		Boolean checkDepositoMarcado = false;
 		Boolean checkFiadorSolidarioMarcado = false;
 		
@@ -102,6 +110,8 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
 					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
 					seguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
+					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC)));
+					estadoBcModificado = true;
 				}else {
 					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_RECHAZADO);
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
@@ -217,6 +227,10 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		genericDao.update(SeguroRentasAlquiler.class, seguroRentasAlquiler);
 		historicoSeguroRentasAlquiler.setSeguroRentasAlquiler(seguroRentasAlquiler);
 		genericDao.save(HistoricoSeguroRentasAlquiler.class, historicoSeguroRentasAlquiler);
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		}
 	}
 
 	public String[] getCodigoTarea() {

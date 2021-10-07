@@ -1,8 +1,20 @@
 Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel', {
 	extend: 'HreRem.view.common.DDViewModel',
 	alias: 'viewmodel.slidedatoscomprador',
+	requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase','HreRem.model.FichaComprador'],
 
 	data: {},
+	formulas : {
+		esObligatorioPersonaJuridica : function(get) {
+			var me = this;
+			var codigoTipoPersona = get('comprador.codTipoPersona');
+			
+			if (codigoTipoPersona === CONST.TIPO_PERSONA['JURIDICA']) {
+				return true;
+			}
+			return false;
+		}
+	},
 	stores: {		
 		comboTipoGradoPropiedad: {
 			model: 'HreRem.model.ComboBase',
@@ -113,6 +125,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				extraParams: {diccionario: 'vinculoCaixa'}
 			},
 			autoLoad: true   	
-	    }
+	    },
+	    comboEstadoCivilCustom: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/comboEstadoCivilCustom',
+				extraParams: {codCartera: '{comprador.entidadPropietariaCodigo}'}
+			},
+			//session: true,
+			autoLoad: true
+	    },		
+
+		comboSiNoBoolean: {
+			data : [	        	
+	        	{"codigo":"false", "descripcion":"No"},
+	        	{"codigo":"true", "descripcion":"Si"}
+	    	]
+		},
+		
+		comboMunicipioRepresentante: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaNacimientoRepresentanteCodigo}'}
+			}
+    	},
+    	
+    	comboMunicipioComprador: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaNacimientoCompradorCodigo}'}
+			}
+    	}
 	}
 });

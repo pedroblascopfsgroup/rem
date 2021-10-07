@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14714
 --## PRODUCTO=NO
---## Finalidad: Creación diccionario GAR_GASTOS_REPERCUTIDOS
+--## Finalidad: Alter coe
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:

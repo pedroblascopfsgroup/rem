@@ -133,6 +133,38 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean isEmpleadoCaixa;
 
+	private Boolean ofertaEspecial;
+	
+	private Boolean ventaSobrePlano;
+	
+	private String riesgoOperacionCodigo;
+	
+	private String riesgoOperacionDescripcion;
+	
+	private Boolean ventaCarteraCfv;
+	
+	private Boolean opcionACompra;
+	
+	private Double valorCompra;
+	
+	private Date fechaVencimientoOpcionCompra;
+	
+	private String clasificacionCodigo;
+
+	private Boolean checkListDocumentalCompleto;
+
+	private Boolean tieneInterlocutoresNoEnviados;
+	
+	private Boolean checkSubasta;
+	
+	private Long numeroContacto;
+	
+	private String canalDistribucionBc;
+	
+	private String tipoOfertaAlquilerCodigo; 
+    
+    private Long numOfertaCaixa;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -597,6 +629,134 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIsEmpleadoCaixa(Boolean isEmpleadoCaixa) {
 		this.isEmpleadoCaixa = isEmpleadoCaixa;
+	}
+	
+	public Boolean getOfertaEspecial() {
+		return ofertaEspecial;
+	}
+
+	public void setOfertaEspecial(Boolean ofertaEspecial) {
+		this.ofertaEspecial = ofertaEspecial;
+	}
+	
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	
+	public String getRiesgoOperacionCodigo() {
+		return riesgoOperacionCodigo;
+	}
+
+	public void setRiesgoOperacionCodigo(String riesgoOperacionCodigo) {
+		this.riesgoOperacionCodigo = riesgoOperacionCodigo;
+	}
+	
+	public String getRiesgoOperacionDescripcion() {
+		return riesgoOperacionDescripcion;
+	}
+
+	public void setRiesgoOperacionDescripcion(String riesgoOperacionDescripcion) {
+		this.riesgoOperacionDescripcion = riesgoOperacionDescripcion;
+	}
+	
+	public Boolean getVentaCarteraCfv() {
+		return ventaCarteraCfv;
+	}
+
+	public void setVentaCarteraCfv(Boolean ventaCarteraCfv) {
+		this.ventaCarteraCfv = ventaCarteraCfv;
+	}
+
+	public Boolean getOpcionACompra() {
+		return opcionACompra;
+	}
+
+	public void setOpcionACompra(Boolean opcionACompra) {
+		this.opcionACompra = opcionACompra;
+	}
+
+	public Double getValorCompra() {
+		return valorCompra;
+	}
+
+	public void setValorCompra(Double valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
+	public Date getFechaVencimientoOpcionCompra() {
+		return fechaVencimientoOpcionCompra;
+	}
+
+	public void setFechaVencimientoOpcionCompra(Date fechaVencimientoOpcionCompra) {
+		this.fechaVencimientoOpcionCompra = fechaVencimientoOpcionCompra;
+	}
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
+
+	public Boolean getCheckListDocumentalCompleto() {
+		return checkListDocumentalCompleto;
+	}
+
+	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
+		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
+	}
+
+	public Boolean getTieneInterlocutoresNoEnviados() {
+		return tieneInterlocutoresNoEnviados;
+	}
+
+	public void setTieneInterlocutoresNoEnviados(Boolean tieneInterlocutoresNoEnviados) {
+		this.tieneInterlocutoresNoEnviados = tieneInterlocutoresNoEnviados;
+	}
+
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
+
+	public Long getNumeroContacto() {
+		return numeroContacto;
+	}
+
+	public void setNumeroContacto(Long numeroContacto) {
+		this.numeroContacto = numeroContacto;
+	}
+
+	public String getCanalDistribucionBc() {
+		return canalDistribucionBc;
+	}
+
+	public void setCanalDistribucionBc(String canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
+	}
+
+	public String getTipoOfertaAlquilerCodigo() {
+		return tipoOfertaAlquilerCodigo;
+	}
+
+	public void setTipoOfertaAlquilerCodigo(String tipoOfertaAlquilerCodigo) {
+		this.tipoOfertaAlquilerCodigo = tipoOfertaAlquilerCodigo;
+	}
+
+	public Long getNumOfertaCaixa() {
+		return numOfertaCaixa;
+	}
+
+	public void setNumOfertaCaixa(Long numOfertaCaixa) {
+		this.numOfertaCaixa = numOfertaCaixa;
 	}
 	
 }

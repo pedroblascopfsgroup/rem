@@ -14,7 +14,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -242,11 +241,39 @@ public class ClienteComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_LOC_NAC_ID")
 	private Localidad localidadNacimiento;
 
+    @Column(name = "CLC_FECHA_NACIMIENTO_REP")
+    private Date fechaNacimientoRep;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID_REP")
+	private Localidad localidadNacimientoRep;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID_REP")
+    private DDPaises paisNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID_REP")
+	private InfoAdicionalPersona infoAdicionalPersonaRep;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_REL_ID")
 	private DDRegimenLaboral regimenLaboral;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
+
+	@Column(name = "CLC_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
+	@Column(name = "CLC_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
 	@Version   
 	private Long version;
 
@@ -672,7 +699,7 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setRegimenLaboral(DDRegimenLaboral regimenLaboral) {
 		this.regimenLaboral = regimenLaboral;
-	}   
+	}
 
 	public Long getIdC4c() {
 		return idC4c;
@@ -712,5 +739,69 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setLocalidadNacimiento(Localidad localidadNacimiento) {
 		this.localidadNacimiento = localidadNacimiento;
+	}
+
+	public Date getFechaNacimientoRep() {
+		return fechaNacimientoRep;
+	}
+
+	public void setFechaNacimientoRep(Date fechaNacimientoRep) {
+		this.fechaNacimientoRep = fechaNacimientoRep;
+	}
+
+	public Localidad getLocalidadNacimientoRep() {
+		return localidadNacimientoRep;
+	}
+
+	public void setLocalidadNacimientoRep(Localidad localidadNacimientoRep) {
+		this.localidadNacimientoRep = localidadNacimientoRep;
+	}
+
+	public DDPaises getPaisNacimientoRep() {
+		return paisNacimientoRep;
+	}
+
+	public void setPaisNacimientoRep(DDPaises paisNacimientoRep) {
+		this.paisNacimientoRep = paisNacimientoRep;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersonaRep() {
+		return infoAdicionalPersonaRep;
+	}
+
+	public void setInfoAdicionalPersonaRep(InfoAdicionalPersona infoAdicionalPersonaRep) {
+		this.infoAdicionalPersonaRep = infoAdicionalPersonaRep;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
 	}
 }

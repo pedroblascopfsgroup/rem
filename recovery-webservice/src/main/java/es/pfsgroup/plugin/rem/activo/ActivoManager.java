@@ -192,6 +192,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -1899,15 +1900,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public Page getPublicacionGrid(DtoPublicacionGridFilter dto) {		
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class ,genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {			
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}		
-		return activoDao.getBusquedaPublicacionGrid(dto);
+	public Page getPublicacionGrid(DtoPublicacionGridFilter dto) {	
+		Long usuarioId = adapter.getUsuarioLogado().getId();
+
+		return activoDao.getBusquedaPublicacionGrid(dto, usuarioId);
 	}
 
 	@Override
@@ -2025,6 +2021,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	@Transactional
 	public PerimetroActivo getPerimetroByIdActivo(Long idActivo) {
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
@@ -5745,9 +5742,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (tituloActivoTPA != null) {
 			conTitulo = tituloActivoTPA.getCodigo();
-		}else {
+		} else if (!Checks.esNulo(posesoria.getConTitulo())) {
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
+		
 		if (activoDto.getOcupado() != null) {
 			ocupado = activoDto.getOcupado();
 		} else
@@ -9333,5 +9331,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activos;
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta) {
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (activoCaixa != null && ofertaCaixa != null && tipoOferta != null) {
+			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
+				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionVenta());
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
+			}
+		}
+	}
 }
 

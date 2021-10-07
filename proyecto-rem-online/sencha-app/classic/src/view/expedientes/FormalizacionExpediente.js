@@ -13,8 +13,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	requires : ['HreRem.model.ExpedienteFormalizacionResolucion',
 			'HreRem.model.ExpedienteFinanciacion',
 			'HreRem.view.expedientes.BloqueosFormalizacionList',
-			'HreRem.model.BloqueosFormalizacionModel',
-			'HreRem.view.expedientes.Desbloquear'],
+			'HreRem.model.BloqueosFormalizacionModel'],
 	listeners : {
 		boxready : 'cargarTabData'
 	},
@@ -520,11 +519,40 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									editor : {
 										xtype : 'textarea',
-										reference : 'motivoAplazamientoRef'
+										reference : 'motivoAplazamientoRef'										
 										//allowBlank : false
 									},
+									bind:{
+										hidden: '{esBankia}'
+									},
 									renderer : coloredRender
-								}, {
+								},
+								{
+									text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
+									dataIndex : 'motivoAnulacionBc',
+									flex : 1,
+						        	editor: {
+										xtype: 'combobox',
+										
+										store: new Ext.data.Store({
+											model: 'HreRem.model.ComboBase',
+											proxy: {
+												type: 'uxproxy',
+												remoteUrl: 'generic/getDiccionario',
+												extraParams: {diccionario: 'motivoAnulacionBc'} 
+											},
+											autoLoad: true
+										}),
+										allowBlank:false,
+										displayField: 'descripcion',
+				    					valueField: 'codigo'
+									},
+									bind:{
+										hidden: '{!esBankia}'
+									},
+									renderer : coloredRender
+								},
+								{
 									dataIndex : 'fechaHoraPosicionamiento',
 									formatter : 'date("d/m/Y H:i")',
 									hidden : true,
@@ -723,80 +751,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1
 								}]
 					},
-							// GRID COMPARECIENTES EN NOMBRE DEL VENDEDOR
-							// {
-							// xtype : 'gridBaseEditableRow',
-							// title:
-							// HreRem.i18n('title.comparecientes.nombre.vendedor'),
-							// reference: 'listadocomparecientesnombrevendedor',
-							// cls : 'panel-base shadow-panel',
-							// topBar: true,
-							// requires:
-							// ['HreRem.view.expedientes.buscarCompareciente'],
-							// bind: {
-							// store: '{storeComparecientes}'
-							// },
-							//						
-							// columns: [
-							// { text:
-							// HreRem.i18n('fieldlabel.tipo.comparecencia'),
-							// dataIndex: 'tipoCompareciente',
-							// flex: 1
-							// },
-							// { text: HreRem.i18n('fieldlabel.nombre'),
-							// dataIndex: 'nombre',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('header.direccion'),
-							// dataIndex: 'direccion',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('fieldlabel.telefono'),
-							// dataIndex: 'telefono',
-							// flex: 1
-							// },
-							// {
-							// text: HreRem.i18n('fieldlabel.email'),
-							// dataIndex: 'email',
-							// flex: 1
-							// }
-							// ],
-							// onAddClick: function (btn) {
-							// var me = this;
-							// Ext.create('HreRem.view.expedientes.BuscarCompareciente',{}).show();
-							//							
-							// }
-							// },
-
 							{
 								xtype : 'button',
 								reference : 'btnGenerarHojaDatos',
-								bind : {
-									disabled : '{!resolucion.generacionHojaDatos}'
-								},
 								text : HreRem.i18n('btn.generar.hoja.datos'),
 								handler : 'onClickGenerarHojaExcel',
 								margin : '10 10 10 10'
-							}, {
-								xtype : 'button',
-								reference : 'btnDesBloquearExpediente',
-								text : HreRem.i18n('title.bloquear.exp'),
-								handler : 'onClickBloquearExpediente',
-								margin : '10 10 10 10',
-								bind : {
-									disabled : '{expediente.bloqueado}'
-								}
-							}, {
-								xtype : 'button',
-								reference : 'btnBloquearExpediente',
-								text : HreRem.i18n('title.desbloquear.exp'),
-								handler : 'onClickDesbloquearExpediente',
-								margin : '10 10 10 10',
-								bind : {
-									disabled : '{!expediente.bloqueado}'
-								}
 							}, {
 								xtype : 'button',
 								reference : 'btnAdvisoryNoteExpediente',
@@ -901,10 +861,29 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							bind : {
 								value: '{resolucion.fechaContabilizacion}',
 								visible: '{expediente.isCarteraBankia}',
-								hidden: '{esBankia}'
+								hidden: '{!esBankia}'
 							},
 							formatter: 'date("d/m/Y")',
 							readOnly: true
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.plazos'),
+						   reference: 'ventaplazosref',
+						   bind : {
+					     		value: '{resolucion.ventaPlazos}',
+					     		hidden: '{!esBankia}'
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.condicion.supensiva'),
+						   reference: 'ventansupensivaref',
+						   bind : {
+					     		value: '{resolucion.ventaCondicionSupensiva}',
+					     		hidden: '{!esBankia}',
+					     		readOnly: true
+						   }
 						}]
 					}]
 				}, {

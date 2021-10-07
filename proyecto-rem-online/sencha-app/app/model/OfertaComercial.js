@@ -87,6 +87,27 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name:'vinculoCaixaCodigo'
+            },
+            {
+            	name: 'tipologivaVentaCod'
+            },
+            {
+            	name:'provinciaNacimiento'
+            },
+            {
+            	name:'provinciaNacimientoDescripcion'
+            },
+            {
+            	name: 'codigoPostalNacimiento'
+            },
+            {
+            	name: 'emailNacimiento'
+            },
+            {
+            	name: 'telefonoNacimiento1'
+            },
+            {
+            	name: 'telefonoNacimiento2'
             }
             
     ],

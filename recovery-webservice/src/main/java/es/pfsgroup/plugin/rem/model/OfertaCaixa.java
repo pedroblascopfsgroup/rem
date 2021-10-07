@@ -17,18 +17,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
-import es.pfsgroup.plugin.rem.model.dd.DDFinalidadOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMedioPago;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaFondosPropios;
-import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 
 @Entity
 @Table(name = "OFR_OFERTAS_CAIXA", schema = "${entity.schema}")
@@ -105,6 +100,36 @@ public class OfertaCaixa implements Serializable, Auditable {
     
 	@Column(name="OFR_DETECCION_INDICIO")
 	private Boolean deteccionIndicio;
+    
+	@Column(name="OFR_CHECK_SUBASTA")
+	private Boolean checkSubasta;
+	
+	@Column(name="OFR_CHECK_DOCUMENTAL_COMPLETO")
+	private Boolean checkListDocumentalCompleto;
+	
+	@Column(name="OFR_SAN_ROD_GRR")
+	private String sancionRODGRR;
+	
+	@Column(name="OFR_SANC_LANZAMIENTOS")
+	private String sancionComiteLanzamientos;
+	
+	@Column(name="OFR_CUENTA_BANC_VIRTUAL")
+	private String cuentaBancariaVirtual;
+	
+	@Column(name="OFR_CUENTA_BANC_CLIENTE")
+	private String cuentaBancariaCliente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TVB_ID")
+	private DDTipologiaVentaBc tipologiaVentaBc;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_CANAL_DIST_VEN_ALQ")
+	private DDTipoComercializar canalDistribucionBc;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="OFR_SANCION_PBC")
+	private DDSancionPBC sancionPbc;
 	
     @Version
     private Integer version;
@@ -282,6 +307,75 @@ public class OfertaCaixa implements Serializable, Auditable {
 		this.deteccionIndicio = deteccionIndicio;
 	}
 
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
 
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
 
+	public Boolean getCheckListDocumentalCompleto() {
+		return checkListDocumentalCompleto;
+	}
+
+	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
+		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
+	}
+
+	public String getSancionRODGRR() {
+		return sancionRODGRR;
+	}
+
+	public void setSancionRODGRR(String sancionRODGRR) {
+		this.sancionRODGRR = sancionRODGRR;
+	}
+
+	public String getSancionComiteLanzamientos() {
+		return sancionComiteLanzamientos;
+	}
+
+	public void setSancionComiteLanzamientos(String sancionComiteLanzamientos) {
+		this.sancionComiteLanzamientos = sancionComiteLanzamientos;
+	}
+
+	public String getCuentaBancariaVirtual() {
+		return cuentaBancariaVirtual;
+	}
+
+	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
+		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
+	}
+
+	public String getCuentaBancariaCliente() {
+		return cuentaBancariaCliente;
+	}
+
+	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
+		this.cuentaBancariaCliente = cuentaBancariaCliente;
+	}
+
+	public DDTipologiaVentaBc getTipologiaVentaBc() {
+		return tipologiaVentaBc;
+	}
+
+	public void setTipologiaVentaBc(DDTipologiaVentaBc tipologiaVentaBc) {
+		this.tipologiaVentaBc = tipologiaVentaBc;
+	}
+
+	public DDTipoComercializar getCanalDistribucionBc() {
+		return canalDistribucionBc;
+	}
+
+	public void setCanalDistribucionBc(DDTipoComercializar canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
+	}
+
+	public DDSancionPBC getSancionPbc() {
+		return sancionPbc;
+	}
+
+	public void setSancionPbc(DDSancionPBC sancionPbc) {
+		this.sancionPbc = sancionPbc;
+	}
 }

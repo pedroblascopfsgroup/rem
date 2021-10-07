@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -24,22 +25,27 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
 @Component
 public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
@@ -67,7 +73,10 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-
+	
+	@Autowired
+    private ReservaApi reservaApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -78,16 +87,26 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
     private static final String CODIGO_SUBCARTERA_OMEGA = "65";
     public static final String CODIGO_T017 = "T017";
-
+    
+    private static final String COMBO_ARRAS = "comboArras";
+    private static final String MESES_FIANZA = "mesesFianza";
+    private static final String IMPORTE_FIANZA = "importeFianza";
+    
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
+		ExpedienteComercial expediente = null;
+		boolean vuelveArras = false;
+		Double importe = null;
+		Integer mesesFianza = null;
+		DecimalFormat num = new DecimalFormat("###.##");
+		boolean estadoBcModificado = false;
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
 
@@ -99,12 +118,27 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
 							expediente.setEstadoPbc(0);
+							Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroEstado);
+							expediente.setEstado(estado);
+							
+							if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
+								String estadoBcString = null;
+								if(reservaApi.tieneReservaFirmada(expediente)) {
+									estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+								}else {
+									estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+									ofertaApi.finalizarOferta(ofertaAceptada);
+								}
+								filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
+								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstado);
+								expediente.setEstadoBc(estadoBc);
+								estadoBcModificado = true;
+							}
+							
 							if(!ofertaApi.checkReserva(ofertaAceptada) || 
 							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
 							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
-								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-								expediente.setEstado(estado);
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 								expediente.setFechaVenta(null);
@@ -171,7 +205,12 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									expediente.setEstadoPbc(2);
 								}
 								
-							} else {
+							} else if(DDCartera.isCarteraBk(activo.getCartera())){
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA);
+								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+								expediente.setEstado(estado);
+								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+							}else {
 								String codSubCartera = null;
 								if (!Checks.esNulo(activo.getSubcartera())) {
 									codSubCartera = activo.getSubcartera().getCodigo();
@@ -180,7 +219,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 									expediente.setEstado(estado);
-									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 									Oferta oferta = expediente.getOferta();
 									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -189,9 +227,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 											ofertaApi.congelarOferta(ofertaAux);
 										}
 									}
+									recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 								}
 								expediente.setEstadoPbc(1);
+								
 							}
+							
+
 							genericDao.save(ExpedienteComercial.class, expediente);
 							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
@@ -212,6 +254,33 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							}
 						}
 					}
+					
+					if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							vuelveArras = true;
+						}
+					}
+					if (MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						mesesFianza = Integer.valueOf(valor.getValor());
+					}
+					if (IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (valor.getValor().contains(",")) {
+							String valorCambiado = valor.getValor().replaceAll(",", ".");
+							importe = Double.valueOf(valorCambiado).doubleValue();
+						}else {
+							importe = Double.valueOf(valor.getValor());
+						}
+						
+					}
+				}
+				
+				if (vuelveArras) {					
+					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+				}
+				
+				if(estadoBcModificado) {
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+
 				}
 			}
 		}

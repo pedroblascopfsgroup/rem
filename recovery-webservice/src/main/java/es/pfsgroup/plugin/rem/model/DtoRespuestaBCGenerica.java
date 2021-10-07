@@ -17,6 +17,8 @@ public class DtoRespuestaBCGenerica extends WebDto {
 	private String observacionesBC;
 	private String necesidadArrasActivo;
 	
+	private String comite;
+	
 	public Long getId() {
 		return id;
 	}
@@ -52,6 +54,12 @@ public class DtoRespuestaBCGenerica extends WebDto {
 	}
 	public void setNecesidadArrasActivo(String necesidadArrasActivo) {
 		this.necesidadArrasActivo = necesidadArrasActivo;
+	}
+	public String getComite() {
+		return comite;
+	}
+	public void setComite(String comite) {
+		this.comite = comite;
 	}
 	
 	

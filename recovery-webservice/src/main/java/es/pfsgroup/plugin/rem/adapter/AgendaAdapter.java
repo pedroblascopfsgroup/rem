@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,13 +88,6 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -420,7 +414,7 @@ public class AgendaAdapter {
 		return true;
 	}
 	
-	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) {
+	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) throws Exception{
 		String errores = "";
 		for (GenericFormItem tfi : campos) {
 			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
@@ -433,7 +427,7 @@ public class AgendaAdapter {
 								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
 							}
 						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
-							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor[0]);
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
 							if(Checks.esNulo(diccionario)) {
@@ -444,13 +438,14 @@ public class AgendaAdapter {
 						Date hoy = new Date();
 						String hoyString = ft.format(hoy);
 						String dateValor = "";
+						Date fecha = null;
 						try {
-							Date fecha = ft.parse(valor[0]);
+							fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
 						}
 						dateValor = valor[0];
-						if(hoyString.compareTo(dateValor) <= 0) {
+						if(hoy.before(fecha)) {
 							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
 						}
 					}else if("numberfield".equals(tfi.getType())) {
@@ -815,13 +810,14 @@ public class AgendaAdapter {
 			List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
 			finalizarTramiteYTareas(tramite);
 			Activo activo = tramite.getActivo();
-			
+			boolean estadoOfertaBcMod = false;
 			
 			DDEstadoOferta ddEstadoOferta;
 			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
 			DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
 			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
 			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+			DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
 			DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER));
 			ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
@@ -842,6 +838,8 @@ public class AgendaAdapter {
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());
 					eco.setMotivoAnulacion(motivoRechazoAlquiler);
+					eco.setEstadoBc(estadoExpedienteBc);
+					estadoOfertaBcMod = true;
 					if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
 						eco.setFechaFinAlquiler(new Date());
 					}
@@ -900,8 +898,11 @@ public class AgendaAdapter {
 						}
 					}
 				}
-				
-				
+
+				if (estadoOfertaBcMod){
+					ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+				}
+
 			}
 		}
 		return true;
@@ -913,7 +914,7 @@ public class AgendaAdapter {
 			if (!Checks.estaVacio(tareas)) {
 				for (TareaExterna t : tareas) {
 					if (t != null) {
-						if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())){
+						if(activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) || activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())){
 							tareaActivoApi.saltoFinAlquileres(t.getId());
 						}else{
 							tareaActivoApi.saltoFin(t.getId());

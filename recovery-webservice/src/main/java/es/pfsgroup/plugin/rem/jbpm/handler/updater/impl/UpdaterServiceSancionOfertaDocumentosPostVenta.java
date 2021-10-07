@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,15 +10,17 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -27,10 +28,10 @@ import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -52,18 +53,22 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
+	private NotificatorServiceContabilidadBbva notificatorServiceContabilidadBbva;
+
+	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDocumentosPostVenta.class);
 	private static final String FECHA_INGRESO = "fechaIngreso";
 	private static final String CHECKBOX_VENTA_DIRECTA = "checkboxVentaDirecta";
+	private static final String COMBO_VENTA_SUPENSIVA = "comboVentaSupensiva";
 	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
 	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		for (TareaExternaValor valor : valores) {
 
@@ -90,6 +95,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 				activo.setVentaDirectaBankia("true".equals(valor.getValor()) ? true : false);
 				genericDao.save(Activo.class, activo);
 			}
+			
+			if (COMBO_VENTA_SUPENSIVA.equals(valor.getNombre()) && valor.getValor() != null) {
+				Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+				Formalizacion formalizacion = expedienteComercialApi.formalizacionPorExpedienteComercial(expediente.getId());
+				formalizacion.setVentaCondicionSupensiva("true".equals(valor.getValor()) ? true : false);
+				genericDao.save(Formalizacion.class, formalizacion);
+			}
 		}
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -99,9 +112,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			// Expediente se marca a vendido.
 			Filter filtro = null;
 			boolean pasaAVendido = false;
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+			if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-			} else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+			} else if (ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())) {
 				if (expediente != null && expediente.getFechaContabilizacion() != null) {
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 				} else {
@@ -150,6 +163,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 					
 					oferta.setMotivoRechazo(motivo);
 					ofertaApi.rechazarOferta(oferta);
+				}
+			}
+			if (expediente.getOferta() != null &&
+					DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+				try {
+					notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,false);
+				} catch (GestorDocumentalException e) {
+					e.printStackTrace();
 				}
 			}
 

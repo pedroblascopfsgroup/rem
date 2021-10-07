@@ -79,7 +79,18 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 
 	ActivoTramite getTramiteComercialVigenteByTrabajoT017(Long idTrabajo);
 
-
+	ActivoTramite getTramiteComercialVigenteByTrabajoT015(Long idTrabajo);
+	
+	ActivoTramite getTramiteComercialVigenteByTrabajoT018(Long idTrabajo);
+	
 	Boolean creaTareas(DtoScreening dto);
+
+	/**
+	 * Devuelve el ActivoTramite segun el id del trabajo y el tipo de tramite.
+	 * @param idTrabajo
+	 * @param codTipoTramite
+	 * @return ActivoTamite
+	 */
+	ActivoTramite getTramiteComercialVigenteByTrabajoYCodTipoTramite(Long idTrabajo, String codTipoTramite);
 
 }

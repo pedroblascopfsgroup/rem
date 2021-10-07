@@ -25,6 +25,11 @@ public class DDEstadoInterlocutor implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	public static final String CODIGO_ACTIVO = "10";
+	public static final String CODIGO_INACTIVO = "20";
+	public static final String CODIGO_SOLICITUD_ALTA = "30";
+	public static final String CODIGO_SOLICITUD_BAJA = "40";
+	public static final String CODIGO_SOLICITUD_CAMBIO_PORCENTAJE_COMPRA = "50";
+	
 
 	@Id
 	@Column(name = "DD_EIC_ID")
@@ -95,4 +100,21 @@ public class DDEstadoInterlocutor implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public static boolean isSolicitudBaja(DDEstadoInterlocutor eic) {
+		boolean is = false;
+		
+		if(eic != null && CODIGO_SOLICITUD_BAJA.equals(eic.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isBaja(DDEstadoInterlocutor eic) {
+		boolean is = false;
+		
+		if(eic != null && CODIGO_INACTIVO.equals(eic.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 }

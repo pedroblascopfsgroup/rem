@@ -356,6 +356,104 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		{
 			name: 'necesidadIf',
 			type: 'boolean'
+		},
+		{
+			name: 'fianzaExonerada',
+			type: 'boolean'
+		},
+		{
+			name: 'fechaIngresoFianzaArrendatario',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'derechoCesionSubarriendo',
+			type: 'boolean'
+		},
+		{
+			name:'vulnerabilidadDetectada',
+			type: 'boolean'
+		},
+		{
+			name:'regimenFianzaCCAACodigo'
+		},
+		{
+			name:'certificaciones',
+			type: 'boolean'
+		},
+		{
+			name:'ofrNuevasCondiciones',
+			type: 'boolean'
+		},
+		{
+			name:'fianzaContratosSubrogados',
+			type: 'boolean'
+		},
+		{
+			name:'adecuaciones',
+			type: 'boolean'
+		},
+		{
+			name:'cntSuscritoPosteridadAdj',
+			type: 'boolean'
+		},
+		{
+			name:'antiguoDeudorLocalizable',
+			type: 'boolean'
+		},
+		{
+			name:'entregasCuenta',
+			type: 'boolean'
+		},
+		{
+			name:'rentasCuenta',
+			type: 'boolean'
+		},
+		{
+			name:'importeEntregasCuenta'
+		},
+		{
+			name:'obligadoCumplimientoac56b6334c00c42d7dccbad5d00b3a693f5dd986'
+		},
+		{
+			name:'fechaPreavisoVencimientoCnt',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaInicioCnt',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaFinCnt',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'metodoActualizacionRentaCod'
+		},
+		{
+			name:'checkIGC',
+			type: 'boolean'
+		},
+		{
+			name:'obligadoCumplimiento'
+		},
+		{
+			name:'periodicidadMeses'
+		},
+		{
+			name:'fechaActualizacion',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'tipoGrupoImpuestoCod'
+		},
+		{
+			name: 'bloqueDepositoEditable',
+			type: 'boolean'
 		}
 	    
     ],

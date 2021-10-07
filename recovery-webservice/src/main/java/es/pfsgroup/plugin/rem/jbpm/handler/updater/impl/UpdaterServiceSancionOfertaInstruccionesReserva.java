@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -9,11 +10,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -21,8 +23,8 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -53,6 +55,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     private static final String TIPO_ARRAS = "tipoArras";
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
+    private static final String COMBO_QUITAR = "comboQuitar";
+   	private static final String motivoAplazamiento = "Suspensión proceso arras";
    	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
    	public static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
    	public static final String CODIGO_T017 = "T017";
@@ -60,97 +64,107 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		if(!Checks.esNulo(ofertaAceptada)){
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			FechaArrasExpediente fae = null;
-			DDEstadosExpedienteComercial estadoExp = null;
-			DDEstadoExpedienteBc estadoBc = null;
-				
+		boolean comboQuitar = false;
+		boolean reagendar = false;
+		String tipoArras = "";
+		Date fechaEnvio = null;
+		DtoGridFechaArras dtoArras = new DtoGridFechaArras();
 		
-			for(TareaExternaValor valor :  valores){
-	
-				if(FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
-				{
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)){
-						try {
-							reserva.setFechaEnvio(ft.parse(valor.getValor()));
-							genericDao.save(Reserva.class, reserva);
-						} catch (ParseException e) {
-							e.printStackTrace();
+
+		try {
+			if(!Checks.esNulo(ofertaAceptada)){
+				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+				String estadoExpediente = null;
+				String estadoBc = null;
+					
+			
+				for(TareaExternaValor valor :  valores){
+					if(FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						fechaEnvio = ft.parse(valor.getValor());
+					}else if(TIPO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						tipoArras = valor.getValor();
+					}else if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						if (DDSiNo.SI.equals(valor.getValor())) {			
+							reagendar = true;
+						}
+					}else if(MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_APLAZADA);
+						dtoArras.setMotivoAnulacion(valor.getValor());
+					}else if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (DDSiNo.SI.equals(valor.getValor())) {
+							comboQuitar = true;
 						}
 					}
 				}
+				Reserva reserva = expediente.getReserva();
+				if(comboQuitar || reagendar) {
+					if(comboQuitar) {
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 				
-				if(TIPO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					Reserva reserva = expediente.getReserva();
-					if(!Checks.esNulo(reserva)){
+						if (reserva != null) {
+							Auditoria.delete(reserva);
+							genericDao.save(Reserva.class, reserva);
+						}
 						
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-						DDTiposArras tipoArras = (DDTiposArras) genericDao.get(DDTiposArras.class, filtro);						
-						reserva.setTipoArras(tipoArras);
+						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
+						dtoArras.setMotivoAnulacion(motivoAplazamiento);
+					}else {
+						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
+					}
+					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);
+				}else {
+					if(reserva != null) {
+						reserva.setFechaEnvio(fechaEnvio);
+						reserva.setTipoArras( genericDao.get(DDTiposArras.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoArras)));
 						genericDao.save(Reserva.class, reserva);
 					}
 				}
-				
-				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					if (DDSiNo.SI.equals(valor.getValor())) {						
-						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS));
-						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
-						expediente.setEstado(estadoExp);
-						expediente.setEstadoBc(estadoBc);
-						estadoBcModificado = true;
-					}
+
+				if(estadoExpediente != null) {
+					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
 				}
-				
-				if(MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					Filter filter = null;
-					fae = expedienteComercialApi.getUltimaPropuesta(expediente.getId(),null);
-					if (fae != null) {
-						DDMotivosEstadoBC motivo = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivosEstadoBC.CODIGO_APLAZADA));
-						if (motivo != null) {
-							fae.setValidacionBC(motivo);
-						}
-						fae.setMotivoAnulacion(valor.getValor());
-						
-						genericDao.save(FechaArrasExpediente.class, fae);
-					}
+				if(estadoBc != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())){
+					estadoBcModificado = true;
+					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+
 				}
-				
-				
 				genericDao.save(ExpedienteComercial.class, expediente);
-			}
-			// LLamada servicio web Bankia para modificaciones según tipo
-			// propuesta (MOD3)
-			
-			if(!Checks.estaVacio(valores) && ofertaAceptada.getActivoPrincipal() != null){
-				String codigoTarea = null;
-				if(activoTramiteApi.isTramiteVenta(tramite.getTipoTramite())) {
-					codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA;
-				}else if(activoTramiteApi.isTramiteVentaApple(tramite.getTipoTramite())) {
-					codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T017_INSTRUCCIONES_RESERVA;
+				
+				// LLamada servicio web Bankia para modificaciones según tipo
+				// propuesta (MOD3)
+				
+				if(!Checks.estaVacio(valores) && ofertaAceptada.getActivoPrincipal() != null){
+					String codigoTarea = null;
+					if(activoTramiteApi.isTramiteVenta(tramite.getTipoTramite())) {
+						codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T013_INSTRUCCIONES_RESERVA;
+					}else if(activoTramiteApi.isTramiteVentaApple(tramite.getTipoTramite())) {
+						codigoTarea = UpdaterServiceSancionOfertaInstruccionesReserva.CODIGO_T017_INSTRUCCIONES_RESERVA;
+					}
+					
+					if( codigoTarea != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera()) 
+						&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+						&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
+						if (!uvemManagerApi.esTramiteOffline(codigoTarea,expediente)) {
+							uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
+						}					
+						
+					}
 				}
 				
-				if( codigoTarea != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera()) 
-					&& !DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-					&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
-					if (!uvemManagerApi.esTramiteOffline(codigoTarea,expediente)) {
-						uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
-					}					
-					
+				if(estadoBcModificado) {
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
+	
 			}
-			
-			if(estadoBcModificado) {
-				ofertaApi.replicateOfertaFlush(expediente.getOferta());
-			}
-
+		}catch (ParseException e) {
+			e.printStackTrace();
 		}
-
 	}
 	
 	

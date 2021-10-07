@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
@@ -44,6 +45,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_COMERCIAL_ALQUILER = "T015";
 	public static final String CODIGO_TAREA_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE = "T017";
+	public static final String CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL = "T018";
 	
 	/**
 	 * Recupera un trámite pasándole su id.
@@ -329,5 +331,13 @@ public interface ActivoTramiteApi {
 	boolean isTramiteVentaApple(TipoProcedimiento procedimiento);
 
 	TareaExterna getTareaActivaByCodigoAndTramite(Long idTramite, String codigoTarea);
+
+	boolean isTramiteAlquilerNoComercial(TipoProcedimiento procedimiento);
+
+	boolean isTramiteAlquiler(TipoProcedimiento procedimiento);
+	
+	Set<TareaExterna> getTareasActivasByExpediente(ExpedienteComercial eco);
+
+	TipoProcedimiento getTipoTramiteByExpediente(ExpedienteComercial eco);
 }
 

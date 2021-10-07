@@ -41,27 +41,27 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@Column(name = "C4C_ID")
 	private String idC4C;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_CNO_ID")
 	private DDCnOcupacional cnOcupacional;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ACE_ID")
 	private DDCnae Cnae;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TSC_ID")
 	private DDTipoSocioComercial tipoSocioComercial;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TRI_ID")
 	private DDRolInterlocutor rolInterlocutor;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_FOJ_ID")
 	private DDFormaJuridica formaJuridica;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ECC_ID")
 	private DDEstadoComunicacionC4C estadoComunicacionC4C;
 
@@ -71,9 +71,24 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@Column(name = "IAP_PRP")
 	private Boolean prp;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_VIC_ID")
 	private DDVinculoCaixa vinculoCaixa;
+	
+	@Column(name = "IAP_ANTIGUO_DEUDOR")
+	private Boolean antiguoDeudor; 
+	
+	@Column(name = "IAP_SOCIEDAD")
+	private String sociedad;
+	
+	@Column(name = "IAP_OFICINA_TRABAJO")
+	private String oficinaTrabajo;
+
+	@Column(name = "IAP_ES_USUFRUCTUARIO")
+	private Boolean esUsufructuario;
+
+	@Column(name = "IAP_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
 
 
 	@Embedded
@@ -197,4 +212,43 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 		this.vinculoCaixa = vinculoCaixa;
 	}
 
+	public Boolean getAntiguoDeudor() {
+		return antiguoDeudor;
+	}
+
+	public void setAntiguoDeudor(Boolean antiguoDeudor) {
+		this.antiguoDeudor = antiguoDeudor;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public Boolean getEsUsufructuario() {
+		return esUsufructuario;
+	}
+
+	public void setEsUsufructuario(Boolean esUsufructuario) {
+		this.esUsufructuario = esUsufructuario;
+	}
+
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
 }

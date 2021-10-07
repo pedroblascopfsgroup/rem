@@ -11,32 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-
-import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
@@ -63,6 +60,9 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresCierreContrato.class);
     
 	private static final String DOCUMENTO_OK = "docOK";
@@ -74,11 +74,13 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
+		boolean estadoBcModificado = false;
 
+		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		
 		for(TareaExternaValor valor :  valores){
@@ -89,6 +91,12 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
 				expedienteComercial.setDocumentacionOk(true);
+				if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO));
+					expedienteComercial.setEstadoBc(estadoBc);	
+					estadoBcModificado = true;
+				}
+
 			}
 			
 			if(FECHA_VALIDACION.equals(valor.getNombre())) {
@@ -123,7 +131,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
-		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 		
 		Activo activo = tramite.getActivo();
 		if(!Checks.esNulo(activo)) {
@@ -139,6 +146,9 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			}
 		}
 		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		}
 	}
 
 	public String[] getCodigoTarea() {

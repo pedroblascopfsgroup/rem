@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.*;
+import net.sf.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -191,14 +192,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_VENTA_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_VENTA_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionVentaContabilizada>() {
             @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
+            public Class<DtoAccionVentaContabilizada> getArgumentType() {
+                return DtoAccionVentaContabilizada.class;
             }
 
             @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+            public Boolean execute(DtoAccionVentaContabilizada dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionVentaContabilizada(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -596,6 +597,147 @@ class AccionesCaixaControllerDispachableMethods {
             public Boolean execute(DtoExpedienteFechaYOfertaCaixa dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionArrasContabilizadas(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_COM_CONTRAOFERTA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionAprobacionCaixa>() {
+            @Override
+            public Class<DtoAccionAprobacionCaixa> getArgumentType() {
+                return DtoAccionAprobacionCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionAprobacionCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionContraoferta(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_AVANZAR_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAvanzaScoringBC>() {
+            @Override
+            public Class<DtoAvanzaScoringBC> getArgumentType() {
+                return DtoAvanzaScoringBC.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAvanzaScoringBC dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionScoringBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PENDIENTE_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PDTE_ANALISIS_TECNICO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PENDIENTE_NEGOCIACION, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_PDTE_CL_ROD, new AccionesCaixaControllerDispachableMethods.DispachableMethod<JSONObject>() {
+            @Override
+            public Class<JSONObject> getArgumentType() {
+                return JSONObject.class;
+            }
+
+            @Override
+            public Boolean execute(JSONObject dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionNoComercialBC(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }  return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.CODIGO_RECHAZO_PBC, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionRechazo(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
                             && !Checks.esNulo(mm.getModel().get("msgError"))) {
                         throw new JsonViewerException(mm.getModel().get("msgError").toString());

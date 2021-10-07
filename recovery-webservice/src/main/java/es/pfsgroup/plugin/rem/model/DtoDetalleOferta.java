@@ -19,7 +19,11 @@ public class DtoDetalleOferta {
 	private String observaciones;
 	private Date fechaEntradaCRMSF;
 	private Boolean empleadoCaixa;
-
+	DtoDeposito dtoDeposito;
+	private String cuentaBancariaVirtual;
+	private String cuentaBancariaCliente;
+	private String numOfertaCaixa;
+	private Boolean checkSubasta;
 
 	public String getId() {
 		return id;
@@ -105,6 +109,36 @@ public class DtoDetalleOferta {
 	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
 		this.empleadoCaixa = empleadoCaixa;
 	}
-
+	public DtoDeposito getDtoDeposito() {
+		return dtoDeposito;
+	}
+	public void setDtoDeposito(DtoDeposito dtoDeposito) {
+		this.dtoDeposito = dtoDeposito;
+	}
+	public String getCuentaBancariaVirtual() {
+		return cuentaBancariaVirtual;
+	}
+	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
+		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
+	}
+	public String getCuentaBancariaCliente() {
+		return cuentaBancariaCliente;
+	}
+	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
+		this.cuentaBancariaCliente = cuentaBancariaCliente;
+	}
+	public String getNumOfertaCaixa() {
+		return numOfertaCaixa;
+	}
+	public void setNumOfertaCaixa(String numOfertaCaixa) {
+		this.numOfertaCaixa = numOfertaCaixa;
+	}
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
+	
 	
 }

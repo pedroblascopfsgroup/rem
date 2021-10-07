@@ -132,7 +132,10 @@ Ext.define('HreRem.model.BusquedaOfertaGrid', {
 			},
 			{ 
 			    name: 'codigoPromocionPrinex'
-			}		
+			},
+			{ 
+			    name: 'codigoEstadoC4C'
+			}
 	
     ]
 });

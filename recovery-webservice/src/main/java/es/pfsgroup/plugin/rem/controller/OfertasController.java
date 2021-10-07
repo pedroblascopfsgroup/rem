@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
@@ -40,6 +42,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -54,6 +57,8 @@ import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
@@ -71,14 +76,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
+import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
+import es.pfsgroup.plugin.rem.thread.EnviarCorreoFichaComercialExcel;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
@@ -132,15 +142,21 @@ public class OfertasController {
 	@Autowired
 	private ConfigManager configManager;
 	
+	@Autowired 
+	private OfertaManager ofertaManager;
+	
 	@Resource
 	private Properties appProperties;
-			
+	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	private static final String RESPONSE_ERROR_KEY = "error";
+	
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
+	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -465,9 +481,18 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
-
+		String clienteGD = null;
 		try {
-			ofertaApi.llamadaMaestroPersonas(dniComprador, OfertaApi.CLIENTE_HAYA);
+			if (!Checks.esNulo(idExpediente)) {
+				clienteGD = ofertaManager.getClienteByidExpedienteGD(idExpediente);
+			}
+			
+			if(!Checks.esNulo(clienteGD)) {
+				ofertaApi.llamadaMaestroPersonas(dniComprador, clienteGD);
+			}else {
+				ofertaApi.llamadaMaestroPersonas(dniComprador, OfertaApi.CLIENTE_HAYA);
+			}
+			
 			//model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("data", false);
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
@@ -762,11 +787,25 @@ public class OfertasController {
 				}else {
 					codTarea = jsonFields.get("codTarea").toString();
 					
+					
+					
+					
 					if(!ofertaDao.tieneTareaActiva(codTarea, ofrNumOferta)) 
 					{
-						error = RestApi.REST_MSG_VALIDACION_TAREA;
-						errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
-						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						if (ofertaDao.tieneTareaFinalizada(codTarea, ofrNumOferta)) {
+							
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "La tarea " + codTarea + " ya está avanzada en esta oferta.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+							
+						}else {
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
+						
+						
+						
 					}
 					
 					tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
@@ -801,8 +840,13 @@ public class OfertasController {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", id);
-			model.put("error",error);
-			model.put("descError", errorDesc);
+			if(error == null || errorDesc == null) {
+				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				model.put("descError", e.getMessage());
+			}else {
+				model.put("error",error);
+				model.put("descError", errorDesc);
+			}
 			model.put("success", false);
 		}
 
@@ -929,35 +973,35 @@ public class OfertasController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {
-
-		try {
-
-			Oferta oferta = ofertaApi.getOfertaById(idOferta);
-			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
-			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
-			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
-
-			if(errorCode == null || errorCode.isEmpty()){
-				model.put("success", true);
-			}
-			else{
-				model.put("success", false);
-				model.put("errorCode", errorCode);
-			}
-
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
-			model.put("errorCode", e.getMessage());
-		}
-
-		return createModelAndViewJson(model);
-
-	}
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.POST)
+//	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {
+//
+//		try {
+//
+//			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
+//			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
+//			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
+//
+//			if(errorCode == null || errorCode.isEmpty()){
+//				model.put("success", true);
+//			}
+//			else{
+//				model.put("success", false);
+//				model.put("errorCode", errorCode);
+//			}
+//
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			model.put("success", false);
+//			model.put("errorCode", e.getMessage());
+//		}
+//
+//		return createModelAndViewJson(model);
+//
+//	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -976,6 +1020,7 @@ public class OfertasController {
 		return createModelAndViewJson(model);
 	}
 
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView actualizaEstadoOferta(Long idOferta, String codigoEstado, ModelMap model) {
 		try {
@@ -989,5 +1034,42 @@ public class OfertasController {
 		}
 		return createModelAndViewJson(model);
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateReport(ReportGeneratorRequest request, HttpServletResponse response) throws IOException {
+		String urlBaseGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_URL);
+		String urlEndpointGenerateExcel = appProperties.getProperty(CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT);
+		ReportGeneratorResponse report = excelReportGeneratorApi.requestExcel(request, urlBaseGenerateExcel.concat(urlEndpointGenerateExcel));
+	 	if(report != null)
+	 		excelReportGeneratorApi.downloadExcel(report, response);
+	 	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional(readOnly = false)
+	public ModelAndView enviarCorreoFichaComercialThread(ReportGeneratorRequest reportGenerator,  HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
+		Thread llamadaAsincrona = new Thread(new EnviarCorreoFichaComercialExcel(reportGenerator.getListId(), reportGenerator.getReportCode(), request.getScheme(), request.getServerName(), usuarioManager.getUsuarioLogado().getUsername()));
+		
+		llamadaAsincrona.start();
+		
+		model.put(RESPONSE_SUCCESS_KEY, true);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto, dtoBancario));
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error("Error en ofertasController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+
 	
 }

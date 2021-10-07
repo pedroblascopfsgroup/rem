@@ -1190,6 +1190,18 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'isCarterasCajamarLiberbank',
+    			calculate: function(data) {
+    				if(data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || 
+    						data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK']){
+    					return true;
+    				}else{
+    					return false;
+    				}
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'subestadoAdmisionDescCabecera'
 			},
 			{
@@ -1244,9 +1256,34 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'estadoExpIncorrienteDescripcion'
-			},{
+			},
+			{
 				name:'esActivoPrincipalAgrupacionRestringida',
 				type: 'boolean'
+			},
+			{
+				name: 'disponibleAdministrativoCodigo'
+			},
+			{
+				name: 'disponibleAdministrativoDescripcion'
+			},
+			{
+				name: 'disponibleTecnicoCodigo'
+			},
+			{
+				name: 'disponibleTecnicoDescripcion'
+			},
+			{
+				name: 'motivoTecnicoCodigo'
+			},
+			{
+				name: 'motivoTecnicoDescripcion'
+			},
+			{
+				name: 'tieneGestionDndCodigo'
+			},
+			{
+				name: 'tieneGestionDndDescripcion'
 			}
     ],
     

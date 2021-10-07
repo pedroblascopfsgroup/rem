@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -58,15 +60,19 @@ import es.pfsgroup.plugin.rem.excel.PlantillaDistribucionPrecios;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
 import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -80,7 +86,10 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
+import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
@@ -107,7 +116,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
@@ -181,6 +189,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private TramiteAlquilerApi tramiteAlquilerApi;
+	
+	@Autowired
+	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+	
+	@Autowired
+	private GestorDocumentalAdapterManager gestorDocumentalAdapterManager;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -947,6 +961,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getCompradorById(DtoModificarCompradores dto, ModelMap model) {
 		try {
 			DtoModificarCompradores comprador = null;
+			String clienteGD = null;
 			if (!Checks.esNulo(dto.getId())) {
 				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
@@ -956,8 +971,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						comprador.setNumeroConyugeUrsus(null);
 					}
 					if (!Checks.esNulo(vistaConExp.getIdExpedienteComercial())) {
-						ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(),
-								OfertaApi.CLIENTE_HAYA);
+						ExpedienteComercial expediente =genericDao.get(ExpedienteComercial.class,
+								genericDao.createFilter(FilterType.EQUALS, "id", vistaConExp.getIdExpedienteComercial()));
+						
+						if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())
+								&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+							Activo activo = expediente.getOferta().getActivoPrincipal();
+							clienteGD = gestorDocumentalAdapterManager.getClienteByCarteraySubcarterayPropietario(activo.getCartera(), activo.getSubcartera(), activo.getPropietarioPrincipal());
+						}
+						
+						if (!Checks.esNulo(clienteGD)) {
+							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), clienteGD);
+						}else {
+							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
+						}
+
 					}
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
@@ -1768,55 +1796,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView bloqueoExpediente(ModelMap model, Long idExpediente) {
-		try {
-			String errorCode = expedienteComercialApi.validaBloqueoExpediente(idExpediente);
-
-			if (errorCode == null || errorCode.isEmpty()) {
-				expedienteComercialApi.bloquearExpediente(idExpediente);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-
-			} else {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put("errorCode", errorCode);
-			}
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorCode", "imposible.bloquear.general");
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView desbloqueoExpediente(ModelMap model, Long idExpediente, String motivoCodigo,
-			String motivoDescLibre) {
-		try {
-			String errorCode = expedienteComercialApi.validaDesbloqueoExpediente(idExpediente);
-
-			if (errorCode == null || errorCode.isEmpty()) {
-				expedienteComercialApi.desbloquearExpediente(idExpediente, motivoCodigo, motivoDescLibre);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-
-			} else {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put("errorCode", errorCode);
-			}
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorCode", "imposible.bloquear.general");
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void getExcelActivosExpediente(Long idExpediente, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -2461,6 +2440,32 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView lanzarDatosPbc(ModelMap model,@RequestParam Long numOferta) {
+		try {
+			String endpoint = expedienteAdapter.getlanzarDatosPbcREM3Endpoint();
+			if (!TareaAdapter.DEV.equals(endpoint) && endpoint != null) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("codigoOferta", numOferta);
+				HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+				JSONObject resp = request.post(JSONObject.class);
+				model.put(RESPONSE_DATA_KEY, resp);
+			} else {
+				JSONObject resp = new JSONObject() {{
+					put("success", false);
+					put("descripcion", RESPONSE_ERROR_CONNECT);
+				}};
+				model.put(RESPONSE_DATA_KEY, resp);
+			}
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController::lanzarDatosPbc", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView recalcularHonorarios(ModelMap model, Long idExpediente) {
 		try {
 			expedienteComercialApi.recalcularHonorarios(idExpediente);
@@ -2706,5 +2711,269 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSancionesBk(ModelMap model, WebDto webDto, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getSancionesBk(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
 
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActualizacionRenta(ModelMap model, WebDto webDto, Long idExpediente) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getActualizacionRenta(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView deleteActualizacionRenta(ModelMap model, WebDto webDto, Long id) {
+		try {
+			expedienteComercialApi.deleteActualizacionRenta(id);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView addActualizacionRenta(DtoActualizacionRenta dto, @RequestParam Long idExpediente, ModelMap model,HttpServletRequest request) {
+		try {
+			expedienteComercialApi.addActualizacionRenta(idExpediente, dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActualizacionRenta(DtoActualizacionRenta dto, @RequestParam Long id, ModelMap model,HttpServletRequest request) {
+		try {
+			expedienteComercialApi.updateActualizacionRenta(id, dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFormalizacionResolucion(ModelMap model, DtoFormalizacionResolucion dto,
+			HttpServletRequest request) {
+		try {
+
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFormalizacionResolucion(dto));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView haPasadoAceptacionCliente(ModelMap model,Long idTramite) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.haPasadoAceptacionCliente(idTramite));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getValoresTareaElevarSancion(ModelMap model, Long idTarea) {
+		try {
+			DtoAccionAprobacionCaixa dto = (DtoAccionAprobacionCaixa) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION);
+			model.put(RESPONSE_DATA_KEY, dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveGarantiasExpediente(DtoGarantiasExpediente dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.saveGarantiasExpediente(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getInfoCaminosAlquilerNoComercial(Long idExpediente, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerNoComercialApi.getInfoCaminosAlquilerNoComercial(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getValoresTareaBloqueoScreeningAlquiler(ModelMap model, Long idTarea) {
+		try {
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING);
+			model.put(RESPONSE_DATA_KEY, dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createGastoRepercutido(Long idExpediente, DtoGastoRepercutido dto, ModelMap model, HttpServletRequest request) {
+		try {
+			expedienteComercialApi.createGastoRepercutido(dto, idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(DataIntegrityViolationException e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_MESSAGE_KEY, "No puede haber más de un gasto repercutido del mismo tipo");
+		}catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosRepercutidosList(Long idExpediente,  ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getGastosRepercutidosList(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getValoresTareaBloqueoScreeningAlquilerNoComercial(ModelMap model, Long idTarea) {
+		try {
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING);
+			model.put(RESPONSE_DATA_KEY, dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastoRepercutido(Long id,  ModelMap model, HttpServletRequest request) {
+		try {
+			expedienteComercialApi.deleteGastoRepercutido(id);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

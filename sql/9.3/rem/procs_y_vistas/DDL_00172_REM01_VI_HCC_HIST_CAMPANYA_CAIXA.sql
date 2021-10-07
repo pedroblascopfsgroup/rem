@@ -1,15 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Alejandra garcía
---## FECHA_CREACION=20210716
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210907
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-15082
 --## PRODUCTO=NO
 --## Finalidad: DDL          
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio lógica merge, tener en cuenta el tiempo de cosecha - [HREOS-14674] - Alejandra García
+--##        0.2 Cambio lógica merge - [HREOS-15082] - Alejandra García
 --##########################################
 --*/
 
@@ -49,27 +51,39 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_HCC_HIST_CAMPANYA_CAIXA...');
   EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_HCC_HIST_CAMPANYA_CAIXA (
-                          ACT_ID
+                           ACT_ID
                           ,ID_CAMPANYA_VENTA
                           ,ID_CAMPANYA_ALQUILER
                       )AS
-                      WITH CAMPANYAS AS (
-                        SELECT 
-                                ACT_ID
-                                ,ID_CAMPANYA
-                                ,TIPOLOGIA
-                        FROM '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA
-                        WHERE SYSDATE BETWEEN FECHA_INICIO_FASE AND FECHA_FIN_FASE
-                            AND BORRADO=0
+                      WITH FECHA_FIN_MINIMA AS(
+                          SELECT
+                               ACT_ID 
+                              ,TIPOLOGIA
+                              ,MIN(FECHA_FIN_FASE + TIEMPO_COSECHA) FECHA_FIN_COSECHA
+                          FROM '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA
+                          WHERE SYSDATE BETWEEN FECHA_INICIO_FASE AND FECHA_FIN_FASE + TIEMPO_COSECHA
+                          AND BORRADO=0
+                          GROUP BY ACT_ID, TIPOLOGIA
+                      ),CAMPANYAS AS (
+                          SELECT DISTINCT
+                               MINIM.ACT_ID
+                              ,HCC.ID_CAMPANYA
+                              ,HCC.TIPOLOGIA
+                              ,HCC.HCC_ID
+                          FROM FECHA_FIN_MINIMA MINIM
+                          JOIN '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA HCC ON MINIM.ACT_ID=HCC.ACT_ID AND HCC.FECHA_FIN_FASE + HCC.TIEMPO_COSECHA = MINIM.FECHA_FIN_COSECHA
+                          WHERE  HCC.BORRADO=0
                       )
-                        SELECT DISTINCT
-                            HCC.ACT_ID AS ACT_ID
-                            ,CAMP1.ID_CAMPANYA AS ID_CAMPANYA_VENTA
-                            ,CAMP2.ID_CAMPANYA AS ID_CAMPANYA_ALQUILER
-                        FROM '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA HCC
-                        LEFT JOIN CAMPANYAS CAMP1 ON CAMP1.ACT_ID=HCC.ACT_ID AND UPPER(CAMP1.TIPOLOGIA)=''VENTA''
-                        LEFT JOIN CAMPANYAS CAMP2 ON CAMP2.ACT_ID=HCC.ACT_ID AND UPPER(CAMP2.TIPOLOGIA)=''ALQUILER''
-                        WHERE SYSDATE BETWEEN HCC.FECHA_INICIO_FASE AND HCC.FECHA_FIN_FASE AND  HCC.BORRADO=0';
+                      SELECT DISTINCT
+                          MINIM.ACT_ID AS ACT_ID
+                          ,CAMP1.ID_CAMPANYA AS ID_CAMPANYA_VENTA
+                          ,CAMP2.ID_CAMPANYA AS ID_CAMPANYA_ALQUILER
+                      FROM FECHA_FIN_MINIMA MINIM
+                      JOIN '|| V_ESQUEMA ||'.HCC_HIST_CAMPANYA_CAIXA HCC ON MINIM.ACT_ID=HCC.ACT_ID
+                      LEFT JOIN CAMPANYAS CAMP1 ON CAMP1.ACT_ID=HCC.ACT_ID AND UPPER(CAMP1.TIPOLOGIA)=''VENTA''
+                      LEFT JOIN CAMPANYAS CAMP2 ON CAMP2.ACT_ID=HCC.ACT_ID AND UPPER(CAMP2.TIPOLOGIA)=''ALQUILER''
+                      WHERE HCC.BORRADO=0
+                      ';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_HCC_HIST_CAMPANYA_CAIXA...Creada OK');
 

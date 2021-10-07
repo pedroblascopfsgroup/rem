@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210713
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20210816
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14585
+--## INCIDENCIA_LINK=HREOS-15066
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -43,8 +43,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T015_AgendarFechaFirma'    ,'label', 		'0'		,'titulo'				,null		    ,null					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Agendar fecha firma'''' </p>'),
-        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox', 	'1'		,'comboResultado'		,'false'	    ,'DDSiNo'				,'Aprobado'),
+    	T_TIPO_DATA('T015_AgendarFechaFirma'    ,'label', 		'0'		,'titulo'				,null		    ,null					,'<p style="margin-bottom:10px">Instrucciones por defecto de la tarea ''''Agendar y firmar'''' </p>'),
+        T_TIPO_DATA('T015_AgendarFechaFirma'	,'combobox', 	'1'		,'comboResultado'		,'false'	    ,'DDSiNo'				,'Firmado'),
         T_TIPO_DATA('T015_AgendarFechaFirma'	,'datefield', 	'2'		,'fechaFirma'		    ,'false'	    ,null					,'Fecha de la firma'),
         T_TIPO_DATA('T015_AgendarFechaFirma'	,'textfield', 	'3'		,'lugarFirma'	        ,'false'	    ,null		            ,'Lugar de la firma'),
         T_TIPO_DATA('T015_AgendarFechaFirma'	,'textarea', 	'4'		,'observaciones'		,null		    ,null					,'Observaciones')

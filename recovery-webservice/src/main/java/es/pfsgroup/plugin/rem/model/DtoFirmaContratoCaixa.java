@@ -8,6 +8,8 @@ public class DtoFirmaContratoCaixa extends WebDto{
 
     private Long idTarea;
 
+    private Long idPosicionamiento;
+
     private Long numOferta;
 
     private Long idExpediente;
@@ -74,5 +76,13 @@ public class DtoFirmaContratoCaixa extends WebDto{
 
     public void setObservacionesBC(String observacionesBC) {
         this.observacionesBC = observacionesBC;
+    }
+
+    public Long getIdPosicionamiento() {
+        return idPosicionamiento;
+    }
+
+    public void setIdPosicionamiento(Long idPosicionamiento) {
+        this.idPosicionamiento = idPosicionamiento;
     }
 }

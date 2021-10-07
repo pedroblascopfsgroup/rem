@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210708
+--## FECHA_CREACION=20210927
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14497
+--## INCIDENCIA_LINK=HREOS-15055
 --## PRODUCTO=SI
 --##
 --## Finalidad: 
@@ -31,7 +31,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T017_ConfirmarFechaEscritura', '(checkBankia() == true && checkExpedienteBloqueado() == true)  ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true && checkAprobadoRechazadoBCPosicionamiento() == false) ? ''''El estado de Validaci&oacute;n BC de la fecha arras tiene que ser Aceptado o Rechazado'''' : !tieneTramiteGENCATVigenteByIdActivo()  ? checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''')  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''  ')                
+        T_TIPO_DATA('T017_ConfirmarFechaEscritura', '(checkBankia() == true && checkExpedienteBloqueado() == true)  ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true && (checkAprobadoRechazadoBCPosicionamiento() == false && userHasPermisoParaAvanzarTareas() == false )) ? ''''El estado de Validaci&oacute;n BC de la fecha arras tiene que ser Aceptado o Rechazado'''' : !tieneTramiteGENCATVigenteByIdActivo()  ? checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''')  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''  ')                
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	
@@ -51,7 +51,7 @@ BEGIN
 	        DBMS_OUTPUT.PUT_LINE(' LA FILA  YA EXISTE EN [TAP_TAREA_PROCEDIMIENTO] ACTUALIZARLA');
 	        V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
 		    		SET TAP_SCRIPT_VALIDACION =  '''||V_TMP_TIPO_DATA(2)||''' 
-					,USUARIOMODIFICAR = ''HREOS-14497''
+					,USUARIOMODIFICAR = ''HREOS-15055''
 		            ,FECHAMODIFICAR = SYSDATE
 		            WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' 
 		        ';

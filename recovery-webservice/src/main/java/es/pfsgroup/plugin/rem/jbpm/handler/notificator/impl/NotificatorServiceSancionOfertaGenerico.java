@@ -1361,9 +1361,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			 */
 			// ADJUNTOS SI ES LIBERBANK
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank_v3.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Unicaja_v3.docx");
 				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Unicaja.docx"));
 				}
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)

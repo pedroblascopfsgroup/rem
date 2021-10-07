@@ -81,6 +81,52 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 					diccionario: 'claseOferta'
 				}
 			}
-		}
+		},
+		comboMunicipioSinFiltro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+			}
+		}, 
+		
+		comboMunicipioOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{oferta.provinciaCodigo}'} 
+			},
+			autoLoad: true
+		},
+				
+		comboTipologiaVentaBcOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipologiaVentaBc'
+				},
+			autoLoad: true
+			}
+		},
+		comboMunicipioNacimientoOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{oferta.provinciaNacimiento}'} 
+			},
+			autoLoad: true
+		},
+    	
+    	comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioTipoOfertas'
+			}
+    	}
 	}
 });

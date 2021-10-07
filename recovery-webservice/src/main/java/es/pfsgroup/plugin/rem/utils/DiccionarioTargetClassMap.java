@@ -306,6 +306,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoGestionComercial", DDMotivoGestionComercial.class);
 		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
 		mapa.put("estadoFisicoActivoDND", DDValidaEstadoActivo.class);
+		mapa.put("tipoRiesgoOperacion", DDTipoRiesgoOperacion.class);
 		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		mapa.put("tipoRetencion", DDTipoRetencion.class);
 		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
@@ -317,7 +318,27 @@ public class DiccionarioTargetClassMap{
 		mapa.put("segmentacionSareb", DDSegmentoSareb.class);
 		mapa.put("estadoContraste", DDEstadoContrasteListas.class);
 		mapa.put("vinculoCaixa", DDVinculoCaixa.class);
-		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);
+		mapa.put("motivoRescisionArras", DDMotivoRescisionArras.class);		
+		mapa.put("disponibleAdministrativo", DDDisponibleAdministracion.class);
+		mapa.put("disponibleTecnico", DDDisponibleTecnico.class);
+		mapa.put("motivoTecnico", DDMotivoTecnico.class);
+		mapa.put("clasificacionAlquiler", DDClasificacionContratoAlquiler.class);
+		mapa.put("motivoRechazoAntiguoDeudor", DDMotivoRechazoAntiguoDeud.class);
+		mapa.put("regimenFianzaCCAA",  DDRegimenFianzaCCAA.class);
+		mapa.put("metodoActualizacionRenta",  DDMetodoActualizacionRenta.class);
+		mapa.put("resolucionComite",  DDResolucionComite.class);
+		mapa.put("motivoAnulacionBc",  DDMotivoAnulacionBC.class);
+		mapa.put("tipologiaVentaBc",  DDTipologiaVentaBc.class);
+		mapa.put("estadoDeposito",  DDEstadoDeposito.class);		 
+		mapa.put("tipoGrupoImpuesto",  DDGrupoImpuesto.class);
+		mapa.put("tipoResultadoScoring",  DDResultadoScoring.class);
+		mapa.put("tipoResultadoCampo",  DDResultadoCampo.class);
+		mapa.put("tipoRatingScoring",  DDRatingScoringServicer.class);
+		mapa.put("tipoOfertaAlquiler",  DDTipoOfertaAlquiler.class);
+		mapa.put("estadoComunicacionC4C",  DDEstadoComunicacionC4C.class);
+		mapa.put("tipoGastoRepercutido",  DDTipoGastoRepercutido.class);
+
+		
 		
 		
 		return Collections.unmodifiableMap(mapa);

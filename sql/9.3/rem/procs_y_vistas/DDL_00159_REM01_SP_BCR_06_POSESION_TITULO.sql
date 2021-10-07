@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210719
+--## FECHA_CREACION=2021104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14672
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,17 @@
 --##	      0.6 Quitar IND_OCUPANTES_VIVIENDA - HREOS-14545
 --##	      0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos. También se ha añadido el Año de concesión y la Fecha de finalización de concesión del activo - HREOS-14545
 --##	      0.8 Campos fiscalidad - HREOS-14672
+--##        0.9 Se inserta si un activo pasa a tener Fecha de inscripción de título o al contrario - [HREOS-14686] - Daniel Algaba
+--##        0.10 Campos Estado posesorio, Estado titularidad y Situación V.P.O.- [HREOS-14712] - Alejandra García
+--##        0.11 Correciones Ocupado y Sin título, se añade el FLAG EN REM [HREOS-14837] -Daniel Algaba
+--##        0.12 Correción Estado posesorio y rellenar campo SPS_VERTICAL- [HREOS-14824] - Alejandra García
+--##        0.13 Se añade por defecto como Tipo Grado Propiedad Plen Dominio con el 100% - [HREOS-14649] - Daniel Algaba
+--##	      0.14 Correcciones - HREOS-14820 - Daniel Algaba
+--##        0.15 Correciones para el plan de pruebas- [HREOS-14899] - Alejandra García
+--##        0.16 Correción merge ACT_AHT_HIST_TRAM_TITULO- [HREOS-15059] - Alejandra García
+--##        0.17 Corrección Fecha de concesión - [HREOS-15133] - Daniel Algaba
+--##        0.18 Corrección Propietarios - [HREOS-15254] - Daniel Algaba
+--##        0.19 Corrección Propietarios para se actualice el PRO_ID - [HREOS-15423] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -50,6 +61,68 @@ BEGIN
 --1º Merge tabla ACT_TIT_TITULO
 
    SALIDA := '[INICIO]'||CHR(10);
+
+   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+                  DISTINCT ACT.ACT_ID
+                  , SYSDATE
+               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
+               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+               JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID = TIT.ACT_ID AND TIT.BORRADO = 0
+               WHERE (APR.FEC_INSC_TITULO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
+               OR APR.FEC_INSC_TITULO IS NOT NULL AND TIT.TIT_FECHA_INSC_REG IS NULL 
+               OR TO_DATE(APR.FEC_INSC_TITULO,''yyyymmdd'') <> TIT.TIT_FECHA_INSC_REG)
+               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)
+               AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM CAMBIO DE FECHA INSCRIPCIÓN [INFO]'|| CHR(10);
+
+   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+                  DISTINCT ACT.ACT_ID
+                  , SYSDATE
+               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
+               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+               JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID = SPS.ACT_ID AND SPS.BORRADO = 0
+               WHERE (APR.FEC_VALIDO_DE IS NULL AND SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL
+               OR APR.FEC_VALIDO_DE IS NOT NULL AND SPS.SPS_FECHA_TOMA_POSESION IS NULL 
+               OR TO_DATE(APR.FEC_VALIDO_DE,''yyyymmdd'') <> SPS.SPS_FECHA_TOMA_POSESION)
+               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)
+               AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM CAMBIO DE FECHA POSESIÓN [INFO]'|| CHR(10);
+
+   V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+               DISTINCT ACT.ACT_ID
+               , SYSDATE
+               FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK APR
+               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+               JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID = SPS.ACT_ID AND SPS.BORRADO = 0
+               LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID = TPA.DD_TPA_ID AND TPA.BORRADO = 0
+               WHERE (APR.ESTADO_POSESORIO IN (''P01'', ''P06'', ''P05'') AND SPS.SPS_OCUPADO = 1
+               OR APR.ESTADO_POSESORIO IN (''P02'', ''P03'',''P04'') AND SPS.SPS_OCUPADO = 0
+               OR APR.ESTADO_POSESORIO IN (''P02'', ''P04'') AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''01'')
+               OR APR.ESTADO_POSESORIO = ''P03'' AND NOT (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''02''))
+               AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT.ACT_ID)
+               AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM POR CAMBIO DE ESTADO POSESORIO [INFO]'|| CHR(10);
 
    SALIDA := SALIDA || '[INFO] SE VA A PROCEDER A ACTUALIZAR/INSERTAR CAMPOS DE POSESIÓN Y TÍTULO.'|| CHR(10);
 
@@ -112,35 +185,48 @@ BEGIN
       USING (				
             SELECT 
                    TO_DATE(AUX.FEC_VALIDO_DE,''yyyymmdd'') AS SPS_FECHA_TOMA_POSESION 
-                  ,TPO.DD_TPO_ID AS  DD_TPO_ID
                   ,TO_DATE(AUX.FEC_ESTADO_POSESORIO,''yyyymmdd'') AS SPS_FECHA_REVISION_ESTADO
+                  ,CASE
+                     WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P03'',''P04'') THEN 1
+                   ELSE 0 END AS SPS_OCUPADO
+                  ,CASE
+                     WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''01'')
+                     WHEN AUX.ESTADO_POSESORIO=''P03'' THEN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO=''02'')
+                   ELSE NULL END AS DD_TPA_ID
+                  ,CASE
+                     WHEN AUX.ESTADO_POSESORIO=''P05'' THEN 1
+                   ELSE 0 END AS SPS_VERTICAL
                   ,ACT2.ACT_ID AS ACT_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''ESTADO_POSESORIO''  AND eqv1.DD_CODIGO_CAIXA = aux.ESTADO_POSESORIO AND EQV1.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPO_TIPO_TITULO_POSESORIO TPO ON TPO.DD_TPO_CODIGO = eqv1.DD_CODIGO_REM 
                WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
                ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
                WHEN MATCHED THEN UPDATE SET
-                  ACT.SPS_FECHA_TOMA_POSESION=US.SPS_FECHA_TOMA_POSESION
-                  ,ACT.DD_TPO_ID=US.DD_TPO_ID
+                   ACT.SPS_FECHA_TOMA_POSESION=US.SPS_FECHA_TOMA_POSESION
                   ,ACT.SPS_FECHA_REVISION_ESTADO=US.SPS_FECHA_REVISION_ESTADO
+                  ,ACT.SPS_OCUPADO=US.SPS_OCUPADO
+                  ,ACT.DD_TPA_ID=US.DD_TPA_ID
+                  ,ACT.SPS_VERTICAL=US.SPS_VERTICAL
                   ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                   ,ACT.FECHAMODIFICAR = SYSDATE
                WHEN NOT MATCHED THEN INSERT (
-                  SPS_ID
+                   SPS_ID
                   ,SPS_FECHA_TOMA_POSESION
-                  ,DD_TPO_ID
                   ,SPS_FECHA_REVISION_ESTADO
                   ,ACT_ID
+                  ,SPS_OCUPADO
+                  ,DD_TPA_ID
+                  ,SPS_VERTICAL
                   ,USUARIOCREAR  
                   ,FECHACREAR             
                   )VALUES(
                         '|| V_ESQUEMA ||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL
                      ,US.SPS_FECHA_TOMA_POSESION
-                     ,US.DD_TPO_ID
                      ,US.SPS_FECHA_REVISION_ESTADO
                      ,US.ACT_ID
+                     ,US.SPS_OCUPADO
+                     ,US.DD_TPA_ID
+                     ,US.SPS_VERTICAL
                      ,''STOCK_BC''
                      ,SYSDATE
                   )
@@ -162,11 +248,16 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                  ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_FORMALIZAR
                  ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_PUBLICAR
                  ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_ADMISION
+                 ,TO_DATE(AUX.FEC_VALIDO_A,''yyyymmdd'') AS PAC_FECHA_GESTION_COMERCIAL
                  ,ACT2.ACT_ID AS ACT_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
                 WHERE AUX.FEC_VALIDO_A IS NOT NULL
                 AND AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
+                AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
             ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
             WHEN MATCHED THEN UPDATE SET
                  ACT.PAC_INCLUIDO=0
@@ -180,6 +271,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 ,ACT.PAC_FECHA_PUBLICAR=US.PAC_FECHA_PUBLICAR
                 ,ACT.PAC_CHECK_ADMISION=0
                 ,ACT.PAC_FECHA_ADMISION=US.PAC_FECHA_ADMISION
+                ,ACT.PAC_CHECK_GESTION_COMERCIAL=0
+                ,ACT.PAC_FECHA_GESTION_COMERCIAL=US.PAC_FECHA_GESTION_COMERCIAL
                 ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                 ,ACT.FECHAMODIFICAR = SYSDATE
             WHEN NOT MATCHED THEN INSERT (
@@ -195,6 +288,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 ,PAC_FECHA_PUBLICAR
                 ,PAC_CHECK_ADMISION
                 ,PAC_FECHA_ADMISION
+                ,PAC_CHECK_GESTION_COMERCIAL
+                ,PAC_FECHA_GESTION_COMERCIAL
                 ,ACT_ID
                 ,USUARIOCREAR  
                 ,FECHACREAR             
@@ -211,6 +306,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                     ,US.PAC_FECHA_PUBLICAR
                     ,0
                     ,US.PAC_FECHA_ADMISION
+                    ,0
+                    ,US.PAC_FECHA_GESTION_COMERCIAL
                     ,US.ACT_ID
                     ,''STOCK_BC''
                     ,SYSDATE
@@ -268,7 +365,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                  ,ACT2.ACT_ID AS ACT_ID
                  ,PROP.PRO_ID AS PRO_ID
                  , AUX.ANYO_CONCESION PAC_ANYO_CONCES
-                 , AUX.FEC_FIN_CONCESION PAC_FEC_FIN_CONCES
+                 , TO_DATE(AUX.FEC_FIN_CONCESION,''yyyymmdd'') PAC_FEC_FIN_CONCES
                  , PAC.PAC_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT2.BORRADO=0
@@ -277,7 +374,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''SOCIEDAD_PATRIMONIAL''  AND eqv2.DD_CODIGO_CAIXA = aux.SOCIEDAD_PATRIMONIAL 
                                                             AND EQV2.DD_NOMBRE_REM=''ACT_PRO_PROPIETARIO'' and eqv2.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PROP ON PROP.PRO_DOCIDENTIF=eqv2.DD_CODIGO_REM
-            LEFT JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT2.ACT_ID = PAC.ACT_ID AND PROP.PRO_ID = PAC.PRO_ID AND PAC.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON ACT2.ACT_ID = PAC.ACT_ID AND PAC.BORRADO = 0
             WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
             ) US ON (US.PAC_ID = ACT.PAC_ID)
             WHEN MATCHED THEN UPDATE SET
@@ -287,6 +384,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 ,ACT.FECHAMODIFICAR = SYSDATE
                 , ACT.PAC_ANYO_CONCES = US.PAC_ANYO_CONCES
                 , ACT.PAC_FEC_FIN_CONCES = US.PAC_FEC_FIN_CONCES
+                , ACT.PRO_ID = US.PRO_ID
             WHEN NOT MATCHED THEN INSERT (
                  PAC_ID
                 ,PRO_ID
@@ -300,8 +398,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                 )VALUES(
                      '|| V_ESQUEMA ||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL
                     ,US.PRO_ID
-                    ,US.PAC_PORC_PROPIEDAD
-                    ,US.DD_TGP_ID
+                    ,NVL(US.PAC_PORC_PROPIEDAD, 100)
+                    ,NVL(US.DD_TGP_ID, (SELECT DD_TGP_ID FROM '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD WHERE DD_TGP_CODIGO = ''01''))
                     ,US.ACT_ID
                     ,''STOCK_BC''
                     ,SYSDATE
@@ -364,15 +462,21 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                      	 SELECT ACT.ACT_ID AS ACT_ID
                         FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                         JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
-                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'') AND ACT.BORRADO=0 
-                        ) 
+                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE)) 
                         )US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
 		         PAC.PAC_CHECK_GESTIONAR=1
+              ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
 		        ,PAC.PAC_CHECK_COMERCIALIZAR=1
+              ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
 		        ,PAC.PAC_CHECK_FORMALIZAR=1
+              ,PAC.PAC_FECHA_FORMALIZAR=SYSDATE
 		        ,PAC.PAC_CHECK_PUBLICAR=1
+              ,PAC.PAC_FECHA_PUBLICAR=SYSDATE
 		        ,PAC.PAC_CHECK_ADMISION=1
+              ,PAC.PAC_FECHA_ADMISION=SYSDATE
+              ,PAC.PAC_CHECK_GESTION_COMERCIAL=1
+              ,PAC.PAC_FECHA_GESTION_COMERCIAL=SYSDATE
                 	,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                 	,PAC.FECHAMODIFICAR = SYSDATE';
                 
@@ -386,8 +490,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         SELECT ACT.ACT_ID AS ACT_ID
                         FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                         JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
-                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'') AND ACT.BORRADO=0
-                        )
+                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE))
                         )US ON (US.ACT_ID = ACT.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
                         ACT_EN_TRAMITE = 0
@@ -406,14 +509,21 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         SELECT ACT.ACT_ID AS ACT_ID
                         FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                         JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
-                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'')
-                        )
+                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE))
                         ) US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
-                        PAC.PAC_CHECK_COMERCIALIZAR=0
+                        PAC.PAC_CHECK_GESTIONAR=0
+                        ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
+                        ,PAC.PAC_CHECK_COMERCIALIZAR=0
+                        ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
                         ,PAC.PAC_CHECK_FORMALIZAR=0
+                        ,PAC.PAC_FECHA_FORMALIZAR=SYSDATE
                         ,PAC.PAC_CHECK_PUBLICAR=0
+                        ,PAC.PAC_FECHA_PUBLICAR=SYSDATE
                         ,PAC.PAC_CHECK_ADMISION=0
+                        ,PAC.PAC_FECHA_ADMISION=SYSDATE
+                        ,PAC.PAC_CHECK_GESTION_COMERCIAL=0
+                        ,PAC.PAC_FECHA_GESTION_COMERCIAL=SYSDATE
                         ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                         ,PAC.FECHAMODIFICAR = SYSDATE';
                         
@@ -428,8 +538,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         SELECT ACT.ACT_ID AS ACT_ID
                         FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                         JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
-                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''dd/mm/yy'') > TO_DATE(SYSDATE, ''dd/mm/yy'')
-                        )
+                        WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE))
                         ) US ON (US.ACT_ID = ACT.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
                          ACT_EN_TRAMITE = 1
@@ -455,6 +564,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         WHEN MATCHED THEN UPDATE SET
                         PAC.PAC_INCLUIDO=1
                         ,PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
                         ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                         ,PAC.FECHAMODIFICAR = SYSDATE';
  
@@ -493,10 +603,17 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         ) US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
                         PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
                         ,PAC.PAC_CHECK_COMERCIALIZAR=1
+                        ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
                         ,PAC.PAC_CHECK_FORMALIZAR=1
+                        ,PAC.PAC_FECHA_FORMALIZAR=SYSDATE
                         ,PAC.PAC_CHECK_PUBLICAR=1
+                        ,PAC.PAC_FECHA_PUBLICAR=SYSDATE
                         ,PAC.PAC_CHECK_ADMISION=1
+                        ,PAC.PAC_FECHA_ADMISION=SYSDATE
+                        ,PAC.PAC_CHECK_GESTION_COMERCIAL=1
+                        ,PAC.PAC_FECHA_GESTION_COMERCIAL=SYSDATE
                         ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                         ,PAC.FECHAMODIFICAR = SYSDATE';
                        
@@ -622,6 +739,229 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    EXECUTE IMMEDIATE V_MSQL;
 
    SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+      SALIDA := SALIDA || '      [INFO] 3 - ACT_ACTIVO'||CHR(10);
+                           
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+               USING (				
+                  SELECT 
+                      ACT.ACT_ID AS ACT_ID
+                     ,CASE
+                        WHEN AUX.SITUACION_VPO IN (''0001'') THEN 0
+                        WHEN AUX.SITUACION_VPO IN (''0002'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0003'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0004'') THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0005'') THEN 1
+                      END AS ACT_VPO
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                  WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM ||'
+                  ) US ON (US.ACT_ID = ACT.ACT_ID)
+                  WHEN MATCHED THEN UPDATE SET
+                      ACT.ACT_VPO = US.ACT_VPO
+                     ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                     ,ACT.FECHAMODIFICAR = SYSDATE
+                  ';
+                       
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_ADM_INF_ADMINISTRATIVA'||CHR(10);
+                           
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_ADM_INF_ADMINISTRATIVA ACT
+               USING (				
+                  SELECT 
+                      ACT.ACT_ID AS ACT_ID
+                     ,CASE
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0002'',''0005'') THEN 2
+                        WHEN AUX.SITUACION_VPO=''0004'' THEN 1
+                      END AS ADM_ACTUALIZA_PRECIO_MAX
+                     ,CASE
+                        WHEN AUX.SITUACION_VPO=''0002'' THEN 1
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0004'',''0005'') THEN 0
+                      END AS ADM_DESCALIFICADO
+                     ,CASE
+                        WHEN AUX.SITUACION_VPO=''0005'' THEN 0
+                        WHEN AUX.SITUACION_VPO IN (''0001'',''0003'',''0004'',''0002'') THEN 1
+                      END AS ADM_LIBERTAD_CESION
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                  WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM ||'
+                  ) US ON (US.ACT_ID = ACT.ACT_ID)
+                  WHEN MATCHED THEN UPDATE SET
+                      ACT.ADM_ACTUALIZA_PRECIO_MAX = US.ADM_ACTUALIZA_PRECIO_MAX
+                     ,ACT.ADM_DESCALIFICADO = US.ADM_DESCALIFICADO
+                     ,ACT.ADM_LIBERTAD_CESION = US.ADM_LIBERTAD_CESION
+                     ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                     ,ACT.FECHAMODIFICAR = SYSDATE
+                  WHEN NOT MATCHED THEN 
+                  INSERT  
+                     ( ADM_ID
+                     , ACT_ID
+                     , ADM_ACTUALIZA_PRECIO_MAX
+                     , ADM_DESCALIFICADO
+                     , ADM_LIBERTAD_CESION
+                     , USUARIOCREAR
+                     , FECHACREAR)
+                  VALUES 
+                     ('|| V_ESQUEMA ||'.S_ACT_ADM_INF_ADMINISTRATIVA.NEXTVAL
+                     , US.ACT_ID                                        
+                     , US.ADM_ACTUALIZA_PRECIO_MAX
+                     , US.ADM_DESCALIFICADO
+                     , US.ADM_LIBERTAD_CESION
+                     , ''STOCK_BC''
+                     , SYSDATE)
+                  ';
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+                       
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_AHT_HIST_TRAM_TITULO'||CHR(10);
+                           
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO T1
+                USING (
+                    WITH ACT_HIST AS (
+                            SELECT 
+                                 HIST.TIT_ID
+                                ,HIST.AHT_ID
+                                ,ESP.DD_ESP_CODIGO
+                                ,HIST.AHT_FECHA_PRES_REGISTRO
+                                ,HIST.AHT_FECHA_INSCRIPCION
+                                ,HIST.AHT_FECHA_CALIFICACION
+                                ,ROW_NUMBER() OVER(PARTITION BY TIT_ID ORDER BY AHT_ID DESC) RN
+                            FROM '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO HIST
+                            JOIN '|| V_ESQUEMA ||'.DD_ESP_ESTADO_PRESENTACION ESP ON ESP.DD_ESP_ID=HIST.DD_ESP_ID
+                            WHERE HIST.BORRADO=0
+                        ), ACT_RECIENTE AS (
+                            SELECT  
+                                 TIT_ID
+                                ,AHT_ID
+                                ,DD_ESP_CODIGO
+                                ,AHT_FECHA_PRES_REGISTRO
+                                ,AHT_FECHA_INSCRIPCION
+                                ,AHT_FECHA_CALIFICACION
+                            FROM ACT_HIST
+                            WHERE RN = 1 
+                        )
+                        SELECT  
+                            CASE 
+                                WHEN ETI.DD_ETI_CODIGO=''01'' AND REC.DD_ESP_CODIGO=''02'' AND AUX.FEC_ESTADO_TITULARIDAD IS NOT NULL AND AUX.FEC_ESTADO_TITULARIDAD !=''00000000''
+                                    THEN TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd'')
+                                WHEN AUX.FEC_ESTADO_TITULARIDAD IS NOT NULL AND AUX.FEC_ESTADO_TITULARIDAD !=''00000000''
+                                    THEN COALESCE(REC.AHT_FECHA_PRES_REGISTRO,TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd'')) 
+                            END AS AHT_FECHA_PRES_REGISTRO
+                            ,CASE
+                                WHEN ETI.DD_ETI_CODIGO=''02'' AND AUX.FEC_ESTADO_TITULARIDAD IS NOT NULL AND AUX.FEC_ESTADO_TITULARIDAD !=''00000000'' 
+                                    THEN COALESCE(REC.AHT_FECHA_INSCRIPCION,TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd''))
+                                ELSE NULL
+                            END AS AHT_FECHA_INSCRIPCION
+                            ,CASE
+                                WHEN ETI.DD_ETI_CODIGO=''06'' AND AUX.FEC_ESTADO_TITULARIDAD IS NOT NULL AND AUX.FEC_ESTADO_TITULARIDAD !=''00000000'' 
+                                    THEN COALESCE(REC.AHT_FECHA_CALIFICACION,TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd''))
+                                ELSE NULL
+                            END AS AHT_FECHA_CALIFICACION
+                            ,TIT.TIT_ID AS TIT_ID
+                            ,CASE       
+                                WHEN ETI.DD_ETI_CODIGO=''01'' AND REC.AHT_ID IS NULL THEN NULL  
+                                WHEN ETI.DD_ETI_CODIGO=''01'' AND REC.DD_ESP_CODIGO=''02'' THEN NULL 
+                                WHEN ETI.DD_ETI_CODIGO=''02'' AND REC.AHT_ID IS NULL THEN NULL                
+                                WHEN ETI.DD_ETI_CODIGO=''02'' AND REC.DD_ESP_CODIGO=''01'' THEN REC.AHT_ID  
+                                WHEN ETI.DD_ETI_CODIGO=''02'' AND REC.DD_ESP_CODIGO=''02'' THEN NULL  
+                                WHEN ETI.DD_ETI_CODIGO=''02'' AND REC.DD_ESP_CODIGO=''03'' THEN REC.AHT_ID  
+                                WHEN ETI.DD_ETI_CODIGO=''06'' AND (REC.AHT_ID IS NULL OR REC.DD_ESP_CODIGO=''03'') THEN NULL             
+                                WHEN ETI.DD_ETI_CODIGO=''06'' AND REC.DD_ESP_CODIGO=''01'' THEN REC.AHT_ID 
+                            END AS AHT_ID
+                            ,CASE
+                                WHEN ETI.DD_ETI_CODIGO=''02'' THEN ''03''
+                                WHEN ETI.DD_ETI_CODIGO=''01'' THEN ''01''
+                                WHEN ETI.DD_ETI_CODIGO=''06'' THEN ''02''
+                            END AS DD_ESP_CODIGO
+                           ,AHT.FECHAMODIFICAR AS FECHAMODIFICAR
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        JOIN '|| V_ESQUEMA ||'.ACT_TIT_TITULO TIT ON ACT.ACT_ID=TIT.ACT_ID AND TIT.BORRADO=0
+                        JOIN '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO ETI ON ETI.DD_ETI_ID=TIT.DD_ETI_ID
+                        LEFT JOIN ACT_RECIENTE REC ON REC.TIT_ID=TIT.TIT_ID
+                        JOIN '|| V_ESQUEMA ||'.ACT_AHT_HIST_TRAM_TITULO AHT ON REC.AHT_ID=AHT.AHT_ID
+                        WHERE ETI.DD_ETI_CODIGO NOT IN (''04'') AND AUX.FLAG_EN_REM='|| FLAG_EN_REM ||' 
+                    ) T2 ON (T1.AHT_ID = T2.AHT_ID)
+                    WHEN MATCHED THEN UPDATE SET
+                          T1.DD_ESP_ID=(SELECT DD_ESP_ID FROM '|| V_ESQUEMA ||'.DD_ESP_ESTADO_PRESENTACION WHERE DD_ESP_CODIGO=T2.DD_ESP_CODIGO)
+                        , T1.AHT_FECHA_PRES_REGISTRO = T2.AHT_FECHA_PRES_REGISTRO
+                        , T1.AHT_FECHA_INSCRIPCION = T2.AHT_FECHA_INSCRIPCION
+                        , T1.AHT_FECHA_CALIFICACION = T2.AHT_FECHA_CALIFICACION
+                        , T1.USUARIOMODIFICAR = ''STOCK_BC''
+                        , T1.FECHAMODIFICAR = COALESCE(T2.FECHAMODIFICAR,SYSDATE)
+                    WHEN NOT MATCHED THEN 
+                    INSERT  
+                        ( AHT_ID
+                        , TIT_ID
+                        , AHT_FECHA_PRES_REGISTRO
+                        , AHT_FECHA_INSCRIPCION
+                        , AHT_FECHA_CALIFICACION
+                        , DD_ESP_ID
+                        , USUARIOCREAR
+                        , FECHACREAR)
+                    VALUES 
+                        ('|| V_ESQUEMA ||'.S_ACT_AHT_HIST_TRAM_TITULO.NEXTVAL
+                        , T2.TIT_ID
+                        , T2.AHT_FECHA_PRES_REGISTRO
+                        , T2.AHT_FECHA_INSCRIPCION
+                        , T2.AHT_FECHA_CALIFICACION
+                        , (SELECT DD_ESP_ID FROM '|| V_ESQUEMA ||'.DD_ESP_ESTADO_PRESENTACION WHERE DD_ESP_CODIGO=T2.DD_ESP_CODIGO)
+                        , ''STOCK_BC''
+                        , SYSDATE)
+                  ';   
+
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PTA_PATRIMONIO_ACTIVO'||CHR(10);
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
+               USING (				
+                  SELECT 
+                      SPS.ACT_ID AS ACT_ID
+                     ,CASE
+                        WHEN AUX.ESTADO_POSESORIO IN (''P01'',''P03'',''P05'',''P06'') THEN NULL
+                        WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
+                      END AS DD_EAL_ID
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                  JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID
+                  WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM ||'
+                  ) US ON (US.ACT_ID = ACT.ACT_ID)
+                  WHEN MATCHED THEN UPDATE SET
+                      ACT.DD_EAL_ID = US.DD_EAL_ID
+                     ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
+                     ,ACT.FECHAMODIFICAR = SYSDATE
+                  ';
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_ACT_SCM (
+                  ACT_ID
+                  , FECHA_CALCULO
+               )
+               SELECT
+                  DISTINCT ACT2.ACT_ID
+                  , SYSDATE
+               FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
+                  WHERE AUX.FEC_VALIDO_A IS NOT NULL
+                  AND AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
+                  AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                  JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                  JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
+                  AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT2.ACT_ID)';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN INSERTADO '|| SQL%ROWCOUNT||' REGISTROS EN TMP_ACT_SCM POR ACTIVOS DADOS DE BAJA [INFO]'|| CHR(10);
+                   
 
 COMMIT;
 

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +26,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -110,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
@@ -129,8 +133,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -274,6 +281,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
 
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
+
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -318,6 +328,9 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIALIZACION_NO_VALIDO = "El tipo de comercialización no es válido.";
 
 	public static final String SPLIT_VALUE = ";s;";
+	
+	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yy");
+
 
 	public DtoAgrupaciones getAgrupacionById(Long id) {
 
@@ -686,7 +699,12 @@ public class AgrupacionAdapter {
 
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
 
-						if (!Checks.esNulo(activoPrincipal.getActivoPublicacion())) {
+						if (!Checks.esNulo(agrupacion.getFechaBaja())) {
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? DDEstadoPublicacionAlquiler.DESCRIPCION_NO_PUBLICADO_ALQUILER : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? DDEstadoPublicacionVenta.DESCRIPCION_NO_PUBLICADO_VENTA : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA : "");
+						} else if (!Checks.esNulo(activoPrincipal.getActivoPublicacion())) {
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion() : "");
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion() : "");
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
@@ -834,15 +852,9 @@ public class AgrupacionAdapter {
 	}
 	
 	public Page getBusquedaAgrupacionesGrid(DtoAgrupacionGridFilter dto) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}
-		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto);		
+		Long usuarioId = genericAdapter.getUsuarioLogado().getId();
+		
+		return activoAgrupacionDao.getBusquedaAgrupacionesGrid(dto, usuarioId);		
 	}
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
@@ -1152,19 +1164,6 @@ public class AgrupacionAdapter {
 		}
 
 		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			boolean errorFlag = false;
-			Activo activoP = agrupacion.getActivoPrincipal();
-			if(activoP != null) {
-				Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
-				PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
-				PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
-				errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
-						
-				if(errorFlag) {
-					throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
-				}
-			}
 			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
 
@@ -1174,7 +1173,7 @@ public class AgrupacionAdapter {
 					dto.setIdActivo(activo.getId());
 					ActivoAgrupacionActivo aga = activoApi
 							.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-					if (aga != null && !errorFlag) {
+					if (aga != null) {
 						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
 					}
 	
@@ -1227,38 +1226,6 @@ public class AgrupacionAdapter {
 	
 	}
 	
-	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
-		boolean errorFlag = false;	
-		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
-		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
-		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
-		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
-		boolean perimetroActivoPrincipalBool = false;
-		boolean perimetroActualPrincipalBool = false;
-		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
-			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
-		}
-		if(perimetroActivoActual.getCheckGestorComercial() != null) {
-			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
-		}
-		
-		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
-		
-		if(!errorFlag) {
-			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
-			if(!errorFlag) {
-				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
-					errorFlag = true;
-				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
-					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
-				}
-			}
-		}
-		return errorFlag;
-	}
-
-
-
 	@Transactional(readOnly = false)
 	public void createActivoAgrupacionMasivo(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
 			throws JsonViewerException {
@@ -1269,51 +1236,7 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
-			if (Checks.esNulo(agrupacion)) {
-				throw new JsonViewerException("La agrupación no existe");
-			}
-			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
-
-			if (Checks.esNulo(activo)) {
-				throw new JsonViewerException("El activo no existe");
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-				}
-			}
-
-			//Si el activo es de Liberbank, además debe ser de la misma subcartera
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
-				if(!Checks.esNulo(activo.getSubcartera())) {
-					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
-						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
-					}
-				}else{
-					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
-
-				}
-			}
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
 			// del activo, y modificamos la agrupación con esos datos
@@ -2396,12 +2319,96 @@ public class AgrupacionAdapter {
 				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
 			}else {
 				tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));			
-			
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+				List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumentoCliente()),
+						genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya"));
+
 				if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya())) {
 					clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
+				}else if (!Checks.esNulo(clientes) && !clientes.isEmpty()) {
+					clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 				}
 			}
+
+			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+			clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+
+			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
+
+			if(iap == null) {
+				iap = new InfoAdicionalPersona();
+				iap.setAuditoria(Auditoria.getNewInstance());
+				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}else if(clienteComercial.getInfoAdicionalPersona() == null) {
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+			
+			Filter filtro = null;
+			if(dto.getFechaNacimientoConstitucion() != null) {
+				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
+			}
+			
+			if(dto.getPaisNacimientoCompradorCodigo() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPaisNacimientoCompradorCodigo());
+				DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtro);
+				clienteComercial.setPaisNacimiento(pais);
+			}
+			if(dto.getLocalidadNacimientoCompradorCodigo() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLocalidadNacimientoCompradorCodigo());
+				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+	
+				clienteComercial.setLocalidadNacimiento(municipioNuevo);
+			}
+			
+			if (dto.getProvinciaNacimiento() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaNacimiento());
+				DDProvincia provinciNacimiento = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+				clienteComercial.setProvinciaNacimiento(provinciNacimiento);
+			}
+			
+			if(dto.getCodigoPais() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
+				DDPaises pais = (DDPaises) genericDao.get(DDPaises.class, filtro);
+				clienteComercial.setPais(pais);
+			}
+			if(dto.getProvinciaCodigo() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+				DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+				clienteComercial.setProvincia(provinciaNueva);
+			}
+			if(dto.getMunicipioCodigo() != null) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+	
+				clienteComercial.setMunicipio(municipioNuevo);
+			}
+			
+			if (dto.getCodigoPostalNacimiento() != null) {
+				clienteComercial.setCodigoPostal(dto.getCodigoPostalNacimiento());
+			}
+			
+			if (dto.getEmailNacimiento() != null) {
+				clienteComercial.setEmail(dto.getEmailNacimiento());
+			}
+			
+			if (dto.getTelefonoNacimiento1() != null) {
+				clienteComercial.setTelefono1(dto.getTelefonoNacimiento1());
+			}
+			
+			if (dto.getTelefonoNacimiento2() != null) {
+				clienteComercial.setTelefono2(dto.getTelefonoNacimiento2());
+			}
+			
+			clienteComercial.setDireccion(dto.getDireccion());
+			if(clienteComercial.getInfoAdicionalPersona() != null) {
+				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
+			}
+			
+			genericDao.save(InfoAdicionalPersona.class, iap);
+
 			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
@@ -3246,8 +3253,6 @@ public class AgrupacionAdapter {
 
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
-
 				Boolean ofertaViva = false;
 
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
@@ -3300,20 +3305,24 @@ public class AgrupacionAdapter {
 				}
 
 				if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
-
+					List<ActivoAgrupacionActivo> activosAgrupacion = agrupacion.getActivos();
+					Activo activo = new Activo();
+					
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquilerCodigo());
 					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) genericDao.get(DDTipoAlquiler.class, filtro);
+					
+					for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+						activo = activoAgrupacion.getActivo();
+						activo.setTipoAlquiler(tipoAlquiler);
+					}
 
 					loteComercial.setTipoAlquiler(tipoAlquiler);
 				}
-
 
 				if (!Checks.esNulo(dto.getCodigoGestorComercial())) {
 					Usuario usuario = proxyFactory.proxy(UsuarioApi.class).get(dto.getCodigoGestorComercial());
 					loteComercial.setUsuarioGestorComercial(usuario);
 				}
-
-				List <Oferta> ofertasAgr = loteComercial.getOfertas();
 
 				Boolean ofertaViva = false;
 
@@ -3949,6 +3958,9 @@ public class AgrupacionAdapter {
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 
+		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
+			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 			List<Long> activosID = new ArrayList<Long>();
 			for (ActivoAgrupacionActivo activosAgrupacion : agrupacion.getActivos()) {

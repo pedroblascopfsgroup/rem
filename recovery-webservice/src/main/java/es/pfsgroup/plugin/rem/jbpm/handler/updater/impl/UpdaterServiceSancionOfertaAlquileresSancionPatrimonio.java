@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -55,7 +56,8 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
@@ -64,7 +66,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.NO.equals(valor.getValor())) {
+				if(DDSiNo.SI.equals(valor.getValor())) {
 					//Cambiar estado ANULADO del expediente por el que toca en el ítem
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -79,7 +81,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 					
-				} else if(DDSiNo.SI.equals(valor.getValor())) {
+				} else if(DDSiNo.NO.equals(valor.getValor())) {
 					//Cambiar estado ANULADO del expediente por el que toca en el ítem
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -100,7 +102,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 
@@ -111,5 +113,4 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
 }

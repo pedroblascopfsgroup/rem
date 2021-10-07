@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -17,6 +18,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -44,7 +46,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	private OfertaApi ofertaApi;
 	
 	@Autowired
-	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	private TramiteAlquilerApi tramiteAlquilerApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     
@@ -54,7 +56,8 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
@@ -66,10 +69,14 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		for(TareaExternaValor valor :  valores){
 			
 			if(RESULTADO_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if (DDSiNo.NO.equals(valor.getValor())) {
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC));
+				if (DDSiNo.SI.equals(valor.getValor())) {
+					if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC));
+					}else {
+						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
+					}
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
-				}else if (DDSiNo.SI.equals(valor.getValor())) {
+				}else if (DDSiNo.NO.equals(valor.getValor())) {
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 				}
@@ -81,7 +88,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		expedienteComercialApi.update(expedienteComercial,false);
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(expedienteComercial.getOferta());
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 	}
 
@@ -92,5 +99,4 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
-
 }

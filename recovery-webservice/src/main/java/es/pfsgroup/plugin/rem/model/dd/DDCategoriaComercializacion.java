@@ -26,10 +26,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDCategoriaComercializacion implements Auditable, Dictionary {
 	
 	
-	public static final String CODIGO_RENTABILIDAD = "01";
-	public static final String CODIGO_TERCIARIO_SIN_POS = "02";
-	public static final String CODIGO_TERCIARIO_SIN_POS_MOROSO = "03";
-	public static final String CODIGO_TERCIARIO_SIN_POS_VENCIDO = "04";
+	public static final String CODIGO_RENTABILIDAD = "1";
+	public static final String CODIGO_TERCIARIO_SIN_POS = "2";
+	public static final String CODIGO_TERCIARIO_SIN_POS_MOROSO = "3";
+	public static final String CODIGO_TERCIARIO_SIN_POS_VENCIDO = "4";
+	
+	public static final String CODIGO_C4C_RENTABILIDAD = "60";
+	public static final String CODIGO_C4C_TERCIARIO_SIN_POS = "30";
+	public static final String CODIGO_C4C_TERCIARIO_SIN_POS_MOROSO = "50";
+	public static final String CODIGO_C4C_TERCIARIO_SIN_POS_VENCIDO = "40";
 	
 	private static final long serialVersionUID = 1L;
 
@@ -41,6 +46,9 @@ public class DDCategoriaComercializacion implements Auditable, Dictionary {
 	 
 	@Column(name = "DD_CTC_CODIGO")   
 	private String codigo;
+	 
+	@Column(name = "DD_CTC_CODIGO_C4C")   
+	private String codigoC4C;
 	 
 	@Column(name = "DD_CTC_DESCRIPCION")   
 	private String descripcion;
@@ -104,6 +112,14 @@ public class DDCategoriaComercializacion implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 
 }

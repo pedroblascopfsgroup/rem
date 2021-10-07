@@ -94,6 +94,23 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean ofrDocRespPrescriptor;
 	
 	private String vinculoCaixaCodigo;
+	
+	private String fechaNacimientoConstitucion;
+	private String paisNacimientoCompradorCodigo;
+    private String localidadNacimientoCompradorCodigo;
+    private String codigoPais;
+    private String provinciaCodigo;
+    private String municipioCodigo;
+    private String direccion;
+    private Boolean prp;
+    private String localidadNacimientoCompradorDescripcion;
+    private String tipologivaVentaCod;
+    private String provinciaNacimiento;
+    private String provinciaNacimientoDescripcion;
+    private String codigoPostalNacimiento;
+    private String emailNacimiento;
+    private String telefonoNacimiento1;
+    private String telefonoNacimiento2;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -525,14 +542,107 @@ public class DtoOfertasFilter extends WebDto {
 	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
 	}
-	
+	public String getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+	public void setFechaNacimientoConstitucion(String fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+	public String getCodigoPais() {
+		return codigoPais;
+	}
+	public void setCodigoPais(String codigoPais) {
+		this.codigoPais = codigoPais;
+	}
+	public String getProvinciaCodigo() {
+		return provinciaCodigo;
+	}
+	public void setProvinciaCodigo(String provinciaCodigo) {
+		this.provinciaCodigo = provinciaCodigo;
+	}
+	public String getMunicipioCodigo() {
+		return municipioCodigo;
+	}
+	public void setMunicipioCodigo(String municipioCodigo) {
+		this.municipioCodigo = municipioCodigo;
+	}
+	public String getDireccion() {
+		return direccion;
+	}
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+	public Boolean getPrp() {
+		return prp;
+	}
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
 	public String getVinculoCaixaCodigo() {
 		return vinculoCaixaCodigo;
 	}
 	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}
-	
-	
+	public String getTipologivaVentaCod() {
+		return tipologivaVentaCod;
+	}
+	public void setTipologivaVentaCod(String tipologivaVentaCod) {
+		this.tipologivaVentaCod = tipologivaVentaCod;
+	}
+	public String getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+	public void setProvinciaNacimiento(String provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
+	public String getProvinciaNacimientoDescripcion() {
+		return provinciaNacimientoDescripcion;
+	}
+	public void setProvinciaNacimientoDescripcion(String provinciaNacimientoDescripcion) {
+		this.provinciaNacimientoDescripcion = provinciaNacimientoDescripcion;
+	}
+	public String getCodigoPostalNacimiento() {
+		return codigoPostalNacimiento;
+	}
+	public void setCodigoPostalNacimiento(String codigoPostalNacimiento) {
+		this.codigoPostalNacimiento = codigoPostalNacimiento;
+	}
+	public String getEmailNacimiento() {
+		return emailNacimiento;
+	}
+	public void setEmailNacimiento(String emailNacimiento) {
+		this.emailNacimiento = emailNacimiento;
+	}
+	public String getTelefonoNacimiento1() {
+		return telefonoNacimiento1;
+	}
+	public void setTelefonoNacimiento1(String telefonoNacimiento1) {
+		this.telefonoNacimiento1 = telefonoNacimiento1;
+	}
+	public String getTelefonoNacimiento2() {
+		return telefonoNacimiento2;
+	}
+	public void setTelefonoNacimiento2(String telefonoNacimiento2) {
+		this.telefonoNacimiento2 = telefonoNacimiento2;
+	}
 	
 }

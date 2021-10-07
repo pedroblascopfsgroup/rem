@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2',
-    		'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle',
+    		'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.TramitarOfertaActivoWindow',
 			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
@@ -3171,10 +3171,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var comboMotivoPerimetroComer = me
 				.lookupReference('comboMotivoPerimetroComer');
 		var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
+		var perimetroAdmision = me.lookupReference('perimetroAdmision');
+		var chkbxPerimetroPublicar = me.lookupReference('chkbxPerimetroPublicar');
 		var textFieldFormalizar = me
 				.lookupReference('textFieldPerimetroFormalizar');
 		var textFieldPerimetroGestion = me
 				.lookupReference('textFieldPerimetroGestion');
+		var textFieldPerimetroAdmision = me
+				.lookupReference('textFieldPerimetroAdmision');
+		var textFieldPerimetroPublicar = me
+				.lookupReference('textFieldPerimetroPublicar');
+
 		if (!val) {
 			switch (ref) {
 				case 'chkbxPerimetroComercializar' :
@@ -3214,6 +3221,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						textFieldFormalizar.reset();
 					}
 					break;
+					
+				case 'perimetroAdmision' :
+					textFieldPerimetroAdmision.reset();
+					break;
+					
+				case 'chkbxPerimetroPublicar' :
+					textFieldPerimetroPublicar.reset();
+					break;
+					
 				default :
 					break;
 			}
@@ -8187,7 +8203,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonCancelarVentanaGastoAsociado : function(btn) {
 		var me = this;
 		btn.up('window').hide();
+	}, 
+    
+    mostrarCrearOfertaTramitada: function(editor, grid, context) {   	
+		var me = this;
+		
+		me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.TramitarOfertaActivoWindow", {
+			editor: editor,
+			grid: grid,
+			context: context
+        });	    
 	},
+	
+	hideWindowCrearOferta: function(btn) {
+		var me = this;
+		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+		btn.up('window').hide();
+	 }, 
+
+    onClickCrearOfertaTramitada: function (btn){
+ 		var me = this;
+ 		var ventanaCrearOferta = btn.up('[reference=crearofertawindowref]');
+ 		var editor = ventanaCrearOferta.editor;
+ 		var gridListadoOfertas = ventanaCrearOferta.grid;
+ 		var context = ventanaCrearOferta.context;
+ 		
+ 		context.record.data.ventaCartera = ventanaCrearOferta.down('[reference=checkVentaCartera]').value;
+ 		context.record.data.ofertaEspecial = ventanaCrearOferta.down('[reference=checkOfertaEspecial]').value;
+ 		context.record.data.ventaSobrePlano = ventanaCrearOferta.down('[reference=checkVentaSobrePlano]').value;
+ 		context.record.data.codRiesgoOperacion = ventanaCrearOferta.down('[reference=tipoRiesgoOperacionRef]').value;
+ 		
+ 		gridListadoOfertas.saveFn(editor, gridListadoOfertas, context);
+ 		
+ 		me.hideWindowCrearOferta(btn);
+ 		
+    },
 
     
     mostrarObservacionesGrid: function(event, target, options) {   	
@@ -8535,6 +8585,87 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			grid.getStore().load();
 		}
 		
+    },
+    
+    onClickModificarDeposito: function(btn){
+    	var me = this;
+    	var activo = me.getViewModel().get('activo');
+    	var deposito = me.getViewModel().get('detalleOfertaModel').get('dtoDeposito');
+    	var cuentaBancariaVirtual = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaVirtual');
+    	var cuentaBancariaCliente = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaCliente');
+    	var parent = btn.up('ofertascomercialactivo');
+		var ventana = Ext.create("HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito", {	
+			deposito: deposito, activo: activo, parent: parent, cuentaBancariaVirtual: cuentaBancariaVirtual,cuentaBancariaCliente: cuentaBancariaCliente
+		});
+    	
+		 ventana.show();
+    },
+    
+	onClickCancelarModificarDeposito : function(btn) {
+		var window = btn.up('window');
+		window.destroy();
+	},
+	
+	onClickSaveModificarDeposito : function(btn) {
+		var me = this;
+		var window = btn.up('window');
+		var array = window.query('container > component[editable]');
+		var params={idOferta:idOferta, id:window.deposito.id};
+		for(i = 0; i < array.length;i++){ 
+			params[array[i].reference] =array[i].value;
+		}
+		if(!window.down('form').isFormValid()){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.campos"));
+			return;
+		}
+
+		url = $AC.getRemoteUrl('ofertas/updateDepositoOferta');
+		Ext.Ajax.request({
+			url : url,
+			method : 'POST',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback : function(record, operation) {
+				var model = me.getViewModel().get('detalleOfertaModel');
+				model.setId(idOferta);
+				model.load({
+					success : function(idOferta) {}
+				});
+				window.destroy();
+			}
+		});
+	},
+	
+	onSelectEstadoDeposito: function(combo, value){
+		var me = this;
+		var window = combo.up('window');
+		var devuelto = false;
+		var ingresado = false;
+		if(CONST.ESTADO_DEPOSITO['COD_DEVUELTO'] == combo.getValue()){
+			devuelto = true;
+		}
+		if(CONST.ESTADO_DEPOSITO['COD_INGRESADO'] == combo.getValue()){
+			ingresado = true;
+		} 
+		window.down('[reference=fechaIngresoDeposito]').allowBlank=!ingresado;
+		window.down('[reference=fechaDevolucionDeposito]').allowBlank=!devuelto;
+		window.down('[reference=ibanDevolucionDeposito]').allowBlank=!devuelto;
+	},
+	
+    onChangeComboGestionDnd: function(combo){
+    	var me = this;
+		var comboEstadoFisico = me.lookupReference('estadoActivoCodigoRef');
+
+		if (combo.getValue() === '01') {
+			comboEstadoFisico.setDisabled(false);
+		} else {
+			comboEstadoFisico.setDisabled(true);
+		}
     }
 });
 

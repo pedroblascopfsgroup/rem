@@ -52,6 +52,14 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String ACCION_FIRMA_ARRAS_RECHAZADAS = "014";
     public static final String ACCION_FIRMA_CONTRATO_RECHAZADO = "016";
     public static final String ACCION_ARRAS_CONTABILIZADAS = "022";
+    public static final String ACCION_COM_CONTRAOFERTA = "003";
+    public static final String ACCION_AVANZAR_SCORING = "031";
+    public static final String CODIGO_PENDIENTE_SCORING = "037";
+    public static final String CODIGO_PDTE_ANALISIS_TECNICO = "038";
+    public static final String CODIGO_PENDIENTE_NEGOCIACION = "039";
+    public static final String CODIGO_PDTE_CL_ROD = "040";
+    public static final String CODIGO_RECHAZO_PBC = "041";
+
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -203,7 +211,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionVentaContabilizada(DtoOnlyExpedienteYOfertaCaixa dto){
+    public ModelAndView accionVentaContabilizada(DtoAccionVentaContabilizada dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionVentaContabilizada(dto);
@@ -460,6 +468,48 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionArrasContabilizadas(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionContraoferta(DtoAccionAprobacionCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionContraoferta(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionScoringBC(DtoAvanzaScoringBC dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionScoringBC(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionNoComercialBC(JSONObject dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.avanzarTareaGenerico(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

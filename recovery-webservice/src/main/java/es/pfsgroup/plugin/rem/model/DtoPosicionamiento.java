@@ -48,6 +48,7 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 	private String observacionesBcPos;
 	private String observacionesRem;
 	private String validacionBCPosiDesc;
+	private String motivoAnulacionBc;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -180,6 +181,12 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 	}
 	public void setValidacionBCPosiDesc(String validacionBCPosiDesc) {
 		this.validacionBCPosiDesc = validacionBCPosiDesc;
+	}
+	public String getMotivoAnulacionBc() {
+		return motivoAnulacionBc;
+	}
+	public void setMotivoAnulacionBc(String motivoAnulacionBc) {
+		this.motivoAnulacionBc = motivoAnulacionBc;
 	}
 	
 	

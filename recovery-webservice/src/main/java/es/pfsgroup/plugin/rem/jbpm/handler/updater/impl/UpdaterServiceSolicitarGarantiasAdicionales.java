@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -45,7 +46,8 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSolicitarGarantiasAdicionales.class);
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -68,8 +70,11 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				if(!haPasadoScoringBC && acepta) {
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
-				}else if((haPasadoScoringBC && acepta)|| (!haPasadoScoringBC && !acepta)){
-					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
+				}else if(haPasadoScoringBC && acepta){
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;//TODO pendiente de cambiar de haya
+					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC;
+				}else if(!haPasadoScoringBC && !acepta){
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;//TODO pendiente de cambiar de haya
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_VALORAR_ACUERDO_SIN_GARANTIAS_ADICIONALES;
 				}else{
 					estadoCodigo = DDEstadosExpedienteComercial.DENEGADO;
@@ -89,7 +94,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
 				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlush(expediente.getOferta());
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
 			}
 

@@ -119,7 +119,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	fieldLabel: 'Tapiado',
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{situacionPosesoria.accesoTapiado}'
+					            		value: '{situacionPosesoria.accesoTapiado}',
+					            		readOnly: '{isAssetManager}'
 					            	},
 					            	labelWidth: 80,
 					            	width: 200,
@@ -145,7 +146,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	readOnly: true,
 						        	bind: {
 						        		value: '{situacionPosesoria.diasTapiado}',
-						        		hidden: '{!activo.isCarteraBankia}'
+						        		hidden: '{!activo.isCarteraBankia}',
+						        		readOnly: '{isAssetManager}'
 						        	},
 					            	labelWidth: 120,
 					            	width: 60
@@ -155,7 +157,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	reference: 'datefieldTapiado',
 						        	fieldLabel: 'Fecha tapiado',
 						        	bind: {
-						        		value: '{situacionPosesoria.fechaAccesoTapiado}'
+						        		value: '{situacionPosesoria.fechaAccesoTapiado}',
+						        		readOnly: '{isAssetManager}'
 						        	},
 					            	labelWidth: 100,
 					            	width: 200
@@ -165,7 +168,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	fieldLabel: 'Puerta antiocupa',
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{situacionPosesoria.accesoAntiocupa}'
+					            		value: '{situacionPosesoria.accesoAntiocupa}',
+					            		readOnly: '{!isGestorSeguridadOAssetManager}'
 					            	},
 					            	labelWidth: 80,
 					            	width: 180,
@@ -189,7 +193,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	xtype:'datefieldbase',
 						        	reference: 'datefieldPuertaAntiocupa',
 						        	fieldLabel: 'Fecha colocaci&oacute;n puerta antiocupa',
-						        	bind: '{situacionPosesoria.fechaAccesoAntiocupa}',
+						        	bind: {
+						        		value: '{situacionPosesoria.fechaAccesoAntiocupa}',
+							        	readOnly: '{!isGestorSeguridadOAssetManager}'
+						        		},
 					            	labelWidth: 80,
 					            	width: 200
 						        },
@@ -197,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	xtype: 'comboboxfieldbase',						        	
 						        	fieldLabel:  HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.alarma'),
 						        	bind: {
-						        		readOnly: '{!isGestorSeguridad}',
+						        		readOnly: '{!isGestorSeguridadOAssetManager}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneAlarma}'
 					            	},
@@ -239,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        	disabled:true,
 							        	bind: {
 								        	value:'{situacionPosesoria.fechaInstalacionAlarma}',
-								        	readOnly: '{!isGestorSeguridad}'
+								        	readOnly: '{!isGestorSeguridadOAssetManager}'
 							        	},
 						            	labelWidth: 80,
 						            	width: 200
@@ -251,7 +258,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.alarma'),							        
 							        	bind:{
 							        		value: '{situacionPosesoria.fechaDesinstalacionAlarma}',
-							        		readOnly: '{!isGestorSeguridad}'
+							        		readOnly: '{!isGestorSeguridadOAssetManager}'
 							        	},
 						            	labelWidth: 80,
 						            	width: 200
@@ -262,7 +269,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            	labelWidth: 80,
 					            	width: 180,
 						        	bind: {
-						        		readOnly: '{!isGestorSeguridad}',
+						        		readOnly: '{!isGestorSeguridadOAssetManager}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneVigilancia}'
 					            		,listeners: {
@@ -302,7 +309,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.vigilancia'),						        	
 							        	bind:{
 							        		value:'{situacionPosesoria.fechaInstalacionVigilancia}',
-							        		readOnly: '{!isGestorSeguridad}'
+							        		readOnly: '{!isGestorSeguridadOAssetManager}'
 							        	},							  
 						            	labelWidth: 80,
 						            	width: 200
@@ -314,7 +321,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.vigilancia'),
 							        	bind: {
 							        		value:'{situacionPosesoria.fechaDesinstalacionVigilancia}',
-							        		readOnly: '{!isGestorSeguridad}'
+							        		readOnly: '{!isGestorSeguridadOAssetManager}'
 							        	},							      
 						            	labelWidth: 80,
 						            	width: 200
@@ -520,7 +527,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: 'Llaves necesarias',
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.necesarias}'
+			            		value: '{situacionPosesoria.necesarias}',
+			            		readOnly: '{isAssetManager}'
 			            	},
 			            	listeners: {
 			            		change: function(combo, value) {
@@ -542,7 +550,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: 'Llaves en poder de HRE',
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.llaveHre}'
+			            		value: '{situacionPosesoria.llaveHre}',
+			            		readOnly: '{isAssetManager}'
 			            	},
 			            	listeners: {
 			            		change: function(combo, value) {
@@ -563,7 +572,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							xtype:'datefieldbase',
 							reference: 'fechaPrimerAnillado',
 							fieldLabel: 'Fecha primer anillado',
-		                	bind:		'{situacionPosesoria.fechaPrimerAnillado}'
+		                	bind:		{
+		                		value: '{situacionPosesoria.fechaPrimerAnillado}',
+		                		readOnly: '{isAssetManager}'
+		                	}
 		                },
 						{ 
 							xtype:'datefieldbase',

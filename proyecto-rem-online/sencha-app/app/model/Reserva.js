@@ -72,7 +72,83 @@ Ext.define('HreRem.model.Reserva', {
     		name: 'fechaFirmaRescision',
     		type : 'date',
 			dateFormat: 'c'
-    	} 
+    	},
+		{
+			name: 'inscripcionTitulo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'tanteoDL',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'selloCalidad',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasTecnicos',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'posesion',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasCatastrales',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'autorizacionVpo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'fechaContabilizacionArras',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'inscripcionTituloMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'tanteoDLMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'selloCalidadMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasTecnicosMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'posesionMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasCatastralesMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'autorizacionVpoMotivo',
+			type: 'boolean'
+			
+		}
+		
     ],
 
     proxy: {

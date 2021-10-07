@@ -23,7 +23,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITE: 3,
 		TAREA: 4,
 		EXPEDIENTE: 5,
-		GASTO: 6
+		GASTO: 6,
+		AGRUPACION: 7
 	},
 
 	TIPOS_COMERCIALIZACION: {
@@ -37,7 +38,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		VENTA:'Venta',
 		ALQUILER: 'Alquiler',
 		ALQUILER_VENTA: 'Alquiler y venta',
-		ALQUILER_OPCION_COMPRA: 'Alquiler con opci�n a compra'
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opci�n a compra',
+		ALQUILER_NO_COMERCIAL: 'Alquiler no comercial'		
 	},
 
 	TIPOS_AGRUPACION: {
@@ -73,7 +75,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	TIPOS_EXPEDIENTE_COMERCIAL: {
 		VENTA: '01',
-		ALQUILER: '02'
+		ALQUILER: '02',
+		ALQUILER_NO_COMERCIAL: '03'
 	},
 
 	TIPOS_TRABAJO: {
@@ -175,7 +178,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		FORMA:				'formalizacionexpediente',
 		GESECO:				'gestioneconomicaexpediente',
 		PLUVTA:             'plusvaliaventaexpedediente',
-		SEGREN: 			'segurorentasexpediente'
+		SEGREN: 			'segurorentasexpediente',
+		GARANTIAS:			'garantiasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
 
@@ -204,7 +208,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'07': 'CERBERUS',
-    	'08': 'LIBERBANK',
+    	'08': 'UNICAJA',
     	'10': 'TANGO',
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
@@ -225,7 +229,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GALEON:'GALEON',
     	ZEUS :'ZEUS',
     	BBVA :'BBVA',
-		CAIXABANK : 'CAIXABANK'
+		CAIXABANK : 'CAIXABANK',
+		UNICAJA : 'UNICAJA'
     },
 
     SUBCARTERA: {
@@ -281,7 +286,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	CAJAMAR: 'logo_cajamar.svg',
     	SAREB: 'logo_sareb.svg',
     	BANKIA: 'logo_bankia.svg',
-		CAIXABANK: 'logo_bankia.svg'
+		CAIXABANK: 'logo_bankia.svg',
+		UNICAJA: 'logo_unicajaBanco.svg'
     },
 
     PERFILES: {
@@ -329,7 +335,10 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTBOARDING: 'PERFGBOARDING',
 		CARTERA_BBVA: 'CARTERA_BBVA',
 		SUPERCOMERCIAL:'SUPERCOMERCIAL',
-		SEGURIDAD_REAM: 'SEGURIDAD_REAM'
+		SEGURIDAD_REAM: 'SEGURIDAD_REAM',
+		USUARIOS_BC: 'USUARIOS_BC',
+		ASSET_MANAGEMENT: 'HAYAGESTASSETMAN',
+		TASADORA: 'TASADORA'
     },
 
     TIPOS_OFERTA: {
@@ -367,6 +376,9 @@ Ext.define('HreRem.ux.util.Constants', {
     	PTE_DOBLE_FIRMA: '13',
     	RPTA_OFERTANTE: '14',
     	EN_DEVOLUCION: '16',
+    	PTE_DE_SANCION_COMITE : '23',
+    	PTE_SANCION_COMITE : '31',
+    	PTE_RESOLUCION_COMITE : '34',
     	PTE_PBC: '24',
     	PTE_POSICIONAMIENTO: '25',
     	PTE_FIRMA: '27',
@@ -976,5 +988,51 @@ Ext.define('HreRem.ux.util.Constants', {
 	 TIPO_ARRAS:{
  		CODIGO_PENITENCIALES:'01',
 		CODIGO_CONFIRMATORIAS: '02'
-	 }
+	 },
+	 
+	 RESCINSION_ARRAS:{
+	 	COD_TITULO: '001',
+	 	COD_POSESION: '002',
+	 	COD_VPO: '003',
+	 	COD_PROBLEMAS_TECNICOS: '004',
+	 	COD_CARGAS: '005',
+	 	COD_MOT_PERS_COMPRADOR: '006',
+	 	COD_DISCREPANCIAS_REGISTRALES: '007',
+	 	COD_ALQUILER: '008',
+	 	COD_OTROS: '009'
+	 },
+	 
+	 METODO_ATUALIZACION_RENTA:{
+	 	COD_LIBRE: 'LIB',
+	 	COD_PORCENTUAL: 'POR',
+	 	COD_MERCADO: 'MER',
+	 	COD_IPCMERCADO: 'IPM',
+	 	COD_NINGUNO: 'NIN'
+	 },
+
+	ESTADO_DEPOSITO:{
+	 	COD_PENDIENTE: 'PDT',
+	 	COD_INGRESADO: 'ING',
+	 	COD_DEVUELTO: 'DEV',
+	 	COD_INCAUTADO: 'INC'
+	 },
+ 	 TIPO_GRUPO_IMPUESTO:{
+ 		CODIGO_EXENTO:'10',
+		CODIGO_GENERAL: '20',
+		CODIGO_REDUCIDO:'30',
+		CODIGO_SUPERREDUCIDO: '40',
+		CODIGO_TASA_CERO: '50'
+	 },
+	 
+	 TIPO_OFERTA_ALQUILER_NO_COMERCIAL:{
+		CODIGO_RENOVACION : 'REN',
+		CODIGO_SUBROGACION : 'SUB',
+		CODIGO_ALQUILER_SOCIAL : 'ALS'
+	 },
+	 
+	 TIPO_RESOLUCION_DUDAS: {
+		APRUEBA: '01',
+		RECHAZA: '02',
+		DUDAS: '03'
+	}
 });

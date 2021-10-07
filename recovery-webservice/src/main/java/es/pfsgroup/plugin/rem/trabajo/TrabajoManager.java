@@ -182,6 +182,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -481,8 +482,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override	
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado) {
 		Long idUsuario = usuarioLogado.getId();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario));
-		if (usuarioCartera != null) dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());					
+			
 		if(this.gestorActivoDao.isUsuarioGestorExterno(idUsuario)) {
 			dto.setEsGestorExterno(true);						
 			for (Perfil perfil : usuarioLogado.getPerfiles()) {
@@ -3087,8 +3087,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		}
+		
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
+		}
+
+		
+		if(DDTipoOferta.isTipoAlquilerNoComercial(expedienteComercial.getOferta().getTipoOferta())){
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL);
 		}
 
 		if (Checks.esNulo(tipoTramite.getId())) {

@@ -164,6 +164,26 @@ public class ClienteDto implements Serializable{
 	private String codigoPostalRepresentante;
 	
 	
+	
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimiento no existe")
+	private String codPaisNacimiento;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimiento no existe")
+	private String codMunicipioNacimiento;
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimientoRepresentante no existe")
+	private String codPaisNacimientoRepresentante;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimientoRepresentante no existe")
+	private String codMunicipioNacimientoRepresentante;
+	private Date fechaNacimiento;
+	private Date fechaNacimientoRepresentante;	
+	private Boolean esPRP;
+	private Boolean esPRPRepresentante;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimiento no existe")
+	private String codProvinciaNacimiento;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
+	private String codProvinciaNacimientoRepresentante;
+	
+	
+		
 	public String getCodTipoPersona() {
 		return codTipoPersona;
 	}
@@ -429,4 +449,65 @@ public class ClienteDto implements Serializable{
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
+	public String getCodPaisNacimiento() {
+		return codPaisNacimiento;
+	}
+	public void setCodPaisNacimiento(String codPaisNacimiento) {
+		this.codPaisNacimiento = codPaisNacimiento;
+	}
+	public String getCodMunicipioNacimiento() {
+		return codMunicipioNacimiento;
+	}
+	public void setCodMunicipioNacimiento(String codMunicipioNacimiento) {
+		this.codMunicipioNacimiento = codMunicipioNacimiento;
+	}
+	public String getCodPaisNacimientoRepresentante() {
+		return codPaisNacimientoRepresentante;
+	}
+	public void setCodPaisNacimientoRepresentante(String codPaisNacimientoRepresentante) {
+		this.codPaisNacimientoRepresentante = codPaisNacimientoRepresentante;
+	}
+	public String getCodMunicipioNacimientoRepresentante() {
+		return codMunicipioNacimientoRepresentante;
+	}
+	public void setCodMunicipioNacimientoRepresentante(String codMunicipioNacimientoRepresentante) {
+		this.codMunicipioNacimientoRepresentante = codMunicipioNacimientoRepresentante;
+	}
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+	public Boolean getEsPRP() {
+		return esPRP;
+	}
+	public void setEsPRP(Boolean esPRP) {
+		this.esPRP = esPRP;
+	}
+	public Boolean getEsPRPRepresentante() {
+		return esPRPRepresentante;
+	}
+	public void setEsPRPRepresentante(Boolean esPRPRepresentante) {
+		this.esPRPRepresentante = esPRPRepresentante;
+	}
+	public String getCodProvinciaNacimiento() {
+		return codProvinciaNacimiento;
+	}
+	public void setCodProvinciaNacimiento(String codProvinciaNacimiento) {
+		this.codProvinciaNacimiento = codProvinciaNacimiento;
+	}
+	public String getCodProvinciaNacimientoRepresentante() {
+		return codProvinciaNacimientoRepresentante;
+	}
+	public void setCodProvinciaNacimientoRepresentante(String codProvinciaNacimientoRepresentante) {
+		this.codProvinciaNacimientoRepresentante = codProvinciaNacimientoRepresentante;
+	}
+	
 }

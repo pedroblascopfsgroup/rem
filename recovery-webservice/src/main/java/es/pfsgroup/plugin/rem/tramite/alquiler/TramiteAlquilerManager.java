@@ -2,18 +2,19 @@ package es.pfsgroup.plugin.rem.tramite.alquiler;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
@@ -26,21 +27,17 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_ScoringBC = "T015_ScoringBC";
 	private static final String T015_DefinicionOferta = "T015_DefinicionOferta";
 	private static final String T015_VerificarSeguroRentas = "T015_VerificarSeguroRentas";
+	private static final String T015_AceptacionCliente = "T015_AceptacionCliente";
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
 	
-	@Autowired
-	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired 
 	private ActivoTramiteApi activoTramiteApi;
-	
-	@Autowired
-	private ActivoTareaExternaApi activoTareaExternaApi;
-	
+		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
 		boolean haPasadoScoring = false;
@@ -130,4 +127,108 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 
 		return haPasado;
 	}
+	
+	@Override
+	public boolean isOfertaContraOfertaMayor10K(TareaExterna tareaExterna) {
+
+		boolean isMayor = false;
+		Double diezK = (double) 10000;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			Oferta oferta = eco.getOferta();
+			if(oferta != null) {
+				if(oferta.getImporteContraOferta() != null){
+					if( oferta.getImporteContraOferta() >= diezK){	
+						isMayor = true;
+					}
+				}else if(oferta.getImporteOferta() != null && oferta.getImporteOferta() >= diezK) {
+					isMayor = true;
+				}
+			}
+		}
+		
+		return isMayor;
+	}
+	
+	@Override
+	public boolean isMetodoActualizacionRelleno(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getMetodoActualizacionRenta() != null) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+	
+	@Override
+	public boolean haPasadoAceptacionCliente(Long idTramite) {
+		boolean haPasadoScoringBC = false;
+		List<TareaProcedimiento> tareas = activoTramiteApi.getTareasByIdTramite(idTramite);
+		for (TareaProcedimiento tareaProcedimiento : tareas) {
+			if(T015_AceptacionCliente.equals(tareaProcedimiento.getCodigo())) {
+				haPasadoScoringBC = true;
+				break;
+			}
+		}
+
+		return haPasadoScoringBC;
+	}
+	
+
+	@Override
+	public boolean checkAvalCondiciones(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getAvalBc() != null && coe.getAvalBc()) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+
+	@Override
+	public boolean checkSeguroRentasCondiciones(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && coe.getSeguroRentasBc() != null && coe.getSeguroRentasBc()) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}
+	@Override
+	public boolean validarMesesImporteDeposito(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null) {
+			CondicionanteExpediente coe = eco.getCondicionante();
+			if(coe != null && (coe.getImporteDeposito() != null || coe.getMesesDeposito() != null)) {
+				isRelleno = true;
+			}
+		}
+		
+		return isRelleno;
+	}	
+
+	@Override
+	public boolean isTramiteT015Aprobado(List<String> tareasActivas){
+		boolean isAprobado = false;
+		String[] tareasParaAprobado = {ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION, ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_DEFINICION_OFERTA};
+		if(!CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+			isAprobado = true;
+		}
+		
+		return isAprobado;
+	}
+	
 }

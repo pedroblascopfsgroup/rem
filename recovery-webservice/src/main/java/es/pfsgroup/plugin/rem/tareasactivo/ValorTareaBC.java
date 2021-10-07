@@ -56,6 +56,10 @@ public class ValorTareaBC implements Serializable, Auditable {
 		private String comboResultado;
 	}
 	
+	static class ElevarSancion {
+		private String observacionesBC;
+		private String comboResolucion;
+	}
 	
 	
 	@Id
@@ -134,6 +138,12 @@ public class ValorTareaBC implements Serializable, Auditable {
 		List<String> listaCampos = new ArrayList<String>();
 		Field[] campos = null;
 		if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codTarea)) {
+			campos =  BloqueoScreening.class.getDeclaredFields();
+		} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codTarea)) {
+			campos =  BloqueoScreening.class.getDeclaredFields();
+		} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION.equals(codTarea)) {
+			campos =  ElevarSancion.class.getDeclaredFields();
+		} else if (ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codTarea)) {
 			campos =  BloqueoScreening.class.getDeclaredFields();
 		}
 		

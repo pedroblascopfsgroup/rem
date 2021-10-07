@@ -38,7 +38,7 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
     @SequenceGenerator(name = "InterlocutorPBCCaixa", sequenceName = "S_IOC_INTERLOCUTOR_PBC_CAIXA")
     private Long id;
     
-    @Column(name = "IOC_ID_PERSONA_HAYA")
+    @Column(name = "IOC_ID_PERSONA_HAYA_CAIXA")
     private String idPersonaHaya;
 
 	@ManyToOne
@@ -98,6 +98,10 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
 
 	@Column(name = "IOC_EMAIL")
 	private String email;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
 
 	@Version
 	private Long version;
@@ -273,5 +277,13 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
 	}
 }

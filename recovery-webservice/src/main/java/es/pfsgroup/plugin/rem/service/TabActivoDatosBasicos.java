@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -87,6 +88,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -102,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoTecnico;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -1190,6 +1194,32 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		activoDto.setEsActivoPrincipalAgrupacionRestringida(estaEnRestringida);
 		
+		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+		
+		if(activoPrinexActivos != null) {
+			if(activoPrinexActivos.getDisponibleAdministracion() != null) {
+				activoDto.setDisponibleAdministrativoCodigo(activoPrinexActivos.getDisponibleAdministracion().getCodigo());
+				activoDto.setDisponibleAdministrativoDescripcion(activoPrinexActivos.getDisponibleAdministracion().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getDisponibleTecnico() != null) {
+				activoDto.setDisponibleTecnicoCodigo(activoPrinexActivos.getDisponibleTecnico().getCodigo());
+				activoDto.setDisponibleTecnicoDescripcion(activoPrinexActivos.getDisponibleTecnico().getDescripcion());
+			}
+			
+			if(activoPrinexActivos.getMotivoTecnico() != null) {
+				activoDto.setMotivoTecnicoCodigo(activoPrinexActivos.getMotivoTecnico().getCodigo());
+				activoDto.setMotivoTecnicoDescripcion(activoPrinexActivos.getMotivoTecnico().getDescripcion());
+			}
+			
+		}
+		
+		if(activo.getTieneGestionDnd() != null) {
+			activoDto.setTieneGestionDndCodigo(activo.getTieneGestionDnd().getCodigo());
+			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
+		}
+		
 		return activoDto;
 	}
 	
@@ -1376,6 +1406,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDEstadoActivo estadoActivo = (DDEstadoActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class,  dto.getEstadoActivoCodigo());
 				activo.setEstadoActivo(estadoActivo);
 				activo.setFechaUltCambioTipoActivo(new Date());
+			}
+			
+			if (!Checks.esNulo(dto.getTieneGestionDndCodigo())) {
+				DDSinSiNo tieneGestionDnd = (DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class,  dto.getTieneGestionDndCodigo());
+				activo.setTieneGestionDnd(tieneGestionDnd);
 			}
 			
 			// Se genera un registro en el histórico por la modificación de los datos en el apartado de 'Datos Admisión' de informe comercial.
@@ -2079,6 +2114,49 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if(activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId()) && (dto.getCheckGestorComercial()!=null 
 					|| dto.getExcluirValidacionesBool()!=null || dto.getMotivoGestionComercialCodigo()!=null)){
 				modificarCheckVisibleGestionComercialRestringida(activo,dto);
+			}
+			
+			Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
+			
+			if(activoPrinexActivos != null) {
+				if(dto.getDisponibleAdministrativoCodigo() != null) {
+					Filter filtroDispAdm = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleAdministrativoCodigo());
+					DDDisponibleAdministracion disponibleAdministracion = genericDao.get(DDDisponibleAdministracion.class, filtroDispAdm);
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				
+				if(dto.getDisponibleTecnicoCodigo() != null) {
+					Filter filtroDispTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getDisponibleTecnicoCodigo());
+					DDDisponibleTecnico disponibleTecnico = genericDao.get(DDDisponibleTecnico.class, filtroDispTec);
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				
+				if(dto.getMotivoTecnicoCodigo() != null) {
+					Filter filtroMotTec = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getMotivoTecnicoCodigo());
+					DDMotivoTecnico motivoTecnico = genericDao.get(DDMotivoTecnico.class, filtroMotTec);
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				
+			}else {
+				activoPrinexActivos = new ActivoPrinexActivos();
+				if (!Checks.esNulo(dto.getDisponibleAdministrativoCodigo())){
+					DDDisponibleAdministracion disponibleAdministracion = (DDDisponibleAdministracion) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleAdministracion.class,  dto.getDisponibleAdministrativoCodigo());
+					activoPrinexActivos.setDisponibleAdministracion(disponibleAdministracion);
+				}
+				if (!Checks.esNulo(dto.getDisponibleTecnicoCodigo())){
+					DDDisponibleTecnico disponibleTecnico = (DDDisponibleTecnico) diccionarioApi.dameValorDiccionarioByCod(DDDisponibleTecnico.class,  dto.getDisponibleTecnicoCodigo());
+					activoPrinexActivos.setDisponibleTecnico(disponibleTecnico);
+				}
+				if (!Checks.esNulo(dto.getMotivoTecnicoCodigo())){
+					DDMotivoTecnico motivoTecnico = (DDMotivoTecnico) diccionarioApi.dameValorDiccionarioByCod(DDMotivoTecnico.class,  dto.getMotivoTecnicoCodigo());
+					activoPrinexActivos.setMotivoTecnico(motivoTecnico);
+				}
+				activoPrinexActivos.setActivo(activo);
+				genericDao.save(ActivoPrinexActivos.class, activoPrinexActivos);
 			}
 		} catch(JsonViewerException jve) {
 			throw jve;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210715
+--## FECHA_CREACION=20210818
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14960
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 Formatos númericos en ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##        0.3 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##	    0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	    0.5 Corrección Tipo de grado - HREOS-14960
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,7 +57,7 @@ BEGIN
                          ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                         ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE                        
                         ,PAC.PAC_PORC_PROPIEDAD * 100 AS CUOTA
-                        ,TGP.DD_TGP_ID AS GRADO_PROPIEDAD
+                        ,eqv1.DD_CODIGO_CAIXA AS GRADO_PROPIEDAD
                         ,CASE
                             WHEN SPS.SPS_OCUPADO=1 AND TPA.DD_TPA_CODIGO IN (''02'',''03'') THEN ''S''
                             ELSE ''N''
@@ -68,7 +69,7 @@ BEGIN
                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_ID = PAC.DD_TGP_ID AND TGP.BORRADO=0
                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''GRADO_PROPIEDAD''  AND eqv1.DD_CODIGO_REM = TGP.DD_TGP_CODIGO AND EQV1.BORRADO=0            
                     JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID AND SPS.BORRADO=0
-                    JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID=TPA.DD_TPA_ID AND TPA.BORRADO=0
+                    LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT TPA ON SPS.DD_TPA_ID = TPA.DD_TPA_ID AND TPA.BORRADO = 0
                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
                     JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
                     WHERE PAC.BORRADO=0       

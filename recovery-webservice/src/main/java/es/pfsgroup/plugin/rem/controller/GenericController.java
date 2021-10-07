@@ -42,6 +42,11 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -54,6 +59,8 @@ import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
 import net.sf.json.JSONObject;
 
 
@@ -90,6 +97,9 @@ public class GenericController extends ParadiseJsonController{
 	private static final String DICCIONARIO_TIPO_DOCUMENTO = "tiposDocumento";
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
+	
+	private static final String URL_ENDPOINT_FOTOSEXCEL = "generic/fichaComercialfotos";
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -146,7 +156,7 @@ public class GenericController extends ParadiseJsonController{
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
-			if(subtipoTrabajo != null) {
+			if(!Checks.esNulo(subtipoTrabajo)) {
 				out = genericApi.getDiccionarioTiposDocumentoBySubtipoTrabajo(subtipoTrabajo,entidad);
 			}
 			if(out.isEmpty()) {
@@ -757,6 +767,42 @@ public class GenericController extends ParadiseJsonController{
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "generic/fichaComercialfotos")
+	public void getFichaComercialFotos(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		
+		try {
+			
+			JSONObject jsonObject = JSONObject.fromObject(request.getBody());
+			
+			Long activoID = jsonObject.get("activoID") != null ? new Long(jsonObject.get("activoID").toString()) : null ;
+			Long agrupacionID = jsonObject.get("agrupacionID") != null ? new Long(jsonObject.get("agrupacionID").toString()) : null ;
+			List<ImagenWebDto> data = null;
+			
+			if(activoID != null && agrupacionID != null) {
+				throw new RestClientException("No se pueden incluir Id de activo y de agrupacion en la misma llamada");
+			}
+			
+			String urlCompleta = request.getRequestURL().toString();
+			String urlBase = urlCompleta.substring(0,urlCompleta.length()-URL_ENDPOINT_FOTOSEXCEL.length());
+			if (activoID != null) {
+				data = genericApi.getFichaComercialFotosActivo(activoID,urlBase);
+			}else if (agrupacionID != null) {
+				data = genericApi.getFichaComercialFotosAgrupacion(agrupacionID,urlBase);
+			}
+			
+			model.put("data", data);
+			model.put("succes", true);
+			
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se han obtenido fotos para este activo/Agrupacion");
+			model.put("success", false);
+		}finally {
+			restApi.sendResponse(response, model, request);
+	
+		}	
+	}
 	/**
 	 * traspasar la actividad de una oficina de Bankia 
 	 * a otra cuando se produce el cierre de alguna oficina 
@@ -831,5 +877,16 @@ public class GenericController extends ParadiseJsonController{
 
 		restApi.sendResponse(response, modelMap, request);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView comboEstadoCivilCustom(String codCartera){
+		return createModelAndViewJson(new ModelMap("data", genericApi.comboEstadoCivilCustom(codCartera)));
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getDiccionarioTipoOfertas(String codCartera, Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTipoOfertas(codCartera, idActivo)));	
+	}
+	
  }
 

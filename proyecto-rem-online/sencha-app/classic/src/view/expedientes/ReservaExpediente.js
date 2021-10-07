@@ -119,19 +119,33 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	xtype: 'checkboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 		                	readOnly: true,
-		                	bind:		'{reserva.conImpuesto}'		                
+		                	bind:		'{reserva.conImpuesto}',
+		                	colspan: 2
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
+							bind: 		'{reserva.diasFirma}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+		                	reference: 'fechacontabilizacionarrasref',
+							readOnly: true,
+		                	bind: 		
+		                		{
+		                			value:'{reserva.fechaContabilizacionArras}',
+		                			hidden: '{!esCarteraBankia}' 
+		                		}
 		                },
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
 		                	minValue: $AC.getCurrentDate(),
 							maxValue: null,
-		                	bind: 		'{reserva.fechaVencimiento}'
+		                	bind: 		'{reserva.fechaVencimiento}',		                	
+							colspan: 2
 		                },
-		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.dias.transcurridos'),
-							bind: 		'{reserva.diasFirma}'
-		                },
+
 		                {
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),
@@ -181,6 +195,61 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							//disabled: true,
 							readOnly: true,
 							allowBlank: true
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'displayfieldbase',				
+							title: HreRem.i18n('fieldlabel.condiciones.arras'),
+							colspan:3,
+							bind:{
+								hidden:'{!esCarteraBankia}'
+							},
+							items :[
+								{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.titulo.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.inscripcionTitulo}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.cargas.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.cargas}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.posesion.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.posesion}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.tanteo.dl.arras'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.tanteoDL}'		                
+		                		},
+
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.temas.tecnicos'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.temasTecnicos}'		                
+		                		},
+
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.temas.catastrales'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.temasCatastrales}'		                
+		                		},
+		                		{		                
+			                		xtype: 'checkboxfieldbase',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.autorizacion.vpo'),
+			                		//readOnly: true,
+			                		bind:		'{reserva.autorizacionVpo}'		                
+		                		}		                				                				                								
+							]
 						},
 						{
 							xtype:'fieldsettable',
@@ -259,11 +328,96 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							    },
 							    {
 							        xtype: 'comboboxfieldbase',
-							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.motivo'),					        
+							        fieldLabel:  HreRem.i18n('fieldlabel.rescision.arras.motivo'),
+							        //multiSelect: true,
 							        bind: {
 							        	store: '{comboMotivoRescisionArras}'
-									}											                	
-							    }
+									}
+							    },
+	    						{
+									xtype:'fieldsettable',
+									defaultType: 'displayfieldbase',				
+									title: HreRem.i18n('fieldlabel.arras.motivo'),
+									colspan:3,
+									bind:{
+										hidden:'{!esCarteraBankia}'
+									},
+									items :[
+										{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.titulo.arras'),
+					                		reference: 'inscripcionTituloMotivoRef',
+					                		//readOnly: true,
+					                		bind:	
+					                			{
+					                				value:'{reserva.inscripcionTituloMotivo}'					                		
+					                			}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.cargas.arras'),
+					                		reference: 'cargasArrasMotivoRef',
+					                		//readOnly: true,
+					                		bind:	
+					                			{
+					                				value:'{reserva.cargasMotivo}'					                		
+					                			}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.posesion.arras'),
+					                		reference: 'posesionArrasMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+						                		{
+						                			value: '{reserva.posesionMotivo}'		                
+						                		}
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.tanteo.dl.arras'),
+					                		reference: 'tanteoDlMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+					                			{
+					                				value:'{reserva.tanteoDLMotivo}'
+					                			}
+				                		},
+		
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.temas.tecnicos'),
+					                		reference: 'temasTecnicosMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+						                		{
+						                			value:'{reserva.temasTecnicosMotivo}'
+						                		}				                					               
+				                		},
+		
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.temas.catastrales'),
+					                		reference: 'temasCatastralesMotivoRef',
+					                		//readOnly: true, 
+					                		bind:
+					                			{
+					                				value:'{reserva.temasCatastralesMotivo}'
+					                			}
+					                				                
+				                		},
+				                		{		                
+					                		xtype: 'checkboxfieldbase',
+					                		fieldLabel:  HreRem.i18n('fieldlabel.autorizacion.vpo'),
+					                		reference: 'autoVpoMotivoRef',
+					                		//readOnly: true,
+					                		bind:		
+					                			{
+					                				value: '{reserva.autorizacionVpoMotivo}'
+					                			}
+				                		}		                				                				                								
+									]
+								}
 							    
 							]
 						}

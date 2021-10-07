@@ -10,7 +10,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm(),
 			visualizar = wizard.visualizar;
-
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
@@ -236,6 +235,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
 				campoTipoPersona = me.lookupReference('tipoPersona'),
 				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+		   	 	campoProvinciaRpr = me.lookupReference('provinciaNacimientoRepresentanteCodigo'),
+		   	 	campoMunicipioRpr = me.lookupReference('localidadNacimientoRepresentanteCodigo'),
+		   	 	campoPaisRpr = me.lookupReference('paisNacimientoRepresentanteCodigo'),
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
 				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge');
 
@@ -292,6 +294,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = true;
 						}
+						if (!Ext.isEmpty(campoProvinciaRpr)) {
+							campoProvinciaRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)) {
+							campoMunicipioRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoPaisRpr)) {
+							campoPaisRpr.allowBlank = true;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -316,6 +327,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
 						}
+						if (!Ext.isEmpty(campoProvinciaRpr)) {
+							campoProvinciaRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)) {
+							campoMunicipioRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoPaisRpr)) {
+							campoPaisRpr.allowBlank = false;
+						}
 					}
 				}
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -338,6 +358,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(campoProvincia)) campoProvincia.validate();
 			if(!Ext.isEmpty(campoMunicipio)) campoMunicipio.validate();
 			if(!Ext.isEmpty(campoPais)) campoPais.validate();
+			if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
+			if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
+			if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);
@@ -787,8 +810,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	        var xxx; 
 	         
 	        texto = texto.toUpperCase(); 
-	         
-	        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+
+	        var regular = new RegExp(/^[ABCDEFGHJKLMNPQRSUVW]\d\d\d\d\d\d\d[0-9,A-J]$/g);
          	if (!regular.exec(texto)) {
 				return false;		
 			}

@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -11,7 +10,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -25,8 +23,6 @@ import es.pfsgroup.plugin.rem.model.DtoScreening;
 @Repository("ActivoTramiteDao")
 public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long> implements ActivoTramiteDao{
 
-	@Autowired
-	private ActivoDao activoDao;
 	/**
 	 * Devuelve los trámites asociados a un activo.
 	 * @param idActivo el id del activo
@@ -162,6 +158,39 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", "T017");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
+	@Override
+	public ActivoTramite getTramiteComercialVigenteByTrabajoT015 (Long idTrabajo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", "T015");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
+	@Override
+	public ActivoTramite getTramiteComercialVigenteByTrabajoT018 (Long idTrabajo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", "T018");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
+	@Override
+	public ActivoTramite getTramiteComercialVigenteByTrabajoYCodTipoTramite(Long idTrabajo, String codTipoTramite){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", codTipoTramite);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		

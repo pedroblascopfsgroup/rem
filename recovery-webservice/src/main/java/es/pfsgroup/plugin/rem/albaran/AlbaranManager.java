@@ -102,14 +102,14 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
 					if(tbj != null) {
 						tbj.setPrefactura(null);
-						genericDao.update(Trabajo.class, tbj);
+						genericDao.save(Trabajo.class, tbj);
 					}
 				}
 			}
 			DDEstEstadoPrefactura estadoPrefactura = genericDao.get(DDEstEstadoPrefactura.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstEstadoPrefactura.CODIGO_VALIDA));
 			prefactura.setEstadoPrefactura(estadoPrefactura);
-			genericDao.update(Prefactura.class, prefactura);
+			genericDao.save(Prefactura.class, prefactura);
 			
 		}else {
 			return false;
@@ -170,7 +170,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	@Override
 	public Boolean getEsUsuarioCliente() {
 		Usuario usuariologado = adapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
-		return usuarioCartera != null;
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
+		return usuarioCartera != null && !usuarioCartera.isEmpty();
 	}
 }

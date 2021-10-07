@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -32,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -394,8 +397,23 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	}
 
 	@Override
-	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto) {
+	public Page getBusquedaOfertasGrid(DtoOfertaGridFilter dto, Long usuarioId) {
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioId));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder("select vgrid from VGridBusquedaOfertas vgrid");
+		
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubcarteraCodigo() == null) {			
+				for (UsuarioCartera usu : usuarioCartera) {
+					if (usu.getSubCartera() != null) {
+						subcarteras.add(usu.getSubCartera().getCodigo());
+					}
+				}
+			}
+		}	
 		
 		if (dto.getNumOferta() != null && StringUtils.isNumeric(dto.getNumOferta().trim()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numOferta", Long.valueOf(dto.getNumOferta().trim()));
@@ -432,7 +450,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.telefonoOfertante", dto.getTelefonoOfertante(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.emailOfertante", dto.getEmailOfertante(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraCodigo());
+		}
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombreCanal", dto.getNombreCanal(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.codigoPromocionPrinex", dto.getCodigoPromocionPrinex(), true);
 				
@@ -509,5 +531,19 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		flush();
 		return caixaBcRestClient.callReplicateOferta(numOferta);
 		
+	}
+
+	@Override
+	public Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto) {
+		flush();
+		return caixaBcRestClient.callReplicateOfertaWithDto(dto);
+
+	}
+
+	@Override
+	public Boolean pbcFlush(LlamadaPbcDto dto) {
+		flush();
+		return caixaBcRestClient.callPbc(dto);
+
 	}
 }

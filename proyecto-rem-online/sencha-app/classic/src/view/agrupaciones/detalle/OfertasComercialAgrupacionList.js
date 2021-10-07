@@ -158,7 +158,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
          	
          	if(this.editOnSelect) {
 	            var estado = context.record.get("codigoEstadoOferta");  
-	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06';
+	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';	            
+	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
+	            	allowEdit = true;
+	            }
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;
@@ -314,10 +317,13 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					   msg: msg,
 					   buttons: Ext.MessageBox.YESNO,
 					   fn: function(buttonId) {
-					        if (buttonId == 'yes') {
-					        	me.saveFn(editor, me, context);
-							}
-					    	else{
+					        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+					        	me.up('agrupacionesdetallemain').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+					        	
+					        	//me.saveFn(editor, me, context);
+							} else if (buttonId == 'yes') {
+								me.saveFn(editor, me, context);
+							} else{
 					    		me.getStore().load();	
 					    	}
 						}

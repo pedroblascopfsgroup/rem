@@ -4,6 +4,7 @@ import java.util.Map;
 
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicacionClientesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,11 +49,18 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
 
 		Boolean resultado = null;
-		resultado = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)
-					&& caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta());
+		String error = null;
+		boolean replicateClientSuccess = true;
+		ReplicacionClientesResponse response = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+
+		if (response != null){
+			error = response.getErrorDesc();
+			replicateClientSuccess = response.getSuccess();
+		}
+		resultado = replicateClientSuccess;
 				
 		if(!resultado){
-			return CaixaBcRestClient.ERROR_REPLICACION_BC;
+			return error != null ? error :CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 
 		//HREOS-2161
@@ -112,9 +120,17 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
 		}
 
-		if(!caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA)
-				&& !caixaBcRestClient.callReplicateOferta(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta())){
-			return CaixaBcRestClient.ERROR_REPLICACION_BC;
+		String error = null;
+		boolean replicateClientSuccess = true;
+		ReplicacionClientesResponse response = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+
+		if (response != null){
+			error = response.getErrorDesc();
+			replicateClientSuccess = response.getSuccess();
+		}
+
+		if(!replicateClientSuccess){
+			return error != null ? error : CaixaBcRestClient.ERROR_REPLICACION_BC ;
 		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 

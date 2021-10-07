@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210507
+--## AUTOR=Carlos Santos Vílchez
+--## FECHA_CREACION=20210727
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=HREOS-13455
+--## INCIDENCIA_LINK=REMVIP-10152
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           
@@ -14,6 +14,7 @@
 --##		0.2 Modificación IMPORTE_CONTRAOFERTA
 --##		0.3 Añadir campos FECHA_VENTA, FECHA_RESERVA y FECHA_ALQUILER
 --##		0.4 Añadir campos NECESIDAD_IF y EXCLUSION_IF [HREOS-13455]
+--##		0.4 Añadir campo IMPORTE - Carlos Santos Vílchez - REMVIP-10152
 --##########################################
 --*/
 
@@ -134,7 +135,9 @@ BEGIN
 		CASE WHEN (DFS.DFS_EXCLUSION_IF = 1) 
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
-		END																					AS EXCLUSION_IF
+		END																					AS EXCLUSION_IF,
+		CAST(OFR.OFR_IMPORTE AS NUMBER(16,2))												AS IMPORTE
+
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 		LEFT JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID
@@ -201,7 +204,8 @@ BEGIN
 		CASE WHEN (DFS.DFS_EXCLUSION_IF = 1) 
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
-		END																					AS EXCLUSION_IF
+		END																					AS EXCLUSION_IF,
+		CAST(OFR.OFR_IMPORTE AS NUMBER(16,2))												AS IMPORTE
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
 		INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = OFR.AGR_ID

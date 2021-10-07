@@ -277,7 +277,6 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name="CEX_USUFRUCTUARIO")
     private Integer usufructuario;
 	
-	
 	@Column(name="DD_LOC_CODIGO_COM")
     private String localidadNacimientoCompradorCodigo;
 	
@@ -285,13 +284,31 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
     private String localidadNacimientoCompradorDescripcion;
 	
 	@Column(name="COM_PRP")
-    private Integer compradorPrp;
+    private Boolean compradorPrp;
+	
+	@Column(name="CEX_PRP")
+    private Boolean representantePrp;
 
 	@Column(name="DD_VIC_CODIGO")
     private String vinculoCaixaCodigo;
 	
 	@Column(name="DD_PAI_CODIGO_NAC_COM")
     private String paisNacimientoCompradorCodigo;
+	
+	@Column(name="DD_PAI_DESCRIPCION_NAC_COM")
+    private String paisNacimientoCompradorDescripcion;
+	
+	@Column(name="DD_PRV_CODIGO_NAC_REP")
+    private String provinciaNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_PRV_DESCRIPCION_NAC_REP")
+    private String provinciaNacimientoRepresentanteDescripcion;
+	
+	@Column(name="DD_PRV_CODIGO_NAC_COM")
+    private String provinciaNacimientoCompradorCodigo;
+	
+	@Column(name="DD_PRV_DESCRIPCION_NAC_COM")
+    private String provinciaNacimientoCompradorDescripcion;
 
 	public Long getId() {
 		return id;
@@ -951,11 +968,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.usufructuario = usufructuario;
 	}
 
-	public Integer getCompradorPrp() {
+	public Boolean getCompradorPrp() {
 		return compradorPrp;
 	}
 
-	public void setCompradorPrp(Integer compradorPrp) {
+	public void setCompradorPrp(Boolean compradorPrp) {
 		this.compradorPrp = compradorPrp;
 	}
 
@@ -1015,12 +1032,64 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
 	}
 
+	public Boolean getRepresentantePrp() {
+		return representantePrp;
+	}
+
+	public void setRepresentantePrp(Boolean representantePrp) {
+		this.representantePrp = representantePrp;
+	}
+
 	public String getPaisNacimientoCompradorCodigo() {
 		return paisNacimientoCompradorCodigo;
 	}
 
 	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
 		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+
+	public String getPaisNacimientoCompradorDescripcion() {
+		return paisNacimientoCompradorDescripcion;
+	}
+
+	public void setPaisNacimientoCompradorDescripcion(String paisNacimientoCompradorDescripcion) {
+		this.paisNacimientoCompradorDescripcion = paisNacimientoCompradorDescripcion;
+	}
+
+	public String getProvinciaNacimientoRepresentanteCodigo() {
+		return provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public void setProvinciaNacimientoRepresentanteCodigo(String provinciaNacimientoRepresentanteCodigo) {
+		this.provinciaNacimientoRepresentanteCodigo = provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public String getProvinciaNacimientoRepresentanteDescripcion() {
+		return provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public void setProvinciaNacimientoRepresentanteDescripcion(String provinciaNacimientoRepresentanteDescripcion) {
+		this.provinciaNacimientoRepresentanteDescripcion = provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public String getProvinciaNacimientoCompradorCodigo() {
+		return provinciaNacimientoCompradorCodigo;
+	}
+
+	public void setProvinciaNacimientoCompradorCodigo(String provinciaNacimientoCompradorCodigo) {
+		this.provinciaNacimientoCompradorCodigo = provinciaNacimientoCompradorCodigo;
+	}
+
+	public String getProvinciaNacimientoCompradorDescripcion() {
+		return provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setProvinciaNacimientoCompradorDescripcion(String provinciaNacimientoCompradorDescripcion) {
+		this.provinciaNacimientoCompradorDescripcion = provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setVcexId(Long vcexId) {
+		this.vcexId = vcexId;
 	}	
 	
 }

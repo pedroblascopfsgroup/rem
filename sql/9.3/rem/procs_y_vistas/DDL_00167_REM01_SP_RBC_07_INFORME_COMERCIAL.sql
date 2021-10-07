@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210715
+--## FECHA_CREACION=20210812
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-14838
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##        0.5 Cambiamos años  - [HREOS-14368] - Daniel Algaba
 --##        0.6 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##	    0.7 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	    0.8 Inclusión de campo TXT_COMERCIAL_CAS - HREOS-14838
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -126,7 +127,9 @@ BEGIN
                 ,CASE
                     WHEN DIST4.DIS_CANTIDAD>0 THEN ''S''
                     ELSE ''N''
-                 END AS EQUIPAMIENTO_015001                
+                 END AS EQUIPAMIENTO_015001
+                ,  REPLACE(REPLACE(ICO.ICO_INFO_DISTRIBUCION_INTERIOR, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
+                ,  REPLACE(REPLACE(EDIF.EDI_DESCRIPCION, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_2                
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO EDIF ON EDIF.ICO_ID=ICO.ICO_ID AND EDIF.BORRADO=0    
@@ -152,6 +155,8 @@ BEGIN
                 ,AUX.NUM_APARACAMIENTOS=US.NUM_APARACAMIENTOS
                 ,AUX.TIENE_TRASTERO=US.TIENE_TRASTERO
                 ,AUX.EQUIPAMIENTO_015001=US.EQUIPAMIENTO_015001   
+                ,AUX.TXT_COMERCIAL_CAS_1=US.TXT_COMERCIAL_CAS_1   
+                ,AUX.TXT_COMERCIAL_CAS_2=US.TXT_COMERCIAL_CAS_2   
             WHEN NOT MATCHED THEN INSERT (
                  NUM_IDENTIFICATIVO
                 ,NUM_INMUEBLE
@@ -164,7 +169,9 @@ BEGIN
                 ,NUM_TERRAZAS
                 ,NUM_APARACAMIENTOS
                 ,TIENE_TRASTERO
-                ,EQUIPAMIENTO_015001    
+                ,EQUIPAMIENTO_015001  
+                ,TXT_COMERCIAL_CAS_1
+                ,TXT_COMERCIAL_CAS_2  
                 )VALUES(
                      US.NUM_IDENTIFICATIVO
                     ,US.NUM_INMUEBLE
@@ -178,6 +185,8 @@ BEGIN
                     ,US.NUM_APARACAMIENTOS
                     ,US.TIENE_TRASTERO
                     ,US.EQUIPAMIENTO_015001
+                    ,US.TXT_COMERCIAL_CAS_1
+                    ,US.TXT_COMERCIAL_CAS_2
                 )
    ';
    EXECUTE IMMEDIATE V_MSQL;

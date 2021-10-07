@@ -225,7 +225,65 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name: 'isEmpleadoCaixa',
     			type: 'boolean'
+    		},
+    		{
+                name: 'tieneInterlocutoresNoEnviados',
+                type: 'boolean'
+            },
+    		{
+    			name:'ofertaEspecial',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'ventaSobrePlano',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'riesgoOperacionCodigo'
+    		},
+    		{
+    			name:'riesgoOperacionDescripcion'
+    		},
+    		{
+    			name:'ventaCarteraCfv',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'opcionACompra',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'valorCompra'
+    		},
+    		{
+    			name:'fechaVencimientoOpcionCompra',
+    			type:'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'clasificacionCodigo'
+    		},
+    		{
+    			name:'checkListDocumentalCompleto',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'checkSubasta',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'numeroContacto'
+    		},
+    		{
+    			name: 'canalDistribucionBc'
+    		},
+    		{
+    			name: 'tipoOfertaAlquilerCodigo'
+    		},
+		    {
+    			name:'numOfertaCaixa'
     		}
+    		
     ],
 
 	proxy: {

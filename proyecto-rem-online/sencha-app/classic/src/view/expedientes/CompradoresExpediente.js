@@ -21,14 +21,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     initComponent: function () {
 		var me = this;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
 		var title = HreRem.i18n('title.compradores');
 		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
 		var isAlquiler = false;
-		
-			
-		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+		var tipoDelExpediente = me.lookupViewModel().get('expediente.tipoExpedienteCodigo');
+		var bloqueado = me.lookupViewModel().get('expediente.bloqueado');
+		if(tipoDelExpediente === tipoExpedienteAlquiler || tipoDelExpediente === tipoExpedienteAlquilerNoComercial ){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
 			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
@@ -61,7 +62,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     	};
     	
     	var cartera= function(){
-    		if(me.lookupViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'] && me.lookupViewModel().get('expediente.tipoExpedienteCodigo') != tipoExpedienteAlquiler){
+    		if(me.lookupViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'] && tipoDelExpediente != tipoExpedienteAlquiler  && tipoDelExpediente != tipoExpedienteAlquilerNoComercial ){
     			return false;
     		}else{
     			return true;
@@ -109,7 +110,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					},
                 	{
 					    xtype		: 'gridBase',
-					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),
+					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']) && !bloqueado,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						activateButton: true,

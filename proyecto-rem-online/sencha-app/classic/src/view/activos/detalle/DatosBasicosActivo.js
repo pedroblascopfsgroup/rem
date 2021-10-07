@@ -285,16 +285,30 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
 							            	hidden: true
 										},
-										
 								        {
 								        	xtype: 'comboboxfieldbasedd',
 								        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 								        	name: 'estadoActivoCodigo',
+								        	reference: 'estadoActivoCodigoRef',
 								        	bind: {
-								        		readOnly : true,
+								        		disabled: '{!tieneGestionDnd}',
 							            		store: '{comboEstadoActivo}',
 							            		value: '{activo.estadoActivoCodigo}',
 												rawValue: '{activo.estadoActivoDescripcion}'
+								        	}
+								        },
+								        {
+								        	xtype: 'comboboxfieldbasedd',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.gestion.dnd'),
+								        	name: 'gestionDndCodigo',
+								        	reference: 'gestionDndCodigoRef',
+								        	bind: {
+							            		store: '{comboGestionDnd}',
+							            		value: '{activo.tieneGestionDndCodigo}',
+												rawValue: '{activo.tieneGestionDndDescripcion}'
+								        	},
+								        	listeners: {
+								        		change: 'onChangeComboGestionDnd'
 								        	}
 								        },
 						                {
@@ -480,6 +494,55 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					],
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
+	                	}
+	                },
+	                {    
+		                //DATOS PRINEX
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.datos.prinex'),
+						border: true,
+						colspan: 3,
+						bind:{hidden: '{!activo.isCarterasCajamarLiberbank}'},
+						items :
+							[
+							{
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.disponible.administrativo'),
+			                	name: 'comboDisponibleAdministrativo',
+			                	reference: 'comboDisponibleAdministrativoRef',
+			                	bind: {
+			                		store: '{comboDisponibleAdministrativo}',
+			                		value: '{activo.disponibleAdministrativoCodigo}',
+									rawValue: '{activo.disponibleAdministrativoDescripcion}'
+			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.disponible.tecnico'),
+			                	name: 'comboDisponibleTecnico',
+			                	reference: 'comboDisponibleTecnicoRef',
+			                	bind: {
+			                		store: '{comboDisponibleTecnico}',
+			                		value: '{activo.disponibleTecnicoCodigo}',
+									rawValue: '{activo.disponibleTecnicoDescripcion}'
+			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbasedd',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.tecnico'),
+			                	name: 'comboMotivoTecnico',
+			                	reference: 'comboMotivoTecnicoRef',
+			                	bind: {
+			                		store: '{comboMotivoTecnico}',
+			                		value: '{activo.motivoTecnicoCodigo}',
+									rawValue: '{activo.motivoTecnicoDescripcion}'
+			                	}
+			                }
+			 			                
+					],
+	                bind:{
+	                	hidden: '{!activo.isCarterasCajamarLiberbank}'
 	                	}
 	                }
 				]
@@ -783,6 +846,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
 				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
+				bind: {
+					hidden: '{esUsuarioTasadora}'
+				},
 				items :[					
 					{
 						xtype: 'datefieldbase',
@@ -799,7 +865,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
+				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) || $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']) || $AU.userIsRol(CONST.PERFILES["TASADORA"]),
 				items :
 					[
 					{
@@ -897,6 +963,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
 								bind : {
 									value : '{activo.perimetroAdmision}'
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
 								}
 							},
 							{
@@ -973,10 +1042,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.aplicaPublicar}'
 								},
 								listeners: {
-									change: function (get) {
-										var me = this;
-										me.lookupController('activoDetalle').checkOfertaTrabajoVivo(me.getReference());
-									}
+									change: 'onChkbxPerimetroChange'
 								}
 							},
 							{
@@ -1530,6 +1596,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.historico.destino.comercial'),
+				bind: {
+					hidden: '{esUsuarioTasadora}'
+				},
 				items :
 					[
 					{

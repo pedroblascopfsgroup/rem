@@ -167,7 +167,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                 }
             }
 
-            if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
+            if(destinoComercialActivo === valueDestComercial 
+            || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"] 
+            || (destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"]) 
+            || (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){
             	if (me.view.up().lookupController().getViewModel().get('activo.isCarteraLiberbank') && valueDestComercial == "Venta"){
             		var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
         			var numOferta = form.findField('numOferPrincipal').value;
@@ -507,6 +510,57 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		    	callback: function(options, success, response){
 				}  		     
 			});	 
+		},
+		onChangeComboProvincia: function(combo) {
+			var me = this,
+				form = me.getView(),
+				chainedCombo = form.lookupReference(combo.chainedReference);
+			
+			if (Ext.isEmpty(combo.getValue())) {
+				chainedCombo.clearValue();
+			}
+
+			chainedCombo.getStore().load({
+				params: {
+					codigoProvincia: combo.getValue()
+				},
+				callback: function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
+					}
+				}
+			});
+		},
+		
+		getComboTipoOferta: function(combo){
+			var me = this;
+			
+			combo.getStore().getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("activo.entidadPropietariaCodigo"),
+				'idActivo': me.getViewModel().get("activo.id")
+			});
+					
+			combo.getStore().load({
+				callback : function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						if (combo.selectFirst == true) {
+							combo.setSelection(1);
+						};
+						combo.setDisabled(false);
+					} else {
+						combo.setDisabled(true);
+					}
+				}
+			});
+			/*
+			combo.bindStore(storeTipoOferta);
+			
+			storeTipoOferta.getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("oferta.entidadPropietariaCodigo")
+			});
+			*/
 		}
 
 });

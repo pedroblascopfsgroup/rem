@@ -59,12 +59,13 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	private static final String COMITE = "comite";
 	private static final String REF_CIRCUITO_CLIENTE = "refCircuitoCliente";
 	private static final String FECHA_ELEVACION = "fechaElevacion";
+	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
 	
 	private static final String CODIGO_T015_ELEVAR_A_SANCION = "T015_ElevarASancion";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
@@ -117,6 +118,10 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 					logger.error("Error insertando Fecha elevación.", e);
 				}
 			}
+			
+			if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				oferta.setImporteContraOferta(Double.parseDouble(valor.getValor().replace(",",".")));
+			}
 		}
 		
 		expedienteComercial.setOferta(oferta);
@@ -141,7 +146,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	
 		
 		if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(resolucion)) {
-			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SANCION_COMITE;
+			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SCORING;
 		
 			DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 			eco.setEstado(estadoExpComercial);
@@ -171,7 +176,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		}
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlush(eco.getOferta());
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 		}
 	}
 

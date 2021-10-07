@@ -171,6 +171,8 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler</value>
     </list>
     </property>
     </bean>

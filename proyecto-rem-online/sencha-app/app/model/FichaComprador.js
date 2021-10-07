@@ -260,6 +260,14 @@ Ext.define('HreRem.model.FichaComprador', {
 			name:'idBC4C'
 		},
 		{
+			name:'compradorPrp',
+			type:'boolean'
+		},
+		{
+			name:'representantePrp',
+			type:'boolean'
+		},
+		{
 			name:'fechaNacimientoConstitucion',
 			type:'date',
 			dateFormat: 'c'
@@ -285,9 +293,6 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'localidadNacimientoCompradorDescripcion'
 		},
 		{
-			name: 'compradorPrp'
-		},
-		{
 			name: 'fechaNacimientoRepresentante',
 			type:'date',
 			dateFormat: 'c'
@@ -309,6 +314,47 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'paisNacimientoCompradorCodigo'
+		},
+		{
+			name:'fechaNacimientoRepresentante',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'paisNacimientoCompradorCodigo'
+		},
+		{
+			name:'paisNacimientoCompradorDescripcion'
+		},
+		{
+			name:'paisNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'paisNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'provinciaNacimientoCompradorCodigo'
+		},
+		{
+			name:'provinciaNacimientoCompradorDescripcion'
+		},
+		{
+			name:'provinciaNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'provinciaNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'localidadNacimientoCompradorCodigo'
+		},
+		{
+			name:'localidadNacimientoCompradorDescripcion'
+		},
+		{
+			name:'localidadNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'localidadNacimientoRepresentanteDescripcion'
 		}
 		
 		

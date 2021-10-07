@@ -16,6 +16,8 @@ import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -41,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -106,16 +109,31 @@ public class GenericAdapter {
 		if("gestorCommiteLiberbank".equals(diccionario)) {			
 			lista.add(diccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_LIBERBANK));
 		}else {
-			UsuarioCartera usuarioCartera = null;
+			List<UsuarioCartera> usuarioCartera = null;
 			Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 			if (clase.equals(DDCartera.class) || clase.equals(DDSubcartera.class)) {				
-				usuarioCartera = genericDao.get(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
-				if (usuarioCartera != null) {
-					lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, clase.equals(DDCartera.class) ? usuarioCartera.getCartera().getCodigo() :  usuarioCartera.getSubCartera().getCodigo()));	
+				usuarioCartera = genericDao.getList(UsuarioCartera.class,	genericDao.createFilter(FilterType.EQUALS, "usuario.id", getUsuarioLogado().getId()));
+				if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+					for (UsuarioCartera usu : usuarioCartera) {
+						if (DDCartera.class.equals(clase) && !lista.contains(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()))) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getCartera().getCodigo()));
+						} else if (DDSubcartera.class.equals(clase) && usu.getSubCartera() != null) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, usu.getSubCartera().getCodigo()));
+						}
+					}	
+					if (DDSubcartera.class.equals(clase) && lista.isEmpty()) {
+						Filter f1 = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", usuarioCartera.get(0).getCartera().getCodigo());
+						Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+						List<DDSubcartera> subcarteras = genericDao.getList(DDSubcartera.class, f1, f2);
+						
+						for (DDSubcartera subcartera : subcarteras) {
+							lista.add(diccionarioApi.dameValorDiccionarioByCod(clase, subcartera.getCodigo()));
+						}
+					}
 				}				
 			}
 			
-			if(usuarioCartera == null) {
+			if(usuarioCartera == null || usuarioCartera.isEmpty()) {
 				lista = diccionarioApi.dameValoresDiccionario(clase);
 			}
 		}
@@ -185,8 +203,8 @@ public class GenericAdapter {
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
 	@Deprecated
-	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos ,List<String> mailsBCC) {
+		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos, mailsBCC);
 		
 	}
 	
@@ -460,6 +478,9 @@ public class GenericAdapter {
 					dtoOfertaNueva.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
 					dtoOfertaNueva.setIdUvem(ofertaOrigen.getIdUvem());
 				}
+				
+				dtoOfertaNueva.setClaseOferta(ofertaOrigen.getClaseOferta() != null ? ofertaOrigen.getClaseOferta().getCodigo() : null);
+				
 				if(!esAgrupacion) {
 					ofertaCreada = activoAdapter.createOfertaActivo(dtoOfertaNueva);
 				}
@@ -477,6 +498,18 @@ public class GenericAdapter {
 				
 				clienteNuevo.setId(idCliente);
 				clienteNuevo.setIdClienteWebcom(idClienteWebcom);
+				
+				
+				clienteNuevo.setFechaNacimiento(clienteOfertaOrigen.getFechaNacimiento());
+				clienteNuevo.setPaisNacimiento(clienteOfertaOrigen.getPaisNacimiento());
+				clienteNuevo.setLocalidadNacimiento(clienteOfertaOrigen.getLocalidadNacimiento());
+				clienteNuevo.setPais(clienteOfertaOrigen.getPais());
+				clienteNuevo.setProvincia(clienteOfertaOrigen.getProvincia());
+				clienteNuevo.setMunicipio(clienteOfertaOrigen.getMunicipio());
+				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setInfoAdicionalPersona(clienteOfertaOrigen.getInfoAdicionalPersona());
+
 				
 				genericDao.update(ClienteComercial.class, clienteNuevo);
 				
@@ -615,5 +648,25 @@ public class GenericAdapter {
 	  Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 	  return genericDao.get(clase, f1, f2);
 	 }
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,List<String> mailsBCC) {
+			this.sendMailCopiaOculta(mailsPara, mailsCC, asunto, cuerpo, null,mailsBCC);
+		}
+	 
+	 public void sendMailCopiaOculta(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+				List<DtoAdjuntoMail> adjuntos, List<String> mailsBCC) {
+			String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
+			if(this.getUsuarioLogado() != null){
+				try{
+					usuarioLogado = this.getUsuarioLogado().getUsername();
+				}catch(Exception e){
+					logger.info("No se puede obtner usuariologado, usamos rest",e);
+				}
+			}
+			Thread hiloCorreo = new Thread(
+					new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado,mailsBCC));
+
+			hiloCorreo.start();
+		}
 
 }

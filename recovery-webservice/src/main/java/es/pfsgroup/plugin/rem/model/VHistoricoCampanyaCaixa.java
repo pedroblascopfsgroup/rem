@@ -18,10 +18,10 @@ public class VHistoricoCampanyaCaixa implements Serializable {
 	private Long id;
 	
 	@Column(name = "ID_CAMPANYA_VENTA")
-	private String tokenGmaps;
+	private String campanyaVenta;
 	
 	@Column(name="ID_CAMPANYA_ALQUILER")
-	private String latitud;
+	private String campanyaAlquiler;
 
 	public Long getId() {
 		return id;
@@ -31,20 +31,22 @@ public class VHistoricoCampanyaCaixa implements Serializable {
 		this.id = id;
 	}
 
-	public String getTokenGmaps() {
-		return tokenGmaps;
+	public String getCampanyaVenta() {
+		return campanyaVenta;
 	}
 
-	public void setTokenGmaps(String tokenGmaps) {
-		this.tokenGmaps = tokenGmaps;
+	public void setCampanyaVenta(String campanyaVenta) {
+		this.campanyaVenta = campanyaVenta;
 	}
 
-	public String getLatitud() {
-		return latitud;
+	public String getCampanyaAlquiler() {
+		return campanyaAlquiler;
 	}
 
-	public void setLatitud(String latitud) {
-		this.latitud = latitud;
+	public void setCampanyaAlquiler(String campanyaAlquiler) {
+		this.campanyaAlquiler = campanyaAlquiler;
 	}
+
+
 
 }

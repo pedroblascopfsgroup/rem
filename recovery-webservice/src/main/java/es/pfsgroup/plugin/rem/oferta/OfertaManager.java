@@ -1947,6 +1947,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && previousState != oferta.getEstadoOferta()){
 			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+			if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()))
 			replicateOfertaFlush(oferta);
 		}
 
@@ -7356,7 +7357,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
 				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-				replicateOfertaFlush(oferta);
+				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()))
+					replicateOfertaFlush(oferta);
 			}
 
 			return true;

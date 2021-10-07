@@ -13720,7 +13720,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			reserva.setEstadoReserva(estadoReserva);
 
 			DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
-					DDTiposArras.CONFIRMATORIAS);
+					DDTiposArras.PENITENCIALES);
 			reserva.setTipoArras(tipoArras);
 		}
 		
@@ -13731,9 +13731,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			condiciones.setAuditoria(Auditoria.getNewInstance());
 		}
 		if (condiciones != null) {
+			DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+					DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
 			condiciones.setImporteReserva(importe);
 			condiciones.setMesesFianza(mesesFianza);
+			condiciones.setPlazoFirmaReserva(mesesFianza*30);
 			condiciones.setSolicitaReserva(1);
+			condiciones.setTipoCalculoReserva(tipoCalculo);
 			
 		}
 		genericDao.save(Reserva.class, reserva);
@@ -14004,6 +14008,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
 			setFechaPropuesta(fechaPropuesta);
+		}};
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(final ExpedienteComercial eco,final String codEstadoAlquiler){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCodEstadoAlquiler(codEstadoAlquiler);
 		}};
 	}
 

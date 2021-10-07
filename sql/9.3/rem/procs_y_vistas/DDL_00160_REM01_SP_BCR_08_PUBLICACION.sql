@@ -94,7 +94,7 @@ BEGIN
             #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_AGR_DESTINO_COMERCIAL');
             
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'							
-                        SELECT ACT.ACT_ID, 0
+                        SELECT ACT.ACT_ID, 0, NULL
                         FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
                             AND APU.BORRADO = 0

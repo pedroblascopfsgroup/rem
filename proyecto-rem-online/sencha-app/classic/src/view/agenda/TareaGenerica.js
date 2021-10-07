@@ -2922,8 +2922,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+            storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+                store.filter('visibleCaixa', true);
+            });
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
         } else {
+            storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+                store.filter('visibleWeb', true);
+            });
         	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
         	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
         }
@@ -2944,13 +2950,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	//me.down('[name=comboMotivoAnulacionReserva]').reset();
             }
         });
-
-		storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
-			store.filter('visibleWeb', true);
-		});
     },
     T017_PosicionamientoYFirmaValidacion: function() {
         var me = this;
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var storeMotivoNoFirma = me.down('[name=motivoNoFirma]').getStore();
 
         me.deshabilitarCampo(me.down('[name=fechaFirma]'));
         me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
@@ -2975,6 +2979,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     me.down('[name=motivoNoFirma]').reset();
                 } else {
                     me.habilitarCampo(me.down('[name=motivoNoFirma]'));
+                    if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+                        storeMotivoNoFirma.addListener('load', function(store, records, successful, operation, eOpts){
+                            store.filter('visibleCaixa', true);
+                        });
+                    }
                 }
                 me.deshabilitarCampo(me.down('[name=fechaFirma]'));
                 me.deshabilitarCampo(me.down('[name=numProtocolo]'));
@@ -3878,6 +3887,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
 		}
+
+	},
+
+	T018_AgendarYFirmarValidacion: function(){
+
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+        var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
+
+        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+            storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
+                store.filter('visibleCaixa', true);
+            });
+        }
 
 	},
 	

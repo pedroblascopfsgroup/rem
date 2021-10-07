@@ -363,6 +363,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		
 
 			var me = this;
+			var codigoCartera = me.getViewModel().get('tramite.codigoCartera');
+			var store = CONST.CARTERA['BANKIA'] == codigoCartera ? '{comboMotivoAnulacionCaixa}' : '{comboMotivoAnulacionAlquiler}';
 			me.getView().up('tabpanel').setDisabled(true);
 			var win = new Ext.window.Window({
 				 border: true,
@@ -389,7 +391,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			             displayField: 'descripcion',
 			             valueField: 'codigo',
 			             bind: {
-			            	 store: '{comboMotivoAnulacionAlquiler}'
+			            	 store: store
 			             },
 			             style: 'margin: 15px 0px 0px 0px'
 			         }

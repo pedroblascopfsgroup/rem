@@ -14009,6 +14009,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(final ExpedienteComercial eco,final String codEstadoAlquiler){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCodEstadoAlquiler(codEstadoAlquiler);
+		}};
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(final ExpedienteComercial eco, final String estadoArras){
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());

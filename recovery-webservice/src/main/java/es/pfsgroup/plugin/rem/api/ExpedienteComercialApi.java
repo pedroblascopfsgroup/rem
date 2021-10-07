@@ -1426,7 +1426,8 @@ public interface ExpedienteComercialApi {
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndArras(ExpedienteComercial eco, String fechaPropuesta);
 
-	@Transactional(readOnly = true)
+	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(ExpedienteComercial eco, String codEstadoAlquiler);
+
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(ExpedienteComercial eco, String estadoArras);
 
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);

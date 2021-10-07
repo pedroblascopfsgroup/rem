@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210809
+--## FECHA_CREACION=20211007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14837
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,8 @@
 --##        0.3 Añadimos nombre y número de registro de la propiedad - HREOS-14545
 --##	      0.4 Se cambia el mapeo de INSCRIPCION al campo BIE_DREG_NUM_REGISTRO - HREOS-14837
 --##	      0.5 Corrección de localidad, región y país - HREOS-14837
+--##	      0.6 Corrección de latitud y longitud - HREOS-15423
+--##	      0.7 Mejora de validaciones para latitud y longitud - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -256,8 +258,8 @@ BEGIN
                   , DIC.DD_DIC_ID DD_DIC_ID
                   , ESE.DD_ESE_ID DD_ESE_ID
                   , PLN.DD_PLN_ID DD_PLN_ID
-                  , REPLACE(APR.X_GOOGLE, ''.'','','') LOC_LONGITUD
-                  , REPLACE(APR.Y_GOOGLE, ''.'','','') LOC_LATITUD
+                  , CASE WHEN IS_NUMERIC_X_Y(REPLACE(APR.X_GOOGLE, ''.'','','')) = 1 THEN REPLACE(APR.X_GOOGLE, ''.'','','') ELSE NULL END LOC_LONGITUD
+                  , CASE WHEN IS_NUMERIC_X_Y(REPLACE(APR.Y_GOOGLE, ''.'','','')) = 1 THEN REPLACE(APR.Y_GOOGLE, ''.'','','') ELSE NULL END LOC_LATITUD
                   , APR.SIGLA_EDIFICIO LOC_BLOQUE
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
@@ -279,8 +281,8 @@ BEGIN
                   , ACT_LOC.DD_DIC_ID = NVL(AUX.DD_DIC_ID,ACT_LOC.DD_DIC_ID)
                   , ACT_LOC.DD_ESE_ID = NVL(AUX.DD_ESE_ID,ACT_LOC.DD_ESE_ID)
                   , ACT_LOC.DD_PLN_ID = NVL(AUX.DD_PLN_ID,ACT_LOC.DD_PLN_ID)
-                  , ACT_LOC.LOC_LONGITUD = NVL(AUX.LOC_LONGITUD,ACT_LOC.LOC_LONGITUD)
-                  , ACT_LOC.LOC_LATITUD = NVL(AUX.LOC_LATITUD,ACT_LOC.LOC_LATITUD)
+                  , ACT_LOC.LOC_LONGITUD = NVL(ACT_LOC.LOC_LONGITUD,AUX.LOC_LONGITUD)
+                  , ACT_LOC.LOC_LATITUD = NVL(ACT_LOC.LOC_LATITUD,AUX.LOC_LATITUD)
                   , ACT_LOC.LOC_BLOQUE = NVL(AUX.LOC_BLOQUE,ACT_LOC.LOC_BLOQUE)
                   , ACT_LOC.USUARIOMODIFICAR = ''STOCK_BC''
                   , ACT_LOC.FECHAMODIFICAR = SYSDATE

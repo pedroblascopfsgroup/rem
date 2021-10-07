@@ -3718,7 +3718,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
-		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
 		}
 		
@@ -3779,7 +3779,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
 		var fecha = me.down('[name=fechaResolucion]');
 		
-		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+		if(!$AU.userHasFunction('AV_ALQNC_SCORING_BC')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
 		}
@@ -3792,7 +3792,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
 			}else{
 				comboMotivoAnulacion.setValue('');
-				me.deshabilitarCampo(comboMotivoAnulacion);
+				me.deshabilitarCampo(comboMotivoAnulacion); 
 			}
         });
 	},
@@ -3803,7 +3803,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
 		var fecha = me.down('[name=fechaResolucion]');
 		
-		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+		if(!$AU.userHasFunction('AV_ALQNC_RES_COMITE')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
 		}
@@ -3871,7 +3871,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var fecha = me.down('[name=fechaResolucion]');
 		
-		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+		if(!$AU.userHasFunction('AV_ALQNC_REV_BC_COND')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
 		}
@@ -3883,7 +3883,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var fecha = me.down('[name=fechaResolucion]');
 		
-		if(!$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+		if(!$AU.userHasFunction('AV_ALQNC_CL_ROD')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
 		}

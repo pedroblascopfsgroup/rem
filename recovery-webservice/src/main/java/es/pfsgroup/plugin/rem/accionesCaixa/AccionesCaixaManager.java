@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 import java.text.ParseException;
@@ -430,6 +432,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionDevolArrasCont(DtoAccionRechazoCaixa dto) {
+    	ExpedienteComercial eco = expedienteComercialApi.findOne(dto.getIdExpediente());
+    	if(eco != null) {
+    	    eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
+			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+			genericDao.save(ExpedienteComercial.class, eco);
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+    	}
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 

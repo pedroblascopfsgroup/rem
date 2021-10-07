@@ -10,15 +10,24 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
 public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterService {
@@ -31,6 +40,15 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
     
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarYFirmarAlquilerNoComercial.class);
     
@@ -51,7 +69,7 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO));
 		estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO));
 		expedienteComercial.setEstado(estadoExpedienteComercial);
-		expedienteComercial.setEstadoBc(estadoExpedienteBc);
+		expedienteComercial.setEstadoBc(estadoExpedienteBc);		 		
 		
 		expedienteComercialApi.update(expedienteComercial,false);
 

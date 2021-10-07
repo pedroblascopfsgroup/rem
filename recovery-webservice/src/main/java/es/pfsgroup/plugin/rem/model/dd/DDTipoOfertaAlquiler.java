@@ -98,6 +98,14 @@ public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
+	}
+
 	public Long getVersion() {
 		return version;
 	}

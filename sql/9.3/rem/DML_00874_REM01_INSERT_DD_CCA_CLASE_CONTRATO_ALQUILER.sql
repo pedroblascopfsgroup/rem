@@ -34,15 +34,15 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      	T_TIPO_DATA('VIV','Alquiler vivienda'),
-		T_TIPO_DATA('TER','Alquiler terciario'),
-		T_TIPO_DATA('SOC','Alquiler social'),
-		T_TIPO_DATA('STI','Alquiler sin título'),
-		T_TIPO_DATA('COM','Comodato'),
-		T_TIPO_DATA('OBS','Alquiler OBS'),
-		T_TIPO_DATA('GRU','Alquiler grupo'),
-		T_TIPO_DATA('GAR','Contrato de garantías'),
-		T_TIPO_DATA('GAG','Contrato de garantías grupo')
+      	T_TIPO_DATA('VIV','Alquiler vivienda','Z101'),
+		T_TIPO_DATA('TER','Alquiler terciario','Z102'),
+		T_TIPO_DATA('SOC','Alquiler social','Z103'),
+		T_TIPO_DATA('STI','Alquiler sin título', 'Z104'),
+		T_TIPO_DATA('COM','Comodato', 'Z105'),
+		T_TIPO_DATA('OBS','Alquiler OBS', 'Z106'),
+		T_TIPO_DATA('GRU','Alquiler grupo', 'Z107'),
+		T_TIPO_DATA('GAR','Contrato de garantías', 'Z108'),
+		T_TIPO_DATA('GAG','Contrato de garantías grupo', 'Z109')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -69,6 +69,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               DD_CCA_CODIGO,
               DD_CCA_DESCRIPCION,
               DD_CCA_DESCRIPCION_LARGA,
+			  DD_CCA_CODIGO_C4C,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -78,6 +79,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(1))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+			  '''||TRIM(V_TMP_TIPO_DATA(3))||''',
               0,
               ''HREOS-14943'',
               SYSDATE, 0)';

@@ -126,8 +126,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				            	displayField: 'descripcion',
 	    						valueField: 'codigo',	    						
 	    						listeners: {
+	    							boxready: function(combo){
+	    								var me = this;
+	    								me.lookupController().getComboTipoOferta(combo);
+    								},
 	    							change: function(combo, value) {
-	    								var me = this;	    								
+	    								var me = this;	    
 	    								var form = combo.up('form');
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');

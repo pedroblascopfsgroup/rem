@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210914
+--## FECHA_CREACION=20211005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15210
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -19,6 +19,7 @@
 --##        0.7 Se añade un leftpad al código postal, por si tuviese menos dígitos de los esperados - [HREOS-14024] -  Daniel Algaba
 --##        0.8 Se Corrige los campos de Latitud y Longitud - [HREOS-14947] -  Daniel Algaba
 --##        0.9 Se corrige error visto en los campos de Latitud y Longitud en casos concretos - [HREOS-15210] -  Daniel Algaba
+--##        0.10 Se añade signo positivo a las coordenadas - [HREOS-15423] -  Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -170,14 +171,14 @@ BEGIN
       
       V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK APR SET 
                     APR.X_GOOGLE = CASE WHEN INSTR(APR.X_GOOGLE,''-'') = 1 AND INSTR(APR.X_GOOGLE,'','') > 0 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-''),INSTR(X_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.X_GOOGLE,INSTR(APR.X_GOOGLE,'','')+1)),15,''0'')
-                                    WHEN INSTR(APR.X_GOOGLE,''-'') = 0 AND INSTR(APR.X_GOOGLE,'','') > 0 THEN LPAD(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-''),INSTR(X_GOOGLE,'','')-1)),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.X_GOOGLE,INSTR(APR.X_GOOGLE,'','')+1)),15,''0'')
+                                    WHEN INSTR(APR.X_GOOGLE,''-'') = 0 AND INSTR(APR.X_GOOGLE,'','') > 0 THEN ''+'' || LPAD(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-''),INSTR(X_GOOGLE,'','')-1)),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.X_GOOGLE,INSTR(APR.X_GOOGLE,'','')+1)),15,''0'')
                                     WHEN INSTR(APR.X_GOOGLE,''-'') = 1 AND INSTR(APR.X_GOOGLE,'','') = 0 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(X_GOOGLE,INSTR(X_GOOGLE,''-'')-1)),''-'',''''),6,''0'') || '',000000000000000''
-                                    WHEN INSTR(APR.X_GOOGLE,''-'') = 0 AND INSTR(APR.X_GOOGLE,'','') = 0 THEN LPAD(X_GOOGLE,6,''0'') || '',000000000000000''
+                                    WHEN INSTR(APR.X_GOOGLE,''-'') = 0 AND INSTR(APR.X_GOOGLE,'','') = 0 THEN ''+'' || LPAD(X_GOOGLE,6,''0'') || '',000000000000000''
                                     ELSE NULL END
                     ,APR.Y_GOOGLE = CASE WHEN INSTR(APR.Y_GOOGLE,''-'') = 1 AND INSTR(APR.Y_GOOGLE,'','') > 0 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-''),INSTR(Y_GOOGLE,'','')-1)),''-'',''''),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.Y_GOOGLE,INSTR(APR.Y_GOOGLE,'','')+1)),15,''0'')
-                                    WHEN INSTR(APR.Y_GOOGLE,''-'') = 0 AND INSTR(APR.Y_GOOGLE,'','') > 0 THEN LPAD(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-''),INSTR(Y_GOOGLE,'','')-1)),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.Y_GOOGLE,INSTR(APR.Y_GOOGLE,'','')+1)),15,''0'')
+                                    WHEN INSTR(APR.Y_GOOGLE,''-'') = 0 AND INSTR(APR.Y_GOOGLE,'','') > 0 THEN ''+'' || LPAD(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-''),INSTR(Y_GOOGLE,'','')-1)),6,''0'') || '','' || RPAD(TRIM(SUBSTR(APR.Y_GOOGLE,INSTR(APR.Y_GOOGLE,'','')+1)),15,''0'')
                                     WHEN INSTR(APR.Y_GOOGLE,''-'') = 1 AND INSTR(APR.Y_GOOGLE,'','') = 0 THEN ''-'' || LPAD(REPLACE(TRIM(SUBSTR(Y_GOOGLE,INSTR(Y_GOOGLE,''-'')-1)),''-'',''''),6,''0'') || '',000000000000000''
-                                    WHEN INSTR(APR.Y_GOOGLE,''-'') = 0 AND INSTR(APR.Y_GOOGLE,'','') = 0 THEN LPAD(Y_GOOGLE,6,''0'') || '',000000000000000''
+                                    WHEN INSTR(APR.Y_GOOGLE,''-'') = 0 AND INSTR(APR.Y_GOOGLE,'','') = 0 THEN ''+'' || LPAD(Y_GOOGLE,6,''0'') || '',000000000000000''
                                     ELSE NULL END';
 
       EXECUTE IMMEDIATE V_MSQL;

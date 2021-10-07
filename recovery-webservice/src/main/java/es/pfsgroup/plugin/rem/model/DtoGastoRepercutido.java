@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 public class DtoGastoRepercutido {
 
 	private Long id;
 	private String tipoGastoCodigo;
 	private Double importe;
 	private Long meses;
+	private Date fechaAlta;
 	
 	
 	public Long getId() {
@@ -31,6 +34,12 @@ public class DtoGastoRepercutido {
 	}
 	public void setMeses(Long meses) {
 		this.meses = meses;
+	}
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
 	}
 	
 	

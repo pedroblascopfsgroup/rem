@@ -27,9 +27,8 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            text: HreRem.i18n('fieldlabel.gasto.tipo'),
 		            flex: 1 ,
 		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-		            	var foundedRecord = this.lookupController().getViewModel().getStore('storeClasificacion').findRecord('codigo', value);
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('storeTipoGastoRepercutido').findRecord('codigo', value);
 		            	var descripcion;
-		            	
 		        		if(!Ext.isEmpty(foundedRecord)) {
 		        			descripcion = foundedRecord.getData().descripcion;
 		        		}
@@ -42,10 +41,11 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 							proxy: {
 								type: 'uxproxy',
 								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'motivosCalificacionNegativa'} 
+								extraParams: {diccionario: 'tipoGastoRepercutido'} 
 							},
 							autoLoad: true
 						}),
+		        		allowBlank: false,
 						displayField: 'descripcion',
     					valueField: 'codigo'
 					}
@@ -58,7 +58,8 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            flex: 1,
 		            editor: {
 		        		xtype: 'numberfield',
-		        		cls: 'grid-no-seleccionable-field-editor'
+		        		cls: 'grid-no-seleccionable-field-editor',
+		        		allowBlank: false
 		        	}
 		        },  
 		        {
@@ -70,6 +71,18 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            editor: {
 		        		xtype: 'numberfield',
 		        		cls: 'grid-no-seleccionable-field-editor'
+		        	}
+		        },
+		        {
+		            dataIndex: 'fechaAlta',
+		            reference: 'fechaAlta',
+		            name:'fechaAlta',
+		            text: HreRem.i18n('fieldlabel.meses'),
+		            flex: 1 ,
+		            formatter: 'date("d/m/Y")',
+		            editor: {
+		        		xtype: 'datefield',
+		        		allowBlank: false
 		        	}
 		        }
 		    ];
@@ -97,6 +110,37 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load(grid.loadCallbackFunction);
   		});
+    },
+    
+    editFuncion: function(editor, context){
+    	var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/createGastoRepercutido'); 
+		var idExpediente = me.up('expedientedetallemain').getViewModel().get('expediente.id');
+		var tipoGastoCodigo = context.newValues.tipoGastoCodigo;
+		var importe = context.newValues.importe;
+		var meses = context.newValues.meses;
+		var fechaAlta = context.newValues.fechaAlta;
+		var id = null;
+		
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idExpediente: idExpediente, tipoGastoCodigo:tipoGastoCodigo, importe:importe,id:id, meses:meses, fechaAlta:fechaAlta},
+		     success: function(response, opts) {
+		    	 var data = Ext.decode(response.responseText);
+		    	 if(data.success === "false"){
+		    		 me.fireEvent("errorToast", data.msg);
+		    	 }else{
+			    	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	 }
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	},callback: function(record, operation) {
+		 		me.getStore().load();
+		    }
+		});
+
     }
     
 });

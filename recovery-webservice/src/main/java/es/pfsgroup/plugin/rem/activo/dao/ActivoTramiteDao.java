@@ -81,6 +81,8 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 
 	ActivoTramite getTramiteComercialVigenteByTrabajoT015(Long idTrabajo);
 	
+	ActivoTramite getTramiteComercialVigenteByTrabajoT018(Long idTrabajo);
+	
 	Boolean creaTareas(DtoScreening dto);
 
 	/**

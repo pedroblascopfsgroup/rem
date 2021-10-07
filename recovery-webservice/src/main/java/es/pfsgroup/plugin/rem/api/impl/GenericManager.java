@@ -1977,4 +1977,33 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaRetorno;
 		
 	}
+
+	@Override
+	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo) {
+		List<DDTipoOferta> tiposOferta = genericDao.getList(DDTipoOferta.class);
+
+		if(!DDCartera.CODIGO_CAIXA.equals(codCartera)) {
+			for (DDTipoOferta tipoOferta : tiposOferta) {
+				if (tipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
+					tiposOferta.remove(tipoOferta);
+					break;
+				}
+			}				
+		}else {
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
+
+			if(!pac.getCheckGestorComercial()
+					|| !pac.getAplicaAdmision()
+					|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
+				for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
+					if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {
+						tiposOferta.remove(i);						
+					}
+				}
+			}
+		}
+		
+		return tiposOferta;
+	}
 }

@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
+import es.pfsgroup.plugin.rem.expediente.condiciones.GastoRepercutido;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
@@ -179,6 +180,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoRepercutido;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -13209,6 +13211,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 			ActivoTramite tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
 			ActivoTramite tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+			ActivoTramite tramiteAlquilerNoComercial = tramiteDao.getTramiteComercialVigenteByTrabajoT018(expedienteComercial.getTrabajo().getId());
 
 			if(tramiteVenta != null) {
 				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteVenta.getId(), ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
@@ -13221,7 +13224,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}		
 			} else if(tramiteAlquiler != null) {
-				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteAlquiler.getId(), ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
+				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteAlquiler.getId(), ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING);
 				this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
 				
 				if(tarea != null) {
@@ -13230,6 +13233,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						this.avanzarTareaScreening(tarea.getId(), tarea.getTareaPadre().getId());
 					}
 				}		
+			} else if (tramiteAlquilerNoComercial != null) {
+				tarea = activoTramiteApi.getTareaActivaByCodigoAndTramite(tramiteAlquilerNoComercial.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING);
+				this.guardarDesbloqueoExpediente(expedienteComercial, dto.getMotivoDesbloqueado(), null);
+				
+				if(tarea != null) {
+					this.setValoresTEB(dto, tarea, dto.getCodigoTarea());
+					if(tarea.getTareaPadre() != null) {
+						this.avanzarTareaScreening(tarea.getId(), tarea.getTareaPadre().getId());
+					}
+				}
 			}
 			DDEstadoComunicacionC4C estadoValidado = (DDEstadoComunicacionC4C) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_VALIDADO);
 			this.actualizarEstadoBCInterlocutores(expedienteComercial, estadoValidado);
@@ -13243,6 +13256,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		ActivoTramite tramiteVenta = null;
 		ActivoTramite tramiteAlquiler = null;
+		ActivoTramite tramiteAlquilerNoComercial = null;
 		
 		if (numOferta != null) {
 			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "numOferta", numOferta);
@@ -13253,6 +13267,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (expedienteComercial != null) {
 					tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
 					tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+					tramiteAlquilerNoComercial = tramiteDao.getTramiteComercialVigenteByTrabajoT018(expedienteComercial.getTrabajo().getId());
 				}
 			}
 		}
@@ -13267,8 +13282,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (tramiteVenta != null) {
 			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
 		} else if (tramiteAlquiler != null) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
-
+			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING);
+		} else if (tramiteAlquilerNoComercial != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING);
 		}
 
 		return dto;
@@ -13279,6 +13295,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		ActivoTramite tramiteVenta = null;
 		ActivoTramite tramiteAlquiler = null;
+		ActivoTramite tramiteAlquilerNoComercial = null;
 		
 		if (numOferta != null) {
 			Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "numOferta", numOferta);
@@ -13289,6 +13306,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (expedienteComercial != null) {
 					tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
 					tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+					tramiteAlquilerNoComercial = tramiteDao.getTramiteComercialVigenteByTrabajoT018(expedienteComercial.getTrabajo().getId());
 				}
 			}
 		}
@@ -13301,7 +13319,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (tramiteVenta != null) {
 			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
 		} else if (tramiteAlquiler != null) {
-			dto.setCodigoTarea(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING);
+			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING);
+		} else if (tramiteAlquilerNoComercial != null) {
+			dto.setCodigoTarea(ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING);
 		}
 		dto.setIsTareaActiva(true);
 
@@ -13314,10 +13334,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		TareaExterna tareaNueva = null;
 		ActivoTramite tramiteVenta = null;
 		ActivoTramite tramiteAlquiler = null;
+		ActivoTramite tramiteAlquilerNoComercial = null;
 		
 		if (expedienteComercial != null && expedienteComercial.getTrabajo() != null) {
 			tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
 			tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
+			tramiteAlquilerNoComercial = tramiteDao.getTramiteComercialVigenteByTrabajoT018(expedienteComercial.getTrabajo().getId());
 		}
 		
 		if (tramiteVenta != null) {
@@ -13360,6 +13382,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							tac.setActivo(tramiteAlquiler.getActivo());
 							tac.setId(tarNot.getId());
 							tac.setTramite(tramiteAlquiler);
+							tac.setAuditoria(Auditoria.getNewInstance());
+						}
+							tac.setUsuario(usuarioLogado);
+						genericDao.save(TareaActivo.class, tac);
+					}
+					break;
+				}
+			}
+		} else if (tramiteAlquilerNoComercial != null) {
+			dto.setUsuarioLogado(usuarioLogado.getUsername());
+			tramiteDao.creaTareas(dto);
+			TareaNotificacion tarNot = null;
+			List<TareaExterna> tareasActivas4 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramiteAlquilerNoComercial.getId());
+			for (TareaExterna tarea : tareasActivas4) {
+				if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
+					tareaNueva = tarea;
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)) {
+						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
+						if(Checks.esNulo(tac)) {
+							tac = new TareaActivo();
+							tac.setActivo(tramiteAlquilerNoComercial.getActivo());
+							tac.setId(tarNot.getId());
+							tac.setTramite(tramiteAlquilerNoComercial);
 							tac.setAuditoria(Auditoria.getNewInstance());
 						}
 							tac.setUsuario(usuarioLogado);
@@ -13500,10 +13546,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<ValorTareaBC> valores = genericDao.getList(ValorTareaBC.class,  genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tar.getTareaExterna().getId()));	
 			if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codigoTarea)) {
 				dto = new DtoScreening();
-			} else if(ComercialUserAssigantionService.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)) {
+			} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)) {
 				dto = new DtoScreening();
 			}else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION.equals(codigoTarea)) {
 				dto = new DtoAccionAprobacionCaixa();
+			} else if (ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codigoTarea)) {
+				dto = new DtoScreening();
 			}
 			if(valores != null) {
 				for (ValorTareaBC valorTareaBC : valores) {
@@ -13961,6 +14009,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(final ExpedienteComercial eco,final String codEstadoAlquiler){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCodEstadoAlquiler(codEstadoAlquiler);
+		}};
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(final ExpedienteComercial eco, final String estadoArras){
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());
@@ -14258,16 +14316,70 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public Boolean checkExpedienteBloqueadoPorFuncion(Long idTramite) {
 		Boolean bloqueado = checkExpedienteBloqueado(idTramite);
-		
+		Boolean respuesta = false;
 		if(bloqueado) {
 			Usuario usuario = genericAdapter.getUsuarioLogado();	
 			
 			if(!funcionApi.elUsuarioTieneFuncion(FUNCION_AV_ECO_BLOQ, usuario)) {
-				bloqueado = true;
+				respuesta = true;
 			}
 		}
 
-		return bloqueado;
+		return respuesta;
 	}
 	
+	@Override
+	@Transactional(readOnly = false)
+	public void createGastoRepercutido(DtoGastoRepercutido dto, Long idExpediente) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		
+		if(eco != null) {
+			GastoRepercutido gr = new GastoRepercutido();
+
+			gr.setCondicionanteExpediente(eco.getCondicionante());
+			gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			gr.setImporte(dto.getImporte());
+			if(!Checks.isFechaNula(dto.getFechaAlta())) {
+				gr.setFechaAlta(dto.getFechaAlta());
+			}
+			gr.setMeses(dto.getMeses());
+			gr.setAuditoria(Auditoria.getNewInstance());
+			
+			genericDao.save(GastoRepercutido.class, gr);
+		}
+	}
+	
+	@Override
+	public List<DtoGastoRepercutido> getGastosRepercutidosList(Long idExpediente) {
+		ExpedienteComercial eco = this.findOne(idExpediente);
+		List<DtoGastoRepercutido> dtoList = new ArrayList<DtoGastoRepercutido>();
+		
+		if(eco != null && eco.getCondicionante() != null) {
+			List<GastoRepercutido> grList = genericDao.getList(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "condicionanteExpediente.id", eco.getCondicionante().getId()));
+			
+			if(grList != null && !grList.isEmpty()) {
+				for (GastoRepercutido gastoRepercutido : grList) {
+					DtoGastoRepercutido dto = new DtoGastoRepercutido();
+					dto.setId(gastoRepercutido.getId());
+					dto.setTipoGastoCodigo(gastoRepercutido.getTipoGastoRepercutido().getCodigo());
+					dto.setImporte(gastoRepercutido.getImporte());
+					dto.setFechaAlta(gastoRepercutido.getFechaAlta());
+					dto.setMeses(gastoRepercutido.getMeses());
+					dtoList.add(dto);
+				}
+			}
+		}
+		return dtoList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteGastoRepercutido(Long idGastoRepercutido) {
+		GastoRepercutido gr = genericDao.get(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "id", idGastoRepercutido));
+		
+		if(gr != null) {
+			Auditoria.delete(gr);
+			genericDao.save(GastoRepercutido.class, gr);
+		}
+	}
 }

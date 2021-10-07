@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TOA_TIPO_OFR_ALQUILER'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_LETRAS_TABLA VARCHAR2(2400 CHAR) := 'TOA';
+	V_CODIGO_TABLA VARCHAR2(2400 CHAR) := 'TOA';
 	V_TIQUET VARCHAR2(2400 CHAR) := 'HREOS-15220';
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
@@ -49,41 +49,29 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
+
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_'||V_LETRAS_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        IF V_NUM_TABLAS = 1 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
-        ELSE 
-          -- Si no existe se inserta.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_CODIGO_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_'||V_LETRAS_TABLA||'_ID,
-              DD_'||V_LETRAS_TABLA||'_CODIGO,
-              DD_'||V_LETRAS_TABLA||'_DESCRIPCION,
-              DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA,
-			  DD_'||V_LETRAS_TABLA||'_CODIGO_C4C,
-              VERSION,
-              USUARIOCREAR,
-              FECHACREAR,
-              BORRADO
-              ) VALUES (
-               '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
-              '''||TRIM(V_TMP_TIPO_DATA(1))||''',
-              '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-              '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-			  '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-              0,
-              '''||V_TIQUET||''',
-              SYSDATE, 0)';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+        IF V_NUM_TABLAS > 0 THEN				
+          -- Si existe se modifica.
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+                    'SET DD_'||V_CODIGO_TABLA||'_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+					', DD_'||V_CODIGO_TABLA||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					', DD_'||V_CODIGO_TABLA||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					', USUARIOMODIFICAR = '''||V_TIQUET||''' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_'||V_CODIGO_TABLA||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+          
+		END IF;
 
-        END IF;
       END LOOP;
+      
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');
 

@@ -55,6 +55,8 @@ public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
 	@Column(name = "DD_TOA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
+	@Column(name = "DD_TOA_CODIGO_C4C")   
+	private String codigoC4C;
 	
 	@Version   
 	private Long version;

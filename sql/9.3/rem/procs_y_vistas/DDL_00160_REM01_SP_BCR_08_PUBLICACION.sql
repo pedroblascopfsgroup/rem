@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210921
+--## FECHA_CREACION=20211005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15254
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##	    0.4 Se añade que cuando no viene DESTINO_COMERCIAL sea VR o su destino actual - HREOS-14649
 --##	    0.5 Los flags de publicación Caixa siempre se actualizan, también sacamos de la ejecución del SP de publicaciones las agrupaciones restringidas OBREM que estén incluida en otras agrupaciones restringidas - HREOS-15137
 --##	    0.6 Correciones perímetros- HREOS-15137
+--##	    0.7 Se añade un consulta para insertar activos que no tiene el estado de publicación que debe y se añade flag para los activos/agrupaciones que procese el SP de publicaciones - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -46,15 +47,17 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
    V_FECHA_INICIO VARCHAR2(100 CHAR);
    V_FECHA_FIN VARCHAR2(100 CHAR);
 
-   CURSOR ACTIVOS IS 
-        SELECT DISTINCT ACT_ID 
-        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL;
+   CURSOR ACTIVOS IS
+        SELECT DISTINCT ACT_ID
+        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL
+        WHERE EJECUTADO = 0 OR EJECUTADO IS NULL;
 
    ACT_ID NUMBER(16);
 
-    CURSOR AGRUPACIONES IS 
-        SELECT DISTINCT AGR_ID 
-        FROM #ESQUEMA#.TMP_AGR_DESTINO_COMERCIAL;
+    CURSOR AGRUPACIONES IS
+        SELECT DISTINCT AGR_ID
+        FROM #ESQUEMA#.TMP_AGR_DESTINO_COMERCIAL
+        WHERE EJECUTADO = 0 OR EJECUTADO IS NULL;
 
    AGR_ID NUMBER(16);
 
@@ -89,6 +92,26 @@ BEGIN
             SALIDA := SALIDA || '[INFO] TRUNCAMOS TMP_AGR_DESTINO_COMERCIAL  [INFO]'|| CHR(10);
 
             #ESQUEMA#.OPERACION_DDL.DDL_Table('TRUNCATE','TMP_AGR_DESTINO_COMERCIAL');
+            
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'							
+                        SELECT ACT.ACT_ID, 0
+                        FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                        JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+                            AND APU.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON AUX.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA
+                        JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+                            AND EPV.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
+                            AND EPA.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CBX ON CBX.ACT_ID = ACT.ACT_ID
+                            AND CBX.BORRADO = 0
+                        WHERE (EPV.DD_EPV_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_VENTA = 0 AND CBX.CBX_PUBL_PORT_INV_VENTA = 0)
+                            OR (EPA.DD_EPA_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_ALQUILER = 0 AND CBX.CBX_PUBL_PORT_INV_ALQUILER = 0)';
+            EXECUTE IMMEDIATE V_MSQL;
+            
+            V_NUM_FILAS := sql%rowcount;
+
+            SALIDA := SALIDA || '[INFO] SE HAN INSERTADO ' || V_NUM_FILAS ||' REGISTROS EN '||V_TABLA||' POR TENER UN ESTADO DE PUBLICACIÓN DIFERENTE AL QUE DEBE [INFO]'|| CHR(10);
 
             V_MSQL := 'INSERT  INTO '||V_ESQUEMA||'.'||V_TABLA||' (
                             ACT_ID
@@ -340,7 +363,7 @@ BEGIN
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.HDC_HIST_DESTINO_COMERCIAL HIST
 	            USING (
                     SELECT
-                        TMP.ACT_ID AS ACT_ID
+                        DISTINCT TMP.ACT_ID AS ACT_ID
                     FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
                 )US ON (US.ACT_ID = HIST.ACT_ID)
                 WHEN MATCHED THEN UPDATE SET
@@ -374,7 +397,7 @@ BEGIN
                     ,''STOCK_BC'' AS HDC_GESTOR_ACTUALIZACION
                     ,''STOCK_BC''AS USUARIOCREAR
                     ,SYSDATE AS FECHACREAR
-                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
                 JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
@@ -392,7 +415,7 @@ BEGIN
                     SELECT
                          TCO.DD_TCO_ID AS DD_TCO_ID
                         ,TMP.ACT_ID AS ACT_ID
-                    FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                    FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
                     JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
                     LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''DESTINO_COMERCIAL''  AND eqv1.DD_CODIGO_CAIXA = aux.DESTINO_COMERCIAL AND EQV1.BORRADO=0
@@ -513,7 +536,7 @@ BEGIN
                              CAI.CBX_PUBL_PORT_INV_VENTA=0  AND CAI.CBX_PUBL_PORT_INV_ALQUILER=0  THEN NULL
                     END AS DD_POR_CODIGO
                     ,ACT.ACT_ID AS ACT_ID
-               FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+               FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
                JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAI ON CAI.ACT_ID=ACT.ACT_ID AND CAI.BORRADO=0
                JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
@@ -561,7 +584,7 @@ BEGIN
                                 WHEN TCO.DD_TCO_CODIGO = ''02'' AND POR.DD_POR_CODIGO = ''02'' AND (CAI.CBX_PUBL_PORT_INV_VENTA=1 OR CAI.CBX_PUBL_PORT_INV_ALQUILER=1) THEN 1
                                 ELSE 0
                             END AS PAC_CHECK_PUBLICAR
-                        FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                        FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAI ON CAI.ACT_ID=ACT.ACT_ID AND CAI.BORRADO=0
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
@@ -653,7 +676,7 @@ BEGIN
                     , FECHA_CALCULO
                 )
                 SELECT TMP.ACT_ID, SYSDATE
-                FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP
+                FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
                 WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = TMP.ACT_ID)
                 UNION ALL
                 SELECT DISTINCT AGA.ACT_ID, SYSDATE
@@ -769,37 +792,7 @@ BEGIN
 
     END IF;
 
---9º Llamar al SP para cada activo guardado en la tabla temporal
---Ejecutamos el Sp por cada activo de la tabla temporal
-
-    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
-
-        FOR I IN ACTIVOS LOOP
-            ACT_ID:=I.ACT_ID;
-
-            SP_CAMBIO_ESTADO_PUBLICACION(ACT_ID);
-
-            EXIT WHEN ACTIVOS%NOTFOUND;
-        END LOOP;
-
-    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
-
---10º Llamar al SP para cada activo guardado en la tabla temporal
---Ejecutamos el Sp por cada activo de la tabla temporal
-
-    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
-
-        FOR I IN AGRUPACIONES LOOP
-            AGR_ID:=I.AGR_ID;
-
-            SP_CAMBIO_ESTADO_PUBLI_AGR(AGR_ID);
-
-            EXIT WHEN AGRUPACIONES%NOTFOUND;
-        END LOOP;
-
-    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
-
---11º Llamar al SP de SCM para cada activo guardado en la tabla temporal
+--9º Llamar al SP de SCM para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
     SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
@@ -813,6 +806,42 @@ BEGIN
     SP_ASC_ACT_SIT_COM_VACIOS(0,1);
 
     SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+
+--10º Llamar al SP para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+
+        FOR I IN ACTIVOS LOOP
+            ACT_ID:=I.ACT_ID;
+
+            SP_CAMBIO_ESTADO_PUBLICACION(ACT_ID);
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL SET EJECUTADO = 1, FECHA_EJECUCION = SYSDATE WHERE ACT_ID = '||ACT_ID;
+            EXECUTE IMMEDIATE V_MSQL;
+            COMMIT;
+
+            EXIT WHEN ACTIVOS%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+
+--11º Llamar al SP para cada activo guardado en la tabla temporal
+--Ejecutamos el Sp por cada activo de la tabla temporal
+
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
+
+        FOR I IN AGRUPACIONES LOOP
+            AGR_ID:=I.AGR_ID;
+
+            SP_CAMBIO_ESTADO_PUBLI_AGR(AGR_ID);
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL SET EJECUTADO = 1, FECHA_EJECUCION = SYSDATE WHERE AGR_ID = '||AGR_ID;
+            EXECUTE IMMEDIATE V_MSQL;
+            COMMIT;
+
+            EXIT WHEN AGRUPACIONES%NOTFOUND;
+        END LOOP;
+
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
 
 COMMIT;
 

@@ -1986,7 +1986,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo) {
 		List<DDTipoOferta> tiposOferta = genericDao.getList(DDTipoOferta.class);
-
+		Activo activo = activoApi.get(idActivo);
+		
 		if(!DDCartera.CODIGO_CAIXA.equals(codCartera)) {
 			for (DDTipoOferta tipoOferta : tiposOferta) {
 				if (tipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
@@ -1998,8 +1999,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
 
-			if(!pac.getCheckGestorComercial()
-					|| !pac.getAplicaAdmision()
+			if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
+					|| (activo.getEnTramite() == null || activo.getEnTramite() == 0)
 					|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
 				for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
 					if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {

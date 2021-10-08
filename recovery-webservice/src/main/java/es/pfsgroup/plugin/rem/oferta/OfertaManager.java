@@ -6882,7 +6882,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS))
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_AGORA_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
 							|| codSubcartera.equals(DDSubcartera.CODIGO_CERB_DIVARIAN) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || codSubcartera.equals(DDSubcartera.CODIGO_CERB_INMOVILIARIO)
-							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB));
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAGUAR));
 				 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_HYT))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_HYT_INMOBILIARIO));
@@ -6909,7 +6910,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_OTRAS_CARTERAS))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_OTRAS_CARTERAS_INMB));
-
 			 
 		 }
 	

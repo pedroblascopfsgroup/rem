@@ -81,7 +81,6 @@ public class DDSubcartera implements Auditable, Dictionary {
 	
 	
 	
-	
 
 	@Id
 	@Column(name = "DD_SCR_ID")

@@ -1332,4 +1332,6 @@ public interface ExpedienteComercialApi {
 	void recalcularHonorarios(Long idExpediente) throws Exception;
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
+
+	boolean esJaguar(TareaExterna tareaExterna);
 }

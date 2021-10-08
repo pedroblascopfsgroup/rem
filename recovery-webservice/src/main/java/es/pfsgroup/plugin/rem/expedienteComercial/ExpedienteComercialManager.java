@@ -9183,7 +9183,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -9249,7 +9249,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -11677,5 +11677,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			transactionManager.rollback(transaction);
 			return false;
 		}
+	}
+	
+	@Override
+	public boolean esJaguar(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esJaguar = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esJaguar = false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+				esJaguar = true;
+			}
+		}
+		return esJaguar;
 	}
 }

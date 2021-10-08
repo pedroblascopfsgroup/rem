@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210622
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14368
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##        0.3 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
+--##	      0.4 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -79,12 +80,15 @@ BEGIN
                      LEFT JOIN ALQUILER ALQ ON ALQ.ACT_ID = ACT.ACT_ID
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                      WHERE (VNT.APU_FECHA_INI_VENTA IS NOT NULL OR ALQ.APU_FECHA_INI_ALQUILER IS NOT NULL)
                      AND ACT.BORRADO = 0
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                      AND ACT.ACT_EN_TRAMITE = 0
                      AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                     AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN

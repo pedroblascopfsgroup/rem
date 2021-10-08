@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.tramitacionofertas;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import es.capgemini.devon.files.WebFileItem;
 import org.springframework.ui.ModelMap;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -42,12 +45,14 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
@@ -193,6 +198,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
+	
+	@Autowired
+	private ExpedienteComercialAdapter expedienteComercialAdapter;	
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -227,6 +235,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
+	@Autowired
+	private GenerarPdfAprobacionOfertasApi pdfAprobacionOfertasApi;
+	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
 
@@ -2099,6 +2110,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Activo activo = activoManager.get(idActivo);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		ExpedienteComercial expedienteComercial = oferta.getExpedienteComercial();
+		Long numExpediente = expedienteComercial.getNumExpediente();
 
 		try {
 			if(expedienteComercial == null) {
@@ -2141,6 +2153,23 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);
+		}
+		
+		if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+		
+			//Hacer aquí lo del GD
+			try {
+				File file = pdfAprobacionOfertasApi.getDocumentoPropuestaVenta(oferta); //Con esto recupero el FILE
+				WebFileItem webFileItem = pdfAprobacionOfertasApi.getWebFileItemByFile(file, numExpediente);
+				/*ExpedienteComercial expedienteAux = genericDao.get(ExpedienteComercial.class, "numExpediente", numExpediente);
+				if (expedienteAux != null) {*/
+					
+					String errores = expedienteComercialAdapter.uploadDocumento(webFileItem);
+				//}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

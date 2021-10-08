@@ -821,7 +821,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						{
 							xtype : 'button',
 							reference : 'btnGenerarPropuestaAprobacionOferta',
-							text : ('Prueba button'),//HreRem.i18n('btn.generar.factura.venta'),
+							text : HreRem.i18n('btn.generar.pdf'),
 							handler : 'onClickGenerarPdfPropuestaAprobacionOferta',
 							margin : '10 10 10 10',
 							bind : {

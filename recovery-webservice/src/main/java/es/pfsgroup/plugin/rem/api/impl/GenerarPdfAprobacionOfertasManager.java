@@ -1,67 +1,50 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.devon.utils.FileUtils;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoDescuentoColectivos;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDataSource;
 import es.pfsgroup.plugin.rem.model.DtoDatosOfertaPdf;
-import es.pfsgroup.plugin.rem.model.DtoInfoActivoFacturaVenta;
 import es.pfsgroup.plugin.rem.model.DtoOfertaPdfPrincipal;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoEntidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.service.GenerateJasperPdfServiceManager;
 import es.pfsgroup.plugin.rem.utils.FileUtilsREM;
 
@@ -98,8 +81,6 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			throw new Exception(e);
 		}
 
-		
-		
 		File salida = null;
 		try {
 			salida = File.createTempFile("propuestaAprobacionOferta", ".pdf");
@@ -108,7 +89,6 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			logger.error(e.getMessage());
 			throw new Exception(e);
 		}
-		
 		
 		return salida;
 	}
@@ -186,19 +166,28 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			if (oferta.getImporteOferta() != null) {
 				dtoAux.setImportePropuesta(oferta.getImporteOferta());
 			}
-			if (oferta.getCliente() != null && oferta.getCliente().getNombreCompleto() != null) {
-				dtoAux.setCompradorUnoNombre(oferta.getCliente().getNombreCompleto());
-			}
-			if (oferta.getCliente() != null && oferta.getCliente().getDocumento() != null) {
-				dtoAux.setCompradorUnoNif(oferta.getCliente().getDocumento());
-			}
 			ClienteComercial cliente = oferta.getCliente();
-			if (cliente != null) {
-				if (cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
-					dtoAux.setFamiliarCaixa(true);
-				}else {
-					dtoAux.setFamiliarCaixa(false);
-				}
+			if (cliente != null && cliente.getNombreCompleto() != null) {
+				dtoAux.setCompradorUnoNombre(cliente.getNombreCompleto());
+			}
+			if (cliente != null && cliente.getDocumento() != null) {
+				dtoAux.setCompradorUnoNif(cliente.getDocumento());
+			}
+			if (cliente != null && cliente.getInfoAdicionalPersona() != null
+					&& cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {
+				dtoAux.setFamiliarCaixa(true);
+			}else {
+				dtoAux.setFamiliarCaixa(false);
+			}
+			if(oferta.getExpedienteComercial() != null 
+					&& !oferta.getExpedienteComercial().getCompradores().isEmpty() 
+					&& oferta.getExpedienteComercial().getCompradores().get(0).getAntiguoDeudor() != null) {
+				dtoAux.setAntiguoDeudor(true);	
+			}else {
+				dtoAux.setAntiguoDeudor(false);
+			}
+			if(oferta.getPrescriptor() != null) {
+				dtoAux.setApi(oferta.getPrescriptor().getNombreComercial());
 			}
 		}
 		return dtoAux;
@@ -212,6 +201,10 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			if (activo.getBien() != null && activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getProvincia() != null
 					&& activo.getBien().getLocalizaciones().get(0).getProvincia().getDescripcion() != null) {
 				dtoAux.setProvinciaInmueble(activo.getBien().getLocalizaciones().get(0).getProvincia().getDescripcion());
+			}
+			if (activo.getBien() != null && activo.getBien().getLocalizaciones() != null 
+					&& activo.getBien().getLocalizaciones().get(0).getPoblacion() != null) {
+				dtoAux.setProcedenciaInmueble(activo.getBien().getLocalizaciones().get(0).getPoblacion());	
 			}
 			if (activo.getBien() != null && activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getLocalidad() != null
 					&& activo.getBien().getLocalizaciones().get(0).getLocalidad().getDescripcion() != null) {
@@ -229,11 +222,8 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
 				dtoAux.setSituacionPosesoria(activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
 			}
-			/*if (activo.getTipoActivo() != null) {
+			if (activo.getTipoActivo() != null) {
 				dtoAux.setTipoInmueble(activo.getTipoActivo().getDescripcion());
-			}*/
-			if (activo.getSubtipoActivo() != null) {
-				dtoAux.setTipoInmueble(activo.getSubtipoActivo().getDescripcion());
 			}
 			if (activo.getTipoComercializacion() != null) {
 				dtoAux.setCanalesComercializacion(activo.getTipoComercializacion().getDescripcion());
@@ -253,13 +243,49 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 				}else {
 					dtoAux.setMultiestrella(false);
 				}
+			}	
+			if(activo.getFullNamePropietario() != null) {
+				dtoAux.setSociedad(activo.getFullNamePropietario());
 			}
-			
-			//activo.getSituacionComercial().getDescripcion();
-			//activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion();				
-			//activo.getTipoBien().getDescripcion();
-			
-			
+			if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {
+				dtoAux.setFincaRegistral(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
+			}
+			if(activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
+				dtoAux.setSituacionJuridica(activo.getTitulo().getEstado().getDescripcion());
+			}
+			if(activo.getAdjNoJudicial() != null) {
+				dtoAux.setFechaDacionCesionAdj(activo.getAdjNoJudicial().getFechaTitulo());
+				dtoAux.setImporteDacionCesionAj(activo.getAdjNoJudicial().getValorAdquisicion());
+			}
+			if(!Checks.estaVacio(activo.getOfertas())) {
+				dtoAux.setInteresados(new Long(activo.getOfertas().size()));
+			}
+			if(!activo.getTasacion().isEmpty()) {
+				List<ActivoTasacion> listActTas = activo.getTasacion();
+				dtoAux.setImporteValoracMercadoActual(listActTas.get(0).getImporteTasacionFin());
+				dtoAux.setImporteValoracMercadoActualFecha(listActTas.get(0).getFechaInicioTasacion());
+				dtoAux.setImporteValoracMercado(listActTas.get(1).getImporteTasacionFin());
+				dtoAux.setImporteValoracMercadoFecha(listActTas.get(1).getFechaInicioTasacion());
+				dtoAux.setImporteValoracMercadoAntigua(listActTas.get(listActTas.size()-1).getImporteTasacionFin());
+				dtoAux.setImporteValoracMercadoAntiguaFecha(listActTas.get(listActTas.size()-1).getFechaInicioTasacion());
+			}
+			if(!activo.getValoracion().isEmpty()) {
+				for (ActivoValoraciones actVal : activo.getValoracion()) {
+					if(actVal.getTipoPrecio() != null && DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(actVal.getTipoPrecio().getCodigo())) {
+						dtoAux.setImportePrecioVenta(actVal.getImporte());
+						break;
+					}
+				}
+			}
+			if(activo.getTipoComercializacion() != null) {
+				dtoAux.setCanalesComercializacion(activo.getTipoComercializacion().getDescripcion());
+			}
+			ActivoBancario actBanc = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if(actBanc != null && actBanc.getCategoriaComercializacion() != null) {
+				dtoAux.setMultiestrella(true);
+			}else {
+				dtoAux.setMultiestrella(false);
+			}
 		}
 		return dtoAux;
 	}
@@ -281,7 +307,10 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			dto.setNombre(ofertaAux.getCliente().getNombreCompleto());
 			dto.setImporteOferta(ofertaAux.getImporteOferta());
 			dto.setFechaOferta(FileUtilsREM.stringify(ofertaAux.getFechaAlta()));
-			dto.setEstadoOferta(ofertaAux.getEstadoOferta().getDescripcion());
+			if(ofertaAux.getOfertaCaixa() != null
+					&& ofertaAux.getOfertaCaixa().getEstadoComunicacionC4C() != null) {
+				dto.setEstadoOferta(ofertaAux.getOfertaCaixa().getEstadoComunicacionC4C().getDescripcion());	
+			}
 			ClienteComercial cliente = ofertaAux.getCliente();
 			if (cliente != null) {
 				if (cliente.getInfoAdicionalPersona() != null && cliente.getInfoAdicionalPersona().getVinculoCaixa() != null) {

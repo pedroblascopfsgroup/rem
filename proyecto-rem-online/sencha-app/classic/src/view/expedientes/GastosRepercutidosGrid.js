@@ -77,7 +77,7 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            dataIndex: 'fechaAlta',
 		            reference: 'fechaAlta',
 		            name:'fechaAlta',
-		            text: HreRem.i18n('fieldlabel.meses'),
+		            text: HreRem.i18n('fieldlabel.fecha.alta'),
 		            flex: 1 ,
 		            formatter: 'date("d/m/Y")',
 		            editor: {

@@ -1013,7 +1013,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		
 		if(tipoRechazoOfertaCodigo.equals("A")) {
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+			Activo activo = oferta.getActivoPrincipal();
+
+			if(activo != null && DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())){
+				Filter filtroVisibleCaixa = genericDao.createFilter(FilterType.EQUALS, "visibleCaixa", true);
+				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroVisibleCaixa);
+			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
 			}else if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 				return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);

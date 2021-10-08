@@ -1127,7 +1127,9 @@ public interface ActivoApi {
 	 */
 	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
 
-	/**
+    List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpedienteCaixa();
+
+    /**
 	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
 	 * @param idProveedor
 	 * @return

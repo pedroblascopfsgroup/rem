@@ -6149,6 +6149,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpedienteCaixa() {
+
+		List<DtoMotivoAnulacionExpediente> listDtoMotivoAnulacionExpediente = new ArrayList<DtoMotivoAnulacionExpediente>();
+		List<DDMotivoAnulacionExpediente> listaDDMotivoAnulacionExpediente = new ArrayList<DDMotivoAnulacionExpediente>();
+
+		Filter filtroMotivoCaixa = genericDao.createFilter(FilterType.EQUALS, "visibleCaixa", true);
+		listaDDMotivoAnulacionExpediente = genericDao.getList(DDMotivoAnulacionExpediente.class, filtroMotivoCaixa);
+
+		for (DDMotivoAnulacionExpediente tipDocExp : listaDDMotivoAnulacionExpediente) {
+			DtoMotivoAnulacionExpediente aux = new DtoMotivoAnulacionExpediente();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVenta(tipDocExp.getVenta());
+			aux.setAlquiler(tipDocExp.getAlquiler());
+			listDtoMotivoAnulacionExpediente.add(aux);
+		}
+
+		return listDtoMotivoAnulacionExpediente;
+	}
+
+	@Override
 	public Activo getActivoByIdProveedor(Long idProveedor) {
 		Filter filterPVE = genericDao.createFilter(FilterType.EQUALS, "id", String.valueOf(idProveedor));
 		VBusquedaProveedoresActivo proveedorActivo = genericDao.get(VBusquedaProveedoresActivo.class, filterPVE);

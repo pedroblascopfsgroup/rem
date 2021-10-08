@@ -3058,6 +3058,24 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getMotivoAnulacionExpedienteCaixa(ModelMap model) {
+
+        try {
+            List <DtoMotivoAnulacionExpediente> dto= activoApi.getMotivoAnulacionExpedienteCaixa();
+
+            model.put("data", dto);
+            model.put("success", true);
+
+        } catch (Exception e) {
+            logger.error("Error en ActivoController", e);
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
 	
 	
 	@RequestMapping(method = RequestMethod.GET)

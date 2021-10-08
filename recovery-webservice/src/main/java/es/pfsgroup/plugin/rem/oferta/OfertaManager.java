@@ -878,8 +878,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			if(ofertaDto.getFechaAltaWC() != null) {
-				oferta.setFechaAltaWebcom(ofertaDto.getFechaAltaWC());
+			if(ofertaDto.getFechaCreacion() != null) {
+				oferta.setFechaAltaWebcom(ofertaDto.getFechaCreacion());
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
@@ -1669,8 +1669,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if(ofertaDto.getFechaAltaWC() != null) {
-				oferta.setFechaAltaWebcom(ofertaDto.getFechaAltaWC());
+			if(ofertaDto.getFechaCreacion() != null) {
+				oferta.setFechaAltaWebcom(ofertaDto.getFechaCreacion());
 			}
 			
 			

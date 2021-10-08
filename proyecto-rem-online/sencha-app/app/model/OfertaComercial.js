@@ -108,7 +108,74 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name: 'telefonoNacimiento2'
-            }
+            },
+            {
+            	name: 'checkSubasta',
+    			type: 'boolean'
+            },
+            {
+    			name: 'codTipoDocumentoRte'
+    		},
+    		{
+    			name: 'numDocumentoRte'
+    		},
+    		{
+    			name:'nombreRazonSocialRte'
+    		},
+    		{
+    			name:'apellidosRte'
+    		},
+    		{
+    			name: 'paisNacimientoRepresentanteCodigo'
+    		},
+    		{
+    			name: 'paisNacimientoRepresentanteDescripcion'
+    		},
+    		{
+    			name:'provinciaNacimientoRepresentanteCodigo'
+    		},
+    		{
+    			name:'provinciaNacimientoRepresentanteDescripcion'
+    		},
+    		{
+    			name:'localidadNacimientoRepresentanteCodigo'
+    		},
+    		{
+    			name:'localidadNacimientoRepresentanteDescripcion'
+    		},
+    		{
+    			name:'fechaNacimientoRepresentante',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'codigoPaisRte'
+    		},
+    		{
+    			name:'provinciaRteCodigo'
+    		},
+    		{
+    			name:'municipioRteCodigo'
+    		},
+    		{
+    			name:'codigoPostalRte'
+    		},
+    		{
+    			name:'direccionRte'
+    		},
+    		{
+    			name:'emailRte'
+    		},
+    		{
+    			name:'telefono1Rte'
+    		},
+    		{
+    			name:'telefono2Rte'
+    		},
+    		{
+    			name:'representantePrp',
+    			type: 'boolean'
+    		}
             
     ],
     

@@ -934,6 +934,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorExpedienteNuevo.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
 				compradorExpedienteNuevo.setDocumentoRepresentante(cliente.getDocumentoRepresentante());
 				compradorBusqueda.setApellidos(cliente.getApellidos());
+				compradorExpedienteNuevo.setEmailRepresentante(cliente.getEmail());
+				compradorExpedienteNuevo.setTelefono1Representante(cliente.getTelefono1());
+				compradorExpedienteNuevo.setTelefono2Representante(cliente.getTelefono2());
 
 			} else {
 				compradorBusqueda.setNombre(cliente.getNombre());
@@ -960,9 +963,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
 			compradorBusqueda.setProvinciaNacimiento(cliente.getProvinciaNacimiento());
 			compradorBusqueda.setCodigoPostal(cliente.getCodigoPostal());
-			compradorBusqueda.setEmail(cliente.getEmail());
-			compradorBusqueda.setTelefono1(cliente.getTelefono1());
-			compradorBusqueda.setTelefono2(cliente.getTelefono2());
 
 			String dir = "";
 			if (!Checks.esNulo(cliente.getTipoVia()))
@@ -1072,9 +1072,18 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (iap.getVinculoCaixa() != null) {
 						compradorExpedienteNuevo.setVinculoCaixa(iap.getVinculoCaixa());
 					}
-					if (iap.getPrp() != null) {
-						compradorBusqueda.setCompradorPrp(iap.getPrp());
+					
+					if (!Checks.esNulo(cliente.getTipoPersona())
+							&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
+						if (iap.getPrp() != null) {
+							compradorBusqueda.setCompradorPrp(iap.getPrp());
+						}
+					} else {
+						if (iap.getPrp() != null) {
+							compradorExpedienteNuevo.setPrp(iap.getPrp());
+						}
 					}
+
 					if (iap.getOficinaTrabajo() != null) {
 						compradorExpedienteNuevo.setOficinaTrabajo(iap.getOficinaTrabajo());
 					}

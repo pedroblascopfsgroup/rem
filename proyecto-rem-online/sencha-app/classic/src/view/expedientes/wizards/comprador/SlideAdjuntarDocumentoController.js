@@ -775,7 +775,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
 	            emailNacimiento:bindRecord.emailNacimiento,
 	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
-	            telefonoNacimiento2:bindRecord.telefonoNacimiento2
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2,
+	            checkSubasta:bindRecord.checkSubasta,
+	            codTipoDocumentoRte:bindRecord.codTipoDocumentoRte,
+	            numDocumentoRte:bindRecord.numDocumentoRte,
+	            nombreRazonSocialRte:bindRecord.nombreRazonSocialRte,
+	            apellidosRte:bindRecord.apellidosRte,
+	            paisNacimientoRepresentanteCodigo:bindRecord.paisNacimientoRepresentanteCodigo,
+	            provinciaNacimientoRepresentanteCodigo:bindRecord.provinciaNacimientoRepresentanteCodigo,
+	            localidadNacimientoRepresentanteCodigo:bindRecord.localidadNacimientoRepresentanteCodigo,
+	            fechaNacimientoRepresentante:bindRecord.fechaNacimientoRepresentante,
+	            codigoPaisRte:bindRecord.codigoPaisRte,
+	            provinciaRteCodigo:bindRecord.provinciaRteCodigo,
+	            municipioRteCodigo:bindRecord.municipioRteCodigo,
+	            codigoPostalRte:bindRecord.codigoPostalRte,
+	            direccionRte:bindRecord.direccionRte,
+	            emailRte:bindRecord.emailRte,
+	            telefono1Rte:bindRecord.telefono1Rte,
+	            telefono2Rte:bindRecord.telefono2Rte,
+	            representantePrp:bindRecord.representantePrp
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -816,7 +834,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
 	            emailNacimiento:bindRecord.emailNacimiento,
 	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
-	            telefonoNacimiento2:bindRecord.telefonoNacimiento2
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2,
+	            checkSubasta:bindRecord.checkSubasta,
+	            codTipoDocumentoRte:bindRecord.codTipoDocumentoRte,
+	            numDocumentoRte:bindRecord.numDocumentoRte,
+	            nombreRazonSocialRte:bindRecord.nombreRazonSocialRte,
+	            apellidosRte:bindRecord.apellidosRte,
+	            paisNacimientoRepresentanteCodigo:bindRecord.paisNacimientoRepresentanteCodigo,
+	            provinciaNacimientoRepresentanteCodigo:bindRecord.provinciaNacimientoRepresentanteCodigo,
+	            localidadNacimientoRepresentanteCodigo:bindRecord.localidadNacimientoRepresentanteCodigo,
+	            fechaNacimientoRepresentante:bindRecord.fechaNacimientoRepresentante,
+	            codigoPaisRte:bindRecord.codigoPaisRte,
+	            provinciaRteCodigo:bindRecord.provinciaRteCodigo,
+	            municipioRteCodigo:bindRecord.municipioRteCodigo,
+	            codigoPostalRte:bindRecord.codigoPostalRte,
+	            direccionRte:bindRecord.direccionRte,
+	            emailRte:bindRecord.emailRte,
+	            telefono1Rte:bindRecord.telefono1Rte,
+	            telefono2Rte:bindRecord.telefono2Rte,
+	            representantePrp:bindRecord.representantePrp
 			});
 		}
  

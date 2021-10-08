@@ -108,44 +108,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -3956,8 +3918,11 @@ public class ActivoAdapter {
 			Long numOferta = activoDao.getNextNumOferta();
 
 			Long clcremid = activoDao.getNextClienteRemId();
-			clienteComercial.setNombre(dto.getNombreCliente());
-			clienteComercial.setApellidos(dto.getApellidosCliente());
+			
+			if (dto.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(dto.getTipoPersona()) || ("01").equals(dto.getTipoPersona())) {
+				clienteComercial.setNombre(dto.getNombreCliente());
+				clienteComercial.setApellidos(dto.getApellidosCliente());
+			}
 			clienteComercial.setDocumento(dto.getNumDocumentoCliente());
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
@@ -4101,6 +4066,97 @@ public class ActivoAdapter {
 			
 			if(clienteComercial.getInfoAdicionalPersona() != null){
 				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
+			}
+			
+			if (dto.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(dto.getTipoPersona()) || ("02").equals(dto.getTipoPersona())) {
+				if (dto.getCodTipoDocumentoRte() != null) {
+					Filter filtroTdi = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getCodTipoDocumentoRte());
+					DDTipoDocumento ddTdi = genericDao.get(DDTipoDocumento.class, filtroTdi);
+					clienteComercial.setTipoDocumentoRepresentante(ddTdi);
+				}
+				
+				if (dto.getNumDocumentoRte() != null) {
+					clienteComercial.setDocumentoRepresentante(dto.getNumDocumentoRte());
+				}
+				
+				if (dto.getNombreRazonSocialRte() != null) {
+					clienteComercial.setNombre(dto.getNombreRazonSocialRte());
+				}
+				
+				if (dto.getApellidosRte() != null) {
+					clienteComercial.setApellidos(dto.getApellidosRte());
+				}
+				
+				if (dto.getPaisNacimientoRepresentanteCodigo() != null) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getPaisNacimientoRepresentanteCodigo());
+					DDPaises ddPais = genericDao.get(DDPaises.class, filtroPais);
+					clienteComercial.setPaisNacimientoRep(ddPais);
+				}
+				
+				if (dto.getProvinciaNacimientoRepresentanteCodigo() != null) {
+					Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getProvinciaNacimientoRepresentanteCodigo());
+					DDProvincia ddProvincia = genericDao.get(DDProvincia.class, filtroProvincia);
+					clienteComercial.setProvinciaNacimientoRep(ddProvincia);
+				}
+				
+				if (dto.getLocalidadNacimientoRepresentanteCodigo() != null) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getLocalidadNacimientoRepresentanteCodigo());
+					Localidad ddMunicipio = genericDao.get(Localidad.class, filtroMunicipio);
+					clienteComercial.setLocalidadNacimientoRep(ddMunicipio);
+				}
+				
+				if (dto.getFechaNacimientoRepresentante() != null) {
+					clienteComercial.setFechaNacimientoRep(ft.parse(dto.getFechaNacimientoRepresentante()));
+				}
+				
+				if (dto.getCodigoPaisRte() != null) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getCodigoPaisRte());
+					DDPaises ddPais = genericDao.get(DDPaises.class, filtroPais);
+					clienteComercial.setPaisRepresentante(ddPais);
+				}
+				
+				if (dto.getProvinciaRteCodigo() != null) {
+					Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getProvinciaRteCodigo());
+					DDProvincia ddProvincia = genericDao.get(DDProvincia.class, filtroProvincia);
+					clienteComercial.setProvinciaRepresentante(ddProvincia);
+				}
+				
+				if (dto.getMunicipioRteCodigo() != null) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getMunicipioRteCodigo());
+					Localidad ddMunicipio = genericDao.get(Localidad.class, filtroMunicipio);
+					clienteComercial.setMunicipioRepresentante(ddMunicipio);
+				}
+				
+				if (dto.getCodigoPostalRte() != null) {
+					clienteComercial.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
+				}
+				
+				if (dto.getDireccionRte() != null) {
+					clienteComercial.setDireccionRepresentante(dto.getDireccionRte());
+				}
+				
+				if (dto.getEmailRte() != null) {
+					clienteComercial.setEmail(dto.getEmailRte());
+				}
+				
+				if (dto.getTelefono1Rte() != null) {
+					clienteComercial.setTelefono1(dto.getTelefono1Rte());
+				}
+				
+				if (dto.getTelefono2Rte() != null) {
+					clienteComercial.setTelefono2(dto.getTelefono2Rte());
+				}
+				
+				if (dto.getRepresentantePrp() != null) {
+					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
+				}
 			}
 			
 			genericDao.save(InfoAdicionalPersona.class, iap);
@@ -4329,9 +4385,18 @@ public class ActivoAdapter {
 			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
 				if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null)) {
 					activoApi.anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getOfertaCaixa(), dto.getTipoOferta());
+					
+					Filter ofertaCaixa = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCreada.getId());
+					OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofertaCaixa);
+					
+					if (ofrCaixa != null) {
+						if (dto.getCheckSubasta() != null) {
+							ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+						}
+					}
+
 				}
 			}
-
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);

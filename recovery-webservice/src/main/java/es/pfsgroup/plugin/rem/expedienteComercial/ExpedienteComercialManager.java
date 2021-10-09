@@ -14345,6 +14345,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gr.setImporte(dto.getImporte());
 			if(!Checks.isFechaNula(dto.getFechaAlta())) {
 				gr.setFechaAlta(dto.getFechaAlta());
+			} else {
+				gr.setFechaAlta(new Date());
 			}
 			gr.setMeses(dto.getMeses());
 			gr.setAuditoria(Auditoria.getNewInstance());

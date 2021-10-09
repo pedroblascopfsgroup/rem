@@ -59,7 +59,7 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            editor: {
 		        		xtype: 'numberfield',
 		        		cls: 'grid-no-seleccionable-field-editor',
-		        		allowBlank: false
+		        		allowBlank: true
 		        	}
 		        },  
 		        {
@@ -80,9 +80,10 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		            text: HreRem.i18n('fieldlabel.fecha.alta'),
 		            flex: 1 ,
 		            formatter: 'date("d/m/Y")',
+		            hidden: true,
 		            editor: {
 		        		xtype: 'datefield',
-		        		allowBlank: false
+		        		allowBlank: true
 		        	}
 		        }
 		    ];

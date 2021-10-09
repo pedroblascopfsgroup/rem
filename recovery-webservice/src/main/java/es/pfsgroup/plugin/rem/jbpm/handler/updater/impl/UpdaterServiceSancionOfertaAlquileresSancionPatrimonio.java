@@ -88,7 +88,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					expedienteComercial.setEstado(estado);
 					
 					//Cambiar estado ANULADO del expedienteBc por el que toca en el ítem
-					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA);
+					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
 					

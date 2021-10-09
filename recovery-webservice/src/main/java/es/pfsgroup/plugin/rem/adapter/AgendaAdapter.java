@@ -811,6 +811,7 @@ public class AgendaAdapter {
 			finalizarTramiteYTareas(tramite);
 			Activo activo = tramite.getActivo();
 			boolean estadoOfertaBcMod = false;
+			boolean aprobadoComercial = pasadoTareaResolComite(tramite);
 			
 			DDEstadoOferta ddEstadoOferta;
 			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
@@ -838,6 +839,8 @@ public class AgendaAdapter {
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());
 					eco.setMotivoAnulacion(motivoRechazoAlquiler);
+					if (aprobadoComercial) 
+						estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
 					eco.setEstadoBc(estadoExpedienteBc);
 					estadoOfertaBcMod = true;
 					if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
@@ -1067,5 +1070,22 @@ public class AgendaAdapter {
 			}
 		}
 		return true;
+	}
+	
+	private Boolean pasadoTareaResolComite(ActivoTramite tramite) {
+		TareaActivo tarAct = null;
+		if (tramite != null && ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+			List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+			if(!Checks.esNulo(listaTareas)){
+				for(int i=0; i<listaTareas.size(); i++){
+					tarAct = listaTareas.get(i);
+					if(!Checks.esNulo(tarAct.getFechaFin()) 
+							&& "T015_ElevarASancion".equals(tarAct.getTareaExterna().getTareaProcedimiento().getCodigo())){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

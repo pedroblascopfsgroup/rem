@@ -141,7 +141,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 					scoringAlquiler.setResultadoScoring(resultadoCampo);
 					
 					if(isBk) {
-						expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA)));
+						expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
 						DDResultadoScoringServicer resultadoScoringServicer = genericDao.get(DDResultadoScoringServicer.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoringServicer.COD_DESFAVORABLE));
 						scoringAlquiler.setResultadoScoringServicer(resultadoScoringServicer);
 					}

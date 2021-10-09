@@ -132,8 +132,8 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
 					}else {
 						if(aprueba) {
-							estadoExp = DDEstadosExpedienteComercial.FIRMADO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+							estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
 							if(reservaApi.tieneReservaFirmada(expediente)) {

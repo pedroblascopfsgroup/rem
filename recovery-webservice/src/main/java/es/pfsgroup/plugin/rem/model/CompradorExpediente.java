@@ -36,6 +36,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 
 /**
@@ -223,6 +225,7 @@ public class CompradorExpediente implements Serializable, Auditable {
     
     @ManyToOne
 	@JoinColumn(name = "IAP_REPR_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private InfoAdicionalPersona infoAdicionalRepresentante;
     
 	@ManyToOne

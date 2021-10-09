@@ -6,11 +6,11 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -43,6 +43,7 @@ public class InterlocutorPBCCaixa implements Serializable, Auditable {
 
 	@ManyToOne
 	@JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private InfoAdicionalPersona infoAdicionalPersona;
 
 	@Column(name = "IOC_DOC_IDENTIFICATIVO")

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211005
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15423
@@ -18,6 +18,7 @@
 --##	    0.5 Los flags de publicación Caixa siempre se actualizan, también sacamos de la ejecución del SP de publicaciones las agrupaciones restringidas OBREM que estén incluida en otras agrupaciones restringidas - HREOS-15137
 --##	    0.6 Correciones perímetros- HREOS-15137
 --##	    0.7 Se añade un consulta para insertar activos que no tiene el estado de publicación que debe y se añade flag para los activos/agrupaciones que procese el SP de publicaciones - HREOS-15423
+--##	    0.8 El check de Visible gestión comercial se rellena con lo que tenga el de publicar - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -602,9 +603,9 @@ BEGIN
                             ,PAC.PAC_CHECK_FORMALIZAR = US.PAC_CHECK_COMERCIALIZAR
                             ,PAC.PAC_FECHA_FORMALIZAR = CASE WHEN PAC.PAC_CHECK_COMERCIALIZAR <> US.PAC_CHECK_COMERCIALIZAR THEN SYSDATE END
                             ,PAC.PAC_MOTIVO_FORMALIZAR = CASE WHEN PAC.PAC_CHECK_COMERCIALIZAR <> US.PAC_CHECK_COMERCIALIZAR THEN NULL END
-                            ,PAC.PAC_CHECK_GESTION_COMERCIAL = US.PAC_CHECK_COMERCIALIZAR
-                            ,PAC.PAC_FECHA_GESTION_COMERCIAL = CASE WHEN PAC.PAC_CHECK_COMERCIALIZAR <> US.PAC_CHECK_COMERCIALIZAR THEN SYSDATE END
-                            ,PAC.PAC_MOTIVO_GESTION_COMERCIAL = CASE WHEN PAC.PAC_CHECK_COMERCIALIZAR <> US.PAC_CHECK_COMERCIALIZAR THEN NULL END
+                            ,PAC.PAC_CHECK_GESTION_COMERCIAL = US.PAC_CHECK_PUBLICAR
+                            ,PAC.PAC_FECHA_GESTION_COMERCIAL = CASE WHEN PAC.PAC_CHECK_PUBLICAR <> US.PAC_CHECK_PUBLICAR THEN SYSDATE END
+                            ,PAC.PAC_MOTIVO_GESTION_COMERCIAL = CASE WHEN PAC.PAC_CHECK_PUBLICAR <> US.PAC_CHECK_PUBLICAR THEN NULL END
                             ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                             ,PAC.FECHAMODIFICAR = SYSDATE
                             WHERE PAC.BORRADO=0

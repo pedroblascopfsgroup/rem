@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211005
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15423
@@ -20,6 +20,7 @@
 --##        0.8 Se Corrige los campos de Latitud y Longitud - [HREOS-14947] -  Daniel Algaba
 --##        0.9 Se corrige error visto en los campos de Latitud y Longitud en casos concretos - [HREOS-15210] -  Daniel Algaba
 --##        0.10 Se añade signo positivo a las coordenadas - [HREOS-15423] -  Daniel Algaba
+--##	      0.11 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -77,6 +78,8 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_LOC.ACT_ID AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_ID = BIE_LOC.DD_TVI_ID AND TVI.BORRADO = 0
                   LEFT JOIN (SELECT EQV_TVI.DD_CODIGO_REM, EQV_TVI.DD_CODIGO_CAIXA, ROW_NUMBER() OVER (PARTITION BY EQV_TVI.DD_CODIGO_REM ORDER BY EQV_TVI.DD_CODIGO_CAIXA DESC) RN FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI WHERE EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'') 
                      EQV_TVI ON EQV_TVI.RN = 1 AND EQV_TVI.DD_CODIGO_REM = TVI.DD_TVI_CODIGO
@@ -96,6 +99,7 @@ BEGIN
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')   
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
@@ -203,11 +207,14 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   WHERE BIE_REG.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
@@ -257,11 +264,14 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = CAT.ACT_ID AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   WHERE CAT.RN = 1
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN

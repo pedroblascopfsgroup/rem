@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=2021104
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15423
@@ -29,6 +29,7 @@
 --##        0.17 Corrección Fecha de concesión - [HREOS-15133] - Daniel Algaba
 --##        0.18 Corrección Propietarios - [HREOS-15254] - Daniel Algaba
 --##        0.19 Corrección Propietarios para se actualice el PRO_ID - [HREOS-15423] - Daniel Algaba
+--##        0.20 Protegemos los activos titulizados de las bajas y además, los activos que no lleguen en 5 días se darán de baja - [HREOS-15423] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -252,12 +253,15 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                  ,ACT2.ACT_ID AS ACT_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
+            JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT2.ACT_ID AND ACT_PRO.BORRADO = 0
+            JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                 WHERE AUX.FEC_VALIDO_A IS NOT NULL
                 AND AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
                 AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
                 JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
                 JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
                 WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
+                AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
             ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
             WHEN MATCHED THEN UPDATE SET
                  ACT.PAC_INCLUIDO=0
@@ -316,6 +320,141 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    EXECUTE IMMEDIATE V_MSQL;
 
    SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+--Cuando un preinmueble/inmueble deja de venir durante 5 días, se da de baja
+   V_MSQL := 'DELETE '||V_ESQUEMA||'.AUX_STOCK_REGISTRO WHERE ACT_ID IN (
+               SELECT
+                  DISTINCT ACT2.ACT_ID
+               FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT2.ACT_ID AND ACT_PRO.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                  WHERE AUX.FEC_VALIDO_A IS NOT NULL
+                  AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM||'
+                  AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                  JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                  JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
+                  AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT2.ACT_ID)
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                  AND EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.AUX_STOCK_REGISTRO ASR WHERE ACT2.ACT_ID = ASR.ACT_ID))';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN BORRADO '|| SQL%ROWCOUNT||' REGISTROS EN AUX_STOCK_REGISTRO POR HABERSE DADO DE BAJA [INFO]'|| CHR(10);
+
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_STOCK_REGISTRO ASR
+               USING (				
+                  SELECT 
+                      ACT.ACT_ID AS ACT_ID
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+                  WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM ||'
+                  AND AUX.FEC_VALIDO_A IS NULL
+                  ) US ON (US.ACT_ID = ASR.ACT_ID)
+                  WHEN MATCHED THEN UPDATE SET
+                     ASR.ULT_FECHA = SYSDATE
+                  WHEN NOT MATCHED THEN 
+                  INSERT  
+                     (ACT_ID
+                     , ULT_FECHA)
+                  VALUES 
+                     (US.ACT_ID                                        
+                     , SYSDATE)';
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS/INSERTADOS EN AUXILIAR DE REGISTRO '|| SQL%ROWCOUNT|| CHR(10);
+
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+	USING (				
+            SELECT 
+                  ACT.ACT_ID AS ACT_ID
+            FROM '|| V_ESQUEMA ||'.AUX_STOCK_REGISTRO AUX
+            JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AUX.ACT_ID AND ACT.BORRADO = 0
+            JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+            JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                WHERE 
+                NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT.ACT_ID)
+                AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                AND TRUNC(AUX.ULT_FECHA) <=  TRUNC(SYSDATE-5)
+            ) US ON (US.ACT_ID = PAC.ACT_ID AND PAC.BORRADO=0)
+            WHEN MATCHED THEN UPDATE SET
+                 PAC.PAC_INCLUIDO = 0
+                , PAC.PAC_CHECK_GESTIONAR = 0
+                , PAC.PAC_FECHA_GESTIONAR = SYSDATE
+                , PAC.PAC_CHECK_COMERCIALIZAR = 0
+                , PAC.PAC_FECHA_COMERCIALIZAR = SYSDATE
+                , PAC.PAC_CHECK_FORMALIZAR = 0
+                , PAC.PAC_FECHA_FORMALIZAR = SYSDATE
+                , PAC.PAC_CHECK_PUBLICAR = 0
+                , PAC.PAC_FECHA_PUBLICAR = SYSDATE
+                , PAC.PAC_CHECK_ADMISION = 0
+                , PAC.PAC_FECHA_ADMISION = SYSDATE
+                , PAC.PAC_CHECK_GESTION_COMERCIAL = 0
+                , PAC.PAC_FECHA_GESTION_COMERCIAL = SYSDATE
+                , PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                , PAC.FECHAMODIFICAR = SYSDATE
+            WHEN NOT MATCHED THEN INSERT (
+                 PAC_ID
+                , PAC_INCLUIDO
+                , PAC_CHECK_GESTIONAR
+                , PAC_FECHA_GESTIONAR
+                , PAC_CHECK_COMERCIALIZAR
+                , PAC_FECHA_COMERCIALIZAR
+                , PAC_CHECK_FORMALIZAR
+                , PAC_FECHA_FORMALIZAR
+                , PAC_CHECK_PUBLICAR
+                , PAC_FECHA_PUBLICAR
+                , PAC_CHECK_ADMISION
+                , PAC_FECHA_ADMISION
+                , PAC_CHECK_GESTION_COMERCIAL
+                , PAC_FECHA_GESTION_COMERCIAL
+                , ACT_ID
+                , USUARIOCREAR  
+                , FECHACREAR             
+                )VALUES(
+                     '|| V_ESQUEMA ||'.S_ACT_PAC_PERIMETRO_ACTIVO.NEXTVAL
+                    , 0
+                    , 0
+                    , SYSDATE
+                    , 0
+                    , SYSDATE
+                    , 0
+                    , SYSDATE
+                    , 0
+                    , SYSDATE
+                    , 0
+                    , SYSDATE
+                    , 0
+                    , SYSDATE
+                    , US.ACT_ID
+                    ,''STOCK_BC''
+                    ,SYSDATE)';
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] BAJA POR NO VENIR EN EL STOCK DURANTE 5 DÍAS '|| SQL%ROWCOUNT|| CHR(10);
+
+   V_MSQL := 'DELETE '||V_ESQUEMA||'.AUX_STOCK_REGISTRO WHERE ACT_ID IN (
+               SELECT 
+                  ACT.ACT_ID AS ACT_ID
+               FROM '|| V_ESQUEMA ||'.AUX_STOCK_REGISTRO AUX
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AUX.ACT_ID AND ACT.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                  WHERE 
+                  NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                  JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                  JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT.ACT_ID)
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                  AND TRUNC(AUX.ULT_FECHA) <=  TRUNC(SYSDATE-5))';
+
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '[INFO] SE HAN BORRADO '|| SQL%ROWCOUNT||' REGISTROS EN AUX_STOCK_REGISTRO POR HABERSE DADO DE BAJA POR PASAR 5 DÍAS [INFO]'|| CHR(10);
 
 --Cuando está campo motivo no comercial (Código motivo no comercialización)
    SALIDA := SALIDA || '   [INFO] 4 - ACT_PAC_PERIMETRO_ACTIVO, CUANDO HAY CAMPO MOTIVO_NO_COMERCIAL'||CHR(10);
@@ -945,18 +1084,36 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   ACT_ID
                   , FECHA_CALCULO
                )
-               SELECT
+               SELECT ACT_ID, FECHA_CALCULO FROM (SELECT
                   DISTINCT ACT2.ACT_ID
-                  , SYSDATE
+                  , SYSDATE FECHA_CALCULO
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
+               JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT2.ACT_ID AND ACT_PRO.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   WHERE AUX.FEC_VALIDO_A IS NOT NULL
                   AND AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
                   AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
                   JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
                   JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
                   WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT2.ACT_ID)
-                  AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT2.ACT_ID)';
+                  AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.TMP_ACT_SCM SCM WHERE SCM.ACT_ID = ACT2.ACT_ID)
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+               UNION ALL
+                  SELECT 
+                  DISTINCT ACT.ACT_ID AS ACT_ID
+                  , SYSDATE FECHA_CALCULO
+               FROM '|| V_ESQUEMA ||'.AUX_STOCK_REGISTRO AUX
+               JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AUX.ACT_ID AND ACT.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+               JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                  WHERE 
+                  NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                  JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                  JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                  WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT.ACT_ID)
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                  AND TRUNC(AUX.ULT_FECHA) <=  TRUNC(SYSDATE-5))';
 
    EXECUTE IMMEDIATE V_MSQL;
 

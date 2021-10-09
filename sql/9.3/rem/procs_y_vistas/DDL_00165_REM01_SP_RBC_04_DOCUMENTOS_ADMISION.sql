@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210824
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14974
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##        0.5 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##        0.6 Añadimos Certificado sustitutivo y miramos vigencia de documentos
 --##        0.7 Revisión lógica equivalencia Calificación Energética- [HREOS-14974] - Alejandra García
+--##	      0.8 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -156,6 +157,8 @@ BEGIN
                   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   LEFT JOIN CEE ON CEE.ACT_ID = ACT.ACT_ID AND CEE.DD_TPA_ID = ACT.DD_TPA_ID AND (CEE.DD_SAC_ID IS NULL OR CEE.DD_SAC_ID = ACT.DD_SAC_ID) AND CEE.RN = 1
                   LEFT JOIN CEH ON CEH.ACT_ID = ACT.ACT_ID AND CEH.DD_TPA_ID = ACT.DD_TPA_ID AND (CEH.DD_SAC_ID IS NULL OR CEH.DD_SAC_ID = ACT.DD_SAC_ID) AND CEH.RN = 1
                   LEFT JOIN LPO ON LPO.ACT_ID = ACT.ACT_ID AND LPO.DD_TPA_ID = ACT.DD_TPA_ID AND (LPO.DD_SAC_ID IS NULL OR LPO.DD_SAC_ID = ACT.DD_SAC_ID) AND LPO.RN = 1
@@ -167,6 +170,7 @@ BEGIN
                      AND PAC.PAC_INCLUIDO = 1
                      AND ACT.ACT_EN_TRAMITE = 0
                      AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                     AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN

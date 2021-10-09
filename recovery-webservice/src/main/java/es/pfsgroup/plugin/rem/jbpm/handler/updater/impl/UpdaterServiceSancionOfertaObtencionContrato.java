@@ -170,7 +170,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						
 					}else {
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
 					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);		
 					

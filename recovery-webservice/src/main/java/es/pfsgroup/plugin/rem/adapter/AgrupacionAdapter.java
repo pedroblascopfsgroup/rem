@@ -1772,6 +1772,14 @@ public class AgrupacionAdapter {
 												.findOneByOferta(ofertaActivo.getPrimaryKey().getOferta());
 										if (!Checks.esNulo(exp)) {
 											ofertaApi.descongelarOfertas(exp);
+										}else if (DDCartera.isCarteraBk(ofertaActivo.getPrimaryKey().getActivo().getCartera())
+												&& (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())
+												|| !ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())) {
+											ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(
+													genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+													DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
+											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
+											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
 										} else {
 											ofertaActivo.getPrimaryKey().getOferta()
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1941,10 +1949,17 @@ public class AgrupacionAdapter {
 
 										if (oferta.getEstadoOferta().getCodigo()
 												.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
-											DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-													.dameValorDiccionarioByCod(DDEstadoOferta.class,
-															DDEstadoOferta.CODIGO_PENDIENTE);
-											oferta.setEstadoOferta(estadoOferta);
+											if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())
+												&& (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
+												oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+														DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
+												ofertaApi.llamadaPbc(oferta);
+											} else {
+												DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+														.dameValorDiccionarioByCod(DDEstadoOferta.class,
+																DDEstadoOferta.CODIGO_PENDIENTE);
+												oferta.setEstadoOferta(estadoOferta);
+											}
 										}
 									}
 								}
@@ -1977,10 +1992,18 @@ public class AgrupacionAdapter {
 							// a 'pendiente'.
 							if (ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo()
 									.equals(DDEstadoOferta.CODIGO_CONGELADA)) {
-								DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-										.dameValorDiccionarioByCod(DDEstadoOferta.class,
-												DDEstadoOferta.CODIGO_PENDIENTE);
-								ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+								if (DDCartera.isCarteraBk(ofertaActivo.getPrimaryKey().getActivo().getCartera()) 
+										&& (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())
+										|| !ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())) {
+									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+											DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
+									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
+								} else {
+									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+											.dameValorDiccionarioByCod(DDEstadoOferta.class,
+													DDEstadoOferta.CODIGO_PENDIENTE);
+									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
+								}
 							}
 						}
 					}

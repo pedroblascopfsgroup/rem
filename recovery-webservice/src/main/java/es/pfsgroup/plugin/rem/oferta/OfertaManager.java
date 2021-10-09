@@ -1208,11 +1208,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 
 				if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())){
-					LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
-					dtoPbc.setFechaReal(oferta.getFechaAlta() != null ? oferta.getFechaAlta().toString() : null);
-					dtoPbc.setNumOferta(oferta.getNumOferta());
-					dtoPbc.setCodAccion("997");
-					pbcFlush(dtoPbc);
+					llamadaPbc(oferta);
 				}
 
 			}
@@ -1736,11 +1732,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
 
 			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
-				LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
-				dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
-				dtoPbc.setNumOferta(ofertaCaixa.getNumOfertaCaixa());
-				dtoPbc.setCodAccion("997");
-				pbcFlush(dtoPbc);
+				llamadaPbc(oferta);
 			}
 
 		}
@@ -2165,6 +2157,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		DDEstadoOferta estado = null;
 		Filter filtro = null;
 		boolean descongelar = false;
+		boolean pdteDocu = false;
 
 		if (Checks.esNulo(expediente)) {
 			throw new Exception("Parámetros incorrectos. El expediente es nulo.");
@@ -2187,6 +2180,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 									DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+						}else if(DDCartera.isCarteraBk(activo.getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) 
+								|| !oferta.getCheckDocumentacion())){
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION);
+							pdteDocu = true;
 						}else {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PENDIENTE);
@@ -2195,6 +2193,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setEstadoOferta(estado);
 						updateStateDispComercialActivosByOferta(oferta);
 						genericDao.save(Oferta.class, oferta);
+						
+						if (pdteDocu) llamadaPbc(oferta);
 
 						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
 							List<ActivoTramite> tramites = activoTramiteApi
@@ -7754,6 +7754,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return clienteGD;
+	}
+	
+	public void llamadaPbc(Oferta oferta) {
+		LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
+		dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
+		dtoPbc.setNumOferta(oferta.getNumOferta());
+		dtoPbc.setCodAccion("997");
+		pbcFlush(dtoPbc);
 	}
 		
 }

@@ -20,9 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -177,6 +175,7 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private InfoAdicionalPersona infoAdicionalPersona;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

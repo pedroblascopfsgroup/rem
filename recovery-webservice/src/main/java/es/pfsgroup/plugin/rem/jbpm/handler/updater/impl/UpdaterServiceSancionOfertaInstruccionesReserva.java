@@ -115,7 +115,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						dtoArras.setMotivoAnulacion(motivoAplazamiento);
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
 					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);
 				}else {

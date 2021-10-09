@@ -691,6 +691,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDClaseOferta claseOferta = null;
 		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
+		boolean pdteDocu = false;
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
 			claseOferta = genericDao.get(DDClaseOferta.class, f);
@@ -743,9 +744,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (DDEstadoOferta.CODIGO_CONGELADA.equals(estOferta.getCodigo())) {
 							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PENDIENTE);
+							if (DDCartera.isCarteraBk(act.getCartera()) && (Checks.esNulo(o.getCheckDocumentacion())
+								|| !o.getCheckDocumentacion())) {
+								fil = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION);
+								pdteDocu = true;
+							}
 							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
 							o.setEstadoOferta(est);
 							genericDao.save(Oferta.class, o);
+							if (pdteDocu) ofertaApi.llamadaPbc(o);
 						}
 					}
 				}

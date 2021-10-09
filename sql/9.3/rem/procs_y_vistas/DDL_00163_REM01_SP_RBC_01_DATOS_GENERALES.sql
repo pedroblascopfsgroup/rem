@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210715
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 ACT_EN_TRAMITE = 0 - [HREOS-14366] - Daniel Algaba
 --##        0.3 Quitamos INDICADOR_LLAVES y FEC_RECEP_LLAVES - [HREOS-14533] - Daniel Algaba
 --##	      0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	      0.5 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -63,14 +64,15 @@ BEGIN
                   END as INMUEBLE_VACACIONAL
                   FROM '|| V_ESQUEMA ||'.ACT_ACTIVO act
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO pac ON pac.ACT_ID = act.ACT_ID
-                 
+                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   WHERE act.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND act.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
                   AND act.BORRADO=0
                   AND pac.PAC_INCLUIDO=1
                   AND pac.BORRADO=0
                   AND ACT.ACT_EN_TRAMITE = 0
-                                       
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')                     
                                  ) us ON ((us.NUM_INMUEBLE = aux.NUM_INMUEBLE) AND (us.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO) )
                                  when matched then update set
                                     
@@ -120,14 +122,15 @@ BEGIN
                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''TRIBUT_PROPUESTA_CLI_EXT_IVA''  AND eqv3.DD_CODIGO_REM =TPE.DD_TPE_CODIGO  AND eqv3.BORRADO=0  
                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 on act2.ACT_ID = act.ACT_ID 
                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO pac ON pac.ACT_ID = act2.ACT_ID
-
+                 JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT2.ACT_ID AND ACT_PRO.BORRADO = 0
+                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                 WHERE act2.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                     AND act2.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
                     AND act2.BORRADO=0 
                     AND act.BORRADO=0
                     AND pac.PAC_INCLUIDO=1
                     AND pac.BORRADO=0
-                                       
+                    AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')    
                                  ) us ON ((us.NUM_INMUEBLE = aux.NUM_INMUEBLE) AND (us.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO) )
                                  when matched then update set
                                     

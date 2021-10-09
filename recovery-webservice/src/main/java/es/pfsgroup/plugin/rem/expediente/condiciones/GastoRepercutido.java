@@ -39,7 +39,7 @@ public class GastoRepercutido implements Serializable, Auditable{
 	
 	
 	@Id
-	@Column(name = "GLD_ID")
+	@Column(name = "GSR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoRepercutidoGenerator")
 	@SequenceGenerator(name = "GastoRepercutidoGenerator", sequenceName = "S_GSR_GASTO_REPERCUTIDO")
 	private Long id;

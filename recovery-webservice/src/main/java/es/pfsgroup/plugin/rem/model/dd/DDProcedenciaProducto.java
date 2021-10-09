@@ -19,21 +19,19 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de alquiler
+ * Modelo que gestiona el diccionario de procedencia de producto.
  * 
- * @author jros
+ * @author Ivan Rubio
  *
  */
 @Entity
-@Table(name = "DD_TOA_TIPO_OFR_ALQUILER", schema = "${entity.schema}")
+@Table(name = "DD_PRP_PROCEDENCIA_PRODUCTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
+public class DDProcedenciaProducto implements Auditable, Dictionary {
 	
-	public static final String CODIGO_RENOVACION = "REN";
-    public static final String CODIGO_SUBROGACION = "SUB";
-    public static final String CODIGO_ALQUILER_SOCIAL = "ALS";
-
+    public static final String CODIGO_CREDITICIO= "01";
+    public static final String CODIGO_NO_CREDITICIO = "02";
 
 	/**
 	 * 
@@ -41,31 +39,30 @@ public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TOA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoOfertaAlquilerGenerator")
-	@SequenceGenerator(name = "DDTipoOfertaAlquilerGenerator", sequenceName = "S_DD_TOA_TIPO_OFR_ALQUILER")
+	@Column(name = "DD_PRP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDProcedenciaProductoIdGenerator")
+	@SequenceGenerator(name = "DDProcedenciaProductoIdGenerator", sequenceName = "S_DD_PRP_PROCEDENCIA_PRODUCTO")
 	private Long id;
 	 
-	@Column(name = "DD_TOA_CODIGO")   
+	@Column(name = "DD_PRP_CODIGO")   
 	private String codigo;
+	
+	@Column(name = "DD_PRP_NOMBRE")   
+	private String nombre;
 	 
-	@Column(name = "DD_TOA_DESCRIPCION")   
+	@Column(name = "DD_PRP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TOA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_PRP_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
-	@Column(name = "DD_TOA_CODIGO_C4C")   
-	private String codigoC4C;
-	
+	    	    
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-	
-	
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -98,14 +95,6 @@ public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public String getCodigoC4C() {
-		return codigoC4C;
-	}
-
-	public void setCodigoC4C(String codigoC4C) {
-		this.codigoC4C = codigoC4C;
-	}
-
 	public Long getVersion() {
 		return version;
 	}
@@ -121,35 +110,13 @@ public class DDTipoOfertaAlquiler implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-	public static boolean isRenovacion(DDTipoOfertaAlquiler tipo) {
-		boolean isTipo = false;
-		
-		if(tipo != null && CODIGO_RENOVACION.equals(tipo.getCodigo())) {
-			isTipo = true;
-		}
-		
-		return isTipo;
+
+	public String getNombre() {
+		return nombre;
 	}
-	
-	public static boolean isSubrogacion(DDTipoOfertaAlquiler tipo) {
-		boolean isTipo = false;
-		
-		if(tipo != null && CODIGO_SUBROGACION.equals(tipo.getCodigo())) {
-			isTipo = true;
-		}
-		
-		return isTipo;
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
-	
-	public static boolean isAlquilerSocial(DDTipoOfertaAlquiler tipo) {
-		boolean isTipo = false;
-		
-		if(tipo != null && CODIGO_ALQUILER_SOCIAL.equals(tipo.getCodigo())) {
-			isTipo = true;
-		}
-		
-		return isTipo;
-	}
-	
+
 }

@@ -828,4 +828,6 @@ public interface OfertaApi {
 	boolean updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario) throws ParseException;
 	
 	String getClienteByidExpedienteGD(Long idExpediente);
+
+	public void llamadaPbc(Oferta oferta);
 }

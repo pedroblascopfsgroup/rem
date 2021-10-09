@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
@@ -716,6 +717,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							// tiene poner oferta PENDIENTE
 							if (!Checks.esNulo(exp)) {
 								ofertaApi.descongelarOfertas(exp);
+							}else if (DDCartera.isCarteraBk(activo.getActivo().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion())
+									|| !oferta.getCheckDocumentacion())) {
+								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
+								genericDao.save(Oferta.class, oferta);
+								ofertaApi.llamadaPbc(oferta);
 							} else {
 								oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 										DDEstadoOferta.CODIGO_PENDIENTE)));

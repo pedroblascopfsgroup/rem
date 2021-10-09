@@ -812,11 +812,13 @@ public class AgendaAdapter {
 			Activo activo = tramite.getActivo();
 			boolean estadoOfertaBcMod = false;
 			boolean aprobadoComercial = pasadoTareaResolComite(tramite);
+			boolean pdteDocu = false;
 			
 			DDEstadoOferta ddEstadoOferta;
 			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
 			DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
 			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
+			DDEstadoOferta pdteDocumentacion = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION));
 			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
 			DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
@@ -892,11 +894,16 @@ public class AgendaAdapter {
 								ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 								if(!Checks.esNulo(expedienteComercial)) {
 									oferta.setEstadoOferta(tramitada);	
+								}else if (DDCartera.isCarteraBk(activoOferta.getPrimaryKey().getActivo().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion())
+										|| !oferta.getCheckDocumentacion())) {
+									oferta.setEstadoOferta(pdteDocumentacion);
+									pdteDocu = true;
 								}else {
 									oferta.setEstadoOferta(pendiente);
 								}
 								genericDao.save(Oferta.class, oferta);
 								
+								if (pdteDocu) ofertaApi.llamadaPbc(oferta);
 							}
 						}
 					}

@@ -4374,11 +4374,7 @@ public class ActivoAdapter {
 			if (esOfertaCaixa) {
 				createOrUpdateOfertaCaixa(ofertaCreada, dto.getTipologivaVentaCod());
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
-					LlamadaPbcDto dtoPbc = new LlamadaPbcDto();
-					dtoPbc.setFechaReal(oferta.getFechaAlta().toString());
-					dtoPbc.setNumOferta(oferta.getNumOferta());
-					dtoPbc.setCodAccion("997");
-					ofertaApi.pbcFlush(dtoPbc);
+					ofertaApi.llamadaPbc(oferta);
 				}
 			}
 			

@@ -1,12 +1,13 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210817
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14794
+--## INCIDENCIA_LINK=HREOS-14710
 --## PRODUCTO=NO
---## Finalidad: Inserción diccionario DD_CCA_CLASE_CONTRATO_ALQUILER
+--##
+--## Finalidad: DML add valores al diccionario DD_TDE_TIPO_DOC_EXP
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -15,39 +16,34 @@
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-
 DECLARE
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_REGISTROS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_TEXT_TABLA VARCHAR2(30):= 'DD_TDE_TIPO_DOC_EXP'; -- Vble. del nombre de la tabla
+    V_ID NUMBER(16); -- Vble.auxiliar para sacar un ID.
+    V_ID2 NUMBER(16); -- Vble.auxiliar para sacar un ID.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CCA_CLASE_CONTRATO_ALQUILER'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
-    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      	T_TIPO_DATA('VIV','Alquiler vivienda','Z101'),
-		T_TIPO_DATA('TER','Alquiler terciario','Z102'),
-		T_TIPO_DATA('SOC','Alquiler social','Z103'),
-		T_TIPO_DATA('STI','Alquiler sin título', 'Z104'),
-		T_TIPO_DATA('COM','Comodato', 'Z105'),
-		T_TIPO_DATA('OBS','Alquiler OBS', 'Z106'),
-		T_TIPO_DATA('GRU','Alquiler grupo', 'Z107'),
-		T_TIPO_DATA('GAR','Contrato de garantías', 'Z108'),
-		T_TIPO_DATA('GAG','Contrato de garantías grupo', 'Z109')
-    ); 
+                --CODIGO    DESCRIPCION
+	    T_TIPO_DATA('08',	'8.- Documentos compradores', 'Documentos compradores')
+
+		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
+
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
 
     -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
@@ -56,7 +52,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_CCA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_TDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -65,11 +61,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_CCA_ID,
-              DD_CCA_CODIGO,
-              DD_CCA_DESCRIPCION,
-              DD_CCA_DESCRIPCION_LARGA,
-			  DD_CCA_CODIGO_C4C,
+              DD_TDE_ID,
+              DD_TDE_CODIGO,
+              DD_TDE_DESCRIPCION,
+              DD_TDE_DESCRIPCION_LARGA,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -78,11 +73,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
               '''||TRIM(V_TMP_TIPO_DATA(1))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-              '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-			  '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+              '''||TRIM(V_TMP_TIPO_DATA(3))||''',
               0,
-              ''HREOS-14943'',
-              SYSDATE, 0)';
+              ''HREOS-14710'',
+              SYSDATE,
+              0)';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
 

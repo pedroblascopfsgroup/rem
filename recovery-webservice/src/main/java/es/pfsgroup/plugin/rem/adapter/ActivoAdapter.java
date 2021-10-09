@@ -3979,8 +3979,11 @@ public class ActivoAdapter {
 			Long numOferta = activoDao.getNextNumOferta();
 
 			Long clcremid = activoDao.getNextClienteRemId();
-			clienteComercial.setNombre(dto.getNombreCliente());
-			clienteComercial.setApellidos(dto.getApellidosCliente());
+			
+			if (dto.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(dto.getTipoPersona()) || ("01").equals(dto.getTipoPersona())) {
+				clienteComercial.setNombre(dto.getNombreCliente());
+				clienteComercial.setApellidos(dto.getApellidosCliente());
+			}
 			clienteComercial.setDocumento(dto.getNumDocumentoCliente());
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
@@ -4124,6 +4127,97 @@ public class ActivoAdapter {
 			
 			if(clienteComercial.getInfoAdicionalPersona() != null){
 				clienteComercial.getInfoAdicionalPersona().setPrp(dto.getPrp());
+			}
+			
+			if (dto.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(dto.getTipoPersona()) || ("02").equals(dto.getTipoPersona())) {
+				if (dto.getCodTipoDocumentoRte() != null) {
+					Filter filtroTdi = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getCodTipoDocumentoRte());
+					DDTipoDocumento ddTdi = genericDao.get(DDTipoDocumento.class, filtroTdi);
+					clienteComercial.setTipoDocumentoRepresentante(ddTdi);
+				}
+				
+				if (dto.getNumDocumentoRte() != null) {
+					clienteComercial.setDocumentoRepresentante(dto.getNumDocumentoRte());
+				}
+				
+				if (dto.getNombreRazonSocialRte() != null) {
+					clienteComercial.setNombre(dto.getNombreRazonSocialRte());
+				}
+				
+				if (dto.getApellidosRte() != null) {
+					clienteComercial.setApellidos(dto.getApellidosRte());
+				}
+				
+				if (dto.getPaisNacimientoRepresentanteCodigo() != null) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getPaisNacimientoRepresentanteCodigo());
+					DDPaises ddPais = genericDao.get(DDPaises.class, filtroPais);
+					clienteComercial.setPaisNacimientoRep(ddPais);
+				}
+				
+				if (dto.getProvinciaNacimientoRepresentanteCodigo() != null) {
+					Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getProvinciaNacimientoRepresentanteCodigo());
+					DDProvincia ddProvincia = genericDao.get(DDProvincia.class, filtroProvincia);
+					clienteComercial.setProvinciaNacimientoRep(ddProvincia);
+				}
+				
+				if (dto.getLocalidadNacimientoRepresentanteCodigo() != null) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getLocalidadNacimientoRepresentanteCodigo());
+					Localidad ddMunicipio = genericDao.get(Localidad.class, filtroMunicipio);
+					clienteComercial.setLocalidadNacimientoRep(ddMunicipio);
+				}
+				
+				if (dto.getFechaNacimientoRepresentante() != null) {
+					clienteComercial.setFechaNacimientoRep(ft.parse(dto.getFechaNacimientoRepresentante()));
+				}
+				
+				if (dto.getCodigoPaisRte() != null) {
+					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getCodigoPaisRte());
+					DDPaises ddPais = genericDao.get(DDPaises.class, filtroPais);
+					clienteComercial.setPaisRepresentante(ddPais);
+				}
+				
+				if (dto.getProvinciaRteCodigo() != null) {
+					Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getProvinciaRteCodigo());
+					DDProvincia ddProvincia = genericDao.get(DDProvincia.class, filtroProvincia);
+					clienteComercial.setProvinciaRepresentante(ddProvincia);
+				}
+				
+				if (dto.getMunicipioRteCodigo() != null) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getMunicipioRteCodigo());
+					Localidad ddMunicipio = genericDao.get(Localidad.class, filtroMunicipio);
+					clienteComercial.setMunicipioRepresentante(ddMunicipio);
+				}
+				
+				if (dto.getCodigoPostalRte() != null) {
+					clienteComercial.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
+				}
+				
+				if (dto.getDireccionRte() != null) {
+					clienteComercial.setDireccionRepresentante(dto.getDireccionRte());
+				}
+				
+				if (dto.getEmailRte() != null) {
+					clienteComercial.setEmail(dto.getEmailRte());
+				}
+				
+				if (dto.getTelefono1Rte() != null) {
+					clienteComercial.setTelefono1(dto.getTelefono1Rte());
+				}
+				
+				if (dto.getTelefono2Rte() != null) {
+					clienteComercial.setTelefono2(dto.getTelefono2Rte());
+				}
+				
+				if (dto.getRepresentantePrp() != null) {
+					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
+				}
 			}
 			
 			genericDao.save(InfoAdicionalPersona.class, iap);
@@ -4352,10 +4446,18 @@ public class ActivoAdapter {
 			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
 				if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null)) {
 					activoApi.anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getOfertaCaixa(), dto.getTipoOferta());
+					
+					Filter ofertaCaixa = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCreada.getId());
+					OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofertaCaixa);
+					
+					if (ofrCaixa != null) {
+						if (dto.getCheckSubasta() != null) {
+							ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+						}
+					}
+
 				}
 			}
-			
-
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;

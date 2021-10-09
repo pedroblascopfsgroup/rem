@@ -545,6 +545,15 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 					}
 				}
 			});
+			
+			if (form.lookupReference(chainedCombo.chainedReference) != null) {
+				var chainedDos = form.lookupReference(chainedCombo.chainedReference);
+				if (!chainedDos.isDisabled()) {
+					chainedDos.clearValue();
+					chainedDos.getStore().removeAll();
+					chainedDos.setDisabled(true);
+				}
+			}
 		},
 		
 		getComboTipoOferta: function(combo){

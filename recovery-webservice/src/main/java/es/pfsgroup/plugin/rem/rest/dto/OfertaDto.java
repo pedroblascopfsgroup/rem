@@ -100,7 +100,7 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private Integer oficinaEmpleadoCaixa;
 	private Boolean esAntiguoDeudor;
-	private Date fechaAltaWC;
+	private Date fechaCreacion;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -423,11 +423,12 @@ public class OfertaDto implements Serializable {
 	public void setEsAntiguoDeudor(Boolean esAntiguoDeudor) {
 		this.esAntiguoDeudor = esAntiguoDeudor;
 	}
-	public Date getFechaAltaWC() {
-		return fechaAltaWC;
-	}
-	public void setFechaAltaWC(Date fechaAltaWC) {
-		this.fechaAltaWC = fechaAltaWC;
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
 	}
 
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
 }

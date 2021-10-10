@@ -37,8 +37,8 @@ public class DDSubtipoOfertaAlquiler implements Auditable, Dictionary {
     public static final String CODIGO_OCUPA = "ZAO";
     public static final String CODIGO_NOVACIONES = "ZAN";
     public static final String CODIGO_RENOVACIONES = "ZRE";
-    public static final String CODIGO_SUBROGACIÓN_DACION = "ZSD";
-    public static final String CODIGO_SUBROGACIÓN_EJECUCION = "ZSE";
+    public static final String CODIGO_SUBROGACION_DACION = "ZSD";
+    public static final String CODIGO_SUBROGACION_EJECUCION = "ZSE";
     
 
 	private static final long serialVersionUID = 1L;

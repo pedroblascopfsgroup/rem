@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
@@ -73,7 +74,9 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCREENING_Y_ANALISIS_BC));
 		estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_SCREENING_Y_ANALISIS_BC));
 		
-		DDTipoOfertaAlquiler tipoOfertaAlquiler = genericDao.get(DDTipoOfertaAlquiler.class,genericDao.createFilter(FilterType.EQUALS,"codigo", codigoOfertaAlquiler));
+		DDSubtipoOfertaAlquiler subtipoOfertaAlquiler = genericDao.get(DDSubtipoOfertaAlquiler.class,genericDao.createFilter(FilterType.EQUALS,"codigo", codigoOfertaAlquiler));
+		
+		DDTipoOfertaAlquiler tipoOfertaAlquiler = subtipoOfertaAlquiler.getTipoOfertaAlquiler();
 		
 		oferta.setTipoOfertaAlquiler(tipoOfertaAlquiler);
 		
@@ -83,7 +86,7 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 		genericDao.save(Oferta.class, oferta);
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(expedienteComercial,tipoOfertaAlquiler != null ? tipoOfertaAlquiler.getCodigoC4C() : null));
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(expedienteComercial,subtipoOfertaAlquiler != null ? tipoOfertaAlquiler.getCodigo() : null));
 
 	}
 

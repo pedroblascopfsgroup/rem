@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20210929
+--## FECHA_CREACION=20211010
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15387
@@ -34,7 +34,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T018_SolicitarGarantiasAdicionales','checkBankia() == true && valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_AVAL ? checkAvalCondiciones() == true ? null : ''''El campo de Aval tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_SEGURO_RENTA ? checkSeguroRentasCondiciones() == true ? null : ''''El campo Seguro de rentas tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_DEPOSITO ? validarMesesImporteDeposito() == true ? null : ''''El campo Importe o el Campo Meses del Dep&oacute;sito, tiene que estar informado.'''': null')                
+        T_TIPO_DATA('T018_SolicitarGarantiasAdicionales','checkBankia() == true && valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_AVAL ? checkAvalCondiciones() == true ? null : ''''El campo de Aval tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_SEGURO_RENTA ? checkSeguroRentasCondiciones() == true ? null : ''''El campo Seguro de rentas tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_DEPOSITO ? validarMesesImporteDeposito() == true ? null : ''''El campo Importe y el Campo Meses del Dep&oacute;sito, tiene que estar informado.'''': null')                
                     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	

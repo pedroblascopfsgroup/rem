@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoringServicer;
@@ -60,6 +61,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
     private static final String FECHA_SANCION_SCORING = "fechaSancScoring";
 	private static final String MOTIVO_RECHAZO = "motivoRechazo";
 	private static final String N_EXPEDIENTE = "nExpediente";
+	private static final String RATING_HAYA = "ratingHaya";
 	private static final String N_MESES_FIANZA = "nMesesFianza";
 	private static final String IMPORTE_FIANZA = "importeFianza";
 	private static final String DEPOSITO = "deposito";
@@ -150,6 +152,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			
 			if(FECHA_SANCION_SCORING.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
+					scoringAlquiler.setFechaSancionBc(ft.parse((valor.getValor())));
 					histScoringAlquiler.setFechaSancion(ft.parse((valor.getValor())));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha sanción scoring.", e);
@@ -167,8 +170,14 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			}
 			
 			if(N_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				scoringAlquiler.setIdSolicitud(valor.getValor());
+				scoringAlquiler.setNumeroExpedienteBc(valor.getValor());
 				histScoringAlquiler.setIdSolicitud("" + valor.getValor()); 
+			}
+			
+			if (RATING_HAYA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				Filter filtroRating = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+				DDRatingScoringServicer rating = genericDao.get(DDRatingScoringServicer.class, filtroRating);
+				scoringAlquiler.setRatingScoringServicer(rating);
 			}
 			
 			if(N_MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

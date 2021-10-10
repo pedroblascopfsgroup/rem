@@ -185,7 +185,10 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			
 			if(DDCartera.isCarteraBk(activo.getCartera())) {
 				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO));		
+				DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO));
+				modificadoEstadoBC = true;
 				expedienteComercial.setEstado(estadoExpedienteComercial);
+				expedienteComercial.setEstadoBc(estadoBc);
 			}
 		}else {
 			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));

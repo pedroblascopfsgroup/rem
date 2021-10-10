@@ -212,7 +212,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
 		if(eco != null) {
 			CondicionanteExpediente coe = eco.getCondicionante();
-			if(coe != null && (coe.getImporteDeposito() != null || coe.getMesesDeposito() != null)) {
+			if(coe != null && coe.getImporteDeposito() != null && coe.getMesesDeposito() != null) {
 				isRelleno = true;
 			}
 		}

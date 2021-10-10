@@ -260,7 +260,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionVentaContabilizada(DtoAccionVentaContabilizada dto) throws ParseException{
+    public void accionVentaContabilizada(DtoAccionVentaContabilizada dto) throws Exception {
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
@@ -274,7 +274,25 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setFechaContabilizacion(sdfEntrada.parse(dto.getFechaReal()));
 
         genericDao.save(ExpedienteComercial.class, expediente);
+
+        adapter.save(createRequestVentaContabilizada(dto));
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+    }
+
+    public Map<String, String[]> createRequestVentaContabilizada(DtoAccionVentaContabilizada dto) throws ParseException {
+        Map<String,String[]> map = new HashMap<String,String[]>();
+
+        String[] idTarea = {dto.getIdTarea().toString()};
+        String[] fechaIngreso = {dto.getFechaReal() != null ? sdf.format(sdfEntrada.parse(dto.getFechaReal())) : null};
+        String[] checkboxVentaDirecta = {dto.getVentaDirecta()};
+        String[] comboVentaSupensiva = {dto.getVentaSuspensiva()};
+
+        map.put("idTarea", idTarea);
+        map.put("fechaIngreso", fechaIngreso);
+        map.put("checkboxVentaDirecta", checkboxVentaDirecta);
+        map.put("comboVentaSupensiva", comboVentaSupensiva);
+
+        return map;
     }
 
     @Override

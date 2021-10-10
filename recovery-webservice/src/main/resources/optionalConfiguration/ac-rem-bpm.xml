@@ -808,6 +808,7 @@
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler</value>
         </list>
     </property>
    </bean>

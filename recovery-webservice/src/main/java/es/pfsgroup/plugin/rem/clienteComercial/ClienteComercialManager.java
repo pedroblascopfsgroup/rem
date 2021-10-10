@@ -418,7 +418,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		InfoAdicionalPersona iapRep = null;
 
 		if (cliente.getDocumentoRepresentante() != null)
-		interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
+		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
 
 		if(iapRep == null && cliente.getDocumentoRepresentante() != null) {
 			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);

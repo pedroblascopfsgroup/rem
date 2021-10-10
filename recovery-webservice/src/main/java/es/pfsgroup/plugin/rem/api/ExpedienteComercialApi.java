@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
+import es.pfsgroup.plugin.rem.model.DtoScoringGarantias;
 import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -1453,4 +1454,6 @@ public interface ExpedienteComercialApi {
 	List<DtoGastoRepercutido> getGastosRepercutidosList(Long idExpediente);
 
 	void deleteGastoRepercutido(Long idGastoRepercutido);
+
+	DtoScoringGarantias getScoringGarantias(Long idExpediente);
 }

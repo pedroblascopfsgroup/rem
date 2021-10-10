@@ -1,0 +1,109 @@
+--/*
+--#########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20210727
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.11
+--## INCIDENCIA_LINK=HREOS-14680
+--## PRODUCTO=NO
+--## 
+--## Finalidad:
+--## 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--## 		0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	TABLE_COUNT NUMBER(10,0) := 0;
+	TABLE_COUNT_2 NUMBER(10,0) := 0;
+	MAX_NUM_OFR NUMBER(10,0) := 0;
+	V_NUM_TABLAS NUMBER(10,0) := 0;
+	V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+	V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+	V_USUARIO VARCHAR2(50 CHAR) := 'MIG_CAIXA';
+	V_SENTENCIA VARCHAR2(32000 CHAR);
+	V_NUM_TABLAS_2 NUMBER(16);
+	V_MSQL VARCHAR2(32000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+
+BEGIN
+
+	--Inicio del proceso de volcado sobre OFR_OFERTAS
+
+
+V_SENTENCIA := 'TRUNCATE TABLE '||V_ESQUEMA||'.MIG2_CAIXA_POSICIONAMIENTO_OFERTA';
+
+	EXECUTE IMMEDIATE V_SENTENCIA;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.MIG2_OFR_MAPEO_NUM_OFERTAS');
+
+	
+	V_SENTENCIA := 'INSERT INTO '||V_ESQUEMA||'.MIG2_CAIXA_POSICIONAMIENTO_OFERTA(NUM_OFERTA, TBJ_ID, ECO_ID, TPO_ID, TAREA_ANTIGUA_TRAMITE, TAREA_NUEVA_TRAMITE, USU_ID, SUP_ID, NUEVO_ESTADO_ECO, NUEVO_ESTADO_EEB)(SELECT OFR_NUM_OFERTA,TBJ_ID, ECO_ID, (SELECT DD_TPO_CODIGO FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T017''),TAR_TAREA , NULL, USU_ID, SUP_ID, CASE 
+	WHEN TAR_TAREA = ''Cierre económico'' AND DD_EEC_CODIGO = ''03'' THEN ''03'' 
+	WHEN TAR_TAREA = ''Resultado PBC'' AND DD_EEC_CODIGO = ''11'' THEN ''11'' 
+	WHEN TAR_TAREA = ''Instrucciones reserva'' AND DD_EEC_CODIGO = ''11'' THEN ''49'' 
+	WHEN TAR_TAREA = ''Resultado PBC'' AND DD_EEC_CODIGO = ''06'' THEN ''46''
+	WHEN TAR_TAREA = ''Instrucciones reserva'' AND DD_EEC_CODIGO = ''06'' THEN ''46''
+	WHEN TAR_TAREA = ''Posicionamiento y firma'' AND DD_EEC_CODIGO = ''06'' THEN ''46''
+	WHEN TAR_TAREA = ''Obtención contrato reserva'' AND DD_EEC_CODIGO = ''06'' THEN ''49''
+	WHEN TAR_TAREA = ''Pendiente de la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''16''
+	WHEN TAR_TAREA = ''Respuesta Bankia sobre la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''16''
+	WHEN TAR_TAREA = ''Respuesta CaixaBank sobre la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''16''
+	WHEN TAR_TAREA = ''Resolución comité'' AND DD_EEC_CODIGO = ''10'' THEN ''10''
+	WHEN TAR_TAREA = ''Pendiente de la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''16''
+	WHEN TAR_TAREA = ''Respuesta Bankia sobre la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''16''
+	WHEN TAR_TAREA = ''Respuesta CaixaBank sobre la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''16'' ELSE DD_EEC_CODIGO END AS NUEVO_ESTADO_ECO,
+	CASE 
+	WHEN TAR_TAREA = ''Cierre económico'' AND DD_EEC_CODIGO = ''03'' THEN ''021'' 
+	WHEN TAR_TAREA = ''Resultado PBC'' AND DD_EEC_CODIGO = ''11'' THEN ''11'' 
+	WHEN TAR_TAREA = ''Instrucciones reserva'' AND DD_EEC_CODIGO = ''11'' THEN ''016'' 
+	WHEN TAR_TAREA = ''Resultado PBC'' AND DD_EEC_CODIGO = ''06'' THEN ''017''
+	WHEN TAR_TAREA = ''Instrucciones reserva'' AND DD_EEC_CODIGO = ''06'' THEN ''017''
+	WHEN TAR_TAREA = ''Posicionamiento y firma'' AND DD_EEC_CODIGO = ''06'' THEN ''017''
+	WHEN TAR_TAREA = ''Obtención contrato reserva'' AND DD_EEC_CODIGO = ''06'' THEN ''016''
+	WHEN TAR_TAREA = ''Pendiente de la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''023''
+	WHEN TAR_TAREA = ''Respuesta Bankia sobre la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''023''
+	WHEN TAR_TAREA = ''Respuesta CaixaBank sobre la devolución'' AND DD_EEC_CODIGO = ''06'' THEN ''023''
+	WHEN TAR_TAREA = ''Resolución comité'' AND DD_EEC_CODIGO = ''10'' THEN ''001''
+	WHEN TAR_TAREA = ''Pendiente de la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''023''
+	WHEN TAR_TAREA = ''Respuesta Bankia sobre la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''023''
+	WHEN TAR_TAREA = ''Respuesta CaixaBank sobre la devolución'' AND DD_EEC_CODIGO = ''16'' THEN ''023'' ELSE DD_EEC_CODIGO END AS NUEVO_ESTADO_EEB  FROM (SELECT DISTINCT OFR.OFR_NUM_OFERTA, ATR.TBJ_ID, ECO.ECO_ID, TAC.USU_ID, TAC.SUP_ID, TAR.TAR_TAREA, EEC.DD_EEC_CODIGO FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
+                    INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACO ON ACO.OFR_ID = OFR.OFR_ID
+                    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACO.ACT_ID
+                    INNER JOIN  '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO  ON ECO.OFR_ID = OFR.OFR_ID
+                    INNER JOIN '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+                    INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
+		     INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE ATR ON  ATR.TBJ_ID=ECO.TBJ_ID
+                    INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+					INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID AND ATR.TBJ_ID=ECO.TBJ_ID AND TAC.BORRADO = 0
+					INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID AND TAR.TAR_TAREA_FINALIZADA = 0 AND TAR.BORRADO = 0
+                    WHERE CRA.DD_CRA_CODIGO = ''03'' AND EOF.DD_EOF_CODIGO IN (''01'') AND  eec.dd_eec_codigo NOT IN (02, 08, 15, 12, 32, 35, 37, 41)  AND USUARIOCREAR = ''MIG_CAIXA''
+/*UNION ALL
+SELECT DISTINCT OFR.OFR_NUM_OFERTA, NULL, ACT.ACT_ID , NULL,  FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
+                    INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACO ON ACO.OFR_ID = OFR.OFR_ID
+                    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACO.ACT_ID
+                    INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
+                    INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+                    WHERE CRA.DD_CRA_CODIGO = ''03'' AND EOF.DD_EOF_CODIGO IN (''04''))*/)) ';
+                   
+        	EXECUTE IMMEDIATE V_SENTENCIA;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'..MIG2_OFR_MAPEO_NUM_OFERTAS cargada. '||SQL%ROWCOUNT||' Filas.');
+
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+		DBMS_OUTPUT.put_line(SQLERRM);
+		ROLLBACK;
+		RAISE;
+END;
+/
+EXIT;

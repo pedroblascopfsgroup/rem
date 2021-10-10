@@ -1958,7 +1958,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_VerificarScoringValidacion: function(){
     	var me = this;
-    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	var codigoEstadoBC = me.up('tramitesdetalle').getViewModel().get('tramite.codigoEstadoExpedienteBC');
     	
     	if(CONST.CARTERA['BANKIA'] == codigoCartera){
@@ -1984,6 +1986,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.campoObligatorio(me.down('[name=resultadoScoring]'));
     	me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
     	me.deshabilitarCampo(me.down('[name=fechaSancScoring]'));
+		me.deshabilitarCampo(me.down('[name=ratingHaya]'));
     	me.deshabilitarCampo(me.down('[name=nExpediente]'));
 
 
@@ -2014,6 +2017,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.campoObligatorio(me.down('[name=nExpediente]'));
             	me.habilitarCampo(me.down('[name=nExpediente]'));
             	me.habilitarCampo(me.down('[name=fechaSancScoring]'));
+				me.habilitarCampo(me.down('[name=ratingHaya]'));
 
             	
             	me.down('[name=motivoRechazo]').noObligatorio=true;
@@ -2053,6 +2057,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.borrarCampo(me.down('[name=fechaSancScoring]'));
             	me.borrarCampo(me.down('[name=nExpediente]'));
             	me.deshabilitarCampo(me.down('[name=nExpediente]'));
+				me.deshabilitarCampo(me.down('[name=ratingHaya]'));
+            	me.borrarCampo(me.down('[name=ratingHaya]'));
 
 
     			if(CONST.CARTERA['BANKIA'] != codigoCartera){
@@ -2152,6 +2158,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     		}	
     	});
+
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getScoringGarantias'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		scoring.setValue(dto.resultadoScoringHaya);
+		    		me.down('[name=fechaSancScoring]').setValue(Ext.Date.format(new Date(dto.fechaSancScoring), 'd/m/Y'));
+		    		me.down('[name=motivoRechazo]').setValue(dto.motivoRechazo);
+		    		me.down('[name=nExpediente]').setValue(dto.numExpediente);
+					me.down('[name=ratingHaya]').setValue(dto.ratingHaya);
+		    	}
+		    }
+		});
 
     },
     
@@ -2322,6 +2344,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	var importeContraoferta = me.down('[name=importeContraoferta]');
     	var observacionesBC = me.down('[name=observacionesBC]');
+		var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
@@ -2334,8 +2357,49 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=fechaElevacion]').setValue(fecha);
 			me.deshabilitarCampo(importeContraoferta);
 			me.ocultaryHacerNoObligatorio(me.down('[name=refCircuitoCliente]'));
-			me.bloquearObligatorio(resolucionOferta);
-			me.bloquearCampo(observacionesBC);
+			if (!isSuper) {
+				me.bloquearObligatorio(resolucionOferta);
+			} else {
+				me.campoObligatorio(resolucionOferta);
+				resolucionOferta.addListener('change', function(){
+
+	    		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
+
+    				if(resolucionOferta.value == '03'){
+    					me.habilitarCampo(importeContraoferta);
+						me.campoObligatorio(importeContraoferta);
+						me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+    				}else{
+    					me.deshabilitarCampo(importeContraoferta);
+						me.campoNoObligatorio(importeContraoferta);
+						me.habilitarCampo(me.down('[name=fechaElevacion]'));
+    				}
+	    			
+	    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+	    			me.borrarCampo(me.down('[name=motivoAnulacion]'));
+	    			me.campoNoObligatorio(me.down('[name=motivoAnulacion]'));
+	    			me.campoObligatorio(me.down('[name=fechaElevacion]'));
+	    			me.setFechaActual(me.down('[name=fechaElevacion]'));
+	    			
+	    		}else{
+	    			
+					me.campoObligatorio(me.down('[name=motivoAnulacion]'));
+	    			me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
+	    			
+	    			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+	            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+	            	
+	            	me.borrarCampo(me.down('[name=fechaElevacion]'));
+					me.borrarCampo(me.down(importeContraoferta));
+	            	
+	            	me.deshabilitarCampo(importeContraoferta);
+					me.campoNoObligatorio(importeContraoferta);
+	    			
+	    		}
+	    		});
+			}
+			
+			if (!isSuper) me.bloquearCampo(observacionesBC);
 			var idTarea = me.idTarea; 
 				
 			var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaElevarSancion');
@@ -3831,12 +3895,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		me.deshabilitarCampo(comboIsVulnerable);
 		
 		comboTipoOferta.addListener('change', function(combo) {
-			if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue()){
+			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
+					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
+					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(comboIsVulnerable);
 				me.campoObligatorio(comboIsVulnerable);
 				textExpedienteAnterior.setValue('');
 				me.deshabilitarCampo(textExpedienteAnterior);
-			}else if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACION'] === comboTipoOferta.getValue()){
+			}else if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_NOVACIONES'] === comboTipoOferta.getValue()
+					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(textExpedienteAnterior);
 				textExpedienteAnterior.allowBlank = false;	
 				comboIsVulnerable.setValue('');

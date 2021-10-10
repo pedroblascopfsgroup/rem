@@ -156,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
@@ -14394,5 +14395,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Auditoria.delete(gr);
 			genericDao.save(GastoRepercutido.class, gr);
 		}
+	}
+	
+	@Override
+	public DtoScoringGarantias getScoringGarantias(Long idExpediente) {	
+		DtoScoringGarantias dto = new DtoScoringGarantias();
+		
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
+		
+		if(!Checks.esNulo(scoring)) {
+			if (!Checks.esNulo(scoring.getFechaSancionBc()))
+				dto.setFechaSancScoring(scoring.getFechaSancionBc());
+			if (!Checks.esNulo(scoring.getMotivoRechazo())){
+				Filter filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "descripcion", scoring.getMotivoRechazo());
+				DDMotivoRechazoAlquiler motivoRechazo = genericDao.get(DDMotivoRechazoAlquiler.class, filtroMotivoRezhazo);
+				dto.setMotivoRechazo(!Checks.esNulo(motivoRechazo.getCodigo()) ? motivoRechazo.getCodigo() : null);
+			}
+			if (!Checks.esNulo(scoring.getNumeroExpedienteBc()))
+				dto.setNumExpediente(scoring.getNumeroExpedienteBc());
+			if (!Checks.esNulo(scoring.getResultadoScoringBc()))
+				dto.setResultadoScoringHaya(scoring.getResultadoScoringBc().getCodigo());
+			if (!Checks.esNulo(scoring.getRatingScoringServicer()))
+				dto.setRatingHaya(scoring.getRatingScoringServicer().getCodigo());
+		}
+		return dto;
 	}
 }

@@ -35,6 +35,12 @@ public class DDMetodoActualizacionRenta implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String COD_NIN = "NIN";
+	public static final String COD_POR = "POR";
+	public static final String COD_MER = "MER";
+	public static final String COD_IPM = "IPM";
+	public static final String COD_LIB = "LIB";
+
 	@Id
 	@Column(name = "DD_MTA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMetodoActualizacionRentaGenerator")

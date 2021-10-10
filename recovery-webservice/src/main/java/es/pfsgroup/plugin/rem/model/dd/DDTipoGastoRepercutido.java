@@ -28,6 +28,12 @@ public class DDTipoGastoRepercutido implements Auditable, Dictionary{
 	
 	private static final long serialVersionUID = 1L;
 
+	public static final String COD_CP = "CP";
+	public static final String COD_IB = "IB";
+	public static final String COD_TAS = "TAS";
+	public static final String COD_SP = "SP";
+	public static final String COD_SC = "SC";
+
 	@Id
 	@Column(name = "DD_TGR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoGastoRepercutidoGenerator")

@@ -129,6 +129,10 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 					expedienteComercial.setOferta(oferta);
 					
 					if(oferta != null && oferta.getActivoPrincipal() != null && !DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+						expedienteComercial.setEstadoBc(estadoBc);	
+						estadoBcModificado = true;
+					} else if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 						expedienteComercial.setEstadoBc(estadoBc);	
 						estadoBcModificado = true;

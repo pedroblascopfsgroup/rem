@@ -2000,7 +2000,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
 
 			if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
-					|| (activo.getEnTramite() == null || activo.getEnTramite() == 0)
+					|| ((activo.getEnTramite() != null && activo.getEnTramite() == 1))
 					|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
 				for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
 					if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {

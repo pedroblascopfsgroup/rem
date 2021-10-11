@@ -120,6 +120,9 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 						expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES)));
 						DDResultadoScoringServicer resultadoScoringServicer = genericDao.get(DDResultadoScoringServicer.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoringServicer.COD_FAVORABLE));
 						scoringAlquiler.setResultadoScoringServicer(resultadoScoringServicer);
+						DDResultadoScoring resultadoScoringBc = genericDao.get(DDResultadoScoring.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoring.RESULTADO_APROBADO));
+						scoringAlquiler.setResultadoScoringBc(resultadoScoringBc);
+						scoringAlquiler.setResultadoScoring(null);
 					}
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
@@ -129,6 +132,8 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 					expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_SCORING_A_REVISAR_POR_BC)));
 					DDResultadoScoringServicer resultadoScoringServicer = genericDao.get(DDResultadoScoringServicer.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoringServicer.COD_FAVORABLE));
 					scoringAlquiler.setResultadoScoringServicer(resultadoScoringServicer);
+					DDResultadoScoring resultadoScoringBc = genericDao.get(DDResultadoScoring.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoring.RESULTADO_DUDAS));
+					scoringAlquiler.setResultadoScoringBc(resultadoScoringBc);
 					
 				}else{
 					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_RECHAZADO);
@@ -146,6 +151,9 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 						expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
 						DDResultadoScoringServicer resultadoScoringServicer = genericDao.get(DDResultadoScoringServicer.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoringServicer.COD_DESFAVORABLE));
 						scoringAlquiler.setResultadoScoringServicer(resultadoScoringServicer);
+						DDResultadoScoring resultadoScoringBc = genericDao.get(DDResultadoScoring.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDResultadoScoring.RESULTADO_RECHAZADO));
+						scoringAlquiler.setResultadoScoringBc(resultadoScoringBc);
+						scoringAlquiler.setResultadoScoring(null);
 					}
 				}
 			}

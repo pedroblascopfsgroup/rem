@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210817
+--## FECHA_CREACION=20211009
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14794
@@ -41,8 +41,8 @@ DECLARE
 		T_TIPO_DATA('COM','Comodato', 'Z105'),
 		T_TIPO_DATA('OBS','Alquiler OBS', 'Z106'),
 		T_TIPO_DATA('GRU','Alquiler grupo', 'Z107'),
-		T_TIPO_DATA('GAR','Contrato de garantías', 'Z108'),
-		T_TIPO_DATA('GAG','Contrato de garantías grupo', 'Z109')
+		T_TIPO_DATA('GAR','Contrato de garantías', 'Z109'),
+		T_TIPO_DATA('GAG','Contrato de garantías grupo', 'Z110')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -60,6 +60,14 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+           V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET
+                        DD_CCA_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+                        DD_CCA_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+          			    DD_CCA_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+                        USUARIOMODIFICAR = ''HREOS-14943'',
+                        FECHAMODIFICAR = SYSDATE
+                        WHERE DD_CCA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+                      EXECUTE IMMEDIATE V_MSQL;
         ELSE 
           -- Si no existe se inserta.
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');

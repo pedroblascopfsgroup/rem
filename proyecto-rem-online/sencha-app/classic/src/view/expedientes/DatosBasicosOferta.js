@@ -155,6 +155,16 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						},
 						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.clase.contrato'),
+							reference: 'comboClaseContratoRef',
+							bind:{
+								store:'{storeClaseContrato}',
+								value:'{datosbasicosoferta.claseContratoCodigo}',
+								hidden: '{!esBankiaAlquiler}'
+							}
+						},
+						{
 							xtype : 'comboboxfieldbase',
 							fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
 							reference: 'empleadoCaixaRef',

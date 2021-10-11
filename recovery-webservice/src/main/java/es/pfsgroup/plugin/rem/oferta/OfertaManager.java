@@ -809,6 +809,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
+		
+		if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(sistemaOrigen.getCodigo()) && ofertaDto.getCodOfertaSalesforce() == null) {
+			errorsList.put("codOfertaSalesforce", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
 
 		return errorsList;
 	}

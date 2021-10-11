@@ -473,6 +473,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
+    public void accionRechazoModTitulares(DtoAccionRechazoCaixa dto) {
+        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    }
+
+    @Override
+    @Transactional
     public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }

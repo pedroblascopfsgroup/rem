@@ -51,6 +51,9 @@ public class DDEntidadFinanciera implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_ETF_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	
+	
+	@Column(name = "DD_ETF_CODIGO_SF")   
+	private String codigoSF;
 	    
 	@Version   
 	private Long version;
@@ -104,5 +107,13 @@ public class DDEntidadFinanciera implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoSF() {
+		return codigoSF;
+	}
+
+	public void setCodigoSF(String codigoSF) {
+		this.codigoSF = codigoSF;
 	}
 }

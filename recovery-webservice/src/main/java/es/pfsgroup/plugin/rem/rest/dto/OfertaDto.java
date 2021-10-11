@@ -106,7 +106,7 @@ public class OfertaDto implements Serializable {
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String tipoFinanciacion;
 	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo DDEntidadFinanciera no existe", groups = { Insert.class,
-			Update.class },foreingField="codigo")
+			Update.class },foreingField="codigoSF")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String entidadFinanciacion;
 	private String codMotivoJustificacionOferta;

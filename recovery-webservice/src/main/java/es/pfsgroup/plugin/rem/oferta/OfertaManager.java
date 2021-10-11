@@ -1737,7 +1737,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())){
 			DDEntidadFinanciera enf = genericDao.get(DDEntidadFinanciera.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getEntidadFinanciacion()));
+					genericDao.createFilter(FilterType.EQUALS, "codigoSF", ofertaDto.getEntidadFinanciacion()));
 			if (existeCoe) coe.setEntidadFinanciera(enf);
 			oferta.setEntidadFinanciera(enf);
 		}

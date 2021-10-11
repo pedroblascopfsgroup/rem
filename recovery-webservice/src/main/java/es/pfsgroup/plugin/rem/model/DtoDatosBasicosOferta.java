@@ -164,6 +164,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String tipoOfertaAlquilerCodigo; 
     
     private Long numOfertaCaixa;
+
+	private String claseContratoCodigo;
 	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -758,5 +760,60 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setNumOfertaCaixa(Long numOfertaCaixa) {
 		this.numOfertaCaixa = numOfertaCaixa;
 	}
-	
+
+	public Boolean getCarteraCerberusApple() {
+		return isCarteraCerberusApple;
+	}
+
+	public void setCarteraCerberusApple(Boolean carteraCerberusApple) {
+		isCarteraCerberusApple = carteraCerberusApple;
+	}
+
+	public Boolean getCarteraLbkVenta() {
+		return isCarteraLbkVenta;
+	}
+
+	public void setCarteraLbkVenta(Boolean carteraLbkVenta) {
+		isCarteraLbkVenta = carteraLbkVenta;
+	}
+
+	public Boolean getLbkOfertaComercialPrincipal() {
+		return isLbkOfertaComercialPrincipal;
+	}
+
+	public void setLbkOfertaComercialPrincipal(Boolean lbkOfertaComercialPrincipal) {
+		isLbkOfertaComercialPrincipal = lbkOfertaComercialPrincipal;
+	}
+
+	public Boolean getAdvisoryNoteEnTareas() {
+		return isAdvisoryNoteEnTareas;
+	}
+
+	public void setAdvisoryNoteEnTareas(Boolean advisoryNoteEnTareas) {
+		isAdvisoryNoteEnTareas = advisoryNoteEnTareas;
+	}
+
+	public Boolean getCarteraCerberusDivarian() {
+		return isCarteraCerberusDivarian;
+	}
+
+	public void setCarteraCerberusDivarian(Boolean carteraCerberusDivarian) {
+		isCarteraCerberusDivarian = carteraCerberusDivarian;
+	}
+
+	public Boolean getEmpleadoCaixa() {
+		return isEmpleadoCaixa;
+	}
+
+	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
+		isEmpleadoCaixa = empleadoCaixa;
+	}
+
+	public String getClaseContratoCodigo() {
+		return claseContratoCodigo;
+	}
+
+	public void setClaseContratoCodigo(String claseContratoCodigo) {
+		this.claseContratoCodigo = claseContratoCodigo;
+	}
 }

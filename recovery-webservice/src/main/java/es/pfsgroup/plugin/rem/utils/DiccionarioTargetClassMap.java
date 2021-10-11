@@ -338,6 +338,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoComunicacionC4C",  DDEstadoComunicacionC4C.class);
 		mapa.put("tipoGastoRepercutido",  DDTipoGastoRepercutido.class);
 		mapa.put("subtipoOfertaAlquiler",  DDSubtipoOfertaAlquiler.class);
+		mapa.put("claseContratoAlquiler", DDClaseContratoAlquiler.class);
 
 		
 		

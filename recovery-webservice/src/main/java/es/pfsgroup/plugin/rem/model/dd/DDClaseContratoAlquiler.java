@@ -43,7 +43,7 @@ public class DDClaseContratoAlquiler implements Auditable, Dictionary{
 	@Column(name = "DD_CCA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	
 	
-	@Column(name = "DD_TOA_CODIGO_C4C")   
+	@Column(name = "DD_CCA_CODIGO_C4C")
 	private String codigoC4C;
 
 	@Version   

@@ -161,7 +161,7 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												disabled: true
 											},
 											{
-												xtype : 'numberfieldbase',
+												xtype : 'textfieldbase',
 												reference : 'documentoRef',
 												fieldLabel : HreRem.i18n('header.documento'),
 												bind : {

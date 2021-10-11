@@ -233,7 +233,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ComunicacionBoardingResponse enviarOfertaHayaHome(Long numOferta, ModelMap model,int segundosTimeout) {
+	public ComunicacionBoardingResponse enviarOfertaHayaHome(Long numOferta, ModelMap model) {
 		
 		Map<String, String> headers = new HashMap<String, String>();
         headers.put("Content-Type", "application/json");

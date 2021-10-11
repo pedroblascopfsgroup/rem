@@ -44,7 +44,7 @@ public class EnviarOfertaHayaHomeRem3 implements Runnable{
 		
 		try {
 			restApi.doSessionConfig(this.userName);
-			boardingComunicacionManager.enviarOfertaHayaHome(numOferta, model, BoardingComunicacionManager.TIMEOUT_30_SEGUNDOS);
+			boardingComunicacionManager.enviarOfertaHayaHome(numOferta, model);
 			
 		} catch (Exception e) {
 			logger.error("Error al enviar la oferta a Haya Home.", e);

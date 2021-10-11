@@ -53,6 +53,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
     private static final String COMBO_ARRAS = "comboArras";
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
+    private static final String COMBO_FIRMA = "comboFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -83,11 +84,11 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						if(COMBO_NUMERO_PROTOCOLO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							expediente.setNumeroProtocolo(valor.getValor());
 						}
-						if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							if(DDSiNo.SI.equals(valor.getValor())) {
-								aprueba = true;
-							}
-						}
+						/*
+						 * if(COMBO_RESULTADO.equals(valor.getNombre()) &&
+						 * !Checks.esNulo(valor.getValor())) { if(DDSiNo.SI.equals(valor.getValor())) {
+						 * aprueba = true; } }
+						 */
 						if(COMBO_MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							aplaza = false;
 							dtoPos.setMotivoAplazamiento(valor.getValor());
@@ -108,6 +109,11 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 								importe = Double.valueOf(valor.getValor());
 							}
 							
+						}
+						if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+							if(DDSiNo.NO.equals(valor.getValor())) {
+								aprueba = true;
+							}
 						}
 					}
 					if (vuelveArras) {											
@@ -132,8 +138,8 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
 					}else {
 						if(aprueba) {
-							estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+							estadoExp = DDEstadosExpedienteComercial.FIRMADO;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
 							if(reservaApi.tieneReservaFirmada(expediente)) {

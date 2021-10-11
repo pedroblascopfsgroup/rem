@@ -62,10 +62,12 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 
 			if(TIPO_OFERTA_ALQUILER.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				codigoOfertaAlquiler = valor.getValor();
-			}else if(VULNERABLE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			}
+			if(VULNERABLE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				Boolean vulnerabilidadDetectada = DDSinSiNo.cambioStringtoBooleano(valor.getValor());
 				coe.setVulnerabilidadDetectada(vulnerabilidadDetectada);
-			}else if(EXPEDIENTE_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			}
+			if(EXPEDIENTE_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				ExpedienteComercial expedienteAnterior = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(valor.getValor()));
 				expedienteComercial.setExpedienteAnterior(expedienteAnterior);
 			}

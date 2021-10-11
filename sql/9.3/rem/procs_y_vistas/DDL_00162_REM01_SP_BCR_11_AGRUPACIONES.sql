@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=dap
 --## FECHA_CREACION=20210924
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
@@ -18,6 +18,7 @@
 --##	      0.6 Corrección fecha de baja para que sea campo de referencia - HREOS-15137 - Daniel Algaba
 --##	      0.7 Se crea el campo AGR_NUM_AGRUP_BC para almacenar el ID de BC - HREOS-15254 - Daniel Algaba
 --##	      0.8 Se añaden fechas de inicio y fin de vigencia - HREOS-15254 - Daniel Algaba
+--##        0.9 Se modifica la creación de obra nueva porque no hacía nada - DAP
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -809,11 +810,29 @@ BEGIN
                   , SYSDATE FECHACREAR
                   , 1 AGR_IS_FORMALIZACION
                   , AUX.COD_AGRUPACION AGR_NUM_AGRUP_BC
-                  FROM (SELECT BCAN.COD_AGRUPACION, BCAN.ACTIVO, BCAN.TIPO 
-                  FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_NUEVAS BCAN
-                  WHERE BCAN.COD_AGRUPACION = BCAN.ACTIVO) AUX
-                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.ACTIVO AND ACT.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0';
+                  FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
+                  JOIN (
+                     SELECT BCAN.COD_AGRUPACION
+                        , BCAN.ACTIVO
+                        , BCAN.TIPO 
+                     FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_NUEVAS BCAN
+                     WHERE BCAN.COD_AGRUPACION = BCAN.ACTIVO
+                        AND TIPO <> ''01''
+                     UNION
+                     SELECT COD_AGRUPACION
+                        , ACTIVO
+                        , TIPO
+                     FROM (
+                        SELECT BCAN.COD_AGRUPACION
+                           , BCAN.ACTIVO
+                           , BCAN.TIPO
+                           , ROW_NUMBER() OVER(PARTITION BY BCAN.COD_AGRUPACION ORDER BY BCAN.ACTIVO) RN
+                        FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_NUEVAS BCAN
+                        WHERE BCAN.TIPO = ''01'')
+                     WHERE RN = 1) AUX ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.ACTIVO 
+                  LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID 
+                     AND BIE_LOC.BORRADO = 0
+                  WHERE ACT.BORRADO = 0';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -904,13 +923,19 @@ BEGIN
                   , BIE_LOC.DD_LOC_ID
                   , BIE_LOC.BIE_LOC_NOMBRE_VIA || '' '' || BIE_LOC.BIE_LOC_PORTAL ONV_DIRECCION
                   , BIE_LOC.BIE_LOC_COD_POST ONV_CP
-                  FROM (SELECT BCAN.COD_AGRUPACION, BCAN.TIPO 
+                  FROM (SELECT 
+                  BCAN.COD_AGRUPACION
+                  , BCAN.TIPO
+                  , BCAN.ACTIVO
+                  , ROW_NUMBER() OVER(PARTITION BY BCAN.COD_AGRUPACION ORDER BY BCAN.ACTIVO) RN
                   FROM '|| V_ESQUEMA ||'.AUX_BC_AGRUPACIONES_NUEVAS BCAN
-                  WHERE BCAN.TIPO = ''01''
-                  GROUP BY BCAN.COD_AGRUPACION, BCAN.TIPO) AUX
-                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.COD_AGRUPACION AND ACT.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_BC = AUX.COD_AGRUPACION AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = AUX.TIPO) AND AGR.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0';
+                  WHERE BCAN.TIPO = ''01'') AUX
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.ACTIVO
+                  AND ACT.BORRADO = 0
+                  JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_BC = AUX.COD_AGRUPACION AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = AUX.TIPO) 
+                  AND AGR.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
+                  WHERE AUX.RN = 1';
    
       EXECUTE IMMEDIATE V_MSQL;
 

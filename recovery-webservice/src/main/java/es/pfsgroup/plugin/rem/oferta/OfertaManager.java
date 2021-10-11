@@ -1725,11 +1725,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
-			
-			if (oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) && activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
-				Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
-				llamadaAsincrona.start();
-			}
 
 		}
 

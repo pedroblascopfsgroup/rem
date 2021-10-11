@@ -267,7 +267,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         logger.debug("[ENVIAR OFERTA HAYA HOME] BODY: "+json.toString());
 		
 		try{			
-			respuesta = procesarPeticion(this.httpClientFacade, urlEnviarOfertaHayaHome.toString(), POST_METHOD, headers, json, BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS, "UTF-8");	
+			respuesta = procesarPeticion(this.httpClientFacade, urlEnviarOfertaHayaHome.toString(), POST_METHOD, headers, json, BoardingComunicacionApi.TIMEOUT_2_MINUTOS, "UTF-8");	
 			resultadoOK = true;
 		}catch (HttpClientException e1) {
 			e1.printStackTrace();

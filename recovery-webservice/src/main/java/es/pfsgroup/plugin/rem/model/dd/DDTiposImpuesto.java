@@ -110,4 +110,11 @@ public class DDTiposImpuesto implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
+	}
 }

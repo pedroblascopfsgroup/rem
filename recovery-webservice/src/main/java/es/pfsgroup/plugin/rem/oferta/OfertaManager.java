@@ -747,6 +747,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getCodTarea())) {
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
+	
 			if (alta) {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
@@ -755,6 +758,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
 					} else if (Checks.esNulo(ofertaDto.getImporteContraoferta()) && ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
 						errorsList.put("importeContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);						
+					} else if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
+							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
+							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
+					if (!((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
+						DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				} else if (ofertaDto.getCodTarea().equals("02")) {
 					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
@@ -763,8 +775,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(Checks.esNulo(ofertaDto.getLugarFirma())) {
 						errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
-				} else if (ofertaDto.getCodTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
-					errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					if (!DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())){
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
+				} else if (ofertaDto.getCodTarea().equals("03")) {
+					if (Checks.esNulo(ofertaDto.getFechaFirma())) {
+						errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					}
+					if (!DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
 				}
 			}
 		}
@@ -1169,14 +1189,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (ofertaDto.getIsExpress()) {
 				congelarExpedientesPorOfertaExpress(oferta);
 			}
-
-			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
-			
-			if (!errorsList.isEmpty()) {
-				return errorsList;
-			}
 			
 			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
 				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
@@ -1464,6 +1476,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, String> errorsList = null;
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
+		
 		if (errorsList.isEmpty()) {
 			boolean modificado = false;
 			boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
@@ -1557,11 +1570,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
-
-			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
-
 			
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
 					&& !ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
@@ -1697,8 +1705,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
 			
-			if (!errorsList.isEmpty()) {
-				return errorsList;
+			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
+				avanzaTarea(oferta, ofertaDto);
 			}
 			
 			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
@@ -4214,53 +4222,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 
-	private HashMap<String, String> avanzaTarea(Oferta oferta, OfertaDto ofertaDto, HashMap<String, String> errorsList) {
+	private void avanzaTarea(Oferta oferta, OfertaDto ofertaDto) throws Exception {
 		try {
 			Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
 			List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-			//GenericForm genericForm = actGenericFormManager.get(tareasTramite.get(0).getTareaPadre().getId());
 			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			boolean avanzar = true;
-			
-			boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
-	
-			if (ofertaDto.getCodTarea().equals("01")  && 
-					((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
-					DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
-					DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
-				if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
-						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
-						&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
-					avanzar = false;
-				} else if (ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+				
+			if (ofertaDto.getCodTarea().equals("01")) {
+				if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(ofertaDto.getAceptacionContraoferta())) {
 					valoresTarea.put("importeContraoferta", new String[] { ofertaDto.getImporteContraoferta().toString() });
 				}
 				valoresTarea.put("aceptacionContraoferta", new String[] { ofertaDto.getAceptacionContraoferta() });
 				valoresTarea.put("fechaRespuesta", new String[] { format.format(new Date()) });
-			} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
+			} else if (ofertaDto.getCodTarea().equals("02")) {
 				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
 				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
-			} else if (ofertaDto.getCodTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+			} else if (ofertaDto.getCodTarea().equals("03")) {
 				valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
-			} else {
-				avanzar = false;
 			}
 	
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
 	
-			if (avanzar) {
-				adapter.save(valoresTarea);
-			} else {
-				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
+			adapter.save(valoresTarea);
 		} catch (Exception e) {
-			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			logger.error("error en OfertasManager.avanzaTarea()", e);
+			throw new Exception(e.getMessage());
 		}
-		
-		return errorsList;
 	}
 
 	@Override

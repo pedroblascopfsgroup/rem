@@ -67,7 +67,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 						estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC;
+						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 					}
 
 				}else {

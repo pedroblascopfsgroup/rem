@@ -72,7 +72,7 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 						}
 					}else {
 						estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC;
+						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 					}
 					
 				}else {

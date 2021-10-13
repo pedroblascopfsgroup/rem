@@ -5439,9 +5439,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (particularValidatorApi.esOfertaCaixa(expedienteComercial.getOferta().getNumOferta().toString())){
 				if(esNuevo || haCambiadoPorcionCompra) {
 					String estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA;
-					if(!esNuevo && haCambiadoPorcionCompra) {
+					if(DDEstadoInterlocutor.isSolicitudAlta(compradorExpediente.getEstadoInterlocutor())){
+						estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA;
+					}else if(DDEstadoInterlocutor.isSolicitudBaja(compradorExpediente.getEstadoInterlocutor())) {
+						estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA;	
+					}else if(!esNuevo && haCambiadoPorcionCompra) {
 						estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_CAMBIO_PORCENTAJE_COMPRA;
 					}
+					
 					this.updateEstadoInterlocutorCompradores(expedienteComercial, compradorExpediente, estadoInterlocutorCodigo);
 				}
 				newDataComprador.compradorToDto(comprador);
@@ -14271,9 +14276,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor){
 		compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
-		this.guardarBloqueoExpediente(eco);
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
-		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
+		
+		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal())) {
+			this.guardarBloqueoExpediente(eco);
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
+		}
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1011,5 +1012,20 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setInterlocutoresExpediente(List<InterlocutorExpediente> interlocutoresExpediente) {
 		this.interlocutoresExpediente = interlocutoresExpediente;
+	}
+	
+	public BigDecimal getImporteParticipacionTotal() {
+		BigDecimal importe = new BigDecimal(0);
+		
+		List<CompradorExpediente> compradores = this.compradores;
+		if(compradores != null && !compradores.isEmpty()) {
+			for (CompradorExpediente compradorExpediente : compradores) {
+				if(compradorExpediente.getPorcionCompra() != null && !compradorExpediente.getAuditoria().isBorrado()) {
+					importe = importe.add(new BigDecimal(compradorExpediente.getPorcionCompra()));
+				}
+			}
+		}
+		
+		return importe;
 	}
 }

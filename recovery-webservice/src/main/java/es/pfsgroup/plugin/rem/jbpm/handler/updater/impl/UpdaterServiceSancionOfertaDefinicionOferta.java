@@ -159,8 +159,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 				
 				if (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress()) {
-					logger.error("Oferta Express numero" + ofertaAceptada.getNumOferta() + " creada");
+					logger.error("Oferta Express numero " + ofertaAceptada.getNumOferta() + " lanzándose a CFV en UpdaterServiceSancionOfertaDefinicionOferta.java.java linea 155");
 					ofertaApi.actualizarOfertaBoarding(ofertaAceptada, CODIGO_T013_DEFINICION_OFERTA);
+					logger.error("Oferta Express numero " + ofertaAceptada.getNumOferta() + " enviada a CFV en UpdaterServiceSancionOfertaDefinicionOferta.java.java linea 157");
 				}
 				
 				

@@ -454,7 +454,13 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		{
 			name: 'bloqueDepositoEditable',
 			type: 'boolean'
-		}
+		},
+		{
+			name:'tipoGrupoImpuestoCodAlq'
+		},
+	    {
+	    	name: 'tipoImpuestoCodigoAlq'
+	    }
 	    
     ],
     

@@ -148,6 +148,8 @@ public class DtoCondiciones extends WebDto {
 	
 	private String tipoGrupoImpuestoCod;
 	private Boolean bloqueDepositoEditable;
+	private String tipoGrupoImpuestoCodAlq;
+	private String tipoImpuestoCodigoAlq;
 	
 	public Integer getMesesFianza() {
 		return mesesFianza;
@@ -1079,6 +1081,21 @@ public class DtoCondiciones extends WebDto {
 
 	public void setBloqueDepositoEditable(Boolean bloqueDepositoEditable) {
 		this.bloqueDepositoEditable = bloqueDepositoEditable;
+	}
+
+	public String getTipoGrupoImpuestoCodAlq() {
+		return tipoGrupoImpuestoCodAlq;
+	}
+
+	public void setTipoGrupoImpuestoCodAlq(String tipoGrupoImpuestoCodAlq) {
+		this.tipoGrupoImpuestoCodAlq = tipoGrupoImpuestoCodAlq;
 	}	
 	
+	public String getTipoImpuestoCodigoAlq() {
+		return tipoImpuestoCodigoAlq;
+	}
+
+	public void setTipoImpuestoCodigoAlq(String tipoImpuestoCodigoAlq) {
+		this.tipoImpuestoCodigoAlq = tipoImpuestoCodigoAlq;
+	}	
 }

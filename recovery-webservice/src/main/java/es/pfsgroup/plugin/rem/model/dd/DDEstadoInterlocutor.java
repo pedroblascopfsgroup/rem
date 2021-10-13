@@ -117,4 +117,13 @@ public class DDEstadoInterlocutor implements Auditable, Dictionary {
 		}
 		return is;
 	}
+	
+	public static boolean isSolicitudAlta(DDEstadoInterlocutor eic) {
+		boolean is = false;
+		
+		if(eic != null && CODIGO_SOLICITUD_ALTA.equals(eic.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 }

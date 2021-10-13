@@ -14,11 +14,7 @@ import es.capgemini.devon.dto.WebDto;
 public class DtoGarantiasExpediente extends WebDto {
 
 	private static final long serialVersionUID = 3574353502838449106L;
-	
 
-	
-	
-	
 	private Long idGarantias;
 	private Boolean scoring;
 	private String resultadoHayaDesc;

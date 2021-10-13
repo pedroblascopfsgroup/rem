@@ -86,8 +86,8 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 						estadoExpediente =  DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
 						estadoBc =  DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
 					}else {
-						estadoExpediente =  DDEstadosExpedienteComercial.PTE_AGENDAR;
-						estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_AGENDAR_ARRAS;
+						estadoExpediente =  DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+						estadoBc =  DDEstadoExpedienteBc.PTE_NEGOCIACION;
 					}
 				}else {
 					estadoExpediente =  DDEstadosExpedienteComercial.PTE_CL_ROD;

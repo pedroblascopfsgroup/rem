@@ -51,7 +51,10 @@ public class DDTiposImpuesto implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_TIT_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;	   
+	
+	@Column(name = "DD_TIT_CODIGO_C4C")   
+	private String codigoC4C;
 
 	@Version   
 	private Long version;

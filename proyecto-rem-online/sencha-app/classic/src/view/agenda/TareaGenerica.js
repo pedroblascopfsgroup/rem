@@ -3824,6 +3824,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
 	
 		me.deshabilitarCampo(comboMotivoAnulacion);
+		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/getScoringGarantias'),
+			params: {idExpediente : idExpediente},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto)){
+		    		me.down('[name=fechaResolucion]').setValue(Ext.Date.format(new Date(dto.fechaSancScoring), 'd/m/Y'));
+		    		me.down('[name=motivoAnulacion]').setValue(dto.motivoRechazo);
+		    		me.down('[name=numExpediente]').setValue(dto.numExpediente);
+					me.down('[name=comboResultado]').setValue(dto.resultadoScoringHaya);
+		    	}
+		    }
+		});
 
 		comboRespuesta.addListener('change', function(combo) {
 			if(CONST.TIPO_RESOLUCION_DUDAS['APRUEBA'] !== comboRespuesta.getValue()){

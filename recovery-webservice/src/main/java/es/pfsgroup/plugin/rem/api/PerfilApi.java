@@ -22,8 +22,12 @@ public interface PerfilApi {
 			"AI-02-DOCJ-23", //Usurpación: denuncia
 			"AI-01-CERA-16", //Impuesto sobre bienes inmuebles (IBI): recibo
 			"AI-04-TASA-11", //Tasación adjudicación
-			"OP-13-TASA-11" //Tasación: informe activo
+			"OP-13-TASA-11", //Tasación: informe activo
+			"AI-11-ESCR-10", //Copia simple escritura de venta
+			"AI-01-NOTS-08" //Registro Propiedad: nota simple inscrita/sin cargas
 			);
+	
+	
 	
 	/**
 	 * Devuelve una lista de perfiles aplicando el filtro que recibe.

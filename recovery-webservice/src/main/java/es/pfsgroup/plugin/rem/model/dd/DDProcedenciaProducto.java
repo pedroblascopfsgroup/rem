@@ -18,12 +18,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de procedencia de producto.
- * 
- * @author Ivan Rubio
- *
- */
+
 @Entity
 @Table(name = "DD_PRP_PROCEDENCIA_PRODUCTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -49,8 +44,7 @@ public class DDProcedenciaProducto implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_PRP_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
-	
+
 	@Version   
 	private Long version;
 
@@ -109,6 +103,5 @@ public class DDProcedenciaProducto implements Auditable, Dictionary {
 	
 	
 }
-
 
 

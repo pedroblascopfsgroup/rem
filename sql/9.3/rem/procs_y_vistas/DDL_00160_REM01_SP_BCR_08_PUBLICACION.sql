@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211008
+--## FECHA_CREACION=20211013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15423
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -19,6 +19,7 @@
 --##	    0.6 Correciones perímetros- HREOS-15137
 --##	    0.7 Se añade un consulta para insertar activos que no tiene el estado de publicación que debe y se añade flag para los activos/agrupaciones que procese el SP de publicaciones - HREOS-15423
 --##	    0.8 El check de Visible gestión comercial se rellena con lo que tenga el de publicar - HREOS-15423
+--##	    0.9 Filtrado de activos con ofertas en vuelo - HREOS-15634
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -106,8 +107,9 @@ BEGIN
                             AND EPA.BORRADO = 0
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CBX ON CBX.ACT_ID = ACT.ACT_ID
                             AND CBX.BORRADO = 0
-                        WHERE (EPV.DD_EPV_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_VENTA = 0 AND CBX.CBX_PUBL_PORT_INV_VENTA = 0)
-                            OR (EPA.DD_EPA_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_ALQUILER = 0 AND CBX.CBX_PUBL_PORT_INV_ALQUILER = 0)';
+                        WHERE ((EPV.DD_EPV_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_VENTA = 0 AND CBX.CBX_PUBL_PORT_INV_VENTA = 0)
+                            OR (EPA.DD_EPA_CODIGO = ''03'' AND CBX.CBX_PUBL_PORT_PUBL_ALQUILER = 0 AND CBX.CBX_PUBL_PORT_INV_ALQUILER = 0))
+                        AND AUX.FLAG_EN_REM = '|| FLAG_EN_REM||'';
             EXECUTE IMMEDIATE V_MSQL;
             
             V_NUM_FILAS := sql%rowcount;
@@ -591,6 +593,10 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
                         JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID=TCO.DD_TCO_ID
                         LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON APU.DD_POR_ID = POR.DD_POR_ID
+                        WHERE NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR 
+                        JOIN '|| V_ESQUEMA ||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID 
+                        JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 
+                        WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''01'' AND ACTO.ACT_ID = ACT.ACT_ID)
                         ) US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
                              PAC.PAC_CHECK_PUBLICAR = US.PAC_CHECK_PUBLICAR

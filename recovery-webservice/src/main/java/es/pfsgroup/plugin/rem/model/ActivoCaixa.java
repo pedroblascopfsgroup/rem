@@ -27,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
@@ -74,10 +73,6 @@ public class ActivoCaixa implements Serializable, Auditable {
     
     @Column(name = "CBX_NECESIDAD_ARRAS")
     private Boolean necesidadArras;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_MNA_ID")
-    private DDMotivoNecesidadArras motivoNecesidadArras;
     
 	@Column(name = "CBX_NEC_FUERZA_PUBL")
 	private Boolean necesariaFuerzaPublica;
@@ -165,6 +160,9 @@ public class ActivoCaixa implements Serializable, Auditable {
 	
 	@Column(name = "CBX_UNIDAD_ECONOMICA")
 	private String unidadEconomicaCaixa;
+
+    @Column(name = "MOT_NECESIDAD_ARRAS")
+    private String motivosNecesidadArras;
 	
 	@Version   
 	private Long version;
@@ -258,14 +256,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setNecesidadArras(Boolean necesidadArras) {
 		this.necesidadArras = necesidadArras;
-	}
-
-	public DDMotivoNecesidadArras getMotivoNecesidadArras() {
-		return motivoNecesidadArras;
-	}
-
-	public void setMotivoNecesidadArras(DDMotivoNecesidadArras motivoNecesidadArras) {
-		this.motivoNecesidadArras = motivoNecesidadArras;
 	}
 
 	public Boolean getNecesariaFuerzaPublica() {
@@ -483,6 +473,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
 		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
+	}
+	
+	public String getMotivosNecesidadArras() {
+		return motivosNecesidadArras;
+	}
+
+	public void setMotivosNecesidadArras(String motivosNecesidadArras) {
+		this.motivosNecesidadArras = motivosNecesidadArras;
 	}
 	
 }

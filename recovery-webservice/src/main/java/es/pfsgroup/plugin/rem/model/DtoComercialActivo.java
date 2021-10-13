@@ -34,8 +34,7 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Date activoObraNuevaComercializacionFecha;
 	private Boolean necesidadIfActivo;
 	private Boolean necesidadArras;
-	private String motivoNecesidadArrasCod;
-	private String motivoNecesidadArrasDesc;
+	private String motivosNecesidadArras;
 	private String estadoComercialVentaCodigo;
 	private String estadoComercialVentaDescripcion;
 	private String estadoComercialAlquilerCodigo;
@@ -277,20 +276,12 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.necesidadArras = necesidadArras;
 	}
 
-	public String getMotivoNecesidadArrasCod() {
-		return motivoNecesidadArrasCod;
+	public String getMotivosNecesidadArras() {
+		return motivosNecesidadArras;
 	}
 
-	public void setMotivoNecesidadArrasCod(String motivoNecesidadArrasCod) {
-		this.motivoNecesidadArrasCod = motivoNecesidadArrasCod;
-	}
-
-	public String getMotivoNecesidadArrasDesc() {
-		return motivoNecesidadArrasDesc;
-	}
-
-	public void setMotivoNecesidadArrasDesc(String motivoNecesidadArrasDesc) {
-		this.motivoNecesidadArrasDesc = motivoNecesidadArrasDesc;
+	public void setMotivosNecesidadArras(String motivosNecesidadArras) {
+		this.motivosNecesidadArras = motivosNecesidadArras;
 	}
 	
 	public String getEstadoComercialVentaCodigo() {

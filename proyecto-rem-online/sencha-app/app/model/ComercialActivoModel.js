@@ -98,10 +98,7 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			type: 'boolean'
 		},
 		{
-			name: 'motivoNecesidadArrasCod'
-		},
-		{
-			name: 'motivoNecesidadArrasDesc'
+			name: 'motivosNecesidadArras'
 		},
 		{
 			name: 'estadoComercialVentaCodigo'

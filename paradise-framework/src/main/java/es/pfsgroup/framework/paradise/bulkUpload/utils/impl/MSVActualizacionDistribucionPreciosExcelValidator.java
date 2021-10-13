@@ -394,7 +394,6 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 							if (!Checks.estaVacio(listaActivos=dameFilas(COL_NUM.EXP_NUM_EXPEDIENTE, numExpediente, COL_NUM.ACT_NUM_ACTIVO, exc)) && !listaExpedientes.contains(numExpediente)) {
 								if (particularValidator.existeActivo(numActivo) 
 										&& particularValidator.existeExpedienteComercial(numExpediente)
-										&& particularValidator.existeActivo(numActivo)
 										&& !particularValidator.isAllActivosEnOferta(numExpediente, listaActivos)
 								){
 										

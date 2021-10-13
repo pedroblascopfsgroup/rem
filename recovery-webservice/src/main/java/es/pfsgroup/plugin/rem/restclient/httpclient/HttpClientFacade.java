@@ -85,7 +85,7 @@ public class HttpClientFacade {
 			restApi.trace(jsonString);
 			
 			JSONObject jsonRespuesta = execute(httpclient, method);
-			logger.error("Respuesta CFV : " + jsonRespuesta.toString());
+			logger.error("Respuesta: " + jsonRespuesta.toString());
 			logger.error("Respuesta httpClient [url=" + serviceUrl + ", method=" + sendMethod
 					+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 

@@ -422,4 +422,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 
 	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
+
+	public Activo getActivoMatrizByNumAgrupacion(Long numAgrupacion);
 }

@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.AltaAsuntosLegalReoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
@@ -137,6 +138,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -149,9 +151,11 @@ import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoCargas;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.service.TabActivoPatrimonio;
 import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
+import es.pfsgroup.plugin.rem.thread.AltaAsuntosLegalReoAsync;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
@@ -281,6 +285,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private AgrupacionAdapter agrupacionAdapter;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3869,6 +3876,14 @@ public class ActivoAdapter {
 				llamadaAsincrona.start();
 			}
 		}
+		
+		if (tabActivoService instanceof TabActivoPatrimonio || tabActivoService instanceof TabActivoSitPosesoriaLlaves 
+				|| tabActivoService instanceof TabActivoDatosRegistrales) {
+			List<Long> numActivosList = new ArrayList<Long>();
+			numActivosList.add(activo.getNumActivo());
+			
+			this.llamadaAltaAsuntosLegalReoAsync(numActivosList, false);
+		}
 
 	}
 
@@ -5034,6 +5049,43 @@ public class ActivoAdapter {
 		}
 		
 		return activosAdicionalesSinRepetidos;
+	}
+	
+	@Transactional(readOnly = false)
+	public void llamadaAltaAsuntosLegalReoAsync(List<Long> numEntidadList, boolean isNumAgrupacionList) {
+		
+		logger.error("ActivoAdapter > llamadaAltaAsuntosLegalReoAsync");
+		logger.error("NUMEROS DE ENTIDADES: "+numEntidadList.toString());
+		
+		List<Long> numActivosList = new ArrayList<Long>();
+		List<Long> numActivosListFinal = new ArrayList<Long>();
+		
+		if (isNumAgrupacionList) {
+			for (Long numAgrupacion : numEntidadList) {
+				Activo activo = activoDao.getActivoMatrizByNumAgrupacion(numAgrupacion);
+				if (activo != null)
+					numActivosList.add(activo.getNumActivo());
+			}
+		} else {
+			numActivosList = numEntidadList;
+		}
+		
+		if (numActivosList != null && !numActivosList.isEmpty()) {
+			for (Long numActivo : numActivosList) {
+				Activo activo = activoDao.getActivoByNumActivo(numActivo);
+				if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+						&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
+						&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) || 
+								DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))) {
+					numActivosListFinal.add(activo.getNumActivo());
+				}
+			}
+		}
+		
+		if (numActivosListFinal != null && !numActivosListFinal.isEmpty()) {
+			Thread llamadaAsync = new Thread(new AltaAsuntosLegalReoAsync(numActivosListFinal, usuarioManager.getUsuarioLogado().getUsername(), AltaAsuntosLegalReoApi.TIMEOUT_30_SEGUNDOS, new ModelMap()));
+			llamadaAsync.start();
+		}
 	}
 }
 

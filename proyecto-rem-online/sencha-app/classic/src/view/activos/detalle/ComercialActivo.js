@@ -347,12 +347,11 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 										}
 									},
 									{ 
-										xtype: 'comboboxfieldbase',
+										xtype: 'textareafieldbase',
 										fieldLabel:	HreRem.i18n('fieldlabel.motivo.necesidad.arras'),
-										reference: 'motivoNecesidadRef',
+										reference: 'motivosNecesidadRef',
 										bind: {								
-											store: '{comboMotivoNecesidadArras}',
-											value: '{comercial.motivoNecesidadArrasCod}',
+											value: '{comercial.motivosNecesidadArras}',
 											disabled: '{!comercial.necesidadArras}',
 											readOnly: '{isCarteraBankia}'
 										}

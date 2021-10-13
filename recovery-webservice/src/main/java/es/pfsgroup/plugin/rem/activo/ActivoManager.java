@@ -4007,9 +4007,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if (actCaixa.getNecesidadArras() != null 
 						&& Boolean.TRUE.equals(actCaixa.getNecesidadArras()) 
-						&& actCaixa.getMotivoNecesidadArras() != null) {
-					dto.setMotivoNecesidadArrasCod(actCaixa.getMotivoNecesidadArras().getCodigo());
-					dto.setMotivoNecesidadArrasDesc(actCaixa.getMotivoNecesidadArras().getDescripcion());
+						&& actCaixa.getMotivosNecesidadArras() != null) {
+					dto.setMotivosNecesidadArras(actCaixa.getMotivosNecesidadArras());
 				}
 				
 				if (actCaixa.getEstadoComercialVenta() != null) {

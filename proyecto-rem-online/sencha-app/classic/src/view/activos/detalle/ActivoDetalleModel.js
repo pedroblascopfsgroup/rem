@@ -3922,16 +3922,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getListHistoricoOcupadoTitulo',
 				extraParams: {id: '{activo.id}'}
 		   }
-	   },
-
-	   comboMotivoNecesidadArras: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'motivoNecesidadArras'}
-			}
-	  },	   
+	   },   
 
 	   comboDisponibleAdministrativo: {
 			model: 'HreRem.model.ComboBase',

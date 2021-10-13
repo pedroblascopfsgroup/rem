@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso	
---## FECHA_CREACION=20211013
+--## FECHA_CREACION=20211012
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10585
@@ -700,7 +700,7 @@ BEGIN
 			        LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0
 			        LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0
 			        WHERE (tco.dd_tco_codigo = ''01'' AND epv.DD_EPV_CODIGO <> ''03'')  OR (epa.DD_EPA_CODIGO <> ''03'' and  tco.dd_tco_codigo = ''03'') 
-			            OR ((epa.DD_EPA_CODIGO <> ''03'' OR epv.DD_EPV_CODIGO <> ''03'') and  tco.dd_tco_codigo = ''02'')   AND a.borrado = 0
+			            OR ((epa.DD_EPA_CODIGO <> ''03'' AND epv.DD_EPV_CODIGO <> ''03'') and  tco.dd_tco_codigo = ''02'')   AND a.borrado = 0
 			    ) publicados
 			ON (aux.act_id = publicados.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -743,7 +743,7 @@ BEGIN
                     LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0
                     LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0
 			        WHERE  cra.dd_Cra_codigo = ''03'' AND (tco.dd_tco_codigo = ''01'' AND epv.DD_EPV_CODIGO <> ''03'')  OR (epa.DD_EPA_CODIGO <> ''03'' and  tco.dd_tco_codigo = ''03'') 
-			            OR ((epa.DD_EPA_CODIGO <> ''03'' OR epv.DD_EPV_CODIGO <> ''03'') and tco.dd_tco_codigo = ''02'') AND a.borrado = 0        
+			            OR ((epa.DD_EPA_CODIGO <> ''03'' AND epv.DD_EPV_CODIGO <> ''03'') and tco.dd_tco_codigo = ''02'') AND a.borrado = 0        
 			    ) sarebBk
 			ON (aux.act_id = sarebBk.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -780,7 +780,7 @@ BEGIN
                     JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 
                     JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0
 					JOIN '||V_ESQUEMA||'.AUX_VIS_GESTION_COMERCIAL_RES AUX2 ON AUX2.ACT_ID=a.act_id and AUX2.CHECK_VISIBILIDAD is null
-			        WHERE cra.dd_Cra_codigo = ''01''  AND a.ACT_VPO = 1			        
+			        WHERE cra.dd_Cra_codigo = ''01'' AND a.ACT_VPO = 1			        
 			    ) checkCajamar
 			ON (aux.act_id = checkCajamar.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -832,7 +832,9 @@ BEGIN
 		        join '||V_ESQUEMA||'.eco_expediente_comercial eco on eco.ofr_id = ofr.ofr_id AND ECO.BORRADO = 0
 		        join '||V_ESQUEMA||'.dd_eec_est_exp_comercial eec on eec.dd_eec_id = eco.dd_eec_id AND EEC.BORRADO = 0
 				JOIN '||V_ESQUEMA||'.AUX_VIS_GESTION_COMERCIAL_RES AUX2 ON AUX2.ACT_ID=a.act_id and AUX2.CHECK_VISIBILIDAD is null
-		        WHERE eec.dd_eec_codigo  in (''03'',''06'',''08'') AND A.BORRADO = 0		        
+				JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 
+				JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0  
+		        WHERE eec.dd_eec_codigo  in (''03'',''06'',''08'') AND TCO.DD_TCO_CODIGO=''01''  AND A.BORRADO = 0	
 		    ) estadosExpediente
 		ON (aux.act_id = estadosExpediente.act_id)
 		WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -962,7 +964,7 @@ BEGIN
 			        LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0
 			        LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0
 			        WHERE (tco.dd_tco_codigo = ''01'' AND epv.DD_EPV_CODIGO <> ''03'')  OR (epa.DD_EPA_CODIGO <> ''03'' and  tco.dd_tco_codigo = ''03'') 
-			            OR ((epa.DD_EPA_CODIGO <> ''03'' OR epv.DD_EPV_CODIGO <> ''03'') and  tco.dd_tco_codigo = ''02'')   AND a.borrado = 0
+			            OR ((epa.DD_EPA_CODIGO <> ''03'' AND epv.DD_EPV_CODIGO <> ''03'') and  tco.dd_tco_codigo = ''02'')   AND a.borrado = 0
 			    ) publicados
 			ON (aux.act_id = publicados.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -1005,7 +1007,7 @@ BEGIN
                     LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON apu.DD_EPA_ID = epa.DD_EPA_ID AND epa.borrado = 0
                     LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON apu.DD_EPV_ID = epv.DD_EPV_ID AND epv.borrado = 0
 			        WHERE  cra.dd_Cra_codigo = ''03'' AND (tco.dd_tco_codigo = ''01'' AND epv.DD_EPV_CODIGO <> ''03'')  OR (epa.DD_EPA_CODIGO <> ''03'' and  tco.dd_tco_codigo = ''03'') 
-			            OR ((epa.DD_EPA_CODIGO <> ''03'' OR epv.DD_EPV_CODIGO <> ''03'') and tco.dd_tco_codigo = ''02'') AND a.borrado = 0        
+			            OR ((epa.DD_EPA_CODIGO <> ''03'' AND epv.DD_EPV_CODIGO <> ''03'') and tco.dd_tco_codigo = ''02'') AND a.borrado = 0        
 			    ) sarebBk
 			ON (aux.act_id = sarebBk.act_id)
 			WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0
@@ -1094,7 +1096,9 @@ BEGIN
 		        join '||V_ESQUEMA||'.eco_expediente_comercial eco on eco.ofr_id = ofr.ofr_id AND ECO.BORRADO = 0
 		        join '||V_ESQUEMA||'.dd_eec_est_exp_comercial eec on eec.dd_eec_id = eco.dd_eec_id AND EEC.BORRADO = 0
 				JOIN '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial AUX2 ON AUX2.ACT_ID=a.act_id and AUX2.CHECK_VISIBILIDAD is null
-		        WHERE eec.dd_eec_codigo  in (''03'',''06'',''08'') AND A.BORRADO = 0		        
+				JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion apu ON a.act_id = apu.act_id AND apu.borrado = 0 
+				JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = apu.dd_tco_id and tco.borrado = 0  
+		        WHERE eec.dd_eec_codigo  in (''03'',''06'',''08'') AND TCO.DD_TCO_CODIGO=''01''  AND A.BORRADO = 0		        
 		    ) estadosExpediente
 		ON (aux.act_id = estadosExpediente.act_id)
 		WHEN MATCHED THEN UPDATE SET CHECK_VISIBILIDAD = 0

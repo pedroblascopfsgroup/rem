@@ -274,7 +274,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
         genericDao.save(ExpedienteComercial.class, expediente);
 
-        adapter.save(createRequestVentaContabilizada(dto));
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 

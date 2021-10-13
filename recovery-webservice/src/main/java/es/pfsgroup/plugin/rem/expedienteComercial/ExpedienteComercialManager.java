@@ -14050,6 +14050,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			if (sra != null) {
+				
+				if(sra.getAseguradoras() != null) {
+					DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"descripcion", sra.getAseguradoras()));
+					if(ddTpoTpoCuenta != null) {
+						dto.setAseguradoraCod(ddTpoTpoCuenta.getCodigo());
+					}
+					dto.setAseguradoraDesc(sra.getAseguradoras());	
+				}
+				
 				if (sra.getFechaVencimientoRentaslBc() != null) {
 					dto.setFechaSancionRentas(sra.getFechaVencimientoRentaslBc());
 				}
@@ -14170,14 +14179,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if (sra != null) {
+			if(dto.getAseguradoraCod() != null) {
+				DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getAseguradoraCod()));
+				if(ddTpoTpoCuenta != null) {
+					sra.setAseguradoras(ddTpoTpoCuenta.getDescripcion());
+				}
+			}
 			if (dto.getFechaSancionRentas()!= null) {
 				sra.setFechaVencimientoRentaslBc(dto.getFechaSancionRentas());
 			}			
-			if (dto.getMesesAval() != null) {
-				sra.setMesesAval(dto.getMesesAval().intValue());
-			}			
+			if (dto.getMesesRentas() != null) {
+				sra.setMesesAval(dto.getMesesRentas().intValue());
+			}else {
+				sra.setMesesAval(null);
+			}
 			if (dto.getImporteRentas() != null) {
 				sra.setImporteRentasBc(dto.getImporteRentas());
+			}else {
+				sra.setImporteRentasBc(null);
 			}
 			genericDao.save(SeguroRentasAlquiler.class, sra);
 		}

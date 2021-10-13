@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210715
+--## FECHA_CREACION=20211008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Formatos númericos en ACT_EN_TRAMITE = 0  - [HREOS-14366] - Daniel Algaba
 --##        0.4 Metemos NUM_IDENTFICATIVO como campos de cruce - [HREOS-14368] - Daniel Algaba
 --##	      0.5 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##	      0.6 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -59,8 +60,11 @@ BEGIN
 		    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
 		    JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON ACT.ACT_ID = PAC.ACT_ID
 		    JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID
+          JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
+          JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
 		    WHERE TPC.DD_TPC_CODIGO = ''12'' AND ACT.BORRADO = 0 AND CRA.DD_CRA_CODIGO = ''03'' AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL AND PAC.PAC_INCLUIDO = 1
             AND ACT.ACT_EN_TRAMITE = 0
+            AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
 		) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE  AND US.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
 		WHEN MATCHED THEN UPDATE SET
 		AUX.IMP_PRECIO_REF_ALQUI = US.VAL_IMPORTE * 100

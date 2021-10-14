@@ -3080,6 +3080,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DatosInformeFiscal informeFiscal = genericDao.get(DatosInformeFiscal.class, 
 				genericDao.createFilter(FilterType.EQUALS,"oferta",expediente.getOferta()));
 
+		Oferta oferta = expediente.getOferta();
+
 		// Si el expediente pertenece a una agrupación miramos el activo principal
 		if (!Checks.esNulo(expediente.getOferta().getAgrupacion())) {
 			Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
@@ -3146,7 +3148,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			// Economicas-Fiscales
 			if (!Checks.esNulo(condiciones.getTipoImpuesto())) {
-				dto.setTipoImpuestoCodigo(condiciones.getTipoImpuesto().getCodigo());
+				if(oferta != null && oferta.getTipoOferta() != null && oferta.getTipoOferta().getCodigo() != null) {
+					if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+						dto.setTipoImpuestoCodigo(condiciones.getTipoImpuesto().getCodigo());
+					}else{
+						dto.setTipoImpuestoCodigoAlq(condiciones.getTipoImpuesto().getCodigo());
+					}
+				}else{
+					dto.setTipoImpuestoCodigo(condiciones.getTipoImpuesto().getCodigo());
+				}
+
 			}
 			dto.setTipoAplicable(condiciones.getTipoAplicable());
 			dto.setRenunciaExencion(condiciones.getRenunciaExencion());
@@ -3427,7 +3438,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setCheckIGC(condiciones.getCheckIGC());
 		
 		
-		Oferta oferta = expediente.getOferta();
+		
 		if(oferta != null) {
 			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());
 			dto.setFechaFinCnt(oferta.getFechaFinContrato());
@@ -3435,7 +3446,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 
 		if (condiciones.getTipoGrupoImpuesto() != null) {
-			dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+			if(oferta != null && oferta.getTipoOferta() != null && oferta.getTipoOferta().getCodigo() != null) {
+				if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+					dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+				}
+				else {
+					dto.setTipoGrupoImpuestoCodAlq(condiciones.getTipoGrupoImpuesto().getCodigo());
+				}
+			}else {
+				dto.setTipoGrupoImpuestoCod(condiciones.getTipoGrupoImpuesto().getCodigo());
+			}
 		}
 		
 		boolean completada = false;
@@ -3689,6 +3709,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones,
 			DtoCondiciones dto) {
 		try {
+			ExpedienteComercial expediente = condiciones.getExpediente();
+			boolean esVenta = true;
+
+			if(expediente != null && expediente.getOferta() != null) {
+				Oferta oferta = expediente.getOferta();
+				if(oferta.getTipoOferta() != null && oferta.getTipoOferta().getCodigo() != null) {
+					if(!DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+						esVenta = false;
+					}
+				}
+			}
 			beanUtilNotNull.copyProperties(condiciones, dto);
 
 			if (!Checks.esNulo(dto.getEstadosFinanciacion())) {
@@ -3715,10 +3746,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			// Fiscales
-			if (!Checks.esNulo(dto.getTipoImpuestoCodigo())) {
-				DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
-				condiciones.setTipoImpuesto(tipoImpuesto);
+			if(esVenta){
+				if (!Checks.esNulo(dto.getTipoImpuestoCodigo())) {
+					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
+					condiciones.setTipoImpuesto(tipoImpuesto);
+				}
+			}else{
+				if (!Checks.esNulo(dto.getTipoImpuestoCodigoAlq())) {
+					DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigoAlq());
+					condiciones.setTipoImpuesto(tipoImpuesto);
+				}
 			}
 
 			if (!Checks.esNulo(dto.getReservaConImpuesto())) {
@@ -4018,7 +4057,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			
-			ExpedienteComercial expediente = condiciones.getExpediente();
+			
 			if(expediente != null) {
 				Oferta oferta = expediente.getOferta();
 				if(oferta != null) {
@@ -4033,13 +4072,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			
-			if (dto.getTipoGrupoImpuestoCod() != null) {
-				DDGrupoImpuesto grupo = (DDGrupoImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDGrupoImpuesto.class, dto.getTipoGrupoImpuestoCod());
-				if (grupo != null) {
-					condiciones.setTipoGrupoImpuesto(grupo);
+			if (esVenta) {
+				if (dto.getTipoGrupoImpuestoCod() != null) {
+					DDGrupoImpuesto grupo = (DDGrupoImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDGrupoImpuesto.class, dto.getTipoGrupoImpuestoCod());
+					if (grupo != null) {
+						condiciones.setTipoGrupoImpuesto(grupo);
+					}
+					if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(condiciones.getTipoImpuesto().getCodigo())) {
+						condiciones.setTipoGrupoImpuesto(null);
+					}
 				}
-				if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(condiciones.getTipoImpuesto().getCodigo())) {
-					condiciones.setTipoGrupoImpuesto(null);
+			}else {
+				if (dto.getTipoGrupoImpuestoCodAlq() != null) {
+					DDGrupoImpuesto grupo = (DDGrupoImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDGrupoImpuesto.class, dto.getTipoGrupoImpuestoCodAlq());
+					if (grupo != null) {
+						condiciones.setTipoGrupoImpuesto(grupo);
+					}
+					if (DDTiposImpuesto.TIPO_IMPUESTO_ITP.equals(condiciones.getTipoImpuesto().getCodigo())) {
+						condiciones.setTipoGrupoImpuesto(null);
+					}
 				}
 			}
 			

@@ -862,7 +862,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
 										bind : {
 											store : '{comboTiposImpuesto}',
-											value : '{condiciones.tipoImpuestoCodigo}'
+											value : '{condiciones.tipoImpuestoCodigoAlq}'
 										},
 										displayField : 'descripcion',
 										valueField : 'codigo',
@@ -886,7 +886,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 
 										bind : {
 											store : '{comboGrupoImpuesto}',
-											value : '{condiciones.tipoGrupoImpuestoCod}'
+											value : '{condiciones.tipoGrupoImpuestoCodAlq}'
 										},
 										displayField : 'descripcion',
 										valueField : 'codigo'

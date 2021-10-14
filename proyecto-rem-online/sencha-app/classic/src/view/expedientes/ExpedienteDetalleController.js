@@ -5711,10 +5711,7 @@ comprobarFormatoModificar: function() {
 					tipoAplicableBk.allowBlank=true;
 					
 			    	var esBankia = me.getViewModel().get("expediente.esBankia");
-			    	if(!esBankia){
-			    		grupoImpuesto.setDisabled(true);
-			    		grupoImpuesto.allowBlank = true;
-			    	}
+			    	
 			    	tipoAplicable.reset();	    				
 	    			inversionSujetoPasivo.reset();
 	    			tributosPropiedad.reset();
@@ -5724,7 +5721,9 @@ comprobarFormatoModificar: function() {
 	    			renunciaExencion.setDisabled(true);
 	    			tributosPropiedad.setDisabled(true);
 	    			inversionSujetoPasivo.setDisabled(true);
-	    			
+	    			grupoImpuesto.setDisabled(true);
+		    		
+	    			grupoImpuesto.allowBlank = true;
 	    			tipoAplicable.allowBlank = true;
 	    			renunciaExencion.allowBlank = true;
 	    			tributosPropiedad.allowBlank = true;

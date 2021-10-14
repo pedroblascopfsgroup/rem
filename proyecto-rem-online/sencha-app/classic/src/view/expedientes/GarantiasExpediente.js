@@ -189,9 +189,6 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												bind : '{garantias.mesesAval}',
 												maxLength: 2,
 												maxValue: 12,
-												listeners:{
-													change:'onChangeMesesGarantiasAval'
-												},
 												disabled: true
 											}, 											
 											{
@@ -200,9 +197,6 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												symbol : HreRem.i18n("symbol.euro"),
 												fieldLabel : HreRem.i18n('fieldlabel.importe'),
 												bind : '{garantias.importeAval}',
-												listeners:{
-													change: 'onChangeImporteGarantiasAval'
-												},
 												disabled: true
 											},
 											{
@@ -273,9 +267,6 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												bind : '{garantias.mesesRentas}',
 												maxLength: 2,
 												maxValue: 12,
-												listeners:{
-													change:'onChangeMesesGarantiasRentas'
-												},
 												disabled: true
 											}, 											
 											{
@@ -284,9 +275,6 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												symbol : HreRem.i18n("symbol.euro"),
 												fieldLabel : HreRem.i18n('fieldlabel.importe'),
 												bind : '{garantias.importeRentas}',
-												listeners:{
-													change:'onChangeImporteGarantiasRentas'
-												},
 												disabled: true
 											}
 										]

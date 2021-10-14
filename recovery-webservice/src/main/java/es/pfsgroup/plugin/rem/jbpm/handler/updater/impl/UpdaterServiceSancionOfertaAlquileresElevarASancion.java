@@ -74,7 +74,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta);
+				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite);
 			}
 			
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -139,7 +139,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	}
 	
 	
-	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta) {
+	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite) {
 		boolean estadoBcModificado = false;
 		String codigoEstadoExpediente = null;
 		String codigoEstadoBc = null;
@@ -151,6 +151,15 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 			eco.setEstado(estadoExpComercial);
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING;
+
+			// Una vez aprobado el expediente, se congelan el resto de ofertas que no
+			// estén rechazadas (aceptadas y pendientes)
+			List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+			for (Oferta ofertaCongelar : listaOfertas) {
+				if (!ofertaCongelar.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaCongelar.getEstadoOferta().getCodigo())) {
+					ofertaApi.congelarOferta(ofertaCongelar);
+				}
+			}
 
 
 		}else if(DDRespuestaOfertante.CODIGO_RECHAZA.equals(resolucion)) {

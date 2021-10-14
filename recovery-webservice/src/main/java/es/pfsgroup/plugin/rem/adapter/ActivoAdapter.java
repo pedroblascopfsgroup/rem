@@ -3984,7 +3984,6 @@ public class ActivoAdapter {
 			}
 
 			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
-			clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
 
 			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
@@ -3994,10 +3993,10 @@ public class ActivoAdapter {
 				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
 				iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
 				clienteComercial.setInfoAdicionalPersona(iap);
-			}else if(clienteComercial.getInfoAdicionalPersona() == null) {
-				clienteComercial.setInfoAdicionalPersona(iap);
 			}
-			
+
+			clienteComercial.setInfoAdicionalPersona(iap);
+
 			if(dto.getVinculoCaixaCodigo() != null) {
 				DDVinculoCaixa vinculoCaixa = (DDVinculoCaixa) utilDiccionarioApi.dameValorDiccionarioByCod(DDVinculoCaixa.class,dto.getVinculoCaixaCodigo());
 				iap.setVinculoCaixa(vinculoCaixa);
@@ -4154,9 +4153,30 @@ public class ActivoAdapter {
 					clienteComercial.setTelefono2(dto.getTelefono2Rte());
 				}
 				
-				if (dto.getRepresentantePrp() != null) {
+				/*if (dto.getRepresentantePrp() != null) {
 					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
 				}
+
+				 */
+
+				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+
+				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),null);
+
+				if(iapRep == null) {
+					iapRep = new InfoAdicionalPersona();
+					iapRep.setAuditoria(Auditoria.getNewInstance());
+					iapRep.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
+					iapRep.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
+					clienteComercial.setInfoAdicionalPersonaRep(iapRep);
+				}
+
+				if (dto.getRepresentantePrp() != null) {
+					iapRep.setPrp(dto.getRepresentantePrp());
+				}
+				genericDao.save(InfoAdicionalPersona.class,iapRep);
+
+				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 			}
 			
 			genericDao.save(InfoAdicionalPersona.class, iap);

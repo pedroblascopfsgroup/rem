@@ -10,6 +10,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
@@ -231,4 +232,14 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		return isAprobado;
 	}
 	
+	@Override
+	public boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna){
+		boolean camposRellenos = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null) {
+			camposRellenos = true;
+		}
+		
+		return camposRellenos;
+	}
 }

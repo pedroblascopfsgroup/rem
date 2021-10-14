@@ -784,7 +784,11 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteBloqueadoPorFuncion(idTramite);
             }
-            
+            def tieneRellenosCamposAnulacion = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.tieneRellenosCamposAnulacion(tareaExterna);
+            }
+           
 	
   			 ]]></value>
   		</list>

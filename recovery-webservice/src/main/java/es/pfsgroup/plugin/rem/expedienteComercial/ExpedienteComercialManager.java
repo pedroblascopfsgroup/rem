@@ -5793,11 +5793,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getPeticionarioAnulacion())) {
 					expedienteComercial.setPeticionarioAnulacion(dto.getPeticionarioAnulacion());
 				}
-
-				if (!Checks.esNulo(dto.getCodMotivoAnulacion()) && DDTipoOferta.CODIGO_VENTA
-						.equals(expedienteComercial.getOferta().getTipoOferta().getCodigo())) {
+				Oferta oferta = expedienteComercial.getOferta();
+				if (!Checks.esNulo(dto.getCodMotivoAnulacion()) && (DDTipoOferta.isTipoVenta(oferta.getTipoOferta()) || DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))) {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = (DDMotivoAnulacionExpediente) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
+						.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
 
 					actualizarEstadoPublicacion = true;

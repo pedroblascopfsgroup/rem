@@ -2352,6 +2352,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.ocultaryHacerNoObligatorio(me.down('[name=comite]'));
+			me.ocultaryHacerNoObligatorio(me.down('[name=motivoAnulacion]'));
 			me.bloquearCampo(me.down('[name=fechaElevacion]'));
 			var fecha = new Date();
 			me.down('[name=fechaElevacion]').setValue(fecha);
@@ -2364,7 +2365,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				resolucionOferta.addListener('change', function(){
 
 	    		if(resolucionOferta.value == '01' || resolucionOferta.value == '03'){
-
     				if(resolucionOferta.value == '03'){
     					me.habilitarCampo(importeContraoferta);
 						me.campoObligatorio(importeContraoferta);
@@ -2375,18 +2375,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 						me.habilitarCampo(me.down('[name=fechaElevacion]'));
     				}
 	    			
-	    			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 	    			me.borrarCampo(me.down('[name=motivoAnulacion]'));
-	    			me.campoNoObligatorio(me.down('[name=motivoAnulacion]'));
 	    			me.campoObligatorio(me.down('[name=fechaElevacion]'));
 	    			me.setFechaActual(me.down('[name=fechaElevacion]'));
 	    			
 	    		}else{
-	    			
-					me.campoObligatorio(me.down('[name=motivoAnulacion]'));
 	    			me.campoNoObligatorio(me.down('[name=fechaElevacion]'));
-	    			
-	    			me.habilitarCampo(me.down('[name=motivoAnulacion]'));
 	            	me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
 	            	
 	            	me.borrarCampo(me.down('[name=fechaElevacion]'));
@@ -2394,7 +2388,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            	
 	            	me.deshabilitarCampo(importeContraoferta);
 					me.campoNoObligatorio(importeContraoferta);
-	    			
 	    		}
 	    		});
 			}

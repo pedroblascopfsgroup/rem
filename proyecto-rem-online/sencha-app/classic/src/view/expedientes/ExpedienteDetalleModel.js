@@ -1751,6 +1751,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'tipoGastoRepercutido'}
 	    	},
 	    	autoLoad: true
-		}
+		},
+	
+		storeMotivoAnulacionCaixa: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'activo/getMotivoAnulacionExpedienteCaixa'
+            },
+	    	autoLoad: true
+        }
     }
 });

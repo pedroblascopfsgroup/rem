@@ -1175,6 +1175,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			},
 			autoLoad: false
-		}
+		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	}
     }
 });

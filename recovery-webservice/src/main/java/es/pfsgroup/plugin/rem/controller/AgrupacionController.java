@@ -646,6 +646,10 @@ public class AgrupacionController extends ParadiseJsonController {
 							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
 						}
 					}
+					
+					if (!Checks.esNulo(listaFotos.get(i).getTipoFoto())) {
+						fotoDto.setCodigoTipoFoto(listaFotos.get(i).getTipoFoto().getCodigo());
+					}
 
 					listaDtoFotos.add(fotoDto);
 

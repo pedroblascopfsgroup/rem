@@ -1185,6 +1185,10 @@ public class ActivoController extends ParadiseJsonController {
 									}
 								}
 							}
+							
+							if (!Checks.esNulo(aListaActivoFoto.getTipoFoto())) {
+								fotoDto.setCodigoTipoFoto(aListaActivoFoto.getTipoFoto().getCodigo());
+							}
 
 						} catch (IllegalAccessException e) {
 							logger.error("error en activoController", e);

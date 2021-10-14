@@ -29,6 +29,8 @@ public interface TramiteAlquilerApi {
 	boolean validarMesesImporteDeposito(TareaExterna tareaExterna);
 
 	boolean isTramiteT015Aprobado(List<String> tareasActivas);
+
+	boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna);
 	
 	
 }

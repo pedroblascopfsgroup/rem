@@ -18,6 +18,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 
         var me = this;
 		me.setTitle(HreRem.i18n('title.ficha'));
+
+		var storeAnulacion  = me.lookupViewModel().get('expediente.isCarteraBankia') ? '{storeMotivoAnulacionCaixa}' : '{storeMotivoAnulacion}';
         var items= [
 
 			{   
@@ -469,7 +471,20 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 		                	reference: 'comboMotivoAnulacion',
 		                	readOnly: true,
-				        	bind: '{getMotivoAnulacionOrRechazo}'
+				        	bind: {
+				        		value: '{getMotivoAnulacionOrRechazo}',
+				        		hidden: '{esBankiaAlquiler}'
+				        	}
+				        },
+				        { 
+							xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+		                	reference: 'comboMotivoAnulacionEditable',
+				        	bind: {
+				        		store:  storeAnulacion,
+			            		value: '{expediente.codMotivoAnulacion}',
+			            		hidden: '{!esBankiaAlquiler}'
+			            	}
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',

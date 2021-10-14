@@ -68,11 +68,11 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 							estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
 						}else {
 							estado = DDEstadosExpedienteComercial.PTE_NEGOCIACION;
-							estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+							estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
 						}
 					}else {
 						estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+						estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
 					}
 					
 				}else {

@@ -193,7 +193,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind : {
 								store : '{comboSiNoBoolean}',
 								value : '{datosbasicosoferta.checkListDocumentalCompleto}',
-								hidden: '{!esBankiaAlquiler}'
+								hidden: '{!esAlquilerNoComercial}' 
 							}
 						},
 					{

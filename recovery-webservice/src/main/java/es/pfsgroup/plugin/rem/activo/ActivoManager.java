@@ -9506,7 +9506,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (activoCaixa != null && ofertaCaixa != null && tipoOferta != null) {
 			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
 				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionVenta());
-			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+			} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)
+					|| DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tipoOferta)) {
 				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
 			}
 		}

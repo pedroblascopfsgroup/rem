@@ -747,12 +747,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-			boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
-	
 			if (alta) {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+				boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
+			
 				if (ofertaDto.getCodTarea().equals("01")) {
 					if (Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
 						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
@@ -813,24 +813,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
 				}			
 			}
-		}
-		
-		if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-			DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
-					"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
-			if (!Checks.esNulo(motivoJustificacionOferta)) {
-				if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(ofertaDto.getCodMotivoJustificacionOferta()) 
-						&& Checks.esNulo(ofertaDto.getJustificacionOferta())) {
-					errorsList.put("justificacionOferta", RestApi.REST_MSG_MISSING_REQUIRED);
-				} else if(!DDMotivoJustificacionOferta.CODIGO_OTRO.equals(ofertaDto.getCodMotivoJustificacionOferta()) 
-						&& !Checks.esNulo(ofertaDto.getJustificacionOferta())){
-					errorsList.put("justificacionOferta", RestApi.REST_MSG_UNKNOWN_KEY);
-				} 
-			}else {
-				errorsList.put("codMotivoJustificacionOferta", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
-		} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta()) && Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-			errorsList.put("codMotivoJustificacionOferta", RestApi.REST_MSG_MISSING_REQUIRED);
 		}
 
 		return errorsList;
@@ -1145,24 +1127,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			saveTestigosOferta(ofertaDto, oferta, false);
 			
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta()) || !Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+				
+				String texto = null;
+				dto.setCampoCodigo("08");
+				if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+					DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
-				if (!Checks.esNulo(motivoJustificacionOferta)) {
-					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
-					
-					dto.setCampoCodigo("08");
-					String texto = motivoJustificacionOferta.getDescripcion();
-					if(ofertaDto.getJustificacionOferta() != null) {
-						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
-							texto += ": " + ofertaDto.getJustificacionOferta();						
+					if (!Checks.esNulo(motivoJustificacionOferta)) {
+						oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+						
+						texto = motivoJustificacionOferta.getDescripcion();
+						if(ofertaDto.getJustificacionOferta() != null) {
+								texto += ": " + ofertaDto.getJustificacionOferta();						
 						}
 					}
-					
-					dto.setTexto(texto);
-					
-					saveTextoOfertaWS(dto, oferta);
+				} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+					texto = ofertaDto.getJustificacionOferta();		
 				}
+				
+				dto.setTexto(texto);
+					
+				saveTextoOfertaWS(dto, oferta);
 			}
 			
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
@@ -1636,24 +1622,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
-				DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta()) || !Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+				
+				String texto = null;
+				dto.setCampoCodigo("08");
+				if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+					DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
-				if (!Checks.esNulo(motivoJustificacionOferta)) {
-					oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
-					
-					dto.setCampoCodigo("08");
-					String texto = motivoJustificacionOferta.getDescripcion();
-					if(ofertaDto.getJustificacionOferta() != null) {
-						if(DDMotivoJustificacionOferta.CODIGO_OTRO.equals(motivoJustificacionOferta.getCodigo())) {
-							texto += ": " + ofertaDto.getJustificacionOferta();						
+					if (!Checks.esNulo(motivoJustificacionOferta)) {
+						oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+						
+						texto = motivoJustificacionOferta.getDescripcion();
+						if(ofertaDto.getJustificacionOferta() != null) {
+								texto += ": " + ofertaDto.getJustificacionOferta();						
 						}
 					}
-					
-					dto.setTexto(texto);
-					
-					saveTextoOfertaWS(dto, oferta);
+				} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+					texto = ofertaDto.getJustificacionOferta();		
 				}
+				
+				dto.setTexto(texto);
+					
+				saveTextoOfertaWS(dto, oferta);
 			}
 			
 			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){

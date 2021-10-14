@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNum
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
@@ -109,6 +110,9 @@ public class OfertaDto implements Serializable {
 			Update.class },foreingField="codigoSF")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String entidadFinanciacion;
+	@Diccionary(clase = DDMotivoJustificacionOferta.class, message = "El codigo DDMotivoJustificacionOferta no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codMotivoJustificacionOferta;
 	private List<TestigosOfertaDto> testigos;
 	

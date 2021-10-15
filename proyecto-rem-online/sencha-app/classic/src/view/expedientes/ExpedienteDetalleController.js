@@ -5444,15 +5444,13 @@ comprobarFormatoModificar: function() {
 		actualizacionRentaGridRef.setDisabled(true);
 		checkboxIPC.setReadOnly(false);
 		
-		
-
-		
+		 
 		if(value == CONST.METODO_ATUALIZACION_RENTA['COD_LIBRE']){
 			actualizacionRentaGridRef.setDisabled(false);
-			periodicidad.setValue("");
+			periodicidad.setDisabled(false);
+			fechaActualizacionRenta.setDisabled(false);
 			checkboxIPC.setValue("");
 			checkIGC.setValue("");
-			fechaActualizacionRenta.setValue("");
 		}else if(value == CONST.METODO_ATUALIZACION_RENTA['COD_PORCENTUAL']){
 			checkboxIPC.setDisabled(false);
 			checkIGC.setDisabled(false);
@@ -5470,7 +5468,6 @@ comprobarFormatoModificar: function() {
 			checkboxIPC.setDisabled(false);
 			checkboxIPC.setValue(true);
 			checkboxIPC.setReadOnly(true);
-
 			checkIGC.setValue("");
 		}
 

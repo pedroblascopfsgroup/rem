@@ -827,6 +827,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'datefieldbase',
 										fieldLabel : HreRem.i18n('header.fecha.fin'),
+										maxValue: null,
 										bind : {
 											value : '{condiciones.fechaFinCnt}'
 										}
@@ -841,6 +842,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'datefieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.preaviso.vencimiento.cnt'),
+										maxValue: null,
 										bind : {
 											value : '{condiciones.fechaPreavisoVencimientoCnt}'
 										}
@@ -1146,6 +1148,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										reference : 'fechaActualizacionRenta',
 										fieldLabel : HreRem.i18n('header.fecha'),
 										disabled: true,
+										maxValue: null,
+										minValue: $AC.getCurrentDate(),
 										bind:{
 											value:'{condiciones.fechaActualizacion}'
 										}

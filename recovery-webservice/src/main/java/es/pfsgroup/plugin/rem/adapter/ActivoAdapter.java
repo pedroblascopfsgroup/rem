@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.*;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -4272,7 +4273,14 @@ public class ActivoAdapter {
 
 			oferta.setCliente(clienteComercial);
 
-			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
+			ActivoProveedor prescriptor = (ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor());
+			if (prescriptor != null && prescriptor.getIdPersonaHaya() == null){
+				MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+				prescriptor.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(prescriptor.getDocIdentificativo(),prescriptor.getCodigoProveedorRem()));
+				genericDao.save(ActivoProveedor.class,prescriptor);
+			}
+
+			oferta.setPrescriptor(prescriptor);
 			
 			oferta.setTipoAlquiler(activo.getTipoAlquiler());
 

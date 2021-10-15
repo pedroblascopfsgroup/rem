@@ -58,31 +58,30 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					aprueba = true;
-					ExpedienteComercial ecoAnt = expedienteComercial.getExpedienteAnterior();
-					if(DDTipoOfertaAlquiler.isRenovacion(oferta.getTipoOfertaAlquiler()) && ecoAnt != null && ecoAnt.getOferta() != null) {
-						if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-							estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-							estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
-						}else {
-							estado = DDEstadosExpedienteComercial.PTE_NEGOCIACION;
-							estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
-						}
-					}else {
-						estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
-					}
-					
-				}else {
-					estado = DDEstadosExpedienteComercial.ANULADO;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 				}
-				
-				
-
 			}
+		}
+		
+		
+		if(aprueba) {
+			ExpedienteComercial ecoAnt = expedienteComercial.getExpedienteAnterior();
+			if(DDTipoOfertaAlquiler.isRenovacion(oferta.getTipoOfertaAlquiler()) && ecoAnt != null && ecoAnt.getOferta() != null) {
+				if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
+					estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+					estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+				}else {
+					estado = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
+					estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
+				}
+			}else {
+				estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+				estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+			}
+		}else {
+			estado = DDEstadosExpedienteComercial.ANULADO;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 		}
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estado));

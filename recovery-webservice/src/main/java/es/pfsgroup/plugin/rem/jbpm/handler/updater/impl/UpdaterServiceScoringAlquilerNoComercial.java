@@ -12,6 +12,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -19,10 +20,13 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoScoringAlquiler;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
 
 @Component
@@ -41,6 +45,7 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceScoringAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String COMBO_RATING_SCORING = "ratingHaya";
 
 	private static final String CODIGO_T018_SCORING = "T018_Scoring";
 
@@ -49,30 +54,44 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		Oferta oferta = expedienteComercial.getOferta();
+		String estadoEcoCodigo = null;
+		String estadoEcoBcCodigo = null;
+		String ratingScoringCodigo = null;
 		
-		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
-		DDEstadoOferta estadoOferta = null;
-		DDEstadoExpedienteBc estadoExpedienteBc = null;
-		
-		CondicionanteExpediente coe = expedienteComercial.getCondicionante();
 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDResultadoScoring.RESULTADO_APROBADO.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE));
+					 estadoEcoCodigo =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+					 estadoEcoBcCodigo = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
 				}else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING));
+					estadoEcoCodigo =  DDEstadosExpedienteComercial.PTE_SCORING;
+					estadoEcoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_A_REVISAR_POR_BC;
 				}
-				
-				expedienteComercial.setEstado(estadoExpedienteComercial);
-				expedienteComercial.setEstadoBc(estadoExpedienteBc);
-
+			}
+			
+			if(COMBO_RATING_SCORING.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				ratingScoringCodigo = valor.getValor();
 			}
 		}
+		
+		
+		ScoringAlquiler scoringAlquiler = genericDao.get(ScoringAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId()));
+		
+		
+		if(Checks.esNulo(scoringAlquiler)) {
+			scoringAlquiler = new ScoringAlquiler();
+			scoringAlquiler.setExpediente(expedienteComercial);
+		}
+
+		if(ratingScoringCodigo != null) {
+			scoringAlquiler.setRatingScoringServicer(genericDao.get(DDRatingScoringServicer.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ratingScoringCodigo)));
+		}
+		genericDao.save(ScoringAlquiler.class, scoringAlquiler);
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoEcoCodigo)));
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoEcoBcCodigo)));
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		

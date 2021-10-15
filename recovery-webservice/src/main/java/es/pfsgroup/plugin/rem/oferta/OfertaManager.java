@@ -1016,6 +1016,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoProveedor prescriptor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(
 						FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
 				if (!Checks.esNulo(prescriptor)) {
+					if (prescriptor.getIdPersonaHaya() == null){
+						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+						prescriptor.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(prescriptor.getDocIdentificativo(),prescriptor.getCodigoProveedorRem()));
+						genericDao.save(ActivoProveedor.class,prescriptor);
+					}
+
 					oferta.setPrescriptor(prescriptor);
 				}
 			}
@@ -1023,6 +1029,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoProveedor cust = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 				if (!Checks.esNulo(cust)) {
+					if (cust.getIdPersonaHaya() == null){
+						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+						cust.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(cust.getDocIdentificativo(),cust.getCodigoProveedorRem()));
+						genericDao.save(ActivoProveedor.class,cust);
+					}
 					oferta.setCustodio(cust);
 				}
 			}

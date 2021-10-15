@@ -30,6 +30,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -47,6 +48,7 @@ import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
@@ -67,6 +69,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
@@ -195,6 +198,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private GestorDocumentalAdapterManager gestorDocumentalAdapterManager;
+	
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2989,6 +2995,40 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getCamposAnulacionInformados(Long idExpediente, ModelMap model) {
+
+		ExpedienteComercial eco = null;
+		boolean response = false;
+
+		try {
+
+			if (Checks.esNulo(idExpediente)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+
+			} else {
+				eco = expedienteComercialApi.findOne(idExpediente);
+				if (Checks.esNulo(eco)) {
+					throw new JsonViewerException("No existe el expediente comercial.");
+				}
+				response = funcionesTramitesApi.tieneRellenosCamposAnulacion(eco);
+			}
+			model.put("success", response);
+
+		} catch (JsonViewerException e) {
+			
+			model.put("success", response);
+			model.put("msgError", e.getMessage());
+
+		} catch (Exception e) {
+			logger.error("Error al saltar a resolución expediente", e);
+			model.put("success", response);
 		}
 
 		return createModelAndViewJson(model);

@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI ? checkBankia() ? checkArrasEstadoBCIngreso() ? actualizarOfertaBoarding() : ''''El expediente tiene arras y el estado BC es distinto a Ingreso de Arras.'''' : actualizarOfertaBoarding()  : checkBankia() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null')
+    	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI ? checkBankia() ? checkArrasEstadoBCIngreso() ? actualizarOfertaBoarding() : ''''El expediente tiene arras y el estado BC es distinto a Ingreso de Arras.'''' : actualizarOfertaBoarding()  : valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.NO ? checkBankia() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null : null')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

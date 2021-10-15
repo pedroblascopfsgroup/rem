@@ -785,8 +785,8 @@
             	return expedienteComercialManager.checkExpedienteBloqueadoPorFuncion(idTramite);
             }
             def tieneRellenosCamposAnulacion = {
-            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-            	return tramiteAlquilerManager.tieneRellenosCamposAnulacion(tareaExterna);
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesManager.tieneRellenosCamposAnulacion(tareaExterna);
             }
             def tieneFechaVencimientoReserva = {
             	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");

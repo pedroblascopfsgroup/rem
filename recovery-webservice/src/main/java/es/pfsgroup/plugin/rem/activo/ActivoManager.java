@@ -4248,6 +4248,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						.dameValorDiccionarioByCod(DDOrigenDato.class, cargaDto.getOrigenDatoCodigo());
 				cargaSeleccionada.setOrigenDato(origenDato);
 			}
+			
+			// HREOS-15591
+			if(!Checks.esNulo(cargaDto.getFechaSolicitudCarta())) {
+				cargaSeleccionada.setFechaSolicitudCarta(cargaDto.getFechaSolicitudCarta());
+			}
+			
+			if(!Checks.esNulo(cargaDto.getFechaRecepcionCarta())) {
+				cargaSeleccionada.setFechaRecepcionCarta(cargaDto.getFechaRecepcionCarta());
+			}
+			
+			if(!Checks.esNulo(cargaDto.getFechaPresentacionRpCarta())) {
+				cargaSeleccionada.setFechaPresentacionRpCarta(cargaDto.getFechaPresentacionRpCarta());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);

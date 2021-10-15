@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Service("tramiteVentaManager")
@@ -107,6 +108,17 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		}
 		
 		return tieneFechaVencimientoReserva;
+	}
+	
+	@Override
+	public boolean checkArrasEstadoBCIngreso(TareaExterna tareaExterna){
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null && expedienteComercial.getReserva() != null 
+				&& !DDEstadoExpedienteBc.CODIGO_INGRESO_DE_ARRAS.equals(expedienteComercial.getEstadoBc().getCodigo())) {
+			return false;
+		}
+		
+		return true;
 	}
 
 }

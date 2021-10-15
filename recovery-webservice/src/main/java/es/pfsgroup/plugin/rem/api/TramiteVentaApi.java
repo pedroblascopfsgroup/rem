@@ -16,6 +16,8 @@ public interface TramiteVentaApi {
 
 	boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna);
 
+	boolean checkArrasEstadoBCIngreso(TareaExterna tareaExterna);
+
 
 	
 	

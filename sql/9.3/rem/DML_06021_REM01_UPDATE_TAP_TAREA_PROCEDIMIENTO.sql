@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20211015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15717
+--## INCIDENCIA_LINK=HREOS-15718
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -46,7 +46,7 @@ DECLARE
     	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI ? actualizarOfertaBoarding() : checkBankia() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null'),
         T_TIPO_DATA('T017_PBCReserva','checkBankia() ? valores[''''T017_PBCReserva''''][''''comboRespuesta''''] == DDSiNo.NO ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null : null'),
         T_TIPO_DATA('T017_PBC_CN','checkBankia() ? valores[''''T017_PBC_CN''''][''''comboResultado''''] == DDSiNo.NO ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null : null'),
-        T_TIPO_DATA('T017_FirmaContrato','checkBankia() ? valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? checkPosicionamiento() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : ''''El expediente debe tener alg&uacute;n posicionamiento'''' : null : checkExpedienteBloqueado() ? valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null : ''''El expediente no est&aacute; bloqueado''''')
+        T_TIPO_DATA('T017_FirmaContrato','checkBankia() ? valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? checkPosicionamiento() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : ''''El expediente debe tener alg&uacute;n posicionamiento'''' : null : checkExpedienteBloqueado() ? valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''' : null : ''''El expediente no est&aacute; bloqueado''''')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

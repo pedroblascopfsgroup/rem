@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Danie Algaba
---## FECHA_CREACION=20210628
+--## FECHA_CREACION=20211015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14436
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se quita los filtrados - HREOS-15634
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -54,13 +55,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
                   WHERE ACT.BORRADO = 0
-                  AND CRA.DD_CRA_CODIGO = ''03''
-                  AND PAC.PAC_INCLUIDO = 1
-                  AND ACT.ACT_EN_TRAMITE = 0
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                ) AUX
                ON (ICO.ICO_ID = AUX.ICO_ID)
@@ -108,13 +103,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
                   WHERE ACT.BORRADO = 0
-                  AND CRA.DD_CRA_CODIGO = ''03''
-                  AND PAC.PAC_INCLUIDO = 1
-                  AND ACT.ACT_EN_TRAMITE = 0
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                   AND NOT EXISTS (SELECT 1
                   FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
@@ -148,13 +137,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
                   WHERE ACT.BORRADO = 0
-                  AND CRA.DD_CRA_CODIGO = ''03''
-                  AND PAC.PAC_INCLUIDO = 1
-                  AND ACT.ACT_EN_TRAMITE = 0
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                   AND NOT EXISTS (SELECT 1
                   FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
@@ -188,13 +171,7 @@ BEGIN
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
                   WHERE ACT.BORRADO = 0
-                  AND CRA.DD_CRA_CODIGO = ''03''
-                  AND PAC.PAC_INCLUIDO = 1
-                  AND ACT.ACT_EN_TRAMITE = 0
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                   AND NOT EXISTS (SELECT 1
                   FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS

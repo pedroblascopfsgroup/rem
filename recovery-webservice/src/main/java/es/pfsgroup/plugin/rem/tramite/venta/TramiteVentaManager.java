@@ -5,20 +5,26 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Service("tramiteVentaManager")
@@ -32,6 +38,12 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	
 	@Autowired
 	private FuncionesApi funcionesApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	public class AvanzaTareaFuncion{
 		public static final String FUNCION_AVANZA_POSICIONAMIENTO = "AV_CONF_F_ESC";
@@ -119,6 +131,19 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		}
 		
 		return true;
+	}
+	
+	@Transactional(readOnly = false)
+	@Override
+	public void guardarEstadoBcAnulacionExpedienteBK(Long ecoId) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(ecoId);
+		
+		if(eco.getOferta() != null && eco.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera()) && DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
+			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC)));
+			genericDao.save(ExpedienteComercial.class, eco);
+			
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+		}
 	}
 
 }

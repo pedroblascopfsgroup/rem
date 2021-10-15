@@ -90,7 +90,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						 * aprueba = true; } }
 						 */
 						if(COMBO_MOTIVO_APLAZAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							aplaza = false;
+							aplaza = true;
 							dtoPos.setMotivoAplazamiento(valor.getValor());
 						}
 						if (COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

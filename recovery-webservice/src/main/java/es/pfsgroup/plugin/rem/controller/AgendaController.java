@@ -47,6 +47,8 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
+import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -108,6 +110,9 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
+	
+	@Autowired
+	private TramiteVentaApi tramiteVentaApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -501,6 +506,7 @@ public class AgendaController extends TareaController {
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
 						}else if(CODIGO_T017.equals(codigo)) {
+							tramiteVentaApi.guardarEstadoBcAnulacionExpedienteBK(idExpediente);
 							salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 						}
 						

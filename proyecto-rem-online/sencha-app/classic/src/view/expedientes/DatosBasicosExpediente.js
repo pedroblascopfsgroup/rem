@@ -493,7 +493,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 				        		store: '{storeMotivoRechazoAntiguoDeudor}',
 			            		value: '{expediente.motivoRechazoAntiguoDeudCod}',
-			            		hidden: '{!esBankiaAlquiler}'
+			            		hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 			            	}
 				        },
 				        { 

@@ -82,6 +82,10 @@ public class MaestroDePersonas implements Runnable {
 		this.cartera = cartera;
 	}
 
+	public MaestroDePersonas() {
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
+
 	public MaestroDePersonas clienteToTitularTransform() throws NoSuchMethodException{
 
 		if (numDocCliente == null){
@@ -647,5 +651,66 @@ public class MaestroDePersonas implements Runnable {
  		}
 		
 		return null;
-	}			 				
+	}
+
+	public String getIdPersonaHayaByDocumentoProveedor(String numDocProveedor,Long codProveedorRem) {
+		Integer idPersonaSimulado = null;
+		String idPersonaOrigen;
+
+		try {
+			if(!Checks.esNulo(numDocProveedor)) {
+				idPersonaOrigen = numDocProveedor;
+			} else {
+				idPersonaOrigen = String.valueOf(codProveedorRem);
+			}
+			personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+			personaDto.setIdPersonaOrigen(idPersonaOrigen);
+			personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+			personaDto.setIdCliente(ID_CLIENTE_HAYA);
+			logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+			logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+			personaOutputDto = new PersonaOutputDto();
+			BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
+					.ejecutar(personaDto));
+			//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
+
+			logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+			logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
+
+			if (Checks.esNulo(personaOutputDto)) {
+				logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+			} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+				logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+
+				SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				String today = df.format(new Date());
+
+				logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+				personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
+				personaDto.setIdCliente(ID_CLIENTE_HAYA);
+				personaDto.setIdPersonaOrigen(idPersonaOrigen);
+				personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
+				personaDto.setIdOrigen(ID_ORIGEN_REM);
+				personaDto.setFechaOperacion(today);
+				personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+				personaDto.setIdRol(ID_ROL_PROVEEDOR_29);
+				BeanUtils.copyProperties(gestorDocumentalMaestroManager
+						.ejecutar(personaDto), personaOutputDto);
+				//personaOutputDto.setIdIntervinienteHaya("123456789");
+
+				logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
+
+				if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+					return (personaOutputDto.getIdIntervinienteHaya());
+				} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+					idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
+					return idPersonaSimulado.toString();
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error maestro de personas", e);
+		}
+
+		return null;
+	}
 }

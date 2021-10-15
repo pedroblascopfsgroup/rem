@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1164,7 +1165,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(visita.getApiCustodio()) && Checks.esNulo(oferta.getCustodio())) {
 					// Si la visita tiene custodio y la oferta no, lo copiamos.
-					oferta.setCustodio(visita.getApiCustodio());
+						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+						visita.getApiCustodio().setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(visita.getApiCustodio().getDocIdentificativo(),visita.getApiCustodio().getCodigoProveedorRem()));
+						oferta.setCustodio(visita.getApiCustodio());
+						genericDao.save(ActivoProveedor.class,visita.getApiCustodio());
 
 				} else if (!Checks.esNulo(visita.getApiCustodio()) && !Checks.esNulo(oferta.getCustodio())) {
 					// si la visita tiene custodio y la oferta también, si son diferentes lo
@@ -1212,6 +1216,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(visita.getPrescriptor()) && Checks.esNulo(oferta.getPrescriptor())) {
 					// Si la visita tiene custodio y la oferta no, lo copiamos.
+					ActivoProveedor prescriptor = visita.getPrescriptor();
+					if (prescriptor != null && prescriptor.getIdPersonaHaya() == null){
+						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+						prescriptor.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(prescriptor.getDocIdentificativo(),prescriptor.getCodigoProveedorRem()));
+						genericDao.save(ActivoProveedor.class,prescriptor);
+					}
+
 					oferta.setPrescriptor(visita.getPrescriptor());
 				}
 

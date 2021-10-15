@@ -453,8 +453,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
-							bind: '{expediente.fechaAnulacion}',
-							readOnly: true,
+							bind: {
+								value: '{expediente.fechaAnulacion}',
+								readOnly: '{!esBankia}'
+							},
 							listeners: {
 								change: 'onFechaAnulacionChange'
 							}
@@ -473,7 +475,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	readOnly: true,
 				        	bind: {
 				        		value: '{getMotivoAnulacionOrRechazo}',
-				        		hidden: '{esBankiaAlquiler}'
+				        		hidden: '{esBankia}'
 				        	}
 				        },
 				        { 
@@ -483,7 +485,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 				        		store:  storeAnulacion,
 			            		value: '{expediente.codMotivoAnulacion}',
-			            		hidden: '{!esBankiaAlquiler}'
+			            		hidden: '{!esBankia}'
 			            	}
 				        },
 				        { 

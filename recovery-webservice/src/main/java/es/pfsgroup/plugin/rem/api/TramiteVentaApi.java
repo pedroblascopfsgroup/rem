@@ -14,6 +14,8 @@ public interface TramiteVentaApi {
 
 	boolean isTramiteT017Aprobado(List<String> tareasActivas);
 
+	boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna);
+
 
 	
 	

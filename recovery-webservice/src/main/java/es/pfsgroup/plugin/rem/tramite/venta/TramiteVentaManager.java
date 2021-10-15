@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
@@ -95,6 +96,17 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		}
 		
 		return isAprobado;
+	}
+	
+	@Override
+	public boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna){
+		boolean tieneFechaVencimientoReserva = false;
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null && expedienteComercial.getReserva() != null && !Checks.isFechaNula(expedienteComercial.getReserva().getFechaVencimiento())) {
+			tieneFechaVencimientoReserva = true;
+		}
+		
+		return tieneFechaVencimientoReserva;
 	}
 
 }

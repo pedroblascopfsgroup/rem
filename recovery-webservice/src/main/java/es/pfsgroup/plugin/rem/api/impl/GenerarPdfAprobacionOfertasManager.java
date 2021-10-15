@@ -31,7 +31,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoDescuentoColectivos;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -41,7 +40,6 @@ import es.pfsgroup.plugin.rem.model.DtoDatosOfertaPdf;
 import es.pfsgroup.plugin.rem.model.DtoOfertaPdfPrincipal;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -332,64 +330,28 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 		return dataSource;
 	}
 	@Override
-	public WebFileItem getWebFileItemByFile (File file, Long numExpediente) { //ADAPTAR LO QUE SALE DE LA REQUEST PARA QUE LO COJA DEL FILE
+	public WebFileItem getWebFileItemByFile (File file, Long numExpediente) {
 		Boolean crear = true;
-		//MultipartRequest multipartRequest = (MultipartRequest) request;
-        //MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
         WebFileItem webFileItem = new WebFileItem();
         FileItem fileItem = null;
 				
-		
 		try {
 			if (file != null) {
-				//TODO creo que no necesido esto
-				FileOutputStream fos = new FileOutputStream(file); 
-				//BufferedWriter out = new BufferedWriter(new FileWriter(file));
-				fos.write(5436);				
-				fos.close();
-												
 				fileItem = new FileItem(file);				
 
-				//fileItem.setContentType(multipartFile.getContentType());
-				//fileItem.setLength(multipartFile.getSize());
-				//String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
 				String fileName = file.getPath();
 				String fileNameFilter = fileName.substring(fileName.lastIndexOf('/')+1, fileName.length());
 				fileItem.setFileName(fileNameFilter);
-				//fileItem.setLength(5436);
-				//fileItem.setLength(file.getAbsoluteFile().length());
+				fileItem.setLength(file.length());
 				fileItem.setContentType("application/pdf");
 				
-				
 				//Con esto meto los parámetros
-				webFileItem.putParameter("tipo", DDTipoDocumentoExpediente.CODIGO_SANCION); //TODO
-				webFileItem.putParameter("subtipo", DDSubtipoDocumentoExpediente.CODIGO_FICHA_TECNICA); //TODO
-				webFileItem.putParameter("idEntidad", numExpediente.toString()); //TODO
+				webFileItem.putParameter("tipo", DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_COMPRADORES); 
+				webFileItem.putParameter("subtipo", DDSubtipoDocumentoExpediente.CODIGO_PROPUESTA_APROBACION_OFERTA); 
+				webFileItem.putParameter("idEntidad", numExpediente.toString());
 				webFileItem.putParameter("descripcion", ""); //TODO
-				webFileItem.putParameter("activos", ""); //TODO
-				
-			
-			//String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/"; 
-			/*if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
-				file = new File(rutaFichero+multipartFile.getOriginalFilename());
-				file.createNewFile(); 
-			    FileOutputStream fos = new FileOutputStream(file); 
-			    fos.write(multipartFile.getBytes());
-			    fos.close();
-			
-				fileItem = new FileItem(file); 
-				fileItem.setContentType(multipartFile.getContentType());
-				fileItem.setLength(multipartFile.getSize());
-				String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
-				fileItem.setFileName(fileName);
-				
-				Enumeration<?> parameters = request.getParameterNames();		
-				
-				while (parameters.hasMoreElements()) {			
-					String key = (String) parameters.nextElement();
-		
-					webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
-				}*/
+				webFileItem.putParameter("activos", "");
+
 			}else {
 				crear = false;
 			}
@@ -400,8 +362,6 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			webFileItem.setFileItem(fileItem);
 		}
 		return webFileItem;
-		//return null;
 	}
-	
 
 }

@@ -788,6 +788,14 @@
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
             	return tramiteAlquilerManager.tieneRellenosCamposAnulacion(tareaExterna);
             }
+            def tieneFechaVencimientoReserva = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.tieneFechaVencimientoReserva(tareaExterna);
+            }
+            def checkArrasEstadoBCIngreso = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkArrasEstadoBCIngreso(tareaExterna);
+            }
            
 	
   			 ]]></value>

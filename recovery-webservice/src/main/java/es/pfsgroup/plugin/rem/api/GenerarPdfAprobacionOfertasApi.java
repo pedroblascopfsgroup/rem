@@ -6,7 +6,6 @@ import java.util.Map;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaPdfPrincipal;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.service.api.GenerateJasperPdfServiceApi;
 

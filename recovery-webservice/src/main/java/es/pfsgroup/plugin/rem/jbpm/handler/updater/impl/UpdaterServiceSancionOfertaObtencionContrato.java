@@ -227,7 +227,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
 						estadoArras = estadoReserva.getCodigoC4C();
 						reserva.setEstadoReserva(estadoReserva);
-						if(Checks.isFechaNula(fechaFirma)) {
+						if(!Checks.isFechaNula(fechaFirma)) {
 							reserva.setFechaFirma(fechaFirma);
 							activoTramiteApi.reactivarTareaResultadoPBC(tareaExternaActual, expediente);
 						}

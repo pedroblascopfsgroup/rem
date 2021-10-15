@@ -773,6 +773,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									formatter : 'date("d/m/Y")',
 									fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.fecha.vencimiento.opcionCompra'),
 									name : 'fechaOpcionCompra',
+									maxValue: null,
+									minValue: $AC.getCurrentDate(),
 									bind: {
 										value: '{datosbasicosoferta.fechaVencimientoOpcionCompra}'
 									}

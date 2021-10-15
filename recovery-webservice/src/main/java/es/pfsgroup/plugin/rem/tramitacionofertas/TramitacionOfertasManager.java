@@ -2165,17 +2165,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 		
 		if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
-		
-			//Hacer aquí lo del GD
 			try {
 				File file = pdfAprobacionOfertasApi.getDocumentoPropuestaVenta(oferta); //Con esto recupero el FILE
 				WebFileItem webFileItem = pdfAprobacionOfertasApi.getWebFileItemByFile(file, numExpediente);
-				/*ExpedienteComercial expedienteAux = genericDao.get(ExpedienteComercial.class, "numExpediente", numExpediente);
-				if (expedienteAux != null) {*/
-					
-					String errores = expedienteComercialAdapter.uploadDocumento(webFileItem);
-				//}
-				
+				String errores = expedienteComercialAdapter.uploadDocumento(webFileItem);
+				if(errores != null) {
+					throw new Exception(errores);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

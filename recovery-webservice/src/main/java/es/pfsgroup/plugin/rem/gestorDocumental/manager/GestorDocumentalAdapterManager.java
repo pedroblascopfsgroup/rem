@@ -656,11 +656,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		List<DtoAdjunto> list;
 
 		String codigoEstado = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codigoEstado = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
 			}
 		}
 
@@ -739,11 +739,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
 		String codigoEstado = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codigoEstado = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
 			}
 		}		
 
@@ -930,11 +930,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		String estadoExpediente = "Alta";
 		String codClase = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codClase = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codClase = "06";
+			}else{
+				codClase = "08";
 			}
 		}
 		

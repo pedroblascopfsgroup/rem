@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211013
+--## FECHA_CREACION=20211015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -20,6 +20,7 @@
 --##	    0.7 Se añade un consulta para insertar activos que no tiene el estado de publicación que debe y se añade flag para los activos/agrupaciones que procese el SP de publicaciones - HREOS-15423
 --##	    0.8 El check de Visible gestión comercial se rellena con lo que tenga el de publicar - HREOS-15423
 --##	    0.9 Filtrado de activos con ofertas en vuelo - HREOS-15634
+--##	    0.10 Se añade paréntesis en consulta - HREOS-15634
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -128,13 +129,13 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID=ACT.ACT_ID
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CBX ON CBX.ACT_ID = ACT.ACT_ID AND CBX.BORRADO = 0
                         WHERE AUX.FLAG_EN_REM = '|| FLAG_EN_REM||'
-                        AND APU.DD_TCO_ID <> TCO_NUEVO.DD_TCO_ID OR
+                        AND (APU.DD_TCO_ID <> TCO_NUEVO.DD_TCO_ID OR
                         (CBX.CBX_PUBL_PORT_PUBL_VENTA <> CASE WHEN AUX.PUBLICABLE_PORT_PUBLI_VENTA IN (''S'',''1'') THEN 1 ELSE 0 END
                         OR CBX.CBX_PUBL_PORT_PUBL_ALQUILER <> CASE WHEN AUX.PUBLICABLE_PORT_PUBLI_ALQUI IN (''S'',''1'') THEN 1 ELSE 0 END
                         OR CBX.CBX_PUBL_PORT_INV_VENTA <> CASE WHEN AUX.PUBLICABLE_PORT_INVER_VENTA IN (''S'',''1'') THEN 1 ELSE 0 END
                         OR CBX.CBX_PUBL_PORT_INV_ALQUILER <> CASE WHEN AUX.PUBLICABLE_PORT_INVER_ALQUI IN (''S'',''1'') THEN 1 ELSE 0 END
                         OR CBX.CBX_PUBL_PORT_API_VENTA <> CASE WHEN AUX.PUBLICABLE_PORT_API_VENTA IN (''S'',''1'') THEN 1 ELSE 0 END
-                        OR CBX.CBX_PUBL_PORT_API_ALQUILER <> CASE WHEN AUX.PUBLICABLE_PORT_API_ALQUI IN (''S'',''1'') THEN 1 ELSE 0 END)';
+                        OR CBX.CBX_PUBL_PORT_API_ALQUILER <> CASE WHEN AUX.PUBLICABLE_PORT_API_ALQUI IN (''S'',''1'') THEN 1 ELSE 0 END))';
 
             EXECUTE IMMEDIATE V_MSQL;
 

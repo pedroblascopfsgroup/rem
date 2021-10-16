@@ -2598,7 +2598,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
 	    	var esBankia = me.getViewModel().get("expediente.esBankia");
 	    	var tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo');
-	    	if (esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
+	    	if (esBankia && CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 	    		if(newValue == true) {
 					/*operacionExenta.reset();
 					operacionExenta.setReadOnly(true);*/
@@ -2618,7 +2618,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    		
 				}
 	    	}else{
-	    		if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] != tipoExpedienteCodigo) {
+	    		if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 	    			if(newValue == true) {
 						operacionExenta.reset();
 						operacionExenta.setReadOnly(true);

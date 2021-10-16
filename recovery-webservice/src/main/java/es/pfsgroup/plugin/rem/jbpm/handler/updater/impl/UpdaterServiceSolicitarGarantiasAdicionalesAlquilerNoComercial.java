@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -36,12 +37,21 @@ public class UpdaterServiceSolicitarGarantiasAdicionalesAlquilerNoComercial impl
     
 
 	private static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
+	private static final String COMBO_RESPUESTA_COMPRADOR = "respuestaComprador";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
+		String respuestaComprador = null;
+		
+		for(TareaExternaValor valor :  valores){
+			if(COMBO_RESPUESTA_COMPRADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				respuestaComprador = valor.getValor();
+				break;
+			}
+		}
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
@@ -54,7 +64,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionalesAlquilerNoComercial impl
 		
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expedienteComercial, respuestaComprador));
 
 	}
 

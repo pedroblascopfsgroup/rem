@@ -821,7 +821,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'numberfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.meses.duracion'),
 										bind : {
-											//value : '{condiciones.mesesDeposito}'
+											value : '{condiciones.mesesDeposito}'
 										}
 									},
 									{

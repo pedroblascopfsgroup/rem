@@ -1432,6 +1432,8 @@ public interface ExpedienteComercialApi {
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(ExpedienteComercial eco, String estadoArras);
 
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
+	
+	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(ExpedienteComercial eco, String codRespuestaComprador);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;
@@ -1456,4 +1458,5 @@ public interface ExpedienteComercialApi {
 	void deleteGastoRepercutido(Long idGastoRepercutido);
 
 	DtoScoringGarantias getScoringGarantias(Long idExpediente);
+
 }

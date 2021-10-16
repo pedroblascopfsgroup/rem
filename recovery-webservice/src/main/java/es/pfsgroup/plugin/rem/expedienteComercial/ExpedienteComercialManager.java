@@ -14051,6 +14051,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(final ExpedienteComercial eco, final String codRespuestaComprador){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCodRespuestaComprador(codRespuestaComprador);
+		}};
+	}
+	
+	@Override
 	public Formalizacion formalizacionPorExpedienteComercial(Long idExpediente) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 

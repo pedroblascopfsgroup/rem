@@ -41,7 +41,8 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 
 
 	private static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
-	private static final String COMBO_RESPUESTA_COMPRADOR = "comboResultado";
+	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String COMBO_RESPUESTA_COMPRADOR = "respuestaComprador";
 
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSolicitarGarantiasAdicionales.class);
@@ -52,19 +53,22 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Boolean haPasadoScoringBC = tramiteAlquilerApi.haPasadoScoringBC(tramite.getId());
+		String comboResultado = null;
 		String respuestaComprador = null;
 	
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			for(TareaExternaValor valor :  valores){
+				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					comboResultado = valor.getValor();
+				}
 				if(COMBO_RESPUESTA_COMPRADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					respuestaComprador = valor.getValor();
-					break;
 				}
 			}
 
-			if(!Checks.esNulo(respuestaComprador)) {
-				Boolean acepta = DDSinSiNo.cambioStringtoBooleano(respuestaComprador);
+			if(!Checks.esNulo(comboResultado)) {
+				Boolean acepta = DDSinSiNo.cambioStringtoBooleano(comboResultado);
 				String estadoCodigo = null;
 				String estadoBcCodigo = null;
 				if(!haPasadoScoringBC && acepta) {
@@ -94,7 +98,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
 				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expediente, respuestaComprador));
 				}
 			}
 

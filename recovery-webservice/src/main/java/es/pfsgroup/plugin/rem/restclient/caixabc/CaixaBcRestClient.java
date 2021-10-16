@@ -162,6 +162,9 @@ public class CaixaBcRestClient {
                     if (dto.getCodEstadoAlquiler()!= null){
                         params.put("codEstadoAlquiler", dto.getCodEstadoAlquiler());
                     }
+                    if (dto.getCodRespuestaComprador()!= null){
+                        params.put("codRespuestaComprador", dto.getCodRespuestaComprador());
+                    }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);
                 } else {

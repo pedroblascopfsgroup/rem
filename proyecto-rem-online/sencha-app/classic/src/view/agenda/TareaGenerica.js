@@ -3965,18 +3965,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
 	},
 
-	T018_AgendarYFirmarValidacion: function(){
-		var me = this;
-        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-        var storeMotivoAnulacion = me.down('[name=motivoAnulacion]').getStore();
-
-        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
-            storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
-                store.filter('visibleCaixa', true);
-            });
-        }
-
-	},
 	
 	T018_BloqueoScreeningValidacion: function(){
 		var me = this;

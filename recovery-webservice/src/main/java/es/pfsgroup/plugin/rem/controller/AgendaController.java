@@ -506,7 +506,7 @@ public class AgendaController extends TareaController {
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
 						}else if(CODIGO_T017.equals(codigo)) {
-							tramiteVentaApi.guardarEstadoBcAnulacionExpedienteBK(idExpediente);
+							tramiteVentaApi.guardarEstadoAnulacionExpedienteBK(idExpediente);
 							salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 						}
 						

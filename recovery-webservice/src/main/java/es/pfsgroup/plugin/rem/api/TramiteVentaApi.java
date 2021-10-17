@@ -18,7 +18,7 @@ public interface TramiteVentaApi {
 
 	boolean checkArrasEstadoBCIngreso(TareaExterna tareaExterna);
 
-	void guardarEstadoBcAnulacionExpedienteBK(Long ecoId);
+	void guardarEstadoAnulacionExpedienteBK(Long ecoId);
 
 
 	

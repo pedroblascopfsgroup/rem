@@ -266,7 +266,9 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							        fieldLabel: HreRem.i18n('fieldlabel.prorroga.arras.propuesta'),
 							        bind: {
 				                		value: '{reserva.fechaPropuestaProrrogaArras}'
-							        }
+							        },
+									minValue: $AC.getCurrentDate(),
+									maxValue: null
 								},
 								{
 							        xtype: 'comboboxfieldbase',

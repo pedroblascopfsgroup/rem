@@ -71,7 +71,7 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);		 		
 		
-		expedienteComercialApi.update(expedienteComercial,false);
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 		
 		if (estadoOfertaBcMod){

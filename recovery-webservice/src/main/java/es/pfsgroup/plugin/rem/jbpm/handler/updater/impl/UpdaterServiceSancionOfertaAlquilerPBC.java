@@ -54,27 +54,37 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		
-		DDEstadosExpedienteComercial estadoExp = null;
-		DDEstadoExpedienteBc estadoBc = null;
+		boolean aprueba = false;
+		String estadoExp = null;
+		String estadoBc = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
-				}else if (DDSiNo.NO.equals(valor.getValor())) {				
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+					aprueba = true;
 				}
-				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);		
-				estadoBcModificado = true;
 			}
 		}
+		
+		if (aprueba) {
+			estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
+		} else{
+			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			Oferta oferta = expedienteComercial.getOferta();
+			
+			if(oferta != null) {
+				ofertaApi.finalizarOferta(oferta);
+			}
 
-		expedienteComercialApi.update(expedienteComercial,false);
+		}
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		estadoBcModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

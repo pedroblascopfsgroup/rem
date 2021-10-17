@@ -5509,15 +5509,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_CAMBIO_PORCENTAJE_COMPRA;
 					}
 					
-					this.updateEstadoInterlocutorCompradores(expedienteComercial, compradorExpediente, estadoInterlocutorCodigo);
+					this.updateEstadoInterlocutorCompradores(expedienteComercial, compradorExpediente, estadoInterlocutorCodigo, true);
 				}
 				newDataComprador.compradorToDto(comprador);
 				newDataComprador.cexToDto(compradorExpediente);
 				newDataRepresentante.representanteToDto(compradorExpediente);
 				boolean compradorOrepresentanteModificado = interlocutorCaixaService.hasChangestoBC(oldDataComprador,newDataComprador,comprador.getIdPersonaHayaCaixa())
 				|| interlocutorCaixaService.hasChangestoBC(oldDataRepresentante,newDataRepresentante,compradorExpediente.getIdPersonaHayaCaixaRepresentante());
-				if (compradorOrepresentanteModificado)
-				interlocutorCaixaService.callReplicateClientAsync(comprador,expedienteComercial.getOferta());
+				if (compradorOrepresentanteModificado){
+					interlocutorCaixaService.callReplicateClientAsync(comprador,expedienteComercial.getOferta());
+					if(new BigDecimal(100).equals(expedienteComercial.getImporteParticipacionTotal()) && (esNuevo || haCambiadoPorcionCompra)) {
+						this.guardaBloqueoReplicaOferta(expedienteComercial);
+					};
+				}
 			}
 
 		}
@@ -6522,7 +6526,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ofertaApi.resetPBC(expediente, true);
 				
 				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
-					this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA);
+					this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA, true);
 
 				}
 
@@ -6530,8 +6534,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.estaVacio(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
-				if (esOfertaCaixa && comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
+				if (esOfertaCaixa && comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null
+						&& DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo())){
 					interlocutorCaixaService.callReplicateClientAsync(comprador,expediente.getOferta());
+					if(new BigDecimal(100).equals(expediente.getImporteParticipacionTotal())) {
+						this.guardaBloqueoReplicaOferta(expediente);
+					}
+				}
+
 
 				return true;
 
@@ -7571,7 +7581,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 					if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
 							&& DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
-						this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA);
+						this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA, false);
 					}
 					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador, usuario.getUsername());
 					
@@ -14311,7 +14321,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 	
-	private void updateEstadoInterlocutorCompradores(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor){
+	private void updateEstadoInterlocutorCompradores(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor,
+													 Boolean llamaReplicarClientes){
 		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
 		List<String> codigoTareasActivas = new ArrayList<String>();
 		boolean isAprobado = false;
@@ -14333,7 +14344,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if(isAprobado) {
-			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor);
+			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor, llamaReplicarClientes);
 		}else {
 			if(DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA.equals(codigoEstadoInterlocutor)) {
 				codigoEstadoInterlocutor = DDEstadoInterlocutor.CODIGO_INACTIVO;
@@ -14348,14 +14359,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Transactional(readOnly = false)
-	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor){
+	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor, Boolean llamaReplicarClientes){
 		compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
-		
-		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal())) {
-			this.guardarBloqueoExpediente(eco);
-			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
+
+		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal()) && !llamaReplicarClientes) {
+			this.guardaBloqueoReplicaOferta(eco);
 		}
+	}
+
+	@Transactional
+	public void guardaBloqueoReplicaOferta(ExpedienteComercial eco){
+		this.guardarBloqueoExpediente(eco);
+		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
 	}
 	
 	@Override

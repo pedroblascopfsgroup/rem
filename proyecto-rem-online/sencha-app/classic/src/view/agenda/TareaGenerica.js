@@ -3756,6 +3756,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
 				me.habilitarCampo(fechaFirma);
 				me.habilitarCampo(lugarFirma);
+				me.campoObligatorio(fechaFirma);
+				me.campoObligatorio(lugarFirma);
 			}else{
 				me.deshabilitarCampo(fechaFirma);
 				me.deshabilitarCampo(lugarFirma);

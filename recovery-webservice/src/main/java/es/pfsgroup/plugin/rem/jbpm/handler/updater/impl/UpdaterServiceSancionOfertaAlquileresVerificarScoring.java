@@ -95,6 +95,10 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 		if(Checks.esNulo(scoringAlquiler)) {
 			scoringAlquiler = new ScoringAlquiler();
 			scoringAlquiler.setExpediente(expedienteComercial);
+			if(condiciones != null) {
+				condiciones.setScoringBc(true);
+				genericDao.save(CondicionanteExpediente.class, condiciones);
+			}
 		}
 		DDResultadoCampo resultadoCampo = null;
 		boolean isBk = false;

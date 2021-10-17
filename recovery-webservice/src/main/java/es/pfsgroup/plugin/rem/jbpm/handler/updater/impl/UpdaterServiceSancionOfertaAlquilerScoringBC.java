@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -18,9 +19,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterService {
@@ -36,7 +41,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerScoringBC.class);
     
-	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String COMBO_RESULTADO = "comboResolucion";
 	
 	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 
@@ -47,26 +52,61 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		DDEstadosExpedienteComercial estadoExp = null;
-		DDEstadoExpedienteBc estadoBc = null;
+		String estadoExp = null;
+		String estadoBc = null;
+		String resultadoScoring = null;
+		boolean aprueba = false;
 		
 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES));
-				} else if (DDSiNo.NO.equals(valor.getValor())) {
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
-
+					aprueba = true;		
 				}
-				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);
-				estadoBcModificado = true;
-				genericDao.save(ExpedienteComercial.class, expedienteComercial);			}			
+			}			
 		}
+		
+		if (aprueba) {
+			estadoExp =  DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES;
+			resultadoScoring = DDResultadoCampo.RESULTADO_APROBADO;
+			
+		} else{
+			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			resultadoScoring = DDResultadoCampo.RESULTADO_RECHAZADO;
+			Oferta oferta = expedienteComercial.getOferta();
+			
+			if(oferta != null) {
+				ofertaApi.finalizarOferta(oferta);
+			}
+
+		}
+
+		ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId()));
+		
+		if (scoring == null ) {
+			scoring = new ScoringAlquiler();
+			scoring.setAuditoria(Auditoria.getNewInstance());
+			scoring.setExpediente(expedienteComercial);	
+			CondicionanteExpediente coe = expedienteComercial.getCondicionante();
+			if(coe != null) {
+				coe.setScoringBc(true);
+				genericDao.save(CondicionanteExpediente.class, coe);
+			}
+			
+			
+		}
+		scoring.setResultadoScoring(genericDao.get(DDResultadoCampo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resultadoScoring))); 
+		genericDao.save(ScoringAlquiler.class, scoring);
+
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		estadoBcModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
+		
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

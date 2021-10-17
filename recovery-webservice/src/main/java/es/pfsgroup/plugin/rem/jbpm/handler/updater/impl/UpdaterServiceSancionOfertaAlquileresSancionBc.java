@@ -50,7 +50,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     
-	private static final String RESULTADO_PBC = "comboResultado";
+	private static final String RESULTADO_PBC = "comboResolucion";
 
 	private static final String CODIGO_T015_SANCION_BC = "T015_SancionBC";
 
@@ -61,32 +61,43 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		Oferta oferta = expedienteComercial.getOferta();
-		
-		DDEstadosExpedienteComercial estadoExp = null;
-		DDEstadoExpedienteBc estadoBc = null;
+		boolean aprueba = false;
+		String estadoExp = null;
+		String estadoBc = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
 			if(RESULTADO_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {
-					if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_PBC));
-					}else {
-						estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
-					}
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
-				}else if (DDSiNo.NO.equals(valor.getValor())) {
-					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO));
-					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+					aprueba = true;
 				}
-				expedienteComercial.setEstado(estadoExp);
-				expedienteComercial.setEstadoBc(estadoBc);
-				estadoBcModificado = true;
 			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial,false);
+		if (aprueba) {
+			
+			if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
+				estadoExp = DDEstadosExpedienteComercial.PTE_PBC;
+			}else {
+				estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
+			}
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
+			
+		} else{
+			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			Oferta oferta = expedienteComercial.getOferta();
+			
+			if(oferta != null) {
+				ofertaApi.finalizarOferta(oferta);
+			}
+
+		}
+		
+		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
+		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
+		estadoBcModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}

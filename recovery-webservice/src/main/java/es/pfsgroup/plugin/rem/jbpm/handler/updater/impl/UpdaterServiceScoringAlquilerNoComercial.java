@@ -83,6 +83,11 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 		if(Checks.esNulo(scoringAlquiler)) {
 			scoringAlquiler = new ScoringAlquiler();
 			scoringAlquiler.setExpediente(expedienteComercial);
+			CondicionanteExpediente coe = expedienteComercial.getCondicionante();
+			if(coe != null) {
+				coe.setScoringBc(true);
+				genericDao.save(CondicionanteExpediente.class, coe);
+			}
 		}
 
 		if(ratingScoringCodigo != null) {

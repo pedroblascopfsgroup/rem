@@ -1,23 +1,13 @@
 package es.pfsgroup.plugin.rem.accionesCaixa;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ReservaApi;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
-import es.pfsgroup.plugin.rem.controller.AgendaController;
-import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +15,44 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.controller.AgendaController;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
+import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
+import es.pfsgroup.plugin.rem.model.DtoAccionResultadoRiesgoCaixa;
+import es.pfsgroup.plugin.rem.model.DtoAccionVentaContabilizada;
+import es.pfsgroup.plugin.rem.model.DtoAvanzaScoringBC;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteFechaYOfertaCaixa;
+import es.pfsgroup.plugin.rem.model.DtoFirmaArrasCaixa;
+import es.pfsgroup.plugin.rem.model.DtoFirmaContratoCaixa;
+import es.pfsgroup.plugin.rem.model.DtoOnlyExpedienteYOfertaCaixa;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
+import es.pfsgroup.plugin.rem.model.InterlocutorExpediente;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
+import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -60,12 +82,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private OfertaApi ofertaApi;
-    
-    @Autowired
-    private ActivoTareaExternaApi activoTareaExternaApi;
-    
-	 @Autowired
-	 private ReservaApi reservaApi;
 
     @Override
     public String managerName() {
@@ -142,17 +158,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto){
-        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
         DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
-
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO));
-        expediente.setEstadoBc(estadoExpedienteBc);
         ofrCaixa.setRiesgoOperacion(rop);
 
         genericDao.save(OfertaCaixa.class, ofrCaixa);
-        genericDao.save(ExpedienteComercial.class, expediente);
     }
 
     @Override

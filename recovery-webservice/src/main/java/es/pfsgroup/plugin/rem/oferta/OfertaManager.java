@@ -2181,23 +2181,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					descongelar = gencatApi.descongelaExpedienteGencat(exp);
 					Activo activo = oferta.getActivoPrincipal();
 					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) && descongelar) {
-						// HREOS-1937 - Si tiene expediente poner oferta
-						// ACEPTADA. Si no tiene poner oferta PENDIENTE
+
 						if (!Checks.esNulo(exp)) {
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadoOferta.CODIGO_ACEPTADA);
-						} else if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
-									DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
-						}else if(DDCartera.isCarteraBk(activo.getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) 
-								|| !oferta.getCheckDocumentacion())){
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_ACEPTADA);
+						} else if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) && DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+						}else if(DDCartera.isCarteraBk(activo.getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION);
 							pdteDocu = true;
 						}else {
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadoOferta.CODIGO_PENDIENTE);
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
 						}
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						oferta.setEstadoOferta(estado);
@@ -2210,7 +2204,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							List<ActivoTramite> tramites = activoTramiteApi
 									.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
 							if (!Checks.estaVacio(tramites)) {
-								//Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
 								List<TareaActivo> tareasTramite = tareaActivoDao.getTareasActivoTramiteBorrados(tramites.get(0).getId());
 								for (TareaActivo tarea : tareasTramite) {
 									// Si se ha borrado sin acabarse, al

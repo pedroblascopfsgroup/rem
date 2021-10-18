@@ -19,9 +19,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
@@ -88,7 +90,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
-	private String codEstadoProvision = null;
+	private String codEstadoProvision = null;	
+
+	private static final String VALIDACION_FECHA_DEVENGO_ESPECIAL = "msg.error.validacion.fecha.devengo.especial";
 	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
@@ -303,6 +307,13 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						}
 					}
 				}
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
+			if(!Checks.esNulo(contabilidadGasto) && ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && Checks.isFechaNula(contabilidadGasto.getFechaDevengoEspecial())){
+				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
+				return error;
 			}
 		}
 		return error;

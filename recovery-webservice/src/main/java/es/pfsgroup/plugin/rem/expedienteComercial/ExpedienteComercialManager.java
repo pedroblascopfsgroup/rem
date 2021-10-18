@@ -4781,6 +4781,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			if(!Checks.isFechaNula(dto.getFechaPropuestaProrrogaArras())) {
 				reserva.setFechaPropuestaProrrogaArras(dto.getFechaPropuestaProrrogaArras());
+				reserva.setFechaAmpliacionArras(dto.getFechaPropuestaProrrogaArras());
 			}
 			if(!Checks.isFechaNula(dto.getFechaComunicacionCliente())) {
 				reserva.setFechaComunicacionCliente(dto.getFechaComunicacionCliente());

@@ -144,6 +144,9 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
 							if(reservaApi.tieneReservaFirmada(expediente)) {
 								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+								if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
+						        	expediente.setFechaAnulacion(new Date());
+						        }
 							}else {
 								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 								ofertaApi.finalizarOferta(ofertaAceptada);

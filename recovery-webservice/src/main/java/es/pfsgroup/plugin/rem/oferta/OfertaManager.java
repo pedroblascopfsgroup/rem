@@ -1708,21 +1708,36 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}	
 			}
 
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			
+			if (expedienteComercial != null) {
+				if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
+					// Actualizar honorarios para el nuevo importe de contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
+				}
+				
+				DDEstadosExpedienteComercial estadoExpCom = null;
+				DDSubestadosExpedienteComercial subestadoExpCom = null;
+				
+				if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && ofertaDto.getCodEstadoExpediente() != null && ofertaDto.getcodSubestadoExpediente() != null) {
+					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(ofertaDto.getCodEstadoExpediente());
+					subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getcodSubestadoExpediente()));
+				}
+				
+				if (estadoExpCom != null)
+					expedienteComercial.setEstado(estadoExpCom);
+				
+				if (subestadoExpCom != null)
+					expedienteComercial.setSubestadoExpediente(subestadoExpCom);
+			}
+			
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
 			}
-
-			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
-				// Actualizar honorarios para el nuevo importe de contraoferta.
-				ExpedienteComercial expedienteComercial = expedienteComercialApi
-						.expedienteComercialPorOferta(oferta.getId());
-				if (!Checks.esNulo(expedienteComercial)) {
-					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
-				}
-			}
+			
 			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) || (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) 
 					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))) {
-				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente());
+				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), null, null);
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
 

@@ -5150,6 +5150,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (condicion.equals(" OR ")) {
 			sql += ")";
 		}
+		rawDao.addParams(params);
 		return resultado.equals(rawDao.getExecuteSQL(sql));
 	}
 	

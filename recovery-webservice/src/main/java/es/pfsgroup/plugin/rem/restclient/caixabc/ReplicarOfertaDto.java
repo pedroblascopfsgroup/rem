@@ -8,6 +8,7 @@ public class ReplicarOfertaDto {
     private String estadoArras;
     private String codEstadoAlquiler;
     private String codRespuestaComprador;
+    private CexDto compradorEditado;
 
     public Long getNumeroOferta() {
         return numeroOferta;
@@ -64,5 +65,12 @@ public class ReplicarOfertaDto {
 	public void setCodRespuestaComprador(String codRespuestaComprador) {
 		this.codRespuestaComprador = codRespuestaComprador;
 	}
-	
+
+    public CexDto getCompradorEditado() {
+        return compradorEditado;
+    }
+
+    public void setCompradorEditado(CexDto compradorEditado) {
+        this.compradorEditado = compradorEditado;
+    }
 }

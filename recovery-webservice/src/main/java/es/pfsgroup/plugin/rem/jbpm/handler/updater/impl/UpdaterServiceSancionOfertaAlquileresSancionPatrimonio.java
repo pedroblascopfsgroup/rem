@@ -50,7 +50,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionPatrimonio.class);
     
-	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String COMBO_RESULTADO = "comboResolucion";
 
 	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
 

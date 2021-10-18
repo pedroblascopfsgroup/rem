@@ -2344,7 +2344,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	var importeContraoferta = me.down('[name=importeContraoferta]');
     	var observacionesBC = me.down('[name=observacionesBC]');
-		var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	
 
     	me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
 		me.deshabilitarCampo(me.down('[name=comite]'));
@@ -2358,7 +2358,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=fechaElevacion]').setValue(fecha);
 			me.deshabilitarCampo(importeContraoferta);
 			me.ocultaryHacerNoObligatorio(me.down('[name=refCircuitoCliente]'));
-			if (!isSuper) {
+			if(!$AU.userHasFunction('AV_ALQ_RES_COMITE')){
 				me.bloquearObligatorio(resolucionOferta);
 			} else {
 				me.campoObligatorio(resolucionOferta);
@@ -2392,7 +2392,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    		});
 			}
 			
-			if (!isSuper) me.bloquearCampo(observacionesBC);
+			if (!$AU.userHasFunction('AV_ALQ_RES_COMITE')){ 
+				me.bloquearCampo(observacionesBC);
+			}
 			var idTarea = me.idTarea; 
 				
 			var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaElevarSancion');
@@ -2496,10 +2498,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    		}
 	    	});
 		}
-		
-
-    	
-    	
     },
     
     
@@ -3074,8 +3072,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.down('[name=comboVentaSupensiva]').setDisabled(false);
-			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
@@ -3087,8 +3085,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] == codigoSubcartera) {
 			me.down('[name=comboVentaSupensiva]').setDisabled(false);
-			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
@@ -4002,6 +4000,47 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    	}
 		    }
 		});
+	},
+	
+	T015_ScoringBcValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResolucion]');
+		var observacionesBC = me.down('[name=observacionesBc]');
+		var fecha = me.down('[name=fechaSancion]');
+		
+		if(!$AU.userHasFunction('AV_ALQ_SCORING_BC')){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+			me.bloquearObligatorio(observacionesBC);
+		}
+	},
+	
+	T015_SancionBcValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResolucion]');
+		var observacionesBC = me.down('[name=observacionesBc]');
+		var fecha = me.down('[name=fechaSancion]');
+		
+		if(!$AU.userHasFunction('AV_ALQ_SANCION_BC')){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+			me.bloquearObligatorio(observacionesBC);
+		}
+	},
+	
+	T015_SancionPatrimonioValidacion: function(){
+		var me = this;
+		var comboRespuesta = me.down('[name=comboResolucion]');
+		var observacionesBC = me.down('[name=observacionesBc]');
+		var fecha = me.down('[name=fechaSancion]');
+		var anulacion = me.down('[name=comboMotivoAnulacion]');
+		
+		if(!$AU.userHasFunction('AV_ALQ_SAN_PATR')){
+			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(fecha);
+			me.bloquearObligatorio(observacionesBC);
+			me.bloquearObligatorio(anulacion);
+		}
 	},
 	
     habilitarCampo: function(campo) {

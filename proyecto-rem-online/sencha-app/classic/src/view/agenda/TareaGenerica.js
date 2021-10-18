@@ -3072,8 +3072,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.down('[name=comboVentaSupensiva]').setDisabled(false);
-			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
@@ -3085,8 +3085,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] == codigoSubcartera) {
 			me.down('[name=comboVentaSupensiva]').setDisabled(false);
-			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
 			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
+			me.editableyNoObligatorio(me.down('[name=comboVentaSupensiva]'));
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));

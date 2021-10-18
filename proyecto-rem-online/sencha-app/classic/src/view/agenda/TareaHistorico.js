@@ -717,7 +717,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 					    		}
 					    	}
 					    },
-						T017_T017_DocsPosVentaValidacion: function() {
+						T017_DocsPosVentaValidacion: function() {
 							var me = this;
 							var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 							

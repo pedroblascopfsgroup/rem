@@ -9255,6 +9255,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						beanUtilNotNull.copyProperty(dtoTestigosOpc, "tipoActivo",
 								lista.getTipoActivo().getDescripcion());
 					}	
+					if (!Checks.esNulo(lista.getSubtipoActivo())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "subtipoActivo",
+								lista.getSubtipoActivo().getDescripcion());
+					}
 				} catch (IllegalAccessException e) {
 					logger.error("Error en activoManager", e);
 	

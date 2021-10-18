@@ -8,17 +8,16 @@ import java.util.Date;
  */
 public class DtoTestigosOpcionales {
 	private Long id;
-	private String informesMediadores;
 	private String fuenteTestigos;
-	private Float precio;
+	private Float eurosPorMetro;
 	private Float precioMercado;
 	private Float superficie;
 	private String tipoActivo;
-	private String link;
+	private String enlace;
 	private String direccion;
-	private String idTestigoSF;
-	private String nombre;
-	
+	private Float lat;
+	private Float lng;
+	private Date fechaTransaccionPublicacion;
 	
 	public Long getId() {
 		return id;
@@ -26,23 +25,17 @@ public class DtoTestigosOpcionales {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getInformesMediadores() {
-		return informesMediadores;
-	}
-	public void setInformesMediadores(String informesMediadores) {
-		this.informesMediadores = informesMediadores;
-	}
 	public String getFuenteTestigos() {
 		return fuenteTestigos;
 	}
 	public void setFuenteTestigos(String fuenteTestigos) {
 		this.fuenteTestigos = fuenteTestigos;
 	}
-	public Float getPrecio() {
-		return precio;
+	public Float getEurosPorMetro() {
+		return eurosPorMetro;
 	}
-	public void setPrecio(Float precio) {
-		this.precio = precio;
+	public void setEurosPorMetro(Float eurosPorMetro) {
+		this.eurosPorMetro = eurosPorMetro;
 	}
 	public Float getPrecioMercado() {
 		return precioMercado;
@@ -62,11 +55,11 @@ public class DtoTestigosOpcionales {
 	public void setTipoActivo(String tipoActivo) {
 		this.tipoActivo = tipoActivo;
 	}
-	public String getLink() {
-		return link;
+	public String getEnlace() {
+		return enlace;
 	}
-	public void setLink(String link) {
-		this.link = link;
+	public void setEnlace(String enlace) {
+		this.enlace = enlace;
 	}
 	public String getDireccion() {
 		return direccion;
@@ -74,18 +67,22 @@ public class DtoTestigosOpcionales {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-	public String getIdTestigoSF() {
-		return idTestigoSF;
+	public Float getLat() {
+		return lat;
 	}
-	public void setIdTestigoSF(String idTestigoSF) {
-		this.idTestigoSF = idTestigoSF;
+	public void setLat(Float lat) {
+		this.lat = lat;
 	}
-	public String getNombre() {
-		return nombre;
+	public Float getLng() {
+		return lng;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setLng(Float lng) {
+		this.lng = lng;
 	}
-	
-	
+	public Date getFechaTransaccionPublicacion() {
+		return fechaTransaccionPublicacion;
+	}
+	public void setFechaTransaccionPublicacion(Date fechaTransaccionPublicacion) {
+		this.fechaTransaccionPublicacion = fechaTransaccionPublicacion;
+	}	
 }

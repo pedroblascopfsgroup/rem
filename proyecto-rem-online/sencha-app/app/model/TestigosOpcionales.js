@@ -7,13 +7,10 @@ Ext.define('HreRem.model.TestigosOpcionales', {
 
 	fields: [
 		{
-            name: 'informesMediadores'
-        },
-        {
             name: 'fuenteTestigos'
         },
         {
-        	name: 'precio'
+        	name: 'eurosPorMetro'
         },
         {
         	name: 'precioMercado'
@@ -24,17 +21,23 @@ Ext.define('HreRem.model.TestigosOpcionales', {
         {
         	name: 'tipoActivo'
         },
+		{
+        	name: 'subtipoActivo'
+        },
         {
-        	name: 'link'
+        	name: 'enlace'
         },
         {
         	name: 'direccion'
         },
         {
-        	name: 'idTestigoSF'
+        	name: 'lat'
         },
         {
-        	name: 'nombre'
+        	name: 'lng'
+        },
+        {
+        	name: 'fechaTransaccion'
         }
 		
 	]

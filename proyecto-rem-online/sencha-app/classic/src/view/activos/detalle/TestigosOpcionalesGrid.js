@@ -13,24 +13,15 @@ Ext.define('HreRem.view.activos.detalle.TestigosOpcionalesGrid', {
      	var me = this;
 		
 		me.columns = [
-		        {
-		        	dataIndex: 'idTestigoSF',
-		            text: HreRem.i18n('title.testigos.opcionales.idtestigo'),
-		            flex: 0.2
-		        },
-		        {
-		        	dataIndex: 'nombre',
-		            text: HreRem.i18n('title.testigos.opcionales.nombre'),
-		            flex: 0.2
-		        },
-		        {
-		            dataIndex: 'informesMediadores',
-		            text: HreRem.i18n('title.testigos.opcionales.infmediadores'),
-		            flex: 0.2
-		        },
+		       
 		        {
 		            dataIndex: 'fuenteTestigos',
 		            text: HreRem.i18n('title.testigos.opcionales.fuente'),
+		            flex: 0.2
+		        },
+		        {
+		        	dataIndex: 'superficie',
+		            text: HreRem.i18n('title.testigos.opcionales.superficie'),
 		            flex: 0.2
 		        },
 		        {
@@ -39,18 +30,28 @@ Ext.define('HreRem.view.activos.detalle.TestigosOpcionalesGrid', {
 		            flex: 0.2
 		        },
 		        {
+		        	dataIndex: 'subtipoActivo',
+		            text: HreRem.i18n('title.testigos.opcionales.subtipologia'),
+		            flex: 0.2
+		        },
+		        {
 		        	dataIndex: 'direccion',
 		            text: HreRem.i18n('title.testigos.opcionales.direccion'),
 		            flex: 0.5
 		        },
 		        {
-		        	dataIndex: 'superficie',
-		            text: HreRem.i18n('title.testigos.opcionales.superficie'),
+		        	dataIndex: 'lat',
+		            text: HreRem.i18n('title.testigos.opcionales.lat'),
 		            flex: 0.2
 		        },
 		        {
-		        	dataIndex: 'precio',
-		            text: HreRem.i18n('title.testigos.opcionales.precio'),
+		        	dataIndex: 'lng',
+		            text: HreRem.i18n('title.testigos.opcionales.lng'),
+		            flex: 0.2
+		        },
+		        {
+		        	dataIndex: 'eurosPorMetro',
+		            text: HreRem.i18n('title.testigos.opcionales.euros.metro'),
 		            flex: 0.2
 		        },
 		        {
@@ -59,13 +60,18 @@ Ext.define('HreRem.view.activos.detalle.TestigosOpcionalesGrid', {
 		            flex: 0.2
 		        },		        
 		        {
-		        	dataIndex: 'link',
+		        	dataIndex: 'enlace',
 		            text: HreRem.i18n('title.testigos.opcionales.link'),
 		            renderer: function(value) {
 		            	return '<a href="' + value + '" target="_blank">' + value + '</a>'
 		        	},
 		            flex: 0.5
-		        }		
+		        },
+		        {
+		            dataIndex: 'fechaTransaccion',
+		            text: HreRem.i18n('title.testigos.opcionales.fecha.transaccion'),
+		            flex: 0.2
+		        }	
 		    ];
 		    me.dockedItems = [
 		        {

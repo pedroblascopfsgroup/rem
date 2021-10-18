@@ -293,14 +293,18 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							        fieldLabel: HreRem.i18n('fieldlabel.fecha.comunicacion.a.cliente'),
 							        bind: {
 				                		value: '{reserva.fechaComunicacionCliente}'
-							        }
+							        },
+									minValue: $AC.getCurrentDate(),
+									maxValue: null
 								},
 								{
 				                	xtype:'datefieldbase',
 							        fieldLabel: HreRem.i18n('fieldlabel.fecha.vigencia.arras'),
 							        bind: {
 				                		value: '{reserva.fechaVigenciaArras}'
-							        }
+							        },
+									minValue: $AC.getCurrentDate(),
+									maxValue: null
 								}
 							]
 						},

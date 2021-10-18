@@ -36,9 +36,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      	T_TIPO_DATA('REN','Renovación/novación'),
-		T_TIPO_DATA('SUB','Subrogación'),
-		T_TIPO_DATA('ALS','Alquiler social')
+      	T_TIPO_DATA('REN','Renovación/novación', 'ZRE'),
+		T_TIPO_DATA('SUB','Subrogación', 'ZSE'),
+		T_TIPO_DATA('ALS','Alquiler social', 'ZAC')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -65,6 +65,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               DD_'||V_LETRAS_TABLA||'_CODIGO,
               DD_'||V_LETRAS_TABLA||'_DESCRIPCION,
               DD_'||V_LETRAS_TABLA||'_DESCRIPCION_LARGA,
+			  DD_'||V_LETRAS_TABLA||'_CODIGO_C4C,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
@@ -74,6 +75,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(1))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+			  '''||TRIM(V_TMP_TIPO_DATA(3))||''',
               0,
               '''||V_TIQUET||''',
               SYSDATE, 0)';

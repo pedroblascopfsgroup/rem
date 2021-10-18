@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210607
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211006
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-14229
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15423
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial para mostrar los campos necesarios para la caixa.
+--##        0.2 HREOS-15423 - Se añade filtrado por fechas
 --##########################################
 --*/
 
@@ -86,7 +87,8 @@ BEGIN
 		WHERE TPC.DD_TPC_CODIGO IN (''02'',''03'',''07'',''13'',''DAA'',''DPA'')
     AND TPC.BORRADO = 0
     AND CRA.DD_CRA_CODIGO = ''03''
-    AND ACT.BORRADO = 0';
+    AND ACT.BORRADO = 0
+    AND SYSDATE BETWEEN NVL(VAL.VAL_FECHA_INICIO,TO_DATE(''19000101'',''YYYYMMDD'')) AND NVL(VAL.VAL_FECHA_FIN,TO_DATE(''20991231'',''YYYYMMDD''))';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PRECIOS_VIGENTES_CAIXA...Creada OK');
   EXCEPTION

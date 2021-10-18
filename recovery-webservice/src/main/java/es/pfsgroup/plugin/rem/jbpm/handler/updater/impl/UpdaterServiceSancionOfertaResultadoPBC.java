@@ -126,6 +126,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								String estadoBcString = null;
 								if(reservaApi.tieneReservaFirmada(expediente)) {
 									estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+									if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
+							        	expediente.setFechaAnulacion(new Date());
+							        }
 								}else {
 									estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 									ofertaApi.finalizarOferta(ofertaAceptada);

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.tramite.venta;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -143,6 +144,9 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(eco.getOferta() != null && eco.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera()) && DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
 			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC)));
 			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+			if(eco.getFechaAnulacion() != null) {
+	        	eco.setFechaAnulacion(new Date());
+	        }
 			genericDao.save(ExpedienteComercial.class, eco);
 			
 			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));

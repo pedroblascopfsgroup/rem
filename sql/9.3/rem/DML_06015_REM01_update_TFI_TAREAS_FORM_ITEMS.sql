@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Julián Dolz
---## FECHA_CREACION=20211015
+--## FECHA_CREACION=20211016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15678
@@ -44,21 +44,21 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
       		--          TAP_CODIGO          TFI_TIPO      TFI_ORDEN     		TFI_NOMBRE            TFI_VALIDACION    	TFI_BUSINESS_OPERATION    	TFI_LABEL
-    	T_TIPO_DATA('T015_ScoringBC'		,'combobox', 	'1'		        ,'comboResolucion'		,null 	        ,'DDSiNo'	    		,'Sanción'),
-    	T_TIPO_DATA('T015_ScoringBC'		,'datefield', 	'2'		        ,'fechaSancion'		,null 	        ,null	    			,'Fecha Sanción'),
+    	T_TIPO_DATA('T015_ScoringBC'		,'combobox', 	'1'		        ,'comboResolucion'		,'false' 	    ,'DDSiNo'	    		,'Sanción'),
+    	T_TIPO_DATA('T015_ScoringBC'		,'datefield', 	'2'		        ,'fechaSancion'			,'false' 	    ,null	    			,'Fecha Sanción'),
       	T_TIPO_DATA('T015_ScoringBC'		,'textarea', 	'3'		        ,'observacionesBc'		,null 	        ,null	    			,'Observaciones Bc'),
-	T_TIPO_DATA('T015_ScoringBC'		,'textarea', 	'4'		        ,'observaciones'		,null 	        ,null	    			,'Observaciones'),
+		T_TIPO_DATA('T015_ScoringBC'		,'textarea', 	'4'		        ,'observaciones'		,null 	        ,null	    			,'Observaciones'),
 	
-	T_TIPO_DATA('T015_SancionBC'		,'combobox', 	'1'		        ,'comboResolucion'		,null 	        ,'DDSiNo'	    		,'Sanción'),
-    	T_TIPO_DATA('T015_SancionBC'		,'datefield', 	'2'		        ,'fechaSancion'		,null 	        ,null	    			,'Fecha Sanción'),
+		T_TIPO_DATA('T015_SancionBC'		,'combobox', 	'1'		        ,'comboResolucion'		,'false' 	    ,'DDSiNo'	    		,'Sanción'),
+    	T_TIPO_DATA('T015_SancionBC'		,'datefield', 	'2'		        ,'fechaSancion'			,'false' 	    ,null	    			,'Fecha Sanción'),
       	T_TIPO_DATA('T015_SancionBC'		,'textarea', 	'3'		        ,'observacionesBc'		,null 	        ,null	    			,'Observaciones Bc'),
-	T_TIPO_DATA('T015_SancionBC'		,'textarea', 	'4'		        ,'observaciones'		,null 	        ,null	    			,'Observaciones'),
+		T_TIPO_DATA('T015_SancionBC'		,'textarea', 	'4'		        ,'observaciones'		,null 	        ,null	    			,'Observaciones'),
 	
-    	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'1'			,'comboResolucion'		,null 	        ,'DDSiNo'	    		,'Sanción'),
-    	T_TIPO_DATA('T015_SancionPatrimonio'	,'datefield', 	'2'			,'fechaSancion'		,null 	        ,null	    			,'Fecha Sanción'),
+    	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'1'			,'comboResolucion'		,'false' 	    ,'DDSiNo'	    		,'Sanción'),
+    	T_TIPO_DATA('T015_SancionPatrimonio'	,'datefield', 	'2'			,'fechaSancion'			,'false' 	    ,null	    			,'Fecha Sanción'),
     	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'3'			,'comboMotivoAnulacion'	,null 	        ,'DDMotivoAnulacionExpediente','Motivo Anulación'),
       	T_TIPO_DATA('T015_SancionPatrimonio'	,'textarea', 	'4'			,'observacionesBc'		,null 	        ,null	    			,'Observaciones Bc'),
-	T_TIPO_DATA('T015_SancionPatrimonio'	,'textarea', 	'5'			,'observaciones'		,null 	        ,null	    			,'Observaciones')
+		T_TIPO_DATA('T015_SancionPatrimonio'	,'textarea', 	'5'			,'observaciones'		,null 	        ,null	    			,'Observaciones')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

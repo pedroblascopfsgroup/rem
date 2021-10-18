@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 
 
@@ -51,16 +53,13 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 	@ManyToOne
     @JoinColumn(name = "ICO_ID")
     private ActivoInfoComercial infoComercial;   
-
-	@Column(name = "TOP_ID_INFORME_SF")
-	private String informesMediadores;
 	
 	@ManyToOne
     @JoinColumn(name = "DD_FTE_ID")
     private DDFuenteTestigos fuenteTestigos;   
 
-	@Column(name = "TOP_PRECIO")
-	private Float precio;
+	@Column(name = "TOP_EUROS_METRO")
+	private Float eurosPorMetro;
 	
 	@Column(name = "TOP_PRECIO_MERCADO")
 	private Float precioMercado;
@@ -72,26 +71,30 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 	@JoinColumn(name = "DD_TPA_ID")
 	private DDTipoActivo tipoActivo;
 	
-	@Column(name = "TOP_LINK")
-	private String link;
+	@ManyToOne
+	@JoinColumn(name = "DD_SAC_ID")
+	private DDSubtipoActivo subtipoActivo;
+	
+	@Column(name = "TOP_ENLACE")
+	private String enlace;
 	
 	@Column(name = "TOP_DIRECCION")
 	private String direccion;
 	
-	@Column(name = "TOP_ID_TESTIGO_SF")
-	private String idTestigoSF;
+	@Column(name = "TOP_LATITUD")
+	private Float lat;
 	
-	@Column(name = "TOP_NOMBRE")
-	private String nombre;
+	@Column(name = "TOP_LONGITUD")
+	private Float lng;
+	
+	@Column(name = "TOP_FECHA_TRANSACCION")
+	private Date fechaTransaccionPublicacion;
 	
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
-	
-	
-
 
 	public Long getId() {
 		return id;
@@ -109,30 +112,6 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 		this.infoComercial = infoComercial;
 	}
 
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-
-	public String getInformesMediadores() {
-		return informesMediadores;
-	}
-
-	public void setInformesMediadores(String informesMediadores) {
-		this.informesMediadores = informesMediadores;
-	}
-
 	public DDFuenteTestigos getFuenteTestigos() {
 		return fuenteTestigos;
 	}
@@ -141,12 +120,12 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 		this.fuenteTestigos = fuenteTestigos;
 	}
 
-	public Float getPrecio() {
-		return precio;
+	public Float getEurosPorMetro() {
+		return eurosPorMetro;
 	}
 
-	public void setPrecio(Float precio) {
-		this.precio = precio;
+	public void setEurosPorMetro(Float eurosPorMetro) {
+		this.eurosPorMetro = eurosPorMetro;
 	}
 
 	public Float getPrecioMercado() {
@@ -173,12 +152,20 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 		this.tipoActivo = tipoActivo;
 	}
 
-	public String getLink() {
-		return link;
+	public DDSubtipoActivo getSubtipoActivo() {
+		return subtipoActivo;
 	}
 
-	public void setLink(String link) {
-		this.link = link;
+	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
+	}
+
+	public String getEnlace() {
+		return enlace;
+	}
+
+	public void setEnlace(String enlace) {
+		this.enlace = enlace;
 	}
 
 	public String getDireccion() {
@@ -189,21 +176,43 @@ public class InformeTestigosOpcionales implements Serializable, Auditable {
 		this.direccion = direccion;
 	}
 
-	public String getIdTestigoSF() {
-		return idTestigoSF;
+	public Float getLat() {
+		return lat;
 	}
 
-	public void setIdTestigoSF(String idTestigoSF) {
-		this.idTestigoSF = idTestigoSF;
+	public void setLat(Float lat) {
+		this.lat = lat;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public Float getLng() {
+		return lng;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setLng(Float lng) {
+		this.lng = lng;
 	}
 
+	public Date getFechaTransaccionPublicacion() {
+		return fechaTransaccionPublicacion;
+	}
 
+	public void setFechaTransaccionPublicacion(Date fechaTransaccionPublicacion) {
+		this.fechaTransaccionPublicacion = fechaTransaccionPublicacion;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
 }

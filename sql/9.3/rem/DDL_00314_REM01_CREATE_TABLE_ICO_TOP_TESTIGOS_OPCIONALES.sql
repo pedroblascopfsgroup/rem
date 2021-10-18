@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210714
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14452
@@ -50,17 +50,18 @@ BEGIN
 		-- Crear la tabla.
 		V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
 			TOP_ID           						NUMBER(16,0)                NOT NULL,
-			ICO_ID 									NUMBER(16,0)				NOT NULL,
-			TOP_ID_INFORME_SF						VARCHAR(150 CHAR),			
+			ICO_ID 									NUMBER(16,0)				NOT NULL,	
 			DD_FTE_ID								NUMBER(16,0),		
-			TOP_PRECIO								NUMBER(18,2),
-			TOP_PRECIO_MERCADO						NUMBER(18,2),
-			TOP_SUPERCIE							NUMBER(18,2),
+			TOP_EUROS_METRO							NUMBER(15,6),
+			TOP_PRECIO_MERCADO						NUMBER(15,6),
+			TOP_SUPERCIE							NUMBER(15,6),
 			DD_TPA_ID								NUMBER(16,0),
-			TOP_LINK								VARCHAR(1000 CHAR),
-			TOP_DIRECCION							VARCHAR(250 CHAR),
-			TOP_ID_TESTIGO_SF						VARCHAR(200 CHAR)			NOT NULL,
-			TOP_NOMBRE								VARCHAR(100 CHAR),
+			DD_SAC_ID								NUMBER(16,0),
+			TOP_ENLACE								VARCHAR(1024 CHAR),
+			TOP_DIRECCION							VARCHAR(1024 CHAR),
+			TOP_LATITUD								NUMBER(11,2),
+			TOP_LONGITUD							NUMBER(11,2),			
+			TOP_FECHA_TRANSACCION					DATE,
 			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 							VARCHAR2(10 CHAR) 			NOT NULL ENABLE, 
 			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -77,20 +78,11 @@ BEGIN
 		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'('||V_TEXT_CHARS||'_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
-
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_UK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ICO_ID, TOP_ID_TESTIGO_SF) TABLESPACE '||V_TABLESPACE_IDX;		
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_UK... Indice creado.');
 		
 		-- Crear primary key.
 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY ('||V_TEXT_CHARS||'_ID) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-
-		-- Crear unique key.
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT '||V_TEXT_TABLA||'_UK UNIQUE (ICO_ID, TOP_ID_TESTIGO_SF)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 
 		-- Creamos foreign keys
 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_FTE_FUENTE_TESTIGOS FOREIGN KEY (DD_FTE_ID) REFERENCES '||V_ESQUEMA||'.DD_FTE_FUENTE_TESTIGOS (DD_FTE_ID) ON DELETE SET NULL)';
@@ -100,6 +92,10 @@ BEGIN
 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_TPA_TIPOACT FOREIGN KEY (DD_TPA_ID) REFERENCES '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO (DD_TPA_ID) ON DELETE SET NULL)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_TPA... Foreign key creada.');	
+
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_SAC_SUBTIPOACT FOREIGN KEY (DD_SAC_ID) REFERENCES '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO (DD_SAC_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_TPA... Foreign key creada.');
 		
 		-- Crear comentarios.
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
@@ -108,16 +104,17 @@ BEGIN
 
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_ID IS ''ID único del registro''';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ICO_ID IS ''Campo ID referencia del informe comercial''';									
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_ID_INFORME_SF IS ''Campo que relaciona testigos con informe de mediadores en SF''';							
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_FTE_ID	IS ''Campo ID único de referencia del diccionario FUENTE_TESTIGOS''';									
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_PRECIO	IS ''Campo que se calcula dividiendo el precio del mercado por la superficie ''';							
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_EUROS_METRO	IS ''Campo que se calcula dividiendo el precio del mercado por la superficie ''';							
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_PRECIO_MERCADO	IS ''Campo que indica el precio de mercado''';					
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_SUPERCIE	IS ''Campo que indica la superficie del inmueble''';						
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPA_ID	IS ''Campo ID único de referencia del diccionario TIPO_ACTIVO''';							
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_LINK	IS ''Campo que almacena url''';						
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_DIRECCION	IS ''Campo que almacena la dirección''';						
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_ID_TESTIGO_SF	IS ''Campo ID identificador del registro en SF''';							
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_NOMBRE IS ''Campo que almacena el nombre en SF''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPA_ID	IS ''Campo ID único de referencia del diccionario TIPO_ACTIVO''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_SAC_ID	IS ''Campo ID único de referencia del diccionario SUBTIPO_ACTIVO''';							
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_ENLACE	IS ''Campo que almacena url''';						
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_DIRECCION	IS ''Campo que almacena la dirección''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_LATITUD	IS ''Campo que almacena la latitud''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_LONGITUD	IS ''Campo que almacena la longitud''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TOP_FECHA_TRANSACCION	IS ''Campo que almacena la fecha de transacción publicación''';						
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro''';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';

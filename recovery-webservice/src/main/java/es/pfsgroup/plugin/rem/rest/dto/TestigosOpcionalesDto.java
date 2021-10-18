@@ -1,11 +1,13 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -18,53 +20,40 @@ public class TestigosOpcionalesDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@NotNull(groups = {Insert.class, Update.class})
-	private String id;
-	
-	private String nombre;
-
 	@Diccionary(clase = DDFuenteTestigos.class, message = "El codigo fuente introducido no existe", groups = { Insert.class,
 			Update.class })
-	private String fuente;
+	private String codFuente;
 
 	private Float superficie;
 	
-	@Diccionary(clase = DDTipoActivo.class, message = "El codigo tipologia introducido no existe", groups = { Insert.class,
+	@Diccionary(clase = DDTipoActivo.class, message = "El codigo codTipoActivo introducido no existe", groups = { Insert.class,
 			Update.class })
-	private String tipologia;
-
-	private Float precioMercado;
-
-	private Float precio;
+	private String codTipoActivo;
 	
-	private String link;
-	
-	private String informeMediadores;
+	@Diccionary(clase = DDSubtipoActivo.class, message = "El codigo codSubtipoInmueble introducido no existe", groups = { Insert.class,
+			Update.class })
+	private String codSubtipoInmueble;
 	
 	private String direccion;
+	
+	private Float lat;
+	
+	private Float lng;
+	
+	private Float precioMercado;
 
-	public String getId() {
-		return id;
+	private Float eurosPorMetro;
+	
+	private String enlace;
+	
+	private Date fechaTransaccionPublicacion;
+
+	public String getCodFuente() {
+		return codFuente;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getFuente() {
-		return fuente;
-	}
-
-	public void setFuente(String fuente) {
-		this.fuente = fuente;
+	public void setCodFuente(String codFuente) {
+		this.codFuente = codFuente;
 	}
 
 	public Float getSuperficie() {
@@ -75,12 +64,44 @@ public class TestigosOpcionalesDto implements Serializable {
 		this.superficie = superficie;
 	}
 
-	public String getTipologia() {
-		return tipologia;
+	public String getCodTipoActivo() {
+		return codTipoActivo;
 	}
 
-	public void setTipologia(String tipologia) {
-		this.tipologia = tipologia;
+	public void setCodTipoActivo(String codTipoActivo) {
+		this.codTipoActivo = codTipoActivo;
+	}
+
+	public String getCodSubtipoInmueble() {
+		return codSubtipoInmueble;
+	}
+
+	public void setCodSubtipoInmueble(String codSubtipoInmueble) {
+		this.codSubtipoInmueble = codSubtipoInmueble;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public Float getLat() {
+		return lat;
+	}
+
+	public void setLat(Float lat) {
+		this.lat = lat;
+	}
+
+	public Float getLng() {
+		return lng;
+	}
+
+	public void setLng(Float lng) {
+		this.lng = lng;
 	}
 
 	public Float getPrecioMercado() {
@@ -91,36 +112,28 @@ public class TestigosOpcionalesDto implements Serializable {
 		this.precioMercado = precioMercado;
 	}
 
-	public Float getPrecio() {
-		return precio;
+	public Float getEurosPorMetro() {
+		return eurosPorMetro;
 	}
 
-	public void setPrecio(Float precio) {
-		this.precio = precio;
+	public void setEurosPorMetro(Float eurosPorMetro) {
+		this.eurosPorMetro = eurosPorMetro;
 	}
 
-	public String getLink() {
-		return link;
+	public String getEnlace() {
+		return enlace;
 	}
 
-	public void setLink(String link) {
-		this.link = link;
+	public void setEnlace(String enlace) {
+		this.enlace = enlace;
 	}
 
-	public String getInformeMediadores() {
-		return informeMediadores;
+	public Date getFechaTransaccionPublicacion() {
+		return fechaTransaccionPublicacion;
 	}
 
-	public void setInformeMediadores(String informeMediadores) {
-		this.informeMediadores = informeMediadores;
-	}
-
-	public String getDireccion() {
-		return direccion;
-	}
-
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
+	public void setFechaTransaccionPublicacion(Date fechaTransaccionPublicacion) {
+		this.fechaTransaccionPublicacion = fechaTransaccionPublicacion;
 	}
 
 }

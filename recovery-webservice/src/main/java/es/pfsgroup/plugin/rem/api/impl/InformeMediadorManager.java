@@ -1334,7 +1334,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						autorizacionWebProveedor = true;
 				}
 			}
-			HashMap<String, String> errorsListTestigo = null;
+			//Si no mandan un id unico como controlamos duplicados, o no controlamos?
+			/*HashMap<String, String> errorsListTestigo = null;
 			if (!Checks.esNulo(informe.getTestigos()) && !Checks.estaVacio(informe.getTestigos())) {
 				for (TestigosOpcionalesDto testigo : informe.getTestigos()) {
 					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
@@ -1353,7 +1354,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						count = 1;
 					}
 				}
-			}
+			}*/
 			
 			if (informe.getCodSubtipoInmueble() != null) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble());
@@ -1581,65 +1582,80 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						if (!Checks.esNulo(testigos) && !Checks.estaVacio(testigos)) {
 							if (!Checks.esNulo(informeEntity)){
 								for (TestigosOpcionalesDto testigo : testigos) {
-									if (!Checks.esNulo(testigo.getId())) {
-										Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idTestigoSF", testigo.getId());
+									//if (!Checks.esNulo(testigo.getId())) {
+										//Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idTestigoSF", testigo.getId());
 										Filter filtroIco = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", informeEntity.getId());
 										InformeTestigosOpcionales infoTestOpc = null;
-										infoTestOpc = genericDao.get(InformeTestigosOpcionales.class, filtroId, filtroIco);
+										infoTestOpc = genericDao.get(InformeTestigosOpcionales.class, /*filtroId,*/ filtroIco);
 										
 										if (!Checks.esNulo(infoTestOpc)){
-											infoTestOpc.setInformesMediadores(testigo.getInformeMediadores());
-											infoTestOpc.setLink(testigo.getLink());
-											infoTestOpc.setNombre(testigo.getNombre());
+											infoTestOpc.setEnlace(testigo.getEnlace());
 											infoTestOpc.setDireccion(testigo.getDireccion());
-											infoTestOpc.setPrecio(testigo.getPrecio());
+											infoTestOpc.setEurosPorMetro(testigo.getEurosPorMetro());
 											infoTestOpc.setSuperficie(testigo.getSuperficie());
 											infoTestOpc.setPrecioMercado(testigo.getPrecioMercado());
+											infoTestOpc.setLat(testigo.getLat());
+											infoTestOpc.setLng(testigo.getLng());
+											infoTestOpc.setFechaTransaccionPublicacion(testigo.getFechaTransaccionPublicacion());
 											
 											DDFuenteTestigos fuenteTestigos = null;
-											if (testigo.getFuente() != null && !testigo.getFuente().isEmpty()) {
+											if (testigo.getCodFuente() != null && !testigo.getCodFuente().isEmpty()) {
 												fuenteTestigos = genericDao.get(DDFuenteTestigos.class, genericDao.createFilter(
-														FilterType.EQUALS, "codigo", testigo.getFuente()));
+														FilterType.EQUALS, "codigo", testigo.getCodFuente()));
 											}
 											infoTestOpc.setFuenteTestigos(fuenteTestigos);
 											
 											DDTipoActivo tipoActivo = null;
-											if (testigo.getTipologia() != null && !testigo.getTipologia().isEmpty()) {
+											if (testigo.getCodTipoActivo() != null && !testigo.getCodTipoActivo().isEmpty()) {
 												tipoActivo = genericDao.get(DDTipoActivo.class, genericDao.createFilter(
-														FilterType.EQUALS, "codigo", testigo.getTipologia()));
+														FilterType.EQUALS, "codigo", testigo.getCodTipoActivo()));
 											}
 											infoTestOpc.setTipoActivo(tipoActivo);
+											
+											DDSubtipoActivo subtipoActivo = null;
+											if (testigo.getCodSubtipoInmueble() != null && !testigo.getCodSubtipoInmueble().isEmpty()) {
+												subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble()));
+											}
+											infoTestOpc.setSubtipoActivo(subtipoActivo);
 										} else {
 											infoTestOpc = new InformeTestigosOpcionales();
 											infoTestOpc.setInfoComercial(informeEntity);
-											infoTestOpc.setIdTestigoSF(testigo.getId());
-											infoTestOpc.setInformesMediadores(testigo.getInformeMediadores());
-											infoTestOpc.setLink(testigo.getLink());
-											infoTestOpc.setNombre(testigo.getNombre());
+											infoTestOpc.setEnlace(testigo.getEnlace());
 											infoTestOpc.setDireccion(testigo.getDireccion());
-											infoTestOpc.setPrecio(testigo.getPrecio());
+											infoTestOpc.setEurosPorMetro(testigo.getEurosPorMetro());
 											infoTestOpc.setSuperficie(testigo.getSuperficie());
 											infoTestOpc.setPrecioMercado(testigo.getPrecioMercado());
+											infoTestOpc.setLat(testigo.getLat());
+											infoTestOpc.setLng(testigo.getLng());
+											infoTestOpc.setFechaTransaccionPublicacion(testigo.getFechaTransaccionPublicacion());
 											
 											DDFuenteTestigos fuenteTestigos = null;
-											if (testigo.getFuente() != null && !testigo.getFuente().isEmpty()) {
+											if (testigo.getCodFuente() != null && !testigo.getCodFuente().isEmpty()) {
 												fuenteTestigos = genericDao.get(DDFuenteTestigos.class, genericDao.createFilter(
-														FilterType.EQUALS, "codigo", testigo.getFuente()));
+														FilterType.EQUALS, "codigo", testigo.getCodFuente()));
 											}
 											infoTestOpc.setFuenteTestigos(fuenteTestigos);
 											
 											DDTipoActivo tipoActivo = null;
-											if (testigo.getTipologia() != null && !testigo.getTipologia().isEmpty()) {
+											if (testigo.getCodTipoActivo() != null && !testigo.getCodTipoActivo().isEmpty()) {
 												tipoActivo = genericDao.get(DDTipoActivo.class, genericDao.createFilter(
-														FilterType.EQUALS, "codigo", testigo.getTipologia()));
+														FilterType.EQUALS, "codigo", testigo.getCodTipoActivo()));
 											}
 											infoTestOpc.setTipoActivo(tipoActivo);
+											
+											DDSubtipoActivo subtipoActivo = null;
+											if (testigo.getCodSubtipoInmueble() != null && !testigo.getCodSubtipoInmueble().isEmpty()) {
+												subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(
+														FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble()));
+											}
+											infoTestOpc.setSubtipoActivo(subtipoActivo);
 										}
 										
 										genericDao.save(InformeTestigosOpcionales.class, infoTestOpc);
 									}
 	
-								}
+								//}
 							}
 						}
 					}

@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CexDto;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -5521,7 +5522,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (compradorOrepresentanteModificado){
 					interlocutorCaixaService.callReplicateClientAsync(comprador,expedienteComercial.getOferta());
 					if(new BigDecimal(100).equals(expedienteComercial.getImporteParticipacionTotal()) && (esNuevo || haCambiadoPorcionCompra) && isAprobado) {
-						this.guardaBloqueoReplicaOferta(expedienteComercial);
+						this.guardaBloqueoReplicaOferta(expedienteComercial, compradorExpediente);
 					};
 				}
 			}
@@ -6542,7 +6543,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						&& DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo())){
 					interlocutorCaixaService.callReplicateClientAsync(comprador,expediente.getOferta());
 					if(new BigDecimal(100).equals(expediente.getImporteParticipacionTotal()) && isAprobado) {
-						this.guardaBloqueoReplicaOferta(expediente);
+						this.guardaBloqueoReplicaOferta(expediente, compradorExpediente);
 					}
 				}
 
@@ -14063,7 +14064,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			setEstadoScoringAlquilerCodigoBC(scoring != null && scoring.getResultadoScoringServicer() != null ? scoring.getResultadoScoringServicer().getCodigo() : null);
 		}};
 	}
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCex(final ExpedienteComercial eco, CompradorExpediente cex){
+		final CexDto cexDto = buildCexDtoFromCex(cex);
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCompradorEditado(cexDto);
+		}};
+	}
+
+	private CexDto buildCexDtoFromCex(CompradorExpediente cex) {
+		CexDto dto = new CexDto();
+
+		dto.setTitularContratacion(cex.getTitularContratacion());
+		dto.setInterlocutorOfertaCod(cex.getInterlocutorOferta() != null ? cex.getInterlocutorOferta().getCodigoC4C() : null);
+		dto.setPorcionCompra(cex.getPorcionCompra());
+		dto.setAntiguoDeudor(cex.getAntiguoDeudor());
+		dto.setVinculoCaixaCod(cex.getVinculoCaixa() != null ? cex.getVinculoCaixa().getCodigo() : null);
+		dto.setEstadoInterlocutorCod(cex.getEstadoInterlocutor() != null ? cex.getEstadoInterlocutor().getCodigo() : null);
+		dto.setIdComprador(cex.getComprador());
+
+		Comprador com = cex.getPrimaryKey().getComprador();
+
+		dto.setIdPersonaHayaCaixa(com != null ? com.getIdPersonaHayaCaixa() : null);
+
+		return dto;
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(final ExpedienteComercial eco, final String codRespuestaComprador){
@@ -14370,14 +14400,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
 
 		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal()) && !llamaReplicarClientes) {
-			this.guardaBloqueoReplicaOferta(eco);
+			this.guardaBloqueoReplicaOferta(eco, compradorExpediente);
 		}
 	}
 
 	@Transactional
-	public void guardaBloqueoReplicaOferta(ExpedienteComercial eco){
+	public void guardaBloqueoReplicaOferta(ExpedienteComercial eco, CompradorExpediente cex){
 		this.guardarBloqueoExpediente(eco);
-		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpediente(eco));
+		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpedienteAndCex(eco, cex));
 	}
 	
 	@Override

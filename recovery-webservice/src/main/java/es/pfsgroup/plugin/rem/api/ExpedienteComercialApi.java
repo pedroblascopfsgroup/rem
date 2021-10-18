@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
@@ -17,71 +18,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.BulkOferta;
-import es.pfsgroup.plugin.rem.model.CondicionesActivo;
-import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
-import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
-import es.pfsgroup.plugin.rem.model.DtoActualizacionRenta;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
-import es.pfsgroup.plugin.rem.model.DtoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
-import es.pfsgroup.plugin.rem.model.DtoDiccionario;
-import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
-import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
-import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
-import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
-import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
-import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
-import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoOferta;
-import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
-import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.model.DtoReserva;
-import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
-import es.pfsgroup.plugin.rem.model.DtoScoringGarantias;
-import es.pfsgroup.plugin.rem.model.DtoScreening;
-import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
-import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
-import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
-import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
-import es.pfsgroup.plugin.rem.model.DtoUsuario;
-import es.pfsgroup.plugin.rem.model.EntregaReserva;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
-import es.pfsgroup.plugin.rem.model.Formalizacion;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
-import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
-import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -1432,8 +1368,10 @@ public interface ExpedienteComercialApi {
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(ExpedienteComercial eco, String estadoArras);
 
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
-	
-	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(ExpedienteComercial eco, String codRespuestaComprador);
+
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCex(ExpedienteComercial eco, CompradorExpediente cex);
+
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(ExpedienteComercial eco, String codRespuestaComprador);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;

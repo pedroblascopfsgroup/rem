@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=rlb
---## FECHA_CREACION=20190617
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3502
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=SI
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Creación columna de Estado de publicación
 --##		0.3 Se ha creado la vista V_COND_PUBLICACION y se hace un join con esta vista para sacar los campos COND_PUBL_VENTA y COND_PUBL_ALQUILER + añadir la columna publicado
 --##		0.4 Se actualiza para nivelar los ID's de esta vista y V_SUBDIVISIONES_AGRUPACION
+--##        0.5 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -80,7 +81,7 @@ COND.COND_PUBL_VENTA, COND.COND_PUBL_ALQUILER
                 GROUP BY ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, ACT.DD_TPA_ID, ACT.DD_SAC_ID, BIEDREG.BIE_DREG_NUM_FINCA, AIC.DD_AIC_DESCRIPCION, NVL (VIV.VIV_NUM_PLANTAS_INTERIOR, 0)) SUBD
                JOIN
                DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
-               JOIN DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
+               LEFT JOIN DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
                ) ACT_SD
         
 		JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID

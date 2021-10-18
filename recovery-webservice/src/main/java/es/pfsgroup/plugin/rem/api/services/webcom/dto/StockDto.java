@@ -365,6 +365,12 @@ public class StockDto implements WebcomRESTDto{
 	@MappedColumn("RECOMENDACION_REQUERIDA")
 	private StringDataType recomendacionInternaRequerida;
 	
+	@WebcomRequired
+	private StringDataType proDocidentif;
+	
+	@WebcomRequired
+	private StringDataType proNombre; 
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1177,5 +1183,18 @@ public class StockDto implements WebcomRESTDto{
 	public void setRecomendacionInternaRequerida(StringDataType recomendacionInternaRequerida) {
 		this.recomendacionInternaRequerida = recomendacionInternaRequerida;
 	}
+	public StringDataType getProDocidentif() {
+		return proDocidentif;
+	}
+	public void setProDocidentif(StringDataType proDocidentif) {
+		this.proDocidentif = proDocidentif;
+	}
+	public StringDataType getProNombre() {
+		return proNombre;
+	}
+	public void setProNombre(StringDataType proNombre) {
+		this.proNombre = proNombre;
+	}
+	
 	
 }

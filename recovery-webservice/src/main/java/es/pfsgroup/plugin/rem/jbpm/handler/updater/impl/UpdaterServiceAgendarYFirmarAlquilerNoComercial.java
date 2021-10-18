@@ -59,7 +59,6 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 	
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		Boolean estadoOfertaBcMod = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
@@ -73,11 +72,7 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
-		
-		if (estadoOfertaBcMod){
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
-		
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 	}
 
 	public String[] getCodigoTarea() {

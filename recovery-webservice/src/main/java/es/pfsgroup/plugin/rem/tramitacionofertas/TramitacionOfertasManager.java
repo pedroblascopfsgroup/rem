@@ -2295,7 +2295,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		cex.setInterlocutorOferta(interlocutor);
 
 		if(cex.getDocumentoRepresentante() != null){
-			interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+			Comprador com = cex.getPrimaryKey().getComprador();
+			if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(com.getTipoPersona().getCodigo())){
+				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
+			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
+				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+			}
 			cex.setInterlocutorOfertaRepresentante(interlocutor);
 		}
 

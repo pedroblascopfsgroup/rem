@@ -41,7 +41,10 @@ public class DDClaseContratoAlquiler implements Auditable, Dictionary{
 	private String descripcion;
 	    
 	@Column(name = "DD_CCA_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;	
+	
+	@Column(name = "DD_TOA_CODIGO_C4C")   
+	private String codigoC4C;
 
 	@Version   
 	private Long version;
@@ -95,6 +98,14 @@ public class DDClaseContratoAlquiler implements Auditable, Dictionary{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 	
 	

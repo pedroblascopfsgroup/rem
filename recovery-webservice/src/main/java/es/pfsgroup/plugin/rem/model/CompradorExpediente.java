@@ -25,6 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
@@ -240,6 +241,13 @@ public class CompradorExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRV_NAC_ID_REP")
 	private DDProvincia provinciaNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EIC_ID")
+	private DDEstadoInterlocutor estadoInterlocutor;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
  
 	@Version   
 	private Long version;
@@ -803,6 +811,20 @@ public class CompradorExpediente implements Serializable, Auditable {
 		this.provinciaNacimientoRep = provinciaNacimientoRep;
 	}
 
+	public DDEstadoInterlocutor getEstadoInterlocutor() {
+		return estadoInterlocutor;
+	}
 
-   
+	public void setEstadoInterlocutor(DDEstadoInterlocutor estadoInterlocutor) {
+		this.estadoInterlocutor = estadoInterlocutor;
+	}
+
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
 }

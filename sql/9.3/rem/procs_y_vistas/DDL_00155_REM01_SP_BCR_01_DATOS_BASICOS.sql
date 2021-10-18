@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210929
+--## FECHA_CREACION=20211013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15423
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -22,8 +22,10 @@
 --##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
 --##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
 --##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
---##	      0.12 Correcciones gestores - [HREOS-15254] - Daniel Algaba
---##	      0.12 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
+--##	      0.13 Correcciones gestores - [HREOS-15254] - Daniel Algaba
+--##	      0.14 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
+--##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
+--##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -45,6 +47,9 @@ CREATE OR REPLACE PROCEDURE SP_BCR_01_DATOS_BASICOS
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    V_AUX NUMBER(10); -- Variable auxiliar
+   V_COUNT NUMBER(16);
+   V_SUBSTR NUMBER(16);
+   V_INCREM NUMBER(16);
 
    V_FECHA_INICIO VARCHAR2(100 CHAR);
    V_FECHA_FIN VARCHAR2(100 CHAR);
@@ -99,7 +104,9 @@ BEGIN
                   CASE 
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
-                     ELSE sac_uso.DD_SAC_ID
+                     WHEN sac_uso.DD_SAC_ID IS NOT NULL THEN sac_uso.DD_SAC_ID
+                     WHEN TPA.DD_TPA_ID IS NOT NULL AND TPA.DD_TPA_ID = ACT.DD_TPA_ID THEN ACT.DD_SAC_ID
+                     ELSE NULL
                   END DD_SAC_ID,
                   COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
@@ -145,7 +152,7 @@ BEGIN
                                  ) us ON (us.act_id = act.act_id)
                                  when matched then update set
                                     act.DD_TPA_ID = NVL(us.DD_TPA_ID,act.DD_TPA_ID)
-                                    ,act.DD_SAC_ID = NVL(us.DD_SAC_ID,act.DD_SAC_ID)
+                                    ,act.DD_SAC_ID = us.DD_SAC_ID
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)
                                     ,act.DD_PRP_ID = us.DD_PRP_ID
@@ -228,6 +235,34 @@ BEGIN
 
    SALIDA := SALIDA || '   [INFO] 3 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO_CAIXA'|| CHR(10);
 
+   EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_MOTIVOS_NECESIDAD_ARRAS';
+
+   V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_MNA_MOT_NECESIDAD_ARRAS WHERE BORRADO = 0';
+    EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+    
+   V_MSQL := 'SELECT MAX(LENGTH(DD_MNA_CODIGO)) + 1 INCREM FROM '||V_ESQUEMA||'.DD_MNA_MOT_NECESIDAD_ARRAS WHERE BORRADO = 0';
+   EXECUTE IMMEDIATE V_MSQL INTO V_INCREM;
+      
+   V_SUBSTR := 1;
+   
+   FOR J IN 1 .. V_COUNT
+   LOOP
+   
+      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_MOTIVOS_NECESIDAD_ARRAS (ACT_ID, MOT_NECESIDAD_ARRAS)
+            SELECT ACT.ACT_ID, 
+               MNA.DD_MNA_DESCRIPCION MOT_NECESIDAD_ARRAS
+            FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX
+            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO
+               AND ACT.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_MNA_MOT_NECESIDAD_ARRAS MNA ON MNA.DD_MNA_CODIGO = SUBSTR(AUX.MOT_NECESIDAD_ARRAS, '||V_SUBSTR||', 2)
+               AND MNA.BORRADO = 0
+            WHERE AUX.FLAG_EN_REM = '||FLAG_EN_REM;
+      EXECUTE IMMEDIATE V_MSQL;
+      
+      V_SUBSTR := V_SUBSTR + V_INCREM;
+   
+   END LOOP;
+
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA act1
 				using (		
 
@@ -256,7 +291,7 @@ BEGIN
                   WHEN aux.NECESIDAD_ARRAS IN (''S'',''1'',''01'') THEN 1
                   WHEN aux.NECESIDAD_ARRAS IN (''N'',''0'',''02'') THEN 0
                END as CBX_NECESIDAD_ARRAS,
-               mna.DD_MNA_ID as DD_MNA_ID,
+               MOT_NEC_ARRAS.MOT_NECESIDAD_ARRAS,
                CASE
                   WHEN aux.PRECIO_VENTA_NEGOCIABLE IN (''S'',''1'') THEN 1
                   WHEN aux.PRECIO_VENTA_NEGOCIABLE IN (''N'',''0'') THEN 0
@@ -295,15 +330,14 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_ALQUILER''  AND eqv1.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_ALQUILER AND EQV1.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_ECA_EST_COM_ALQUILER eca ON eca.DD_ECA_CODIGO = eqv1.DD_CODIGO_REM         
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''ESTADO_COMERCIAL_VENTA''  AND eqv2.DD_CODIGO_CAIXA = aux.ESTADO_COMERCIAL_VENTA AND EQV2.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_EST_COM_VENTA ecv ON ecv.DD_ECV_CODIGO = eqv2.DD_CODIGO_REM        
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''MOT_NECESIDAD_ARRAS''  AND eqv3.DD_CODIGO_CAIXA = aux.MOT_NECESIDAD_ARRAS AND EQV3.BORRADO=0
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_MNA_MOT_NECESIDAD_ARRAS mna ON mna.DD_MNA_CODIGO = eqv3.DD_CODIGO_REM     
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_EST_COM_VENTA ecv ON ecv.DD_ECV_CODIGO = eqv2.DD_CODIGO_REM          
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr1 ON tcr1.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM   
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_ALQUILER''  AND eqv8.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_ALQ AND eqv8.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr2 ON tcr2.DD_TCR_CODIGO = eqv8.DD_CODIGO_REM                 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv1.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM     
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM    
+               LEFT JOIN (SELECT MOT.ACT_ID, LISTAGG(MOT.MOT_NECESIDAD_ARRAS, '', '') WITHIN GROUP (ORDER BY MOT.MOT_NECESIDAD_ARRAS) MOT_NECESIDAD_ARRAS FROM '|| V_ESQUEMA ||'.TMP_MOTIVOS_NECESIDAD_ARRAS MOT GROUP BY MOT.ACT_ID) MOT_NEC_ARRAS ON MOT_NEC_ARRAS.ACT_ID = ACT2.ACT_ID 
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )
@@ -318,7 +352,7 @@ BEGIN
                               ,act1.CBX_FEC_INI_CONCU = us.CBX_FEC_INI_CONCU 
                               ,act1.CBX_FEC_FIN_CONCU = us.CBX_FEC_FIN_CONCU 
                               ,act1.CBX_NECESIDAD_ARRAS = us.CBX_NECESIDAD_ARRAS 
-                              ,act1.DD_MNA_ID = us.DD_MNA_ID 
+                              ,act1.MOT_NECESIDAD_ARRAS = us.MOT_NECESIDAD_ARRAS 
                               ,act1.CBX_PRECIO_VENT_NEGO = us.CBX_PRECIO_VENT_NEGO 
                               ,act1.CBX_PRECIO_ALQU_NEGO = us.CBX_PRECIO_ALQU_NEGO 
                               ,act1.CBX_CAMP_PRECIO_ALQ_NEGO = us.CBX_CAMP_PRECIO_ALQ_NEGO 
@@ -345,7 +379,7 @@ BEGIN
                                           DD_ECV_ID,
                                           FECHA_ECV_EST_COM_VENTA,
                                           CBX_NECESIDAD_ARRAS,
-                                          DD_MNA_ID,
+                                          MOT_NECESIDAD_ARRAS,
                                           CBX_PRECIO_VENT_NEGO,
                                           CBX_PRECIO_ALQU_NEGO,
                                           CBX_CAMP_PRECIO_ALQ_NEGO,
@@ -371,7 +405,7 @@ BEGIN
                                           us.DD_ECV_ID,
                                           us.FECHA_ECV_EST_COM_VENTA,
                                           us.CBX_NECESIDAD_ARRAS,
-                                          us.DD_MNA_ID,
+                                          us.MOT_NECESIDAD_ARRAS,
                                           us.CBX_PRECIO_VENT_NEGO,
                                           us.CBX_PRECIO_ALQU_NEGO,
                                           us.CBX_CAMP_PRECIO_ALQ_NEGO,

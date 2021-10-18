@@ -24,6 +24,10 @@ public class DDRolInterlocutor implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 
+	public static final String COD_CLIENTE_FINAL = "CRM000";
+	public static final String COD_SOCIO_COMERCIAL = "CRM011";
+
+
 	@Id
 	@Column(name = "DD_TRI_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDRolInterlocutor")

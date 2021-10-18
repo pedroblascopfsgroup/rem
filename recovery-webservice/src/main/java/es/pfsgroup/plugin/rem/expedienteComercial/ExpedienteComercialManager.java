@@ -12909,7 +12909,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					fechaArrasExpediente.setValidacionBC(dd);
 				}
 			}
-			
+
 			if (dto.getMotivoAnulacion() != null) {
 				fechaArrasExpediente.setMotivoAnulacion(dto.getMotivoAnulacion());
 			}
@@ -13963,8 +13963,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			iap.setAuditoria(Auditoria.getNewInstance());
 			iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
 			iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
+		iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+		genericDao.save(InfoAdicionalPersona.class, iap);
 
 		comprador.setInfoAdicionalPersona(iap);
 
@@ -13984,8 +13985,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					iapRepresentante.setAuditoria(Auditoria.getNewInstance());
 					iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
 					iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-					genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
 				}
+				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
 
 
 			}else {

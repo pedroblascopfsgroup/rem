@@ -2097,9 +2097,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
+		logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java con los valores: " + (oferta != null) + " && (" + oferta.getOfertaEspecial() + " || " + oferta.getOfertaExpress() + ") && " + ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) + " && " + boardingComunicacionApi.modoRestClientBoardingActivado());
 		if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
 				&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
+			logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java linea 1991");
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+			logger.error("Oferta Express numero " + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 1993");
 		}
 		
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);

@@ -129,6 +129,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			if(!Ext.isEmpty(comprador.email)){
 		            				slideDatos.getForm().findField('email').setValue(comprador.email);
 		            				slideDatos.getForm().findField('email').setReadOnly(true);
+		            				slideDatos.getForm().findField('emailNacimiento').setValue(comprador.email);
 		            			}
 		            			if(!Ext.isEmpty(comprador.vinculoCaixaCodigo)){
 		            				slideDatos.getForm().findField('vinculoCaixa').setValue(comprador.vinculoCaixaCodigo);
@@ -144,14 +145,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(date);
 		            			}
 		            			
-		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
-		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorCodigo);
-		            			}
-		            			
-		            			if(!Ext.isEmpty(comprador.municipioCodigo)){
-		            				slideDatos.getForm().findField('municipioCodigo').setValue(comprador.municipioCodigo);
-		            			}	
-		            			
 		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
 		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
 		            			}
@@ -159,12 +152,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			if(!Ext.isEmpty(comprador.provinciaCodigo)){
 		            				slideDatos.getForm().findField('provinciaCodigo').setValue(comprador.provinciaCodigo);
 		            			}
+
+		            			if(!Ext.isEmpty(comprador.municipioCodigo) && !Ext.isEmpty(comprador.provinciaCodigo)){
+		            				slideDatos.getForm().findField('municipioCodigo').setValue(comprador.municipioCodigo);
+		            			}
+		            			
 		            			if(!Ext.isEmpty(comprador.direccion)){
 		            				slideDatos.getForm().findField('direccionTodos').setValue(comprador.direccion);
 		            			}
 		            			
 		            			if(!Ext.isEmpty(comprador.prp)){
 		            				slideDatos.getForm().findField('prp').setValue(comprador.prp);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.telefono1)){
+		            				slideDatos.getForm().findField('telefonoNacimiento1').setValue(comprador.telefono1);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.telefono2)){
+		            				slideDatos.getForm().findField('telefonoNacimiento2').setValue(comprador.telefono2);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPostal)){
+		            				slideDatos.getForm().findField('codigoPostalNacimiento').setValue(comprador.codigoPostal);
+		            			}
+
+		            			if(!Ext.isEmpty(comprador.provinciaNacimientoCodigo)){
+		            				slideDatos.getForm().findField('provinciaNacimiento').setValue(comprador.provinciaNacimientoCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
+		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorCodigo);
 		            			}
 		            			
 		        			}

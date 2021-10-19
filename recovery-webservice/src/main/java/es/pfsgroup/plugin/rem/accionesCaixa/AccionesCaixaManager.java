@@ -207,8 +207,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(ExpedienteComercial.class, expediente);
 
         adapter.save(createRequestAccionFirmaArras(dto));
-
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     public Map<String, String[]> createRequestAccionFirmaArras(DtoFirmaArrasCaixa dto) throws ParseException {
@@ -536,8 +534,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(FechaArrasExpediente.class,fae);
 
         adapter.save(createRequestAccionFirmaArras(dto));
-
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -558,8 +554,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(ExpedienteComercial.class, expediente);
 
         adapter.save(createRequestAccionFirmaContrato(dto));
-
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override

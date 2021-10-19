@@ -45,6 +45,7 @@ public class DtoClienteComercial {
     private String municipioCodigo;
     private Boolean prp;
     private String localidadNacimientoCompradorDescripcion;
+    private String provinciaNacimientoCodigo;
 		
     
 	public Long getId() {
@@ -287,6 +288,12 @@ public class DtoClienteComercial {
 	}
 	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
 		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+	public String getProvinciaNacimientoCodigo() {
+		return provinciaNacimientoCodigo;
+	}
+	public void setProvinciaNacimientoCodigo(String provinciaNacimientoCodigo) {
+		this.provinciaNacimientoCodigo = provinciaNacimientoCodigo;
 	}
 	
 }

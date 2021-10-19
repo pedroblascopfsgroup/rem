@@ -4573,13 +4573,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					clienteComercialDto.setFechaNacimientoConstitucion(clienteCom.getFechaNacimiento());
 					if(clienteCom.getPaisNacimiento() != null) {
 						clienteComercialDto.setPaisNacimientoCompradorCodigo(clienteCom.getPaisNacimiento().getCodigo());
+					}else {
+						clienteComercialDto.setPaisNacimientoCompradorCodigo(DDPaises.CODIGO_PAIS_SPAIN);
 					}
+					
+					
+					if(clienteCom.getProvinciaNacimiento() != null) {
+						clienteComercialDto.setProvinciaNacimientoCodigo(clienteCom.getProvincia().getCodigo());
+					}
+					
 					if(clienteCom.getLocalidadNacimiento() != null) {
 						clienteComercialDto.setLocalidadNacimientoCompradorCodigo(clienteCom.getLocalidadNacimiento().getCodigo());
 						clienteComercialDto.setLocalidadNacimientoCompradorDescripcion(clienteCom.getLocalidadNacimiento().getDescripcion());
 					}
 					if(clienteCom.getPais() != null) {
 						clienteComercialDto.setCodigoPais(clienteCom.getPais().getCodigo());
+					}else {
+						clienteComercialDto.setCodigoPais(DDPaises.CODIGO_PAIS_SPAIN);
 					}
 					if(clienteCom.getProvincia() != null) {
 						clienteComercialDto.setProvinciaCodigo(clienteCom.getProvincia().getCodigo());
@@ -4587,7 +4597,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(clienteCom.getMunicipio() != null) {
 						clienteComercialDto.setMunicipioCodigo(clienteCom.getMunicipio().getCodigo());
 					}
-					clienteComercialDto.setDireccion(clienteCom.getDireccion());
+					
+					clienteComercialDto.setTelefono1(clienteCom.getTelefono1());
+					clienteComercialDto.setTelefono2(clienteCom.getTelefono2());
+					clienteComercialDto.setCodigoPostal(clienteCom.getCodigoPostal());
 					
 					if(clienteCom.getInfoAdicionalPersona() != null) {
 						clienteComercialDto.setPrp(clienteCom.getInfoAdicionalPersona().getPrp());
@@ -4606,6 +4619,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}else {
 			clienteComercialDto.setDocumento(dniComprador);
 			clienteComercialDto.setTipoDocumentoCodigo(codtipoDoc);
+			clienteComercialDto.setCodigoPais(DDPaises.CODIGO_PAIS_SPAIN);
+			clienteComercialDto.setPaisNacimientoCompradorCodigo(DDPaises.CODIGO_PAIS_SPAIN);
 		}
 
 		return clienteComercialDto;

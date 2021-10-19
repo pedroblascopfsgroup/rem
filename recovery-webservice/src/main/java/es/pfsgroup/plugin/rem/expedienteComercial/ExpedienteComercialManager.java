@@ -14023,7 +14023,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(final ExpedienteComercial eco){
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());
-			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigoC4C() : null);
 		}};
 	}
 

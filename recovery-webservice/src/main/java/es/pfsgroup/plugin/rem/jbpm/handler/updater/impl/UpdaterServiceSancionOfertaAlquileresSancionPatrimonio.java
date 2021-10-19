@@ -91,6 +91,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
+					ofertaApi.finalizarOferta(oferta);
 					
 					estadoBcModificado = true;
 					

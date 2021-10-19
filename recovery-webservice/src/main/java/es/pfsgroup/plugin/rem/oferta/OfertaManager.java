@@ -2614,6 +2614,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else {
 					map.put("idOfertaRem", null);
 				}
+				if (oferta != null && oferta.getExpedienteComercial() != null) {
+					map.put("idExpedienteRem",  oferta.getExpedienteComercial().getNumExpediente());
+				} else {
+					map.put("idExpedienteRem", null);
+				}
 				if(!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
@@ -2627,6 +2632,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
+				map.put("idExpedienteRem", oferta.getExpedienteComercial().getNumExpediente());
 				map.put("success", false);
 
 				map.put("invalidFields", errorsList);

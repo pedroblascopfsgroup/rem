@@ -258,9 +258,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					//Actualizar el estado comercial de los activos de la oferta
 					ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 		
-					if (!Checks.esNulo(tramite.getActivo())) {
-						activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-					}
+//					if (!Checks.esNulo(tramite.getActivo())) {
+//						activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+//					}
 					if (expediente.getOferta() != null &&
 							DDCartera.CODIGO_CARTERA_BBVA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 						try {

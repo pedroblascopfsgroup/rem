@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -34,9 +35,14 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	
+	private static final String COMBO_IRCLROD = "comboIrClRod";
 
 	private static final String CODIGO_T018_TRASLADAR_OFERTA_CLIENTE = "T018_TrasladarOfertaCliente";
 
@@ -64,8 +70,13 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 				expedienteComercial.setEstadoBc(estadoExpedienteBc);
 
 			}
+			
+			if(COMBO_IRCLROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if(DDSiNo.SI.equals(valor.getValor())) {
+					tramiteAlquilerApi.irClRod(expedienteComercial);	
+				}
+			}
 		}
-
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		

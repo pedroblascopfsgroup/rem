@@ -35,22 +35,25 @@ public class NotificatorServiceSancionOfertaReserva extends NotificatorServiceSa
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Date fechaFirma = null;
+		boolean comboQuitarNo = false;
 		
 		for(TareaExternaValor valor: valores) {
 			if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.NO.equals(valor.getValor())) {
-					if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						try {
-							fechaFirma = formato.parse(valor.getValor());
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-					}
+					comboQuitarNo = true;
+				}
+			}
+			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && comboQuitarNo) {
+				try {
+					fechaFirma = formato.parse(valor.getValor());
+				} catch (ParseException e) {
+					e.printStackTrace();
 				}
 			}
 		}
-		
-		this.generaNotificacionReserva(tramite, fechaFirma);
+		if(fechaFirma != null) {
+			this.generaNotificacionReserva(tramite, fechaFirma);
+		}
 		
 	}
 

@@ -3929,14 +3929,34 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var me = this;
 		var comboResultado = me.down('[name=comboResultado]');
 		var fecha = me.down('[name=fechaResolucion]');
+		var comboIrClRod = me.down('[name=comboIrClRod]');
+		
+		comboIrClRod.setValue('02');
+		
+		comboIrClRod.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['NO'] === comboIrClRod.getValue()){
+				me.habilitarCampo(fecha);
+				me.campoObligatorio(fecha);
+				me.habilitarCampo(comboResultado);
+				me.campoObligatorio(comboResultado);
+			}else if(CONST.COMBO_SIN_SINO['SI'] === comboIrClRod.getValue()){
+				me.deshabilitarCampo(fecha);
+				me.deshabilitarCampo(comboResultado);
+				fecha.setValue('');
+				comboResultado.setValue('');
+			}
+        });
 		
 		comboResultado.addListener('change', function(combo) {
 			if(CONST.COMBO_SIN_SINO['NO'] === comboResultado.getValue()){
 				me.deshabilitarCampo(fecha);
 				fecha.setValue('');
-			}else{
+			}else if(CONST.COMBO_SIN_SINO['SI'] === comboResultado.getValue()){
 				me.habilitarCampo(fecha);
 				me.campoObligatorio(fecha);
+			}else{
+				me.deshabilitarCampo(fecha);
+				fecha.setValue('');
 			}
         });
 	},
@@ -4041,6 +4061,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.bloquearObligatorio(observacionesBC);
 			me.bloquearObligatorio(anulacion);
 		}
+	},
+	
+	T018_AgendarYFirmarValidacion: function(){
+		var me = this;
+		var comboIrClRod = me.down('[name=comboIrClRod]');
+		var fecha = me.down('[name=fecha]');
+		var lugarFirma = me.down('[name=lugarFirma]');
+		
+		comboIrClRod.setValue('02');
+		
+		comboIrClRod.addListener('change', function(combo) {
+			if(CONST.COMBO_SIN_SINO['NO'] === comboIrClRod.getValue()){
+				me.habilitarCampo(fecha);
+				me.campoObligatorio(fecha);
+				me.habilitarCampo(lugarFirma);
+				me.campoObligatorio(lugarFirma);
+			}else{
+				me.deshabilitarCampo(fecha);
+				me.deshabilitarCampo(lugarFirma);
+				fecha.setValue('');
+				lugarFirma.setValue('');
+			}
+        });
 	},
 	
     habilitarCampo: function(campo) {

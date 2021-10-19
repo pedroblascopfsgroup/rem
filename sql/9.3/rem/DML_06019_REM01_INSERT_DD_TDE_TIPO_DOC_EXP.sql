@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20211015
+--## FECHA_CREACION=20211019
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15719
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                 --CODIGO    DESCRIPCION
-	    T_TIPO_DATA('09',	'9.- Documentos de alquiler', 'Documentos de alquiler')
+	    T_TIPO_DATA('09',	'9.- Documentos de alquiler no comercial', 'Documentos de alquiler no comercial')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -55,7 +55,13 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 					WHERE DD_TDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe. Modificamos nombre');
+
+          V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET DD_TDE_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+              DD_TDE_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+              USUARIOMODIFICAR = ''HREOS-15719'', FECHAMODIFICAR = SYSDATE
+              WHERE DD_TDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+            EXECUTE IMMEDIATE V_MSQL;
         ELSE 
           -- Si no existe se inserta.
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');

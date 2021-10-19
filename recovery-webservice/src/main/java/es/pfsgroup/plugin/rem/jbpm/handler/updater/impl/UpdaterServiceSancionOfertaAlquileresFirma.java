@@ -196,6 +196,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			modificadoEstadoBC = true;
 			expedienteComercial.setEstado(estadoExpedienteComercial);
 			expedienteComercial.setEstadoBc(estadoBc);	
+			ofertaApi.finalizarOferta(oferta);
 			
 		}
 		

@@ -268,6 +268,7 @@
 	<decision name ="T018_TrasladarOfertaClienteDecision" expression="#{T018_TrasladarOfertaClienteDecision}">
 		<transition to="T018_RevisionBcYCondiciones" name="rechaza"></transition>
         <transition to="T018_AgendarYFirmar" name="aprueba"></transition>
+        <transition to="T018_PteClRod" name="clRodSi"></transition>
 	</decision>
 	
 	<state name="T018_RevisionBcYCondiciones">
@@ -317,9 +318,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="T018_AgendarYFirmarDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state> 
+	
+	<decision name ="T018_AgendarYFirmarDecision" expression="#{T018_AgendarYFirmarDecision}">
+		<transition to="T018_PteClRod" name="clRodSi"></transition>
+        <transition to="Fin" name="clRodNo"></transition>
+	</decision>
 	
 	<state name="T018_BloqueoScreening">
 		<event type="node-enter">

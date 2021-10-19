@@ -10,14 +10,18 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -38,6 +42,12 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	
 	@Autowired 
 	private ActivoTramiteApi activoTramiteApi;
+	
+    @Autowired
+    private GenericABMDao genericDao;
+    
+    @Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
@@ -241,5 +251,16 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		}
 		
 		return camposRellenos;
+	}
+
+	@Override
+	public void irClRod(ExpedienteComercial eco) {
+		
+		DDEstadosExpedienteComercial estado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.PTE_CL_ROD);
+		DDEstadoExpedienteBc estadoBC = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_AGENDAR));
+		eco.setEstado(estado);
+		eco.setEstadoBc(estadoBC);
+		
+		expedienteComercialDao.save(eco);
 	}
 }

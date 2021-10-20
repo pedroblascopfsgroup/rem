@@ -9,5 +9,7 @@ public class TareaProcedimientoConstants {
     public static final String CODIGO_CONFIRMAR_FECHA_ARRAS_T017 = "T017_ConfirmarFechaFirmaArras";
     public static final String CODIGO_RESOLUCION_CES_T017 = "T017_ResolucionCES";
     public static final String CODIGO_SANCION_BC = "T015_SancionBC";
+    public static final String CODIGO_T018_AGENDAR_FIRMAR = "T018_AgendarYFirmar";
+    public static final String CODIGO_T015_FIRMA = "T015_Firma";
 
 }

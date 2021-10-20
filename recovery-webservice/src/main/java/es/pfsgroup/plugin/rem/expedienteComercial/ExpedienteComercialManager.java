@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CexDto;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -4220,6 +4221,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.getFechaHoraPosicionamiento());
 			}
 
+			if(posicionamiento.getFechaPosicionamiento() == null && dto.getFechaPosicionamiento() != null){
+				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento",
+						dto.getFechaPosicionamiento());
+			}
+
 			beanUtilNotNull.copyProperty(posicionamiento, "lugarFirma", dto.getLugarFirma());
 			if(dto.getObservacionesRem() != null) {
 				beanUtilNotNull.copyProperty(posicionamiento, "observacionesRem", dto.getObservacionesRem());
@@ -6959,17 +6965,48 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
+	public void sendPosicionamientoToBc(Long idEntidad, Boolean success) {
+		ExpedienteComercial expediente = findOne(idEntidad);
+		Boolean tieneTareaActiva = ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T018_AGENDAR_FIRMAR, expediente.getOferta().getNumOferta().toString())
+				|| ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T015_FIRMA, expediente.getOferta().getNumOferta().toString()) ;
+
+		if(tieneTareaActiva && success && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())){
+			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), this.buildReplicarOfertaDtoFromExpediente(expediente));
+		}
+	}
+
+	@Override
+	public Long getExpedienteByPosicionamiento(Long idPosicionamiento) {
+		if(idPosicionamiento != null){
+			Posicionamiento pos = genericDao.get(Posicionamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idPosicionamiento));
+
+			if(pos != null && pos.getExpediente() != null){
+				return pos.getExpediente().getId();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
 	public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad) {
 		ExpedienteComercial expediente = findOne(idEntidad);
 		Posicionamiento posicionamiento = new Posicionamiento();
 		List<Posicionamiento> lista = expediente.getPosicionamientos();
 		dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_NO_ENVIADA);
+		//Boolean tieneTareaActiva = ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T018_AGENDAR_FIRMAR, expediente.getOferta().getNumOferta().toString())
+		//		|| ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T015_FIRMA, expediente.getOferta().getNumOferta().toString()) ;
 		if (lista.isEmpty()) {
 			
 			posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 			posicionamiento.setExpediente(expediente);
 
 			genericDao.save(Posicionamiento.class, posicionamiento);
+
+		//	if(tieneTareaActiva){
+		//		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), this.buildReplicarOfertaDtoFromExpediente(expediente));
+
+		//	}
 
 			return true;
 
@@ -6980,7 +7017,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				isCarteraBK = DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera());
 			}
 			for (Posicionamiento p : lista) {
-				if (Checks.esNulo(p.getFechaFinPosicionamiento()) && Checks.esNulo(p.getMotivoAplazamiento())) {
+				if (Checks.esNulo(p.getFechaFinPosicionamiento()) && Checks.esNulo(p.getMotivoAplazamiento())
+				&& DDTipoOferta.isTipoVenta(expediente.getOferta().getTipoOferta())) {
 					hayPosicionamientoVigente = true;
 					if(isCarteraBK && DDMotivosEstadoBC.isRechazado(p.getValidacionBCPos())) {
 						hayPosicionamientoVigente = false;
@@ -6988,6 +7026,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					
 					if(hayPosicionamientoVigente) {
 						 break;
+					}
+				}else if(Checks.esNulo(p.getMotivoAplazamiento()) &&
+						(DDTipoOferta.isTipoAlquiler(expediente.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(expediente.getOferta().getTipoOferta()))){
+					if(isCarteraBK && DDMotivosEstadoBC.isRechazado(p.getValidacionBCPos())) {
+						hayPosicionamientoVigente = false;
+					}
+
+					if(hayPosicionamientoVigente) {
+						break;
 					}
 				}
 			}

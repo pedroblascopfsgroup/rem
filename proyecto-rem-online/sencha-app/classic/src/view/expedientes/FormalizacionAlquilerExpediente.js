@@ -79,6 +79,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                     idPrincipal : 'expediente.id',
                     topBar : true,
                     removeButton: false,
+                    editOnSelect: true,
                     bind : {
                         store : '{storePosicionamientos}',
                         topBar : '{!esExpedienteBloqueado}'
@@ -123,10 +124,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                                     increment : 15,
                                     reference : 'horaFirmaRef',
                                     disabled : true,
-                                    allowBlank : true,
+                                    allowBlank : true/*,
                                     listeners : {
                                         change : 'changeHora'
-                                    }
+                                    }*/
                                 },
                                 renderer : hourColoredRender
                             }, {
@@ -149,21 +150,65 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                                     reference : 'motivoAplazamientoRef'
                                     //allowBlank : false
                                 },
+                                bind:{
+                                    hidden: '{esBankia}'
+                                },
+                                renderer : coloredRender
+                            },
+                            {
+                                text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
+                                dataIndex : 'motivoAnulacionBc',
+                                flex : 1,
+                                editor: {
+                                    xtype: 'combobox',
+									reference : 'motivoAplazamientoBcRef',
+                                    store: new Ext.data.Store({
+                                        model: 'HreRem.model.ComboBase',
+                                        proxy: {
+                                            type: 'uxproxy',
+                                            remoteUrl: 'generic/getDiccionario',
+                                            extraParams: {diccionario: 'motivoAnulacionBc'}
+                                        },
+                                        autoLoad: true
+                                    }),
+                                    displayField: 'descripcion',
+                                    valueField: 'codigo',
+                                    listeners : {
+                                        change : 'changeMotivoAplazamientoAlquiler'
+                                    }
+                                },
+                                bind:{
+                                    hidden: '{!esBankia}'
+                                },
                                 renderer : coloredRender
                             },
                             {
 								dataIndex : 'fechaHoraFirma',
 								formatter : 'date("d/m/Y H:i")',
+								hidden : true,
 								hideable: false,
 								resizble : false,
-								width : 0,
+								width : 0/*,
 								editor : {
 									xtype : 'timefieldbase',
 									hidden : true,
 									format : 'd/m/Y H:i',
 									reference : 'fechaHoraFirmaRef'
-								}
-							}],
+								}*/
+							},
+                            {//este campo se pone para evitar un error que mataba la app
+                                dataIndex : 'fechaHoraPosicionamiento',
+                                formatter : 'date("d/m/Y H:i")',
+                                hidden : true,
+                                resizble : false,
+                                width : 0,
+                                editor : {
+                                    xtype : 'timefieldbase',
+                                    hidden : true,
+                                    format : 'd/m/Y H:i',
+                                    reference : 'fechaHoraPosicionamientoRef'
+                                }
+                            }],
 
                             dockedItems : [{
                                 xtype : 'pagingtoolbar',
@@ -178,7 +223,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                         var grid = this;
                         me.funcionRecargar();
                         me.funcionReloadExp();
-                        
+
+                        grid.lookupController().quitarAllowBlankMotivoAplazamientoAlquiler(grid);
                         grid.lookupController().onClickEnviarGestionLlaves();
                         
                     },

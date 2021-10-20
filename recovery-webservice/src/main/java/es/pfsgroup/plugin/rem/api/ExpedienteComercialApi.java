@@ -1395,4 +1395,7 @@ public interface ExpedienteComercialApi {
 
 	List<DtoRespuestaBCGenerica> getListResolucionComiteBC(Long idExpediente);
 
+    void sendPosicionamientoToBc(Long idEntidad, Boolean success);
+
+	Long getExpedienteByPosicionamiento(Long idPosicionamiento);
 }

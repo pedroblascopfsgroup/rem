@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211019
+--## FECHA_CREACION=20211020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -81,12 +81,63 @@ DECLARE
         T_TIPO_DATA('FONDO','V85295087', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V85295087','MADRID RMBS IV'),
         T_TIPO_DATA('FONDO','V84175744', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84175744','TdA 22 Mixto, FTA'),
         T_TIPO_DATA('FONDO','V84925569', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84925569','TdA 27, FTA'),
+        --Función clase de uso Clase de uso
+        T_TIPO_DATA('CLASE_USO','0001','Casa aislada','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
+        T_TIPO_DATA('CLASE_USO','0001','Casa adosada','DD_SAC_SUBTIPO_ACTIVO','06','Unifamiliar adosada'),
+        T_TIPO_DATA('CLASE_USO','0001','Casa pareada','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada'),
+        T_TIPO_DATA('CLASE_USO','0001','Piso Admisión','DD_SAC_SUBTIPO_ACTIVO','09','Piso'),
+        T_TIPO_DATA('CLASE_USO','0001','Estudio	Admisión','DD_SAC_SUBTIPO_ACTIVO','12','Estudio/Loft'),
+        T_TIPO_DATA('CLASE_USO','0001','Dúplex','DD_SAC_SUBTIPO_ACTIVO','10','Piso dúplex'),
+        --T_TIPO_DATA('CLASE_USO','0001','Triplex	Admisión','DD_SAC_SUBTIPO_ACTIVO','10','Piso dúplex'),
+        --T_TIPO_DATA('CLASE_USO','0001','Apartamento	Admisión','DD_SAC_SUBTIPO_ACTIVO','09','Piso'),
+        --T_TIPO_DATA('CLASE_USO','0001','Loft Admisión','DD_SAC_SUBTIPO_ACTIVO','12','Estudio/Loft'),
+        T_TIPO_DATA('CLASE_USO','0001','Ático	Admisión','DD_SAC_SUBTIPO_ACTIVO','11','Ático'),
+        --T_TIPO_DATA('CLASE_USO','0001','Planta Baja	Admisión','DD_SAC_SUBTIPO_ACTIVO','09','Piso'),
+        --T_TIPO_DATA('CLASE_USO','0001','Villa	Admisión','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
+        --T_TIPO_DATA('CLASE_USO','0001','Comercial	Admisión','DD_SAC_SUBTIPO_ACTIVO','13','Local comercial'),
+        T_TIPO_DATA('CLASE_USO','0001','Almacén	Admisión','DD_SAC_SUBTIPO_ACTIVO','15','Almacén'),
+        T_TIPO_DATA('CLASE_USO','0001','Entremedianeras	Admisión','DD_SAC_SUBTIPO_ACTIVO','28','Parque Medianas'),
+        T_TIPO_DATA('CLASE_USO','0001','Unifamiliar casa de pueblo','DD_SAC_SUBTIPO_ACTIVO','08','Unifamiliar casa de pueblo'),
+        T_TIPO_DATA('CLASE_USO','0001','Apartamento','DD_SAC_SUBTIPO_ACTIVO','40','Apartamento'),
+        T_TIPO_DATA('CLASE_USO','0008','Resto de suelo urbanizable','DD_SAC_SUBTIPO_ACTIVO','02','Urbanizable no programado'),
+        T_TIPO_DATA('CLASE_USO','0008','Suelo urbanizable organizado y Suelo urbanizable sectorizado','DD_SAC_SUBTIPO_ACTIVO','03','Urbanizable programado'),
+        T_TIPO_DATA('CLASE_USO','0007','Suelo urbano no consolidado','DD_SAC_SUBTIPO_ACTIVO','42','Suelo Urbano No Consolidado'),
+        T_TIPO_DATA('CLASE_USO','0007','Suelo urbano consolidado','DD_SAC_SUBTIPO_ACTIVO','04','Nave aislada'),
+        T_TIPO_DATA('CLASE_USO','0006','Oficina','DD_SAC_SUBTIPO_ACTIVO','14','Oficina'),
+        T_TIPO_DATA('CLASE_USO','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','20','Hotel/Apartamentos turísticos'),
+        T_TIPO_DATA('CLASE_USO','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','41','Hostelero'),
+        T_TIPO_DATA('CLASE_USO','0015','Edificio aparcamientos','DD_SAC_SUBTIPO_ACTIVO','19','Aparcamiento'),
+        T_TIPO_DATA('CLASE_USO','0011','Edificio comercial','DD_SAC_SUBTIPO_ACTIVO','22','Comercial'),
+        --T_TIPO_DATA('CLASE_USO','0014','Edificio residencial','DD_SAC_SUBTIPO_ACTIVO','43','Residencial (viviendas, locales, trasteros garajes)'),
+        T_TIPO_DATA('CLASE_USO','0005','Parking','DD_SAC_SUBTIPO_ACTIVO','24','Garaje'),
+        T_TIPO_DATA('CLASE_USO','0099','Varios','DD_SAC_SUBTIPO_ACTIVO','26','Otros'),
+        T_TIPO_DATA('CLASE_USO','0004','Trastero','DD_SAC_SUBTIPO_ACTIVO','25','Trastero'),
+        T_TIPO_DATA('CLASE_USO','0024','Instalaciones deportivas','DD_SAC_SUBTIPO_ACTIVO','30','Dotacional Deportivo'),
+        T_TIPO_DATA('CLASE_USO','0023','Derechos','DD_SAC_SUBTIPO_ACTIVO','33','Otros Derechos'),
+        T_TIPO_DATA('CLASE_USO','0002','Local','DD_SAC_SUBTIPO_ACTIVO','13','Local comercial'),
+        T_TIPO_DATA('CLASE_USO','0003','Local comercial y vivienda','DD_SAC_SUBTIPO_ACTIVO','43','Residencial (viviendas, locales, trasteros garajes)'),
+        T_TIPO_DATA('CLASE_USO','0009','Suelo no urbanizable','DD_SAC_SUBTIPO_ACTIVO','01','No urbanizable (rústico)'),
+        --T_TIPO_DATA('CLASE_USO','0010','Edificio','DD_SAC_SUBTIPO_ACTIVO','43','Residencial (viviendas, locales, trasteros garajes)'),
+        --T_TIPO_DATA('CLASE_USO','0012','Edificio mixto','DD_SAC_SUBTIPO_ACTIVO','43','Residencial (viviendas, locales, trasteros garajes)'),
+        --T_TIPO_DATA('CLASE_USO','0013','Edificio terciario','DD_SAC_SUBTIPO_ACTIVO','22','Comercial'),
+        T_TIPO_DATA('CLASE_USO','0016','Edificio educativo','DD_SAC_SUBTIPO_ACTIVO','38','Residencia Estudiantes'),
+        T_TIPO_DATA('CLASE_USO','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','37','Nave en varias plantas'),
+        T_TIPO_DATA('CLASE_USO','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','17','Nave aislada'),
+        T_TIPO_DATA('CLASE_USO','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','18','Nave adosada'),
+        T_TIPO_DATA('CLASE_USO','0018','Finca rústica','DD_SAC_SUBTIPO_ACTIVO','01','No urbanizable (rústico)'),
+        --T_TIPO_DATA('CLASE_USO','0020','Portería','DD_SAC_SUBTIPO_ACTIVO','26','Otros'),
+        --T_TIPO_DATA('CLASE_USO','0021','Amarres','DD_SAC_SUBTIPO_ACTIVO','26','Otros'),
       --Tipo Suelo   
         T_TIPO_DATA('SUBTIPO_SUELO','U17','Resto de suelo urbanizable','DD_SAC_SUBTIPO_ACTIVO','02','Urbanizable no programado'),
         T_TIPO_DATA('SUBTIPO_SUELO','U15','Suelo urbanizable organizado','DD_SAC_SUBTIPO_ACTIVO','03','Urbanizable programado'),
         T_TIPO_DATA('SUBTIPO_SUELO','U14','Suelo urbano no consolidado','DD_SAC_SUBTIPO_ACTIVO','42','Suelo Urbano No Consolidado'),
         T_TIPO_DATA('SUBTIPO_SUELO','U13','Suelo urbano consolidado','DD_SAC_SUBTIPO_ACTIVO','04','Urbano (solar)'),
-        T_TIPO_DATA('SUBTIPO_SUELO','U16','Suelo urbanizable sectorizado','DD_SAC_SUBTIPO_ACTIVO','03','Urbanizable programado')
+        --T_TIPO_DATA('SUBTIPO_SUELO','U16','Suelo urbanizable sectorizado','DD_SAC_SUBTIPO_ACTIVO','03','Urbanizable programado')
+        --Tipo Vivienda   
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','2','Vivienda Unifamiliar Adosada','DD_SAC_SUBTIPO_ACTIVO','06','Unifamiliar adosada'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada')
+        --T_TIPO_DATA('SUBTIPO_VIVIENDA','0','En el caso de no aplicar al tratarse de un bien inmueble no vivienda','DD_SAC_SUBTIPO_ACTIVO', NULL,'No puede ser no inmueble')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

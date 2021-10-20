@@ -4215,12 +4215,6 @@ public class ActivoAdapter {
 					clienteComercial.setTelefono2(dto.getTelefono2Rte());
 				}
 				
-				/*if (dto.getRepresentantePrp() != null) {
-					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
-				}
-
-				 */
-
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
 
 				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),null);
@@ -4236,6 +4230,9 @@ public class ActivoAdapter {
 				if (dto.getRepresentantePrp() != null) {
 					iapRep.setPrp(dto.getRepresentantePrp());
 				}
+				
+				iapRep.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+
 				genericDao.save(InfoAdicionalPersona.class,iapRep);
 
 				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
@@ -4461,27 +4458,15 @@ public class ActivoAdapter {
 			boolean esOfertaCaixa = particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null);
 
 			if (esOfertaCaixa) {
-				createOrUpdateOfertaCaixa(ofertaCreada, dto.getTipologivaVentaCod());
+				OfertaCaixa ofertaCaixa = createOrUpdateOfertaCaixa(ofertaCreada, dto.getTipologivaVentaCod(), dto.getCheckSubasta());
+				activoApi.anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCaixa, dto.getTipoOferta());
+				genericDao.save(OfertaCaixa.class, ofertaCaixa);
+				
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
 					ofertaApi.llamadaPbc(oferta);
 				}
 			}
 			
-			if (dto.getIdActivo() != null && ofertaCreada.getNumOferta() != null && ofertaCreada.getId() != null && dto.getTipoOferta() != null) {
-				if (particularValidatorApi.esOfertaCaixa(ofertaCreada != null ? ofertaCreada.getNumOferta().toString() : null)) {
-					activoApi.anyadirCanalDistribucionOfertaCaixa(dto.getIdActivo(), ofertaCreada.getOfertaCaixa(), dto.getTipoOferta());
-					
-					Filter ofertaCaixa = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCreada.getId());
-					OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofertaCaixa);
-					
-					if (ofrCaixa != null) {
-						if (dto.getCheckSubasta() != null) {
-							ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
-						}
-					}
-
-				}
-			}
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;
@@ -4492,7 +4477,7 @@ public class ActivoAdapter {
 
 
 	@Transactional(readOnly = false)
-	public void createOrUpdateOfertaCaixa(final Oferta oferta,String codigoTipologia) {
+	public OfertaCaixa createOrUpdateOfertaCaixa(final Oferta oferta,String codigoTipologia, Boolean subasta) {
 
 		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
 
@@ -4509,8 +4494,17 @@ public class ActivoAdapter {
 				ofertaCaixa.setTipologiaVentaBc(tipologia);
 			}
 		}
-		genericDao.save(OfertaCaixa.class,ofertaCaixa);
+		
+		if(subasta != null) {
+			ofertaCaixa.setCheckSubasta(subasta);
+		}
+
 		oferta.setOfertaCaixa(ofertaCaixa);
+
+		genericDao.save(OfertaCaixa.class,ofertaCaixa);
+		
+		return ofertaCaixa;
+
 	}
 
 

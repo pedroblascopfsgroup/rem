@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +45,8 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 	private static final String TIPO_OFERTA_ALQUILER = "tipoOfertaAlquiler";
 	private static final String VULNERABLE = "isVulnerable";
 	private static final String EXPEDIENTE_ANTERIOR = "expedienteAnterior";
+	private static final String RIESGO_REPUTACIONAL = "riesgoReputacional";
+	private static final String CONFLICTO_INTERESES = "conflictoIntereses";
 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -70,6 +73,12 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 			if(EXPEDIENTE_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				ExpedienteComercial expedienteAnterior = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(valor.getValor()));
 				expedienteComercial.setExpedienteAnterior(expedienteAnterior);
+			}
+			if (RIESGO_REPUTACIONAL.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				expedienteComercial.setRiesgoReputacional(DDSinSiNo.cambioStringToIntger(valor.getValor()));
+			}
+			if (CONFLICTO_INTERESES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				expedienteComercial.setConflictoIntereses(DDSinSiNo.cambioStringToIntger(valor.getValor()));
 			}
 		}
 		

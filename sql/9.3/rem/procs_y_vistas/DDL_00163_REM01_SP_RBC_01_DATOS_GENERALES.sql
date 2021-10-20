@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211008
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15423
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Quitamos INDICADOR_LLAVES y FEC_RECEP_LLAVES - [HREOS-14533] - Daniel Algaba
 --##	      0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##	      0.5 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
+--##        0.6 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -72,7 +73,7 @@ BEGIN
                   AND pac.PAC_INCLUIDO=1
                   AND pac.BORRADO=0
                   AND ACT.ACT_EN_TRAMITE = 0
-                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')                     
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')                     
                                  ) us ON ((us.NUM_INMUEBLE = aux.NUM_INMUEBLE) AND (us.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO) )
                                  when matched then update set
                                     
@@ -130,7 +131,7 @@ BEGIN
                     AND act.BORRADO=0
                     AND pac.PAC_INCLUIDO=1
                     AND pac.BORRADO=0
-                    AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')    
+                    AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')    
                                  ) us ON ((us.NUM_INMUEBLE = aux.NUM_INMUEBLE) AND (us.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO) )
                                  when matched then update set
                                     

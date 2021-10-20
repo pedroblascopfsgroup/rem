@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211013
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -26,6 +26,7 @@
 --##	      0.14 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
 --##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
 --##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
+--##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -105,7 +106,7 @@ BEGIN
                      WHEN aux.SUBTIPO_VIVIENDA IS NOT NULL THEN sac_viv.DD_SAC_ID
                      WHEN aux.SUBTIPO_SUELO IS NOT NULL THEN sac_suelo.DD_SAC_ID
                      WHEN sac_uso.DD_SAC_ID IS NOT NULL THEN sac_uso.DD_SAC_ID
-                     WHEN TPA.DD_TPA_ID IS NOT NULL AND TPA.DD_TPA_ID = ACT.DD_TPA_ID THEN ACT.DD_SAC_ID
+                     WHEN TPA.DD_TPA_ID IS NOT NULL AND SAC.DD_SAC_ID IS NOT NULL THEN ACT.DD_SAC_ID
                      ELSE NULL
                   END DD_SAC_ID,
                   COALESCE(STA_OR.DD_TTA_ID, STA.DD_TTA_ID) AS DD_TTA_ID,
@@ -147,6 +148,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO AND eqv11.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON ACT.DD_SAC_ID = SAC.DD_SAC_ID AND TPA.DD_TPA_ID = SAC.DD_TPA_ID AND SAC.BORRADO = 0
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                                        
                                  ) us ON (us.act_id = act.act_id)

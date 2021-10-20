@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211008
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15423
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -21,6 +21,7 @@
 --##        0.9 Se corrige error visto en los campos de Latitud y Longitud en casos concretos - [HREOS-15210] -  Daniel Algaba
 --##        0.10 Se añade signo positivo a las coordenadas - [HREOS-15423] -  Daniel Algaba
 --##	      0.11 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
+--##        0.12 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -99,7 +100,7 @@ BEGIN
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')   
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')   
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
@@ -214,7 +215,7 @@ BEGIN
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
@@ -271,7 +272,7 @@ BEGIN
                   AND PAC.PAC_INCLUIDO = 1
                   AND ACT.ACT_EN_TRAMITE = 0
                   AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                  AND PRO.PRO_DOCIDENTIF NOT IN (''A80352750'', ''A80514466'')
+                  AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN

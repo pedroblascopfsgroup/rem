@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210125
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8711
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Se actualiza para nivelar los ID's de esta vista y V_ACTIVOS_SUBDIVISION
 --##		0.3 Se añade codigo subtipo activo
+--##        0.4 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -91,7 +92,7 @@ BEGIN
 									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
 							) SUBD
 							JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
-							JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
+							LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
 			) ACT_SD
 		JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID
 		JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID

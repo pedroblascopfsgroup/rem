@@ -1,18 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
+--## AUTOR=Daniel Algaba
 --## FECHA_CREACION=20211020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15855
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
---## Finalidad: Creacion tabla DD_EQV_CAIXA_REM, que establece la equivalencia entre diccionarios CAIXA y REM.
+--## Finalidad: Creacion tabla DD_EQV_TIT_CAIXA_REM, que establece la equivalencia entre diccionarios CAIXA y REM.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
---##        0.2 Modificación de la PK y del UNIQUE INDEX - [HREOS-14344] - Alejandra García
---##        0.3 Añadir el campo PRIORIDAD - [HREOS-15855] - Alejandra García
+--##        0.1 Versión inicial - [HREOS-15634]
 --##########################################
 --*/
 
@@ -37,7 +35,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EQV_CAIXA_REM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EQV_TIT_CAIXA_REM'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(2400 CHAR) := 'Tabla destinada a establecer la equivalencia de diccionarios CAIXA - REM';
 
 BEGIN
@@ -65,7 +63,8 @@ BEGIN
 		DD_DESCRIPCION_LARGA_CAIXA VARCHAR2(250 CHAR),
 		DD_NOMBRE_REM VARCHAR2(30 CHAR),
 		DD_CODIGO_REM VARCHAR2(20 CHAR),
-		PRIORIDAD					NUMBER(2,0) 				DEFAULT 0 NOT NULL ENABLE,
+		DD_DESCRIPCION_REM VARCHAR2(100 CHAR),
+		DD_DESCRIPCION_LARGA_REM VARCHAR2(250 CHAR),
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -83,19 +82,6 @@ BEGIN
 	';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
-	
-
-	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA,DD_NOMBRE_REM,DD_CODIGO_REM) TABLESPACE '||V_TABLESPACE_IDX;			
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
-	
-	
-	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_NOMBRE_CAIXA,DD_CODIGO_CAIXA,DD_NOMBRE_REM,DD_CODIGO_REM) USING INDEX)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-
 	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		

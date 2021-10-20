@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20210616
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14344
+--## INCIDENCIA_LINK=HREOS-15855
 --## PRODUCTO=NO
 --## Finalidad: Creacion tabla DD_EQV_CAIXA_REM, que establece la equivalencia entre diccionarios CAIXA y REM.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
 --##        0.2 Modificación de la PK y del UNIQUE INDEX - [HREOS-14344] - Alejandra García
+--##        0.3 Añadir el campo PRIORIDAD - [HREOS-15855] - Alejandra García
 --##########################################
 --*/
 
@@ -64,6 +65,7 @@ BEGIN
 		DD_DESCRIPCION_LARGA_CAIXA VARCHAR2(250 CHAR),
 		DD_NOMBRE_REM VARCHAR2(30 CHAR),
 		DD_CODIGO_REM VARCHAR2(20 CHAR),
+		PRIORIDAD					NUMBER(2,0) 				DEFAULT 0 NOT NULL ENABLE,
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 

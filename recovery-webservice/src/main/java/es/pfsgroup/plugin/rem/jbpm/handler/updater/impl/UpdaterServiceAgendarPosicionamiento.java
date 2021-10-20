@@ -61,12 +61,14 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 		Double importe = null;
 		Integer mesesFianza = null;
 		String estadoBC = null;
+		String fechaPropuesta = null;
 		try {
 			if (ofertaAceptada != null) {
 				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 				for(TareaExternaValor valor :  valores){
 					if(COMBO_FECHA_ENVIO_PROPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoPosicionamiento.setFechaPosicionamiento(ft.parse(valor.getValor()));
+						fechaPropuesta = valor.getValor();
 					}
 					if(COMBO_FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dtoPosicionamiento.setFechaEnvioPos(ft.parse(valor.getValor()));
@@ -104,7 +106,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 				genericDao.save(ExpedienteComercial.class, expediente);
 
-				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expediente, fechaPropuesta));
 			}
 		}catch(ParseException e) {
 			e.printStackTrace();

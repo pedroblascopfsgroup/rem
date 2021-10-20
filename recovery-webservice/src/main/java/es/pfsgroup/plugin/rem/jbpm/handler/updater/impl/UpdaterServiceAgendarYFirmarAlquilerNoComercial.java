@@ -53,6 +53,7 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
     protected static final Log logger = LogFactory.getLog(UpdaterServiceAgendarYFirmarAlquilerNoComercial.class);
     
 	private static final String CODIGO_T018_AGENDAR_Y_FIRMAR = "T018_AgendarYFirmar";
+	private static final String FECHA = "fecha";
 	
 	private static final String COMBO_IRCLROD = "comboIrClRod";
 
@@ -68,6 +69,7 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
+		String fechaFirma = null;
 		
 		for(TareaExternaValor valor :  valores) {
 			if(COMBO_IRCLROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -80,6 +82,10 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 					expedienteComercial.setEstadoBc(estadoExpedienteBc);		
 					firmado = true;
 				}
+			}
+
+			if(FECHA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				fechaFirma = valor.getValor();
 			}
 		}
 		
@@ -111,9 +117,10 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 			}
 			
 			activoDao.saveOrUpdate(activo);
+
 		}
 
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expedienteComercial, fechaFirma));
 	}
 
 	public String[] getCodigoTarea() {

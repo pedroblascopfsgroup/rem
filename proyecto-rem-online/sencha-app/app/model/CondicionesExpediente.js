@@ -460,6 +460,9 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 	    {
 	    	name: 'tipoImpuestoCodigoAlq'
+	    },
+	    {
+	    	name: 'mesesDuracion'
 	    }
 	    
     ],

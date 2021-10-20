@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -321,9 +320,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @return
 	 */
-	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
-	
-	//boolean crearCompradorExpedienteComercial(VBusquedaDatosCompradorExpediente dto);
+
 
 	/**
 	 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento. Esta verificación está pensada para trámites (ya que se identifica el trabajo)
@@ -490,6 +487,10 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean deleteEntregaReserva(Long idEntrega);
 
+	boolean createCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+
+	boolean saveFichaCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto);
+
 	/**
 	 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
 	 *
@@ -524,14 +525,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean deletePosicionamiento(Long idPosicionamiento);
 
-	/**
-	 * Método que crea un comprador desde la pestaña compradores del expediente
-	 *
-	 * @param dto
-	 * @param idExpediente
-	 * @return
-	 */
-	boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+
 
 	/**
 	 * Crea un objeto de tipo OfertaUVEMDto
@@ -1319,8 +1313,6 @@ public interface ExpedienteComercialApi {
 
 	boolean checkVueltaAtras(Long idTramite);
 
-	DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente);
-
 	WebDto devolverValoresTEB(Long idTarea, String codigoTarea) throws IllegalAccessException, InvocationTargetException;
 
 	void tareaBloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException;
@@ -1372,6 +1364,10 @@ public interface ExpedienteComercialApi {
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCex(ExpedienteComercial eco, CompradorExpediente cex);
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(ExpedienteComercial eco, String codRespuestaComprador);
+    
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(ExpedienteComercial eco, String sancionCLROD);
+    
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaFirma(ExpedienteComercial eco, String fechaFirma);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;
@@ -1397,4 +1393,9 @@ public interface ExpedienteComercialApi {
 
 	DtoScoringGarantias getScoringGarantias(Long idExpediente);
 
+	List<DtoRespuestaBCGenerica> getListResolucionComiteBC(Long idExpediente);
+
+    void sendPosicionamientoToBc(Long idEntidad, Boolean success);
+
+	Long getExpedienteByPosicionamiento(Long idPosicionamiento);
 }

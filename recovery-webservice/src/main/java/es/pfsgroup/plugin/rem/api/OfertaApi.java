@@ -818,7 +818,9 @@ public interface OfertaApi {
 
 	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
 
-    void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
+	void replicarOferta(Long numOferta);
+
+	void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
 
     void pbcFlush(LlamadaPbcDto dto);
 

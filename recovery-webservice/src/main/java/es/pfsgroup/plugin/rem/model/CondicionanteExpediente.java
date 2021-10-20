@@ -428,6 +428,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
 	@Column(name="ALQ_MESES_AVAL")
     private Integer mesesAval;
+	
+	@Column(name="ALQ_DURACION_MESES")
+    private Integer mesesDuracion;
     
 	@Version   
 	private Long version;
@@ -1368,6 +1371,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setMesesAval(Integer mesesAval) {
 		this.mesesAval = mesesAval;
+	}
+
+	public Integer getMesesDuracion() {
+		return mesesDuracion;
+	}
+
+	public void setMesesDuracion(Integer mesesDuracion) {
+		this.mesesDuracion = mesesDuracion;
 	}
 
 }

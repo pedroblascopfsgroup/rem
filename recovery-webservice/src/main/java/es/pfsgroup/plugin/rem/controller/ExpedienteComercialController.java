@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -1037,7 +1038,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				this.createComprador(model, vDatosComprador, vDatosComprador.getIdExpedienteComercial());
 				success = true;
 			} else {
-				success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+				success = expedienteComercialApi.saveFichaCompradorAndSendToBC(vDatosComprador);
 			}
 
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -1177,7 +1178,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView createComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador,
 			Long idExpedienteComercial) {
 		try {
-			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpedienteComercial);
+			boolean success = expedienteComercialApi.createCompradorAndSendToBC(vDatosComprador, idExpedienteComercial);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -1213,6 +1214,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView createPosicionamiento(DtoPosicionamiento dto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
 			boolean success = expedienteComercialApi.createPosicionamiento(dto, idEntidad);
+			expedienteComercialApi.sendPosicionamientoToBc(idEntidad, success);
 			if (!success) {
 				model.put("msgError", "Ya existe un posicionamiento vigente");
 			}
@@ -1231,6 +1233,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView savePosicionamiento(DtoPosicionamiento dto, ModelMap model) {
 		try {
 			boolean success = expedienteComercialApi.savePosicionamiento(dto);
+			Long idEntidad = expedienteComercialApi.getExpedienteByPosicionamiento(dto.getIdPosicionamiento());
+			expedienteComercialApi.sendPosicionamientoToBc(idEntidad, success);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -2612,7 +2616,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getUltimaResolucionComiteBC(ModelMap model, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getUltimaResolucionComiteBC(idExpediente));
+			List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = expedienteComercialApi.getListResolucionComiteBC(idExpediente);
+			model.put(RESPONSE_DATA_KEY, dtoRespuestaBCGenericaList.get(0));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

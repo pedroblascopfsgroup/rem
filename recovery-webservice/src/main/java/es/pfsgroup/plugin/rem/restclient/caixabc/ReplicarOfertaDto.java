@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.caixabc;
 
+
 public class ReplicarOfertaDto {
     private Long numeroOferta;
     private String estadoExpedienteBcCodigoBC;
@@ -9,6 +10,8 @@ public class ReplicarOfertaDto {
     private String codEstadoAlquiler;
     private String codRespuestaComprador;
     private CexDto compradorEditado;
+    private String sancionCLROD;
+    private String fechaFirma;
 
     public Long getNumeroOferta() {
         return numeroOferta;
@@ -73,4 +76,21 @@ public class ReplicarOfertaDto {
     public void setCompradorEditado(CexDto compradorEditado) {
         this.compradorEditado = compradorEditado;
     }
+
+	public String getSancionCLROD() {
+		return sancionCLROD;
+	}
+
+	public void setSancionCLROD(String sancionCLROD) {
+		this.sancionCLROD = sancionCLROD;
+	}
+
+	public String getFechaFirma() {
+		return fechaFirma;
+	}
+
+	public void setFechaFirma(String fechaFirma) {
+		this.fechaFirma = fechaFirma;
+	}
+
 }

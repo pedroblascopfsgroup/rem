@@ -1971,7 +1971,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.lookupReference('motivoAplazamientoRef').setValue();
 		}
 		me.changeFecha(me.lookupReference('fechaFirmaRef'));
-		me.changeHora(me.lookupReference('horaFirmaRef'));
+		//me.changeHora(me.lookupReference('horaFirmaRef'));
 		
 		me.lookupReference('fechaFirmaRef').setDisabled(false);
 		me.lookupReference('horaFirmaRef').setDisabled(false);
@@ -1980,35 +1980,38 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	comprobacionesDobleClick: function(editor, gridNfo) {
 		var me = this;
-		
-		if(editor.isNew) {
-			me.lookupReference('fechaPosicionamientoRef').setValue();
-			me.lookupReference('horaAvisoRef').setValue();
-			me.lookupReference('horaPosicionamientoRef').setValue();
-		}
-		me.changeFecha(me.lookupReference('fechaPosicionamientoRef'));
-		me.changeHora(me.lookupReference('horaAvisoRef'));
-		me.changeHora(me.lookupReference('horaPosicionamientoRef'));
-		
-		me.lookupReference('fechaPosicionamientoRef').setDisabled(true);
-		me.lookupReference('horaPosicionamientoRef').setDisabled(true);
-		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
+
+        if(editor.up().up().up().getBindRecord().esBankia){
+		    me.lookupReference('motivoAplazamientoBcRef').allowBlank = false;
+		    me.lookupReference('motivoAplazamientoBcRef').isValid()
+        }
 	},
 
 	comprobacionesDobleClickAlquiler: function(editor, gridNfo) {
 		var me = this;
 
-		if(editor.isNew) {
-			me.lookupReference('fechaFirmaRef').setValue();
-			me.lookupReference('horaFirmaRef').setValue();
-		}
-		me.changeFecha(me.lookupReference('fechaFirmaRef'));
-		me.changeHora(me.lookupReference('horaFirmaRef'));
-		
-		me.lookupReference('fechaFirmaRef').setDisabled(true);
-		me.lookupReference('horaFirmaRef').setDisabled(true);
-		me.lookupReference('lugarFirmaRef').setDisabled(true);
-		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
+		if(editor.up().up().up().getBindRecord().esBankia){
+          me.lookupReference('motivoAplazamientoBcRef').allowBlank = false;
+          me.lookupReference('motivoAplazamientoBcRef').isValid();
+        }
+
+	},
+
+	changeMotivoAplazamientoAlquiler: function(combo, newValue){
+	var me = this;
+
+    me.lookupReference('motivoAplazamientoBcRef').isValid();
+
+	},
+
+	quitarAllowBlankMotivoAplazamientoAlquiler: function(grid) {
+		var me = this;
+
+		if(grid.up().up().getBindRecord().esCarteraBankia){
+          me.lookupReference('motivoAplazamientoBcRef').allowBlank = true;
+          me.lookupReference('motivoAplazamientoBcRef').isValid();
+        }
+
 	},
 
 	onRowClickPosicionamiento:  function(gridView, record) {

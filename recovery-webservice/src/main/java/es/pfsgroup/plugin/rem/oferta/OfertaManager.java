@@ -7474,6 +7474,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	public void replicarOferta(Long numOferta){
+		caixaBcRestClient.callReplicateOfertaNoSession(numOferta);
+	}
+
+	@Override
 	public void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto) {
 		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
 		if(ofertaCaixa != null) {

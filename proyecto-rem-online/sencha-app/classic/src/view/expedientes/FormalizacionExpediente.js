@@ -368,7 +368,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							topBar : '{puedeAnyadirRegistrosPosicionamiento}'
 						},
 						listeners : {
-							//rowdblclick : 'comprobacionesDobleClick',
+							rowdblclick : 'comprobacionesDobleClick',
 							beforeedit : 'comprobarCamposFechas',
 							rowclick : 'onRowClickPosicionamiento'
 						},
@@ -533,7 +533,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 						        	editor: {
 										xtype: 'combobox',
-										
+										reference : 'motivoAplazamientoBcRef',
 										store: new Ext.data.Store({
 											model: 'HreRem.model.ComboBase',
 											proxy: {
@@ -543,7 +543,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 											},
 											autoLoad: true
 										}),
-										allowBlank:false,
 										displayField: 'descripcion',
 				    					valueField: 'codigo'
 									},

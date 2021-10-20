@@ -3449,7 +3449,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		dto.setCheckIGC(condiciones.getCheckIGC());
 		
-		
+		if(condiciones.getMesesDuracion() != null) {
+			dto.setMesesDuracion(condiciones.getMesesDuracion());
+		}
 		
 		if(oferta != null) {
 			dto.setFechaInicioCnt(oferta.getFechaInicioContrato());
@@ -4066,6 +4068,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (dto.getCheckIPC() != null) {
 				condiciones.setCheckIPC(dto.getCheckIPC());
+			}
+			
+			if(dto.getMesesDuracion() != null) {
+				condiciones.setMesesDuracion(dto.getMesesDuracion());
 			}
 			
 			

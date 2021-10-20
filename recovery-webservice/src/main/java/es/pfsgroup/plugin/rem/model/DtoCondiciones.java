@@ -151,6 +151,8 @@ public class DtoCondiciones extends WebDto {
 	private String tipoGrupoImpuestoCodAlq;
 	private String tipoImpuestoCodigoAlq;
 	
+	private Integer mesesDuracion;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -1097,5 +1099,13 @@ public class DtoCondiciones extends WebDto {
 
 	public void setTipoImpuestoCodigoAlq(String tipoImpuestoCodigoAlq) {
 		this.tipoImpuestoCodigoAlq = tipoImpuestoCodigoAlq;
+	}
+
+	public Integer getMesesDuracion() {
+		return mesesDuracion;
+	}
+
+	public void setMesesDuracion(Integer mesesDuracion) {
+		this.mesesDuracion = mesesDuracion;
 	}	
 }

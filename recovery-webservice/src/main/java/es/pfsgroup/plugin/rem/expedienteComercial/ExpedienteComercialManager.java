@@ -13185,32 +13185,46 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente) {	
-		DtoRespuestaBCGenerica dto = new DtoRespuestaBCGenerica();
+	public List<DtoRespuestaBCGenerica> getListResolucionComiteBC(Long idExpediente) {	
+		List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = new ArrayList<DtoRespuestaBCGenerica>();
 		Order order = new Order(OrderType.DESC,"id");
 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expedienteComercial.id", idExpediente);
-		List<RespuestaComiteBC> respuestComiteBc =  genericDao.getListOrdered(RespuestaComiteBC.class, order, filtroExpediente);
-		if(respuestComiteBc != null && !respuestComiteBc.isEmpty()) {
-			dto = this.respuestaComiteToDtoRespuestaBCGen(respuestComiteBc.get(0));
-			dto.setNecesidadArrasActivo(this.getCodigoNecesitaArras(idExpediente));
-			
+		List<RespuestaComiteBC> respuestaComiteBcList =  genericDao.getListOrdered(RespuestaComiteBC.class, order, filtroExpediente);
+		if(respuestaComiteBcList != null && !respuestaComiteBcList.isEmpty()) {
+			for (RespuestaComiteBC respuestaComiteBc : respuestaComiteBcList) {
+				DtoRespuestaBCGenerica dtoRespuestaBCGenerica = this.respuestaComiteToDtoRespuestaBCGen(respuestaComiteBc);
+				dtoRespuestaBCGenerica.setNecesidadArrasActivo(this.getCodigoNecesitaArras(idExpediente));
+				dtoRespuestaBCGenericaList.add(dtoRespuestaBCGenerica);
+			}
 		}
-		return dto;
+		return dtoRespuestaBCGenericaList;
 	}
 	
-	private DtoRespuestaBCGenerica respuestaComiteToDtoRespuestaBCGen (RespuestaComiteBC respuesta) {
+	private DtoRespuestaBCGenerica respuestaComiteToDtoRespuestaBCGen(RespuestaComiteBC respuesta) {
 		DtoRespuestaBCGenerica dto = new DtoRespuestaBCGenerica();
 		if(respuesta != null) {
 			dto.setId(respuesta.getId());
 			dto.setFechaRespuestaBC(respuesta.getFechaRespuestaBcRBC());
-			dto.setObservacionesBC(respuesta.getObservacionesBcRBC());
+			
+			if (respuesta.getSancionClRod() != null) {
+				dto.setObservacionesBC(respuesta.getSancionClRod());
+			} else {
+				dto.setObservacionesBC(respuesta.getObservacionesBcRBC());
+			}
+			
+			if (respuesta.getComiteRBC() != null && respuesta.getComiteRBC()) {
+				dto.setComite(RespuestaComiteBC.COMITE_COMERCIAL);
+			} else {
+				dto.setComite(RespuestaComiteBC.COMITE_CL_ROD);
+			}
+			
 			if(respuesta.getExpedienteComercial() != null) {
 				dto.setIdExpediente(respuesta.getExpedienteComercial().getId());
 			}
+			
 			if(respuesta.getValidacionBcRBC() != null) {
 				dto.setRespuestaBC(respuesta.getValidacionBcRBC().getCodigo());
 			}
-			
 		}
 		
 		return dto;
@@ -13969,11 +13983,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	public List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente) {
+		
 		List<DtoRespuestaBCGenerica> listDtos = new ArrayList<DtoRespuestaBCGenerica>();
 		
-		DtoRespuestaBCGenerica dto = this.getUltimaResolucionComiteBC(idExpediente);
-		dto.setComite(RespuestaComiteBC.COMITE_COMERCIAL);
-		listDtos.add(dto);
+		DtoRespuestaBCGenerica dtoComercial = new DtoRespuestaBCGenerica();
+		dtoComercial.setComite(RespuestaComiteBC.COMITE_COMERCIAL);
+		listDtos.add(dtoComercial);
+		DtoRespuestaBCGenerica dtoClRod = new DtoRespuestaBCGenerica();
+		dtoClRod.setComite(RespuestaComiteBC.COMITE_CL_ROD);
+		listDtos.add(dtoClRod);
+		
+		List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = this.getListResolucionComiteBC(idExpediente);
+		
+		if (dtoRespuestaBCGenericaList != null && !dtoRespuestaBCGenericaList.isEmpty()) {
+			for (DtoRespuestaBCGenerica dtoRespuestaBCGenerica : dtoRespuestaBCGenericaList) {
+				if (RespuestaComiteBC.COMITE_COMERCIAL.equalsIgnoreCase(dtoRespuestaBCGenerica.getComite()) && listDtos.contains(dtoComercial)) {
+					listDtos.remove(dtoComercial);
+				} else if (RespuestaComiteBC.COMITE_CL_ROD.equalsIgnoreCase(dtoRespuestaBCGenerica.getComite()) && listDtos.contains(dtoComercial)) {
+					listDtos.remove(dtoClRod);
+				}
+			}
+			
+			listDtos.addAll(dtoRespuestaBCGenericaList);
+		}		
 		
 //		ExpedienteComercial eco = this.findOne(idExpediente);
 //		if(eco != null && eco.getTrabajo() != null) {
@@ -14148,6 +14180,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
 			setCodRespuestaComprador(codRespuestaComprador);
+		}};
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(final ExpedienteComercial eco, final String sancionCLROD){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setSancionCLROD(sancionCLROD);
+		}};
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaFirma(final ExpedienteComercial eco, final String fechaFirma){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setFechaFirma(fechaFirma);
 		}};
 	}
 	

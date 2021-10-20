@@ -188,11 +188,17 @@ public class CaixaBcRestClient {
                     if (dto.getCodEstadoAlquiler()!= null){
                         params.put("codEstadoAlquiler", dto.getCodEstadoAlquiler());
                     }
-                    if (dto.getCodRespuestaComprador()!= null){
+                    if (dto.getCodRespuestaComprador() != null){
                         params.put("codRespuestaComprador", dto.getCodRespuestaComprador());
                     }
                     if (dto.getCompradorEditado() != null){
                         params.put("compradorEditado", JSONObject.fromObject(dto.getCompradorEditado()));
+                    }
+                    if (dto.getSancionCLROD() != null){
+                        params.put("sancionCLROD", dto.getSancionCLROD());
+                    }
+                    if (dto.getFechaFirma() != null){
+                        params.put("fechaFirma", dto.getFechaFirma());
                     }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);

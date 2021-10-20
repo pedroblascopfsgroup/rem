@@ -35,6 +35,7 @@ public class RespuestaComiteBC implements Serializable, Auditable {
 	 * 
 	 */
 	public static final String COMITE_COMERCIAL = "Comercial";
+	public static final String COMITE_CL_ROD = "CL/ROD";
 	
 	
 	private static final long serialVersionUID = 1L;
@@ -59,6 +60,11 @@ public class RespuestaComiteBC implements Serializable, Auditable {
     @Column(name = "RBC_OBSERVACIONES_BC")
     private String observacionesBcRBC;
     
+    @Column(name = "RBC_SANCION_CL_ROD")
+    private String sancionClRod;
+    
+    @Column(name = "RBC_COMITE")
+    private Boolean comiteRBC;
     
     @Version   
 	private Long version;
@@ -104,6 +110,22 @@ public class RespuestaComiteBC implements Serializable, Auditable {
 
 	public void setObservacionesBcRBC(String observacionesBcRBC) {
 		this.observacionesBcRBC = observacionesBcRBC;
+	}
+
+	public String getSancionClRod() {
+		return sancionClRod;
+	}
+
+	public void setSancionClRod(String sancionClRod) {
+		this.sancionClRod = sancionClRod;
+	}
+
+	public Boolean getComiteRBC() {
+		return comiteRBC;
+	}
+
+	public void setComiteRBC(Boolean comiteRBC) {
+		this.comiteRBC = comiteRBC;
 	}
 
 	public Auditoria getAuditoria() {

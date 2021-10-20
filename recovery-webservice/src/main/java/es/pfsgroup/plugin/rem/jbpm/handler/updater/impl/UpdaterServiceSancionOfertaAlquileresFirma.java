@@ -89,6 +89,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		boolean anular = false;
 		boolean modificadoEstadoBC = false;
+		String fechaFirma = null;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
@@ -125,6 +126,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha anulación.", e);
 				}
+				fechaFirma = valor.getValor();
 			}
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
 				anular = true;
@@ -203,7 +205,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(modificadoEstadoBC) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expedienteComercial, fechaFirma));
 		}
 				
 	}

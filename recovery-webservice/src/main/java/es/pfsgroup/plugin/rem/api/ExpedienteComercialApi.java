@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -1314,8 +1313,6 @@ public interface ExpedienteComercialApi {
 
 	boolean checkVueltaAtras(Long idTramite);
 
-	DtoRespuestaBCGenerica getUltimaResolucionComiteBC(Long idExpediente);
-
 	WebDto devolverValoresTEB(Long idTarea, String codigoTarea) throws IllegalAccessException, InvocationTargetException;
 
 	void tareaBloqueoScreening(DtoScreening dto) throws IllegalArgumentException, IllegalAccessException;
@@ -1367,6 +1364,10 @@ public interface ExpedienteComercialApi {
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCex(ExpedienteComercial eco, CompradorExpediente cex);
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(ExpedienteComercial eco, String codRespuestaComprador);
+    
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(ExpedienteComercial eco, String sancionCLROD);
+    
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaFirma(ExpedienteComercial eco, String fechaFirma);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;
@@ -1391,5 +1392,7 @@ public interface ExpedienteComercialApi {
 	void deleteGastoRepercutido(Long idGastoRepercutido);
 
 	DtoScoringGarantias getScoringGarantias(Long idExpediente);
+
+	List<DtoRespuestaBCGenerica> getListResolucionComiteBC(Long idExpediente);
 
 }

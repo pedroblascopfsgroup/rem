@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.DtoScreening;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -2612,7 +2613,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getUltimaResolucionComiteBC(ModelMap model, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getUltimaResolucionComiteBC(idExpediente));
+			List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = expedienteComercialApi.getListResolucionComiteBC(idExpediente);
+			model.put(RESPONSE_DATA_KEY, dtoRespuestaBCGenericaList.get(0));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

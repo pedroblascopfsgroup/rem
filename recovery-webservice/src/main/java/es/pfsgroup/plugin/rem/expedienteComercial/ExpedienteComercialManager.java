@@ -4536,6 +4536,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		resolucionDto.setFechaPago(formalizacion.getFechaPago());
 		resolucionDto.setVentaCondicionSupensiva(formalizacion.getVentaCondicionSupensiva());
 		resolucionDto.setVentaPlazos(formalizacion.getVentaPlazos());
+		resolucionDto.setCesionRemate(formalizacion.getCesionRemate());
+		resolucionDto.setContratoPrivado(formalizacion.getContratoPrivado());
 		this.rellenarDatosVentaFormalizacion(formalizacion, resolucionDto);
 
 		return resolucionDto;
@@ -14011,6 +14013,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			if (dto.getVentaPlazos() != null) {
 				formalizacion.setVentaPlazos(dto.getVentaPlazos());
+			}
+			if (dto.getCesionRemate() != null) {
+				formalizacion.setCesionRemate(dto.getCesionRemate());
+			}
+			if (dto.getContratoPrivado() != null) {
+				formalizacion.setContratoPrivado(dto.getContratoPrivado());
 			}
 			genericDao.save(Formalizacion.class, formalizacion);
 

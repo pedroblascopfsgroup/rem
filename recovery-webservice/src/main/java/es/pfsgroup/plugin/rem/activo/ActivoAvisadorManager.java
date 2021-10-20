@@ -14,19 +14,27 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 
@@ -41,6 +49,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	
 	@Autowired 
@@ -375,7 +386,44 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
+		
+		boolean alquilado = updateActivoAlquilado(id, activo, activo.getOfertas());
+		
+		if (alquilado) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Alquilado");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
 
 		return listaAvisos;
+	}
+	
+	public boolean updateActivoAlquilado(Long id, Activo activo, List<ActivoOferta> listaActivoOfertas) {
+		
+		if (listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
+
+			for (ActivoOferta activoOferta : listaActivoOfertas) {
+
+				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
+
+				if (oferta != null && oferta.getEstadoOferta() != null
+						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
+						&& (DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())
+						|| DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()))) {
+
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+					
+					if (expediente != null && expediente.getEstado() != null
+							&& DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
+						
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 }

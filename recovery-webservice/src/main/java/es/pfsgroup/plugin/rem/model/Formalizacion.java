@@ -119,6 +119,13 @@ public class Formalizacion implements Serializable, Auditable {
     
     @Column(name="FOR_VENTA_COND_SUPENSIVA")
 	private Boolean ventaCondicionSupensiva;
+    
+    @Column(name="FOR_CESION_REMATE")
+	private Boolean cesionRemate;
+    
+    @Column(name="FOR_CONTRATO_PRIVADO")
+	private Boolean contratoPrivado;
+    
     @Version   
 	private Long version;
 
@@ -325,7 +332,21 @@ public class Formalizacion implements Serializable, Auditable {
 	public void setVentaCondicionSupensiva(Boolean ventaCondicionSupensiva) {
 		this.ventaCondicionSupensiva = ventaCondicionSupensiva;
 	}
-    
-    
+
+	public Boolean getCesionRemate() {
+		return cesionRemate;
+	}
+
+	public void setCesionRemate(Boolean cesionRemate) {
+		this.cesionRemate = cesionRemate;
+	}
+
+	public Boolean getContratoPrivado() {
+		return contratoPrivado;
+	}
+
+	public void setContratoPrivado(Boolean contratoPrivado) {
+		this.contratoPrivado = contratoPrivado;
+	}    
    
 }

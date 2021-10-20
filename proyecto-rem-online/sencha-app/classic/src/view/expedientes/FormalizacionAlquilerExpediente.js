@@ -6,6 +6,16 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
     disableValidation: true,
     reference: 'formalizacionalquilerexpediente',
     scrollable: 'y',
+    recordName : "resolucionalquiler",
+	recordClass : "HreRem.model.ExpedienteFormalizacionAlquilerResolucion",
+	requires : ['HreRem.model.ExpedienteFormalizacionAlquilerResolucion'],
+	refreshAfterSave: true,
+	listeners : {
+		boxready : function() {
+			var me = this;
+			me.lookupController().cargarTabData(me);
+		}
+	},
 
     initComponent: function () {
         var me = this;
@@ -218,7 +228,25 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                                 });
                     }
                     
-                }]
+                },
+                {
+				   xtype: 'checkboxfieldbase',
+				   fieldLabel: HreRem.i18n('fieldlabel.cesion.remate'),
+				   reference: 'cesionremateref',
+				   bind : {
+			     		value: '{resolucionalquiler.cesionRemate}',
+			     		hidden: '{!esBankia}'
+				   }
+				},
+				{
+				   xtype: 'checkboxfieldbase',
+				   fieldLabel: HreRem.i18n('fieldlabel.contrato.privado'),
+				   reference: 'contratoprivadoref',
+				   bind : {
+			     		value: '{resolucionalquiler.contratoPrivado}',
+			     		hidden: '{!esBankia}'
+				   }
+				}]
             },
             // Apartado Alquiler.
             {

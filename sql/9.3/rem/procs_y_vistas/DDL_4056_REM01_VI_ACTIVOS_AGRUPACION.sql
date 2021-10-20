@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210311
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-13266
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -26,6 +26,7 @@
 --##		0.14 Se añade la columna de precio renta - REMVIP-4642
 --##	    0.15 Se modifica el TO_DATE de fecha inicio y fecha fin de las valoraciones.
 --##	    0.16 Se quitan cruces de columnas que ya no se usan.
+--##        0.17 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -160,7 +161,7 @@ BEGIN
     	INNER JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION 				LOC  	ON ACT.BIE_ID = LOC.BIE_ID 			 	 AND LOC.BORRADO = 0
     	INNER JOIN ' || V_ESQUEMA || '.BIE_DATOS_REGISTRALES 			BIE  	ON ACT.BIE_ID = BIE.BIE_ID 			 	 AND BIE.BORRADO = 0
     	INNER JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO 				TPA  	ON TPA.DD_TPA_ID = ACT.DD_TPA_ID 	 	 AND TPA.BORRADO = 0
-		INNER JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO 			SAC  	ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 	 	 AND SAC.BORRADO = 0
+		LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO 			SAC  	ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 	 	 AND SAC.BORRADO = 0
     	INNER JOIN ' || V_ESQUEMA || '.DD_SCM_SITUACION_COMERCIAL 		SCM  	ON SCM.DD_SCM_ID = ACT.DD_SCM_ID		 AND SCM.BORRADO = 0
         INNER JOIN ' || V_ESQUEMA || '.ACT_APU_ACTIVO_PUBLICACION 		ACT_APU ON ACT_APU.ACT_ID = ACT.ACT_ID 		 	 AND ACT_APU.BORRADO = 0
         INNER JOIN ' || V_ESQUEMA || '.DD_EPA_ESTADO_PUB_ALQUILER 		EPA 	ON ACT_APU.DD_EPA_ID = EPA.DD_EPA_ID 	 AND EPA.BORRADO = 0

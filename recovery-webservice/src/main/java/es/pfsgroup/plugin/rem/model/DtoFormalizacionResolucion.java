@@ -45,6 +45,8 @@ public class DtoFormalizacionResolucion extends WebDto {
 	
 	private Boolean ventaPlazos;
 	private Boolean ventaCondicionSupensiva;
+	private Boolean cesionRemate;
+	private Boolean contratoPrivado;
 	
 	
 	public Long getIdFormalizacion() {
@@ -178,6 +180,18 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public Boolean getCesionRemate() {
+		return cesionRemate;
+	}
+	public void setCesionRemate(Boolean cesionRemate) {
+		this.cesionRemate = cesionRemate;
+	}
+	public Boolean getContratoPrivado() {
+		return contratoPrivado;
+	}
+	public void setContratoPrivado(Boolean contratoPrivado) {
+		this.contratoPrivado = contratoPrivado;
 	}
 	
 }

@@ -91,6 +91,14 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     	    {
     	    	name: 'ventaCondicionSupensiva',
     	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'cesionRemate',
+    	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'contratoPrivado',
+    	    	type: 'boolean'
     	    }
     ],
     

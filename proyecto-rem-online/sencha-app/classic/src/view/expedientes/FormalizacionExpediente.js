@@ -884,6 +884,24 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					     		hidden: '{!esBankia}',
 					     		readOnly: true
 						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.cesion.remate'),
+						   reference: 'cesionremateref',
+						   bind : {
+					     		value: '{resolucion.cesionRemate}',
+					     		hidden: '{!esBankia}'
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.contrato.privado'),
+						   reference: 'contratoprivadoref',
+						   bind : {
+					     		value: '{resolucion.contratoPrivado}',
+					     		hidden: '{!esBankia}'
+						   }
 						}]
 					}]
 				}, {

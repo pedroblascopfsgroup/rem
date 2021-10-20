@@ -19,10 +19,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
 public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements UpdaterService {
@@ -47,8 +45,6 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
-		Oferta oferta = expedienteComercial.getOferta();
-		boolean aprueba = false;
 		String estado = null;
 		String estadoBc = null;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
@@ -59,18 +55,12 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && valor.getValor() != null) {
-				if(DDSiNo.SI.equals(valor.getValor())) {
-					aprueba = true;
-					if(DDTipoOfertaAlquiler.isAlquilerSocial(oferta.getTipoOfertaAlquiler()) && (coe.getVulnerabilidadDetectada() == null || !coe.getVulnerabilidadDetectada())) {
-						estado = DDEstadosExpedienteComercial.PTE_CL_ROD;
-						estadoBc = DDEstadoExpedienteBc.PTE_CL_ROD;
-					}else {
-						estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
-					}
+				if(DDSiNo.NO.equals(valor.getValor())) {
+					estado = DDEstadosExpedienteComercial.PTE_CL_ROD;
+					estadoBc = DDEstadoExpedienteBc.PTE_CL_ROD;
 				}else {
-					estado = DDEstadosExpedienteComercial.ANULADO;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+					estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+					estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 				}
 			}
 		}
@@ -81,10 +71,6 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
-		
-		if(!aprueba) {
-			ofertaApi.rechazarOferta(oferta);		
-		}
 		
 		expedienteComercialApi.update(expedienteComercial,false);	
 		

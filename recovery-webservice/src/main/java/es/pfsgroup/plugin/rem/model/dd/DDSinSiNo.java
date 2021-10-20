@@ -176,4 +176,15 @@ public class DDSinSiNo implements Auditable, Dictionary {
     	}
     	return dicc;   	
     }
+    
+    public static Integer cambioStringToIntger(String codigo) {
+    	Integer valorDD = 0;
+    	
+    	if (DDSinSiNo.CODIGO_SI.equals(codigo)) {
+    		valorDD = 1;
+		}
+    	
+		return valorDD;
+    	
+    }
 }

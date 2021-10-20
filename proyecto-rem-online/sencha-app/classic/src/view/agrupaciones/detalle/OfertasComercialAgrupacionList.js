@@ -546,7 +546,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var agr = me.lookupController().getViewModel().get('agrupacionficha');
 		me.setTopBar(agr.get('esEditable'));
 
-		if(agr.get('esHayaHome')){
+		if(agr.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		}
 		

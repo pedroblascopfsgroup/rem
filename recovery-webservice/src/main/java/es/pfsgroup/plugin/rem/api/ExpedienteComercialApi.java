@@ -321,9 +321,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @return
 	 */
-	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
-	
-	//boolean crearCompradorExpedienteComercial(VBusquedaDatosCompradorExpediente dto);
+
 
 	/**
 	 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento. Esta verificación está pensada para trámites (ya que se identifica el trabajo)
@@ -490,6 +488,10 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean deleteEntregaReserva(Long idEntrega);
 
+	boolean createCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+
+	boolean saveFichaCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto);
+
 	/**
 	 * Función que devuelve la propuesta de un comité para un expediente comercial de Bankia
 	 *
@@ -524,14 +526,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean deletePosicionamiento(Long idPosicionamiento);
 
-	/**
-	 * Método que crea un comprador desde la pestaña compradores del expediente
-	 *
-	 * @param dto
-	 * @param idExpediente
-	 * @return
-	 */
-	boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente);
+
 
 	/**
 	 * Crea un objeto de tipo OfertaUVEMDto

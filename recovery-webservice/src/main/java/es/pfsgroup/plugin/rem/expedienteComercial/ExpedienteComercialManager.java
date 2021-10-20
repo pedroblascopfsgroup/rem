@@ -5005,9 +5005,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 
-	@Override
 	@Transactional(readOnly = false)
-	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
+	public DtoCompradorLLamadaBC saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
+		DtoCompradorLLamadaBC response = new DtoCompradorLLamadaBC();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
 		DtoInterlocutorBC oldDataComprador = new DtoInterlocutorBC();
@@ -5520,7 +5520,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						estadoInterlocutorCodigo = DDEstadoInterlocutor.CODIGO_SOLICITUD_CAMBIO_PORCENTAJE_COMPRA;
 					}
 					
-					isAprobado = this.updateEstadoInterlocutorCompradores(expedienteComercial, compradorExpediente, estadoInterlocutorCodigo, true);
+					isAprobado = this.updateEstadoInterlocutorCompradores(expedienteComercial, compradorExpediente, estadoInterlocutorCodigo, true,response);
 				}
 				newDataComprador.compradorToDto(comprador);
 				newDataComprador.cexToDto(compradorExpediente);
@@ -5528,16 +5528,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				boolean compradorOrepresentanteModificado = interlocutorCaixaService.hasChangestoBC(oldDataComprador,newDataComprador,comprador.getIdPersonaHayaCaixa())
 				|| interlocutorCaixaService.hasChangestoBC(oldDataRepresentante,newDataRepresentante,compradorExpediente.getIdPersonaHayaCaixaRepresentante());
 				if (compradorOrepresentanteModificado){
-					interlocutorCaixaService.callReplicateClientAsync(comprador,expedienteComercial.getOferta());
+					response.setIdComprador(comprador.getId());
+					response.setNumOferta(expedienteComercial.getOferta().getNumOferta());
+					response.setReplicarCLiente(Boolean.TRUE);
 					if(new BigDecimal(100).equals(expedienteComercial.getImporteParticipacionTotal()) && (esNuevo || haCambiadoPorcionCompra) && isAprobado) {
-						this.guardaBloqueoReplicaOferta(expedienteComercial, compradorExpediente);
+						this.guardaBloqueoReplicaOferta(expedienteComercial, compradorExpediente,response);
 					};
 				}
 			}
 
 		}
 
-		return true;
+		response.setSucessComprador(Boolean.TRUE);
+
+		return response;
 	}
 
 	@Override
@@ -6052,9 +6056,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 
-	@Override
 	@Transactional(readOnly = false)
-	public boolean createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente) {
+	public DtoCompradorLLamadaBC createComprador(VBusquedaDatosCompradorExpediente dto, Long idExpediente) {
+
+		DtoCompradorLLamadaBC response = new DtoCompradorLLamadaBC();
 
 		Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumento());
 		Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
@@ -6193,8 +6198,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
 			if (esOfertaCaixa && compradorBusqueda.getInfoAdicionalPersona() != null && compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null && DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(compradorBusqueda.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo()))
-				interlocutorCaixaService.callReplicateClientAsync(compradorBusqueda,expediente.getOferta());
-			return true;
+				response.setIdComprador(compradorBusqueda.getId());
+				response.setReplicarCLiente(Boolean.TRUE);
+				response.setNumOferta(expediente.getOferta().getNumOferta());
+			response.setSucessComprador(Boolean.TRUE);
+
+			return response;
 		} else {
 
 			try {
@@ -6539,7 +6548,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Boolean isAprobado = false;
 
 				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
-					isAprobado = this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA, true);
+					isAprobado = this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_ALTA, true,response);
 
 				}
 
@@ -6549,20 +6558,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (esOfertaCaixa && comprador.getInfoAdicionalPersona() != null && comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C() != null
 						&& DDEstadoComunicacionC4C.C4C_NO_ENVIADO.equals(comprador.getInfoAdicionalPersona().getEstadoComunicacionC4C().getCodigo())){
-					interlocutorCaixaService.callReplicateClientAsync(comprador,expediente.getOferta());
+					response.setNumOferta(expediente.getOferta().getNumOferta());
+					response.setIdComprador(comprador.getId());
+					response.setReplicarCLiente(Boolean.TRUE);
 					if(new BigDecimal(100).equals(expediente.getImporteParticipacionTotal()) && isAprobado) {
-						this.guardaBloqueoReplicaOferta(expediente, compradorExpediente);
+						this.guardaBloqueoReplicaOferta(expediente, compradorExpediente,response);
 					}
 				}
 
+				response.setSucessComprador(Boolean.TRUE);
 
-				return true;
+				return response;
 
 			} catch (Exception e) {
 				logger.error("error en expedienteComercialManager", e);
-				return false;
+				response.setSucessComprador(Boolean.FALSE);
+				return response;
 			}
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto, Long idExpediente){
+		DtoCompradorLLamadaBC responseComprador = createComprador(dto,idExpediente);
+		if (responseComprador.getSucessComprador() != null && responseComprador.getSucessComprador())
+			interlocutorCaixaService.callReplicateClientAndOfertaOnComprador(responseComprador);
+		return responseComprador.getSucessComprador();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveFichaCompradorAndSendToBC(VBusquedaDatosCompradorExpediente dto){
+		DtoCompradorLLamadaBC responseComprador = saveFichaComprador(dto);
+		if (responseComprador.getSucessComprador() != null && responseComprador.getSucessComprador())
+			interlocutorCaixaService.callReplicateClientAndOfertaOnComprador(responseComprador);
+		return responseComprador.getSucessComprador();
 	}
 
 	@Override
@@ -7594,7 +7625,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 					if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
 							&& DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
-						this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA, false);
+						this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA, false,null);
 					}
 					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador, usuario.getUsername());
 					
@@ -14372,7 +14403,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	private Boolean updateEstadoInterlocutorCompradores(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor,
-													 Boolean llamaReplicarClientes){
+													 Boolean llamaReplicarClientes,DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
 		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
 		List<String> codigoTareasActivas = new ArrayList<String>();
 		boolean isAprobado = false;
@@ -14394,7 +14425,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if(isAprobado) {
-			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor, llamaReplicarClientes);
+			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor, llamaReplicarClientes,dtoCompradorLLamadaBC);
 		}else {
 			if(DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA.equals(codigoEstadoInterlocutor)) {
 				codigoEstadoInterlocutor = DDEstadoInterlocutor.CODIGO_INACTIVO;
@@ -14411,18 +14442,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Transactional(readOnly = false)
-	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor, Boolean llamaReplicarClientes){
+	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor, Boolean llamaReplicarClientes,DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
 		compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
 
 		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal()) && !llamaReplicarClientes) {
-			this.guardaBloqueoReplicaOferta(eco, compradorExpediente);
+			this.guardaBloqueoReplicaOferta(eco, compradorExpediente, dtoCompradorLLamadaBC);
 		}
 	}
 
 	@Transactional
-	public void guardaBloqueoReplicaOferta(ExpedienteComercial eco, CompradorExpediente cex){
+	public void guardaBloqueoReplicaOferta(ExpedienteComercial eco, CompradorExpediente cex,DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
 		this.guardarBloqueoExpediente(eco);
+		if (dtoCompradorLLamadaBC != null){
+			dtoCompradorLLamadaBC.setReplicarOferta(Boolean.TRUE);
+			dtoCompradorLLamadaBC.setNumOferta(eco.getOferta().getNumOferta());
+		}else
 		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),this.buildReplicarOfertaDtoFromExpedienteAndCex(eco, cex));
 	}
 	

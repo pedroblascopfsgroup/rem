@@ -111,6 +111,32 @@ public class CaixaBcRestClient {
 
     }
 
+
+    public Boolean callReplicateOfertaNoSession(Long numOferta){
+        Boolean resp = false;
+
+        try {
+            if (this.isActive()){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_OFERTAS_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("numeroOferta", numOferta.toString());
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(Boolean.class);
+                } else {
+                    return false;
+                }
+            }else{
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+
+        return resp;
+
+    }
     
     public Boolean callReplicateOferta(Long numOferta){
         Boolean resp = false;

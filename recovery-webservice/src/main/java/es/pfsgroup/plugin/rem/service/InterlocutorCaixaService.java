@@ -34,6 +34,9 @@ public class InterlocutorCaixaService {
     @Autowired
     private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
+    @Autowired
+    private OfertaApi ofertaApi;
+
     public boolean hasChangestoBC(DtoInterlocutorBC oldValues, DtoInterlocutorBC newValues, String idPersonaHaya){
 
         if (idPersonaHaya == null)
@@ -81,6 +84,21 @@ public class InterlocutorCaixaService {
                 }
             });
             thread.start();
+    }
+
+
+    public void callReplicateClientAndOfertaOnComprador(final DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
+        hibernateUtils.flushSession();
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                if (dtoCompradorLLamadaBC.getReplicarCLiente() != null && dtoCompradorLLamadaBC.getReplicarCLiente())
+                caixaBcRestClient.callReplicateClientUpdateComprador(dtoCompradorLLamadaBC.getIdComprador(),dtoCompradorLLamadaBC.getNumOferta());
+                if (dtoCompradorLLamadaBC.getReplicarOferta() != null && dtoCompradorLLamadaBC.getReplicarOferta())
+                    ofertaApi.replicarOferta(dtoCompradorLLamadaBC.getNumOferta());
+            }
+        });
+        thread.start();
+
     }
 
     public void callReplicateClientAsync(final DtoInterlocutorBC oldData, final DtoInterlocutorBC newData, final ActivoProveedor proveedor){

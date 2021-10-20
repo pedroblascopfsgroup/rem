@@ -1037,7 +1037,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				this.createComprador(model, vDatosComprador, vDatosComprador.getIdExpedienteComercial());
 				success = true;
 			} else {
-				success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+				success = expedienteComercialApi.saveFichaCompradorAndSendToBC(vDatosComprador);
 			}
 
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -1177,7 +1177,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView createComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador,
 			Long idExpedienteComercial) {
 		try {
-			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpedienteComercial);
+			boolean success = expedienteComercialApi.createCompradorAndSendToBC(vDatosComprador, idExpedienteComercial);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

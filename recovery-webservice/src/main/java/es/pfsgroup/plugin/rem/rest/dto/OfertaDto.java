@@ -114,6 +114,7 @@ public class OfertaDto implements Serializable {
 	private String codEstadoExpediente;
 	private String codSubestadoExpediente;
 	private String codOfertaSalesforce;
+	private String idOfertaSalesforce;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -535,5 +536,11 @@ public class OfertaDto implements Serializable {
 	}
 	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
 		this.codOfertaSalesforce = codOfertaSalesforce;
+	}
+	public String getIdOfertaSalesforce() {
+		return idOfertaSalesforce;
+	}
+	public void setIdOfertaSalesforce(String idOfertaSalesforce) {
+		this.idOfertaSalesforce = idOfertaSalesforce;
 	}
 }

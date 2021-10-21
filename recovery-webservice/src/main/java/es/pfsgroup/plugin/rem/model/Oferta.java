@@ -409,6 +409,9 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_SALESFORCE_COD")
     private String codOfertaSalesforce;
+	
+	@Column(name = "OFR_SALESFORCE_ID")
+	private String idOfertaSalseforce;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1284,6 +1287,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
 		this.codOfertaSalesforce = codOfertaSalesforce;
+	}
+	
+	public String getIdOfertaSalseforce() {
+		return idOfertaSalseforce;
+	}
+
+	public void setIdOfertaSalseforce(String idOfertaSalseforce) {
+		this.idOfertaSalseforce = idOfertaSalseforce;
 	}
 	
 }

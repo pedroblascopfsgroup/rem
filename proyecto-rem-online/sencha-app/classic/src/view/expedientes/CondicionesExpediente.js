@@ -748,9 +748,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										maxLength : 9,
 										bind : {
 											value : '{condiciones.documentoFiador}'
-										},
-										maskRe : /[A-Za-z0-9]/,
-										regex : /^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$/
+										}
 									},
 									{
 										xtype : 'comboboxfieldbase',

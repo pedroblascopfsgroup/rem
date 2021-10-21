@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-15855
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -22,6 +22,7 @@
 --##        0.10 Se añade signo positivo a las coordenadas - [HREOS-15423] -  Daniel Algaba
 --##	      0.11 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.12 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##	      0.13 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855 - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -82,7 +83,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_ID = BIE_LOC.DD_TVI_ID AND TVI.BORRADO = 0
-                  LEFT JOIN (SELECT EQV_TVI.DD_CODIGO_REM, EQV_TVI.DD_CODIGO_CAIXA, ROW_NUMBER() OVER (PARTITION BY EQV_TVI.DD_CODIGO_REM ORDER BY EQV_TVI.DD_CODIGO_CAIXA DESC) RN FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI WHERE EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'') 
+                  LEFT JOIN (SELECT EQV_TVI.DD_CODIGO_REM, EQV_TVI.DD_CODIGO_CAIXA, ROW_NUMBER() OVER (PARTITION BY EQV_TVI.DD_CODIGO_REM ORDER BY EQV_TVI.PRIORIDAD ASC) RN FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI WHERE EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'') 
                      EQV_TVI ON EQV_TVI.RN = 1 AND EQV_TVI.DD_CODIGO_REM = TVI.DD_TVI_CODIGO
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID AND LOC.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BIE_LOC.DD_PRV_ID AND PRV.BORRADO = 0

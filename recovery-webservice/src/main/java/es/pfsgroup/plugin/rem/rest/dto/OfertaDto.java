@@ -89,10 +89,10 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
-	private String recomendacionRc;
-	private Date fechaRecomendacionRc;
-	private String recomendacionDc;
-	private Date fechaRecomendacionDc;
+	private String recomendacionRC;
+	private Date fechaRecomendacionRC;
+	private String recomendacionDC;
+	private Date fechaRecomendacionDC;
 	private String documentoIdentificativo;
 	private String nombreDocumentoIdentificativo;
 	private String documentoGDPR;
@@ -101,7 +101,7 @@ public class OfertaDto implements Serializable {
 	private String porcentajeDescuento;
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
-	private String observacionesRCDC;
+	private String recomendacionObservaciones;
 	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -340,29 +340,29 @@ public class OfertaDto implements Serializable {
 	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
 		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
 	}
-	public String getRecomendacionRc() {
-		return recomendacionRc;
+	public String getRecomendacionRC() {
+		return recomendacionRC;
 	}
-	public void setRecomendacionRc(String recomendacionRc) {
-		this.recomendacionRc = recomendacionRc;
+	public void setRecomendacionRC(String recomendacionRC) {
+		this.recomendacionRC = recomendacionRC;
 	}
-	public Date getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
+	public Date getFechaRecomendacionRC() {
+		return fechaRecomendacionRC;
 	}
-	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
+	public void setFechaRecomendacionRC(Date fechaRecomendacionRC) {
+		this.fechaRecomendacionRC = fechaRecomendacionRC;
 	}
-	public String getRecomendacionDc() {
-		return recomendacionDc;
+	public String getRecomendacionDC() {
+		return recomendacionDC;
 	}
-	public void setRecomendacionDc(String recomendacionDc) {
-		this.recomendacionDc = recomendacionDc;
+	public void setRecomendacionDC(String recomendacionDC) {
+		this.recomendacionDC = recomendacionDC;
 	}
-	public Date getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
+	public Date getFechaRecomendacionDC() {
+		return fechaRecomendacionDC;
 	}
-	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
+	public void setFechaRecomendacionDC(Date fechaRecomendacionDC) {
+		this.fechaRecomendacionDC = fechaRecomendacionDC;
 	}
 
 	public String getDocumentoIdentificativo() {
@@ -413,11 +413,11 @@ public class OfertaDto implements Serializable {
 	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
 		this.fechaAcepGdpr = fechaAcepGdpr;
 	}
-	public String getObservacionesRCDC() {
-		return observacionesRCDC;
+	public String getRecomendacionObservaciones() {
+		return recomendacionObservaciones;
 	}
-	public void setObservacionesRCDC(String observacionesRCDC) {
-		this.observacionesRCDC = observacionesRCDC;
+	public void setRecomendacionObservaciones(String recomendacionObservaciones) {
+		this.recomendacionObservaciones = recomendacionObservaciones;
 	}
 	public String getTipoFinanciacion() {
 		return tipoFinanciacion;

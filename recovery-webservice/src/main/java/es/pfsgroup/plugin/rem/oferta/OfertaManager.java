@@ -1042,20 +1042,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRC());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRC())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRC());
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDC());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDC())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDC());
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())) {
@@ -1092,18 +1092,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
 				dto.setCampoCodigo("05");
-				dto.setTexto(ofertaDto.getRecomendacionRc());
-				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
+				dto.setTexto(ofertaDto.getRecomendacionRC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
 				dto.setCampoCodigo("06");
-				dto.setTexto(ofertaDto.getRecomendacionDc());
-				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
+				dto.setTexto(ofertaDto.getRecomendacionDC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1115,9 +1115,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){
+			if(!Checks.esNulo(ofertaDto.getRecomendacionObservaciones())){
 				dto.setCampoCodigo("09");
-				dto.setTexto(ofertaDto.getObservacionesRCDC());
+				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1563,27 +1563,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
-					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())
+					&& !ofertaDto.getRecomendacionRC().equals(oferta.getOfrRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRC());
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())
-					&& !ofertaDto.getFechaRecomendacionRc().equals(oferta.getOfrFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRC())
+					&& !ofertaDto.getFechaRecomendacionRC().equals(oferta.getOfrFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRC());
 				modificado = true;
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
-					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())
+					&& !ofertaDto.getRecomendacionDC().equals(oferta.getOfrRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDC());
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
-					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDC())
+					&& !ofertaDto.getFechaRecomendacionDC().equals(oferta.getOfrFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDC());
 				modificado = true;
 			}
 			
@@ -1595,19 +1595,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
 				dto.setCampoCodigo("05");
-				dto.setTexto(ofertaDto.getRecomendacionRc());
-				dto.setFecha(ofertaDto.getFechaRecomendacionRc().toString());
+				dto.setTexto(ofertaDto.getRecomendacionRC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
 				dto.setCampoCodigo("06");
-				dto.setTexto(ofertaDto.getRecomendacionDc());
-				dto.setFecha(ofertaDto.getFechaRecomendacionDc().toString());
+				dto.setTexto(ofertaDto.getRecomendacionDC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -1646,9 +1646,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getObservacionesRCDC())){
+			if(!Checks.esNulo(ofertaDto.getRecomendacionObservaciones())){
 				dto.setCampoCodigo("09");
-				dto.setTexto(ofertaDto.getObservacionesRCDC());
+				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -2589,7 +2589,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ofertaDto = listaOfertaDto.get(i);
 
 			// idrem puede venir o no, el idWebcom es obligatorio
-			if (!Checks.esNulo(ofertaDto.getIdOfertaRem())) {
+  			if (!Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 				oferta = ofertaDao.getOfertaByIdRem(ofertaDto.getIdOfertaRem());
 			} else {
 				oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
@@ -2632,7 +2632,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
-				map.put("idExpedienteRem", oferta.getExpedienteComercial().getNumExpediente());
+				map.put("idExpedienteRem", !Checks.esNulo(oferta.getExpedienteComercial()) ? oferta.getExpedienteComercial().getNumExpediente() : null);
 				map.put("success", false);
 
 				map.put("invalidFields", errorsList);

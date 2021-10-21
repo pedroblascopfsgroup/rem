@@ -1359,7 +1359,9 @@ public interface ExpedienteComercialApi {
 
 	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndEstadoArras(ExpedienteComercial eco, String estadoArras);
 
-	ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(ExpedienteComercial eco, ScoringAlquiler scoring);
+	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndVerificarScoring(ExpedienteComercial eco, ScoringAlquiler scoring);
+	
+	ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndScoringBc(ExpedienteComercial eco, String resultadoScoring, String fecha);
 
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndCex(ExpedienteComercial eco, CompradorExpediente cex);
 
@@ -1368,6 +1370,8 @@ public interface ExpedienteComercialApi {
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(ExpedienteComercial eco, String sancionCLROD);
     
     ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaFirma(ExpedienteComercial eco, String fechaFirma);
+    
+    ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(ExpedienteComercial eco, String fechaEnvio);
 
 	void setValoresTEB(WebDto dto, TareaExterna tarea, String codigoTarea)
 			throws IllegalArgumentException, IllegalAccessException;

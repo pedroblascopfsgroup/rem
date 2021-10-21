@@ -19,15 +19,10 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements UpdaterService {
@@ -65,6 +60,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 		
 		DDEstadosExpedienteComercial estadoExp = null;
 		DDEstadoExpedienteBc estadoBc = null;
+		String fechaEnvio = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -87,12 +83,15 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 				}
 				expedienteComercial.setEstado(estadoExp);
 			}
+			if(FECHA_ENVIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				fechaEnvio = valor.getValor();
+			}
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaEnvio));
 		}
 	}
 

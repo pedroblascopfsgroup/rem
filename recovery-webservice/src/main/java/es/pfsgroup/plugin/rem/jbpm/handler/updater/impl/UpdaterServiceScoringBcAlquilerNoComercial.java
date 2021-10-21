@@ -39,6 +39,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
     protected static final Log logger = LogFactory.getLog(UpdaterServiceScoringBcAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String FECHA_RESOLUCION = "fechaResolucion";
 
 	private static final String CODIGO_T018_SCORING_BC = "T018_ScoringBc";
 
@@ -51,6 +52,8 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		boolean aprueba = false;
 		String estadoExpediente = null;
 		String estadoBc = null;
+		String fechaResolucion = null;
+		String comboResultado = null;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
 		
@@ -69,6 +72,8 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 						estadoExpediente = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
 						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 					}
+					
+					comboResultado = valor.getValor();
 
 				}else {
 					estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
@@ -77,6 +82,10 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 				
 
 			}
+			
+			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				fechaResolucion = valor.getValor();
+			}	
 		}
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpediente));
@@ -92,7 +101,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndScoringBc(expedienteComercial, comboResultado, fechaResolucion));
 
 	}
 

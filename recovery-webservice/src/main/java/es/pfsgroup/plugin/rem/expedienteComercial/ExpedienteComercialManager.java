@@ -14183,11 +14183,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = true)
-	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpediente(final ExpedienteComercial eco, final ScoringAlquiler scoring){
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndVerificarScoring(final ExpedienteComercial eco, final ScoringAlquiler scoring){
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
 			setEstadoScoringAlquilerCodigoBC(scoring != null && scoring.getResultadoScoringServicer() != null ? scoring.getResultadoScoringServicer().getCodigo() : null);
+			setCodResultadoScoringBc(scoring != null && scoring.getResultadoScoringBc() != null ? scoring.getResultadoScoringBc().getCodigo() : null);
+			setRatingScoringServicerC4c(scoring != null && scoring.getRatingScoringServicer() != null ? scoring.getRatingScoringServicer().getCodigoC4c() : null);
+			setFechaScoringBc(scoring != null && scoring.getFechaSancionBc() != null ? ft.format(scoring.getFechaSancionBc()) : null);
+		}};
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndScoringBc(final ExpedienteComercial eco, final String resultadoScoring, final String fecha){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setCodResultadoScoringBc(resultadoScoring);
+			setFechaScoringBc(fecha);
 		}};
 	}
 
@@ -14247,6 +14261,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
 			setFechaFirma(fechaFirma);
+		}};
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ReplicarOfertaDto buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(final ExpedienteComercial eco, final String fechaEnvio){
+		return new ReplicarOfertaDto(){{
+			setNumeroOferta(eco.getOferta().getNumOferta());
+			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc().getCodigoC4C());
+			setFechaEnvio(fechaEnvio);
 		}};
 	}
 	

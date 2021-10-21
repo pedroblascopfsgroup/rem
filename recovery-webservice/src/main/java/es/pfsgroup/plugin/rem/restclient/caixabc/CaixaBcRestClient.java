@@ -200,6 +200,18 @@ public class CaixaBcRestClient {
                     if (dto.getFechaFirma() != null){
                         params.put("fechaFirma", dto.getFechaFirma());
                     }
+                    if (dto.getFechaEnvio() != null){
+                        params.put("fechaEnvio", dto.getFechaEnvio());
+                    }
+                    if (dto.getCodResultadoScoringBc() != null){
+                        params.put("codResultadoScoringBc", dto.getCodResultadoScoringBc());
+                    }
+                    if (dto.getRatingScoringServicerC4c() != null){
+                        params.put("ratingScoringServicerC4c", dto.getRatingScoringServicerC4c());
+                    }             
+                    if (dto.getFechaScoringBc() != null){
+                        params.put("fechaScoringBc", dto.getFechaScoringBc());
+                    }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);
                 } else {

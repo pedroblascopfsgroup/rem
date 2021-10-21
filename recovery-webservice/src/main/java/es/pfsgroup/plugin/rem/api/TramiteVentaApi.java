@@ -20,6 +20,8 @@ public interface TramiteVentaApi {
 
 	void guardarEstadoAnulacionExpedienteBK(Long ecoId);
 
+	boolean tieneReservaPrevia(TareaExterna tareaExterna);
+
 
 	
 	

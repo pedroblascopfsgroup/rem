@@ -152,5 +152,16 @@ public class TramiteVentaManager implements TramiteVentaApi {
 			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 		}
 	}
+	
+	@Override
+	public boolean tieneReservaPrevia(TareaExterna tareaExterna){
+		boolean tieneReservaPrevia = false;
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null && expedienteComercial.getReserva() != null) {
+			tieneReservaPrevia =  true;
+		}
+		
+		return tieneReservaPrevia;
+	}
 
 }

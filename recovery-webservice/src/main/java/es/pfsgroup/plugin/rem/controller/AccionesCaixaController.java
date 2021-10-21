@@ -131,7 +131,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto){
         ModelMap model = new ModelMap();
         try {
-            accionesCaixaApi.accionRechazoAvanzaRE(dto);
+            Boolean success = accionesCaixaApi.accionRechazoAvanzaRE(dto);
+            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

@@ -136,8 +136,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception {
-        adapter.save(createRequestAccionRechazo(dto));
+    public Boolean accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception {
+        return adapter.save(createRequestAccionRechazo(dto));
     }
 
     public Map<String, String[]> createRequestAccionRechazo(DtoAccionRechazoCaixa dto){
@@ -632,4 +632,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
 		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 	}
+
+    @Override
+    @Transactional
+    public void sendReplicarOfertaAccionesAvanzarTarea(Long idTarea, Boolean success){
+        adapter.callReplicateOferta(idTarea, success);
+    }
 }

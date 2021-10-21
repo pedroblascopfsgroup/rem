@@ -3555,102 +3555,64 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.habilitarCampo(comboResultado);
 			me.campoObligatorio(comboResultado);
-			me.habilitarCampo(motivoAplazamiento);
-			me.campoObligatorio(motivoAplazamiento);
-			
 			me.habilitarCampo(comboArras);
 			me.campoObligatorio(comboArras);
-			me.habilitarCampo(mesesFianza);
-			me.campoObligatorio(mesesFianza);
-			me.habilitarCampo(importeFianza);
-			me.campoObligatorio(importeFianza);
-			comboArras.setValue('02');
-						
+			me.habilitarCampo(comboFirma);
+			me.campoObligatorio(comboFirma);
+			me.deshabilitarCampo(numeroProtocolo);
+			me.deshabilitarCampo(fechaFirma);
+			me.deshabilitarCampo(motivoAplazamiento);
+			comboArras.setValue(CONST.COMBO_SIN_SINO['NO']);
+			
 			me.down('[name=comboArras]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					me.deshabilitarCampo(motivoAplazamiento);
-					me.campoNoObligatorio(motivoAplazamiento);
-					me.deshabilitarCampo(comboFirma);
-					me.borrarCampo(comboFirma);
-					me.deshabilitarCampo(fechaFirma);
-					me.borrarCampo(fechaFirma);
-					me.deshabilitarCampo(numeroProtocolo);
-					me.borrarCampo(numeroProtocolo);
-					me.deshabilitarCampo(comboResultado);
-					me.borrarCampo(comboResultado);
-					me.deshabilitarCampo(comboFirma);
-					me.borrarCampo(comboFirma);
-					me.deshabilitarCampo(fechaFirma);
-					me.borrarCampo(fechaFirma);
-					me.deshabilitarCampo(numeroProtocolo);
-					me.borrarCampo(numeroProtocolo);
-					me.borrarCampo(motivoAplazamiento);
-					
-					me.habilitarCampo(comboArras);
-					me.campoObligatorio(comboArras);
+				if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
 					me.habilitarCampo(mesesFianza);
 					me.campoObligatorio(mesesFianza);
 					me.habilitarCampo(importeFianza);
 					me.campoObligatorio(importeFianza);
-				} else { //NO
-					me.habilitarCampo(motivoAplazamiento);
-					me.campoObligatorio(motivoAplazamiento);
-					me.borrarCampo(motivoAplazamiento);
-					me.habilitarCampo(comboFirma);
-					me.campoNoObligatorio(comboFirma);					
-					me.habilitarCampo(fechaFirma);
-					me.campoNoObligatorio(fechaFirma);
-					me.habilitarCampo(numeroProtocolo);
-					me.campoNoObligatorio(numeroProtocolo);
-					me.habilitarCampo(comboResultado);
-					me.campoObligatorio(comboResultado);
+					me.deshabilitarCampo(comboResultado);
 					me.deshabilitarCampo(comboFirma);
-					me.borrarCampo(comboFirma);
-					me.deshabilitarCampo(fechaFirma);
-					me.borrarCampo(fechaFirma);
-					me.deshabilitarCampo(numeroProtocolo);
-					me.borrarCampo(numeroProtocolo);
-					
-					
-					//me.deshabilitarCampo(motivoAplazamiento);
-					//me.borrarCampo(comboArras);
+					comboResultado.setValue(CONST.COMBO_SIN_SINO['NO']);
+					comboFirma.setValue(CONST.COMBO_SIN_SINO['SI']);
+				} else { 
 					me.deshabilitarCampo(mesesFianza);
 					me.borrarCampo(mesesFianza);
 					me.deshabilitarCampo(importeFianza);
 					me.borrarCampo(importeFianza);
+					me.habilitarCampo(comboResultado);
+					me.campoObligatorio(comboResultado);
+					me.borrarCampo(comboResultado);
+
 				}
 			});
 			me.down('[name=comboResultado]').addListener('change', function(combo) {
-				if (combo.value == '01') { //SI
-					me.habilitarCampo(motivoAplazamiento);
-					me.campoObligatorio(motivoAplazamiento);
-					me.deshabilitarCampo(comboFirma);
-					me.borrarCampo(comboFirma);
-					me.deshabilitarCampo(fechaFirma);
-					me.borrarCampo(fechaFirma);
+				if(!combo.isDisabled()){
+					if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
+						me.habilitarCampo(motivoAplazamiento);
+						me.campoObligatorio(motivoAplazamiento);
+						comboFirma.setValue(CONST.COMBO_SIN_SINO['SI']);
+						me.deshabilitarCampo(comboFirma);
+					} else { 
+						me.deshabilitarCampo(motivoAplazamiento);
+						me.borrarCampo(motivoAplazamiento);
+						me.habilitarCampo(comboFirma);
+						me.borrarCampo(comboFirma);
+						me.campoObligatorio(comboFirma);
+					}
+				}
+			});
+			
+			me.down('[name=comboFirma]').addListener('change', function(combo) {
+				if (combo.value == CONST.COMBO_SIN_SINO['NO']) { 
+					me.habilitarCampo(numeroProtocolo);
+					me.campoObligatorio(numeroProtocolo);
+					me.habilitarCampo(fechaFirma);
+					me.campoObligatorio(fechaFirma);
+				} else { 
 					me.deshabilitarCampo(numeroProtocolo);
 					me.borrarCampo(numeroProtocolo);
-					//me.borrarCampo(comboArras);
-					me.deshabilitarCampo(mesesFianza);
-					me.borrarCampo(mesesFianza);
-					me.deshabilitarCampo(importeFianza);
-					me.borrarCampo(importeFianza);
-					
-				} else { //NO
-					me.deshabilitarCampo(motivoAplazamiento);
-					me.borrarCampo(motivoAplazamiento);
-					me.habilitarCampo(comboFirma);
-					me.campoNoObligatorio(comboFirma);					
-					me.habilitarCampo(fechaFirma);
-					me.campoNoObligatorio(fechaFirma);
-					me.habilitarCampo(numeroProtocolo);
-					me.campoNoObligatorio(numeroProtocolo);					
-					//me.habilitarCampo(comboArras);
-					me.campoObligatorio(comboArras);
-					me.deshabilitarCampo(mesesFianza);
-					me.borrarCampo(mesesFianza);
-					me.deshabilitarCampo(importeFianza);
-					me.borrarCampo(importeFianza);
+					me.deshabilitarCampo(fechaFirma);
+					me.borrarCampo(fechaFirma);
 				}
 			});
 			

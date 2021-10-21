@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -1073,5 +1074,61 @@ public class AgendaAdapter {
 			}
 		}
 		return false;
+	}
+
+	@Transactional
+	public void callReplicateOferta(Long idTarea, Boolean success){
+		ExpedienteComercial eco = null;
+		Boolean lanzarReplicate = false;
+		TareaActivo tarea = null;
+
+		if(idTarea != null){
+			tarea = tareaActivoApi.get(idTarea);
+			Long idTramite = tarea != null && tarea.getTramite() != null ? tarea.getTramite().getId() : null;
+			if(idTramite != null)
+				eco = expedienteComercialApi.getExpedienteByIdTramite(idTramite);
+		}
+
+		if(eco != null && tarea != null && success){
+			lanzarReplicate = calculaLanzarReplicateByEco(eco, tarea);
+			if(lanzarReplicate)
+				ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+		}
+	}
+
+	private Boolean calculaLanzarReplicateByEco(ExpedienteComercial eco, TareaActivo tarea) {
+		String codTarea = tarea.getTareaExterna().getTareaProcedimiento().getCodigo();
+		DDEstadoExpedienteBc estadoBc = eco.getEstadoBc();
+		String codEstado = estadoBc != null ? estadoBc.getCodigo() : null;
+
+		if(!DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())){
+			return false;
+		}
+
+		if(calculaResolucionExpdiente(codTarea, codEstado)){
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean calculaResolucionExpdiente(String codTarea, String codEstado) {
+		if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea) &&
+				(DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado) || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+				return true;
+
+		return false;
+	}
+
+	public String getIdTareaFormParameterMap(Map<String,String[]> valores) {
+
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if (key.equals("idTarea")){
+				return (String)entry.getValue()[0];
+			}
+		}
+
+		return null;
 	}
 }

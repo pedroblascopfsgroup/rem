@@ -130,7 +130,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.contabilizacion'),
 		                	reference: 'fechacontabilizacionarrasref',
-							readOnly: true,
+							readOnly: !$AU.userIsRol("HAYASUPER"),
 		                	bind: 		
 		                		{
 		                			value:'{reserva.fechaContabilizacionArras}',

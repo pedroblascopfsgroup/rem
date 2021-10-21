@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211015
+--## FECHA_CREACION=20211021
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -21,6 +21,7 @@
 --##	    0.8 El check de Visible gestión comercial se rellena con lo que tenga el de publicar - HREOS-15423
 --##	    0.9 Filtrado de activos con ofertas en vuelo - HREOS-15634
 --##	    0.10 Se añade paréntesis en consulta - HREOS-15634
+--##	    0.10 Se cambia la llamada de SPs de publicaciones a los nuevos para Caixa - HREOS-15634
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -805,25 +806,25 @@ BEGIN
 
     SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
 
-    SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
+    #ESQUEMA#.SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
 
     SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
 
     SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
 
-    SP_ASC_ACT_SIT_COM_VACIOS(0,1);
+    #ESQUEMA#.SP_ASC_ACT_SIT_COM_VACIOS(0,1);
 
     SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
 
 --10º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
-    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLICACION_CONV_CAIXA '|| CHR(10);
 
         FOR I IN ACTIVOS LOOP
             ACT_ID:=I.ACT_ID;
 
-            SP_CAMBIO_ESTADO_PUBLICACION(ACT_ID);
+            #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLICACION_CONV_CAIXA(ACT_ID);
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL SET EJECUTADO = 1, FECHA_EJECUCION = SYSDATE WHERE ACT_ID = '||ACT_ID;
             EXECUTE IMMEDIATE V_MSQL;
             COMMIT;
@@ -831,17 +832,17 @@ BEGIN
             EXIT WHEN ACTIVOS%NOTFOUND;
         END LOOP;
 
-    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION '|| CHR(10);
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLICACION_CONV_CAIXA '|| CHR(10);
 
 --11º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
-    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
+    SALIDA := SALIDA || '##INICIO: SP_CAMBIO_ESTADO_PUBLI_AGR_CONV_CAIXA '|| CHR(10);
 
         FOR I IN AGRUPACIONES LOOP
             AGR_ID:=I.AGR_ID;
 
-            SP_CAMBIO_ESTADO_PUBLI_AGR(AGR_ID);
+            #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR_CONV_CAIXA(AGR_ID);
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.TMP_AGR_DESTINO_COMERCIAL SET EJECUTADO = 1, FECHA_EJECUCION = SYSDATE WHERE AGR_ID = '||AGR_ID;
             EXECUTE IMMEDIATE V_MSQL;
             COMMIT;
@@ -849,7 +850,7 @@ BEGIN
             EXIT WHEN AGRUPACIONES%NOTFOUND;
         END LOOP;
 
-    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR '|| CHR(10);
+    SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR_CONV_CAIXA '|| CHR(10);
 
 COMMIT;
 

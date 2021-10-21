@@ -315,6 +315,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionAprobarModTitulares(dto);
+            accionesCaixaApi.sendReplicarOfertaAccion(dto.getIdExpediente());
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

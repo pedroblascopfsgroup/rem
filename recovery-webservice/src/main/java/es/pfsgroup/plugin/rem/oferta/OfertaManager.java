@@ -433,8 +433,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private InterlocutorCaixaService interlocutorCaixaService;
 	
 	@Resource
-    private Properties appProperties;	
-	
+    private Properties appProperties;
+
 
 	@Override
 	public String managerName() {
@@ -7460,18 +7460,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public void replicateOfertaFlush(Oferta oferta) {
-		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
-		if(ofertaCaixa != null) {
-			expedienteComercialDao.flush();
-			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
-			
-			if(ofertaDao.replicateOfertaFlush(oferta.getNumOferta())) {
-				ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_PTE_VALIDACION));
-			}
-
-			genericDao.save(OfertaCaixa.class, ofertaCaixa);
+		hibernateUtils.flushSession();
+		caixaBcRestClient.callReplicateOferta(oferta.getNumOferta());
 		}
-	}
+
 
 	@Override
 	public void replicarOferta(Long numOferta){
@@ -7480,17 +7472,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto) {
-		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
-		if(ofertaCaixa != null) {
-			expedienteComercialDao.flush();
-			ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
-
-			if(ofertaDao.replicateOfertaFlushWithDto(dto)) {
-				ofertaCaixa.setEstadoComunicacionC4C((DDEstadoComunicacionC4C)utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionC4C.class, DDEstadoComunicacionC4C.C4C_PTE_VALIDACION));
-			}
-
-			genericDao.save(OfertaCaixa.class, ofertaCaixa);
-		}
+		hibernateUtils.flushSession();
+		caixaBcRestClient.callReplicateOfertaWithDto(dto);
 	}
 
 	@Override

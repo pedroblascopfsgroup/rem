@@ -405,7 +405,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 	        	genericDao.save(OfertaCaixa.class, ofrCaixa);
 	        }
 	        genericDao.save(ExpedienteComercial.class, expediente);
-			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 
     	}
 
@@ -627,7 +626,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         return map;
     }
 
-
-
-
+	@Override
+	@Transactional
+	public void sendReplicarOfertaAccion(Long idExpediente) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+	}
 }

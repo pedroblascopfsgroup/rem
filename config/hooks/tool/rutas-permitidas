@@ -206,6 +206,7 @@ rem_mirror|func-rem-cierreOficinas
 func-rem-cierreOficinas|R-Ambersweet
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
+rem_mirror|func-rem-subcarteraBFA
 rem_mirror|func-rem-cuadreContableBBVA
 func-rem-cuadreContableBBVA|R-Chislett
 func-rem-fichaClientes|R-Chislett
@@ -213,4 +214,5 @@ rem_mirror|func-rem-mejorasRendimiento-F5
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
+rem_mirror|func-rem-onboardingBFA
 rem_mirror|func-rem-jupiter

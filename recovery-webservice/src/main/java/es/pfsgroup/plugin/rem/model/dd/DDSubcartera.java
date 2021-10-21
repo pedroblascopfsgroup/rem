@@ -41,7 +41,6 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_SAR_INMOBILIARIO = "04";
 	public static final String CODIGO_BAN_ASISTIDA = "05";
 	public static final String CODIGO_BAN_BH = "06";
-	public static final String CODIGO_BAN_BFA = "07";
 	public static final String CODIGO_BAN_BK = "08";
 	public static final String CODIGO_BAN_TITULIZADA = "09";
 	public static final String CODIGO_BANKIA_SOLVIA = "14";
@@ -75,6 +74,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_LBKN_LIBERBANK = "56";
 	public static final String CODIGO_LBKN_MOSCATA = "57";
 	public static final String CODIGO_LBKN_RETAMAR = "60";
+	public static final String CODIGO_BFA_BFA = "07";
 	public static final String CODIGO_MAPFRE = "66";
 	public static final String CODIGO_THIRD_PARTIES_1_TO_1 = "68";
 	

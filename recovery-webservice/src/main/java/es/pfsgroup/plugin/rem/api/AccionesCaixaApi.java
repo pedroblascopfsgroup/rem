@@ -12,7 +12,7 @@ public interface AccionesCaixaApi {
 
     void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception;
 
-    void accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception;
+    Boolean accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception;
 
     void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto);
 
@@ -68,4 +68,5 @@ public interface AccionesCaixaApi {
     
     void sendReplicarOfertaAccion(Long numOferta);
 
+    void sendReplicarOfertaAccionesAvanzarTarea(Long idTarea, Boolean success);
 }

@@ -232,6 +232,12 @@ public class AgendaController extends TareaController {
 				if(!esBulk || (esBulk && cumpleCondiciones)) {
 					
 					success = adapter.save(request.getParameterMap());
+
+					if(success){
+						String idTarea = adapter.getIdTareaFormParameterMap(request.getParameterMap());
+
+						adapter.callReplicateOferta(Long.parseLong(idTarea), success);
+					}
 					
 					if(esBulk && cumpleCondiciones) {
 						bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());

@@ -163,5 +163,15 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		
 		return tieneReservaPrevia;
 	}
+	
+	@Override
+	public boolean checkFechaContabilizacionArras(TareaExterna tareaExterna){
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (expedienteComercial != null && expedienteComercial.getReserva() != null && Checks.esNulo(expedienteComercial.getReserva().getFechaContArras())) {
+			return false;
+		}
+		
+		return true;
+	}
 
 }

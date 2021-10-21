@@ -800,6 +800,10 @@
             	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
             	return tramiteVentaManager.tieneReservaPrevia(tareaExterna);
             }
+             def checkFechaContabilizacionArras = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkFechaContabilizacionArras(tareaExterna);
+            }
            
   			 ]]></value>
   		</list>

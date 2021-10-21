@@ -22,8 +22,7 @@ public interface TramiteVentaApi {
 
 	boolean tieneReservaPrevia(TareaExterna tareaExterna);
 
+	boolean checkFechaContabilizacionArras(TareaExterna tareaExterna);
 
-	
-	
 }
 

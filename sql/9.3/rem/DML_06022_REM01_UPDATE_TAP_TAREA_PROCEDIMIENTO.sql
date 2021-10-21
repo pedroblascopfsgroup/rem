@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=IVAN REPISO
---## FECHA_CREACION=20211015
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211021
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15733
+--## INCIDENCIA_LINK=HREOS-15876
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,11 +39,11 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TAP'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-15733';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-15876';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI ? checkBankia() ? checkArrasEstadoBCIngreso() ? actualizarOfertaBoarding() : ''''El expediente tiene arras y el estado BC es distinto a Ingreso de Arras.'''' : actualizarOfertaBoarding()  : valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.NO ? checkBankia() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null : null')
+    	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI ? checkBankia() ? checkFechaContabilizacionArras() ? actualizarOfertaBoarding() : ''''El expediente tiene arras y no tiene fecha de contabilizaci&oacute;n de arras.'''' : actualizarOfertaBoarding()  : valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.NO ? checkBankia() ? tieneRellenosCamposAnulacion() ? null : ''''Debe estar informado el motivo de anulaci&oacute;n, la fecha y el detalle.''''  : null : null')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

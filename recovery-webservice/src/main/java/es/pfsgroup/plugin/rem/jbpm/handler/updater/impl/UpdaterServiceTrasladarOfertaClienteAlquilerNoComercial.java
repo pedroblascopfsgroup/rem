@@ -41,8 +41,8 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
-	
 	private static final String COMBO_IRCLROD = "comboIrClRod";
+	private static final String FECHA_RESOLUCION = "fechaResolucion";
 
 	private static final String CODIGO_T018_TRASLADAR_OFERTA_CLIENTE = "T018_TrasladarOfertaCliente";
 
@@ -54,6 +54,7 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
+		String fechaResolucion = null;
 
 		for(TareaExternaValor valor :  valores){
 			
@@ -76,11 +77,15 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 					tramiteAlquilerApi.irClRod(expedienteComercial);	
 				}
 			}
+			
+			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				fechaResolucion = valor.getValor();
+			}
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaResolucion));
 
 	}
 

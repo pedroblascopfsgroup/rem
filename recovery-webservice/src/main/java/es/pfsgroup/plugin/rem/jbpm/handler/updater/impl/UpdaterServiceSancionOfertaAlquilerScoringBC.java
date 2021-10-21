@@ -42,6 +42,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerScoringBC.class);
     
 	private static final String COMBO_RESULTADO = "comboResolucion";
+	private static final String FECHA_SANCION = "fechaSancion";
 	
 	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 
@@ -55,6 +56,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		String estadoExp = null;
 		String estadoBc = null;
 		String resultadoScoring = null;
+		String fechaSancion = null;
 		boolean aprueba = false;
 		
 
@@ -64,7 +66,10 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 				if (DDSiNo.SI.equals(valor.getValor())) {
 					aprueba = true;		
 				}
-			}			
+			}
+			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				fechaSancion = valor.getValor();
+			}	
 		}
 		
 		if (aprueba) {
@@ -109,7 +114,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		
 		
 		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndScoringBc(expedienteComercial, resultadoScoring, fechaSancion));
 		}
 	}
 

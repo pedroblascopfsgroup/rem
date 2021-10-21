@@ -265,7 +265,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 		
 
 		if(isBk) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial,scoringAlquiler));
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndVerificarScoring(expedienteComercial,scoringAlquiler));
 		}
 	}
 

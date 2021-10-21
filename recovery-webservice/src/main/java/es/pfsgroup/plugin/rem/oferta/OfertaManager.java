@@ -1094,7 +1094,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			if(!Checks.esNulo(ofertaDto.getIdOfertaSalesforce())) {
-				oferta.setIdOfertaSalseforce(ofertaDto.getIdOfertaSalesforce());
+				oferta.setIdOfertaSalesforce(ofertaDto.getIdOfertaSalesforce());
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())) {

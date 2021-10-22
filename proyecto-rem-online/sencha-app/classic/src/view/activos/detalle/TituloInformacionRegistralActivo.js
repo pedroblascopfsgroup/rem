@@ -834,7 +834,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            		store: '{comboTiposJuzgadoPlaza}',
 				            		value: '{datosRegistrales.tipoJuzgadoCodigo}',
 				            		readOnly: '{datosRegistrales.unidadAlquilable}',
-									rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}'
+									rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}',
+									disabled: '{!datosRegistrales.tipoPlazaCodigo}'
 				            	}
 							},
 			                {

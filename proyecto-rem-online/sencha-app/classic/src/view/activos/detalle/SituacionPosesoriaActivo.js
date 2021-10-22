@@ -147,9 +147,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {
 						        		value: '{situacionPosesoria.diasTapiado}',
 						        		hidden: '{!activo.isCarteraBankia}',
-						        		readOnly: '{isAssetManager}'
+						        		readOnly: true
 						        	},
-					            	labelWidth: 120,
+									labelWidth: 120,
 					            	width: 60
 						        },
 						        {

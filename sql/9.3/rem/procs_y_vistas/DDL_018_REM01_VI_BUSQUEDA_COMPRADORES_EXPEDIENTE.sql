@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20210930
+--## FECHA_CREACION=20211027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15438
+--## INCIDENCIA_LINK=HREOS-15898
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.7 HREOS-13840 Cambiado a left los titulares adicionales añadiendo un borrado lógico a 0.
 --##        0.8 HREOS-13407 Se añaden 2 campos Estado Contraste y fecha contraste.
 --##		0.9 HREOS-14394  Añadir estados bc
+--##		0.10 HREOS-14394  Modificar logica estados BC
 --##########################################
 --*/
 		
@@ -111,8 +112,8 @@ BEGIN
 					''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 			ELSE NULL
 			END 																				AS ECO_ECL_FECHA,
-			CASE WHEN ECC.DD_ECC_CODIGO IN (''03'',''04'') THEN ECC.DD_ECC_CODIGO ELSE EIC.DD_EIC_CODIGO END AS ESTADO_CODIGO,
-  			CASE WHEN ECC.DD_ECC_CODIGO IN (''03'', ''04'') THEN ECC.DD_ECC_DESCRIPCION ELSE EIC.DD_EIC_DESCRIPCION END AS ESTADO_DESCRIPCION
+			CASE WHEN EIC.DD_EIC_CODIGO NOT IN (''10'', ''20'') THEN EIC.DD_EIC_CODIGO ELSE ECC.DD_ECC_CODIGO END AS ESTADO_CODIGO,
+			CASE WHEN EIC.DD_EIC_CODIGO NOT IN (''10'', ''20'') THEN EIC.DD_EIC_DESCRIPCION ELSE ECC.DD_ECC_DESCRIPCION END AS ESTADO_DESCRIPCION
 		
 		FROM '|| V_ESQUEMA ||'.COM_COMPRADOR COM
       	LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID

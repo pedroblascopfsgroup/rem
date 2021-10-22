@@ -2549,8 +2549,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_AceptacionClienteValidacion: function(){
     	var me = this; 
-    	me.down('[name=aceptacionContraoferta]').noObligatorio=false;
     	me.campoObligatorio(me.down('[name=aceptacionContraoferta]'));
+    	me.down('[name=fechaAceptaDenega]').allowBlank = false;
+
     },
     
     T015_ResolucionPBCValidacion: function(){

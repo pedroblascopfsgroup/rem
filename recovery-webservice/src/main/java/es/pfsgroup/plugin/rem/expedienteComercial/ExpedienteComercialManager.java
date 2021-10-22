@@ -1333,6 +1333,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getCheckSubasta() != null) {
 				ofrCx.setCheckSubasta(dto.getCheckSubasta());
 			}
+			if(dto.getTipologiaVentaCod() != null) {
+				ofrCx.setTipologiaVentaBc(genericDao.get(DDTipologiaVentaBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getTipologiaVentaCod())));
+			}
 		}
 		
 		if(dto.getClasificacionCodigo() != null) {
@@ -2173,6 +2176,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setCheckSubasta(ofrCaixa.getCheckSubasta());
 				if (ofrCaixa.getCanalDistribucionBc() != null) {
 					dto.setCanalDistribucionBc(ofrCaixa.getCanalDistribucionBc().getCodigo());
+				}
+				if(ofrCaixa.getTipologiaVentaBc() != null) {
+					dto.setTipologiaVentaCod(ofrCaixa.getTipologiaVentaBc().getCodigo());
 				}
 			}
 

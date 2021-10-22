@@ -17,7 +17,8 @@
 --##	    0.5: 20210421 Viorel Remus Ovidiu. Añadir campos PISO_PILOTO, AGR_VISITABLE, AGR_EMPRESA_PROMOTORA, AGR_EMPRESA_COMERCIALIZADORA
 --##	    0.6: 20210720 Daniel Algaba. Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM - HREOS-14686
 --##		0.7: 20210903 Javier Esbri. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15078
---##		0.8: 20211020 Daniel Algaba. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15634
+--##		0.8: 20210923 Daniel Algaba. Se cambiañ el campo de ID_AGRUPACION_BC para apuntar a AGR_NUM_AGRUP_BC de la ACT_AGR - HREOS-15254
+--##		0.9: 20211020 Daniel Algaba. Añadir el campo de ID_AGRUPACION_BC que se informa del campo AGR_UVEM_COAGIW de la ACT_AGR - HREOS-15634
 --##########################################
 --*/
 
@@ -45,7 +46,7 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN/*Versión 0.6*/
+BEGIN/*Versión 0.9*/
 	
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 

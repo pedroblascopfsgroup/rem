@@ -446,12 +446,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
 		HQLBuilder hb = new HQLBuilder(isIntegradoQueryStringIn);
-
-		 String agrupaciones = DDTipoAgrupacion.AGRUPACION_RESTRINGIDA + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM;
-		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
-		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", agrupaciones);
 		
+		List<String> agrupaciones = new ArrayList<String>();
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA); 
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER); 
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM); 
+		
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		 q.setParameter("actId", id);
+		 q.setParameterList("codAgrupacion", agrupaciones);
+
 		return ((Long) q.uniqueResult()).intValue();
 	}
 
@@ -470,10 +474,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
 		HQLBuilder hb = new HQLBuilder(isPrincipalQueryStringIn);
 
-		 String agrupaciones = DDTipoAgrupacion.AGRUPACION_RESTRINGIDA + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER + "," + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM;
+		List<String> agrupaciones = new ArrayList<String>();
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA); 
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER); 
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM); 
+		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", agrupaciones);
+		 q.setParameterList("codAgrupacion", agrupaciones);
 		return ((Long) q.uniqueResult()).intValue();
 	}
 

@@ -2291,8 +2291,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaContabilizacionArras(reserva.getFechaContArras());
 			}
 		}
-
-		CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+		CondicionesReserva condiciones = null;
+		
+		if(reserva != null) {
+			condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
+		}
 		
 		if (condiciones != null) {
 			if (condiciones.getAutorizacionVpo() != null) {
@@ -2317,10 +2320,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setTemasTecnicos(condiciones.getTemasTecnicos());
 			}
 		}
+		MotivoRescinsionArras rescinsionArras = null;
 		
-		MotivoRescinsionArras rescinsionArras = genericDao.get(MotivoRescinsionArras.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
-		
-		
+		if(reserva != null) {
+			rescinsionArras = genericDao.get(MotivoRescinsionArras.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));	
+		}
 		
 		if (rescinsionArras != null) {
 			if (rescinsionArras.getAutorizacionVpo() != null) {

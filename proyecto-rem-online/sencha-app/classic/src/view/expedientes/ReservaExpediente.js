@@ -143,7 +143,8 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	minValue: $AC.getCurrentDate(),
 							maxValue: null,
 		                	bind: 		'{reserva.fechaVencimiento}',		                	
-							colspan: 2
+							colspan: 2,
+							readOnly: true
 		                },
 
 		                {

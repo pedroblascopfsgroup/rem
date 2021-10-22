@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -172,6 +171,17 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
+		boolean camposRellenos = false;
+
+		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null && !Checks.isFechaNula(eco.getFechaAnulacion())) {
+			camposRellenos = true;
+		}
+		
+		return camposRellenos;
 	}
 
 }

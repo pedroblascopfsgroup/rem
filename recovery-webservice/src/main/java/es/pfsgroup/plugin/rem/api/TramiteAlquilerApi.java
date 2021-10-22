@@ -34,6 +34,8 @@ public interface TramiteAlquilerApi {
 	boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna);
 	
 	void irClRod(ExpedienteComercial eco);
+
+	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 	
 }
 

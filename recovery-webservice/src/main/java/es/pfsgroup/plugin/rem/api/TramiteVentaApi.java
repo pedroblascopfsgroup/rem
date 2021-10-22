@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteVentaApi {
 
@@ -23,6 +24,8 @@ public interface TramiteVentaApi {
 	boolean tieneReservaPrevia(TareaExterna tareaExterna);
 
 	boolean checkFechaContabilizacionArras(TareaExterna tareaExterna);
+
+	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 
 }
 

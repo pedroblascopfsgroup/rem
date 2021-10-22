@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -148,4 +149,14 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return isAprobado;
 	}
 	
+	@Override
+	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
+		boolean camposRellenos = false;
+
+		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null ) {
+			camposRellenos = true;
+		}
+		
+		return camposRellenos;
+	}
 }

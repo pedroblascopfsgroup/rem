@@ -5,6 +5,7 @@ import java.util.Map;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerNoComercialApi {
 	
@@ -23,6 +24,8 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean isExpedienteFirmado(TareaExterna tareaExterna, String expedienteAnterior);
 
 	boolean isTramiteT018Aprobado(List<String> tareasActivas);
+
+	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 	
 }
 

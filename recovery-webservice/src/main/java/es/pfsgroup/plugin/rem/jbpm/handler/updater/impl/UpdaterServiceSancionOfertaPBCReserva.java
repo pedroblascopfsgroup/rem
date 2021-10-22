@@ -210,7 +210,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 				}
 				
 				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoExp)));
-				if(estadoBc != null) {
+				if(estadoBc != null && expediente.getEstadoBc() != null &&!estadoBc.equals(expediente.getEstadoBc().getCodigo())) {
 					cambiaEstadoBc = true;
 					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
 				}

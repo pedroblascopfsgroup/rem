@@ -106,6 +106,10 @@ public class DtoTramite extends WebDto {
 	private String codigoEstadoExpediente;
 	
 	private String codigoEstadoExpedienteBC;
+
+	private String fechaContabilizacion;
+
+	private String fechaContabilizacionPropietario;
 	
 	
 	
@@ -492,6 +496,20 @@ public class DtoTramite extends WebDto {
 	public void setCodigoEstadoExpedienteBC(String codigoEstadoExpedienteBC) {
 		this.codigoEstadoExpedienteBC = codigoEstadoExpedienteBC;
 	}
-	
-	
+
+	public String getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(String fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public String getFechaContabilizacionPropietario() {
+		return fechaContabilizacionPropietario;
+	}
+
+	public void setFechaContabilizacionPropietario(String fechaContabilizacionPropietario) {
+		this.fechaContabilizacionPropietario = fechaContabilizacionPropietario;
+	}
 }

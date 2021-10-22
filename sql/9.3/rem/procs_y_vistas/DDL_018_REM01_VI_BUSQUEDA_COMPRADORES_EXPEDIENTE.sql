@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20211022
+--## FECHA_CREACION=20211027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15898
@@ -19,7 +19,7 @@
 --##		0.7 HREOS-13840 Cambiado a left los titulares adicionales añadiendo un borrado lógico a 0.
 --##        0.8 HREOS-13407 Se añaden 2 campos Estado Contraste y fecha contraste.
 --##		0.9 HREOS-14394  Añadir estados bc
---##		0.9 HREOS-14394  Modificar logica estados BC
+--##		0.10 HREOS-14394  Modificar logica estados BC
 --##########################################
 --*/
 		

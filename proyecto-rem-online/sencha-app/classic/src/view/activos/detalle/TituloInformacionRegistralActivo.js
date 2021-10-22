@@ -1180,7 +1180,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		motivoCalNegativa = me.down("[reference=itemselMotivo]");
    		superficieParcelaUtil = me.down("[reference=superficieParcelaUtil]");
 
-   		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
+   		if(provinciaRegistro.isVisible() && provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 

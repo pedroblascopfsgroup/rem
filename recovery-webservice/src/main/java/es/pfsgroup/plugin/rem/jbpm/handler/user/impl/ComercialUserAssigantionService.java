@@ -81,6 +81,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_CIERRE_ECONOMICO ="T017_CierreEconomico";
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	public static final String USUARIO_REST_BC_DEFAULT = "COMM_CBK";
 	
 	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
 	

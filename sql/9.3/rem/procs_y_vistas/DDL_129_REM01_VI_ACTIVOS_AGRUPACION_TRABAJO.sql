@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20210129
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12961
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -99,7 +100,7 @@ BEGIN
     	ACT.ACT_ID = AGR.ACT_ID AND
       ACT.ACT_ID = PAC.ACT_ID AND
     	TPA.DD_TPA_ID = ACT.DD_TPA_ID AND
-		SAC.DD_SAC_ID = ACT.DD_SAC_ID AND
+		SAC.DD_SAC_ID (+) = ACT.DD_SAC_ID AND
 		SCM.DD_SCM_ID (+) = ACT.DD_SCM_ID AND
   		SPS.ACT_ID = ACT.ACT_ID
 		AND CRA.DD_CRA_ID = ACT.DD_CRA_ID 

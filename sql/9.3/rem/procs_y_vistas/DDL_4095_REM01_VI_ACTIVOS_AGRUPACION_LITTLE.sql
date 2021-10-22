@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=rlb
---## FECHA_CREACION=20200206
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4642
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -81,7 +82,7 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION 				LOC  	ON ACT.BIE_ID = LOC.BIE_ID 			 AND LOC.BORRADO = 0
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL         REG     ON ACT.ACT_ID = REG.ACT_ID           AND REG.BORRADO = 0
     	INNER JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO 			TPA  	ON TPA.DD_TPA_ID = ACT.DD_TPA_ID 	 AND TPA.BORRADO = 0
-		INNER JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO 			SAC  	ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 	 AND SAC.BORRADO = 0
+		LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO 			SAC  	ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 	 AND SAC.BORRADO = 0
     	INNER JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL 	SCM  	ON SCM.DD_SCM_ID = ACT.DD_SCM_ID 	 AND SCM.BORRADO = 0
     	LEFT JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA 			SPS  	ON SPS.ACT_ID = ACT.ACT_ID 			 AND SPS.BORRADO = 0
  		LEFT JOIN (

@@ -179,6 +179,16 @@ Ext.define('HreRem.model.Tramite', {
 			name: 'estaEnTareaReserva',
 			type: 'boolean'
     	},
+        {
+            name : 'fechaContabilizacion',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+            name : 'fechaContabilizacionPropietario',
+            type:'date',
+            dateFormat: 'c'
+        },
     	{
     		name: 'evaluarBtnReasignar',
     		calculate: function(data) {

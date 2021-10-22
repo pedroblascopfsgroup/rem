@@ -2311,6 +2311,8 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(expedienteComercial)) {
 					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
 					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
+					beanUtilNotNull.copyProperty(dtoTramite, "fechaContabilizacion", expedienteComercial.getFechaContabilizacion());
+					beanUtilNotNull.copyProperty(dtoTramite, "fechaContabilizacionPropietario", expedienteComercial.getFechaContabilizacionPropietario());
 					if(expedienteComercial.getEstado() != null) {
 						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 								expedienteComercial.getEstado().getDescripcion());

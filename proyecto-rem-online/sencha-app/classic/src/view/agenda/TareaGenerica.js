@@ -3063,6 +3063,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T017_DocsPosVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
+		var fechaContabilizacion = me.down('[name=fechaContabilizacion]');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
 		var comboVentaSupensiva = me.down('[name=comboVentaSupensiva]');
@@ -3108,7 +3109,24 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            	me.down('[name=fechaIngreso]').reset();
 	            }
 			}
-        })
+        });
+
+        me.habilitarCampo(fechaIngreso);
+        me.habilitarCampo(fechaContabilizacion);
+
+        me.desocultarCampo(fechaIngreso);
+        me.desocultarCampo(fechaContabilizacion);
+
+        fechaIngreso.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacionPropietario'));
+        fechaContabilizacion.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacion'));
+
+        fechaIngreso.allowBlank = false;
+        fechaContabilizacion.allowBlank = false;
+
+        fechaIngreso.setReadOnly(true);
+		fechaContabilizacion.setReadOnly(true);
+
+
 	},
 	
 	T017_AgendarFechaFirmaArrasValidacion: function() {

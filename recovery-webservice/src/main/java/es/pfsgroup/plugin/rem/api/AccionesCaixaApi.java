@@ -64,7 +64,7 @@ public interface AccionesCaixaApi {
 
     void accionScoringBC(DtoAvanzaScoringBC dto) throws Exception;
 
-    void avanzarTareaGenerico(JSONObject dto) throws Exception;
+    Boolean avanzarTareaGenerico(JSONObject dto) throws Exception;
     
     void sendReplicarOfertaAccion(Long numOferta);
 

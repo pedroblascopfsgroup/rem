@@ -96,8 +96,6 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 
 		genericDao.save(Oferta.class, oferta);
 		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndCodEstadoAlquiler(expedienteComercial, subtipoOfertaAlquiler != null ? subtipoOfertaAlquiler.getCodigo() : null));
 
 	}
 

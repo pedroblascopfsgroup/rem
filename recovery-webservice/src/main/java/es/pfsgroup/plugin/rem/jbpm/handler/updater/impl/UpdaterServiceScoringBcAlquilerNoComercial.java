@@ -99,9 +99,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		}
 		
 
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndScoringBc(expedienteComercial, comboResultado, fechaResolucion));
+		expedienteComercialApi.update(expedienteComercial,false);
 
 	}
 

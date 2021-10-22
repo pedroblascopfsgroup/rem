@@ -70,9 +70,7 @@ public class UpdaterServiceResolucionComiteAlquilerNoComercial implements Update
 			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		expedienteComercialApi.update(expedienteComercial,false);
 
 	}
 

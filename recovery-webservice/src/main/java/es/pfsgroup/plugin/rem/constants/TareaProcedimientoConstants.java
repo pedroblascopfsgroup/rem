@@ -11,5 +11,11 @@ public class TareaProcedimientoConstants {
     public static final String CODIGO_SANCION_BC = "T015_SancionBC";
     public static final String CODIGO_T018_AGENDAR_FIRMAR = "T018_AgendarYFirmar";
     public static final String CODIGO_T015_FIRMA = "T015_Firma";
+    public static final String CODIGO_T018_DEFINICION_OFERTA = "T018_DefinicionOferta";
+    public static final String CODIGO_T018_ANALISIS_TECNICO = "T018_AnalisisTecnico";
+    public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
+    public static final String CODIGO_T018_SCORING_BC = "T018_ScoringBc";
+    public static final String CODIGO_T018_RESOLUCION_COMITE = "T018_ResolucionComite";
+    public static final String CODIGO_T018_REVISION_BC_Y_CONDICIONES = "T018_RevisionBcYCondiciones";
 
 }

@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -93,6 +96,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private String codEstadoProvision = null;	
 
 	private static final String VALIDACION_FECHA_DEVENGO_ESPECIAL = "msg.error.validacion.fecha.devengo.especial";
+	
+	public static final SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
@@ -311,7 +316,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
-			if(!Checks.esNulo(contabilidadGasto) && ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && Checks.isFechaNula(contabilidadGasto.getFechaDevengoEspecial())){
+			Date fechaEmisionGastoPosterior = null;
+			try {
+				fechaEmisionGastoPosterior = ft.parse(GastoProveedor.FECHA_EMISION_GASTO_POSTERIOR);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!Checks.esNulo(contabilidadGasto) && ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && Checks.isFechaNula(contabilidadGasto.getFechaDevengoEspecial())
+					&& gasto.getFechaEmision().after(fechaEmisionGastoPosterior)){
 				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
 				return error;
 			}

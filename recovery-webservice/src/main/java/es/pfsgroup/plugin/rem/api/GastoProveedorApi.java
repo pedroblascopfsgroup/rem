@@ -362,7 +362,7 @@ public interface GastoProveedorApi {
 
 		AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient)
 				throws Exception;
-		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto);
+		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto) throws Exception;
 
 
 		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);

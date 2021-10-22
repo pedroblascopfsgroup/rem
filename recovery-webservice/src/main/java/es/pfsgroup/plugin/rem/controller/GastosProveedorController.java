@@ -1208,16 +1208,18 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		List<String> gastosRefacturables = new ArrayList<String>();
 		List<String> gastosNoRefacturables = new ArrayList<String>();
-		if(!Checks.esNulo(gastos)) {
-			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario, tipoGasto);
-			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
-		}
-		try {			
+		
+		try {	
+			if(!Checks.esNulo(gastos)) {
+				gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario, tipoGasto);
+				gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
+			}
 			model.put("refacturable", gastosRefacturables);
 			model.put("noRefacturable", gastosNoRefacturables);
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
+			model.put("error", e.getMessage());
 			model.put("success", false);		
 		}
 

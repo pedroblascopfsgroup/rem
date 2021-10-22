@@ -1715,8 +1715,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoRatingScoring'}
+				remoteUrl: 'expedientecomercial/getResultadoRatingScoring'
 			}
     	},
     	comboEntidadBancariaAvalista: {

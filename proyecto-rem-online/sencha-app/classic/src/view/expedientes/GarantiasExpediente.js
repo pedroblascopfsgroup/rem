@@ -278,7 +278,47 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												disabled: true
 											}
 										]
-							}
+							},
+							{
+								xtype : 'fieldset',
+								height : 100,
+								layout : {
+									type : 'table',
+									columns : 2
+								},
+								defaultType : 'textfieldbase',
+								title : HreRem.i18n("fieldlabel.deposito"),
+								bind:{
+									disabled: '{!garantias.bloqueDepositoEditable}'
+								},
+								items : [
+									{
+										xtype : 'numberfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.meses'),
+										bind : {
+											value : '{garantias.mesesDeposito}'
+										},
+										readOnly : false
+									},
+									{
+										xtype : 'checkboxfieldbase',
+										reference : 'chekboxReservaConImpuesto',
+										fieldLabel : HreRem.i18n('fieldlabel.deposito.actualizable'),
+										bind : {
+											value : '{garantias.depositoActualizable}'
+										},
+										readOnly : false
+									},
+									{
+										xtype : 'numberfieldbase',
+										reference : 'importeDeposito',
+										fieldLabel : HreRem.i18n('fieldlabel.importe'),
+										bind : '{garantias.importeDeposito}',
+										symbol : HreRem.i18n('symbol.euro'),
+										readOnly : false
+									} 
+								]
+							} 
 				
 				
 						]

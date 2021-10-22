@@ -92,7 +92,20 @@ Ext.define('HreRem.model.GarantiasExpedienteModel', {
 		},{
 			name:'scoringEditable',
 	    	type: 'boolean'
-		}
+		},
+		{
+			name: 'bloqueDepositoEditable',
+			type: 'boolean'
+		},
+	    {
+	    	name: 'mesesDeposito'
+	    },
+	    {
+	    	name: 'importeDeposito'
+	    },
+	    {
+	    	name: 'depositoActualizable'
+	    }
 	    	    
     ],
     

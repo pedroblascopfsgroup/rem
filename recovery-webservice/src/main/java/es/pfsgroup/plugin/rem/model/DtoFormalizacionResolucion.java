@@ -48,6 +48,9 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private Boolean cesionRemate;
 	private Boolean contratoPrivado;
 	
+	private Date fechaInicioCnt;
+	private Date fechaFinCnt;
+	
 	
 	public Long getIdFormalizacion() {
 		return idFormalizacion;
@@ -192,6 +195,18 @@ public class DtoFormalizacionResolucion extends WebDto {
 	}
 	public void setContratoPrivado(Boolean contratoPrivado) {
 		this.contratoPrivado = contratoPrivado;
+	}
+	public Date getFechaInicioCnt() {
+		return fechaInicioCnt;
+	}
+	public void setFechaInicioCnt(Date fechaInicioCnt) {
+		this.fechaInicioCnt = fechaInicioCnt;
+	}
+	public Date getFechaFinCnt() {
+		return fechaFinCnt;
+	}
+	public void setFechaFinCnt(Date fechaFinCnt) {
+		this.fechaFinCnt = fechaFinCnt;
 	}
 	
 }

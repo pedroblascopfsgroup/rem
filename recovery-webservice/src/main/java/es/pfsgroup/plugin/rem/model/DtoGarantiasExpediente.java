@@ -44,6 +44,11 @@ public class DtoGarantiasExpediente extends WebDto {
 	private Boolean scoringEditable;
 	private Boolean bloqueEditable;
 	
+	private Boolean bloqueDepositoEditable;
+	private Integer mesesDeposito;
+	private Boolean depositoActualizable;
+	private Double importeDeposito;
+	
 	public Long getIdGarantias() {
 		return idGarantias;
 	}
@@ -211,6 +216,30 @@ public class DtoGarantiasExpediente extends WebDto {
 	}
 	public void setBloqueEditable(Boolean bloqueEditable) {
 		this.bloqueEditable = bloqueEditable;
+	}
+	public Boolean getBloqueDepositoEditable() {
+		return bloqueDepositoEditable;
+	}
+	public void setBloqueDepositoEditable(Boolean bloqueDepositoEditable) {
+		this.bloqueDepositoEditable = bloqueDepositoEditable;
+	}
+	public Integer getMesesDeposito() {
+		return mesesDeposito;
+	}
+	public void setMesesDeposito(Integer mesesDeposito) {
+		this.mesesDeposito = mesesDeposito;
+	}
+	public Boolean getDepositoActualizable() {
+		return depositoActualizable;
+	}
+	public void setDepositoActualizable(Boolean depositoActualizable) {
+		this.depositoActualizable = depositoActualizable;
+	}
+	public Double getImporteDeposito() {
+		return importeDeposito;
+	}
+	public void setImporteDeposito(Double importeDeposito) {
+		this.importeDeposito = importeDeposito;
 	}
 	
 	

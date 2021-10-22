@@ -3123,6 +3123,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var fechaEnvio = me.down('[name=fechaEnvio]');
 		var fechaEnvioPropuesta = me.down('[name=fechaPropuesta]');
 		var comboQuitar = me.down('[name=comboQuitar]');
+		var fechaVencimientoArras = me.down('[name=fechaVencimientoArras]');
 		
         var url =  $AC.getRemoteUrl('expedientecomercial/getUltimaFechaPropuesta');
 		Ext.Ajax.request({
@@ -3153,11 +3154,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.borrarCampo(fechaEnvio);
 					me.deshabilitarCampo(fechaEnvioPropuesta);
 					me.borrarCampo(fechaEnvioPropuesta);
+					me.deshabilitarCampo(fechaVencimientoArras);
+					me.borrarCampo(fechaVencimientoArras);
 				} else { //NO
 					me.habilitarCampo(fechaEnvio);
 					me.campoObligatorio(fechaEnvio);
 					me.habilitarCampo(fechaEnvioPropuesta);
 					me.campoObligatorio(fechaEnvioPropuesta);
+					me.habilitarCampo(fechaVencimientoArras);
+					me.campoObligatorio(fechaVencimientoArras);
 				}
 			});
 		} else {

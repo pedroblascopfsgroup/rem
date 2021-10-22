@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-
 import es.capgemini.devon.dto.WebDto;
 
 

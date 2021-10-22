@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,6 +15,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -48,6 +50,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 	private static final String COMBO_FECHA_ENVIO_PROPUESTA = "fechaPropuesta";
 	private static final String COMBO_FECHA_ENVIO = "fechaEnvio";
 	private static final String MOTIVO_APLAZAMIENTO = "Suspensión proceso arras";
+	private static final String COMBO_FECHA_VENCIMIENTO_ARRAS = "fechaVencimientoArras";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -65,6 +68,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				String estadoExp = null;
 				String estadoBc = null;
 				String estadoArras = null;
+				String fechaVencimientoArras = null;
 				
 				for(TareaExternaValor valor :  valores){
 					if(COMBO_FECHA_ENVIO_PROPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -76,6 +80,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 						if (DDSiNo.SI.equals(valor.getValor())) {
 							comboQuitar = true;
 						}
+					}else if(COMBO_FECHA_VENCIMIENTO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						fechaVencimientoArras = valor.getValor();
 					}
 				}	
 				
@@ -100,6 +106,14 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 					estadoExp =  DDEstadosExpedienteComercial.PTE_FIRMA_ARRAS;
 					estadoBc =  DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_ARRAS_POR_BC;
 					estadoArras = DDMotivosEstadoBC.CODIGO_PDTE_VALIDACION;
+					
+					Filter filtroReserva = genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId());
+					Reserva reserva = genericDao.get(Reserva.class, filtroReserva);
+					Date fechaVencArras= ft.parse(fechaVencimientoArras);
+					reserva.setFechaVencimiento(fechaVencArras);
+					
+					genericDao.save(Reserva.class, reserva);
+					
 				}
 				
 				dtoArras.setValidacionBC(estadoArras);

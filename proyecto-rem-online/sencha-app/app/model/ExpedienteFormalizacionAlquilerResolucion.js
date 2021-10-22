@@ -77,7 +77,17 @@ Ext.define('HreRem.model.ExpedienteFormalizacionAlquilerResolucion', {
     	    {
     	    	name: 'contratoPrivado',
     	    	type: 'boolean'
-    	    }
+    	    },
+			{
+				name:'fechaInicioCnt',
+				type:'date',
+	    		dateFormat: 'c'
+			},
+			{
+				name:'fechaFinCnt',
+				type:'date',
+	    		dateFormat: 'c'
+			}
     ],
     
     proxy: {

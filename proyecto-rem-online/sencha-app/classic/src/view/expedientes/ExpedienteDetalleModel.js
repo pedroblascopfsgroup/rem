@@ -743,7 +743,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 var me = this;
 
 			 return get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];;
+		 },
+		 esBankiaVenta: function(get){
+	    	 var isVenta = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			 
+			 return isVenta && isBK;
 		 }
+		 
 	 },
 	
 
@@ -1715,8 +1722,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoRatingScoring'}
+				remoteUrl: 'expedientecomercial/getResultadoRatingScoring'
 			}
     	},
     	comboEntidadBancariaAvalista: {
@@ -1760,6 +1766,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 remoteUrl: 'activo/getMotivoAnulacionExpedienteCaixa'
             },
 	    	autoLoad: true
-        }
+        },
+        comboTipologiaVentaBcOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipologiaVentaBc'
+				},
+			autoLoad: true
+			}
+		}
     }
 });

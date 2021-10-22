@@ -583,7 +583,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 						},
 						margin: '0 0 0 10',
-						colspan: 3,
+						colspan: 2,
 						border : false,
 						defaultType : 'displayfieldbase',
 						items : [
@@ -613,6 +613,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							type : 'table',
 							columns : 1
 						},
+						margin : '0 0 10 10',
+						colspan: 1,
 						border : false,
 						defaultType : 'displayfieldbase',
 						items : [
@@ -670,46 +672,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										}
 									}
 								]
-							},
-							{
-								xtype : 'fieldset',
-								height : 100,
-								layout : {
-									type : 'table',
-									columns : 2
-								},
-								defaultType : 'textfieldbase',
-								title : HreRem.i18n("fieldlabel.deposito"),
-								bind:{
-									disabled: '{!condiciones.bloqueDepositoEditable}'
-								},
-								items : [
-									{
-										xtype : 'numberfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.meses'),
-										bind : {
-											value : '{condiciones.mesesDeposito}'
-										},
-										readOnly : false
-									},
-									{
-										xtype : 'checkboxfieldbase',
-										reference : 'chekboxReservaConImpuesto',
-										fieldLabel : HreRem.i18n('fieldlabel.deposito.actualizable'),
-										bind : {
-											value : '{condiciones.depositoActualizable}'
-										},
-										readOnly : false
-									},
-									{
-										xtype : 'numberfieldbase',
-										reference : 'importeDeposito',
-										fieldLabel : HreRem.i18n('fieldlabel.importe'),
-										bind : '{condiciones.importeDeposito}',
-										symbol : HreRem.i18n('symbol.euro'),
-										readOnly : false
-									} 
-								]
 							} 
 						]
 					},
@@ -728,7 +690,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						items : [
 						 	{
 								xtype : 'fieldset',
-								height : 210,
+								height : 130,
 								layout : {
 									type : 'table',
 									columns : 2
@@ -784,114 +746,93 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							} 
 						]
 					},
+					
 					{
 						xtype : 'fieldset',
-						collapsible : false,
-						border : false,
+						height : 130,
 						layout : {
 							type : 'table',
-							columns : 1
+							columns : 2
 						},
+						colspan: 1,
 						bind:{
 							hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 						},
-						defaultType : 'displayfieldbase',
+						margin : '0 0 20 10',
+						defaultType : 'textfieldbase',
+						title : HreRem.i18n("fieldlabel.duracion"),
 						items : [
-
 							{
-								xtype : 'fieldset',
-								height : 130,
-								layout : {
-									type : 'table',
-									columns : 2
-								},
-								defaultType : 'textfieldbase',
-								title : HreRem.i18n("fieldlabel.duracion"),
-								items : [
-									{
-										xtype : 'datefieldbase',
-										fieldLabel : HreRem.i18n('header.fecha.inicio'),
-										bind : {
-											value : '{condiciones.fechaInicioCnt}'
-										}
-									},
-									{
-										xtype : 'numberfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.meses.duracion'),
-										bind : {
-											value : '{condiciones.mesesDuracion}'
-										}
-									},
-									{
-										xtype : 'datefieldbase',
-										fieldLabel : HreRem.i18n('header.fecha.fin'),
-										maxValue: null,
-										bind : {
-											value : '{condiciones.fechaFinCnt}'
-										}
-									},
-									{
-										xtype : 'numberfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.anyos.obligado.cump'),
-										bind : {
-											value : '{condiciones.obligadoCumplimiento}'
-										}
-									},
-									{
-										xtype : 'datefieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.fecha.preaviso.vencimiento.cnt'),
-										maxValue: null,
-										bind : {
-											value : '{condiciones.fechaPreavisoVencimientoCnt}'
-										}
-									}
-								]
+								xtype : 'numberfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.meses.duracion'),
+								bind : {
+									value : '{condiciones.mesesDuracion}'
+								}
 							},
 							{
-								xtype : 'fieldset',
-								height : 100,
-								layout : {
-									type : 'table',
-									columns : 2
+								xtype : 'numberfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.anyos.obligado.cump'),
+								bind : {
+									value : '{condiciones.obligadoCumplimiento}'
+								}
+							},
+							{
+								xtype : 'datefieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.fecha.preaviso.vencimiento.cnt'),
+								maxValue: null,
+								bind : {
+									value : '{condiciones.fechaPreavisoVencimientoCnt}'
+								}
+							}
+						]
+					},
+					{
+						xtype : 'fieldset',
+						height : 130,
+						layout : {
+							type : 'table',
+							columns : 2
+						},
+						defaultType : 'textfieldbase',
+						bind:{
+							hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+						},
+						margin : '0 0 20 10',
+						title : HreRem.i18n("fieldlabel.fiscalidad"),
+						items : [
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
+								bind : {
+									store : '{comboTiposImpuesto}',
+									value : '{condiciones.tipoImpuestoCodigoAlq}'
 								},
-								defaultType : 'textfieldbase',
-								title : HreRem.i18n("fieldlabel.fiscalidad"),
-								items : [
-									{
-										xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
-										bind : {
-											store : '{comboTiposImpuesto}',
-											value : '{condiciones.tipoImpuestoCodigoAlq}'
-										},
-										displayField : 'descripcion',
-										valueField : 'codigo',
-										listeners : {
-											change : 'onCambioTipoImpuesto2'
-										}
-									},
-									{
-										xtype : 'numberfieldbase',
-										reference : 'tipoAplicableBk',
-										symbol : HreRem.i18n("symbol.porcentaje"),
-										fieldLabel : HreRem.i18n('fieldlabel.tipo.aplicable'),
-										bind : {
-											value : '{condiciones.tipoAplicable}'
-										}
-									},
-									{
-										xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.grupo.impuesto'),
-										reference : 'grupoImpuestoRef2',
+								displayField : 'descripcion',
+								valueField : 'codigo',
+								listeners : {
+									change : 'onCambioTipoImpuesto2'
+								}
+							},
+							{
+								xtype : 'numberfieldbase',
+								reference : 'tipoAplicableBk',
+								symbol : HreRem.i18n("symbol.porcentaje"),
+								fieldLabel : HreRem.i18n('fieldlabel.tipo.aplicable'),
+								bind : {
+									value : '{condiciones.tipoAplicable}'
+								}
+							},
+							{
+								xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.grupo.impuesto'),
+								reference : 'grupoImpuestoRef2',
 
-										bind : {
-											store : '{comboGrupoImpuesto}',
-											value : '{condiciones.tipoGrupoImpuestoCodAlq}'
-										},
-										displayField : 'descripcion',
-										valueField : 'codigo'
-									}
-								]
+								bind : {
+									store : '{comboGrupoImpuesto}',
+									value : '{condiciones.tipoGrupoImpuestoCodAlq}'
+								},
+								displayField : 'descripcion',
+								valueField : 'codigo'
 							}
 						]
 					},

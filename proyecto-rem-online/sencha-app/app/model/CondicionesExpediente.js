@@ -216,15 +216,6 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    	name: 'fianzaActualizable'
 	    },
 	    {
-	    	name: 'mesesDeposito'
-	    },
-	    {
-	    	name: 'importeDeposito'
-	    },
-	    {
-	    	name: 'depositoActualizable'
-	    },
-	    {
 	    	name: 'avalista'
 	    },
 	    {
@@ -421,16 +412,6 @@ Ext.define('HreRem.model.CondicionesExpediente', {
     		dateFormat: 'c'
 		},
 		{
-			name:'fechaInicioCnt',
-			type:'date',
-    		dateFormat: 'c'
-		},
-		{
-			name:'fechaFinCnt',
-			type:'date',
-    		dateFormat: 'c'
-		},
-		{
 			name:'metodoActualizacionRentaCod'
 		},
 		{
@@ -450,10 +431,6 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name:'tipoGrupoImpuestoCod'
-		},
-		{
-			name: 'bloqueDepositoEditable',
-			type: 'boolean'
 		},
 		{
 			name:'tipoGrupoImpuestoCodAlq'

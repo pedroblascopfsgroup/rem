@@ -41,6 +41,7 @@ public class DDRatingScoringServicer implements Auditable, Dictionary{
 	private String descripcion;
 	    
 	@Column(name = "DD_RAT_DESCRIPCION_LARGA")   
+
 	private String descripcionLarga;	
 	
     @Column(name = "DD_RAT_CODIGO_C4C")
@@ -107,7 +108,5 @@ public class DDRatingScoringServicer implements Auditable, Dictionary{
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-	
 
 }

@@ -73,6 +73,20 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                 cls : 'panel-base shadow-panel',
                 title : HreRem.i18n('title.publicaciones.alquiler'),
                 items : [{
+					xtype : 'datefieldbase',
+					fieldLabel : HreRem.i18n('header.fecha.inicio'),
+					bind : {
+						value : '{resolucionalquiler.fechaInicioCnt}'
+					}
+				},
+				{
+					xtype : 'datefieldbase',
+					fieldLabel : HreRem.i18n('header.fecha.fin'),
+					maxValue: null,
+					bind : {
+						value : '{resolucionalquiler.fechaFinCnt}'
+					}
+				},{
                     xtype : 'gridBaseEditableRow',
                     title : HreRem.i18n('title.posicionamiento'),
                     reference : 'listadoPosicionamiento',

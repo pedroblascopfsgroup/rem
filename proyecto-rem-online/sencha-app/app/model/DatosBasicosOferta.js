@@ -285,7 +285,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     		    name:'claseContratoCodigo'
-    		}
+    		},
+            {
+            	name: 'tipologiaVentaCod'
+            }
     		
     ],
 

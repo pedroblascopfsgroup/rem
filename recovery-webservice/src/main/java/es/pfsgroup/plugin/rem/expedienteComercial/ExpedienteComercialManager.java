@@ -1333,6 +1333,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getCheckSubasta() != null) {
 				ofrCx.setCheckSubasta(dto.getCheckSubasta());
 			}
+			if(dto.getTipologiaVentaCod() != null) {
+				ofrCx.setTipologiaVentaBc(genericDao.get(DDTipologiaVentaBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getTipologiaVentaCod())));
+			}
 		}
 		
 		if(dto.getClasificacionCodigo() != null) {
@@ -2173,6 +2176,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setCheckSubasta(ofrCaixa.getCheckSubasta());
 				if (ofrCaixa.getCanalDistribucionBc() != null) {
 					dto.setCanalDistribucionBc(ofrCaixa.getCanalDistribucionBc().getCodigo());
+				}
+				if(ofrCaixa.getTipologiaVentaBc() != null) {
+					dto.setTipologiaVentaCod(ofrCaixa.getTipologiaVentaBc().getCodigo());
 				}
 			}
 
@@ -4338,7 +4344,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoFormalizacionResolucion expedienteToDtoFormalizacion(ExpedienteComercial expediente) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
 		List<Formalizacion> listaResolucionFormalizacion = genericDao.getList(Formalizacion.class, filtro);
-
+		Oferta oferta = expediente.getOferta();
 		DtoFormalizacionResolucion formalizacionDto = new DtoFormalizacionResolucion();
 
 		// Un expediente de venta solo puede tener una resolución, en el extraño caso
@@ -4366,6 +4372,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (!Checks.esNulo(expediente.getNumeroProtocolo())) {
 			formalizacionDto.setNumeroProtocoloCaixa(expediente.getNumeroProtocolo());
+		}
+		
+		if(oferta != null) {
+			formalizacionDto.setFechaInicioCnt(oferta.getFechaInicioContrato());
+			formalizacionDto.setFechaFinCnt(oferta.getFechaFinContrato());
 		}
 		
 		return formalizacionDto;
@@ -14124,7 +14135,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 		ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getId()));
-		if (!Checks.esNulo(expediente)) {			
+		
+		if (!Checks.esNulo(expediente)) {	
+			Oferta oferta = expediente.getOferta();
 			Formalizacion formalizacion = expediente.getFormalizacion();
 			
 			if (dto.getVentaPlazos() != null) {
@@ -14136,6 +14149,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (dto.getContratoPrivado() != null) {
 				formalizacion.setContratoPrivado(dto.getContratoPrivado());
 			}
+			
+			if(oferta != null) {
+				if(!Checks.isFechaNula(dto.getFechaInicioCnt())) {
+					oferta.setFechaInicioContrato(dto.getFechaInicioCnt());
+				}
+				if(!Checks.isFechaNula(dto.getFechaFinCnt())) {
+					oferta.setFechaFinContrato(dto.getFechaFinCnt());
+				}
+				
+				genericDao.save(Oferta.class, oferta);
+			}
+			
 			genericDao.save(Formalizacion.class, formalizacion);
 
 		}
@@ -14288,6 +14313,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
 			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
 			SeguroRentasAlquiler sra = genericDao.get(SeguroRentasAlquiler.class, filter);
+			CondicionanteExpediente condiciones = expediente.getCondicionante();
 			if (scoring != null) {
 				
 				if (scoring.getRatingScoringServicer() != null) {
@@ -14362,6 +14388,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setImporteRentas(sra.getImporteRentasBc());
 				}
 			}
+			
+			if(condiciones != null) {
+				if (!Checks.esNulo(condiciones.getMesesDeposito())) {
+					dto.setMesesDeposito(condiciones.getMesesDeposito());
+				}
+				
+				if (!Checks.esNulo(condiciones.getDepositoActualizable())) {
+								dto.setDepositoActualizable(condiciones.getDepositoActualizable());
+				}
+							
+				if (!Checks.esNulo(condiciones.getImporteDeposito())) {
+					dto.setImporteDeposito(condiciones.getImporteDeposito());
+				}
+				
+			}
+			
 			boolean completada = false;
 			dto.setScoringEditable(false);
 			dto.setBloqueEditable(false);
@@ -14401,7 +14443,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				if(completada) {
 					dto.setBloqueEditable(false);
+					dto.setBloqueDepositoEditable(false);
 				}else{
+					dto.setBloqueDepositoEditable(true);
 					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
 					for (TareaProcedimiento tarea : tareasActivas) {
 						if (!ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING.equals(tarea.getCodigo())
@@ -14680,4 +14724,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return dto;
 	}
+
+	@Override
+	public List<DDRatingScoringServicer> getDDRatingScoringOrderByCodC4c() {
+		Order orden = new Order(GenericABMDao.OrderType.ASC, "codigoC4C");
+		return  genericDao.getListOrdered(DDRatingScoringServicer.class, orden);
+	}
+	
 }

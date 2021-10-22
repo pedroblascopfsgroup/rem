@@ -147,6 +147,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			
 		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
 		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
+		            			}else{
+		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue("28");
 		            			}
 		            			
 		            			if(!Ext.isEmpty(comprador.provinciaCodigo)){
@@ -183,6 +185,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			
 		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
 		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPaisRte)){
+		            				slideDatos.getForm().findField('codigoPaisRte').setValue(comprador.codigoPaisRte);
+		            			}else{
+		            				slideDatos.getForm().findField('codigoPaisRte').setValue("28");
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPais)){
+		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
+		            			}else{
+		            				slideDatos.getForm().findField('codigoPais').setValue("28");
 		            			}
 		            			
 		        			}
@@ -230,6 +244,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		        				   }else{
 		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue("");		
 		        				   }
+		        				   
+		        				   	if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
+		            					slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
+		            			   	}else{
+		            			   		slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue("28");
+		            			   	}
+		            			
+			            			if(!Ext.isEmpty(comprador.codigoPaisRte)){
+			            				slideDatos.getForm().findField('codigoPaisRte').setValue(comprador.codigoPaisRte);
+			            			}else{
+			            				slideDatos.getForm().findField('codigoPaisRte').setValue("28");
+			            			}
+			            			
+			            			if(!Ext.isEmpty(comprador.codigoPais)){
+			            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
+			            			}else{
+			            				slideDatos.getForm().findField('codigoPais').setValue("28");
+			            			}
+		            				
 		    				   }
 		    			   }
 		    				wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;

@@ -196,6 +196,20 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								hidden: '{!esAlquilerNoComercial}' 
 							}
 						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
+							name: 'tipologiaVentaCod',
+							reference: 'tipologiaVentaCodRef', 
+							allowBlank: true,
+							bind: {
+								store: '{comboTipologiaVentaBcOfr}',
+								value: '{datosbasicosoferta.tipologiaVentaCod}',
+								hidden: '{!esBankiaVenta}',
+							},
+							displayField: 'descripcion',
+							valueField: 'codigo',
+						},
 					{
 						bind : {hidden : '{!esTipoAlquiler}'}
 					}

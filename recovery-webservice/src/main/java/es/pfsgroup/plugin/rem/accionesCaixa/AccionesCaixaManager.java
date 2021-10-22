@@ -640,8 +640,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void avanzarTareaGenerico(net.sf.json.JSONObject dto) throws Exception {
-        adapter.save(createRequestAvanzarTareaGenerico(dto));
+    public Boolean avanzarTareaGenerico(net.sf.json.JSONObject dto) throws Exception {
+        return adapter.save(createRequestAvanzarTareaGenerico(dto));
     }
 
     public Map<String, String[]> createRequestAvanzarTareaGenerico(net.sf.json.JSONObject dto) throws ParseException {

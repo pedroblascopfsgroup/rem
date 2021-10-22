@@ -526,8 +526,9 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionNoComercialBC(JSONObject dto){
         ModelMap model = new ModelMap();
         try {
-            accionesCaixaApi.avanzarTareaGenerico(dto);
-            model.put("success", true);
+            boolean success = accionesCaixaApi.avanzarTareaGenerico(dto);
+            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.containsKey("idTarea") ? Long.parseLong(dto.get("idTarea").toString()) : null, success);
+            model.put("success", success);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);

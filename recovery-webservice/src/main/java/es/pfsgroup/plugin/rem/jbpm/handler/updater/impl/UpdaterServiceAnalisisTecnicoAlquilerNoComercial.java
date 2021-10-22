@@ -68,9 +68,7 @@ public class UpdaterServiceAnalisisTecnicoAlquilerNoComercial implements Updater
 		
 		genericDao.save(CondicionanteExpediente.class, coe);
 		
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		expedienteComercialApi.update(expedienteComercial,false);
 
 	}
 

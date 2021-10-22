@@ -106,9 +106,7 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
 	
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		expedienteComercialApi.update(expedienteComercial,false);
 
 	}
 

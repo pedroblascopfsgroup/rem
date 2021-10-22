@@ -205,10 +205,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind: {
 								store: '{comboTipologiaVentaBcOfr}',
 								value: '{datosbasicosoferta.tipologiaVentaCod}',
-								hidden: '{!esBankiaVenta}',
+								hidden: '{!esBankiaVenta}'
 							},
 							displayField: 'descripcion',
-							valueField: 'codigo',
+							valueField: 'codigo'
 						},
 					{
 						bind : {hidden : '{!esTipoAlquiler}'}

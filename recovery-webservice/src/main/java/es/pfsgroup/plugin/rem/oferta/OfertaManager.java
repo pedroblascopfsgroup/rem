@@ -193,6 +193,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
@@ -6967,10 +6968,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (dto.getTexto() != null && dto.getTexto().length() > 3000) {
 				throw new UserException("La longitud del texto no puede exceder los 3000 car&acute;cteres");
 			}
-			textoOferta.setTexto(dto.getTexto());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
 			textoOferta.setTipoTexto(tipoTexto);
+			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
+					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
+				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				}
+			}else {
+				textoOferta.setTexto(dto.getTexto());
+			}
 			if (!Checks.esNulo(recoDC)) {
 				textoOferta.setFecha(recoDC);
 			} else if(!Checks.esNulo(recoRC)){

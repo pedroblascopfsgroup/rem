@@ -203,7 +203,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem");  
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && Ext.isEmpty(numAgrupacion);
+            var allowEdit = estado != '01' && estado != '02' && estado != '09' && estado != '06' && Ext.isEmpty(numAgrupacion);
 
             this.editOnSelect = allowEdit;
             return allowEdit;

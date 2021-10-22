@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +18,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
@@ -44,6 +47,9 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
     
     @Autowired
     private ReservaApi reservaApi;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	private static final String CODIGO_T017_FIRMA_CONTRATO = "T017_FirmaContrato";
 	private static final String COMBO_FECHA_FIRMA = "fechaFirma";
@@ -54,6 +60,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
     private static final String COMBO_FIRMA = "comboFirma";
+    private static final String TIPO_OPERACION = "tipoOperacion";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -69,6 +76,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 		boolean aplaza = false;
 		boolean aprueba = false;
 		DtoPosicionamiento dtoPos = new DtoPosicionamiento();
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
 			if (ofertaAceptada != null) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -116,7 +124,8 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							}
 						}
 					}
-					if (vuelveArras) {											
+					if (vuelveArras) {	
+						campos.put(TIPO_OPERACION, true);										
 						if(expediente != null) {
 							expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
 							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(), null, false);
@@ -161,6 +170,8 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 					
 			        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 
+			        if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+						boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 				}				
 			}
 		}catch(ParseException e) {

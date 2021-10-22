@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
@@ -65,6 +68,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	@Autowired
     private ReservaApi reservaApi;
 	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
+	
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
@@ -75,6 +81,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String TIPO_OPERACION = "tipoOperacion";
 
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
@@ -83,6 +90,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		boolean quitarArras = false;
 		boolean cambiaEstadoBc = false;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -190,6 +198,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 				}
 				
 				if(quitarArras) {
+					campos.put(TIPO_OPERACION, false);
 					estadoExp = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
 					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 					
@@ -218,6 +227,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 				if(cambiaEstadoBc) {
 					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
+				
+				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}
 		}
 	}

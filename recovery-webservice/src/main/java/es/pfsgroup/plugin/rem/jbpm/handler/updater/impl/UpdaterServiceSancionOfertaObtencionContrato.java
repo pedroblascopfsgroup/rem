@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +24,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -76,6 +79,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
     private ReservaApi reservaApi;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -94,6 +100,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		    private static final String MOTIVO_APLAZAMIENTO = "motivoAplazamiento";
 		    private static final String COMBO_QUITAR = "comboQuitar";
 	    }
+	  
+	private static final String TIPO_OPERACION = "tipoOperacion";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -120,6 +128,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				Date fechaFirma = null;
 				
 				DtoGridFechaArras dtoArras = new DtoGridFechaArras();
+				Map<String, Boolean> campos = new HashMap<String,Boolean>();
 				
 				if(ofertaApi.tieneTarea(tramite, CODIGO_T017_ADVISORY_NOTE) == 0 
 						&& ofertaApi.tieneTarea(tramite, CODIGO_T017_RECOMENDACION_ADVISORY) == 0 
@@ -157,6 +166,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				
 				if(quitarArras || aplazarArras) {
 					if(quitarArras) {
+						campos.put(TIPO_OPERACION, false);
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 						
@@ -274,6 +284,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(estadoBcModificado) {
 					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndEstadoArras(expediente,estadoArras));
 				}
+				
+				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

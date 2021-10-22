@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +19,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -41,13 +44,16 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 	
 	@Autowired
 	private GenericABMDao genericDao;
-
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	private static final String CODIGO_T017_AGENDAR_FECHA_ARRAS = "T017_AgendarFechaFirmaArras";
 	private static final String COMBO_QUITAR = "comboQuitar";
 	private static final String COMBO_FECHA_ENVIO_PROPUESTA = "fechaPropuesta";
 	private static final String COMBO_FECHA_ENVIO = "fechaEnvio";
 	private static final String MOTIVO_APLAZAMIENTO = "Suspensión proceso arras";
+	private static final String TIPO_OPERACION = "tipoOperacion";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -60,6 +66,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 		ExpedienteComercial expediente = expedienteComercialApi.getExpedienteByIdTramite(tramite.getId());
 		String fechaPropuesta = null;
 		boolean comboQuitar = false;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
 			if (ofertaAceptada != null && expediente != null) {
 				String estadoExp = null;
@@ -82,6 +89,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				DtoExpedienteComercial dto = expedienteComercialApi.getExpedienteComercialByOferta(ofertaAceptada.getNumOferta());
 				
 				if(comboQuitar) {
+					campos.put(TIPO_OPERACION, false);
 					estadoExp =  DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
 					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
 					
@@ -111,6 +119,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				
 				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndArras(expediente, fechaPropuesta));
 
+				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}
 		}catch(ParseException e) {
 			e.printStackTrace();

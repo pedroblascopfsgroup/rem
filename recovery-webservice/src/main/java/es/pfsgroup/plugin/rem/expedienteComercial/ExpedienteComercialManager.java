@@ -7683,14 +7683,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(compradorExpediente)) {
 				if (!Checks.esNulo(compradorExpediente.getTitularContratacion()) && compradorExpediente.getTitularContratacion() == 0) {
-					Usuario usuario = genericAdapter.getUsuarioLogado();
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+					this.deleteCompradorExpedienteSetBorrado(idExpediente, idComprador);
 					if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
 							&& DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
 						this.updateEstadoInterlocutorCompradores(expediente, compradorExpediente, DDEstadoInterlocutor.CODIGO_SOLICITUD_BAJA, false,null);
 					}
-					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador, usuario.getUsername());
-					
 					ofertaApi.resetPBC(expediente, true);
 				} else {
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
@@ -14733,6 +14731,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public List<DDRatingScoringServicer> getDDRatingScoringOrderByCodC4c() {
 		Order orden = new Order(GenericABMDao.OrderType.ASC, "codigoC4C");
 		return  genericDao.getListOrdered(DDRatingScoringServicer.class, orden);
+	}
+	
+	@Transactional(readOnly = false)
+	private void deleteCompradorExpedienteSetBorrado(Long idExpediente, Long idComprador) {
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente);
+		Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", idComprador);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+
+		CompradorExpediente cex = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador, filtroBorrado);
+		
+		if(cex != null) {
+			cex.setPorcionCompra(0.0);
+			Auditoria.delete(cex);
+			genericDao.update(CompradorExpediente.class, cex);
+		}
+		
 	}
 	
 }

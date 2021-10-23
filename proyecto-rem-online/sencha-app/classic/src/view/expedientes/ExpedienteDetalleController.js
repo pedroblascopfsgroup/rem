@@ -2594,7 +2594,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
-		//if(!Ext.isEmpty(oldValue)){
+		if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			operacionExenta = me.lookupReference('chckboxOperacionExenta'),
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
@@ -2636,10 +2636,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						tipoAplicable.allowBlank = false;
 					}
 	    		}	    		
-	    	}
-	
-			
-		//}
+	    	}			
+		}
 	},
 	onCambioGrupoImpuesto: function(combo, value, oldValue, eOpts){
 			var me = this,			
@@ -5684,7 +5682,6 @@ comprobarFormatoModificar: function() {
 	},
 	onCambioTipoImpuesto2 : function(combo, value, oldValue, eOpts) {
 		try {
-			
 			if (!Ext.isEmpty(value)) {
 				if(!Ext.isEmpty(value.data)){
 					value = value.get('codigo');

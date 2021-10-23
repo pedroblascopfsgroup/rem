@@ -209,7 +209,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				}
 				var editarReserva = true;
 				if(!Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]'))){
-					if(tabAnterior.down('[reference=tieneReserva]').value == CONST.COMBO_SI_NO['NO']){
+					if(Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]').value) || tabAnterior.down('[reference=tieneReserva]').value == CONST.COMBO_SI_NO['NO']){
 						editarReserva = false;
 					}
 				}else{

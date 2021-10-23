@@ -864,7 +864,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							}
 						},
 						{
-							xtype: 'numberfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 							reference: 'codigoPostalRte',
 							name: 'codigoPostalRte',

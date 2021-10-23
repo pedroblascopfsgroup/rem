@@ -74,7 +74,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	            		return false;
 	        		}
 	        		// Si la pestaña necesita botones de edición
-	        		if(!tabNext.ocultarBotonesEdicion) {
+	        		if(tabNext.reference === 'reservaExpediente'){
+	        			tabPanel.evaluarBotonesEdicion(tabNext);
+	        		}else if(!tabNext.ocultarBotonesEdicion) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
 	        		return true;
@@ -113,7 +115,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 
 		initComponent: function () {
 	        var me = this;
-
 	        var items = [];
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
@@ -136,15 +137,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: true})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        	}
 	        } else if(me.lookupController().getViewModel().get('expediente').get('esBankia')){ 
-	    		var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
-	        	var editarReserva = true;
-	        	if(dataExpediente.solicitaReserva === "0" || !dataExpediente.tieneReserva){
-	        		editarReserva = false;
-	    		}
-	    		if(!editarReserva || dataExpediente.tipoExpedienteCodigo === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
-					editarReserva = false;
-	    		}
-	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: !editarReserva , funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
+	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: true , funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
 			}else{
 	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}, funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        }
@@ -171,8 +164,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 
 		evaluarBotonesEdicion: function(tab) {
 			var me = this;
-			me.bloquearExpediente(tab,me.bloqueado);
+			if(tab.reference === 'reservaExpediente'){
+				var tabAnterior = tab.up('expedientedetallemain').down('[reference=condicionesExpediente]');
+				me.bloquearExpedienteReserva(tab,me.bloqueado, tabAnterior);
+			}else{
+				me.bloquearExpediente(tab,me.bloqueado);
+
+			}
 		},
+
 	    bloquearExpediente: function(tab,bloqueado) {    	
 			var me = this;
 			me.bloqueado = bloqueado;
@@ -180,7 +180,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			var editionEnabled = function() {
 				me.down("[itemId=botoneditar]").setVisible(true);
 			}
-			
 			if(!bloqueado){
 				// Si la pestaña recibida no tiene asignados roles de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
@@ -188,6 +187,39 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				} else {
 					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 				}
+			}else{
+				me.down("[itemId=botoneditar]").setVisible(false);
+			}
+		},
+		
+		bloquearExpedienteReserva: function(tab,bloqueado, tabAnterior) {    	
+			var me = this;
+			me.bloqueado = bloqueado;
+			me.down("[itemId=botoneditar]").setVisible(false);
+			var editionEnabled = function() {
+				me.down("[itemId=botoneditar]").setVisible(true);
+			}
+			if(!bloqueado){
+				// Si la pestaña recibida no tiene asignados roles de edicion
+				
+				if(Ext.isEmpty(tab.funPermEdition)) {
+					editionEnabled();
+				} else {
+					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				}
+				var editarReserva = true;
+				if(!Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]'))){
+					if(Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]').value) || tabAnterior.down('[reference=tieneReserva]').value == CONST.COMBO_SI_NO['NO']){
+						editarReserva = false;
+					}
+				}else{
+					var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+		        	if(dataExpediente.solicitaReserva === "0" || !dataExpediente.tieneReserva){
+		        		editarReserva = false;
+		    		}
+				}
+				me.down("[itemId=botoneditar]").setVisible(editarReserva);
+
 			}else{
 				me.down("[itemId=botoneditar]").setVisible(false);
 			}

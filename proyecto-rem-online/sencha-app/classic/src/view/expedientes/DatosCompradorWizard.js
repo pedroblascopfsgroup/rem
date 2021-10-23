@@ -246,12 +246,14 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'telefono2',
 			        	padding: '5px'
 			        },
-			        { 
-			        	xtype:'numberfieldbase',
+			        {
 			        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 			        	name: 'codigoPostal',
 			        	reference: 'codigoPostal',
-			        	padding: '5px'
+			        	padding: '5px',
+			        	vtype: 'codigoPostal',
+						maskRe: /^\d*$/, 
+	                	maxLength: 5
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
@@ -527,12 +529,14 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	name: 'telefono2Rte',
 			        	padding: '5px'
 			        },
-			        { 
-			        	xtype:'numberfieldbase',
+			        {
 			        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 			        	reference: 'codigoPostalRte',
 			        	name: 'codigoPostalRte',
-			        	padding: '5px'
+			        	padding: '5px',
+			        	vtype: 'codigoPostal',
+						maskRe: /^\d*$/, 
+	                	maxLength: 5
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.email'),

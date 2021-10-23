@@ -1161,6 +1161,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			auditoria.setFechaCrear(new Date());
 			proveedor.setAuditoria(auditoria);
 			
+			proveedor.setFechaAlta(new Date());			
 			proveedoresDao.save(proveedor);
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

@@ -351,7 +351,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						}
 					},
 					{
-						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						name: 'codigoPostal',
 						reference: 'codigoPostal',
@@ -864,7 +863,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						}
 					},
 					{
-						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 						reference: 'codigoPostalRte',
 						name: 'codigoPostalRte',

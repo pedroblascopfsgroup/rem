@@ -199,6 +199,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						},
 			           	{
 							xtype:'displayfieldbase',
+							reference: 'fechaGestorPropietario',
 							fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.gestor'),
 							bind: '{gestion.fechaYGestorAutorizacionPropietario}'
 						},
@@ -272,6 +273,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 					afterrender: function(get){
 						var me =this;
 						var grid = me.items.items[0];
+						var fechaGestorPropietario = me.up().items.items[1].child("[reference='fechaGestorPropietario']");
 						var gestionMotivoRechazo = me.up().items.items[1].child("[reference='gestionMotivoRechazoPropietario']");
 						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
 						
@@ -279,10 +281,12 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							me.setHidden(true);
 							grid.setHidden(true);
 							gestionMotivoRechazo.setHidden(false);
+							fechaGestorPropietario.colspan = 1;
 						}else{
 							grid.setHidden(false);
 							me.setHidden(false);
 							gestionMotivoRechazo.setHidden(true);
+							fechaGestorPropietario.colspan = 2;
 						}												
 					}
 				},

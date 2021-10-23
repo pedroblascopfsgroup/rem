@@ -1184,6 +1184,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									store: '{comboMotivoAplicaComercializarActivo}',
 									value: '{activo.motivoAplicaComercializarCodigo}',
 									visible: '{activo.aplicaComercializar}',
+									readOnly: '{activo.isCarteraBankia}',
 									rawValue: '{activo.motivoAplicaComercializarDescripcion}'
 								}
 							},

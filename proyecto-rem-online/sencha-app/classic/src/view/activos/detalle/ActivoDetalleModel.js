@@ -4177,6 +4177,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadoDeposito'}
 			},
 			autoLoad: true
+		},
+		comboMunicipioAnterior: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+			},
+			autoLoad: true
 		}
 
 	 }

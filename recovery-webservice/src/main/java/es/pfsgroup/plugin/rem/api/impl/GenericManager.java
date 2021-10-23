@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.controller.GenericController;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -1984,11 +1985,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo) {
+	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion) {
 		List<DDTipoOferta> tiposOferta = genericDao.getList(DDTipoOferta.class);
-		Activo activo = activoApi.get(idActivo);
+		Activo activo = null;
+		String codigoCartera = codCartera;
 		
-		if(!DDCartera.CODIGO_CAIXA.equals(codCartera)) {
+		if (idAgrupacion != null) {
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+			activo = agrupacion != null ? agrupacion.getActivoPrincipal() : null;
+		} else if (idActivo != null)
+			activo = activoApi.get(idActivo);
+		
+		if (codigoCartera == null || codigoCartera.isEmpty())
+			codigoCartera = activo != null && activo.getCartera() != null ? activo.getCartera().getCodigo() : null;
+		
+		if(!DDCartera.CODIGO_CAIXA.equals(codigoCartera)) {
 			for (DDTipoOferta tipoOferta : tiposOferta) {
 				if (tipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
 					tiposOferta.remove(tipoOferta);
@@ -1996,15 +2007,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				}
 			}				
 		}else {
-			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-			PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
+			if (activo != null) {
+				Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
 
-			if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
-					|| (activo.getEnTramite() == null || activo.getEnTramite() == 0)
-					|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
-				for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
-					if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {
-						tiposOferta.remove(i);						
+				if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
+						|| (activo.getEnTramite() == null || activo.getEnTramite() == 0)
+						|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
+					for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
+						if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {
+							tiposOferta.remove(i);						
+						}
 					}
 				}
 			}

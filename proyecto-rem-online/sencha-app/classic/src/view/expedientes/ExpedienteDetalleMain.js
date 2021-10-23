@@ -48,12 +48,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     		me.down('reservaexpediente').setDisabled(reservaDisabled);
 		}
 		
-		if(me.down('expedientedetalle').getActiveTab().getConfig().reference != "ofertaexpedienteref"){
-			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
-		}else{
+		if(me.down('expedientedetalle').getActiveTab().getConfig().reference === "ofertaexpedienteref"){
 			var comboClaseOferta = me.down('ofertaexpediente').down('[name="claseOferta"]');
 			comboClaseOferta.events.change.fire(comboClaseOferta, comboClaseOferta.getValue(), comboClaseOferta.getValue());
+		}else if(me.down('expedientedetalle').getActiveTab().getConfig().reference != 'reservaExpediente'){
+			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		}
+
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
 
 		// HREOS-4366 - HREOS 4374

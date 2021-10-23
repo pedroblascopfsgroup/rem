@@ -71,14 +71,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											{ 
 									        	xtype: 'comboboxfieldbase',
 									        	fieldLabel: HreRem.i18n('fieldlabel.reserva.necesaria'),
+									        	reference: 'tieneReserva',
 									        	bind: {
 								            		store: '{comboSiNoRem}',
 								            		value: '{condiciones.solicitaReserva}',
 								            		readOnly: '{esCarteraGaleonOZeus}'
 								            	},
 								            	listeners: {
-								            		change: 'onHaCambiadoSolicitaReserva',
-								            		select: 'evaluarBotonesEditarReserva'
+								            		change: 'onHaCambiadoSolicitaReserva'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo'

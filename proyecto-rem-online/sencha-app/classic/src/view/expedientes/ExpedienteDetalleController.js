@@ -126,7 +126,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    	me.getView().unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
-				    	}
+				    	}						
 				    }, 		    
 				    failure: function(operation) {		    	
 				    	me.getView().unmask();
@@ -5421,12 +5421,8 @@ comprobarFormatoModificar: function() {
 	evaluarBotonesEditarReserva: function(combo, value){
 		var me = this;
 		var tabReserva = me.getView().down('[reference=reservaExpediente]');
-		if(me.viewModel.get('esCarteraBankia')){
-			if(value === "1"){
-				tabReserva.ocultarBotonesEdicion=false; 
-			}else{
-				tabReserva.ocultarBotonesEdicion=true;
-			}
+		if(me.getViewModel().get('esCarteraBankia')){
+			tabReserva.evaluarBotonesEdicion(tabReserva.up('expedientedetallemain')); 
 		}
 		
 	},

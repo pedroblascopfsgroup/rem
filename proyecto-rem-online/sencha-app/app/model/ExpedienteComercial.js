@@ -362,7 +362,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'codigoEstadoComunicacionC4C'
-    		}
+    		},
+            {
+                name: 'estadoPbcAlquiler'
+            }
     		
     ],
     formulas: {

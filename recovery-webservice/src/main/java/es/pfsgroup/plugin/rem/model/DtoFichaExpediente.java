@@ -115,7 +115,9 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer estadoPbc;
 	private Integer estadoPbcR;
 	private Date fechaVenta;
-	
+	private Integer estadoPbcAlquiler;
+
+
 
 	private Integer alquilerOpcionCompra;
 	private String codigoEstado;
@@ -906,5 +908,12 @@ public class DtoFichaExpediente extends WebDto {
 	public void setCodigoEstadoComunicacionC4C(String codigoEstadoComunicacionC4C) {
 		this.codigoEstadoComunicacionC4C = codigoEstadoComunicacionC4C;
 	}
-	
+
+	public Integer getEstadoPbcAlquiler() {
+		return estadoPbcAlquiler;
+	}
+
+	public void setEstadoPbcAlquiler(Integer estadoPbcAlquiler) {
+		this.estadoPbcAlquiler = estadoPbcAlquiler;
+	}
 }

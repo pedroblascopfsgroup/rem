@@ -564,11 +564,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var estadoAlquiler = get('patrimonio.estadoAlquiler');
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			
-	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]) 
-	        	|| (!Ext.isEmpty(codComercializacion) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
+	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"])){
 	        	return true;
-	        } else {
+	          } else if (!Ext.isEmpty(codComercializacion) && 
+	        		(CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] == codComercializacion || CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] == codComercializacion)) {
 	            return false;
+	        } else {
+	        	return true;
 	        }
 		 },
 

@@ -390,7 +390,7 @@ public interface GenericApi {
 	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
 
 	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera);
-	
-	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo);
+
+	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion);
 
 }

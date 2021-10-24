@@ -102,7 +102,8 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												displayField : 'descripcion',
 												valueField : 'codigo',
 												reference : 'resultadoPropiedadRef',
-												disabled: true
+												disabled: true,
+												readOnly: true
 											},
 											{
 												xtype : 'textfieldbase',

@@ -6154,10 +6154,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(true);
             	}
+            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);
             }else{
+            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);
@@ -6584,8 +6586,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
 
 	   	 if (!newValue) {
-		    		comboTipoAlquiler.setValue(null);
-		            comboAdecuacion.setValue(null);
+		    comboTipoAlquiler.setValue(null);
+		    comboAdecuacion.setValue(null);
 	   	 } 
 	},
 

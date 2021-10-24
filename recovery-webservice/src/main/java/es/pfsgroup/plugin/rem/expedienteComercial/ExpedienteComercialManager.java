@@ -1827,8 +1827,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getMotivoRechazoAntiguoDeud() != null) {
 				dto.setMotivoRechazoAntiguoDeudCod(expediente.getMotivoRechazoAntiguoDeud().getCodigo());
 			}
-			
-			
+
+			if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) || DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL .equals(oferta.getTipoOferta().getCodigo())) {
+				String valorPbcAlquiler = tareaActivoApi.getValorCampoTarea(ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER, expediente.getNumExpediente(), "comboResultado");
+				valorPbcAlquiler = (valorPbcAlquiler != null ? valorPbcAlquiler : tareaActivoApi.getValorCampoTarea(ComercialUserAssigantionService.CODIGO_T015_PBC, expediente.getNumExpediente(), "comboResultado"));
+
+				if (valorPbcAlquiler != null) {
+					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
+				}
+			}
 		}
 		return dto;
 	}
@@ -14651,6 +14658,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(eco != null) {
 			GastoRepercutido gr = new GastoRepercutido();
+
+			if(dto.getImporte() == null){
+				dto.setImporte(0d);
+			}
 
 			gr.setCondicionanteExpediente(eco.getCondicionante());
 			gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));

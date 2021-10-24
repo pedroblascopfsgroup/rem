@@ -558,10 +558,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		
 		getComboTipoOferta: function(combo){
 			var me = this;
-			
 			combo.getStore().getProxy().setExtraParams({
 				'codCartera' : me.getViewModel().get("activo.entidadPropietariaCodigo"),
-				'idActivo': me.getViewModel().get("activo.id")
+				'idActivo': me.getViewModel().get("activo.id"),
+				'idAgrupacion': combo.up("wizardBase").oferta.data.idAgrupacion
 			});
 					
 			combo.getStore().load({

@@ -2414,17 +2414,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion) {
-		/*String hql = "from ActivoObservacion aob where aob.activo.id = :idActivo and aob.auditoria.borrado = 0";
-		if (!Checks.estaVacio(codTiposObservacion)) {
-			if (codTiposObservacion.size()==1) {
-				hql += " and aob.tipoObservacion.codigo='"+codTiposObservacion.get(0) + "'";
-			} else {
-				hql += " and aob.tipoObservacion.codigo in ("+convertirEnStringComas(codTiposObservacion)+")";
-			}
-		}
-		List<ActivoObservacion> observaciones = getHibernateTemplate().find(hql, idActivo);
-		return observaciones;
-*/
+
 		HQLBuilder hb = new HQLBuilder(" from ActivoObservacion aob");
 
 		hb.appendWhere("aob.activo.id = :idActivo");

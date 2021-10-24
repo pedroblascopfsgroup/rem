@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -2408,5 +2409,51 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere("aga.agrupacion.id ="+ agrId + " and aga.activo.id !=" +idActivoPrincipal + "");
 		
 		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion) {
+		/*String hql = "from ActivoObservacion aob where aob.activo.id = :idActivo and aob.auditoria.borrado = 0";
+		if (!Checks.estaVacio(codTiposObservacion)) {
+			if (codTiposObservacion.size()==1) {
+				hql += " and aob.tipoObservacion.codigo='"+codTiposObservacion.get(0) + "'";
+			} else {
+				hql += " and aob.tipoObservacion.codigo in ("+convertirEnStringComas(codTiposObservacion)+")";
+			}
+		}
+		List<ActivoObservacion> observaciones = getHibernateTemplate().find(hql, idActivo);
+		return observaciones;
+*/
+		HQLBuilder hb = new HQLBuilder(" from ActivoObservacion aob");
+
+		hb.appendWhere("aob.activo.id = :idActivo");
+		hb.appendWhere("aob.auditoria.borrado = 0");
+
+		if (!Checks.esNulo(codTiposObservacion))
+			hb.appendWhere("aob.tipoObservacion.codigo in ( :codTiposObservacion )");
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+
+		if(codTiposObservacion != null) {
+			q.setParameterList("codTiposObservacion", Arrays.asList(codTiposObservacion));
+		}
+
+		if(idActivo != null){
+			q.setParameter("idActivo", idActivo);
+		}
+
+		return (List<ActivoObservacion>) q.list();
+	}
+
+	private Object convertirEnStringComas(List<String> cadena) {
+		String r = null;
+		for (String cad : cadena){
+			if (!Checks.esNulo(r)){
+				r = r + ',' + "'" + cad + "'";
+			}else{
+				r = "'" + cad + "'";
+			}
+		}
+		return r;
 	}
 }

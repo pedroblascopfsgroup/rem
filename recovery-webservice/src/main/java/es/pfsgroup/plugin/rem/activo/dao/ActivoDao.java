@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -422,4 +423,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 
 	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
+
+	@SuppressWarnings("unchecked")
+	List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion);
 }

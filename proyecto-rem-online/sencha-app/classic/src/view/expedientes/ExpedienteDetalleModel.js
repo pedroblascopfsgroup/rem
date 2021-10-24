@@ -749,8 +749,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
 			 
 			 return isVenta && isBK;
-		 }
-		 
+		 },
+        esOfertaVentaOrCarteraCaixa: function(get){
+          var me= this;
+          var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+          var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+          return tipoOferta == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA'] || carteraCodigo == CONST.CARTERA['BANKIA'];
+        }
+
 	 },
 	
 

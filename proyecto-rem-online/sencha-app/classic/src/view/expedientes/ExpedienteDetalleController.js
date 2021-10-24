@@ -3960,10 +3960,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 			
 			if(newValue == true) {
-				meses.setDisabled(false);
+			    if(me.viewModel.get('esCarteraBankia') != true){
+				    meses.setDisabled(false);
+			    }
 				importe.setDisabled(false);
 			} else {
-				meses.setDisabled(true);
+                if(me.viewModel.get('esCarteraBankia') != true){
+				    meses.setDisabled(true);
+                }
 				importe.setDisabled(true);
 			}
 	},
@@ -5534,19 +5538,20 @@ comprobarFormatoModificar: function() {
 			fechaVencimiento.setDisabled(false);
 		}else{
 			avalista.allowBlank=true;
-			avalista.setValue("");
+			avalista.setValue(null);
 			avalista.setDisabled(true);
 			documento.allowBlank=true;
 			documento.setValue(null);
 			documento.setDisabled(true);
 			meses.setDisabled(true);
-			avalista.setValue("");
+			avalista.setValue(null);
 			importe.setDisabled(true);
 			importe.setValue(null);
 			entidadBancaria.setDisabled(true);
 			entidadBancaria.setValue(null);
 			fechaVencimiento.setDisabled(true);
 			fechaVencimiento.setValue(null);
+			meses.setValue(null);
 		}
 	},
 	
@@ -5626,7 +5631,7 @@ comprobarFormatoModificar: function() {
 			importeRentas.setDisabled(false);
 		}else{
 			aseguradora.allowBlank=true;
-			aseguradora.setValue("");
+			aseguradora.setValue(null);
 			aseguradora.setDisabled(true);
 			fechaSancionRentas.allowBlank=true;
 			fechaSancionRentas.setValue(null);

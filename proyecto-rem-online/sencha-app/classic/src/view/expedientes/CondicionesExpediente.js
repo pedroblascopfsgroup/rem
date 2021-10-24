@@ -1028,7 +1028,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
 								bind : {
 									value : '{condiciones.mesesBonificacion}',
-									disabled : '{!condiciones.bonificacion}'
+									disabled : true
 								}
 							},
 							{

@@ -5232,8 +5232,8 @@ public class AgrupacionAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("error en agrupacionAdapter", e);
 		}
-		
-		if (DDCartera.isCarteraBk(agrupacion.getActivoPrincipal().getCartera()) && 
+		DDCartera carteraActivoAux = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal().getCartera() : agrupacion.getActivos().get(0).getActivo().getCartera();
+		if (DDCartera.isCarteraBk(carteraActivoAux) && 
 				(DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion()) || DDTipoAgrupacion.isRestringidaAlquiler(agrupacion.getTipoAgrupacion())
 				|| DDTipoAgrupacion.isRestringidaObrem(agrupacion.getTipoAgrupacion()))) {
 			

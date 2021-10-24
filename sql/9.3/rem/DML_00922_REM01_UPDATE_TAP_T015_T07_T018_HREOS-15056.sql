@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211004
+--## FECHA_CREACION=20211124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15056
@@ -10,6 +10,7 @@
 --## Finalidad: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        1.0  HREOS-15846 Anyadida camprobacion para contraste de listas en definicion de oferta T017
 --##########################################
 --*/
 
@@ -37,7 +38,7 @@ DECLARE
         T_TIPO_DATA('T015_ResolucionPBC','(checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : null  '),
         T_TIPO_DATA('T015_Posicionamiento',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : null  '),
         T_TIPO_DATA('T015_CierreContrato',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : null  '),
-        T_TIPO_DATA('T017_DefinicionOferta',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true  || checkReservaInformada() == true) ? checkImporteParticipacion() ? checkCamposComprador()  ? checkCompradores()  ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable()  ? null  : ''''El activo debe ser comercializable''''  : ''''Los compradores deben sumar el 100%''''  : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.''''  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''  : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''''),
+        T_TIPO_DATA('T017_DefinicionOferta',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : (checkBankia() == true  || checkReservaInformada() == true) ? checkImporteParticipacion() ? checkCamposComprador()  ? checkCompradores()  ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable()  ? compruebaEstadoNoSolicitadoPendiente() ? '''' Hay compradores en los que no se ha realizado el contraste de listas'''' : compruebaEstadoPositivoRealDenegado() ?  ''''Hay compradores con un estado positivo real denegado en el contraste de listas'''' : null  : ''''El activo debe ser comercializable''''  : ''''Los compradores deben sumar el 100%''''  : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.''''  : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''  : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''''),
         T_TIPO_DATA('T017_AnalisisPM',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : null  '),
         T_TIPO_DATA('T017_ResolucionCES',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' : checkReservaInformada() == false ? ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' : checkImporteParticipacion()  ? (checkCompradores() ? (checkVendido()  ? ''''El activo est&aacute; vendido''''  : (checkComercializable() ? (checkPoliticaCorporativa()  ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.''''): ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''  '),
         T_TIPO_DATA('T017_RespuestaOfertantePM',' (checkBankia() == true && checkExpedienteBloqueadoPorFuncion() == true) ? '''' El expediente est&aacute; bloqueado '''' :  checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''': (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''''),

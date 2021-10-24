@@ -642,7 +642,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
                                 store: '{comboAceptadoRechazado}',
                                 hidden: '{esOfertaVenta}',
                                 value: '{expediente.estadoPbcAlquiler}'
-                            }
+                            },
+                            readOnly: true
                         }
 		        ]
             }

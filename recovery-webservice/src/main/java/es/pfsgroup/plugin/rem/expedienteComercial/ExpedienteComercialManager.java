@@ -7016,19 +7016,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Posicionamiento posicionamiento = new Posicionamiento();
 		List<Posicionamiento> lista = expediente.getPosicionamientos();
 		dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_NO_ENVIADA);
-		//Boolean tieneTareaActiva = ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T018_AGENDAR_FIRMAR, expediente.getOferta().getNumOferta().toString())
-		//		|| ofertaDao.tieneTareaActiva(TareaProcedimientoConstants.CODIGO_T015_FIRMA, expediente.getOferta().getNumOferta().toString()) ;
+
 		if (lista.isEmpty()) {
 			
 			posicionamiento = dtoToPosicionamiento(dto, posicionamiento);
 			posicionamiento.setExpediente(expediente);
 
 			genericDao.save(Posicionamiento.class, posicionamiento);
-
-		//	if(tieneTareaActiva){
-		//		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), this.buildReplicarOfertaDtoFromExpediente(expediente));
-
-		//	}
 
 			return true;
 

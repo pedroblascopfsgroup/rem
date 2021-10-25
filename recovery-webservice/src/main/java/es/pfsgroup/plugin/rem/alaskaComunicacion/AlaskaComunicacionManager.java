@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.ResponseGestorDocumentalFotos;
 import es.pfsgroup.plugin.rem.restclient.exception.*;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -167,7 +168,11 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }else{
         	map.put("subtipoActivo", null);
         }
-        map.put("estadoBien", "1");
+        if(activo.getEstadoActivo() != null) {
+        	map.put("estado", activo.getEstadoActivo());
+        }else {
+            map.put("estado", "1");
+        }
         map.put("referenciaCatastral", activoCatastro.getRefCatastral());
         if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
         	map.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());
@@ -189,9 +194,9 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("folio", null);
         }
         if(actTitulo.getFechaInscripcionReg() != null) {
-            map.put("fechaInscripcionReg", objSDF.format(actTitulo.getFechaInscripcionReg().getTime()));
+            map.put("fechaInscripcion", objSDF.format(actTitulo.getFechaInscripcionReg().getTime()));
         }else {
-            map.put("fechaInscripcionReg", null);
+            map.put("fechaInscripcion", null);
         }
         if(activo.getInfoComercial() != null){
         	map.put("longitud", activo.getInfoComercial().getLongitud());
@@ -215,7 +220,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("tipoVia", null);
         }
         map.put("nombreVia", activo.getNombreVia());
-        map.put("numeroDomicilio", activo.getNumeroDomicilio());
+        map.put("numero", activo.getNumeroDomicilio());
         map.put("portal", activo.getPortal());
         if(activo.getLocalizacion().getLocalizacionBien() != null){
         	map.put("bloque", activo.getLocalizacion().getLocalizacionBien().getBloque());
@@ -235,13 +240,21 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("comentarioDireccion", "");
         map.put("pais", activo.getPais());
         map.put("codigoPostal", activo.getCodPostal());
-        if(activo.getTipoActivo() != null){
-        	map.put("tipoBienCatalogo", activo.getTipoActivo().getCodigo());
-        }else{
-        	map.put("tipoBienCatalogo", null);
-        }
         if(activo.getTipoBien() != null){
-        	map.put("tipoBien", activo.getTipoBien().getCodigo());
+        	if(activo.getTipoBien().getCodigo().equals("01")) {
+        		map.put("tipoActivo", "01");
+        	}else {
+        		map.put("tipoActivo", "0");
+        	}
+        }else{
+        	map.put("tipoActivo", "01");
+        }
+        if(activo.getTipoActivo() != null){
+        	if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())) {
+        		map.put("tipoBien", "99");
+        	}else {
+            	map.put("tipoBien", activo.getTipoActivo().getCodigo());
+        	}
         }else{
         	map.put("tipoBien", null);
         }
@@ -260,23 +273,23 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("estadoOcupacion", "");
         }
         if(activo.getTipoUsoDestino() != null){
-        	map.put("usoActivo", activo.getTipoUsoDestino().getCodigo());
+        	map.put("uso", activo.getTipoUsoDestino().getCodigo());
         }else{
-        	map.put("usoActivo", null);
+        	map.put("uso", null);
         }
         if(activo.getInfoComercial() != null){
-        	map.put("anyoConstruccion", activo.getInfoComercial().getAnyoConstruccion());
+        	map.put("anioConstruccion", activo.getInfoComercial().getAnyoConstruccion());
         }else{
-        	map.put("anyoConstruccion", null);
+        	map.put("anioConstruccion", null);
         }
         if(activo.getBien().getBienEntidad() != null){
-        	map.put("superficieBien", activo.getBien().getBienEntidad().getSuperficie());
+        	map.put("superficieSuelo", activo.getBien().getBienEntidad().getSuperficie());
         	map.put("superficieConstruida", activo.getBien().getBienEntidad().getSuperficieConstruida());
-        	map.put("numRegistro", activo.getBien().getBienEntidad().getNumRegistro());
+        	map.put("registro", activo.getBien().getBienEntidad().getNumRegistro());
         }else{
-        	map.put("superficieBien", null);
+        	map.put("superficieSuelo", null);
         	map.put("superficieConstruida", null);
-        	map.put("numRegistro", null);
+        	map.put("registro", null);
         }
         map.put("cargas", listaCargas);
         map.put("anejoGaraje", "");
@@ -303,7 +316,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
 
             map = new HashMap<String, Object>();
 
-            map.put("nombreTasadora", tasaciones.getNomTasador());
+            map.put("tasadora", tasaciones.getNomTasador());
             if(tasaciones.getTipoTasacion() != null){
                 map.put("tipoTasacion", tasaciones.getTipoTasacion().getCodigo());
             }else{

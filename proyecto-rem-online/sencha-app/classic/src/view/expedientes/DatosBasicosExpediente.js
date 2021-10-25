@@ -193,7 +193,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 					        		value:'{expediente.mesesDuracionCntAlquiler}',
 					        		hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 					        	},
-					        	readOnly: true,
+					        	readOnly: true
 					        },
 					        {
 				        		xtype:'datefieldbase',
@@ -210,7 +210,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 									value:'{expediente.importeRentaAlquiler}',
 									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 								},
-                                readOnly: true,
+                                readOnly: true
 					        },
 							{ 
 								xtype: 'textfieldbase',

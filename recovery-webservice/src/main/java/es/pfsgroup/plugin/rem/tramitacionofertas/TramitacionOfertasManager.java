@@ -1801,6 +1801,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			comprobarTramitarOferta(oferta, activo, esAlquiler, null);
 		}
+		
+		if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getFechaBaja() != null)
+			throw new JsonViewerException(messageServices.getMessage(AGRUPACION_BAJA));
 
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar
 		// ofertas de forma individual en el activo

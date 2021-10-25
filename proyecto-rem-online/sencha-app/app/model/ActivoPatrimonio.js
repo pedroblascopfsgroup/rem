@@ -64,6 +64,19 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		},
     		{
     			name: 'cesionUsoDescripcion'
+    		},
+    		{
+    			name: 'isCarteraTitulizada',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'acuerdoPago'
+    		},
+    		{
+    			name: 'moroso'
+    		},
+    		{
+    			name: 'activoPromoEstrategico'
     		}
     ],
     

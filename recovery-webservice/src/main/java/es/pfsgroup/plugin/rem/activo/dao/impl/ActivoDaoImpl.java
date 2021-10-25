@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -446,12 +447,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
 		HQLBuilder hb = new HQLBuilder(isIntegradoQueryStringIn);
-		
+
 		List<String> agrupaciones = new ArrayList<String>();
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA); 
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER); 
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM); 
-		
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM);
+
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameterList("codAgrupacion", agrupaciones);
@@ -475,10 +476,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(isPrincipalQueryStringIn);
 
 		List<String> agrupaciones = new ArrayList<String>();
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA); 
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER); 
-		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM); 
-		
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM);
+
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
 		 q.setParameterList("codAgrupacion", agrupaciones);
@@ -490,7 +491,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
 						+ id + " and (act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA 
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA
 						+ " or act.agrupacion.tipoAgrupacion.codigo = "
 						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER
 						+ " or act.agrupacion.tipoAgrupacion.codigo = "
@@ -2428,7 +2429,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
-	
+
 	@Override
 	public boolean isCarteraCaixa(Long idActivo) {
 		if (idActivo != null) {
@@ -2460,5 +2461,41 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				dto.getFechaRecepcionTasacion());
 
 		return HibernateQueryUtils.page(this, hb, dto);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoObservacion aob");
+
+		hb.appendWhere("aob.activo.id = :idActivo");
+		hb.appendWhere("aob.auditoria.borrado = 0");
+
+		if (!Checks.esNulo(codTiposObservacion))
+			hb.appendWhere("aob.tipoObservacion.codigo in ( :codTiposObservacion )");
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+
+		if(codTiposObservacion != null) {
+			q.setParameterList("codTiposObservacion", Arrays.asList(codTiposObservacion));
+		}
+
+		if(idActivo != null){
+			q.setParameter("idActivo", idActivo);
+		}
+
+		return (List<ActivoObservacion>) q.list();
+	}
+
+	private Object convertirEnStringComas(List<String> cadena) {
+		String r = null;
+		for (String cad : cadena){
+			if (!Checks.esNulo(r)){
+				r = r + ',' + "'" + cad + "'";
+			}else{
+				r = "'" + cad + "'";
+			}
+		}
+		return r;
 	}
 }

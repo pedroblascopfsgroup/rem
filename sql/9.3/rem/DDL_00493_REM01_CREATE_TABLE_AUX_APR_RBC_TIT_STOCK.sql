@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210920
+--## FECHA_CREACION=20211020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15217
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -69,13 +69,10 @@ BEGIN
     (
         NUM_IDENTIFICATIVO          VARCHAR2(8 CHAR),
         SOCIEDAD_PATRIMONIAL        VARCHAR2(4 CHAR),
-        --FONDO
+        FONDO                       VARCHAR2(20 CHAR),
         ESTADO_POSESORIO            VARCHAR2(3 CHAR),
-        FEC_ESTADO_POSESORIO        VARCHAR2(8 CHAR),
-        FEC_TITULO_FIRME            VARCHAR2(8 CHAR), 
+        FEC_ESTADO_POSESORIO        VARCHAR2(8 CHAR), 
         PORC_OBRA_EJECUTADA         VARCHAR2(7 CHAR),
-        FEC_COMPRA                  VARCHAR2(8 CHAR),
-        FEC_VALIDO_DE               VARCHAR2(8 CHAR),
         SUBTIPO_VIVIENDA            VARCHAR2(1 CHAR),
         FEC_ULT_REHAB               VARCHAR2(8 CHAR),
         IND_OCUPANTES_VIVIENDA      VARCHAR2(1 CHAR),
@@ -89,7 +86,7 @@ BEGIN
         ACUERDO_PAGO                VARCHAR2(1 CHAR),
         ALQUILADO                   VARCHAR2(1 CHAR),
         MOROSO                      VARCHAR2(1 CHAR),
-        --ACTIVO_PROMO_ESTRATEG      
+        ACTIVO_PROMO_ESTRATEG       VARCHAR2(1 CHAR),
         ALQUILER_GESTION            VARCHAR2(1 CHAR),
 
         FEC_VENTA                   VARCHAR2(8 CHAR),
@@ -165,12 +162,10 @@ BEGIN
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_IDENTIFICATIVO IS ''Código inmueble''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SOCIEDAD_PATRIMONIAL IS ''Sociedad Gestora''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FONDO IS ''Fondo''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_POSESORIO IS ''Estado Situacion posesoria''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_POSESORIO IS ''Fecha inicio estado posesorio''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_TITULO_FIRME IS ''Fecha titulo''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PORC_OBRA_EJECUTADA IS ''% construccion ''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_COMPRA IS ''Fecha compra''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VALIDO_DE IS ''Fecha de alta en sistema''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUBTIPO_VIVIENDA IS ''Tipo de vivienda''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ULT_REHAB IS ''Fecha de la última rehabilitación''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IND_OCUPANTES_VIVIENDA IS ''Ind. Existencia Ocupantes Vivienda''';
@@ -184,6 +179,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACUERDO_PAGO IS ''Acuerdo de pago (SI/NO)''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ALQUILADO IS ''Alquilado/No alquilado''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MOROSO IS ''Moroso/No Moroso (SI/NO)''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ACTIVO_PROMO_ESTRATEG IS ''Activo Estratégico''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ALQUILER_GESTION IS ''Alquiler de gestión''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_VENTA IS ''Fecha venta''';

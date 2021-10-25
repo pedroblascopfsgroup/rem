@@ -54,6 +54,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class GastoProveedor implements Serializable, Auditable {
+
+	public static final String FECHA_EMISION_GASTO_POSTERIOR ="15/11/2021";
 	
     /**
 	 * 

@@ -570,7 +570,6 @@ public class ActivoTasacion implements Serializable, Auditable {
 	public void setGastoTasacionActivo(GastoTasacionActivo gastoTasacionActivo) {
 		this.gastoTasacionActivo = gastoTasacionActivo;
 	}
-
 	public Double getGastosComercialesTasacion() {
 		return gastosComercialesTasacion;
 	}

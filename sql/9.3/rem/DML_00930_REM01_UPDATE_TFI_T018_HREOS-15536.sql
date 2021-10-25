@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211018
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211025
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15536
+--## INCIDENCIA_LINK=HREOS-16046
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,16 +39,16 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TFI'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-15536';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16046';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     
-    	T_TIPO_DATA('T018_TrasladarOfertaCliente'			,'combobox', 	'3'				,'comboIrClRod'			,'false' 	,'DDSiNo'		,'Ir a CL/Rod'),
-    	T_TIPO_DATA('T018_TrasladarOfertaCliente'			,'textarea', 	'4'				,'observaciones'			,null		,null		,'Observaciones'),
+    	T_TIPO_DATA('T018_TrasladarOfertaCliente'			,'combobox', 	'3'				,'comboIrClRod'			,'false' 	,'DDSiNo'		,'Ir a CL/Rod', 	'1'),
+    	T_TIPO_DATA('T018_TrasladarOfertaCliente'			,'textarea', 	'3'				,'observaciones'		,null		,null			,'Observaciones',	'0'),
     	
-    	T_TIPO_DATA('T018_AgendarYFirmar'			,'combobox', 	'3'				,'comboIrClRod'				,'false' 	,'DDSiNo'		,'Ir a CL/Rod'),
-    	T_TIPO_DATA('T018_AgendarYFirmar'			,'textarea', 	'4'				,'observaciones'			,null		,null		,'Observaciones')
+    	T_TIPO_DATA('T018_AgendarYFirmar'			,'combobox', 	'3'				,'comboIrClRod'				,'false' 	,'DDSiNo'		,'Ir a CL/Rod',			'0'),
+    	T_TIPO_DATA('T018_AgendarYFirmar'			,'textarea', 	'4'				,'observaciones'			,null		,null			,'Observaciones',		'0')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -81,7 +81,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 					', '||V_TEXT_CHARS||'_ORDEN = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', '||V_TEXT_CHARS||'_VALIDACION = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
 					', '||V_TEXT_CHARS||'_BUSINESS_OPERATION = '''||TRIM(V_TMP_TIPO_DATA(6))||''''||
-					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE, BORRADO = 0 '||
+					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE, BORRADO = '''||TRIM(V_TMP_TIPO_DATA(8))||''' '||
 					'WHERE '||V_TEXT_CHARS||'_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND TAP_ID = '||V_TAP_ID||'';
           EXECUTE IMMEDIATE V_MSQL;
          

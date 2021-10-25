@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211018
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211025
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15536
+--## INCIDENCIA_LINK=HREOS-16046
 --## PRODUCTO=SI
 --##
 --## Finalidad: 
@@ -32,7 +32,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		    	
-        T_TIPO_DATA('T018_TrasladarOfertaCliente', 'valores[''''T018_TrasladarOfertaCliente''''][''''comboIrClRod''''] == DDSiNo.SI ? ''''clRodSi'''' : valores[''''T018_TrasladarOfertaCliente''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechaza'''' : ''''aprueba'''''),	
+        T_TIPO_DATA('T018_TrasladarOfertaCliente', 'valores[''''T018_TrasladarOfertaCliente''''][''''comboResultado''''] == DDSiNo.NO ? ''''rechaza'''' : ''''aprueba'''''),	
         T_TIPO_DATA('T018_AgendarYFirmar', 'valores[''''T018_AgendarYFirmar''''][''''comboIrClRod''''] == DDSiNo.SI ? ''''clRodSi'''' : ''''clRodNo''''')       
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -53,7 +53,7 @@ BEGIN
 	        DBMS_OUTPUT.PUT_LINE(' LA FILA  YA EXISTE EN [TAP_TAREA_PROCEDIMIENTO] ACTUALIZARLA');
 	        V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
 		    		SET TAP_SCRIPT_DECISION =  '''||V_TMP_TIPO_DATA(2)||''' 
-					,USUARIOMODIFICAR = ''HREOS-15536''
+					,USUARIOMODIFICAR = ''HREOS-16046''
 		            ,FECHAMODIFICAR = SYSDATE
 		            WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' 
 		        ';

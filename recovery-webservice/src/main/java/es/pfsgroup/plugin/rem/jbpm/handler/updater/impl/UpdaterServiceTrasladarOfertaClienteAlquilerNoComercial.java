@@ -72,12 +72,6 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 
 			}
 			
-			if(COMBO_IRCLROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.SI.equals(valor.getValor())) {
-					tramiteAlquilerApi.irClRod(expedienteComercial);	
-				}
-			}
-			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				fechaResolucion = valor.getValor();
 			}

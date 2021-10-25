@@ -2294,7 +2294,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoMunicipioRte.setValue();
 						campoCodigoPostalRte.setValue();
 						campoEmailRte.setValue();
-						campoPaisRte.setValue();
+						campoPaisRte.setValue(null);
+						campoPais.setValue(null);
+						
+						
 					} else {
 						//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -2313,6 +2316,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
+						campoPaisRte.setValue("28");
+						campoPais.setValue("28");
 					}
 				}
 			} else {
@@ -2334,6 +2339,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = true;
+							campoPaisRte.setValue(null);
 						}
 						
 						if(!Ext.isEmpty(campoApellidos)){
@@ -2380,7 +2386,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								}						
 							}						
 						}
-
+						campoPais.setValue(null);
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -2413,6 +2419,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
+						}else{
+							campoPaisRte.setValue("28");
 						}
 						campoEstadoCivil.setValue();						
 						campoRegEconomico.setValue();
@@ -2421,6 +2429,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
+						campoPais.setValue("28");
 					}
 				}
 				if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){

@@ -262,10 +262,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									nombreRazonSocialRepresentante.allowBlank = true;
 	    									apellidosRepresentante.allowBlank = true;
 	    									paisNacimientoRepresentante.allowBlank = true;
+	    									paisNacimientoRepresentante.setValue(null);
 	    									provinciaNacimientoRepresentante.allowBlank = true;
 	    									municipioNacimientoRepresentante.allowBlank = true;
 	    									fechaNacimientaRepresentante.allowBlank = true;
 	    									paisRepresentante.allowBlank = true;
+	    									paisRepresentante.setValue(null);
 	    									provinciaRepresentante.allowBlank = true;
 	    									municipioRepresentante.allowBlank = true;
 	    									
@@ -282,10 +284,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									nombreRazonSocialRepresentante.allowBlank = false;
 	    									apellidosRepresentante.allowBlank = false;
 	    									paisNacimientoRepresentante.allowBlank = false;
+	    									paisNacimientoRepresentante.setValue("28");
 	    									provinciaNacimientoRepresentante.allowBlank = false;
 	    									municipioNacimientoRepresentante.allowBlank = false;
 	    									fechaNacimientaRepresentante.allowBlank = false;
 	    									paisRepresentante.allowBlank = false;
+	    									paisRepresentante.setValue("28");
 	    									provinciaRepresentante.allowBlank = false;
 	    									municipioRepresentante.allowBlank = false;
 	    									
@@ -294,7 +298,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									estadoCivil.reset();
 	    									regimen.reset();
 	    								}
-
+	    								
 	    								if(!Ext.isEmpty(importe)) importe.validate();
 	    								if(!Ext.isEmpty(tipoOferta)) tipoOferta.validate();
 	    								if(!Ext.isEmpty(estadoCivil)) estadoCivil.validate();

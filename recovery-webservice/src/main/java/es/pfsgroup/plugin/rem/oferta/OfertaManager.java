@@ -929,6 +929,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setPrescriptor(prescriptor);
 				}
 			}
+			
 			if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 				ActivoProveedor cust = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
@@ -1003,13 +1004,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getDocResponsabilidadPrescriptor())) {
-				oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
-			} else {
+			String codigo = null;
+			
+			if (!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())) {
+				ActivoProveedor prescriptor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(
+						FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
+				if (!Checks.esNulo(prescriptor) && DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(prescriptor.getTipoProveedor().getDescripcion())) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+				}else {
+					oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+				}
+			}else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
 			
-			String codigo = null;
 			
 			if(!oferta.getOfrDocRespPrescriptor()) {
 				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;

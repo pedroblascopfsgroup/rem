@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltran
---## FECHA_CREACION=20210318
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10301
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de publicaciones
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 [HREOS-10301] Versión inicial (Creación de la vista)
+--##        0.2 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --#########################################
 --*/
 
@@ -108,7 +109,7 @@ BEGIN
 		    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA 										ON CRA.DD_CRA_ID = ACT.DD_CRA_ID 
 			JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR 									ON SCR.DD_SCR_ID = ACT.DD_SCR_ID 
 		    JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA 									ON TPA.DD_TPA_ID = ACT.DD_TPA_ID 
-			JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC 							ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 
+			LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC 							ON SAC.DD_SAC_ID = ACT.DD_SAC_ID 
   			LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTOV 			ON MTOV.DD_MTO_ID = ACT_APU.DD_MTO_V_ID
 			LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTOA 			ON MTOA.DD_MTO_ID = ACT_APU.DD_MTO_A_ID
 

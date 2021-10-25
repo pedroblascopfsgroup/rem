@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20190711
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-6635
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_PLUSVALIA.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - Juanjo Arbona - 20190711 - HREOS-6635
+--##        0.2 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -62,7 +63,7 @@ BEGIN
 		JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = PLS.ACT_ID
 		JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
 		JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID
-		JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
 		JOIN ' || V_ESQUEMA || '.DD_EAC_ESTADO_ACTIVO EAC ON EAC.DD_EAC_ID = ACT.DD_EAC_ID
 		JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION LOC ON LOC.BIE_ID = ACT.BIE_ID
 		JOIN ' || V_ESQUEMA_M || '.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID

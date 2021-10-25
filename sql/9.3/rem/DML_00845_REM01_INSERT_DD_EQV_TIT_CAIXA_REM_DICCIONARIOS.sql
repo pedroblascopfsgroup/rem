@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211020
+--## FECHA_CREACION=20211022
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-15894
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_TIT_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15423';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15894';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -136,8 +136,68 @@ DECLARE
         --Tipo Vivienda   
         T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','2','Vivienda Unifamiliar Adosada','DD_SAC_SUBTIPO_ACTIVO','06','Unifamiliar adosada'),
-        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada')
-        --T_TIPO_DATA('SUBTIPO_VIVIENDA','0','En el caso de no aplicar al tratarse de un bien inmueble no vivienda','DD_SAC_SUBTIPO_ACTIVO', NULL,'No puede ser no inmueble')
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada'),
+        --T_TIPO_DATA('SUBTIPO_VIVIENDA','0','En el caso de no aplicar al tratarse de un bien inmueble no vivienda','DD_SAC_SUBTIPO_ACTIVO', NULL,'No puede ser no inmueble'),
+        --Desarrollo planteamiento
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U18','Urbanización recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U18','Urbanización recepcionada por el ayuntamiento'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U20','Proyecto de urbanización aprobado','DD_DSP_DESA_PLANTEAMIENTO','U20','Proyecto de urbanización aprobado'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U21','Planeamiento de desarrollo aprobado definitivamente','DD_DSP_DESA_PLANTEAMIENTO','U21','Planeamiento de desarrollo aprobado definitivamente'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U22','Planeamiento de desarrollo aprobado inicialmente','DD_DSP_DESA_PLANTEAMIENTO','U22','Planeamiento de desarrollo aprobado inicialmente'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','U23','Planeamiento de desarrollo no redactado o no aprobado','DD_DSP_DESA_PLANTEAMIENTO','U23','Planeamiento de desarrollo no redactado o no aprobado'),
+        T_TIPO_DATA('DESA_PLANTEMIENTO','ZZZ ','No aplicable','DD_DSP_DESA_PLANTEAMIENTO','ZZZ ','No aplicable'),
+        --Fase gestión
+        T_TIPO_DATA('FASE_GESTION','U24 ','Licencia','DD_FSG_FASE_GESTION','U24 ','Licencia'),
+        T_TIPO_DATA('FASE_GESTION','U25 ','Agente urbanizador o concierto','DD_FSG_FASE_GESTION','U25 ','Agente urbanizador o concierto'),
+        T_TIPO_DATA('FASE_GESTION','U26 ','Compensación','DD_FSG_FASE_GESTION','U26 ','Compensación'),
+        T_TIPO_DATA('FASE_GESTION','U27 ','Cooperación','DD_FSG_FASE_GESTION','U27 ','Cooperación'),
+        --Producto desarrollar
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U39','Residencial (viviendas protegidas)','DD_PRD_PRODUCTO_DESARROLLAR','U39','Residencial (viviendas protegidas)'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U40','Residencial (viviendas libres de 1era Residencia)','DD_PRD_PRODUCTO_DESARROLLAR','U40','Residencial (viviendas libres de 1era Residencia)'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U41','Residencial (viviendas libres de 2da Residencia)','DD_PRD_PRODUCTO_DESARROLLAR','U41','Residencial (viviendas libres de 2da Residencia)'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U42','Oficinas','DD_PRD_PRODUCTO_DESARROLLAR','U42','Oficinas'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U43','Locales comerciales','DD_PRD_PRODUCTO_DESARROLLAR','U43','Locales comerciales'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U44','Uso Industria','DD_PRD_PRODUCTO_DESARROLLAR','U44','Uso Industria'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U45','Uso hotelero','DD_PRD_PRODUCTO_DESARROLLAR','U45','Uso hotelero'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U46','Residencias de estudiantes o de la tercera edad','DD_PRD_PRODUCTO_DESARROLLAR','U46','Residencias de estudiantes o de la tercera edad'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U47','Aparcamiento','DD_PRD_PRODUCTO_DESARROLLAR','U47','Aparcamiento'),
+        T_TIPO_DATA('PRODUCTO_DESARROLLAR','U48','Recreativa','DD_PRD_PRODUCTO_DESARROLLAR','U48','Recreativa'),
+        --Proximidad respecto a núcleo urbano
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U39','Residencial (viviendas protegidas)','DD_PNU_PROX_RESP_NUCLEO_URB','U39','Residencial (viviendas protegidas)'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U40','Residencial (viviendas libres de primera residencia)','DD_PNU_PROX_RESP_NUCLEO_URB','U40','Residencial (viviendas libres de primera residencia)'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U41','Residencial (viviendas libres de segunda residencia)','DD_PNU_PROX_RESP_NUCLEO_URB','U41','Residencial (viviendas libres de segunda residencia)'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U42','Oficinas','DD_PNU_PROX_RESP_NUCLEO_URB','U42','Oficinas'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U43','Locales comerciales','DD_PNU_PROX_RESP_NUCLEO_URB','U43','Locales comerciales'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U44','Uso Industria','DD_PNU_PROX_RESP_NUCLEO_URB','U44','Uso Industria'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U45','Uso hotelero','DD_PNU_PROX_RESP_NUCLEO_URB','U45','Uso hotelero'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U46','Residencias de estudiantes o de la tercera edad','DD_PNU_PROX_RESP_NUCLEO_URB','U46','Residencias de estudiantes o de la tercera edad'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U47','Aparcamiento','DD_PNU_PROX_RESP_NUCLEO_URB','U47','Aparcamiento'),
+        T_TIPO_DATA('PROX_RESPECT_NUCLEO_URB','U48','Recreativa','DD_PNU_PROX_RESP_NUCLEO_URB','U48','Recreativa'),
+        --Sistema gestión
+        T_TIPO_DATA('SISTEMA_GESTION','U24','Licencia','DD_SGT_SISTEMA_GESTION','U24','Licencia'),
+        T_TIPO_DATA('SISTEMA_GESTION','U25','Agente urbanizador o concierto','DD_SGT_SISTEMA_GESTION','U25','Agente urbanizador o concierto'),
+        T_TIPO_DATA('SISTEMA_GESTION','U26','Compensación','DD_SGT_SISTEMA_GESTION','U26','Compensación'),
+        T_TIPO_DATA('SISTEMA_GESTION','U27','Cooperación','DD_SGT_SISTEMA_GESTION','U27','Cooperación'),
+        T_TIPO_DATA('SISTEMA_GESTION','U28','Expropiación','DD_SGT_SISTEMA_GESTION','U28','Expropiación'),
+        T_TIPO_DATA('SISTEMA_GESTION','U29','Sin gestión / no necesita gestión','DD_SGT_SISTEMA_GESTION','U29','Sin gestión / no necesita gestión'),
+        T_TIPO_DATA('SISTEMA_GESTION','ZZZ','No aplicable','DD_SGT_SISTEMA_GESTION','ZZZ','No aplicable'),
+        --Método valoración
+        T_TIPO_DATA('METODO_VALORACION','01','Reemplazamiento bruto','DD_MTV_METODO_VALORACION','01','Reemplazamiento bruto'),
+        T_TIPO_DATA('METODO_VALORACION','02','reemplazamiento neto','DD_MTV_METODO_VALORACION','02','reemplazamiento neto'),
+        T_TIPO_DATA('METODO_VALORACION','03','Residual dinámico','DD_MTV_METODO_VALORACION','03','Residual dinámico'),
+        T_TIPO_DATA('METODO_VALORACION','04','Residual estático','DD_MTV_METODO_VALORACION','04','Residual estático'),
+        T_TIPO_DATA('METODO_VALORACION','05','mercado por comparación','DD_MTV_METODO_VALORACION','05','mercado por comparación'),
+        T_TIPO_DATA('METODO_VALORACION','06','mercado por comparación ajustado','DD_MTV_METODO_VALORACION','06','mercado por comparación ajustado'),
+        T_TIPO_DATA('METODO_VALORACION','07','actualización rentas inmuebles ligados a otra explotación económica','DD_MTV_METODO_VALORACION','07','actualización rentas inmuebles ligados a otra explotación económica'),
+        T_TIPO_DATA('METODO_VALORACION','08','actualización rentas de inmuebles con mercado de alquileres','DD_MTV_METODO_VALORACION','08','actualización rentas de inmuebles con mercado de alquileres'),
+        T_TIPO_DATA('METODO_VALORACION','09','actualización rentas otros inm. en arrendamiento','DD_MTV_METODO_VALORACION','09','actualización rentas otros inm. en arrendamiento'),
+        T_TIPO_DATA('METODO_VALORACION','10','máximo legal','DD_MTV_METODO_VALORACION','10','máximo legal'),
+        T_TIPO_DATA('METODO_VALORACION','11','catastral','DD_MTV_METODO_VALORACION','11','catastral'),
+        T_TIPO_DATA('METODO_VALORACION','12','hipótesis edificio terminado','DD_MTV_METODO_VALORACION','12','hipótesis edificio terminado'),
+        T_TIPO_DATA('METODO_VALORACION','13','otro criterio','DD_MTV_METODO_VALORACION','13','otro criterio'),
+        --Tipo de datos utilizados  de inmuebles comparables
+        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','01','Datos de oferta','DD_TDU_TIPO_DAT_UTI_INM_COMP','01','Datos de oferta'),
+        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','02','Transacciones recientes','DD_TDU_TIPO_DAT_UTI_INM_COMP','02','Transacciones recientes')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -238,8 +238,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		   	 	campoProvinciaRpr = me.lookupReference('provinciaNacimientoRepresentanteCodigo'),
 		   	 	campoMunicipioRpr = me.lookupReference('localidadNacimientoRepresentanteCodigo'),
 		   	 	campoPaisRpr = me.lookupReference('paisNacimientoRepresentanteCodigo'),
-				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
-				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge');
+				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo'),
+				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
+				codigoPaisRte = me.lookupReference('paisRte');
 
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					if(!Ext.isEmpty(campoEstadoCivil)){
@@ -302,6 +303,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr)) {
 							campoPaisRpr.allowBlank = true;
+							campoPaisRpr.setValue(null);
+						}
+						if (!Ext.isEmpty(codigoPaisRte)) {
+							codigoPaisRte.allowBlank = true;
+							codigoPaisRte.setValue(null);
 						}
 											
 					} else {
@@ -335,7 +341,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr)) {
 							campoPaisRpr.allowBlank = false;
+							campoPaisRpr.setValue("28");
 						}
+						if (!Ext.isEmpty(codigoPaisRte)) {
+							codigoPaisRte.allowBlank = false;
+							codigoPaisRte.setValue("28");
+						}
+						
 					}
 				}
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -359,6 +371,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(campoMunicipio)) campoMunicipio.validate();
 			if(!Ext.isEmpty(campoPais)) campoPais.validate();
 			if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
+			if(!Ext.isEmpty(codigoPaisRte)) codigoPaisRte.validate();
 			if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
 			if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
 			form.recordName = "comprador";

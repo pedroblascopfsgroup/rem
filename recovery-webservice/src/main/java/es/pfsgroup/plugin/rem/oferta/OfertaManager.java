@@ -880,6 +880,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(ofertaDto.getFechaCreacion() != null) {
 				oferta.setFechaAltaWebcom(ofertaDto.getFechaCreacion());
+				oferta.setFechaAlta(ofertaDto.getFechaCreacion());
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
@@ -1930,7 +1931,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
 					} else{
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO)));
+						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 					}
 					oferta.setFechaAlta(fechaAccion);
 				}				
@@ -1957,7 +1958,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 
-		if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+		if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 

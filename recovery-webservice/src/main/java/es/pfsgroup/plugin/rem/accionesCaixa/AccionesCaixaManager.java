@@ -302,10 +302,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionArrasRechazadas(DtoOnlyExpedienteYOfertaCaixa dto) {
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
-        expediente.setEstadoBc(estadoExpedienteBc);
-
+        expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
+        expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+        if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
+        	expediente.setFechaAnulacion(new Date());
+        }
+        expediente.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+        Reserva reserva = expediente.getReserva();
+        if(reserva != null){
+            reserva.setEstadoReserva(genericDao.get(DDEstadosReserva.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_ANULADA)));
+            genericDao.save(Reserva.class, reserva);
+        }
+        ofertaApi.finalizarOferta(expediente.getOferta());
         genericDao.save(ExpedienteComercial.class, expediente);
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
@@ -516,7 +524,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
                 genericDao.save(Reserva.class, reserva);
             }
-
+            
             genericDao.save(ExpedienteComercial.class, eco);
 			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
     	}

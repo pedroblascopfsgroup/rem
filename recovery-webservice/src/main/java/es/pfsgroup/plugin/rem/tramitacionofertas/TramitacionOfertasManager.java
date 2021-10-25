@@ -137,6 +137,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS = "activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS = "activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private static final String AGRUPACION_SIN_FORMALIZACION = "agrupacion.sin.formalizacion";
+	private static final String AGRUPACION_BAJA = "agrupacion.baja";
 	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 
@@ -1887,6 +1888,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Boolean esAlquiler, ActivoAgrupacion agrupacion) throws Exception {
 
 		if (!Checks.esNulo(agrupacion)) {
+			if (agrupacion.getFechaBaja() != null)
+				throw new JsonViewerException(messageServices.getMessage(AGRUPACION_BAJA));
+			
 			List<ActivoAgrupacionActivo> agaList = agrupacion.getActivos();
 
 			for (ActivoAgrupacionActivo aga : agaList) {

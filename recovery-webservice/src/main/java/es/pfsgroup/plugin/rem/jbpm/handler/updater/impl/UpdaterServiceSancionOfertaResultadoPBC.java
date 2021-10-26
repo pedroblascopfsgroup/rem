@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +24,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
@@ -77,6 +80,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	@Autowired
     private ReservaApi reservaApi;
 	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -91,6 +97,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private static final String COMBO_ARRAS = "comboArras";
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
+    private static final String TIPO_OPERACION = "tipoOperacion";
     
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -104,6 +111,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 		Integer mesesFianza = null;
 		DecimalFormat num = new DecimalFormat("###.##");
 		boolean estadoBcModificado = false;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -277,7 +285,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					}
 				}
 				
-				if (vuelveArras) {					
+				if (vuelveArras) {	
+					campos.put(TIPO_OPERACION, true);				
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
 				}
 				
@@ -285,6 +294,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 
 				}
+
+				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}
 		}
 	}

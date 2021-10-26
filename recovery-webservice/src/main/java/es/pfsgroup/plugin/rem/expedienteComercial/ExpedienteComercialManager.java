@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
@@ -220,6 +221,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
 	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
 	private final String FUNCION_AV_ECO_BLOQ = "AV_ECO_BLOQ";
+	
+	private static final String COMPRADOR_BLOQUEADO = "compradorBloqueado";
 
 	@Resource
 	private MessageService messageServices;
@@ -354,6 +357,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private TramiteAlquilerNoComercialApi tramiteAlquilerNoComercialApi;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -13316,8 +13322,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta o = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferta());
 		ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(o.getId());
 		TareaExterna tarea = null;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
 		dto.setComboResultado(DDSinSiNo.CODIGO_SI);
+		campos.put(COMPRADOR_BLOQUEADO, true);
 		
 		if(!dto.getIsTareaActiva()) {
 			this.guardarBloqueoExpediente(expedienteComercial);
@@ -13332,6 +13340,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		}
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
+		if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+			boardingComunicacionApi.enviarBloqueoCompradoresCFV(o, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 	}
 	
 	@Override
@@ -13340,8 +13351,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta o = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferta());
 		ExpedienteComercial expedienteComercial =  expedienteComercialDao.getExpedienteComercialByIdOferta(o.getId());
 		TareaExterna tarea = null;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		dto.setNumExpedienteComercial(expedienteComercial.getNumExpediente());
 		dto.setComboResultado(DDSinSiNo.CODIGO_NO);
+		campos.put(COMPRADOR_BLOQUEADO, false);
 		if(dto.getIsTareaActiva()){
 			if(Checks.esNulo(dto.getMotivoDesbloqueado())) {
 				dto.setMotivoDesbloqueado(DDMotivosDesbloqueo.DESBLOQUEO_SCREENING);
@@ -13386,6 +13399,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			this.actualizarEstadoBCInterlocutores(expedienteComercial, estadoValidado);
 			this.actualizarEstadoBCCompradores(expedienteComercial, estadoValidado);
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			
+			if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+				boardingComunicacionApi.enviarBloqueoCompradoresCFV(o, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 		}
 	}
 

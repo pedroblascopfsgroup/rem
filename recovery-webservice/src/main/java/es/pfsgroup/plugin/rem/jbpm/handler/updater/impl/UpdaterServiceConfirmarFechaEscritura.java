@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -43,6 +46,9 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	private static final String CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA = "T017_ConfirmarFechaEscritura";
 	
@@ -59,6 +65,9 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
         private static final String IMPORTE_FIANZA = "importeFianza";
         private static final String OBSERVACIONES_REM = "observaciones";
     }
+    
+    private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String PLANIFICADA_FIRMA = "fechaPropuestaPlanificadaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -73,12 +82,18 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 		Integer mesesFianza = null;
 		String estadoBC = null;
 		String estadoExpediente = null;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		
 		DtoPosicionamiento dto = new DtoPosicionamiento();
 		try {
 			if (ofertaAceptada != null && eco != null) {
 				for(TareaExternaValor valor :  valores){
 					if(CamposConfirmarFechaFirmaEscritura.COMBO_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(valor.getValor())) {
+							campos.put(PLANIFICADA_FIRMA, true);
+						} else if (DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(valor.getValor())) {
+							campos.put(PLANIFICADA_FIRMA, false);
+						}
 						dto.setValidacionBCPosi(valor.getValor());
 					}else if (CamposConfirmarFechaFirmaEscritura.COMBO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if(DDSiNo.SI.equals(valor.getValor())) {
@@ -104,6 +119,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 				}
 				
 				if (vuelveArras) {
+					campos.put(TIPO_OPERACION, true);
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(eco, importe, mesesFianza, ofertaAceptada);
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())){
 						dto.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
@@ -129,6 +145,9 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 			genericDao.save(ExpedienteComercial.class, eco);
 			
 	        ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+	        
+	        if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+				boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 
 		}catch(ParseException e) {
 			e.printStackTrace();

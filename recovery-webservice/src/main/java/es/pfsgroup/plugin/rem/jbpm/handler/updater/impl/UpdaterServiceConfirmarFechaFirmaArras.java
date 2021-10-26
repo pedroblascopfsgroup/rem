@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +20,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -41,6 +44,9 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private BoardingComunicacionApi boardingComunicacionApi;
 
 	private static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";
 	private static final String motivoAplazamiento = "Suspensión proceso arras";
@@ -54,6 +60,9 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 		private static final String OBSERVACIONES_BC = "observacionesBC";
 		private static final String OBSERVACIONES_REM = "observaciones";
 	}
+	
+	private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String FIRMA_RESERVA = "fechaPropuestaFirmaReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -67,6 +76,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 		boolean comboQuitar = false;
 		String estadoBc = null;
 		String estadoExpediente = null;
+		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
 			if (ofertaAceptada != null && eco != null) {
 				DtoGridFechaArras dto = new DtoGridFechaArras();
@@ -78,6 +88,11 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 						}
 					}
 					else if(CamposConfirmarFechaFirmaArras.COMBO_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if (DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(valor.getValor())) {
+							campos.put(FIRMA_RESERVA, true);
+						} else if (DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(valor.getValor())) {
+							campos.put(FIRMA_RESERVA, false);
+						}
 						dto.setValidacionBC(valor.getValor());
 					}
 					else if(CamposConfirmarFechaFirmaArras.FECHA_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -92,7 +107,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 				}
 				
 				if(comboQuitar) {
-					
+					campos.put(TIPO_OPERACION, false);
 					dto.setMotivoAnulacion(motivoAplazamiento);
 					dto.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
 					
@@ -128,6 +143,8 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 				
 				ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 				
+				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
+					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 			}
 		}catch(ParseException e) {
 			e.printStackTrace();

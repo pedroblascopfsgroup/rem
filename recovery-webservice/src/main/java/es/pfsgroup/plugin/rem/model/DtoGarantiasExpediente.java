@@ -20,7 +20,7 @@ public class DtoGarantiasExpediente extends WebDto {
 	private String resultadoHayaDesc;
 	private String resultadoHayaCod;
 	private Date fechaSancion;
-	private Long numeroExpediente;
+	private String numeroExpediente;
 	private String resultadoPropiedadDesc;
 	private String resultadoPropiedadCod;
 	private String motivoRechazo;
@@ -79,10 +79,10 @@ public class DtoGarantiasExpediente extends WebDto {
 	public void setFechaSancion(Date fechaSancion) {
 		this.fechaSancion = fechaSancion;
 	}
-	public Long getNumeroExpediente() {
+	public String getNumeroExpediente() {
 		return numeroExpediente;
 	}
-	public void setNumeroExpediente(Long numeroExpediente) {
+	public void setNumeroExpediente(String numeroExpediente) {
 		this.numeroExpediente = numeroExpediente;
 	}
 	public String getResultadoPropiedadDesc() {

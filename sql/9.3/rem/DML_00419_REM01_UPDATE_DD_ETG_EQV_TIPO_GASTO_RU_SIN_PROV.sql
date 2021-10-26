@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211007
+--## FECHA_CREACION=20211026
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15516
@@ -21,8 +21,8 @@ SET DEFINE OFF;
 DECLARE
 	V_TABLA VARCHAR2(100 CHAR) := 'DD_ETG_EQV_TIPO_GASTO'; -- Tabla Destino
 	V_TABLA_AUX VARCHAR2(100 CHAR) := 'DD_ETG_EQV_TIPO_GASTO'; -- Tabla origen
-	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
-	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	ERR_NUM NUMBER;-- Numero de errores
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
@@ -76,30 +76,29 @@ DECLARE
 		T_TABLA('10','40','39','3','42','6','','','','Impago Alquileres'),
 		T_TABLA('11','97','40','3','21','10','','','','Reclamacion Judicial Plusvalias Municipales'),
 		T_TABLA('11','96','41','3','21','10','','','','Serv. Gestion Situaciones Ocupacionales Activos Adjudicados'),
-		/*T_TABLA('11','CFK','3','21','10','','','','Serv. Gestion Situaciones Ocupacionales Activos Adjudicados'),*/
-		T_TABLA('11','44','42','3','60','2','','','','Renovación Asesoram. Jurídico Gestión Activos Inmob. Bankia'),
-		T_TABLA('11','47','43','3','21','10','','','','Ampliación Gestión De Situaciones Ocupacionales De Activos'),
-		T_TABLA('11','46','44','3','21','12','','','','Ratificacion Servicio Contratado Despachos'),
-		T_TABLA('11','51','45','3','22','1','','','','Activos Disponibles Para La Venta'),
-		T_TABLA('09','36','46','2','3','2','2','3','52','Suministros Bankia'),
-		T_TABLA('09','35','47','2','3','1','2','3','51','Suministros Bankia'),
-		T_TABLA('09','37','48','2','3','3','','','','Suministros Bankia'),
-		T_TABLA('09','38','49','2','3','0','','','','Suministros Bankia'),
-		T_TABLA('02','10','50','2','1','4','2','1','54','Tributos'),
-		T_TABLA('02','09','51','2','1','3','2','1','53','Ampliación Ibi'),
-		T_TABLA('02','08','52','2','1','2','2','1','52','Ampliación Ibi'),
-		/*T_TABLA('02','Basura','2','1','6','','','',''),*/
-		T_TABLA('02','12','53','2','1','8','2','1','58','Ibi'),
-		T_TABLA('02','14','54','2','1','6','2','1','56','Ibi'),
-		T_TABLA('02','16','55','2','1','6','','','','Ibi'),
-		T_TABLA('02','15','56','2','1','6','2','1','56','Ampliación Ibi'),
-		T_TABLA('02','18','57','2','1','1','2','1','56','Ibi'),
-		T_TABLA('02','17','58','2','1','6','2','1','56','Tributos'),
-		T_TABLA('02','13','59','2','1','6','2','1','56','Ibi'),
-		T_TABLA('02','11','60','2','1','7','2','1','57','Ibi'),
-		T_TABLA('16','86','61','3','42','5','','','','Mantenimiento C/ Incendio -Edificios Plataforma- May15_abr16'),
-		T_TABLA('16','87','62','3','42','5','','','','Mto Seg. Edif. Electronica, Cra, Cctv Y Control Accesos'),
-		T_TABLA('16','85','63','3','42','5','','','','Mantenimiento C/ Incendio -Edificios Plataforma- May15_abr16')
+		T_TABLA('11','95','42','3','21','10','','','','Serv. Gestion Situaciones Ocupacionales Activos Adjudicados'),
+		T_TABLA('11','44','43','3','60','2','','','','Renovación Asesoram. Jurídico Gestión Activos Inmob. Bankia'),
+		T_TABLA('11','47','44','3','21','10','','','','Ampliación Gestión De Situaciones Ocupacionales De Activos'),
+		T_TABLA('11','46','45','3','21','12','','','','Ratificacion Servicio Contratado Despachos'),
+		T_TABLA('11','51','46','3','22','1','','','','Activos Disponibles Para La Venta'),
+		T_TABLA('09','36','47','2','3','2','2','3','52','Suministros Bankia'),
+		T_TABLA('09','35','48','2','3','1','2','3','51','Suministros Bankia'),
+		T_TABLA('09','37','49','2','3','3','','','','Suministros Bankia'),
+		T_TABLA('09','38','50','2','3','0','','','','Suministros Bankia'),
+		T_TABLA('02','10','51','2','1','4','2','1','54','Tributos'),
+		T_TABLA('02','09','52','2','1','3','2','1','53','Ampliación Ibi'),
+		T_TABLA('02','08','53','2','1','2','2','1','52','Ampliación Ibi'),
+		T_TABLA('02','12','54','2','1','8','2','1','58','Ibi'),
+		T_TABLA('02','14','55','2','1','6','2','1','56','Ibi'),
+		T_TABLA('02','16','56','2','1','6','','','','Ibi'),
+		T_TABLA('02','15','57','2','1','6','2','1','56','Ampliación Ibi'),
+		T_TABLA('02','18','58','2','1','1','2','1','56','Ibi'),
+		T_TABLA('02','17','59','2','1','6','2','1','56','Tributos'),
+		T_TABLA('02','13','60','2','1','6','2','1','56','Ibi'),
+		T_TABLA('02','11','61','2','1','7','2','1','57','Ibi'),
+		T_TABLA('16','86','62','3','42','5','','','','Mantenimiento C/ Incendio -Edificios Plataforma- May15_abr16'),
+		T_TABLA('16','87','63','3','42','5','','','','Mto Seg. Edif. Electronica, Cra, Cctv Y Control Accesos'),
+		T_TABLA('16','85','64','3','42','5','','','','Mantenimiento C/ Incendio -Edificios Plataforma- May15_abr16')
 
     ); 
     V_TMP_TABLA T_TABLA;

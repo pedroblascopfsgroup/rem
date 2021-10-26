@@ -65,6 +65,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		'fotoswebactivo' : {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
+		
+		'fotostecnicasactivo' : {
+			updateOrdenFotos : 'updateOrdenFotosInterno'
+		},
 
 		'uxvalidargeolocalizacion' : {
 			actualizarCoordenadas : 'actualizarCoordenadas'

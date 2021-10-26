@@ -81,6 +81,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_CIERRE_ECONOMICO ="T017_CierreEconomico";
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	public static final String CODIGO_T017_AGENDAR_ARRAS = "T017_AgendarFechaFirmaArras";
+	public static final String CODIGO_T017_CONFIRMAR_ARRAS = "T017_ConfirmarFechaFirmaArras";
+	public static final String CODIGO_T017_AGENDAR_FIRMA = "T017_AgendarPosicionamiento";
+	public static final String CODIGO_T017_CONFIRMAR_FIRMA = "T017_ConfirmarFechaEscritura";
+	public static final String CODIGO_T017_FIRMA = "T017_FirmaContrato";
+	public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
+
 	public static final String USUARIO_REST_BC_DEFAULT = "COMM_CBK";
 	
 	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
@@ -154,7 +161,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				 	CODIGO_T017_ADVISORY_NOTE,CODIGO_T017_PBC_RESERVA,CODIGO_T017_PBC_VENTA,CODIGO_T017_RECOMENDACION_CES,
 				 	CODIGO_T017_RESOLUCION_PRO_MANZANA,CODIGO_T017_RESOLUCION_EXPEDIENTE,CODIGO_T017_INSTRUCCIONES_RESERVA,CODIGO_T017_OBTENCION_CONTRATO_RESERVA,
 				 	CODIGO_T017_POSICIONAMIENTO_FIRMA,CODIGO_T017_DOCUMENTOS_POSTVENTA,CODIGO_T017_CIERRE_ECONOMICO, CODIGO_T017_RESOLUCION_DIVARIAN, CODIGO_T017_RESOLUCION_ARROW,
-				 	CODIGO_T017_RATIFICACION_COMITE_CES};
+				 	CODIGO_T017_RATIFICACION_COMITE_CES, CODIGO_T017_AGENDAR_ARRAS, CODIGO_T017_CONFIRMAR_ARRAS, CODIGO_T017_AGENDAR_FIRMA, CODIGO_T017_CONFIRMAR_FIRMA,
+					CODIGO_T017_FIRMA, CODIGO_T017_PBC_CN};
 
 	}
 
@@ -220,6 +228,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, 
 					isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, 
 					isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus, isActivoJaipur, isActivoEgeo, isActivoAgora,tieneGBOAR).get(codigoTarea);
+		}
+
+		if(isActivoBankia && isTareaGetUsuarioCaixa(codigoTarea)){
+			Usuario user = getUsuarioByTareaCaixa(codigoTarea);
+			if(user != null){
+				return user;
+			}
 		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
@@ -330,6 +345,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
+	}
+
+	private Usuario getUsuarioByTareaCaixa(String codigoTarea) {
+		return gestorActivoApi.getUsuarioByTareaCaixa(codigoTarea);
+	}
+
+	private boolean isTareaGetUsuarioCaixa(String codigoTarea) {
+		return CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+				|| CODIGO_T017_PBC_RESERVA.equals(codigoTarea) || CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
+				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea)
+				|| CODIGO_T017_AGENDAR_FIRMA.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea) || CODIGO_T017_FIRMA.equals(codigoTarea)
+				|| CODIGO_T017_DOCUMENTOS_POSTVENTA.equals(codigoTarea) || CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea);
 	}
 
 	public boolean expedienteTieneReserva(ExpedienteComercial expediente,TareaActivo tareaActivo) {
@@ -692,7 +719,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			}
 		}
 		
-		if(isActivoBankia || isActivoSareb) {
+		if(isActivoSareb) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -713,7 +740,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		}
 		
-		if(isActivoApple || isActivoRemaining) {
+		if(isActivoApple || isActivoRemaining || isActivoBankia) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);

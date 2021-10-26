@@ -14354,7 +14354,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setResultadoPropiedadDesc(scoring.getResultadoScoring().getDescripcion());
 				}
 				if (scoring.getNumeroExpedienteBc() != null) {
-					dto.setNumeroExpediente(Long.valueOf(scoring.getNumeroExpedienteBc()));
+					dto.setNumeroExpediente(scoring.getNumeroExpedienteBc());
 				}
 			}
 			if (coe != null) {
@@ -14749,7 +14749,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public List<DDRatingScoringServicer> getDDRatingScoringOrderByCodC4c() {
-		Order orden = new Order(GenericABMDao.OrderType.ASC, "codigoC4C");
+		Order orden = new Order(GenericABMDao.OrderType.ASC, "codigoC4c");
 		return  genericDao.getListOrdered(DDRatingScoringServicer.class, orden);
 	}
 	

@@ -1119,13 +1119,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrDocRespPrescriptor(true);
 			}
 			
-			
-			if(!oferta.getOfrDocRespPrescriptor()) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
-			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
-			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			if(oferta.getOfrDocRespPrescriptor() != null){
+				if(!oferta.getOfrDocRespPrescriptor()) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+				}
 			}
 			
 			if (codigo != null) {
@@ -1679,7 +1680,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
 				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 			}
-			
+
 			if (codigo != null) {
 				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
 				oferta.setRespDocCliente(respCodCliente);

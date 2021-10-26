@@ -967,8 +967,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							iap.setVinculoCaixa(vinculoCaixa);
 						}
 						if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
-							DDTipoSocioComercial tipoSocioComercial = genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getSociedadEmpleadoGrupoCaixa()));
-							iap.setTipoSocioComercial(tipoSocioComercial);
+							iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
 						}
 						if(ofertaDto.getOficinaEmpleadoCaixa() != null) {
 							iap.setOficinaTrabajo(Integer.toString(ofertaDto.getOficinaEmpleadoCaixa()));
@@ -1712,7 +1711,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					modificado = true;
 				}
 				if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
-					iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getSociedadEmpleadoGrupoCaixa())));
+					iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
 					modificado = true;
 				}
 				
@@ -7644,7 +7643,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixa())));
 			}
 			if(dto.getSociedadEmpleadoGrupoCaixa() != null) {
-				iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSociedadEmpleadoGrupoCaixa())));
+				iap.setSociedad(dto.getSociedadEmpleadoGrupoCaixa());
 			}
 			
 			if(dto.getOficinaEmpleadoCaixa() != null) {

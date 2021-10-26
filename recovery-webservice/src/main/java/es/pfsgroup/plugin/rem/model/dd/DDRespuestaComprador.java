@@ -33,6 +33,7 @@ public class DDRespuestaComprador implements Auditable, Dictionary {
     public static final String CODIGO_AVAL = "AVA";
     public static final String CODIGO_SEGURO_RENTA = "SRT";
     public static final String CODIGO_DEPOSITO = "DEP";
+    public static final String CODIGO_NINGUNA = "NIN";
     
 	private static final long serialVersionUID = 1L;
 

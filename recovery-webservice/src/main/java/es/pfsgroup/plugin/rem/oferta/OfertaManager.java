@@ -6879,15 +6879,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_CAJ_INMOBILIARIO));
 			
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS))
-				 return (codSubcartera.equals(DDSubcartera.CODIGO_AGORA_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
+				 return (codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
 							|| codSubcartera.equals(DDSubcartera.CODIGO_CERB_DIVARIAN) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || codSubcartera.equals(DDSubcartera.CODIGO_CERB_INMOVILIARIO)
-							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB));
+							|| codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB));
 				 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_HYT))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_HYT_INMOBILIARIO));
 		    	 
-		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_JAIPUR))
-		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_JAIPUR));
 		    
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_LIBERBANK))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_LBKN_CLM) || codSubcartera.equals(DDSubcartera.CODIGO_LBKN_BYP) 
@@ -6901,16 +6899,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		    	 return true;
 		    				 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY))
-		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING) || codSubcartera.equals(DDSubcartera.CODIGO_OMEGA) || codSubcartera.equals(DDSubcartera.CODIGO_MAPFRE));
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING) || codSubcartera.equals(DDSubcartera.CODIGO_MAPFRE));
 		    					 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_BFA))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_BFA_BFA));
 			 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_SIN_DEFINIR))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_SIN_DEFINIR_INMB));
-			 
-		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_OTRAS_CARTERAS))
-		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_OTRAS_CARTERAS_INMB));
 
 			 
 		 }

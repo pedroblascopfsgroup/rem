@@ -804,6 +804,11 @@
             	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
             	return tramiteVentaManager.checkFechaContabilizacionArras(tareaExterna);
             }
+            
+             def checkGarantiasNinguna = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkGarantiasNinguna(tareaExterna, valores);
+            }
            
   			 ]]></value>
   		</list>

@@ -276,7 +276,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									apellidos.setDisabled(true);
 	    									nombre.setDisabled(true);
 	    									razonSocial.setDisabled(false);
-	    									estadoCivil.setDisabled(true)
+	    									estadoCivil.setDisabled(true);
 	    									regimen.setDisabled(true);
 	    									estadoCivil.allowBlank = true;
 	    									tipoDocumentoRepresentante.allowBlank = false;

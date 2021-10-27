@@ -1343,7 +1343,14 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'tieneGestionDndDescripcion'
-			}
+			},
+    		{
+    			name: 'isCarteraTitulizada',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['TITULIZADA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		}
     ],
     
 	proxy: {

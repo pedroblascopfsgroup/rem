@@ -174,7 +174,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						        	bind: {
 					            		store: '{comboTipoActivo}',
 					            		value: '{activo.tipoActivoCodigo}',
-										rawValue: '{activo.tipoActivoDescripcion}'
+										rawValue: '{activo.tipoActivoDescripcion}',
+										readOnly: '{isCarteraBankia}'
 					            	},
 		    						listeners: {
 					                	select: 'onChangeChainedCombo'

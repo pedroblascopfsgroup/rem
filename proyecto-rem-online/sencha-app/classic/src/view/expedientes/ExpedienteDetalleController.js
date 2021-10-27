@@ -5756,6 +5756,30 @@ comprobarFormatoModificar: function() {
 		} catch (err) {
 			Ext.global.console.log('Error en onCambioTipoImpuesto: '+ err)
 		}
+	},
+	
+	onClickCheckDeposito: function(checkbox){
+		var me = this;
+		var chekboxReservaConImpuesto= me.lookupReference('chekboxReservaConImpuesto');
+		var mesesDeposito= me.lookupReference('mesesDepositoRef');
+		var importeDeposito= me.lookupReference('importeDeposito');
+		
+		if(checkbox.checked){
+			chekboxReservaConImpuesto.allowBlank=false;
+			chekboxReservaConImpuesto.setDisabled(false);
+			importeDeposito.setDisabled(false);
+			mesesDeposito.setDisabled(false);
+		}else{
+			chekboxReservaConImpuesto.allowBlank=true;
+			chekboxReservaConImpuesto.setValue(null);
+			chekboxReservaConImpuesto.setDisabled(true);
+			mesesDeposito.allowBlank=true;
+			mesesDeposito.setDisabled(true);
+			mesesDeposito.setValue(null);
+			importeDeposito.allowBlank=true;
+			importeDeposito.setDisabled(true);
+			importeDeposito.setValue(null);
+		}
 	}
 	
 	

@@ -1,32 +1,31 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -38,12 +37,8 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_DefinicionOferta = "T015_DefinicionOferta";
 	private static final String T015_VerificarSeguroRentas = "T015_VerificarSeguroRentas";
 	private static final String T015_AceptacionCliente = "T015_AceptacionCliente";
-	private static final String T015_SolicitarGarantiasAdicionales = "T015_SolicitarGarantiasAdicionales";
-	private static final String T018_SolicitarGarantiasAdicionales = "T018_SolicitarGarantiasAdicionales";
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
-	private static final String CAMPO_GARANTIAS_RESPUESTA_COMPRADOR = "respuestaComprador";
-	
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -57,8 +52,8 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
     @Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
     
-    @Autowired
-	private TareaActivoApi tareaActivoApi;
+    @Resource
+	private MessageService messageServices;
 		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
@@ -287,26 +282,20 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	}
 	
 	@Override
-	public boolean checkGarantiasNinguna(TareaExterna tareaExterna,  Map<String, Map<String,String>> valores) {
-		boolean check = false;
-		TareaActivo tareaActivoPrincipal = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+	public String checkGarantiasNinguna(TareaExterna tareaExterna, String expedienteAnterior) {
+		String resultado = null;
 		
-		if (!Checks.esNulo(tareaActivoPrincipal)) {
-			for (Entry<String, Map<String, String>> entry : valores.entrySet()) {
-				String key = entry.getKey();
-				if (T015_SolicitarGarantiasAdicionales.equals(key) || T018_SolicitarGarantiasAdicionales.equals(key)){
-					for (Entry<String, String> valor : entry.getValue().entrySet()) {
-						if(CAMPO_GARANTIAS_RESPUESTA_COMPRADOR.equals(valor.getKey()) 
-								&& "NIN".equals(valor.getValue()) 
-								&& !(checkAvalCondiciones(tareaExterna) || checkSeguroRentasCondiciones(tareaExterna))) {
-							check = true;
-						}
-					}
-				}
-			}
+		if (DDRespuestaComprador.CODIGO_NINGUNA.equals(expedienteAnterior)) {
+			return resultado;
+		}else if(DDRespuestaComprador.CODIGO_AVAL.equals(expedienteAnterior) && !checkAvalCondiciones(tareaExterna)){
+			resultado = messageServices.getMessage("tramite.alquiler.aval");
+		}else if(DDRespuestaComprador.CODIGO_SEGURO_RENTA.equals(expedienteAnterior) && !checkSeguroRentasCondiciones(tareaExterna)) {
+			resultado = messageServices.getMessage("tramite.alquiler.seguro.rentas");
+		}else if(DDRespuestaComprador.CODIGO_DEPOSITO.equals(expedienteAnterior) && !validarMesesImporteDeposito(tareaExterna)) {
+			resultado = messageServices.getMessage("tramite.alquiler.deposito");
 		}
-		
-		return check;
+			
+		return resultado;
 	}
 	
 }

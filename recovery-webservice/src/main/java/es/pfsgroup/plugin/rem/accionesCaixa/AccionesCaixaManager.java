@@ -570,11 +570,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws Exception {
-        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
-        expediente.setEstadoBc(estadoExpedienteBc);
-
         FechaArrasExpediente fae = genericDao.get(FechaArrasExpediente.class,
                 genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdFae()));
         DDMotivosEstadoBC motivoEstado = genericDao.get(DDMotivosEstadoBC.class,
@@ -582,7 +577,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         fae.setValidacionBC(motivoEstado);
         fae.setFechaRespuestaBC(new Date());
 
-        genericDao.save(ExpedienteComercial.class, expediente);
         genericDao.save(FechaArrasExpediente.class,fae);
 
         adapter.save(createRequestAccionFirmaArras(dto));

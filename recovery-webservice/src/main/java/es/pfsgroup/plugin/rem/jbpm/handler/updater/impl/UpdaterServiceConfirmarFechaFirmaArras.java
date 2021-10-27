@@ -121,13 +121,11 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 						Auditoria.delete(reserva);
 						genericDao.save(Reserva.class, reserva);
 					}
-				}
-				else {
+				}else {
 					if(DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(dto.getValidacionBC())) {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_FIRMA_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_ARRAS_AGENDADAS;
-					}
-					else {
+					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}

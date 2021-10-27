@@ -294,8 +294,19 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 								},
 								items : [
 									{
+										xtype : 'checkboxfieldbase',
+										reference : 'chckboxDepositoRef',
+										fieldLabel : HreRem.i18n("fieldlabel.deposito"),
+										colspan:3,
+										bind : {
+											value : '{garantias.checkDeposito}'
+										},
+										handler:'onClickCheckDeposito'
+									},
+									{
 										xtype : 'numberfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.meses'),
+										reference : 'mesesDepositoRef',
 										bind : {
 											value : '{garantias.mesesDeposito}'
 										},

@@ -105,6 +105,9 @@ Ext.define('HreRem.model.GarantiasExpedienteModel', {
 	    },
 	    {
 	    	name: 'depositoActualizable'
+	    },
+	    {
+	    	name: 'checkDeposito'
 	    }
 	    	    
     ],

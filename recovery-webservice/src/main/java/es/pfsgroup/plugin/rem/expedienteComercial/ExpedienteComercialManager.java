@@ -14348,7 +14348,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
 			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
 			SeguroRentasAlquiler sra = genericDao.get(SeguroRentasAlquiler.class, filter);
-			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			
 			if (scoring != null) {
 				
 				if (scoring.getRatingScoringServicer() != null) {
@@ -14402,6 +14402,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (coe.getImporteAval() != null) {
 					dto.setImporteAval(coe.getImporteAval());
 				}
+				if (!Checks.esNulo(coe.getMesesDeposito())) {
+					dto.setMesesDeposito(coe.getMesesDeposito());
+				}
+				
+				if (!Checks.esNulo(coe.getDepositoActualizable())) {
+					dto.setDepositoActualizable(coe.getDepositoActualizable());
+				}
+							
+				if (!Checks.esNulo(coe.getImporteDeposito())) {
+					dto.setImporteDeposito(coe.getImporteDeposito());
+				}
+				if(coe.getCheckDeposito() != null && coe.getCheckDeposito()) {
+					dto.setCheckDeposito(coe.getCheckDeposito());
+				}
+				
 			}
 			if (sra != null) {
 				
@@ -14422,21 +14437,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (sra.getImporteRentasBc() != null) {
 					dto.setImporteRentas(sra.getImporteRentasBc());
 				}
-			}
-			
-			if(condiciones != null) {
-				if (!Checks.esNulo(condiciones.getMesesDeposito())) {
-					dto.setMesesDeposito(condiciones.getMesesDeposito());
-				}
-				
-				if (!Checks.esNulo(condiciones.getDepositoActualizable())) {
-								dto.setDepositoActualizable(condiciones.getDepositoActualizable());
-				}
-							
-				if (!Checks.esNulo(condiciones.getImporteDeposito())) {
-					dto.setImporteDeposito(condiciones.getImporteDeposito());
-				}
-				
 			}
 			
 			boolean completada = false;
@@ -14546,6 +14546,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (dto.getImporteAval() != null) {
 				coe.setImporteAval(dto.getImporteAval());
 			}
+			
+			if(dto.getCheckDeposito() != null && dto.getCheckDeposito()){
+				coe.setCheckDeposito(dto.getCheckDeposito());
+			}else {
+				coe.setCheckDeposito(false);
+			}
+			 
 			genericDao.save(CondicionanteExpediente.class, coe);
 			
 		}

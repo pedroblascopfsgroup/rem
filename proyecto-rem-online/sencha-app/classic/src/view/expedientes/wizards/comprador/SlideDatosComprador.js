@@ -493,6 +493,32 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								if(!Ext.isEmpty(me.getStore())){
 									me.getStore().insert(0, [{codigo: null , descripcion: '-', id: 0}]);
 								}
+							},
+							change: function(combo, value) {
+								var me = this;	   
+								var form = combo.up('form');
+								var sociedadEmpleado = form.down('field[name=sociedad]');
+								var oficinaEmpleado = form.down('field[name=oficinaTrabajo]');
+								
+								if (value == "10") {
+									sociedadEmpleado.setDisabled(false);
+									sociedadEmpleado.allowBlank = false;
+									oficinaEmpleado.setDisabled(false);
+									oficinaEmpleado.allowBlank = false;
+								}else{
+									sociedadEmpleado.setDisabled(true);
+									sociedadEmpleado.allowBlank = true;
+									sociedadEmpleado.setValue(null);
+									oficinaEmpleado.setDisabled(true);
+									oficinaEmpleado.allowBlank = true;
+									oficinaEmpleado.setValue(null);
+									
+									sociedadEmpleado.reset();
+									oficinaEmpleado.reset();
+								}
+								
+								if(!Ext.isEmpty(sociedadEmpleado)) sociedadEmpleado.validate();
+								if(!Ext.isEmpty(oficinaEmpleado)) oficinaEmpleado.validate();
 							}
 						}
 					},
@@ -506,6 +532,30 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboSiNoBoolean}',
 							hidden: '{!comprador.esCarteraBankia}'
 						}
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.sociedad.empleado.caixa'),
+						reference: 'sociedad',
+						name: 'sociedad',
+						allowBlank: true,
+						disabled: true,
+						bind: {
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						padding: '5px'
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.oficina.empleado.caixa'),
+						reference: 'oficinaTrabajo',
+						name: 'oficinaTrabajo',
+						allowBlank: true,
+						disabled: true,
+						bind: {
+							hidden: '{!comprador.esCarteraBankia}'
+						},
+						padding: '5px'
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.relacion.hre'),
@@ -526,6 +576,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'antiguoDeudor',
 						name: 'antiguoDeudor',
 						padding: '5px',
+						allowBlank: false,
 						bind: {
 							store: '{comboSiNoRem}'
 						}

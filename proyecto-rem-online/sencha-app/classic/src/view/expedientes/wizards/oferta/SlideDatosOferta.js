@@ -479,7 +479,74 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				            		allowBlank: isBk
 				            	},
 				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+	    						valueField: 'codigo',
+	    						listeners: {
+	    							change: function(combo, value) {
+	    								var me = this;	   
+	    								var form = combo.up('form');
+	    								var sociedadEmpleado = form.down('field[name=sociedadEmpleadoCaixa]');
+	    								var oficinaEmpleado = form.down('field[name=oficinaEmpleadoCaixa]');
+	    								
+	    								if (value == "10") {
+	    									sociedadEmpleado.setDisabled(false);
+	    									sociedadEmpleado.allowBlank = false;
+	    									oficinaEmpleado.setDisabled(false);
+	    									oficinaEmpleado.allowBlank = false;
+	    									
+	    								}else{
+	    									sociedadEmpleado.setDisabled(true);
+	    									sociedadEmpleado.allowBlank = true;
+	    									sociedadEmpleado.setValue(null);
+	    									oficinaEmpleado.setDisabled(true);
+	    									oficinaEmpleado.allowBlank = true;
+	    									oficinaEmpleado.setValue(null);
+	    									
+	    									sociedadEmpleado.reset();
+	    									oficinaEmpleado.reset();
+	    								}
+	    								
+	    								if(!Ext.isEmpty(sociedadEmpleado)) sociedadEmpleado.validate();
+	    								if(!Ext.isEmpty(oficinaEmpleado)) oficinaEmpleado.validate();
+	    							}
+	    						}
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.sociedad.empleado.caixa'),
+								reference: 'sociedadEmpleadoCaixa',
+								name: 'sociedadEmpleadoCaixa',
+								allowBlank: true,
+								disabled: true,
+								bind: {
+				            		value: '{oferta.sociedadEmpleadoCaixa}',
+				            		hidden: !isBk
+				            	},
+					        	colspan: 2
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.oficina.empleado.caixa'),
+								reference: 'oficinaEmpleadoCaixa',
+								name: 'oficinaEmpleadoCaixa',
+								allowBlank: true,
+								disabled: true,
+								bind: {
+				            		value: '{oferta.oficinaEmpleadoCaixa}',
+				            		hidden: !isBk
+				            	}
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
+								reference: 'antiguoDeudor',
+								name: 'antiguoDeudor',								
+								allowBlank: false,
+								bind: {
+									store: '{comboSiNoBoolean}',
+									value: '{oferta.antiguoDeudor}',
+									hidden: !isBk,
+								},								
+					        	colspan: 2
 							},
 							{
 								xtype: 'comboboxfieldbase',
@@ -494,9 +561,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.tipologivaVentaCod}'
 								},
 								displayField: 'descripcion',
-								valueField: 'codigo',
-					        	colspan: 2
+								valueField: 'codigo'
 							},
+					        {
+								xtype: 'displayfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.campo.vacio'),
+					        	readOnly: true,
+					        	allowBlank:true
+					        },
 							{
 								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),

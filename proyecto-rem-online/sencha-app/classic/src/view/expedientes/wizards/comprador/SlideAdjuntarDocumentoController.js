@@ -793,7 +793,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            emailRte:bindRecord.emailRte,
 	            telefono1Rte:bindRecord.telefono1Rte,
 	            telefono2Rte:bindRecord.telefono2Rte,
-	            representantePrp:bindRecord.representantePrp
+	            representantePrp:bindRecord.representantePrp,
+	            sociedadEmpleadoCaixa:bindRecord.sociedadEmpleadoCaixa,
+	            oficinaEmpleadoCaixa:bindRecord.oficinaEmpleadoCaixa,
+	            antiguoDeudor:bindRecord.antiguoDeudor
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -852,7 +855,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            emailRte:bindRecord.emailRte,
 	            telefono1Rte:bindRecord.telefono1Rte,
 	            telefono2Rte:bindRecord.telefono2Rte,
-	            representantePrp:bindRecord.representantePrp
+	            representantePrp:bindRecord.representantePrp,
+	            sociedadEmpleadoCaixa:bindRecord.sociedadEmpleadoCaixa,
+	            oficinaEmpleadoCaixa:bindRecord.oficinaEmpleadoCaixa,
+	            antiguoDeudor:bindRecord.antiguoDeudor
 			});
 		}
  

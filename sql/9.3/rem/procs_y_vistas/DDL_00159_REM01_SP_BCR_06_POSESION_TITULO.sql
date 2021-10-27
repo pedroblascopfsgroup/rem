@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211026
+--## FECHA_CREACION=20211027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-16087
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -31,6 +31,7 @@
 --##        0.19 Corrección Propietarios para se actualice el PRO_ID - [HREOS-15423] - Daniel Algaba
 --##        0.20 Protegemos los activos titulizados de las bajas y además, los activos que no lleguen en 5 días se darán de baja - [HREOS-15423] - Daniel Algaba
 --##        0.21 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##        0.22 Se añade el check de Perímetro alquiler, marcado cuando esté alquilar y desmarcado si es solo Venta - [HREOS-16087] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -1012,6 +1013,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         WHEN AUX.ESTADO_POSESORIO IN (''P01'',''P03'',''P05'',''P06'') THEN NULL
                         WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN (SELECT DD_EAL_ID FROM '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO=''02'')
                       END AS DD_EAL_ID
+                     , CASE WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN 1
+                            WHEN AUX.DESTINO_COMERCIAL = ''VT'' THEN 0
+                      END CHECK_HPM
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
                   JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID
@@ -1019,6 +1023,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   ) US ON (US.ACT_ID = ACT.ACT_ID)
                   WHEN MATCHED THEN UPDATE SET
                       ACT.DD_EAL_ID = US.DD_EAL_ID
+                     ,ACT.CHECK_HPM = US.CHECK_HPM
                      ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                      ,ACT.FECHAMODIFICAR = SYSDATE
                   ';

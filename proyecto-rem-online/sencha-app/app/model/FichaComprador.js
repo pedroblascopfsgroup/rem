@@ -355,6 +355,12 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'localidadNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'sociedad'
+		},
+		{
+			name:'oficinaTrabajo'
 		}
 		
 		

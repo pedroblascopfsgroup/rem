@@ -129,6 +129,9 @@ public class DtoOfertasFilter extends WebDto {
     private String telefono1Rte;
     private String telefono2Rte;
     private Boolean representantePrp;
+    private String sociedadEmpleadoCaixa;
+    private String oficinaEmpleadoCaixa;
+    private Boolean antiguoDeudor;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -769,6 +772,24 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setRepresentantePrp(Boolean representantePrp) {
 		this.representantePrp = representantePrp;
+	}
+	public String getSociedadEmpleadoCaixa() {
+		return sociedadEmpleadoCaixa;
+	}
+	public void setSociedadEmpleadoCaixa(String sociedadEmpleadoCaixa) {
+		this.sociedadEmpleadoCaixa = sociedadEmpleadoCaixa;
+	}
+	public String getOficinaEmpleadoCaixa() {
+		return oficinaEmpleadoCaixa;
+	}
+	public void setOficinaEmpleadoCaixa(String oficinaEmpleadoCaixa) {
+		this.oficinaEmpleadoCaixa = oficinaEmpleadoCaixa;
+	}
+	public Boolean getAntiguoDeudor() {
+		return antiguoDeudor;
+	}
+	public void setAntiguoDeudor(Boolean antiguoDeudor) {
+		this.antiguoDeudor = antiguoDeudor;
 	}
 	
 }

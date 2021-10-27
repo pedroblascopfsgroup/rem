@@ -5327,6 +5327,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			compradorExpediente.setRelacionHre(dto.getRelacionHre());
 
 			compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
+			
+			compradorExpediente.setSociedad(dto.getSociedad());
+			
+			compradorExpediente.setOficinaTrabajo(dto.getOficinaTrabajo());
+			
 			// Datos representante
 			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
@@ -5514,6 +5519,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if(comprador.getInfoAdicionalPersona() != null) {
 				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
+				comprador.getInfoAdicionalPersona().setSociedad(dto.getSociedad());
+				comprador.getInfoAdicionalPersona().setOficinaTrabajo(dto.getOficinaTrabajo());
 			}
 			if (vinculoCaixa != null) {
 				compradorExpediente.setVinculoCaixa(vinculoCaixa);
@@ -6376,6 +6383,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getAntiguoDeudor())) {
 					compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
 				}
+				
+				if (dto.getSociedad() != null) {
+					compradorExpediente.setSociedad(dto.getSociedad());
+				}
+				
+				if (dto.getOficinaTrabajo() != null) {
+					compradorExpediente.setOficinaTrabajo(dto.getOficinaTrabajo());
+				}
 
 				// Datos representante
 				if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
@@ -6556,9 +6571,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if(!Checks.esNulo(dto.getVinculoCaixaCodigo())) {
 					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo())));
+					iap.setSociedad(dto.getSociedad());
+					iap.setOficinaTrabajo(dto.getOficinaTrabajo());
 				}
 
-					
 				comprador.setInfoAdicionalPersona(iap);
 				
 				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {

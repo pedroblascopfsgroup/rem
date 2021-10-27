@@ -356,6 +356,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoGastoRepercutido",  DDTipoGastoRepercutido.class);
 		mapa.put("subtipoOfertaAlquiler",  DDSubtipoOfertaAlquiler.class);
 		mapa.put("claseContratoAlquiler", DDClaseContratoAlquiler.class);
+		mapa.put("tipoDeDocumento", DDTipoDeDocumento.class);
 
 		
 		

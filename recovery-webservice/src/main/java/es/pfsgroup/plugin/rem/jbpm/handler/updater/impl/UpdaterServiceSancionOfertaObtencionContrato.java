@@ -241,17 +241,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 							reserva.setFechaFirma(fechaFirma);
 							activoTramiteApi.reactivarTareaResultadoPBC(tareaExternaActual, expediente);
 						}
-		
-						// Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento
-						// reserva" con Fecha firma + plazo para firmar
-						if (!Checks.esNulo(reserva.getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())) {
-							Calendar calendar = Calendar.getInstance();
-							calendar.setTime(expediente.getReserva().getFechaFirma());
-							if(!Checks.esNulo(diasVencimiento)){
-								calendar.add(Calendar.DAY_OF_YEAR, diasVencimiento);
-							}
-							reserva.setFechaVencimiento(calendar.getTime());
-						}
+
 						genericDao.save(Reserva.class, reserva);
 						
 						if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo())) {

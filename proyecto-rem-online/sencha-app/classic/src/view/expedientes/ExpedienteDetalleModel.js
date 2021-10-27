@@ -1730,7 +1730,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'expedientecomercial/getResultadoRatingScoring'
-			}
+			},
+	    	autoLoad: true
     	},
     	comboEntidadBancariaAvalista: {
     		model: 'HreRem.model.ComboBase',

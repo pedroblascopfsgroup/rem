@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -118,7 +119,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
 
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
-            adapter.anularTramiteAlquiler(acTra.getId(), "905");
+			String motivoAnulacionExpediente = DDMotivoAnulacionExpediente.CODIGO_ORDEN_PROPIEDAD;
+			if(eco.getOferta() != null && DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
+				TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+				if(tarea != null && tarea.getTareaProcedimiento() != null) {
+					if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						motivoAnulacionExpediente = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_GARANTIAS;
+					}else if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						motivoAnulacionExpediente = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_PROPIEDAD;
+					}
+				}
+			}
+            adapter.anularTramiteAlquiler(acTra.getId(), motivoAnulacionExpediente);
         }else {
             eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
             genericDao.save(ExpedienteComercial.class, eco);
@@ -273,9 +285,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstado(eec);
         
         expediente.setFechaContabilizacion(sdfEntrada.parse(dto.getFechaReal()));
-
-        expediente.setFechaContabilizacionPropietario(sdfEntrada.parse(dto.getFechaReal()));
-        
+   
         genericDao.save(ExpedienteComercial.class, expediente);
 
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));

@@ -29,6 +29,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -250,7 +252,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
-	
+
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+
 	@Autowired 
 	private PerfilApi perfilApi;
 		
@@ -2012,7 +2017,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
 
 				if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
-						|| (activo.getEnTramite() == null || activo.getEnTramite() == 0)
+						|| ((activo.getEnTramite() != null && activo.getEnTramite() == 1))
 						|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
 					for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
 						if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {
@@ -2025,4 +2030,28 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		return tiposOferta;
 	}
+
+	@Override
+	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera){
+
+		MaestroDePersonas maestroDePersonas = null;
+
+		String idPersonaHayaCaixa = null;
+
+		if (codCartera == null) {
+			maestroDePersonas = new MaestroDePersonas();
+
+			if (documentoProveedor != null)
+				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(documentoProveedor, codProveedorRem != null ? Long.parseLong(codProveedorRem) : null);
+
+		}else {
+			maestroDePersonas = new MaestroDePersonas(gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),null,null));
+
+			if (documentoInterlocutor != null)
+				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumento(documentoInterlocutor);
+
+		}
+		return idPersonaHayaCaixa;
+	}
+
 }

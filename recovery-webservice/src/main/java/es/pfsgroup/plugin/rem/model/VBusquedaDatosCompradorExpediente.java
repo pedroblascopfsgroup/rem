@@ -309,6 +309,12 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name="DD_PRV_DESCRIPCION_NAC_COM")
     private String provinciaNacimientoCompradorDescripcion;
+	
+	@Column(name="CEX_SOCIEDAD")
+    private String sociedad;
+	
+	@Column(name="CEX_OFICINA_TRABAJO")
+    private String oficinaTrabajo;
 
 	public Long getId() {
 		return id;
@@ -1090,6 +1096,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setVcexId(Long vcexId) {
 		this.vcexId = vcexId;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
 	}	
 	
 }

@@ -211,7 +211,9 @@ public class DtoModificarCompradores{
 
 	private String localidadNacimientoCompradorDescripcion;
 	
-	
+	private String sociedad;
+
+	private String oficinaTrabajo;
 	
 	public Long getId() {
 		return id;
@@ -1014,6 +1016,22 @@ public class DtoModificarCompradores{
 
 	public void setLocalidadNacimientoRepresentanteDescripcion(String localidadNacimientoRepresentanteDescripcion) {
 		this.localidadNacimientoRepresentanteDescripcion = localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
 	}
 	
 }

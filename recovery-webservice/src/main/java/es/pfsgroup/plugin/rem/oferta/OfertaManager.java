@@ -967,8 +967,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							iap.setVinculoCaixa(vinculoCaixa);
 						}
 						if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
-							DDTipoSocioComercial tipoSocioComercial = genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getSociedadEmpleadoGrupoCaixa()));
-							iap.setTipoSocioComercial(tipoSocioComercial);
+							iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
 						}
 						if(ofertaDto.getOficinaEmpleadoCaixa() != null) {
 							iap.setOficinaTrabajo(Integer.toString(ofertaDto.getOficinaEmpleadoCaixa()));
@@ -1120,13 +1119,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfrDocRespPrescriptor(true);
 			}
 			
-			
-			if(!oferta.getOfrDocRespPrescriptor()) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
-			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
-			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
-				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+			if(oferta.getOfrDocRespPrescriptor() != null){
+				if(!oferta.getOfrDocRespPrescriptor()) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
+				}
 			}
 			
 			if (codigo != null) {
@@ -1680,7 +1680,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
 				codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 			}
-			
+
 			if (codigo != null) {
 				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
 				oferta.setRespDocCliente(respCodCliente);
@@ -1712,7 +1712,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					modificado = true;
 				}
 				if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
-					iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getSociedadEmpleadoGrupoCaixa())));
+					iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
 					modificado = true;
 				}
 				
@@ -7406,13 +7406,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
 			ofertaDao.saveOrUpdate(oferta);
 
-			if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
-				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
-					replicateOfertaFlush(oferta);
-				}
-			}
-
 			return true;
 		}
 
@@ -7527,8 +7520,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		 if (codCartera != null && codSubcartera != null ) {
 			 
 			 if(codCartera.equals(DDCartera.CODIGO_CARTERA_BANKIA))
-				return (codSubcartera.equals(DDSubcartera.CODIGO_BAN_BK) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_BH) 
-						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_BFA) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA));
+				return (codSubcartera.equals(DDSubcartera.CODIGO_BAN_ASISTIDA) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_BH) 
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_BK) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SOLVIA) 
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO)
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_CAIXABANK) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_LIVING_CENTER));
 			 
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_CAJ_INMOBILIARIO));
@@ -7644,7 +7639,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixa())));
 			}
 			if(dto.getSociedadEmpleadoGrupoCaixa() != null) {
-				iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSociedadEmpleadoGrupoCaixa())));
+				iap.setSociedad(dto.getSociedadEmpleadoGrupoCaixa());
 			}
 			
 			if(dto.getOficinaEmpleadoCaixa() != null) {

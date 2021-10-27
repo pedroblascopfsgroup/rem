@@ -198,7 +198,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = :numActivo "
-				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' OR tipoAgr.DD_TAG_CODIGO = '17' OR tipoAgr.DD_TAG_CODIGO = '18' "
+				+ "			    AND tipoAgr.DD_TAG_CODIGO IN ('02','17','18') "
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "

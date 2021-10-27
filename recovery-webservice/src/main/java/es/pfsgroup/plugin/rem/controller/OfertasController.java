@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -147,6 +149,9 @@ public class OfertasController {
 	
 	@Resource
 	private Properties appProperties;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -1025,6 +1030,13 @@ public class OfertasController {
 	public ModelAndView actualizaEstadoOferta(Long idOferta, String codigoEstado, ModelMap model) {
 		try {
 			Boolean actualizado = ofertaApi.actualizaEstadoOferta(idOferta, codigoEstado);
+			if (actualizado && DDEstadoOferta.CODIGO_PENDIENTE.equals(codigoEstado)){
+				Oferta oferta = ofertaApi.getOfertaById(idOferta);
+				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
+					ofertaApi.replicateOfertaFlush(oferta);
+				}
+			}
 			model.put(RESPONSE_SUCCESS_KEY, actualizado);
 
 		} catch (Exception e) {

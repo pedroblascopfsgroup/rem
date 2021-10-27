@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211022
+--## FECHA_CREACION=20211025
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15894
+--## INCIDENCIA_LINK=HREOS-15969
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_TIT_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15894';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15969';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -48,6 +48,7 @@ DECLARE
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84669332','MBS Bancaja 3, FTA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85082675','MBS Bancaja 4, FTA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85623668','MBS Bancaja 6, FTA'),
+        T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84054840','BANCAJA 7, FTA'),
 
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3143', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84856319','Caixa Penedés 1, TdA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3143', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V85500866','Caixa Penedes FTGENCAT 1 TDA'),
@@ -69,6 +70,7 @@ DECLARE
         T_TIPO_DATA('FONDO','V84669332', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84669332','MBS Bancaja 3, FTA'),
         T_TIPO_DATA('FONDO','V85082675', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85082675','MBS Bancaja 4, FTA'),
         T_TIPO_DATA('FONDO','V85623668', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85623668','MBS Bancaja 6, FTA'),
+        T_TIPO_DATA('FONDO','V84054840', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84054840','BANCAJA 7, FTA'),
 
         T_TIPO_DATA('FONDO','V84856319', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84856319','Caixa Penedés 1, TdA'),
         T_TIPO_DATA('FONDO','V85500866', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V85500866','Caixa Penedes FTGENCAT 1 TDA'),

@@ -20,6 +20,8 @@ import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
+import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
@@ -182,6 +184,20 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		}
 		
 		return camposRellenos;
+	}
+	
+	@Override
+	public DtoDocPostVenta getDatosDocPostventa(Long idExpediente) {	
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		DtoDocPostVenta dto = new DtoDocPostVenta();
+		
+		dto.setFechaContabilizacion(eco.getFechaContabilizacion());
+		dto.setFechaIngresoCheque(eco.getFechaContabilizacionPropietario());
+		dto.setVentaDirecta(eco.getOferta().getVentaDirecta());
+
+		
+		
+		return dto;
 	}
 
 }

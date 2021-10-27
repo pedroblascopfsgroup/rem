@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211025
+--## FECHA_CREACION=20211027
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15969
@@ -14,6 +14,7 @@
 --##        0.2 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.3 Se añaden los campos reción creados y los mapeos necesarios - [HREOS-15894] - Daniel Algaba
 --##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
+--##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -101,9 +102,8 @@ BEGIN
                      , TASACION.VAL_HIPOTECARIO             
                      , TASACION.VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                      JOIN (SELECT
                      TAS.ACT_ID
                      , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_ID DESC) RN
@@ -177,12 +177,8 @@ BEGIN
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_SUELO ON SAC_SUELO.DD_SAC_ID = TAS.DD_SAC_ID AND SAC_SUELO.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV9 ON EQV9.DD_NOMBRE_CAIXA = ''SUBTIPO_SUELO'' AND EQV9.DD_CODIGO_REM = SAC_SUELO.DD_SAC_CODIGO AND EQV9.BORRADO = 0
                      WHERE TAS.BORRADO = 0) TASACION ON RN = 1 AND TASACION.ACT_ID = ACT.ACT_ID
-                     WHERE ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                     --AND ACT.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''17'')
-                     AND ACT.BORRADO = 0
+                     WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
-                     --AND ACT.ACT_EN_TRAMITE = 0
-                     AND PRO.PRO_DOCIDENTIF IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569'')
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.TASADORA = AUX.TASADORA

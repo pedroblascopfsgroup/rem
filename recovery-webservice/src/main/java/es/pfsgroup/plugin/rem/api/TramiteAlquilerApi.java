@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -36,6 +37,8 @@ public interface TramiteAlquilerApi {
 	void irClRod(ExpedienteComercial eco);
 
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
+
+	boolean checkGarantiasNinguna(TareaExterna tareaExterna, Map<String, Map<String, String>> valores);
 	
 }
 

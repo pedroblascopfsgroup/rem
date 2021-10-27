@@ -175,6 +175,16 @@ Ext.define('HreRem.model.OfertaComercial', {
     		{
     			name:'representantePrp',
     			type: 'boolean'
+    		},
+    		{
+    			name:'sociedadEmpleadoCaixa'
+    		},
+    		{
+    			name:'oficinaEmpleadoCaixa'
+    		},
+    		{
+    			name:'antiguoDeudor',
+    			type:'boolean'
     		}
             
     ],

@@ -2652,6 +2652,21 @@ public class AgrupacionAdapter {
 				clienteComercial.setInfoAdicionalPersona(iap);
 			}
 			
+			if (dto.getSociedadEmpleadoCaixa() != null) {
+				iap.setSociedad(dto.getSociedadEmpleadoCaixa());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+			
+			if (dto.getOficinaEmpleadoCaixa() != null) {
+				iap.setOficinaTrabajo(dto.getOficinaEmpleadoCaixa());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+			
+			if (dto.getAntiguoDeudor() != null) {
+				iap.setAntiguoDeudor(dto.getAntiguoDeudor());
+				clienteComercial.setInfoAdicionalPersona(iap);
+			}
+			
 			Filter filtro = null;
 			if(dto.getFechaNacimientoConstitucion() != null) {
 				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));

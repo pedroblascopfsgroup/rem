@@ -84,7 +84,7 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												disabled: true
 											},
 											{
-												xtype : 'numberfieldbase',
+												xtype : 'textfieldbase',
 												reference : 'numeroExpedienteRef',
 												fieldLabel : HreRem.i18n('fieldlabel.num.expediente'),												
 												bind : {

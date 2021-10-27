@@ -1,29 +1,26 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
 import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -887,6 +884,17 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTipoOfertas(codCartera, idActivo, idAgrupacion)));	
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void idPersonaHaya(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
+								   @RequestParam (required = false) String documentoInterlocutor,
+								   @RequestParam (required = false) String documentoProveedor,
+								   @RequestParam (required = false) String codCartera,
+								   @RequestParam (required = false) String codProveedor){
+
+		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera));
+
+		restApi.sendResponse(response, model, request);
+	}
  }
 

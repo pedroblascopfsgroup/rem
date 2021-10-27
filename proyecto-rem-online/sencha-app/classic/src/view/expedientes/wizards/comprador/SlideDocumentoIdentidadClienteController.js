@@ -13,6 +13,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				fieldsetDocumentoIdentidad.setTitle(HreRem.i18n('title.nuevo.comprador'));
 			}
 		}
+		if(me.esBankia()){
+			me.getViewModel().getStore("storeTipoDocumentoIdentidad").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
+		
 	},
 
 	onClickCancelar: function() {
@@ -369,6 +375,26 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	},
 	onChangeTipoDocumentoNuevoComprador : function(checkbox, newVal, oldVal){
 		
+	},
+	esBankia: function() {
+		var me = this,
+			vista = me.getView(),
+			esBankia = false,
+			expediente = me.getView().up().expediente,
+			activoDetalle = me.getView().up('[reference="activosdetalle"]');
+		
+		if(me.getView().up().expediente != null && me.getView().up().expediente != undefined) return me.getView().up().expediente.data.esBankia;
+		
+		if(Ext.isEmpty(activoDetalle)){
+			esBankia = me.getView().up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionCaixa");
+		}else{
+			esBankia = activoDetalle.lookupController().getViewModel().get('activo').get('isCarteraBankia');
+		}
+		if (esBankia){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 });

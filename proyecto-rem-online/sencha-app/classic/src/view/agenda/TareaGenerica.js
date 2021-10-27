@@ -3071,7 +3071,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		me.ocultarCampo(me.down('[name=comboVentaSupensiva]'));
 		me.deshabilitarCampo(me.down('[name=comboVentaSupensiva]'));
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
-		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.down('[name=comboVentaSupensiva]').setDisabled(false);
 			me.desocultarCampo(me.down('[name=comboVentaSupensiva]'));
@@ -3079,6 +3078,22 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
+			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+			var url =  $AC.getRemoteUrl('expedientecomercial/getDatosDocPostVenta');
+			Ext.Ajax.request({
+				url: url,
+				params: {idExpediente : idExp},
+			    success: function(response, opts) {
+			    	var data = Ext.decode(response.responseText);
+			    	var dto = data.data;
+			    	if(!Ext.isEmpty(dto)){		
+			    		me.down('[name=checkboxVentaDirecta]').setValue(dto.ventaDirecta);
+			    		if(!Ext.isEmpty(dto.fechaIngresoCheque)){
+				    		me.down('[name=fechaIngreso]').setValue(Ext.Date.format(dto.fechaIngresoCheque, 'd/m/Y'));
+			    		}
+			    	}
+			    }
+			});
 		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 		}else if(CONST.CARTERA['SAREB'] == codigoCartera) {

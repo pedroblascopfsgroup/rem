@@ -285,9 +285,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         expediente.setEstado(eec);
         
         expediente.setFechaContabilizacion(sdfEntrada.parse(dto.getFechaReal()));
-
-        expediente.setFechaContabilizacionPropietario(sdfEntrada.parse(dto.getFechaReal()));
-        
+   
         genericDao.save(ExpedienteComercial.class, expediente);
 
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));

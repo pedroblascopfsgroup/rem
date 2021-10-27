@@ -254,7 +254,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
 	    									apellidos.setDisabled(false);
-	    									nombre.setDisabled(false)
+	    									nombre.setDisabled(false);
 	    									razonSocial.setDisabled(true);
 	    									estadoCivil.allowBlank = false;
 	    									tipoDocumentoRepresentante.allowBlank = true;
@@ -274,7 +274,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									razonSocial.reset();
 	    								}else{
 	    									apellidos.setDisabled(true);
-	    									nombre.setDisabled(true)
+	    									nombre.setDisabled(true);
 	    									razonSocial.setDisabled(false);
 	    									estadoCivil.setDisabled(true)
 	    									regimen.setDisabled(true);

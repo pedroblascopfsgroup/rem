@@ -431,6 +431,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
 	@Column(name="ALQ_DURACION_MESES")
     private Integer mesesDuracion;
+	
+	@Column(name="COE_CHECK_DEPOSITO")
+	private Boolean checkDeposito;
     
 	@Version   
 	private Long version;
@@ -1379,6 +1382,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setMesesDuracion(Integer mesesDuracion) {
 		this.mesesDuracion = mesesDuracion;
+	}
+
+	public Boolean getCheckDeposito() {
+		return checkDeposito;
+	}
+
+	public void setCheckDeposito(Boolean checkDeposito) {
+		this.checkDeposito = checkDeposito;
 	}
 
 }

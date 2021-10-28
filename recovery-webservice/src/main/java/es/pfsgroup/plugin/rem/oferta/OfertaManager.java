@@ -1873,11 +1873,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (subestadoExpCom != null)
 					expedienteComercial.setSubestadoExpediente(subestadoExpCom);
 				
-				if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && estadoExpCom != null && DDEstadosExpedienteComercial.DESCARTADA.equals(estadoExpCom.getCodigo()) 
-						&& subestadoExpCom != null && DDSubestadosExpedienteComercial.DESCARTADA.equals(subestadoExpCom.getCodigo())) {
-					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
-					oferta.setFechaRechazoOferta(fechaAccion);
-				}
+				cambiarEstadoOfertaHayaHome(oferta, estadoExpCom, fechaAccion);
 				
 				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpCom);
 
@@ -1931,6 +1927,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
+	private void cambiarEstadoOfertaHayaHome(Oferta oferta, DDEstadosExpedienteComercial estadoExpCom, Date fechaAccion) {
+		if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && estadoExpCom != null 
+				&& (DDEstadosExpedienteComercial.DESCARTADA.equals(estadoExpCom.getCodigo()) || DDEstadosExpedienteComercial.CANCELADA.equals(estadoExpCom.getCodigo()))) {
+			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+			oferta.setFechaRechazoOferta(fechaAccion);
+		}
+	}
+	
 	@Override
 	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta)
 			throws Exception {

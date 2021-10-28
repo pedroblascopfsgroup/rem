@@ -24,7 +24,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 		
 		if(isBK && (isAlquiler || isAlquilerNoComercial)){
 			 tamanyo1 = 130;
-		}		
+		}	
 
 		var items = [
 			{
@@ -804,7 +804,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								xtype : 'comboboxfieldbase',
 								fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
 								bind : {
-									store : '{comboTiposImpuesto}',
+									store : '{comboTipoImpuesto}',
 									value : '{condiciones.tipoImpuestoCodigoAlq}'
 								},
 								displayField : 'descripcion',

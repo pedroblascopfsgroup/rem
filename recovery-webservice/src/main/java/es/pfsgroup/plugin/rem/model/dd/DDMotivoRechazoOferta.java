@@ -39,6 +39,7 @@ public class DDMotivoRechazoOferta implements Auditable, Dictionary {
 	public static final String CODIGO_PBC_DENEGADO = "902";
 	public static final String CODIGO_ACTIVO_VENDIDO = "705";
 	public static final String CODIGO_OTROS = "20";
+	public static final String CODIGO_PENDIENTE_RECOMENDACION_INTERNA = "916";
 
 	public static final String COD_CAIXA_CAMBIO_TITULAR = "1000";
 	public static final String COD_CAIXA_CLIENTE_ARREPENTIDO = "2000";

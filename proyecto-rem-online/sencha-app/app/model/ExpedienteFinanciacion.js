@@ -72,7 +72,10 @@ Ext.define('HreRem.model.ExpedienteFinanciacion', {
 	    },
 	    {
 	    	name: 'otraEntidadFinanciera'
-	    }
+	    },
+		{
+			name: 'financiacionTPCodigo'
+		}
     ],
 
     proxy: {

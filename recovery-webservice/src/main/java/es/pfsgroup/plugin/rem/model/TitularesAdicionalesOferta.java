@@ -32,6 +32,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -229,6 +230,10 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	@Column(name = "TIA_ID_PERSONA_HAYA_CAIXA_REPR")
 	private String idPersonaHayaCaixaRepresentante;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TIA_ACEPTACION_OFERTA")
+    private DDSinSiNo aceptacionOferta;
+    
     @Version   
 	private Long version;
 
@@ -662,4 +667,13 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
 		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
 	}
+	
+	public DDSinSiNo getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+
+	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
+	}
+	
 }

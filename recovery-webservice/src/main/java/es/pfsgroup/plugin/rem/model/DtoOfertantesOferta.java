@@ -17,6 +17,7 @@ public class DtoOfertantesOferta extends WebDto {
 	private Long ADCOMIdDocumentoIdentificativo;
 	private Long ADCOMIdDocumentoGDPR;
 	private String vinculoCaixaDesc;
+	private String aceptacionOferta;
 
 
 
@@ -87,4 +88,10 @@ public class DtoOfertantesOferta extends WebDto {
 		this.vinculoCaixaDesc = vinculoCaixaDesc;
 	}
 	
+	public String getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+	public void setAceptacionOferta(String aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
+	}
 }

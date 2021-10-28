@@ -7,7 +7,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
-				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid',
+				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid', 'HreRem.model.Testigos',
 				'HreRem.model.FechaArrasModel', 'HreRem.model.GastosRepercutidosModel', 'HreRem.model.ActualizacionRentaModel','HreRem.model.SancionesModel'],
     
     data: {
@@ -1197,8 +1197,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
+				remoteUrl: 'generic/getEstadosOfertaWeb'
 			}
 	    },
 	    
@@ -1631,6 +1630,56 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'claseContratoAlquiler'}
 	    	}
 		},
+		
+		comboDDSNS: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'siNoNosabe'
+				}
+			}
+		},
+		
+		comboTipoFinanciacionTP: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipoFinanciacion'
+				}
+			}
+		},
+		
+		testigosOferta:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Testigos',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getTestigos',
+				extraParams: {id: '{datosbasicosoferta.idOferta}'}
+			}
+		},
+		
+		comboDDFuenteTestigos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'fuenteTestigos'}
+			}
+    	},
+
+		comboDDTipoActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposActivo'}
+			}
+    	}
 		
 		storeMotivoRechazoAntiguoDeudor:{
 			model: 'HreRem.model.ComboBase',

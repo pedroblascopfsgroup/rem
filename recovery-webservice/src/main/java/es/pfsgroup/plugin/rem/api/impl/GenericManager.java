@@ -1017,6 +1017,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroMotivoAlquiler = genericDao.createFilter(FilterType.EQUALS, "alquiler", true);
 		Filter filtroMotivoVenta = genericDao.createFilter(FilterType.EQUALS, "venta", true);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		List<DDMotivoRechazoOferta> listaMotivoRechazo = null;
+		List<DDMotivoRechazoOferta> listaTiposFiltered = new ArrayList<DDMotivoRechazoOferta>();
 		
 		if(tipoRechazoOfertaCodigo.equals("A")) {
 			Activo activo = oferta.getActivoPrincipal();
@@ -1025,12 +1027,30 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				Filter filtroVisibleCaixa = genericDao.createFilter(FilterType.EQUALS, "visibleCaixa", true);
 				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroVisibleCaixa);
 			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}else if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-				return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}
 		}else if (tipoRechazoOfertaCodigo.equals("D")) {
-			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+				if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+					listaTiposFiltered.add(motivo);
+				}
+			}
+			return listaTiposFiltered;
 		}
 
 		return new ArrayList<DDMotivoRechazoOferta>();
@@ -2054,4 +2074,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return idPersonaHayaCaixa;
 	}
 
+	@Override
+	public List<DDEstadoOferta> getEstadosOfertaWeb() {
+		
+		List<DDEstadoOferta> listaDD = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaTiposFiltered = new ArrayList<DDEstadoOferta>();
+	
+		
+		for (DDEstadoOferta estado : listaDD) {
+			if (!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estado.getCodigo()))
+				listaTiposFiltered.add(estado);
+		}
+
+		return listaTiposFiltered;
+	}
 }

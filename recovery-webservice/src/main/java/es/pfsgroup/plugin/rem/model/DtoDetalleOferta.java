@@ -24,6 +24,8 @@ public class DtoDetalleOferta {
 	private String cuentaBancariaCliente;
 	private String numOfertaCaixa;
 	private Boolean checkSubasta;
+	private String titularesConfirmados;
+
 
 	public String getId() {
 		return id;
@@ -140,5 +142,11 @@ public class DtoDetalleOferta {
 		this.checkSubasta = checkSubasta;
 	}
 	
+	public String getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(String titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
+	}
 	
 }

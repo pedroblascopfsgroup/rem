@@ -12,7 +12,7 @@ recordName: "datosbasicosoferta",
 recordClass: "HreRem.model.DatosBasicosOferta",
     
     requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel',
-    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel','HreRem.view.expedientes.SancionesGrid'],
+    'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel','HreRem.view.expedientes.SancionesGrid', 'HreRem.view.activos.detalle.TestigosOfertaGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -214,6 +214,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {hidden : '{!esTipoAlquiler}'}
 					}
 						]},
+					{
+						xtype : 'datefieldbase',
+						formatter : 'date("d/m/Y")',
+						colspan: 3,
+						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
+						readOnly : true,
+						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+					},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
@@ -701,6 +709,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        columns: 3
 						    },
 							bind : {
+								store : '{comboDDSNS}',
+								value : '{datosbasicosoferta.necesitaFinanciacion}',
 								hidden: '{esBankiaAlquiler}'
 							},
 							items : [
@@ -880,6 +890,16 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 				xtype:'sancionesBkGrid'
 			}]
 			
+		}, 		
+		//Testigos Opcionales
+		{
+			xtype:'fieldsettable',
+			title:HreRem.i18n('title.testigos'),
+			defaultType: 'textfieldbase',
+			items :
+				[
+					{xtype: "testigosofertagrid", reference: "testigosofertagrid"}
+				]
 		},
 		{
 
@@ -895,7 +915,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {
 							store : '{storeTextosOferta}'
 						},
+						listeners: {
+							beforeedit: function(editor, context) {
+					            var estado = context.record.get("campoCodigo");
+					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09';
 
+					            return !allowEdit;
+							}
+						},
 						columns : [{
 									text : HreRem.i18n('header.campo'),
 									dataIndex : 'campoDescripcion',
@@ -907,6 +934,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									editor : {
 										xtype : 'textarea'
 									}
+								},	{
+									text : HreRem.i18n('header.fecha'),
+									dataIndex : 'fecha',
+									flex : 1
 								}]
 					}]
 		}

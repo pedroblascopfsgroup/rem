@@ -357,9 +357,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("subtipoOfertaAlquiler",  DDSubtipoOfertaAlquiler.class);
 		mapa.put("claseContratoAlquiler", DDClaseContratoAlquiler.class);
 		mapa.put("tipoDeDocumento", DDTipoDeDocumento.class);
-
-		
-		
+		mapa.put("tipoFinanciacion", DDTfnTipoFinanciacion.class);
+		mapa.put("siNoNosabe", DDSnsSiNoNosabe.class);
+		mapa.put("fuenteTestigos", DDFuenteTestigos.class);
+		mapa.put("recomendacionRCDC", DDRecomendacionRCDC.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

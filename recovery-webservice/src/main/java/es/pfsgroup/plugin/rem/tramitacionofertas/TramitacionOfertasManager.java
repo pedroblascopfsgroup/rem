@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
@@ -298,17 +299,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		boolean resultado = true;
 		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
-
+		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
-
+		
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
 		oferta.setEstadoOferta(estadoOferta);
+		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+				&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
 		validateSaveOferta(dto, oferta, estadoOferta, activo, esAlquiler, esAgrupacion, agrupacion);
 
@@ -339,6 +342,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 		transactionManager.commit(transaction);
+		
 		return oferta;
 	}
 
@@ -643,13 +647,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return nuevoExpediente;
 	}
 
-	private CondicionanteExpediente calculoCondicionantes(Activo activo, Double importeOferta) {
+	private CondicionanteExpediente calculoCondicionantes(Activo activo, Oferta oferta) {
 
 		CondicionanteExpediente condicionante = new CondicionanteExpediente();
 		condicionante.setAuditoria(Auditoria.getNewInstance());
 
 		DDCartera cartera = activo.getCartera();
 		DDSubcartera subcartera = activo.getSubcartera();
+		Double importeOferta = oferta.getImporteOferta();
 
 		if (cartera != null && importeOferta != null) {
 			// HREOS-2799
@@ -758,6 +763,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				condicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
 			}
 		}
+		
+		if (!Checks.esNulo(oferta.getNecesitaFinanciar())) {
+			condicionante.setSolicitaFinanciacion(oferta.getNecesitaFinanciar());
+		}
+		if (!Checks.esNulo(oferta.getEntidadFinanciera())) {
+			condicionante.setEntidadFinanciera(oferta.getEntidadFinanciera());
+		}
+		if (!Checks.esNulo(oferta.getTipologiaFinanciacion())) {
+			condicionante.setTipoFinanciacion(oferta.getTipologiaFinanciacion());
+		}
 
 		return condicionante;
 	}
@@ -772,7 +787,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		if (!Checks.esNulo(activo)) {
 			if (condicionanteExpediente == null) {
-				condicionanteExpediente = calculoCondicionantes(activo, oferta.getImporteOferta());
+				condicionanteExpediente = calculoCondicionantes(activo, oferta);
 				condicionanteExpediente.setExpediente(expedienteComercial);
 			}
 

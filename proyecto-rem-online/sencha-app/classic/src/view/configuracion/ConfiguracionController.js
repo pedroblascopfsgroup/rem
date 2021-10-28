@@ -73,6 +73,84 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 		}
     },
     
+    onChangeCarteraTestigosChainedCombo: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+		
+    	var chainedStore = chainedCombo.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idCartera' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					if (chainedCombo.selectFirst == true) {
+		   					chainedCombo.setSelection(1);
+		   				};
+	   					chainedCombo.setDisabled(false);
+	   				} else {
+	   					chainedCombo.setDisabled(true);
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+
+	onChangeCarteraRecomendacionChainedCombo: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+		
+    	var chainedStore = chainedCombo.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idCartera' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					if (chainedCombo.selectFirst == true) {
+		   					chainedCombo.setSelection(1);
+		   				};
+	   					chainedCombo.setDisabled(false);
+	   				} else {
+	   					chainedCombo.setDisabled(true);
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+    
     paramLoadingProveedores: function(store, operation, opts) {
 		var initialData = {};
 		var searchForm = this.getReferences().configuracionProveedoresFiltros;

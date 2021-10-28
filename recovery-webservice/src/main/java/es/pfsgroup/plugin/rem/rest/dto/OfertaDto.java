@@ -14,6 +14,11 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -59,11 +64,16 @@ public class OfertaDto implements Serializable {
 	@Size(max=1000)
 	private String observaciones;
 	@NotNull(groups = {Insert.class})
-	private Boolean financiacion;
+	@Diccionary(clase = DDSnsSiNoNosabe.class, message = "El codigo DDSnsSiNoNosabe no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String financiacion;
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
-	private Boolean aceptacionContraoferta;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo DDRespuestaOfertante no existe", groups = { Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Update.class })
+	private String aceptacionContraoferta;
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
 	private Date fechaFirma;
@@ -81,10 +91,10 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
-	private String recomendacionRc;
-	private Date fechaRecomendacionRc;
-	private String recomendacionDc;
-	private Date fechaRecomendacionDc;
+	private String recomendacionRC;
+	private Date fechaRecomendacionRC;
+	private String recomendacionDC;
+	private Date fechaRecomendacionDC;
 	private String documentoIdentificativo;
 	private String nombreDocumentoIdentificativo;
 	private String documentoGDPR;
@@ -101,6 +111,25 @@ public class OfertaDto implements Serializable {
 	private Integer oficinaEmpleadoCaixa;
 	private Boolean esAntiguoDeudor;
 	private Date fechaCreacion;
+	private String recomendacionObservaciones;
+	private String importeInicial;
+	private String importeContraofertaRCDC;
+	private String importeContraofertaPrescriptor;
+	private Boolean recomendacionRequerida;
+	private Boolean titularesConfirmados;
+	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String tipoFinanciacion;
+	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo DDEntidadFinanciera no existe", groups = { Insert.class,
+			Update.class },foreingField="codigoSF")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String entidadFinanciacion;
+	@Diccionary(clase = DDMotivoJustificacionOferta.class, message = "El codigo DDMotivoJustificacionOferta no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String codMotivoJustificacionOferta;
+	private List<TestigosOfertaDto> testigos;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -211,10 +240,10 @@ public class OfertaDto implements Serializable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Boolean getFinanciacion() {
+	public String getFinanciacion() {
 		return financiacion;
 	}
-	public void setFinanciacion(Boolean financiacion) {
+	public void setFinanciacion(String financiacion) {
 		this.financiacion = financiacion;
 	}
 	public Boolean getIsExpress() {
@@ -229,10 +258,10 @@ public class OfertaDto implements Serializable {
 	public void setCodTarea(String codTarea) {
 		this.codTarea = codTarea;
 	}
-	public Boolean getAceptacionContraoferta() {
+	public String getAceptacionContraoferta() {
 		return aceptacionContraoferta;
 	}
-	public void setAceptacionContraoferta(Boolean aceptacionContraoferta) {
+	public void setAceptacionContraoferta(String aceptacionContraoferta) {
 		this.aceptacionContraoferta = aceptacionContraoferta;
 	}
 	public Date getFechaPrevistaFirma() {
@@ -326,29 +355,29 @@ public class OfertaDto implements Serializable {
 	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
 		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
 	}
-	public String getRecomendacionRc() {
-		return recomendacionRc;
+	public String getRecomendacionRC() {
+		return recomendacionRC;
 	}
-	public void setRecomendacionRc(String recomendacionRc) {
-		this.recomendacionRc = recomendacionRc;
+	public void setRecomendacionRC(String recomendacionRC) {
+		this.recomendacionRC = recomendacionRC;
 	}
-	public Date getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
+	public Date getFechaRecomendacionRC() {
+		return fechaRecomendacionRC;
 	}
-	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
+	public void setFechaRecomendacionRC(Date fechaRecomendacionRC) {
+		this.fechaRecomendacionRC = fechaRecomendacionRC;
 	}
-	public String getRecomendacionDc() {
-		return recomendacionDc;
+	public String getRecomendacionDC() {
+		return recomendacionDC;
 	}
-	public void setRecomendacionDc(String recomendacionDc) {
-		this.recomendacionDc = recomendacionDc;
+	public void setRecomendacionDC(String recomendacionDC) {
+		this.recomendacionDC = recomendacionDC;
 	}
-	public Date getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
+	public Date getFechaRecomendacionDC() {
+		return fechaRecomendacionDC;
 	}
-	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
+	public void setFechaRecomendacionDC(Date fechaRecomendacionDC) {
+		this.fechaRecomendacionDC = fechaRecomendacionDC;
 	}
 
 	public String getDocumentoIdentificativo() {
@@ -430,5 +459,66 @@ public class OfertaDto implements Serializable {
 
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
+	}
+	
+	public String getRecomendacionObservaciones() {
+		return recomendacionObservaciones;
+	}
+	public void setRecomendacionObservaciones(String recomendacionObservaciones) {
+		this.recomendacionObservaciones = recomendacionObservaciones;
+	}
+	public String getTipoFinanciacion() {
+		return tipoFinanciacion;
+	}
+	public void setTipoFinanciacion(String tipoFinanciacion) {
+		this.tipoFinanciacion = tipoFinanciacion;
+	}
+	public String getEntidadFinanciacion() {
+		return entidadFinanciacion;
+	}
+	public void setEntidadFinanciacion(String entidadFinanciacion) {
+		this.entidadFinanciacion = entidadFinanciacion;
+	}
+	public String getCodMotivoJustificacionOferta() {
+		return codMotivoJustificacionOferta;
+	}
+	public void setCodMotivoJustificacionOferta(String codMotivoJustificacionOferta) {
+		this.codMotivoJustificacionOferta = codMotivoJustificacionOferta;
+	}
+	public List<TestigosOfertaDto> getTestigos() {
+		return testigos;
+	}
+	public void setTestigos(List<TestigosOfertaDto> testigos) {
+		this.testigos = testigos;
+	}
+	public String getImporteInicial() {
+		return importeInicial;
+	}
+	public void setImporteInicial(String importeInicial) {
+		this.importeInicial = importeInicial;
+	}
+	public String getImporteContraofertaRCDC() {
+		return importeContraofertaRCDC;
+	}
+	public void setImporteContraofertaRCDC(String importeContraofertaRCDC) {
+		this.importeContraofertaRCDC = importeContraofertaRCDC;
+	}
+	public String getImporteContraofertaPrescriptor() {
+		return importeContraofertaPrescriptor;
+	}
+	public void setImporteContraofertaPrescriptor(String importeContraofertaPrescriptor) {
+		this.importeContraofertaPrescriptor = importeContraofertaPrescriptor;
+	}
+	public Boolean getRecomendacionRequerida() {
+		return recomendacionRequerida;
+	}
+	public void setRecomendacionRequerida(Boolean recomendacionRequerida) {
+		this.recomendacionRequerida = recomendacionRequerida;
+	}
+	public Boolean getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(Boolean titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
 	}
 }

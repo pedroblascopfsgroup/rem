@@ -153,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoTestigos;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
@@ -165,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.OfertaTestigos;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
@@ -185,6 +187,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
@@ -195,17 +198,23 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
+import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -240,6 +249,10 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -626,9 +639,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
-					&& !(DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_RECHAZADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
-							|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_CADUCADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
-							|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta()))
+					&& !(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_RECHAZADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_CADUCADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta()))
 					&& Checks.esNulo(ofertaDto.getCodTarea())) {
 
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -745,7 +758,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
+		if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && ofertaDto.getTitularesAdicionales().size() != 0) {
 			for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
 				OfertaTitularAdicionalDto titDto = ofertaDto.getTitularesAdicionales().get(i);
 				if (!Checks.esNulo(titDto)) {
@@ -756,13 +769,33 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
+		} else {
+			if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(ofertaDto.getCodEstadoOferta())) {
+				errorsList.put("codEstadoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
 		}
 		if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 			if (alta) {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
-				if (ofertaDto.getCodTarea().equals("01") && Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
-					errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+				boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
+			
+				if (ofertaDto.getCodTarea().equals("01")) {
+					if (Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
+						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+					} else if (Checks.esNulo(ofertaDto.getImporteContraoferta()) && ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+						errorsList.put("importeContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);						
+					} else if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
+							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
+							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
+					if (!((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
+						DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+						DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
 				} else if (ofertaDto.getCodTarea().equals("02")) {
 					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
 						errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
@@ -770,8 +803,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(Checks.esNulo(ofertaDto.getLugarFirma())) {
 						errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
-				} else if (ofertaDto.getCodTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
-					errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					if (!DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())){
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
+				} else if (ofertaDto.getCodTarea().equals("03")) {
+					if (Checks.esNulo(ofertaDto.getFechaFirma())) {
+						errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					}
+					if (!DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
 				}
 			}
 		}
@@ -781,6 +822,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					"codigo", ofertaDto.getOrigenLeadProveedor()));
 			if (Checks.esNulo(origenComprador)) {
 				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
+		
+		if (!Checks.esNulo(ofertaDto.getFinanciacion())) {
+			if (ofertaDto.getFinanciacion().equals("01")) {
+				if (Checks.esNulo(ofertaDto.getTipoFinanciacion())) {
+					errorsList.put("tipoFinanciacion", RestApi.REST_MSG_MISSING_REQUIRED);
+				} else if (Checks.esNulo(ofertaDto.getEntidadFinanciacion())) {
+					errorsList.put("entidadFinanciacion", RestApi.REST_MSG_MISSING_REQUIRED);						
+				}
+			} else if (!Checks.esNulo(ofertaDto.getTipoFinanciacion())) {
+				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			} else if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())) {
+				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+				}			
 			}
 		}
 
@@ -1061,10 +1120,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setObservaciones(ofertaDto.getObservaciones());
 			}
 
-			if (!Checks.esNulo(ofertaDto.getFinanciacion())) {
-				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
-			}
-
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
 			}
@@ -1089,20 +1144,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRC());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRC())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRC());
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDC());
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDC())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDC());
 			}
 			
 			String codigo = null;
@@ -1133,6 +1188,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
 				oferta.setRespDocCliente(respCodCliente);
 			}
+			
+			if(!Checks.esNulo(ofertaDto.getTitularesConfirmados())) {
+				if(ofertaDto.getTitularesConfirmados()) {
+					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+					oferta.setTitularesConfirmados(diccionarioSiNo);
+				}else {
+					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+					oferta.setTitularesConfirmados(diccionarioSiNo);
+				}
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -1147,38 +1212,96 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
 				dto.setCampoCodigo("05");
-				dto.setCampoDescripcion("Recomendación RC");
-				dto.setTexto(ofertaDto.getRecomendacionRc());
+				dto.setTexto(ofertaDto.getRecomendacionRC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
 				dto.setCampoCodigo("06");
-				dto.setCampoDescripcion("Recomendación DC");
-				dto.setTexto(ofertaDto.getRecomendacionDc());
+				dto.setTexto(ofertaDto.getRecomendacionDC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
-				dto.setCampoDescripcion("Descuento respecto a precio publicado");
 				dto.setTexto(ofertaDto.getPorcentajeDescuento());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
-				dto.setCampoCodigo("08");
-				dto.setCampoDescripcion("Justificación del API");
-				dto.setTexto(ofertaDto.getJustificacionOferta());
+			if(!Checks.esNulo(ofertaDto.getRecomendacionObservaciones())){
+				dto.setCampoCodigo("09");
+				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
 				
 				saveTextoOfertaWS(dto, oferta);
 			}
-
+			
+			if(!Checks.esNulo(ofertaDto.getImporteInicial())) {
+				dto.setCampoCodigo("10");
+				dto.setTexto(ofertaDto.getImporteInicial());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaRCDC())) {
+				dto.setCampoCodigo("11");
+				dto.setTexto(ofertaDto.getImporteContraofertaRCDC());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaPrescriptor())) {
+				dto.setCampoCodigo("12");
+				dto.setTexto(ofertaDto.getImporteContraofertaPrescriptor());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
+				dto.setCampoCodigo("13");
+				if(ofertaDto.getRecomendacionRequerida()) {
+					dto.setTexto("1");
+				}else {
+					dto.setTexto("0");
+				}
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			setValuesFinanciacion(ofertaDto, oferta);
+			
+			saveTestigosOferta(ofertaDto, oferta, false);
+			
+			dto = new DtoTextosOferta();
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta()) || !Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+				
+				String texto = null;
+				dto.setCampoCodigo("08");
+				if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+					DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+					if (!Checks.esNulo(motivoJustificacionOferta)) {
+						oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+						
+						texto = motivoJustificacionOferta.getDescripcion();
+						if(ofertaDto.getJustificacionOferta() != null) {
+								texto += ": " + ofertaDto.getJustificacionOferta();						
+						}
+					}
+				} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+					texto = ofertaDto.getJustificacionOferta();		
+				}
+				
+				dto.setTexto(texto);
+					
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			
 			if(activo != null && activo.getSubcartera() != null &&
@@ -1203,12 +1326,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (ofertaDto.getIsExpress()) {
 				congelarExpedientesPorOfertaExpress(oferta);
 			}
-
-			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
-
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+			
+			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
+				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
+			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
@@ -1238,6 +1359,51 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return errorsList;
+	}
+
+	@Transactional(readOnly = false)
+	private void saveTestigosOferta(OfertaDto dto, Oferta oferta, boolean update) {
+		if(!Checks.esNulo(dto) && !Checks.esNulo(dto.getTestigos()) && !Checks.esNulo(oferta)) {
+			if (update) {
+				Filter idOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, idOferta);
+				
+				if (!Checks.esNulo(testigos)) {
+					for (OfertaTestigos lista : testigos) {
+						genericDao.deleteById(OfertaTestigos.class, lista.getId());
+					}
+				}
+			}
+			
+			try {
+				for (TestigosOfertaDto testigo : dto.getTestigos()) {
+					OfertaTestigos testigoOfr = new OfertaTestigos();
+					testigoOfr.setOferta(oferta);
+
+					beanUtilNotNull.copyProperties(testigoOfr, testigo);
+					
+					if (!Checks.esNulo(testigo.getCodFuente())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodFuente());
+						DDFuenteTestigos fte = genericDao.get(DDFuenteTestigos.class, filtro);
+						beanUtilNotNull.copyProperty(testigoOfr, "fuenteTestigos",fte);
+					}
+					if (!Checks.esNulo(testigo.getCodTipoActivo())) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodTipoActivo());
+						DDTipoActivo tpa = genericDao.get(DDTipoActivo.class, filtro);
+						beanUtilNotNull.copyProperty(testigoOfr, "tipoActivo",tpa);
+					}
+					if (!Checks.esNulo(testigo.getEurosPorMetro())) {
+						beanUtilNotNull.copyProperty(testigoOfr, "eurosMetro",testigo.getEurosPorMetro());
+					}				
+				
+					genericDao.save(OfertaTestigos.class, testigoOfr);
+				}
+			} catch (IllegalAccessException e) {
+				logger.error("Error en ofertaManager (copyProperties) ", e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error en ofertaManager (copyProperties) ", e);
+			}
+		}
 	}
 
 	@Transactional(readOnly = false)
@@ -1412,6 +1578,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 //					titAdi.setFechaAcepGdpr(ofertaDto.getFechaAcepGdpr());
 				}
 				
+				if(titDto.getAceptacionOfertaTSecundario() != null) {
+					if(titDto.getAceptacionOfertaTSecundario()) {
+						DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+						titAdi.setAceptacionOferta(diccionarioSiNo);
+					}else {
+						DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+						titAdi.setAceptacionOferta(diccionarioSiNo);
+					}
+				}
+				
 
 				
 				titAdi = this.updateTitularesAdicionalesBC(titDto, titAdi, oferta);
@@ -1497,8 +1673,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		HashMap<String, String> errorsList = null;
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
+		
 		if (errorsList.isEmpty()) {
 			boolean modificado = false;
+			boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, true);
 				modificado = true;
@@ -1517,12 +1695,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getObservaciones())
 					&& !ofertaDto.getObservaciones().equals(oferta.getObservaciones())) {
 				oferta.setObservaciones(ofertaDto.getObservaciones());
-				modificado = true;
-			}
-
-			if (!Checks.esNulo(ofertaDto.getFinanciacion())
-					&& !ofertaDto.getFinanciacion().equals(oferta.getNecesitaFinanciacion())) {
-				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
 				modificado = true;
 			}
 
@@ -1584,6 +1756,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = expedienteComercialApi
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
+					
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
@@ -1591,11 +1767,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
-
-			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
-			}
-
 			
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
 					&& !ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
@@ -1603,27 +1774,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())
-					&& !ofertaDto.getRecomendacionRc().equals(oferta.getOfrRecomendacionRc())) {
-				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())
+					&& !ofertaDto.getRecomendacionRC().equals(oferta.getOfrRecomendacionRc())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRC());
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRc())
-					&& !ofertaDto.getFechaRecomendacionRc().equals(oferta.getOfrFechaRecomendacionRc())) {
-				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRC())
+					&& !ofertaDto.getFechaRecomendacionRC().equals(oferta.getOfrFechaRecomendacionRc())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRC());
 				modificado = true;
 			}
 
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())
-					&& !ofertaDto.getRecomendacionDc().equals(oferta.getOfrRecomendacionDc())) {
-				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())
+					&& !ofertaDto.getRecomendacionDC().equals(oferta.getOfrRecomendacionDc())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDC());
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDc())
-					&& !ofertaDto.getFechaRecomendacionDc().equals(oferta.getOfrFechaRecomendacionDc())) {
-				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDc());
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDC())
+					&& !ofertaDto.getFechaRecomendacionDC().equals(oferta.getOfrFechaRecomendacionDc())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDC());
 				modificado = true;
 			}
 			
@@ -1635,19 +1806,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			DtoTextosOferta dto;
 			dto = new DtoTextosOferta();
-			if (!Checks.esNulo(ofertaDto.getRecomendacionRc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
 				dto.setCampoCodigo("05");
-				dto.setCampoDescripcion("Recomendación RC");
-				dto.setTexto(ofertaDto.getRecomendacionRc());
+				dto.setTexto(ofertaDto.getRecomendacionRC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionRC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
 			
-			if (!Checks.esNulo(ofertaDto.getRecomendacionDc())) {
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
 				dto.setCampoCodigo("06");
-				dto.setCampoDescripcion("Recomendación DC");
-				dto.setTexto(ofertaDto.getRecomendacionDc());
+				dto.setTexto(ofertaDto.getRecomendacionDC());
+				dto.setFecha(ofertaDto.getFechaRecomendacionDC().toString());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -1655,18 +1826,76 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(ofertaDto.getPorcentajeDescuento())) {
 				dto.setCampoCodigo("07");
-				dto.setCampoDescripcion("Descuento respecto a precio publicado");
 				dto.setTexto(ofertaDto.getPorcentajeDescuento());
 				
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
 			
-			if(!Checks.esNulo(ofertaDto.getJustificacionOferta())){
-				dto.setCampoCodigo("08");
-				dto.setCampoDescripcion("Justificación del API");
-				dto.setTexto(ofertaDto.getJustificacionOferta());
+			dto = new DtoTextosOferta();
+			if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta()) || !Checks.esNulo(ofertaDto.getJustificacionOferta())) {
 				
+				String texto = null;
+				dto.setCampoCodigo("08");
+				if (!Checks.esNulo(ofertaDto.getCodMotivoJustificacionOferta())) {
+					DDMotivoJustificacionOferta motivoJustificacionOferta = genericDao.get(DDMotivoJustificacionOferta.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoJustificacionOferta()));
+					if (!Checks.esNulo(motivoJustificacionOferta)) {
+						oferta.setMotivoJustificacionOferta(motivoJustificacionOferta);
+						
+						texto = motivoJustificacionOferta.getDescripcion();
+						if(ofertaDto.getJustificacionOferta() != null) {
+								texto += ": " + ofertaDto.getJustificacionOferta();						
+						}
+					}
+				} else if (!Checks.esNulo(ofertaDto.getJustificacionOferta())) {
+					texto = ofertaDto.getJustificacionOferta();		
+				}
+				
+				dto.setTexto(texto);
+					
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionObservaciones())){
+				dto.setCampoCodigo("09");
+				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteInicial())) {
+				dto.setCampoCodigo("10");
+				dto.setTexto(ofertaDto.getImporteInicial());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaRCDC())) {
+				dto.setCampoCodigo("11");
+				dto.setTexto(ofertaDto.getImporteContraofertaRCDC());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaPrescriptor())) {
+				dto.setCampoCodigo("12");
+				dto.setTexto(ofertaDto.getImporteContraofertaPrescriptor());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
+				dto.setCampoCodigo("13");
+				if(ofertaDto.getRecomendacionRequerida()) {
+					dto.setTexto("1");
+				}else {
+					dto.setTexto("0");
+				}
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
@@ -1733,12 +1962,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
 			}
+			
+			setValuesFinanciacion(ofertaDto, oferta);
+			
+			saveTestigosOferta(ofertaDto, oferta, true);
 
 			if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 				// Actualizar honorarios para el nuevo importe de contraoferta.
 				ExpedienteComercial expedienteComercial = expedienteComercialApi
 						.expedienteComercialPorOferta(oferta.getId());
 				if (!Checks.esNulo(expedienteComercial)) {
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
+					
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
@@ -1746,9 +1983,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
-
+			
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
-				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
+				avanzaTarea(oferta, ofertaDto);
+			}
+			
+			if (oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES)){
+				notificationOfertaManager.notificationOfrPdteTitSec(oferta);
+			} else if ("01".equals(ofertaDto.getCodTarea())) {
+				notificationOfertaManager.notificationSancionContraoferta(oferta, ofertaDto);
+			} else if (eraPdteTitulares && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())){
+				notificationOfertaManager.notificationOfrPdteAfterPdteTitSec(oferta);
 			}
 
 			OfertaCaixa ofertaCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
@@ -1760,6 +2005,39 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return errorsList;
+	}
+
+	private void setValuesFinanciacion(OfertaDto ofertaDto, Oferta oferta) {
+		CondicionanteExpediente coe = null;
+		Boolean existeCoe = false;
+		if (!Checks.esNulo(oferta.getExpedienteComercial())) {
+				coe = oferta.getExpedienteComercial().getCondicionante();
+				existeCoe = true;
+		}
+
+
+		if (!Checks.esNulo(ofertaDto.getFinanciacion())){
+			DDSnsSiNoNosabe sns = genericDao.get(DDSnsSiNoNosabe.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getFinanciacion()));
+			if (existeCoe) coe.setSolicitaFinanciacion(sns);
+			oferta.setNecesitaFinanciar(sns);
+		}
+		if (!Checks.esNulo(ofertaDto.getTipoFinanciacion())){
+			DDTfnTipoFinanciacion tfn = genericDao.get(DDTfnTipoFinanciacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getTipoFinanciacion()));
+			if (existeCoe) coe.setTipoFinanciacion(tfn);
+			oferta.setTipologiaFinanciacion(tfn);
+		}
+		if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())){
+			DDEntidadFinanciera enf = genericDao.get(DDEntidadFinanciera.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigoSF", ofertaDto.getEntidadFinanciacion()));
+			if (existeCoe) coe.setEntidadFinanciera(enf);
+			oferta.setEntidadFinanciera(enf);
+		}
+		
+		genericDao.save(Oferta.class, oferta);
+		if (existeCoe) genericDao.save(CondicionanteExpediente.class, coe);
+		
 	}
 
 	@Transactional(readOnly = false)
@@ -1856,13 +2134,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//ofertaDao.flush();
 				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
-
-				// Se copiará el valor del campo necesita financiación al campo
-				// asociado del expediente comercial
-				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
-				if (!Checks.esNulo(coe)) {
-					coe.setSolicitaFinanciacion(oferta.getNecesitaFinanciacion() ? 1 : 0);
-				}
+				
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
@@ -1887,13 +2159,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}else{
 				if (estadoOferta != null) {
-						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
+						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
 								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta))) {
 							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							
-
-							
-							if (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
+							if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) 
+							|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
 
 								oferta.setFechaAlta(null);
 								oferta.setFechaEntradaCRMSF(fechaAccion);
@@ -1909,7 +2180,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 						}else if(oferta.getEstadoOferta() != null) {
 							//Cuando codigo es Pendiente Consentimiento
-							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())) {
+							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) 
+							&& (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
 								if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
 										DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())){
 									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1961,7 +2233,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (oferta.getEstadoOferta() != null && DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
-
+		
+		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 		ofertaDao.saveOrUpdate(oferta);
 
 		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && previousState != oferta.getEstadoOferta()){
@@ -2210,6 +2483,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						oferta.setEstadoOferta(estado);
+						if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+									&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estado.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 						updateStateDispComercialActivosByOferta(oferta);
 						genericDao.save(Oferta.class, oferta);
 						
@@ -2645,7 +2920,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ofertaDto = listaOfertaDto.get(i);
 
 			// idrem puede venir o no, el idWebcom es obligatorio
-			if (!Checks.esNulo(ofertaDto.getIdOfertaRem())) {
+  			if (!Checks.esNulo(ofertaDto.getIdOfertaRem())) {
 				oferta = ofertaDao.getOfertaByIdRem(ofertaDto.getIdOfertaRem());
 			} else {
 				oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
@@ -2670,6 +2945,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else {
 					map.put("idOfertaRem", null);
 				}
+				if (oferta != null && oferta.getExpedienteComercial() != null) {
+					map.put("idExpedienteRem",  oferta.getExpedienteComercial().getNumExpediente());
+				} else {
+					map.put("idExpedienteRem", null);
+				}
 				if(!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
@@ -2683,6 +2963,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
+				map.put("idExpedienteRem", !Checks.esNulo(oferta.getExpedienteComercial()) ? oferta.getExpedienteComercial().getNumExpediente() : null);
 				map.put("success", false);
 
 				map.put("invalidFields", errorsList);
@@ -3133,8 +3414,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getOfertaExpress())) {
 					dtoResponse.setOfertaExpress(oferta.getOfertaExpress() ? "Si" : "No");
 				}
-				if (!Checks.esNulo(oferta.getNecesitaFinanciacion())) {
-					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+				if (!Checks.esNulo(oferta.getNecesitaFinanciar())) {
+					dtoResponse.setNecesitaFinanciacion(oferta.getNecesitaFinanciar().getCodigo().equals("01") ? "Si" : "No");
 				}
 				dtoResponse.setObservaciones(oferta.getObservaciones());
 				
@@ -3159,7 +3440,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(ofrCaixa.getNumOfertaCaixa() != null) {
 						dtoResponse.setNumOfertaCaixa(ofrCaixa.getNumOfertaCaixa().toString());						
 					}
-					dtoResponse.setCheckSubasta(ofrCaixa.getCheckSubasta());						
+					dtoResponse.setCheckSubasta(ofrCaixa.getCheckSubasta());	
+				}		
+							
+				if(!Checks.esNulo(oferta.getTitularesConfirmados())){
+					dtoResponse.setTitularesConfirmados(oferta.getTitularesConfirmados().getDescripcion());
 				}
 			}
 		}
@@ -3201,6 +3486,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getEstadoCivil())) {
 					dto.setEstadoCivil(oferta.getCliente().getEstadoCivil().getDescripcion());
 				}
+				if(!Checks.esNulo(oferta.getCliente().getAceptacionOferta())) {
+					dto.setAceptacionOferta(oferta.getCliente().getAceptacionOferta().getDescripcion());
+				}
 				if(clienteGCD != null) {
 					if(clienteGCD.getAdjuntoComprador() != null) {
 						dto.setADCOMIdDocumentoGDPR(clienteGCD.getAdjuntoComprador().getId());
@@ -3240,6 +3528,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
 						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
+					}
+					if(!Checks.esNulo(titularAdicional.getAceptacionOferta())) {
+						dto.setAceptacionOferta(titularAdicional.getAceptacionOferta().getDescripcion());
 					}
 					if(titularAdicional.getAdcomIdDocumentoIdentificativo() != null) {
 						dto.setADCOMIdDocumentoIdentificativo(titularAdicional.getAdcomIdDocumentoIdentificativo().getId());
@@ -4299,44 +4590,34 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 
-	private HashMap<String, String> avanzaTarea(Oferta oferta, OfertaDto ofertaDto, HashMap<String, String> errorsList) {
-		Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-		List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		boolean avanzar = true;
-
-		if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-			if (ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-			} else if (!ofertaDto.getAceptacionContraoferta()) {
-				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
-			} else {
-				avanzar = false;
+	private void avanzaTarea(Oferta oferta, OfertaDto ofertaDto) throws Exception {
+		try {
+			Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+			List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				
+			if (ofertaDto.getCodTarea().equals("01")) {
+				if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(ofertaDto.getAceptacionContraoferta())) {
+					valoresTarea.put("importeContraoferta", new String[] { ofertaDto.getImporteContraoferta().toString() });
+				}
+				valoresTarea.put("aceptacionContraoferta", new String[] { ofertaDto.getAceptacionContraoferta() });
+				valoresTarea.put("fechaRespuesta", new String[] { format.format(new Date()) });
+			} else if (ofertaDto.getCodTarea().equals("02")) {
+				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
+				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
+			} else if (ofertaDto.getCodTarea().equals("03")) {
+				valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
 			}
-		} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
-			valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
-			valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
-		} else if (ofertaDto.getCodTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
-			valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
-		} else {
-			avanzar = false;
+	
+			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+	
+			adapter.save(valoresTarea);
+		} catch (Exception e) {
+			logger.error("error en OfertasManager.avanzaTarea()", e);
+			throw new Exception(e.getMessage());
 		}
-
-		valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
-
-		if (avanzar) {
-			try {
-				adapter.save(valoresTarea);
-			} catch (Exception e) {
-				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-				logger.error("error en OfertasManager", e);
-			}
-		} else {
-			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-		}
-		return errorsList;
 	}
 
 	@Override
@@ -7075,6 +7356,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		Filter filtroTipoTexto;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date recoDC = null, recoRC = null;
+
+		try {
+			recoDC = dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC) ? sdf.parse(dto.getFecha()) : null;
+			recoRC = dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC) ? sdf.parse(dto.getFecha()) : null;
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+		}
 		
 		if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_DESCUENTO);
@@ -7084,6 +7374,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
 		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA);
 		} else{
 			filtroTipoTexto = null;
 		}
@@ -7097,14 +7397,54 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (dto.getTexto() != null && dto.getTexto().length() > 3000) {
 				throw new UserException("La longitud del texto no puede exceder los 3000 car&acute;cteres");
 			}
-			textoOferta.setTexto(dto.getTexto());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
 			textoOferta.setTipoTexto(tipoTexto);
+			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
+					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
+				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				}
+			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
+				if(dto.getTexto().equals("1") ) {
+					textoOferta.setTexto("SI");
+				}else {
+					textoOferta.setTexto("NO");
+				}
+			} else {
+				textoOferta.setTexto(dto.getTexto());
+			}
+			if (!Checks.esNulo(recoDC)) {
+				textoOferta.setFecha(recoDC);
+			} else if(!Checks.esNulo(recoRC)){
+				textoOferta.setFecha(recoRC);
+			}
 
 		} else {
 			// Modificamos un texto existente
-			textoOferta.setTexto(dto.getTexto());
+			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
+					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
+				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				}
+			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
+				if(dto.getTexto().equals("1") ) {
+					textoOferta.setTexto("SI");
+				}else {
+					textoOferta.setTexto("NO");
+				}
+			} else {
+				textoOferta.setTexto(dto.getTexto());
+			}
+			if (!Checks.esNulo(recoDC)) {
+				textoOferta.setFecha(recoDC);
+			} else if(!Checks.esNulo(recoRC)){
+				textoOferta.setFecha(recoRC);
+			}
 		}
 
 		genericDao.save(TextosOferta.class, textoOferta);

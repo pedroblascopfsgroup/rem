@@ -246,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && Ext.isEmpty(numAgrupacion);
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
             if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
             	allowEdit = true;
             }
@@ -360,6 +360,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
+				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
+				me.up('activosdetalle').lookupController().refrescarActivo(true);
+				return false;
+			}
 			var activo = me.lookupController().getViewModel().get('activo');
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
 				if(activo.get('cambioEstadoActivo')){

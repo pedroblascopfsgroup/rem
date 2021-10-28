@@ -51,6 +51,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static final String TIPO_FECHA_FIRMA_RESERVA = "02";
 	public static final String TIPO_FECHA_POSICIONAMIENTO = "03";
 	public static final String TIPO_FECHA_ENTRADA_CRMSF = "04";
+	public static final String TIPO_FECHA_OFR_PENDIENTE = "05";
 	public static final String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
 	public static final String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
 	public static final String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
@@ -436,6 +437,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCreacion", fechaDesde, fechaHasta);
 				} else if (TIPO_FECHA_FIRMA_RESERVA.equals(dto.getTipoFecha())) {
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaFirmaReserva", fechaDesde, fechaHasta);
+				} else if (TIPO_FECHA_OFR_PENDIENTE.equals(dto.getTipoFecha())) {
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaOfertaPendiente", fechaDesde, fechaHasta);
 				}
 			} catch (ParseException e) {
 				logger.error(e.getMessage());

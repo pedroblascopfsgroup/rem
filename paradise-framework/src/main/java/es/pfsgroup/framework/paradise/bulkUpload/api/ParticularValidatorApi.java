@@ -1507,4 +1507,6 @@ public interface ParticularValidatorApi {
 	Boolean existeProvision(String idProvision);
 
 	List<String> getGastosByNumProvision(String idEntidad);
+	
+	Boolean existeRecomendacionByCod(String recomendacion);
 }

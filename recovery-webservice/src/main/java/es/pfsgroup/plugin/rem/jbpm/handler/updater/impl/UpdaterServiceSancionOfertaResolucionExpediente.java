@@ -309,55 +309,57 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(act.getId());
 						if (!Checks.esNulo(comunicacionGencat)) {
 							DDEstadoComunicacionGencat estadoComunicacion = comunicacionGencat.getEstadoComunicacion();
-							if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo()) || (!Checks.esNulo(comunicacionGencat.getSancion()) && DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) ) {
-								
-								Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
-								Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
-								Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
-								List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
-								
-								if (!Checks.estaVacio(tramitesActivo)) {
-									Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-									VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
-									ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
-									activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
+							if (!Checks.esNulo(estadoComunicacion)) {
+								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo()) || (!Checks.esNulo(comunicacionGencat.getSancion()) && DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) ) {
 									
-									//Finaliza el trámite
-									activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
-								}
-								/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
-								 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
-								// finalizamos la tarea
-								if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
-									DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
-									if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									}else {
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									}
-									comunicacionGencat.setEstadoComunicacion(estado);
-									comunicacionGencat.setFechaAnulacion(new Date());
-									if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
-										comunicacionGencat.setComunicadoAnulacionAGencat(true);
-									}
+									Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+									Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+									Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
+									List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
 									
-									genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-								}
-								
-							} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
-								GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
-								gestorEntidadDto.setIdEntidad(act.getId());
-								gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
-								List<GestorEntidadHistorico> listaGestores = gestorActivoApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
-								for (GestorEntidadHistorico gestor : listaGestores) {
-									if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
-											|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
-											|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
-											&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
+									if (!Checks.estaVacio(tramitesActivo)) {
+										Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+										VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
+										ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
+										activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
 										
-											enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
+										//Finaliza el trámite
+										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
+									}
+									/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
+									 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+									// finalizamos la tarea
+									if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
+										DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
+										if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}else {
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}
+										comunicacionGencat.setEstadoComunicacion(estado);
+										comunicacionGencat.setFechaAnulacion(new Date());
+										if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
+											comunicacionGencat.setComunicadoAnulacionAGencat(true);
+										}
+										
+										genericDao.save(ComunicacionGencat.class, comunicacionGencat);
+									}
+									
+								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
+									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+									gestorEntidadDto.setIdEntidad(act.getId());
+									gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+									List<GestorEntidadHistorico> listaGestores = gestorActivoApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+									for (GestorEntidadHistorico gestor : listaGestores) {
+										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
+												&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
+											
+												enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
+										}
 									}
 								}
 							}

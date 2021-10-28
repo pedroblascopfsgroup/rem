@@ -34,8 +34,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('04','IPSI Melilla','20'),
-        T_TIPO_DATA('05','IPSI Ceuta','40')
+        T_TIPO_DATA('06','IPSI Melilla','20'),
+        T_TIPO_DATA('05','IPSI Ceuta','40'),
+        T_TIPO_DATA('04','IPSI',null)
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

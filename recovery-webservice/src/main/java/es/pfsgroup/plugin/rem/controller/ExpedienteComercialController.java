@@ -2634,7 +2634,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getUltimaResolucionComiteBC(ModelMap model, Long idExpediente) {
 		try {
 			List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = expedienteComercialApi.getListResolucionComiteBC(idExpediente);
-			model.put(RESPONSE_DATA_KEY, dtoRespuestaBCGenericaList.get(0));
+			model.put(RESPONSE_DATA_KEY, (dtoRespuestaBCGenericaList != null && !dtoRespuestaBCGenericaList.isEmpty()) ? dtoRespuestaBCGenericaList.get(0) : null);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

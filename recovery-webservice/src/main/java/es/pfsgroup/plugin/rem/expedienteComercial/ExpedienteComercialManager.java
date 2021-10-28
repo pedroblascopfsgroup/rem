@@ -4837,6 +4837,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setFechaFirmaRescision(dto.getFechaFirmaRescision());
 			}
 			
+			if(!Checks.isFechaNula(dto.getFechaContabilizacionArras())) {
+				reserva.setFechaContArras(dto.getFechaContabilizacionArras());
+			}
+			
 			genericDao.save(Reserva.class, reserva);
 			
 			CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
@@ -13024,6 +13028,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaRespuestaBC", dto.getFechaBC());
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "comentariosBC", dto.getComentariosBC());
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaEnvio", dto.getFechaEnvio());
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "observaciones", dto.getObservaciones());
 			
 			if(dto.getValidacionBC() != null) {
 				DDMotivosEstadoBC dd = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBC()));

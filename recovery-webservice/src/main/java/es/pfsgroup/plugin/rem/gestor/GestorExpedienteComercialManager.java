@@ -188,10 +188,12 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 		final String CODIGO_NOTARIA = "NOTARI";
 		final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
 		MaestroDePersonas maestroDePersonas = null;
+		List <GestorExpedienteComercial> listGex = genericDao.getList(GestorExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"expedienteComercial.id",expedienteComercial.getId()));
 
-		for (GestorExpedienteComercial gec: genericDao.getList(GestorExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"expedienteComercial.id",expedienteComercial.getId()))) {
+		for (GestorExpedienteComercial gec: listGex) {
 			if ((gec.getTipoGestor()!= null && CODIGO_NOTARIA.equals(gec.getTipoGestor().getCodigo())) || (gec.getTipoGestor()!= null && CODIGO_GESTORIA_FORMALIZACION.equals(gec.getTipoGestor().getCodigo())) && gec.getUsuario() != null){
-				for (ActivoProveedorContacto activoProveedorContacto:genericDao.getList(ActivoProveedorContacto.class,genericDao.createFilter(FilterType.EQUALS,"usuario.id",gec.getUsuario().getId()))) {
+				List<ActivoProveedorContacto> listActProveedor = genericDao.getList(ActivoProveedorContacto.class,genericDao.createFilter(FilterType.EQUALS,"usuario.id",gec.getUsuario().getId()));
+				for (ActivoProveedorContacto activoProveedorContacto: listActProveedor) {
 					if (activoProveedorContacto != null && activoProveedorContacto.getProveedor() != null && activoProveedorContacto.getProveedor().getIdPersonaHaya() == null){
 						if (maestroDePersonas == null)
 							maestroDePersonas = new MaestroDePersonas();

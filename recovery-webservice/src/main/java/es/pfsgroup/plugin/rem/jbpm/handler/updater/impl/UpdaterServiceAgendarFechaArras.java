@@ -57,6 +57,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 	private static final String MOTIVO_APLAZAMIENTO = "Suspensión proceso arras";
 	private static final String COMBO_FECHA_VENCIMIENTO_ARRAS = "fechaVencimientoArras";
 	private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String OBSERVACIONES = "observaciones";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -89,6 +90,8 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 						}
 					}else if(COMBO_FECHA_VENCIMIENTO_ARRAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						fechaVencimientoArras = valor.getValor();
+					}else if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dtoArras.setObservaciones(valor.getValor());
 					}
 				}	
 				
@@ -131,7 +134,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
-				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndArras(expediente, fechaPropuesta));
+				//ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndArras(expediente, fechaPropuesta));
 
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);

@@ -3774,10 +3774,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
 		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
+		var textAreaObservacionesBc = me.down('[name=observacionesBC]');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(textAreaObservacionesBc);
 		}
 		
 		me.bloquearObligatorio(comboTipoOferta);

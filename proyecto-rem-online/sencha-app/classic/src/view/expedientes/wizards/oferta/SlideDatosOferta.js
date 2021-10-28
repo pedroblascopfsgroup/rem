@@ -26,6 +26,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	viewModel: {
 		type: 'slidedatosoferta'
 	},
+	isBankia: false,
 
 	initComponent: function() {
 		var me = this;
@@ -38,6 +39,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		}else{
 			isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
 		}
+		me.isBankia = isBk;
 		
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},

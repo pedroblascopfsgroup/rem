@@ -11,6 +11,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 			field.fireEvent('edit');
 			if(index == 0) field.focus(); 		
 		});
+		if(me.getView().isBankia){
+			me.getViewModel().getStore("comboTipoDocumento").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
 	},
 
 	onClickCancelar: function() {

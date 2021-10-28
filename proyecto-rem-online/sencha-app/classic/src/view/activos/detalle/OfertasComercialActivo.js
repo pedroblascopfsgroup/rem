@@ -214,7 +214,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 					    			},
 					    			{
 					    				xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.empleado.caixa'),
+										fieldLabel : HreRem.i18n('fieldlabel.empleado.familiar.caixa'),
 										reference: 'empleadoCaixaRef',
 										bind : {
 											store : '{comboSiNoBoolean}',

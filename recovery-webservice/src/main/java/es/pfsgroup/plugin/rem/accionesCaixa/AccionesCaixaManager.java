@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,10 +25,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -78,6 +75,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private OfertaApi ofertaApi;
+
+    @Autowired
+    private ReplicacionOfertasApi replicacionOfertasApi;
 
     @Override
     public String managerName() {
@@ -683,6 +683,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void sendReplicarOfertaAccionesAvanzarTarea(Long idTarea, Boolean success){
-        adapter.callReplicateOferta(idTarea, success);
+        replicacionOfertasApi.callReplicateOferta(idTarea, success);
     }
 }

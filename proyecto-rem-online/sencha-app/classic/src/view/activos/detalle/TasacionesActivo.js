@@ -107,8 +107,8 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   					cls	: 'panel-base shadow-panel',
 			   					bind: {
 			   						store: '{storeTasacionesGrid}',
-			   						topBar: '{activo.isCarteraHyT}',
-				   					editOnSelect: '{activo.isCarteraHyT}'
+			   						topBar: '{isCarteraHyTOrBFA}',
+				   					editOnSelect: '{isCarteraHyTOrBFA}'
 			   					},
 			   					colspan: 3,
 			   					columns: [

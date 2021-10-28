@@ -635,8 +635,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if (dto.getSubcarteraCodigo() != null) {
 			if ("00".equals(dto.getSubcarteraCodigo())) {
 				List<String> lista = new ArrayList<String>();
-				Collections.addAll(lista, "'" + DDSubcartera.CODIGO_BAN_BFA + "'",
-						"'" + DDSubcartera.CODIGO_BAN_BH + "'", "'" + DDSubcartera.CODIGO_BAN_BK + "'");
+				Collections.addAll(lista, "'" + DDSubcartera.CODIGO_BAN_BH + "'", "'" + DDSubcartera.CODIGO_BAN_BK + "'");
 				HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcarteraCodigo", lista);
 			} else {
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());

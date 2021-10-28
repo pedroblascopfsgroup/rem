@@ -201,7 +201,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	EGEO: '13',
     	GALEON:'15',
     	ZEUS: '14',
-    	BBVA: '16',
+		BBVA: '16',
+    	BFA: '17',
     	TITULIZADA: '18'
     },
 
@@ -218,7 +219,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS',
-    	'16': 'BBVA',
+		'16': 'BBVA',
+		'17': 'BFA',
     	'18': 'TITULIZADA'
     },
 
@@ -236,6 +238,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	BBVA :'BBVA',
 		CAIXABANK : 'CAIXABANK',
 		UNICAJA : 'UNICAJA',
+		BFA : 'BFA',
 		TITULIZADA: 'TITULIZADA'
     },
 

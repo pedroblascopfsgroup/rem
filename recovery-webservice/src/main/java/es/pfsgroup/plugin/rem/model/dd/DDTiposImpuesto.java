@@ -33,8 +33,8 @@ public class DDTiposImpuesto implements Auditable, Dictionary {
 	public final static String TIPO_IMPUESTO_IVA = "01";
 	public final static String TIPO_IMPUESTO_ITP = "02";
 	public final static String TIPO_IMPUESTO_IGIC = "03";
-	public final static String TIPO_IMPUESTO_IPSI = "04";
-	
+	public final static String TIPO_IMPUESTO_IPSI_MELILLA = "04";
+	public final static String TIPO_IMPUESTO_IPSI_CEUTA = "05";
 
 	private static final long serialVersionUID = 1L;
 

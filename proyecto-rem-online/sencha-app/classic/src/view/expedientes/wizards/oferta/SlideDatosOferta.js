@@ -544,7 +544,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind: {
 									store: '{comboSiNoBoolean}',
 									value: '{oferta.antiguoDeudor}',
-									hidden: !isBk,
+									hidden: !isBk
 								},								
 					        	colspan: 2
 							},

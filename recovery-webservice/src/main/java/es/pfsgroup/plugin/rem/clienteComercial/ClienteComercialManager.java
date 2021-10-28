@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -347,6 +348,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
+		
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
+		}
 
 		clienteComercialDao.save(cliente);
 		
@@ -615,6 +626,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+		}
+		
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
 		}
 		
 		clienteComercialDao.saveOrUpdate(cliente);

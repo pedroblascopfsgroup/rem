@@ -16,6 +16,7 @@ public class DtoOfertantesOferta extends WebDto {
 	private String regimenMatrimonial;
 	private Long ADCOMIdDocumentoIdentificativo;
 	private Long ADCOMIdDocumentoGDPR;
+	private String aceptacionOferta;
 
 
 
@@ -79,7 +80,12 @@ public class DtoOfertantesOferta extends WebDto {
 	public void setADCOMIdDocumentoGDPR(Long aDCOMIdDocumentoGDPR) {
 		ADCOMIdDocumentoGDPR = aDCOMIdDocumentoGDPR;
 	}
-
+	public String getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+	public void setAceptacionOferta(String aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
+	}
 
 
 

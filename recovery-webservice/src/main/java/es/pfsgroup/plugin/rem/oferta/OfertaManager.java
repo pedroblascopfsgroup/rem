@@ -1079,6 +1079,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDResponsableDocumentacionCliente respCodCliente = genericDao.get(DDResponsableDocumentacionCliente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
 				oferta.setRespDocCliente(respCodCliente);
 			}
+			
+			if(!Checks.esNulo(ofertaDto.getTitularesConfirmados())) {
+				if(ofertaDto.getTitularesConfirmados()) {
+					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+					oferta.setTitularesConfirmados(diccionarioSiNo);
+				}else {
+					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+					oferta.setTitularesConfirmados(diccionarioSiNo);
+				}
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -1120,6 +1130,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("09");
 				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
 				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteInicial())) {
+				dto.setCampoCodigo("10");
+				dto.setTexto(ofertaDto.getImporteInicial());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaRCDC())) {
+				dto.setCampoCodigo("11");
+				dto.setTexto(ofertaDto.getImporteContraofertaRCDC());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaPrescriptor())) {
+				dto.setCampoCodigo("12");
+				dto.setTexto(ofertaDto.getImporteContraofertaPrescriptor());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
+				dto.setCampoCodigo("13");
+				if(ofertaDto.getRecomendacionRequerida()) {
+					dto.setTexto("1");
+				}else {
+					dto.setTexto("0");
+				}
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
@@ -1406,6 +1447,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 //					titAdi.setFechaAcepGdpr(ofertaDto.getFechaAcepGdpr());
 				}
 				
+				if(titDto.getAceptacionOfertaTSecundario() != null) {
+					if(titDto.getAceptacionOfertaTSecundario()) {
+						DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+						titAdi.setAceptacionOferta(diccionarioSiNo);
+					}else {
+						DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+						titAdi.setAceptacionOferta(diccionarioSiNo);
+					}
+				}
+				
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
@@ -1651,6 +1702,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCampoCodigo("09");
 				dto.setTexto(ofertaDto.getRecomendacionObservaciones());
 				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteInicial())) {
+				dto.setCampoCodigo("10");
+				dto.setTexto(ofertaDto.getImporteInicial());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaRCDC())) {
+				dto.setCampoCodigo("11");
+				dto.setTexto(ofertaDto.getImporteContraofertaRCDC());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getImporteContraofertaPrescriptor())) {
+				dto.setCampoCodigo("12");
+				dto.setTexto(ofertaDto.getImporteContraofertaPrescriptor());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
+				dto.setCampoCodigo("13");
+				if(ofertaDto.getRecomendacionRequerida()) {
+					dto.setTexto("1");
+				}else {
+					dto.setTexto("0");
+				}
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
 			}
@@ -3092,7 +3178,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (oferta.getFechaEntradaCRMSF() != null) {
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
-
+				if(!Checks.esNulo(oferta.getTitularesConfirmados())){
+					dtoResponse.setTitularesConfirmados(oferta.getTitularesConfirmados().getDescripcion());
+				}
 			}
 		}
 
@@ -3132,6 +3220,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getEstadoCivil())) {
 					dto.setEstadoCivil(oferta.getCliente().getEstadoCivil().getDescripcion());
 				}
+				if(!Checks.esNulo(oferta.getCliente().getAceptacionOferta())) {
+					dto.setAceptacionOferta(oferta.getCliente().getAceptacionOferta().getDescripcion());
+				}
 				if(clienteGCD != null) {
 					if(clienteGCD.getAdjuntoComprador() != null) {
 						dto.setADCOMIdDocumentoGDPR(clienteGCD.getAdjuntoComprador().getId());
@@ -3167,6 +3258,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
 						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
+					}
+					if(!Checks.esNulo(titularAdicional.getAceptacionOferta())) {
+						dto.setAceptacionOferta(titularAdicional.getAceptacionOferta().getDescripcion());
 					}
 					if(titularAdicional.getAdcomIdDocumentoIdentificativo() != null) {
 						dto.setADCOMIdDocumentoIdentificativo(titularAdicional.getAdcomIdDocumentoIdentificativo().getId());
@@ -6955,6 +7049,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
 		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA);
 		} else{
 			filtroTipoTexto = null;
 		}
@@ -6978,7 +7080,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(ddRecomendacionRCDC != null) {
 					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
 				}
-			}else {
+			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
+				if(dto.getTexto().equals("1") ) {
+					textoOferta.setTexto("SI");
+				}else {
+					textoOferta.setTexto("NO");
+				}
+			} else {
 				textoOferta.setTexto(dto.getTexto());
 			}
 			if (!Checks.esNulo(recoDC)) {
@@ -6989,7 +7097,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		} else {
 			// Modificamos un texto existente
-			textoOferta.setTexto(dto.getTexto());
+			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
+					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
+				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				}
+			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
+				if(dto.getTexto().equals("1") ) {
+					textoOferta.setTexto("SI");
+				}else {
+					textoOferta.setTexto("NO");
+				}
+			} else {
+				textoOferta.setTexto(dto.getTexto());
+			}
 			if (!Checks.esNulo(recoDC)) {
 				textoOferta.setFecha(recoDC);
 			} else if(!Checks.esNulo(recoRC)){

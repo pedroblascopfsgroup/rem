@@ -140,7 +140,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		    				colspan: 2
 		    			},
 		    			{
-		    				//colspan: 1
+							xtype: "textfield",
+							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.titulares.confirmados'),
+		                	name: 'titularesConfirmados',
+		                	reference: 'titularesConfirmadosRef',
+		                	bind: {	
+								value: '{detalleOfertaModel.titularesConfirmados}'
+		                	},
+		    				colspan: 1
 		    			},
 		    			{
 		    				xtype: "textfield",

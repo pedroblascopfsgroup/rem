@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -221,6 +222,10 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CLC_ACEPTACION_OFERTA")
+    private DDSinSiNo aceptacionOferta;
     
 	@Version   
 	private Long version;
@@ -639,5 +644,13 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setDocumentoConyuge(String documentoConyuge) {
 		this.documentoConyuge = documentoConyuge;
-	}   
+	}
+	
+	public DDSinSiNo getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+
+	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
+	}
 }

@@ -74,6 +74,11 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	dataIndex: 'regimenMatrimonial',
 		        	text: HreRem.i18n('header.regimen.matrimonial'),
 		        	flex:2
+		        },
+		        {
+		        	dataIndex: 'aceptacionOferta',
+		        	text: HreRem.i18n('header.aceptacion.oferta'),
+		        	flex:2
 		        },{
 					   xtype: 'actioncolumn',
 				      flex: 1,

@@ -102,6 +102,11 @@ public class OfertaDto implements Serializable {
 	private String justificacionOferta;
 	private Date fechaAcepGdpr;
 	private String recomendacionObservaciones;
+	private String importeInicial;
+	private String importeContraofertaRCDC;
+	private String importeContraofertaPrescriptor;
+	private Boolean recomendacionRequerida;
+	private Boolean titularesConfirmados;
 	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -443,5 +448,34 @@ public class OfertaDto implements Serializable {
 	public void setTestigos(List<TestigosOfertaDto> testigos) {
 		this.testigos = testigos;
 	}
-
+	public String getImporteInicial() {
+		return importeInicial;
+	}
+	public void setImporteInicial(String importeInicial) {
+		this.importeInicial = importeInicial;
+	}
+	public String getImporteContraofertaRCDC() {
+		return importeContraofertaRCDC;
+	}
+	public void setImporteContraofertaRCDC(String importeContraofertaRCDC) {
+		this.importeContraofertaRCDC = importeContraofertaRCDC;
+	}
+	public String getImporteContraofertaPrescriptor() {
+		return importeContraofertaPrescriptor;
+	}
+	public void setImporteContraofertaPrescriptor(String importeContraofertaPrescriptor) {
+		this.importeContraofertaPrescriptor = importeContraofertaPrescriptor;
+	}
+	public Boolean getRecomendacionRequerida() {
+		return recomendacionRequerida;
+	}
+	public void setRecomendacionRequerida(Boolean recomendacionRequerida) {
+		this.recomendacionRequerida = recomendacionRequerida;
+	}
+	public Boolean getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(Boolean titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
+	}
 }

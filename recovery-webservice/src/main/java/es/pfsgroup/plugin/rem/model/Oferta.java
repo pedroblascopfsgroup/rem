@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -368,6 +369,10 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MJO_ID")
 	private DDMotivoJustificacionOferta motivoJustificacionOferta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_TITULARES_CONFIRMADOS")
+    private DDSinSiNo titularesConfirmados;
 
 
 	public Date getFechaAlta() {
@@ -1116,6 +1121,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setMotivoJustificacionOferta(DDMotivoJustificacionOferta motivoJustificacionOferta) {
 		this.motivoJustificacionOferta = motivoJustificacionOferta;
+	}
+	
+	public DDSinSiNo getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+
+	public void setTitularesConfirmados(DDSinSiNo titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
 	}
 	
 }

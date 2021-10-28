@@ -18,6 +18,7 @@ public class DtoDetalleOferta {
 	private String necesitaFinanciacion;
 	private String observaciones;
 	private Date fechaEntradaCRMSF;
+	private String titularesConfirmados;
 
 
 	public String getId() {
@@ -97,6 +98,12 @@ public class DtoDetalleOferta {
 	}
 	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
 		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+	public String getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(String titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
 	}
 	
 }

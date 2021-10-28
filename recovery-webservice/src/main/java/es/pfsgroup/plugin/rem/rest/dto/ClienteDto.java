@@ -127,6 +127,8 @@ public class ClienteDto implements Serializable{
 	private Boolean comunicacionTerceros;
 	private Boolean transferenciasInternacionales;
 	
+	private Boolean aceptacionOfertaTPrincipal;
+	
 	//REMVIP-3846
 	@Size(max=10,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El conyugeTipoDocumento no existe", groups = { Insert.class,
@@ -428,5 +430,11 @@ public class ClienteDto implements Serializable{
 	}
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+	public Boolean getAceptacionOfertaTPrincipal() {
+		return aceptacionOfertaTPrincipal;
+	}
+	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
+		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
 	}
 }

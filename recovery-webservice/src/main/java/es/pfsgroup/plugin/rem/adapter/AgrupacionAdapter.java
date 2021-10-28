@@ -1979,8 +1979,8 @@ public class AgrupacionAdapter {
 									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
 								} else {
 									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-										.dameValorDiccionarioByCod(DDEstadoOferta.class,
-												DDEstadoOferta.CODIGO_PENDIENTE);
+											.dameValorDiccionarioByCod(DDEstadoOferta.class,
+													DDEstadoOferta.CODIGO_PENDIENTE);
 									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(estadoOferta);
 									if (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 										ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
@@ -2645,22 +2645,6 @@ public class AgrupacionAdapter {
 			}
 
 			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
-			oferta.setNumOferta(numOferta);
-			oferta.setAgrupacion(agrupacion);
-			
-			if (!Checks.esNulo(dto.getImporteOferta())) {
-				try{
-					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
-				}catch(NumberFormatException ne){
-					logger.warn("Formato numero incorrecto");
-					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
-				}
-			}
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
-			oferta.setTipoOferta(tipoOferta);
-			oferta.setFechaAlta(new Date());
 
 			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
@@ -2888,6 +2872,8 @@ public class AgrupacionAdapter {
 			   
 			}
 			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 

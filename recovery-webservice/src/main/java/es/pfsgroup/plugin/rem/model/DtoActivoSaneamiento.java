@@ -533,6 +533,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setIsCarteraBankia(Boolean isCarteraBankia) {
 		this.isCarteraBankia = isCarteraBankia;
+	}
 	public Boolean getPlusvaliaComprador() {
 		return plusvaliaComprador;
 	}

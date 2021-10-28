@@ -1679,7 +1679,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposActivo'}
 			}
-    	}
+    	},
 		
 		storeMotivoRechazoAntiguoDeudor:{
 			model: 'HreRem.model.ComboBase',

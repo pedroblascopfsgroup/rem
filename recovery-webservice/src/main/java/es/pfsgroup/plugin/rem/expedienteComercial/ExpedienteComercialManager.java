@@ -9320,7 +9320,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
 								codigoError = "imposible.bloquear.financiacion.no.informada";
 							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
+								if (!Checks.esNulo(financiacion.getSolicitaFinanciacion()) 
+										&& financiacion.getSolicitaFinanciacion().equals("01")
 										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
 									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
 								}
@@ -9341,7 +9342,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
 								codigoError = "imposible.bloquear.financiacion.no.informada";
 							} else {
-								if (financiacion.getSolicitaFinanciacion() == 1
+								if (!Checks.esNulo(financiacion.getSolicitaFinanciacion()) 
+										&& financiacion.getSolicitaFinanciacion().equals("01")
 										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
 									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
 								}

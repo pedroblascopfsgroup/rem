@@ -119,7 +119,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
 
             ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
-			String motivoAnulacionExpediente = DDMotivoAnulacionExpediente.CODIGO_ORDEN_PROPIEDAD;
+			String motivoAnulacionExpediente = dto.getMotivoAnulacion();
 			if(eco.getOferta() != null && DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
 				TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
 				if(tarea != null && tarea.getTareaProcedimiento() != null) {

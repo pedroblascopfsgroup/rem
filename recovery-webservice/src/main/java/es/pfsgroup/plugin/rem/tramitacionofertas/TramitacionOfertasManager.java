@@ -1193,6 +1193,22 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
 					}
 					
+					if (!Checks.esNulo(titularAdicional.getFechaNacimiento())) {
+						compradorBusquedaAdicional.setFechaNacimientoConstitucion(titularAdicional.getFechaNacimiento());;
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getPaisNacimiento())) {
+						compradorBusquedaAdicional.setPaisNacimientoComprador(titularAdicional.getPaisNacimiento());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getProvinciaNacimiento())) {
+						compradorBusquedaAdicional.setProvinciaNacimiento(titularAdicional.getProvinciaNacimiento());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getLocalidadNacimiento())) {
+						compradorBusquedaAdicional.setLocalidadNacimientoComprador(titularAdicional.getLocalidadNacimiento());
+					}
+					
 					if (!Checks.esNulo(compradorBusquedaAdicional.getIdCompradorUrsus())) {
 						compradorBusquedaAdicional.setIdCompradorUrsus(null);
 					}
@@ -1244,6 +1260,22 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					compradorExpedienteAdicionalNuevo
 							.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
 					compradorExpedienteAdicionalNuevo.setEstadoInterlocutor(interlocutorActivo);
+					
+					if (!Checks.esNulo(titularAdicional.getFechaNacimientoRep())) {
+						compradorExpedienteAdicionalNuevo.setFechaNacimientoRepresentante(titularAdicional.getFechaNacimientoRep());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getPaisNacimientoRep())) {
+						compradorExpedienteAdicionalNuevo.setPaisNacimientoRepresentante(titularAdicional.getPaisNacimientoRep());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getProvinciaNacimientoRep())) {
+						compradorExpedienteAdicionalNuevo.setProvinciaNacimientoRep(titularAdicional.getProvinciaNacimientoRep());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getLocalidadNacimientoRep())) {
+						compradorExpedienteAdicionalNuevo.setLocalidadNacimientoRepresentante(titularAdicional.getLocalidadNacimientoRep());
+					}
 
 					if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 						this.setInterlocutorOferta(compradorExpedienteAdicionalNuevo, false, oferta);

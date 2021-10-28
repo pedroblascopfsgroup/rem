@@ -4837,6 +4837,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setFechaFirmaRescision(dto.getFechaFirmaRescision());
 			}
 			
+			if(!Checks.isFechaNula(dto.getFechaContabilizacionArras())) {
+				reserva.setFechaContArras(dto.getFechaContabilizacionArras());
+			}
+			
 			genericDao.save(Reserva.class, reserva);
 			
 			CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));

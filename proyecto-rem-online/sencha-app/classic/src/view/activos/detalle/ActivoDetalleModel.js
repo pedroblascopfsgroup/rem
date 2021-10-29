@@ -940,14 +940,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    },
 	    
-	    esSuperUsuarioAndNoUA: function(get){
+	    esUnRolPreinmueble: function(get){
+	    	var isOneRol = false;
+	    	isOneRol= $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || 
+				$AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+    		return isOneRol;
+	    },
+	    
+		esSuperUsuarioAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {
 	    		UA = get('activo.unidadAlquilable');
 	    	}
     		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
 	    },
-	    
+
 	    esSuperUsuarioCalidadDatoAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {

@@ -258,7 +258,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 11: Activo en trámite
 		if(!Checks.esNulo(activo.getEnTramite()) && activo.getEnTramite()==1) {
 			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Activo en trámite");
+			dtoAviso.setDescripcion("Preinmueble");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

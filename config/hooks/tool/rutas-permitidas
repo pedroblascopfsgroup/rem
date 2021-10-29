@@ -208,7 +208,6 @@ func-rem-cierreOficinas|R-Ambersweet
 rem_mirror|func-rem-contrasteDeListas
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
-<<<<<<< HEAD
 func-rem-modeloHydra|func-rem-comercialHydra
 func-rem-confirmacionTitulares|func-rem-comercialHydra
 func-rem-contrasteDeListas|func-rem-comercialHydra
@@ -220,9 +219,7 @@ func-rem-comercialHydra|R-Hydra
 func-rem-modeloHydra|func-rem-campanyasHydra
 func-rem-campanyasHydra|R-Hydra
 rem_mirror|func-rem-subcarteraBFA
-=======
 rem_mirror|func-rem-procesoOfertas
->>>>>>> func-rem-procesoOfertas
 rem_mirror|func-rem-cuadreContableBBVA
 func-rem-cuadreContableBBVA|R-Chislett
 func-rem-fichaClientes|R-Chislett
@@ -231,13 +228,10 @@ func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
-<<<<<<< HEAD
 func-rem-modeloHydra|func-rem-preparacionHYDRA
 func-rem-preparacionHYDRA|func-rem-comercialHydra
 rem_mirror|func-rem-jupiter
 func-rem-modeloHydra|func-rem-func-rem-stockHydra
 rem_mirror|func-rem-onboardingBFA
-=======
 func-rem-confirmacionTitulares|func-rem-procesoOfertas
->>>>>>> func-rem-procesoOfertas
 rem_mirror|func-rem-jupiter

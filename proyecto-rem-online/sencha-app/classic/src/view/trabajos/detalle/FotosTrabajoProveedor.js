@@ -67,7 +67,7 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoProveedor', {
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos del proveedor (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
-                itemdblclick: function(dataview,record) {
+                itemclick: function(dataview,record) {
 	        		this.up('form').setBindRecord(record.data);
 	        	}
             }

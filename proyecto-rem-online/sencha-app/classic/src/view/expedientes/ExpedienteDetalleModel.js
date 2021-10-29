@@ -1834,6 +1834,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				},
 			autoLoad: true
 			}
-		}
+		},
+
+    	comboTipoImpuesto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getTiposImpuestoFiltered',
+				extraParams: {esBankia: '{expediente.esBankia}'}
+			}   
+    	}
     }
 });

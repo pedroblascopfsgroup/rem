@@ -3774,10 +3774,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
 		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
+		var textAreaObservacionesBc = me.down('[name=observacionesBC]');
 		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 		
 		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
+			me.bloquearObligatorio(textAreaObservacionesBc);
 		}
 		
 		me.bloquearObligatorio(comboTipoOferta);
@@ -3899,10 +3901,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
 		var textExpedienteAnterior = me.down('[name=expedienteAnterior]');
-		
+		 
 		me.deshabilitarCampo(textExpedienteAnterior);
 		me.deshabilitarCampo(comboIsVulnerable);
-		
+	
 		comboTipoOferta.addListener('change', function(combo) {
 			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
@@ -3911,6 +3913,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 				me.campoObligatorio(comboIsVulnerable);
 				textExpedienteAnterior.setValue('');
 				me.deshabilitarCampo(textExpedienteAnterior);
+				me.habilitarCampo(textExpedienteAnterior);
+				textExpedienteAnterior.allowBlank = true;	
 			}else if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_NOVACIONES'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(textExpedienteAnterior);

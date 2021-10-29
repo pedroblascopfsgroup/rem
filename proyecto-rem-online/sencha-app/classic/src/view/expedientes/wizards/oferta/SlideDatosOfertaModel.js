@@ -45,7 +45,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {
-					diccionario: 'tiposDocumentos'
+					diccionario: 'tipoDeDocumento'
 				}
 			}
 		},

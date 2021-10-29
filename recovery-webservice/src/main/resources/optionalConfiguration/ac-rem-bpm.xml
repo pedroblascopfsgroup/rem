@@ -805,9 +805,9 @@
             	return tramiteVentaManager.checkFechaContabilizacionArras(tareaExterna);
             }
             
-             def checkGarantiasNinguna = {
+             def checkGarantiasNinguna (String expedienteAnterior) {
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
-				return tramiteAlquilerManager.checkGarantiasNinguna(tareaExterna, valores);
+				return tramiteAlquilerManager.checkGarantiasNinguna(tareaExterna, expedienteAnterior);
             }
            
   			 ]]></value>

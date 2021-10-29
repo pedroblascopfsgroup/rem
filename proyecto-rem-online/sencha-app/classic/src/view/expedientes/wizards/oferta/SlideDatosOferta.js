@@ -26,6 +26,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	viewModel: {
 		type: 'slidedatosoferta'
 	},
+	isBankia: false,
 
 	initComponent: function() {
 		var me = this;
@@ -38,6 +39,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		}else{
 			isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
 		}
+		me.isBankia = isBk;
 		
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
@@ -254,7 +256,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
 	    									apellidos.setDisabled(false);
-	    									nombre.setDisabled(false)
+	    									nombre.setDisabled(false);
 	    									razonSocial.setDisabled(true);
 	    									estadoCivil.allowBlank = false;
 	    									tipoDocumentoRepresentante.allowBlank = true;
@@ -274,9 +276,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									razonSocial.reset();
 	    								}else{
 	    									apellidos.setDisabled(true);
-	    									nombre.setDisabled(true)
+	    									nombre.setDisabled(true);
 	    									razonSocial.setDisabled(false);
-	    									estadoCivil.setDisabled(true)
+	    									estadoCivil.setDisabled(true);
 	    									regimen.setDisabled(true);
 	    									estadoCivil.allowBlank = true;
 	    									tipoDocumentoRepresentante.allowBlank = false;
@@ -544,7 +546,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								bind: {
 									store: '{comboSiNoBoolean}',
 									value: '{oferta.antiguoDeudor}',
-									hidden: !isBk,
+									hidden: !isBk
 								},								
 					        	colspan: 2
 							},

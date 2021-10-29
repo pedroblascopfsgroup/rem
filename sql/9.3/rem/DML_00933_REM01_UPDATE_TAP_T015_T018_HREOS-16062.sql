@@ -31,10 +31,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('T015_SolicitarGarantiasAdicionales','checkBankia() == true ? (haPasadoScoringBC() && valores[''''T015_SolicitarGarantiasAdicionales''''][''''comboResultado''''] == DDSiNo.NO)  ? tieneRellenosCamposAnulacion()  ? null  : ''''Se deben rellenar el motivo anulaci&oacute;n, la fecha anulaci&oacute;n y el detalle anulaci&oacute;n'''' : valores[''''T015_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_NINGUNA ? checkGarantiasNinguna() == true ?  null : ''''Se debe desmarcar los bloques de la pesta&ntilde;a de Garant&iacute;as para poder avanzar la tarea.'''' : null'),
-        T_TIPO_DATA('T018_SolicitarGarantiasAdicionales','checkBankia() == true && valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_AVAL ? checkAvalCondiciones() == true ? null : ''''El campo de Aval tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_SEGURO_RENTA ? checkSeguroRentasCondiciones() == true ? null : ''''El campo Seguro de rentas tiene que estar informado'''' : valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_DEPOSITO ? validarMesesImporteDeposito() == true ? null : ''''El campo Importe y el Campo Meses del Dep&oacute;sito, tiene que estar informado.'''': valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador''''] == DDRespuestaComprador.CODIGO_NINGUNA ? checkGarantiasNinguna() == true ?  null : ''''Se debe desmarcar los bloques de la pesta&ntilde;a de Garant&iacute;as para poder avanzar la tarea.'''' : null')
-
-
+        T_TIPO_DATA('T015_SolicitarGarantiasAdicionales','checkBankia() == true ? (haPasadoScoringBC() && valores[''''T015_SolicitarGarantiasAdicionales''''][''''comboResultado''''] == DDSiNo.NO)  ? tieneRellenosCamposAnulacion()  ? null  : ''''Se deben rellenar el motivo anulaci&oacute;n, la fecha anulaci&oacute;n y el detalle anulaci&oacute;n'''' : checkGarantiasNinguna(valores[''''T015_SolicitarGarantiasAdicionales''''][''''respuestaComprador'''']) : null'),
+        T_TIPO_DATA('T018_SolicitarGarantiasAdicionales','checkBankia() == true ?  checkGarantiasNinguna(valores[''''T018_SolicitarGarantiasAdicionales''''][''''respuestaComprador'''']) : null')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	

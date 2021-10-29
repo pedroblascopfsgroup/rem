@@ -33,7 +33,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {
-					diccionario: 'tiposDocumentos'
+					diccionario: 'tipoDeDocumento'
 				}
 			}
 		},

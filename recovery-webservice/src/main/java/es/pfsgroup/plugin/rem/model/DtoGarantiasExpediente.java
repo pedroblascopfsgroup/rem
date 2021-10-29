@@ -48,6 +48,7 @@ public class DtoGarantiasExpediente extends WebDto {
 	private Integer mesesDeposito;
 	private Boolean depositoActualizable;
 	private Double importeDeposito;
+	private Boolean checkDeposito;
 	
 	public Long getIdGarantias() {
 		return idGarantias;
@@ -240,6 +241,12 @@ public class DtoGarantiasExpediente extends WebDto {
 	}
 	public void setImporteDeposito(Double importeDeposito) {
 		this.importeDeposito = importeDeposito;
+	}
+	public Boolean getCheckDeposito() {
+		return checkDeposito;
+	}
+	public void setCheckDeposito(Boolean checkDeposito) {
+		this.checkDeposito = checkDeposito;
 	}
 	
 	

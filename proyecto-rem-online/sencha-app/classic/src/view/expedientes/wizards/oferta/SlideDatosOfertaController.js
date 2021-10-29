@@ -11,6 +11,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 			field.fireEvent('edit');
 			if(index == 0) field.focus(); 		
 		});
+		if(me.getView().isBankia){
+			me.getViewModel().getStore("comboTipoDocumento").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
 	},
 
 	onClickCancelar: function() {
@@ -460,6 +465,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
             }else{
                 me.fireEvent("errorToast", HreRem.i18n("wizardOferta.operacion.ko.nueva.oferta")+valueDestComercial);
             }
+        } else {
+        	if(!Ext.isEmpty(form.findField('nombrePrescriptor')) && Ext.isEmpty(form.findField('nombrePrescriptor').value)){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.prescriptor"));
+        	}else{
+        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador"));
+        	}
         }
     },
     

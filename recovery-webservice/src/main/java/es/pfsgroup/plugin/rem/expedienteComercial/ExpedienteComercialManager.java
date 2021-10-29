@@ -4837,6 +4837,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setFechaFirmaRescision(dto.getFechaFirmaRescision());
 			}
 			
+			if(!Checks.isFechaNula(dto.getFechaContabilizacionArras())) {
+				reserva.setFechaContArras(dto.getFechaContabilizacionArras());
+			}
+			
 			genericDao.save(Reserva.class, reserva);
 			
 			CondicionesReserva condiciones = genericDao.get(CondicionesReserva.class, genericDao.createFilter(FilterType.EQUALS, "reserva.id", reserva.getId()));
@@ -13024,6 +13028,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaRespuestaBC", dto.getFechaBC());
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "comentariosBC", dto.getComentariosBC());
 			beanUtilNotNull.copyProperty(fechaArrasExpediente, "fechaEnvio", dto.getFechaEnvio());
+			beanUtilNotNull.copyProperty(fechaArrasExpediente, "observaciones", dto.getObservaciones());
 			
 			if(dto.getValidacionBC() != null) {
 				DDMotivosEstadoBC dd = genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getValidacionBC()));
@@ -14348,7 +14353,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ScoringAlquiler scoring = genericDao.get(ScoringAlquiler.class, filter);
 			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filter);
 			SeguroRentasAlquiler sra = genericDao.get(SeguroRentasAlquiler.class, filter);
-			CondicionanteExpediente condiciones = expediente.getCondicionante();
+			
 			if (scoring != null) {
 				
 				if (scoring.getRatingScoringServicer() != null) {
@@ -14402,6 +14407,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (coe.getImporteAval() != null) {
 					dto.setImporteAval(coe.getImporteAval());
 				}
+				if (!Checks.esNulo(coe.getMesesDeposito())) {
+					dto.setMesesDeposito(coe.getMesesDeposito());
+				}
+				
+				if (!Checks.esNulo(coe.getDepositoActualizable())) {
+					dto.setDepositoActualizable(coe.getDepositoActualizable());
+				}
+							
+				if (!Checks.esNulo(coe.getImporteDeposito())) {
+					dto.setImporteDeposito(coe.getImporteDeposito());
+				}
+				if(coe.getCheckDeposito() != null && coe.getCheckDeposito()) {
+					dto.setCheckDeposito(coe.getCheckDeposito());
+				}
+				
 			}
 			if (sra != null) {
 				
@@ -14422,21 +14442,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (sra.getImporteRentasBc() != null) {
 					dto.setImporteRentas(sra.getImporteRentasBc());
 				}
-			}
-			
-			if(condiciones != null) {
-				if (!Checks.esNulo(condiciones.getMesesDeposito())) {
-					dto.setMesesDeposito(condiciones.getMesesDeposito());
-				}
-				
-				if (!Checks.esNulo(condiciones.getDepositoActualizable())) {
-								dto.setDepositoActualizable(condiciones.getDepositoActualizable());
-				}
-							
-				if (!Checks.esNulo(condiciones.getImporteDeposito())) {
-					dto.setImporteDeposito(condiciones.getImporteDeposito());
-				}
-				
 			}
 			
 			boolean completada = false;
@@ -14546,6 +14551,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (dto.getImporteAval() != null) {
 				coe.setImporteAval(dto.getImporteAval());
 			}
+			
+			if(dto.getCheckDeposito() != null && dto.getCheckDeposito()){
+				coe.setCheckDeposito(dto.getCheckDeposito());
+			}else {
+				coe.setCheckDeposito(false);
+			}
+			 
 			genericDao.save(CondicionanteExpediente.class, coe);
 			
 		}

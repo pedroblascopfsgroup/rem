@@ -17,6 +17,10 @@ public class TareaProcedimientoConstants {
     public static final String CODIGO_T018_SCORING_BC = "T018_ScoringBc";
     public static final String CODIGO_T018_RESOLUCION_COMITE = "T018_ResolucionComite";
     public static final String CODIGO_T018_REVISION_BC_Y_CONDICIONES = "T018_RevisionBcYCondiciones";
+
+    public class TramiteComercialT017{
+        public static final String CODIGO_T017_AGENDAR_FECHA_ARRAS = "T017_AgendarFechaFirmaArras";
+    }
     
     public class TramiteAlquilerT015{
     	public static final String CODIGO_SANCION = "T015_SancionBC";

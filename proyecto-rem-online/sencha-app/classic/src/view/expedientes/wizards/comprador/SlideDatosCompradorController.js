@@ -45,6 +45,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		Ext.Array.each(me.getView().query('field[isReadOnlyEdit]'), function(field) {
 			field.setReadOnly(!wizard.modoEdicion);
 		});
+		if(me.getView().up().expediente.data.esBankia){
+			me.getViewModel().getStore("comboTipoDocumento").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
 		
 	},
 

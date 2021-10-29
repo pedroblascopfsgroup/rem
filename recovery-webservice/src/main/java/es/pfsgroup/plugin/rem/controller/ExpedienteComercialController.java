@@ -13,6 +13,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1073,7 +1075,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveReserva(DtoReserva dto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveReserva(dto, id));
+			boolean success = expedienteComercialApi.saveReserva(dto, id);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+			if(success &&
+					(dto.getFechaPropuestaProrrogaArras() != null ||
+					 dto.getFechaVigenciaArras() != null ||
+					 dto.getFechaComunicacionCliente() != null)
+			  ){
+				Oferta oferta = expedienteComercialApi.findOne(id).getOferta();
+				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
+					ofertaApi.replicateOfertaFlush(oferta);
+				}
+			}
+
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "reserva",
 					ACCION_CODIGO.CODIGO_MODIFICAR);
 
@@ -2619,7 +2634,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getUltimaResolucionComiteBC(ModelMap model, Long idExpediente) {
 		try {
 			List<DtoRespuestaBCGenerica> dtoRespuestaBCGenericaList = expedienteComercialApi.getListResolucionComiteBC(idExpediente);
-			model.put(RESPONSE_DATA_KEY, dtoRespuestaBCGenericaList.get(0));
+			model.put(RESPONSE_DATA_KEY, (dtoRespuestaBCGenericaList != null && !dtoRespuestaBCGenericaList.isEmpty()) ? dtoRespuestaBCGenericaList.get(0) : null);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

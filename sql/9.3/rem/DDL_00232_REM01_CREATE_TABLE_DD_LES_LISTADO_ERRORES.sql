@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210530
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211029
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-13884
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16116
 --## PRODUCTO=NO
 --##
---## Finalidad: Crear la tabla OGR_OFERTAS_AGRUPADAS_LBK.
+--## Finalidad: Crear la tabla DD_LES_LISTADO_ERRORES_SAP.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-13884] - PIER GOTTA
+--##        0.2 Ampliar campo DD_LES_CODIGO a 32 BYTE - [HREOS-16116] - Alejandra García
 --##########################################
 --*/
 
@@ -28,7 +29,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TABLA VARCHAR2(27 CHAR) := 'DD_LES_LISTADO_ERRORES_SAP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-13884';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16116';
     
     
  BEGIN
@@ -59,7 +60,7 @@ DECLARE
 		V_SQL := 'CREATE TABLE ' || V_ESQUEMA || '.'||V_TABLA||'
                     (
                       DD_LES_ID         		NUMBER(16)          NOT NULL,
-                      DD_LES_CODIGO            	VARCHAR2(10 CHAR)   NOT NULL,
+                      DD_LES_CODIGO            	VARCHAR2(32 BYTE)   NOT NULL,
                       DD_RETORNO_SAPBC        	VARCHAR2(50 CHAR)   NOT NULL,
                       DD_TEXT_MENSAJE_SAP	  	VARCHAR2(300 CHAR)  NOT NULL,
                       DD_EGA_ID			NUMBER(16),

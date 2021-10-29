@@ -7,7 +7,6 @@
 --## INCIDENCIA_LINK=HREOS-14547
 --## PRODUCTO=NO
 --##
---## Finalidad: Añadir campos nuevos a la tabla OFR_OFERTAS_CAIXA
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial

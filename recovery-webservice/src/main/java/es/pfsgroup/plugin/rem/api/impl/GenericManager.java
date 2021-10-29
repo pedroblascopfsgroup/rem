@@ -2018,20 +2018,24 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera){
+	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera){
 
 		MaestroDePersonas maestroDePersonas = null;
 
 		String idPersonaHayaCaixa = null;
 
-		if (codCartera == null) {
+		if (codCartera == null || codSubCartera == null) {
 			maestroDePersonas = new MaestroDePersonas();
 
 			if (documentoProveedor != null)
 				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(documentoProveedor, codProveedorRem != null ? Long.parseLong(codProveedorRem) : null);
 
 		}else {
-			maestroDePersonas = new MaestroDePersonas(gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),null,null));
+			maestroDePersonas = new MaestroDePersonas(
+					gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(
+							genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),
+							genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codSubCartera)),
+							null));
 
 			if (documentoInterlocutor != null)
 				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumento(documentoInterlocutor);

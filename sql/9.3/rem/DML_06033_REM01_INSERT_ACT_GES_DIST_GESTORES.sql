@@ -27,6 +27,10 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-16043'; -- Usuario modificar
+
+    V_TGE VARCHAR2(25 CHAR):= 'GCOM'; -- Usuario modificar
+    V_USERNAME VARCHAR2(25 CHAR):= 'msanchezf'; -- Usuario modificar
+
 BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
@@ -60,9 +64,17 @@ BEGIN
   	
 	EXECUTE IMMEDIATE V_MSQL; 
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '|| SQL%ROWCOUNT ||' REGISTROS PARA Titulizadas EN '||V_TEXT_TABLA);
+    DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '|| SQL%ROWCOUNT ||' REGISTROS PARA Titulizada EN '||V_TEXT_TABLA);
 
-   
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET 
+                USERNAME = '''||V_USERNAME||''',
+                NOMBRE_USUARIO = (SELECT USU.USU_NOMBRE ||'' ''|| USU.USU_APELLIDO1 ||'' ''|| USU.USU_APELLIDO2 
+                FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = '''||V_USERNAME||''')
+                WHERE TIPO_GESTOR = '''||V_TGE||''' AND COD_CARTERA = 18 AND BORRADO = 0';
+  	
+	EXECUTE IMMEDIATE V_MSQL; 
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICADOS '|| SQL%ROWCOUNT ||' REGISTROS PARA Titulizada '''||V_TGE||''' - '''||V_USERNAME||''' EN '||V_TEXT_TABLA);
 
 	COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]');

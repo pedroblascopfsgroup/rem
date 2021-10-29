@@ -889,12 +889,13 @@ public class GenericController extends ParadiseJsonController{
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void idPersonaHaya(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
-								   @RequestParam (required = false) String documentoInterlocutor,
-								   @RequestParam (required = false) String documentoProveedor,
-								   @RequestParam (required = false) String codCartera,
-								   @RequestParam (required = false) String codProveedor){
+											  @RequestParam (required = false) String documentoInterlocutor,
+											  @RequestParam (required = false) String documentoProveedor,
+											  @RequestParam (required = false) String codCartera,
+											  @RequestParam (required = false) String codSubCartera,
+											  @RequestParam (required = false) String codProveedor){
 
-		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera));
+		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera,codSubCartera));
 
 		restApi.sendResponse(response, model, request);
 	}

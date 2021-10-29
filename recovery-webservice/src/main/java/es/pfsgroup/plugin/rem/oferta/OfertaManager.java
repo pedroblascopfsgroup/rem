@@ -7558,6 +7558,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_OTRAS_CARTERAS))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_OTRAS_CARTERAS_INMB));
+			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_TITULIZADA))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_TITULIZADA_EDT) || codSubcartera.equals(DDSubcartera.CODIGO_TITULIZADA_TDA));
 
 			 
 		 }

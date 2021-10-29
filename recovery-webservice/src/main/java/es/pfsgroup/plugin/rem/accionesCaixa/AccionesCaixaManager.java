@@ -22,6 +22,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
@@ -78,6 +79,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private ReplicacionOfertasApi replicacionOfertasApi;
+    
+    @Autowired
+    private ReservaApi reservaApi;
 
     @Override
     public String managerName() {
@@ -346,14 +350,19 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
-        expediente.setEstadoBc(estadoExpedienteBc);
+        
+        Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
+        if(reservaApi.tieneReservaFirmada(expediente)) {
+        	  filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC);
+        }
+        
+        expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+        expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, filter));
         if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
         	expediente.setFechaAnulacion(new Date());
         }
 
-
+        ofertaApi.finalizarOferta(expediente.getOferta());
         genericDao.save(ExpedienteComercial.class, expediente);
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }

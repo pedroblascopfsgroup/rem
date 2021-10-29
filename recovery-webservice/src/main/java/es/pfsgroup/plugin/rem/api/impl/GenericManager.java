@@ -2047,7 +2047,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtro = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI);
 			return genericDao.getList(DDTiposImpuesto.class, filtro);
 		}else {
-			return genericDao.getList(DDTiposImpuesto.class);
+			Filter filtro1 = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI_CEUTA);
+			Filter filtro2 = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI_MELILLA);
+			return genericDao.getList(DDTiposImpuesto.class, filtro1,filtro2);
 		}
 		 
 	}

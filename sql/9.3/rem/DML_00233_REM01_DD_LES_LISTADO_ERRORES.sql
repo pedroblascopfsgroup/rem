@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20210813
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211029
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-14300
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16116
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_SAP.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-14300] - PIER GOTTA
+--##        0.2 Modificar campo DD_LES_CODIGO para rellenarlo con SYS_GUID() - [HREOS-16116] - Alejandra García
 --##########################################
 --*/
 
@@ -37,20 +38,20 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_LES_LISTADO_ERRORES_SAP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-13884';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16116';
 
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('01','700','Gasto OK, pendiente de aprobación.','09','03','05'),
-	T_TIPO_DATA('02','999','Gasto KO, pero se subsana en SAPBC (periodo contable cerrado, etc) y no requiere gestión por parte de Haya.', '08','01','04'),
-	T_TIPO_DATA('03','000','Gasto contabilizado.','04','03','07'),
-	T_TIPO_DATA('04','701','Gasto rechazado, requiere gestión por parte de Haya (vendrá acompañado de algún texto que clarifique el problema).','08','01','04'),
-	T_TIPO_DATA('05','600','Gasto Ok, pero error en otro gasto de provisión.','03','03','01'),
-	T_TIPO_DATA('06','800','Gasto pagado','05','03','07'),
-	T_TIPO_DATA('07','801','Gasto retrocedido y vuelto a pagar.','05','03','07'),
-	T_TIPO_DATA('08','802','Anulación pago.','04','03','07')
+	T_TIPO_DATA('700','Gasto OK, pendiente de aprobación.','09','03','05'),
+	T_TIPO_DATA('999','Gasto KO, pero se subsana en SAPBC (periodo contable cerrado, etc) y no requiere gestión por parte de Haya.', '08','01','04'),
+	T_TIPO_DATA('000','Gasto contabilizado.','04','03','07'),
+	T_TIPO_DATA('701','Gasto rechazado, requiere gestión por parte de Haya (vendrá acompañado de algún texto que clarifique el problema).','08','01','04'),
+	T_TIPO_DATA('600','Gasto Ok, pero error en otro gasto de provisión.','03','03','01'),
+	T_TIPO_DATA('800','Gasto pagado','05','03','07'),
+	T_TIPO_DATA('801','Gasto retrocedido y vuelto a pagar.','05','03','07'),
+	T_TIPO_DATA('802','Anulación pago.','04','03','07')
 
 
     ); 
@@ -67,17 +68,19 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_LES_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS > 0 THEN				
           -- Si existe se modifica.
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TEXT_MENSAJE_SAP = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+                    'SET DD_TEXT_MENSAJE_SAP = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					', DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''') '||
+					', DD_EAH_ID = (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
+					', DD_EAP_ID = (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') '||
 					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_LES_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
@@ -87,7 +90,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
   
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
                       DD_LES_ID, DD_LES_CODIGO, DD_RETORNO_SAPBC, DD_TEXT_MENSAJE_SAP, DD_EGA_ID, DD_EAH_ID, DD_EAP_ID ,USUARIOCREAR, FECHACREAR) VALUES
-                      (S_'||V_TEXT_TABLA||'.NEXTVAL,  '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_ID = '''||TRIM(V_TMP_TIPO_DATA(4))||'''),(SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_ID = '''||TRIM(V_TMP_TIPO_DATA(5))||'''),(SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_ID = '''||TRIM(V_TMP_TIPO_DATA(6))||'''),'''||V_USUARIO||''',SYSDATE)';
+                      (S_'||V_TEXT_TABLA||'.NEXTVAL,  SYS_GUID(),'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''', (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''),(SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''),(SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||'''),'''||V_USUARIO||''',SYSDATE)';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

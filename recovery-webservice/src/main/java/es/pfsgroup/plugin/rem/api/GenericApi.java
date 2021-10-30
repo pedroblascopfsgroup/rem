@@ -392,9 +392,9 @@ public interface GenericApi {
 
 	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion);
 
-	String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera);
-
 	List<DDEstadoOferta> getEstadosOfertaWeb();
+	
+	String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera);
 	
 	List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia);
 }

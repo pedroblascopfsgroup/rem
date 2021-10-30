@@ -44,7 +44,7 @@ BEGIN
 
                              
             -- Verificar si el campo ya existe
-            V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''' AND COLUMN_NAME = '''||V_COL||'''';
+            V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''' AND COLUMN_NAME = '''||V_COL||''' AND nullable<>''Y''';
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
             
             IF V_NUM_TABLAS = 0 THEN

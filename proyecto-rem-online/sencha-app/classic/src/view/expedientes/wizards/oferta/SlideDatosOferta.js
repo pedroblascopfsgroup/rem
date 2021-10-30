@@ -285,15 +285,18 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									numeroDocumentoRepresentante.allowBlank = false;
 	    									nombreRazonSocialRepresentante.allowBlank = false;
 	    									apellidosRepresentante.allowBlank = false;
-	    									paisNacimientoRepresentante.allowBlank = false;
-	    									paisNacimientoRepresentante.setValue("28");
-	    									provinciaNacimientoRepresentante.allowBlank = false;
-	    									municipioNacimientoRepresentante.allowBlank = false;
-	    									fechaNacimientaRepresentante.allowBlank = false;
 	    									paisRepresentante.allowBlank = false;
 	    									paisRepresentante.setValue("28");
 	    									provinciaRepresentante.allowBlank = false;
 	    									municipioRepresentante.allowBlank = false;
+	    									
+	    									if(isBk){
+	    										paisNacimientoRepresentante.allowBlank = false;
+		    									paisNacimientoRepresentante.setValue("28");
+		    									provinciaNacimientoRepresentante.allowBlank = false;
+		    									municipioNacimientoRepresentante.allowBlank = false;
+		    									fechaNacimientaRepresentante.allowBlank = false;
+	    									}
 	    									
 	    									apellidos.reset();
 	    									nombre.reset();
@@ -488,27 +491,28 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var form = combo.up('form');
 	    								var sociedadEmpleado = form.down('field[name=sociedadEmpleadoCaixa]');
 	    								var oficinaEmpleado = form.down('field[name=oficinaEmpleadoCaixa]');
-	    								
-	    								if (value == "10") {
-	    									sociedadEmpleado.setDisabled(false);
-	    									sociedadEmpleado.allowBlank = false;
-	    									oficinaEmpleado.setDisabled(false);
-	    									oficinaEmpleado.allowBlank = false;
-	    									
-	    								}else{
-	    									sociedadEmpleado.setDisabled(true);
-	    									sociedadEmpleado.allowBlank = true;
-	    									sociedadEmpleado.setValue(null);
-	    									oficinaEmpleado.setDisabled(true);
-	    									oficinaEmpleado.allowBlank = true;
-	    									oficinaEmpleado.setValue(null);
-	    									
-	    									sociedadEmpleado.reset();
-	    									oficinaEmpleado.reset();
-	    								}
-	    								
-	    								if(!Ext.isEmpty(sociedadEmpleado)) sociedadEmpleado.validate();
-	    								if(!Ext.isEmpty(oficinaEmpleado)) oficinaEmpleado.validate();
+		    							if(isBk){	
+		    								if (value == "10") {
+		    									sociedadEmpleado.setDisabled(false);
+		    									sociedadEmpleado.allowBlank = false;
+		    									oficinaEmpleado.setDisabled(false);
+		    									oficinaEmpleado.allowBlank = false;
+		    									
+		    								}else{
+		    									sociedadEmpleado.setDisabled(true);
+		    									sociedadEmpleado.allowBlank = true;
+		    									sociedadEmpleado.setValue(null);
+		    									oficinaEmpleado.setDisabled(true);
+		    									oficinaEmpleado.allowBlank = true;
+		    									oficinaEmpleado.setValue(null);
+		    									
+		    									sociedadEmpleado.reset();
+		    									oficinaEmpleado.reset();
+		    								}
+		    								
+		    								if(!Ext.isEmpty(sociedadEmpleado)) sociedadEmpleado.validate();
+		    								if(!Ext.isEmpty(oficinaEmpleado)) oficinaEmpleado.validate();
+		    							}
 	    							}
 	    						}
 							},
@@ -541,11 +545,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
 								reference: 'antiguoDeudor',
-								name: 'antiguoDeudor',								
-								allowBlank: false,
+								name: 'antiguoDeudor',									
 								bind: {
 									store: '{comboSiNoBoolean}',
 									value: '{oferta.antiguoDeudor}',
+									allowBlank: !isBk,
 									hidden: !isBk
 								},								
 					        	colspan: 2
@@ -555,12 +559,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel:  HreRem.i18n('fieldlabel.tipologia.venta'),
 								name: 		'tipologivaVentaCod',
 								reference: 		'tipologivaVentaCodRef',
-								allowBlank: true,
-								hidden: !isBk,
 								disabled: true,
 								bind: {
 									store: '{comboTipologiaVentaBcOfr}',
-									value: '{oferta.tipologivaVentaCod}'
+									value: '{oferta.tipologivaVentaCod}',
+									allowBlank: !isBk,
+									hidden: !isBk
 								},
 								displayField: 'descripcion',
 								valueField: 'codigo'

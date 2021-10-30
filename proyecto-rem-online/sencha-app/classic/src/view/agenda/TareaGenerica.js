@@ -2637,6 +2637,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     },
     
 	T017_DefinicionOfertaValidacion: function() {		
+		debbugger;
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');

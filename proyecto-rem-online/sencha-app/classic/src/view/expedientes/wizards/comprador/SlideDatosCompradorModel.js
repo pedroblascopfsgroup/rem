@@ -7,11 +7,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 	formulas : {
 		esObligatorioPersonaJuridica : function(get) {
 			var me = this;
+			var bk = get('comprador.esCarteraBankia');
 			var codigoTipoPersona = get('comprador.codTipoPersona');
 			
-			if (codigoTipoPersona === CONST.TIPO_PERSONA['JURIDICA']) {
+			if (codigoTipoPersona === CONST.TIPO_PERSONA['JURIDICA'] && bk) {
 				return true;
 			}
+			
 			return false;
 		}
 	},

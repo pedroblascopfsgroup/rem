@@ -252,8 +252,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'paisNacimientoCompradorCodigo',
 						reference: 'paisNacimientoCompradorCodigo',
 						padding: '5px',
-						allowBlank: false,
 						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}',
 							store: '{comboPaises}',
 							hidden: '{!comprador.esCarteraBankia}'
 						}
@@ -265,10 +265,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'provinciaNacimientoCompradorCodigo',
 						name: 'provinciaNacimientoCompradorCodigo',
 						padding: '5px',
-						allowBlank: false,
 						chainedStore: 'comboMunicipioComprador',
 						chainedReference: 'localidadNacimientoCompradorCodigo',
 						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}',
 							store: '{comboProvincia}',
 							hidden: '{!comprador.esCarteraBankia}'
 						},
@@ -287,7 +287,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboMunicipioComprador}',
 							hidden: '{!comprador.esCarteraBankia}',
-							disabled: '{!comprador.provinciaNacimientoCompradorCodigo}'
+							disabled: '{!comprador.provinciaNacimientoCompradorCodigo}',
+							allowBlank: '{!comprador.esCarteraBankia}'
 						}
 					},
 					{ 
@@ -828,7 +829,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboPaises}',
 							hidden: '{!comprador.esCarteraBankia}',
-							allowBlank: '{esObligatorioPersonaJuridica}'
+							allowBlank: '{!esObligatorioPersonaJuridica}'
 						}
 					},
 					{
@@ -842,7 +843,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboProvincia}',
 							hidden: '{!comprador.esCarteraBankia}',
-							allowBlank: '{esObligatorioPersonaJuridica}'
+							allowBlank: '{!esObligatorioPersonaJuridica}'
 						},
 						displayField: 'descripcion',
 						valueField: 'codigo',
@@ -860,7 +861,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboMunicipioRepresentante}',
 							hidden: '{!comprador.esCarteraBankia}',
 							disabled: '{!comprador.provinciaNacimientoRepresentanteCodigo}',
-							allowBlank: '{esObligatorioPersonaJuridica}'
+							allowBlank: '{!esObligatorioPersonaJuridica}'
 						}
 					},
 					{ 

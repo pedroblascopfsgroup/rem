@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
@@ -157,6 +158,10 @@ public class ActivoCaixa implements Serializable, Auditable {
 	
     @Column(name = "MOT_NECESIDAD_ARRAS")
     private String motivosNecesidadArras;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CTC_ID")
+    private DDCategoriaComercializacion categoriaComercializacion;
 	
 	@Version   
 	private Long version;

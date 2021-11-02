@@ -2668,7 +2668,7 @@ public class AgrupacionAdapter {
 			}
 			
 			Filter filtro = null;
-			if(dto.getFechaNacimientoConstitucion() != null) {
+			if(!Checks.isFechaNula(dto.getFechaNacimientoConstitucion())) {
 				clienteComercial.setFechaNacimiento(ft.parse(dto.getFechaNacimientoConstitucion()));
 			}
 			

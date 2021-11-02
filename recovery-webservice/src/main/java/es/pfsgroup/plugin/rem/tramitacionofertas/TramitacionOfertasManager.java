@@ -2356,6 +2356,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
 				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
 			}
+			cex.setInterlocutorOferta(interlocutor);
 			cex.setInterlocutorOfertaRepresentante(interlocutor);
 		}
 

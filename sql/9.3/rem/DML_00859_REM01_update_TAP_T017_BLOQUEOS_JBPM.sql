@@ -1,15 +1,16 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20210518
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14376
+--## INCIDENCIA_LINK=HREOS-16219
 --## PRODUCTO=SI
 --##
 --## Finalidad: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Quitar bloqueos fuera de BC
 --##########################################
 --*/
 
@@ -32,9 +33,9 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         
-    	T_TIPO_DATA('T017_PosicionamientoYFirma','checkBankia() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null)	: checkExpedienteBloqueado() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : ''''El expediente no est&aacute; bloqueado'''' '),
-		T_TIPO_DATA('T017_ConfirmarFechaEscritura','	checkVueltaAtras() ? null : checkBankia() ? (valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : checkExpedienteBloqueado() ? (valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : ''''El expediente no est&aacute; bloqueado ''''  '),
-	    T_TIPO_DATA('T017_FirmaContrato','checkBankia() ? (valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null)	: checkExpedienteBloqueado() ? (valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : ''''El expediente no est&aacute; bloqueado'''' ')
+    	T_TIPO_DATA('T017_PosicionamientoYFirma','checkBankia() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null)	: (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) '),
+		T_TIPO_DATA('T017_ConfirmarFechaEscritura','	checkVueltaAtras() ? null : checkBankia() ? (valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) : (valores[''''T017_ConfirmarFechaEscritura''''][''''comboConfirmado''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null)'),
+	    T_TIPO_DATA('T017_FirmaContrato','checkBankia() ? (valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null)	: (valores[''''T017_FirmaContrato''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener alg&uacute;n posicionamiento'''') : null) ')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -89,7 +89,7 @@ public class ActivoTitulo implements Serializable, Auditable {
     @Column(name = "FECHA_EST_TIT_ACT_INM")
 	private Date fechaEstadoTitularidadActivoInmobiliario;
 	
-	@Column(name = "TIT_PLUSVALIA_COMPRADOR")
+    @Column(name = "TIT_PLUSVALIA_COMPRADOR")
 	private Boolean plusvaliaComprador;
 	
 	@Column(name = "TIT_FECHA_LIQUIDACION_PLUSVALIA")

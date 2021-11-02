@@ -2960,13 +2960,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.habilitarCampo(fechaFirma);					
 	            }
         	});
-			
 		}else{
 			//SI NO ES CAIXA/BANKIA
 			me.deshabilitarCampo(comboResultado);
 			me.ocultarCampo(comboResultado);
 			me.deshabilitarCampo(motivoAplazamiento);
 			me.ocultarCampo(motivoAplazamiento);
+			me.ocultarCampo(comboQuitar);
 		}
     },
     T017_ResolucionExpedienteValidacion: function() {
@@ -3078,6 +3078,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
+			
+	        me.habilitarCampo(fechaIngreso);
+	        me.habilitarCampo(fechaContabilizacion);
+
+	        me.desocultarCampo(fechaIngreso);
+	        me.desocultarCampo(fechaContabilizacion);
+
+	        fechaIngreso.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacionPropietario'));
+	        fechaContabilizacion.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacion'));
+
+	        fechaIngreso.allowBlank = false;
+	        fechaContabilizacion.allowBlank = false;
+
+	        fechaIngreso.setReadOnly(true);
+			fechaContabilizacion.setReadOnly(true);
+
+			
 			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 			var url =  $AC.getRemoteUrl('expedientecomercial/getDatosDocPostVenta');
 			Ext.Ajax.request({
@@ -3125,23 +3142,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            }
 			}
         });
-
-        me.habilitarCampo(fechaIngreso);
-        me.habilitarCampo(fechaContabilizacion);
-
-        me.desocultarCampo(fechaIngreso);
-        me.desocultarCampo(fechaContabilizacion);
-
-        fechaIngreso.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacionPropietario'));
-        fechaContabilizacion.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacion'));
-
-        fechaIngreso.allowBlank = false;
-        fechaContabilizacion.allowBlank = false;
-
-        fechaIngreso.setReadOnly(true);
-		fechaContabilizacion.setReadOnly(true);
-
-
 	},
 	
 	T017_AgendarFechaFirmaArrasValidacion: function() {
@@ -3574,6 +3574,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.ocultarCampo(comboResultado);
 			me.deshabilitarCampo(motivoAplazamiento);
 			me.ocultarCampo(motivoAplazamiento);
+			me.ocultarCampo(comboQuitar);
 		}
 	},
 	T017_FirmaContratoValidacion: function() {
@@ -4006,7 +4007,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T015_SancionBcValidacion: function(){
 		var me = this;
-		var comboRespuesta = me.down('[name=comboResolucion]');
+		var comboRespuesta = me.down('[name=comboResultado]');
 		var observacionesBC = me.down('[name=observacionesBc]');
 		var fecha = me.down('[name=fechaSancion]');
 		

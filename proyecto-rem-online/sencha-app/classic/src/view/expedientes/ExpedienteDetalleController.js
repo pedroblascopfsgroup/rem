@@ -2320,8 +2320,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
-						campoPaisRte.setValue("28");
-						campoPais.setValue("28");
+						
+						if(campoPaisRte.value == null){
+							campoPaisRte.setValue("28");
+						}
+						
+						if(campoPais.value == null){
+							campoPais.setValue("28");
+						}	
 					}
 				}
 			} else {
@@ -2423,7 +2429,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
-						}else{
+						}else if(campoPaisRte.value == null){
 							campoPaisRte.setValue("28");
 						}
 						campoEstadoCivil.setValue();						
@@ -2433,7 +2439,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
-						campoPais.setValue("28");
+						
+						if(campoPais.value == null){
+							campoPais.setValue("28");
+						}
 					}
 				}
 				if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){

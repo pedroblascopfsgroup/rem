@@ -5893,7 +5893,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE aga.AGR_ID = agr.AGR_ID " 
 				+ "AND agr.dd_tag_id = tag.dd_tag_id "
 				+ "AND act.act_id   = aga.act_id " 
-				+ "AND tag.dd_tag_codigo = '02' OR tag.dd_tag_codigo = '17' OR tag.dd_tag_codigo = '18' " 
+				+ "AND tag.dd_tag_codigo IN ('02','17','18') " 
 				+ "AND act.ACT_NUM_ACTIVO =  :numActivo " 
 				+ "AND agr.agr_fecha_baja is null "
 				+ "AND aga.BORRADO  = 0 " 

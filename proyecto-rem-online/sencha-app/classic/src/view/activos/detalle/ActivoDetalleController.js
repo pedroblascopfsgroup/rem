@@ -8745,6 +8745,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			comboEstadoFisico.setDisabled(true);
 		}
+    },
+    
+    onPlusvaliaCompradorChange: function(combo, value){
+    	var me = this,
+    	disabled = value == 'false';
+    	
+    	var fechaLiquidacionPlusvaliaRef = me.lookupReference('fechaLiquidacionPlusvaliaRef');
+    	
+    	fechaLiquidacionPlusvaliaRef.setDisabled(disabled);	
+    	if(disabled) {
+    		fechaLiquidacionPlusvaliaRef.setValue(null);
+    	}
     }
 });
 

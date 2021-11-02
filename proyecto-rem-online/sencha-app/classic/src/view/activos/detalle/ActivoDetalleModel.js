@@ -1908,6 +1908,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 				return false;
 			}
+	    },
+	    
+		isCarteraHyTOrBFA: function(get) {
+	    	var codigoCarteraHyT = get('activo.isCarteraHyT'), codigoCarteraBFA = get('activo.isCarteraBFA');	    	
+	    	return codigoCarteraHyT || codigoCarteraBFA;
 		},
 		
 		tieneGestionDnd: function(get){

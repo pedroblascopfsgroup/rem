@@ -218,6 +218,7 @@ func-rem-stockHydra|R-Hydra
 func-rem-comercialHydra|R-Hydra
 func-rem-modeloHydra|func-rem-campanyasHydra
 func-rem-campanyasHydra|R-Hydra
+rem_mirror|func-rem-subcarteraBFA
 rem_mirror|func-rem-cuadreContableBBVA
 func-rem-cuadreContableBBVA|R-Chislett
 func-rem-fichaClientes|R-Chislett
@@ -230,3 +231,5 @@ func-rem-modeloHydra|func-rem-preparacionHYDRA
 func-rem-preparacionHYDRA|func-rem-comercialHydra
 rem_mirror|func-rem-jupiter
 func-rem-modeloHydra|func-rem-func-rem-stockHydra
+rem_mirror|func-rem-onboardingBFA
+rem_mirror|func-rem-jupiter

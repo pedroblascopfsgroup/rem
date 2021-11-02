@@ -1,112 +1,128 @@
 Ext.define('HreRem.model.ActivoSaneamiento', {
-    extend: 'HreRem.model.Base',
-    idProperty: 'id',
+	extend : 'HreRem.model.Base',
+	idProperty : 'id',
 
-    fields: [
+	fields : [
 		{
-			name:'idActivo'
+			name : 'idActivo'
 		},
 		{
-			name:'estadoTitulo'
+			name : 'estadoTitulo'
 		},
 		{
-			name:'estadoTituloDescripcion'
+			name : 'estadoTituloDescripcion'
 		},
 		{
-			name:'fechaEntregaGestoria',
-			convert: function(value) {
+			name : 'fechaEntregaGestoria',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaPresHacienda',
-			convert: function(value) {
+			name : 'fechaPresHacienda',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaPres1Registro',
-			convert: function(value) {
+			name : 'fechaPres1Registro',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaEnvioAuto',
-			convert: function(value) {
+			name : 'fechaEnvioAuto',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaPres2Registro',
-			convert: function(value) {
+			name : 'fechaPres2Registro',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaInscripcionReg',
-			convert: function(value) {
+			name : 'fechaInscripcionReg',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				} else {
 					return value;
 				}
 			}
 		},
 		{
-			name:'fechaRetiradaReg',
-			convert: function(value) {
+			name : 'fechaRetiradaReg',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
 		{
-			name:'fechaNotaSimple',
-			convert: function(value) {
+			name : 'fechaNotaSimple',
+			convert : function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
 				}
 			}
 		},
@@ -355,21 +371,41 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		{
 			name:'isCarteraBankia',
 			type: 'boolean'
+		},
+		{
+			name : 'plusvaliaComprador',
+			type : 'boolean'
+		}, 
+		{
+			name : 'fechaLiquidacionPlusvalia',
+			convert : function(value) {
+				if (!Ext.isEmpty(value)) {
+					if ((typeof value) == 'string') {
+						return value.substr(8, 2) + '/'
+								+ value.substr(5, 2) + '/'
+								+ value.substr(0, 4);
+					} else {
+						return value;
+					}
+				}
+			}
+		} 
+	],
+
+	proxy : {
+		type : 'uxproxy',
+		localUrl : 'activos.json',
+		remoteUrl : 'activo/getTabActivo',
+
+		api : {
+			read : 'activo/getTabActivo',
+			create : 'activo/saveActivoSaneamiento',
+			update : 'activo/saveActivoSaneamiento',
+			destroy : 'activo/getTabActivo'
+		},
+		extraParams : {
+			tab : 'saneamiento'
 		}
-    ],
-
-    proxy: {
-		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getTabActivo',
-
-		api: {
-            read: 'activo/getTabActivo',
-            create: 'activo/saveActivoSaneamiento',
-            update: 'activo/saveActivoSaneamiento',
-            destroy: 'activo/getTabActivo'
-        },
-        extraParams: {tab: 'saneamiento'}
-    }
+	}
 
 });

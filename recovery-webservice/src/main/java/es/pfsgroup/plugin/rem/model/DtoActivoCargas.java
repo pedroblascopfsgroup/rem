@@ -59,6 +59,11 @@ public class DtoActivoCargas {
     
     //HREOS-7783
     private String codigoImpideVenta;
+    
+    //HREOS-15591
+    private Date fechaSolicitudCarta;
+    private Date fechaRecepcionCarta;
+    private Date fechaPresentacionRpCarta;
  
 
     
@@ -242,6 +247,24 @@ public class DtoActivoCargas {
 	}
 	public void setCodigoImpideVenta(String codigoImpideVenta) {
 		this.codigoImpideVenta = codigoImpideVenta;
+	}
+	public Date getFechaSolicitudCarta() {
+		return fechaSolicitudCarta;
+	}
+	public void setFechaSolicitudCarta(Date fechaSolicitudCarta) {
+		this.fechaSolicitudCarta = fechaSolicitudCarta;
+	}
+	public Date getFechaRecepcionCarta() {
+		return fechaRecepcionCarta;
+	}
+	public void setFechaRecepcionCarta(Date fechaRecepcionCarta) {
+		this.fechaRecepcionCarta = fechaRecepcionCarta;
+	}
+	public Date getFechaPresentacionRpCarta() {
+		return fechaPresentacionRpCarta;
+	}
+	public void setFechaPresentacionRpCarta(Date fechaPresentacionRpCarta) {
+		this.fechaPresentacionRpCarta = fechaPresentacionRpCarta;
 	}
 	
 	

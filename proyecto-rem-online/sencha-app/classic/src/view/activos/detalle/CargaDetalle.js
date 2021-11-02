@@ -282,7 +282,54 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 							
 											]
 						                 
-						       }
+						       },
+						   	{    
+									xtype:'fieldset',
+									padding: 10,
+									cls: 'x-fieldset-detalle-carga',
+									layout: {
+								    type: 'table',
+								        // The total column count must be specified here
+								        columns: 2,
+								        trAttrs: {height: '45px', width: '100%'},
+								        tdAttrs: {width: '50%'},
+								        tableAttrs: {
+								            style: {
+								                width: '100%'
+											}
+								        }
+									},
+									defaultType: 'textfieldbase',
+									collapsed: false,
+									scrollable	: 'y',
+									items :
+											[
+												{
+													xtype:'datefieldbase',
+													fieldLabel: HreRem.i18n('header.fecha.solicitud.carta.pago'),
+									            	bind: '{carga.fechaSolicitudCarta}',
+											 		maxValue : null 
+									            	
+												},
+												{
+													xtype:'datefieldbase',
+													fieldLabel: HreRem.i18n('header.fecha.recepcion.carta.pago'),
+									            	bind: '{carga.fechaRecepcionCarta}',
+											 		maxValue : null 
+									            	
+												},
+												{
+													xtype:'datefieldbase',
+													fieldLabel: HreRem.i18n('header.fecha.presentacion.carta.pago'),
+									            	bind:'{carga.fechaPresentacionRpCarta}',
+											 		maxValue : null 
+									            	
+												}
+								       
+						
+										]
+					                 
+					       }
 					]
     			}
     	

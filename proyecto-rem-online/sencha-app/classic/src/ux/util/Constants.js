@@ -202,7 +202,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GALEON:'15',
     	ZEUS: '14',
     	BBVA: '16',
-    	TITULIZADA: '18'
+    	TITULIZADA: '18',
+    	BFA: '17'
     },
 
     NOMBRE_CARTERA:	{
@@ -219,7 +220,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'15': 'GALEON',
     	'14': 'ZEUS',
     	'16': 'BBVA',
-    	'18': 'TITULIZADA'
+    	'18': 'TITULIZADA',
+    	'17': 'BFA'
     },
 
     NOMBRE_CARTERA2: {
@@ -236,7 +238,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	BBVA :'BBVA',
 		CAIXABANK : 'CAIXABANK',
 		UNICAJA : 'UNICAJA',
-		TITULIZADA: 'TITULIZADA'
+		TITULIZADA: 'TITULIZADA',
+		BFA : 'BFA'
     },
 
     SUBCARTERA: {

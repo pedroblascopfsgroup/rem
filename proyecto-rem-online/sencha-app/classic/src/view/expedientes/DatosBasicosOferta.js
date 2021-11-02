@@ -145,6 +145,14 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						},
 						{
+						xtype : 'datefieldbase',
+						formatter : 'date("d/m/Y")',
+						colspan: 3,
+						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
+						readOnly : true,
+						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+						},
+						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
 							reference: 'comboClasificacionRef',
@@ -214,14 +222,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {hidden : '{!esTipoAlquiler}'}
 					}
 						]},
-					{
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						colspan: 3,
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
-						readOnly : true,
-						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
-					},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
@@ -709,8 +709,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        columns: 3
 						    },
 							bind : {
-								store : '{comboDDSNS}',
-								value : '{datosbasicosoferta.necesitaFinanciacion}',
 								hidden: '{esBankiaAlquiler}'
 							},
 							items : [
@@ -732,7 +730,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 				    			}, {
 									xtype : 'comboboxfieldbase',
 									bind : {
-										store : '{comboSiNo}',
+										store : '{comboDDSNS}',
 										value : '{datosbasicosoferta.necesitaFinanciacion}'
 									},
 									fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
@@ -890,9 +888,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 				xtype:'sancionesBkGrid'
 			}]
 			
-		}, 		
-		//Testigos Opcionales
-		{
+		},
+{
 			xtype:'fieldsettable',
 			title:HreRem.i18n('title.testigos'),
 			defaultType: 'textfieldbase',

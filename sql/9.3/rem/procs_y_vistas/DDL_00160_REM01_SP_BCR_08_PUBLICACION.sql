@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211021
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-16087
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -21,7 +21,8 @@
 --##	    0.8 El check de Visible gestión comercial se rellena con lo que tenga el de publicar - HREOS-15423
 --##	    0.9 Filtrado de activos con ofertas en vuelo - HREOS-15634
 --##	    0.10 Se añade paréntesis en consulta - HREOS-15634
---##	    0.10 Se cambia la llamada de SPs de publicaciones a los nuevos para Caixa - HREOS-15634
+--##	    0.11 Se cambia la llamada de SPs de publicaciones a los nuevos para Caixa - HREOS-15634
+--##	    0.12 Se añade el vaciado en los situaciones comerciales para posteriormente lanzar el SP SCM de vacíos - HREOS-16087
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -804,17 +805,24 @@ BEGIN
 --9º Llamar al SP de SCM para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal
 
-    SALIDA := SALIDA || '##INICIO: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+    V_MSQL :=  'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                USING   (SELECT
+                            DISTINCT TMP.ACT_ID AS ACT_ID
+                        FROM '||V_ESQUEMA||'.TMP_ACT_SCM TMP) US 
+                        ON (ACT.ACT_ID = US.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                                ACT.DD_SCM_ID = NULL';
+    EXECUTE IMMEDIATE V_MSQL;
 
-    #ESQUEMA#.SP_ASC_ACTUALIZA_SIT_COMERCIAL(0,1,1);
+    V_NUM_FILAS := sql%rowcount;
 
-    SALIDA := SALIDA || '##FIN: SP_ASC_ACTUALIZA_SIT_COMERCIAL '|| CHR(10);
+    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' ACTIVOS PARA ACTUALIZAR SU SITUACIÓN COMERCIAL'|| CHR(10);
 
-    SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+    SALIDA := SALIDA || '##INICIO: SP_ASC_ACT_SIT_COM_VACIOS_V2'|| CHR(10);
 
-    #ESQUEMA#.SP_ASC_ACT_SIT_COM_VACIOS(0,1);
+    #ESQUEMA#.SP_ASC_ACT_SIT_COM_VACIOS_V2(0);
 
-    SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS '|| CHR(10);
+    SALIDA := SALIDA || '##FIN: SP_ASC_ACT_SIT_COM_VACIOS_V2'|| CHR(10);
 
 --10º Llamar al SP para cada activo guardado en la tabla temporal
 --Ejecutamos el Sp por cada activo de la tabla temporal

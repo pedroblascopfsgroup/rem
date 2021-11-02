@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
@@ -155,14 +156,15 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@Column(name = "CBX_FEC_FIN_CONCU")
     private Date fechaFinConcurrencia;
 	
-	@Column(name = "CBX_EMPL_FAML")
-	private Boolean empleadoFamiliarCaixa;
-	
 	@Column(name = "CBX_UNIDAD_ECONOMICA")
 	private String unidadEconomicaCaixa;
 
     @Column(name = "MOT_NECESIDAD_ARRAS")
     private String motivosNecesidadArras;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CTC_ID")
+    private DDCategoriaComercializacion categoriaComercializacion;
 	
 	@Version   
 	private Long version;
@@ -459,14 +461,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
 	}
 
-	public Boolean getEmpleadoFamiliarCaixa() {
-		return empleadoFamiliarCaixa;
-	}
-
-	public void setEmpleadoFamiliarCaixa(Boolean empleadoFamiliarCaixa) {
-		this.empleadoFamiliarCaixa = empleadoFamiliarCaixa;
-	}
-
 	public String getUnidadEconomicaCaixa() {
 		return unidadEconomicaCaixa;
 	}
@@ -474,13 +468,21 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
 		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
 	}
-	
+
 	public String getMotivosNecesidadArras() {
 		return motivosNecesidadArras;
 	}
 
 	public void setMotivosNecesidadArras(String motivosNecesidadArras) {
 		this.motivosNecesidadArras = motivosNecesidadArras;
+	}
+
+	public DDCategoriaComercializacion getCategoriaComercializacion() {
+		return categoriaComercializacion;
+	}
+
+	public void setCategoriaComercializacion(DDCategoriaComercializacion categoriaComercializacion) {
+		this.categoriaComercializacion = categoriaComercializacion;
 	}
 	
 }

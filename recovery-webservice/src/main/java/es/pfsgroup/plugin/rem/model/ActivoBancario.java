@@ -22,7 +22,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
@@ -80,10 +79,6 @@ public class ActivoBancario implements Serializable, Auditable {
 	
 	@Column(name = "ABA_TIPO_PRODUCTO")
 	private String productoDescripcion;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_CTC_ID")
-    private DDCategoriaComercializacion categoriaComercializacion;
 	
 	@Version   
 	private Long version;
@@ -178,14 +173,6 @@ public class ActivoBancario implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public DDCategoriaComercializacion getCategoriaComercializacion() {
-		return categoriaComercializacion;
-	}
-
-	public void setCategoriaComercializacion(DDCategoriaComercializacion categoriaComercializacion) {
-		this.categoriaComercializacion = categoriaComercializacion;
 	}
 	
 

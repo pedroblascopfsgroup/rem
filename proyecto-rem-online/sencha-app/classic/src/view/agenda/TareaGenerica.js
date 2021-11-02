@@ -3078,6 +3078,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
+			
+	        me.habilitarCampo(fechaIngreso);
+	        me.habilitarCampo(fechaContabilizacion);
+
+	        me.desocultarCampo(fechaIngreso);
+	        me.desocultarCampo(fechaContabilizacion);
+
+	        fechaIngreso.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacionPropietario'));
+	        fechaContabilizacion.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacion'));
+
+	        fechaIngreso.allowBlank = false;
+	        fechaContabilizacion.allowBlank = false;
+
+	        fechaIngreso.setReadOnly(true);
+			fechaContabilizacion.setReadOnly(true);
+
+			
 			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
 			var url =  $AC.getRemoteUrl('expedientecomercial/getDatosDocPostVenta');
 			Ext.Ajax.request({
@@ -3125,23 +3142,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            }
 			}
         });
-
-        me.habilitarCampo(fechaIngreso);
-        me.habilitarCampo(fechaContabilizacion);
-
-        me.desocultarCampo(fechaIngreso);
-        me.desocultarCampo(fechaContabilizacion);
-
-        fechaIngreso.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacionPropietario'));
-        fechaContabilizacion.setValue(me.up('tramitesdetalle').getViewModel().get('tramite.fechaContabilizacion'));
-
-        fechaIngreso.allowBlank = false;
-        fechaContabilizacion.allowBlank = false;
-
-        fechaIngreso.setReadOnly(true);
-		fechaContabilizacion.setReadOnly(true);
-
-
 	},
 	
 	T017_AgendarFechaFirmaArrasValidacion: function() {

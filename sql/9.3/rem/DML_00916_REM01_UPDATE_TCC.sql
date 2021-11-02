@@ -64,7 +64,7 @@ DECLARE
 		--			 					TAREA					INSTANCIA					CAMPO						 VALOR	 														ACCION			
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'comboQuitar',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'comboQuitar',													'02', 							'='),
-		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaEnvioPropuesta',				 '', 								'IS NOT NULL'),				
+		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaPropuesta',				 '', 								'IS NOT NULL'),
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',                  '1',                'fechaVencimientoArras',            '',                                 'IS NOT NULL'),
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaEnvio',											 '',	 							'IS NOT NULL'),
 

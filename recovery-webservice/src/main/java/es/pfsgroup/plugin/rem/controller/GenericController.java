@@ -901,8 +901,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
-	public ModelAndView getTiposImpuestoFiltered(String esBankia) {
-		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia);
+	public ModelAndView getTiposImpuestoFiltered(String esBankia, String tipoExpediente) {
+		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia,tipoExpediente);
 		return createModelAndViewJson(new ModelMap("data", lista));	
 	}
  }

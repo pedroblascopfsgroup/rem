@@ -2667,7 +2667,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	var esBankia = me.getViewModel().get("expediente.esBankia");
 		    	if (esBankia) {
 		    		renunciaExencion.setDisabled(true);
-		    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == value) {
+		    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value) {
 		    			renunciaExencion.setDisabled(false);
 		    			renunciaExencion.reset();
 		    		}else{

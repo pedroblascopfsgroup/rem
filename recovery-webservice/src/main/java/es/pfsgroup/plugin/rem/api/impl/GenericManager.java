@@ -2045,9 +2045,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia) {
-		
-		if(Boolean.valueOf(esBankia)) {
+	public List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia, String tipoExpediente) {
+		if(Boolean.valueOf(esBankia) && !DDTipoOferta.CODIGO_VENTA.equals(tipoExpediente)) {
 			Filter filtro = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI);
 			return genericDao.getList(DDTiposImpuesto.class, filtro);
 		}else {

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +27,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -278,8 +276,8 @@ public class GenerarPdfAprobacionOfertasManager extends GenerateJasperPdfService
 			if(activo.getTipoComercializacion() != null) {
 				dtoAux.setCanalesComercializacion(activo.getTipoComercializacion().getDescripcion());
 			}
-			ActivoBancario actBanc = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-			if(actBanc != null && actBanc.getCategoriaComercializacion() != null) {
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if(activoCaixa != null && activoCaixa.getCategoriaComercializacion() != null) {
 				dtoAux.setMultiestrella(true);
 			}else {
 				dtoAux.setMultiestrella(false);

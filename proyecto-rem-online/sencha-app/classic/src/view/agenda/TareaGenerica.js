@@ -2960,13 +2960,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.habilitarCampo(fechaFirma);					
 	            }
         	});
-			
 		}else{
 			//SI NO ES CAIXA/BANKIA
 			me.deshabilitarCampo(comboResultado);
 			me.ocultarCampo(comboResultado);
 			me.deshabilitarCampo(motivoAplazamiento);
 			me.ocultarCampo(motivoAplazamiento);
+			me.ocultarCampo(comboQuitar);
 		}
     },
     T017_ResolucionExpedienteValidacion: function() {
@@ -3574,6 +3574,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.ocultarCampo(comboResultado);
 			me.deshabilitarCampo(motivoAplazamiento);
 			me.ocultarCampo(motivoAplazamiento);
+			me.ocultarCampo(comboQuitar);
 		}
 	},
 	T017_FirmaContratoValidacion: function() {

@@ -4196,7 +4196,87 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboMunicipioSinFiltro'
 			},
 			autoLoad: true
+		},
+		comboMetodoValoracion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'metodoValoracion'}
+			},
+			autoLoad: true
+		},
+		comboDesarrolloPlanteamiento: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'desarrolloPlanteamiento'}
+			},
+			autoLoad: true
+		},
+		comboFaseGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'faseGestion'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollar: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollar'}
+			},
+			autoLoad: true
+		},
+		comboProximidadRespectoNucleoUrbano: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'proximidadRespectoNucleoUrbano'}
+			},
+			autoLoad: true
+		},
+		comboSistemaGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'sistemaGestion'}
+			},
+			autoLoad: true
+		},
+		comboTipoSuelo: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposActivo'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollarPrevisto: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
+			},
+			autoLoad: true
+		},
+		comboTipoDatoUtilizadoInmuebleComparable: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
+			},
+			autoLoad: true
 		}
-
 	 }
 });

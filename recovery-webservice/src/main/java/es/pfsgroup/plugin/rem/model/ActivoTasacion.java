@@ -170,7 +170,7 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean porcentajeCosteDefecto;
 	
 	@Column(name = "APROV_PARCELA_SUELO")
-    private Long aprovechamientoPacerlaSuelo; 
+    private Long aprovechamientoParcelaSuelo; 
 	
     @ManyToOne
     @JoinColumn(name = "DD_DSP_ID")
@@ -274,7 +274,7 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean proyectoObra;
 	
 	@Column(name = "SUPERFICIE_TERRENO")
-    private Long superficioTerreno;
+    private Long superficieTerreno;
 	
 	@Column(name = "TAS_ANU_VAR_MERCADO")
     private Long tasaAnualMedioVariacionPrecioMercado;
@@ -594,14 +594,6 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.porcentajeCosteDefecto = porcentajeCosteDefecto;
 	}
 
-	public Long getAprovechamientoPacerlaSuelo() {
-		return aprovechamientoPacerlaSuelo;
-	}
-
-	public void setAprovechamientoPacerlaSuelo(Long aprovechamientoPacerlaSuelo) {
-		this.aprovechamientoPacerlaSuelo = aprovechamientoPacerlaSuelo;
-	}
-
 	public DDDesarrolloPlanteamiento getDesarrolloPlanteamiento() {
 		return desarrolloPlanteamiento;
 	}
@@ -850,12 +842,20 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.proyectoObra = proyectoObra;
 	}
 
-	public Long getSuperficioTerreno() {
-		return superficioTerreno;
+	public Long getAprovechamientoParcelaSuelo() {
+		return aprovechamientoParcelaSuelo;
 	}
 
-	public void setSuperficioTerreno(Long superficioTerreno) {
-		this.superficioTerreno = superficioTerreno;
+	public void setAprovechamientoParcelaSuelo(Long aprovechamientoParcelaSuelo) {
+		this.aprovechamientoParcelaSuelo = aprovechamientoParcelaSuelo;
+	}
+
+	public Long getSuperficieTerreno() {
+		return superficieTerreno;
+	}
+
+	public void setSuperficieTerreno(Long superficieTerreno) {
+		this.superficieTerreno = superficieTerreno;
 	}
 
 	public Long getTasaAnualMedioVariacionPrecioMercado() {

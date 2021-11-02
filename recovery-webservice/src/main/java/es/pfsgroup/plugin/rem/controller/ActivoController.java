@@ -1063,8 +1063,8 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTasacionById(Long id, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, adapter.getTasacionById(id));
+	public ModelAndView getTasacionByActivoId(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getTasacionByActivoId(id));
 
 		return createModelAndViewJson(model);
 	}

@@ -4056,13 +4056,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
 	},
 	
-	T018_TrasladarOfertaClienteValidacion: function(){
-		var me = this;
-		var comboIrClRod = me.down('[name=comboIrClRod]');
-		
-		me.deshabilitarCampo(comboIrClRod);
-	},
-	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

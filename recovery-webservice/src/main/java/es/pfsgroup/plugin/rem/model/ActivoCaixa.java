@@ -27,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoNecesidadArras;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
@@ -155,9 +154,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 	
 	@Column(name = "CBX_FEC_FIN_CONCU")
     private Date fechaFinConcurrencia;
-	
-	@Column(name = "CBX_EMPL_FAML")
-	private Boolean empleadoFamiliarCaixa;
 	
     @Column(name = "MOT_NECESIDAD_ARRAS")
     private String motivosNecesidadArras;
@@ -455,14 +451,6 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
 		this.fechaFinConcurrencia = fechaFinConcurrencia;
-	}
-
-	public Boolean getEmpleadoFamiliarCaixa() {
-		return empleadoFamiliarCaixa;
-	}
-
-	public void setEmpleadoFamiliarCaixa(Boolean empleadoFamiliarCaixa) {
-		this.empleadoFamiliarCaixa = empleadoFamiliarCaixa;
 	}
 
 	public String getMotivosNecesidadArras() {

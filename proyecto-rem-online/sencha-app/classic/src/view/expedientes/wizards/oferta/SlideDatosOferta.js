@@ -542,10 +542,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
 								reference: 'antiguoDeudor',
 								name: 'antiguoDeudor',								
-								allowBlank: false,
 								bind: {
 									store: '{comboSiNoBoolean}',
 									value: '{oferta.antiguoDeudor}',
+									allowBlank: !isBk,
 									hidden: !isBk
 								},								
 					        	colspan: 2

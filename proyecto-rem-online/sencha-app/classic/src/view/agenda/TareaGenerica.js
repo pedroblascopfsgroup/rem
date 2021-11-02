@@ -4006,7 +4006,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	
 	T015_SancionBcValidacion: function(){
 		var me = this;
-		var comboRespuesta = me.down('[name=comboResolucion]');
+		var comboRespuesta = me.down('[name=comboResultado]');
 		var observacionesBC = me.down('[name=observacionesBc]');
 		var fecha = me.down('[name=fechaSancion]');
 		

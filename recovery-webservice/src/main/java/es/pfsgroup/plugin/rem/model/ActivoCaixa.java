@@ -465,5 +465,13 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setMotivosNecesidadArras(String motivosNecesidadArras) {
 		this.motivosNecesidadArras = motivosNecesidadArras;
 	}
+
+	public DDCategoriaComercializacion getCategoriaComercializacion() {
+		return categoriaComercializacion;
+	}
+
+	public void setCategoriaComercializacion(DDCategoriaComercializacion categoriaComercializacion) {
+		this.categoriaComercializacion = categoriaComercializacion;
+	}
 	
 }

@@ -415,7 +415,7 @@ public class Oferta implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_TITULARES_CONFIRMADOS")
-    private DDSinSiNo titularesConfirmados;
+    private DDSinSiNo titularesConfirmadosSINo;
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -1281,12 +1281,12 @@ public class Oferta implements Serializable, Auditable {
 		this.motivoJustificacionOferta = motivoJustificacionOferta;
 	}
 	
-	public DDSinSiNo getTitularesConfirmados() {
-		return titularesConfirmados;
+	public DDSinSiNo getTitularesConfirmadosSINo() {
+		return titularesConfirmadosSINo;
 	}
 
-	public void setTitularesConfirmados(DDSinSiNo titularesConfirmados) {
-		this.titularesConfirmados = titularesConfirmados;
+	public void setTitularesConfirmadosSINo(DDSinSiNo titularesConfirmados) {
+		this.titularesConfirmadosSINo = titularesConfirmados;
 	}
 	
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210923
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15264
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir campo finalizada
 --##########################################
 --*/
 
@@ -38,7 +39,8 @@ DECLARE
 	T_TIPO_DATA('52','Pendiente registro de firmas en sistema','Pendiente registro de firmas en sistema','0','1'),
 	T_TIPO_DATA('53','Finalizada','Finalizada','0','1'),
 	T_TIPO_DATA('54','Cancelada','Cancelada','0','1'),
-	T_TIPO_DATA('55','Borrador','Borrador','0','0')
+  T_TIPO_DATA('55','Borrador','Borrador','0','0'),
+  T_TIPO_DATA('53','Finalizada','Finalizada','0','0')
 
     ); 
 

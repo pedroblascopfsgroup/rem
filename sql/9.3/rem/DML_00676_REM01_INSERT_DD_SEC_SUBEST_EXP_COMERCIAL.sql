@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210923
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15264
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 HREOS-14964 - Añadimos subestado 'Enviado' y 'No enviado' relacionado al estado 'En tramitacion'
 --##        0.3 HREOS-15264 - Modificar codigos
+--##        0.4 HREOS-15264 - Código subestado Finalizada
 --##########################################
 --*/
 
@@ -70,7 +71,8 @@ DECLARE
   T_TIPO_DATA('42','01','Enviado','Enviado'),
   T_TIPO_DATA('43','01','No enviado','No enviado'),
   T_TIPO_DATA('52','54','Desistimiento de interés','Desistimiento de interés'),
-  T_TIPO_DATA('55','55','Borrador','Borrador')
+  T_TIPO_DATA('55','55','Borrador','Borrador'),
+  T_TIPO_DATA('53','53','Finalizada','Finalizada')
 
   ); 
 

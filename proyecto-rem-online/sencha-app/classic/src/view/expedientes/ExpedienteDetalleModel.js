@@ -1792,7 +1792,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getTiposImpuestoFiltered',
-				extraParams: {esBankia: '{expediente.esBankia}', tipoExpediente: '{expediente.tipoExpedienteCodigo}'}
+				extraParams: {esBankia: '{expediente.esBankia}'}
 			}   
     	}
     }

@@ -3498,28 +3498,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		boolean completada = false;
 		dto.setBloqueDepositoEditable(false);
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T015);
-		if(tramite != null) {
-			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+		if(expediente.getTrabajo() != null) {
+			ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T015);
+			if(tramite != null) {
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES);
+				
+				if(completada) {
+					dto.setBloqueDepositoEditable(false);
+				}else {
+					dto.setBloqueDepositoEditable(true);
+				}	
+			}
 			
-			if(completada) {
-				dto.setBloqueDepositoEditable(false);
-			}else {
-				dto.setBloqueDepositoEditable(true);
-			}	
-		}
-		
-		tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
-		if(tramite != null) {
-			completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
-			
-			if(completada) {
-				dto.setBloqueDepositoEditable(false);
-			}else{
-				dto.setBloqueDepositoEditable(true);
+			tramite = tramiteDao.getTramiteComercialVigenteByTrabajoYCodTipoTramite(expediente.getTrabajo().getId(),CODIGO_TRAMITE_T018);
+			if(tramite != null) {
+				completada = tareaActivoApi.getSiTareaCompletada(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES);
+				
+				if(completada) {
+					dto.setBloqueDepositoEditable(false);
+				}else{
+					dto.setBloqueDepositoEditable(true);
+				}
 			}
 		}
-		
 		return dto;
 	}
 

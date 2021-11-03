@@ -394,5 +394,5 @@ public interface GenericApi {
 
 	String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera);
 	
-	List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia, String tipoExpediente);
+	List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia);
 }

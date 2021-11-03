@@ -5074,26 +5074,7 @@ public class ActivoAdapter {
 			DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable = genericDao.get(DDTipoDatoUtilizadoInmuebleComparable.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTipoDatoUtilizadoInmuebleComparableCodigo()));
 			activoTasacion.setTipoDatoUtilizadoInmuebleComparable(tipoDatoUtilizadoInmuebleComparable);
 		}
-		
-		NMBValoracionesBien valoracionActivoTasacion = activoTasacion.getValoracionBien();
-		NMBInformacionRegistralBien informacionRegistralBien = activoTasacion.getActivo().getInfoRegistral().getInfoRegistralBien();
 
-		try {
-			beanUtilNotNull.copyProperty(valoracionActivoTasacion, "fechaValorTasacion", dtoTasacion.getFechaValorTasacion());
-			if (dtoTasacion.getSuperficieParcela() != null)
-				beanUtilNotNull.copyProperty(informacionRegistralBien, "superficie", BigDecimal.valueOf(dtoTasacion.getSuperficieParcela()));
-			if (dtoTasacion.getSuperficie() != null)
-				beanUtilNotNull.copyProperty(informacionRegistralBien, "superficieConstruida", BigDecimal.valueOf(dtoTasacion.getSuperficie()));
-		} catch (IllegalAccessException e) {
-			logger.error("Error en ActivoAdapter, saveTasacion", e);
-			throw new JsonViewerException(SAVE_ERROR_TASACION);
-		} catch (InvocationTargetException e) {
-			logger.error("Error en ActivoAdapter, saveTasacion", e);
-			throw new JsonViewerException(SAVE_ERROR_TASACION);
-		}
-
-		genericDao.save(NMBValoracionesBien.class, valoracionActivoTasacion);
-		genericDao.save(NMBInformacionRegistralBien.class, informacionRegistralBien);
 		genericDao.save(ActivoTasacion.class, activoTasacion);
 
 		return true;

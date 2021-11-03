@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211025
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15969
@@ -139,7 +139,11 @@ DECLARE
         T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','2','Vivienda Unifamiliar Adosada','DD_SAC_SUBTIPO_ACTIVO','06','Unifamiliar adosada'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada'),
-        --T_TIPO_DATA('SUBTIPO_VIVIENDA','0','En el caso de no aplicar al tratarse de un bien inmueble no vivienda','DD_SAC_SUBTIPO_ACTIVO', NULL,'No puede ser no inmueble'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','08','Unifamiliar casa de pueblo'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','09','Piso'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','10','Piso dúplex'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','11','Ático'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','12','Estudio/Loft'),
         --Desarrollo planteamiento
         T_TIPO_DATA('DESA_PLANTEMIENTO','U18','Urbanización recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U18','Urbanización recepcionada por el ayuntamiento'),
         T_TIPO_DATA('DESA_PLANTEMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento'),
@@ -199,7 +203,16 @@ DECLARE
         T_TIPO_DATA('METODO_VALORACION','13','otro criterio','DD_MTV_METODO_VALORACION','13','otro criterio'),
         --Tipo de datos utilizados  de inmuebles comparables
         T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','01','Datos de oferta','DD_TDU_TIPO_DAT_UTI_INM_COMP','01','Datos de oferta'),
-        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','02','Transacciones recientes','DD_TDU_TIPO_DAT_UTI_INM_COMP','02','Transacciones recientes')
+        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','02','Transacciones recientes','DD_TDU_TIPO_DAT_UTI_INM_COMP','02','Transacciones recientes'),
+        --Tipo de Valoración Estado Tasación
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','0','DOTACIÓN ESTADÍSTICA ','DD_TTS_TIPO_TASACION','07','Estadística'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','2','COMPLETA ','DD_TTS_TIPO_TASACION','01','Adjudicación'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','03','Asesoramiento comercial'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','04','Dación'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','05','Compra'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','06','Banco de España (BdE)'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','12','Retasacion BDE'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','4','GARANTIA HIPOTECARIA','DD_TTS_TIPO_TASACION','02','Concesión operación')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

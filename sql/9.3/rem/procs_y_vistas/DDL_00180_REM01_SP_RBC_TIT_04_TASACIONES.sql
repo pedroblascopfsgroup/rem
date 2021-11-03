@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15969
@@ -15,6 +15,7 @@
 --##        0.3 Se añaden los campos reción creados y los mapeos necesarios - [HREOS-15894] - Daniel Algaba
 --##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
 --##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
+--##        0.6 Se añade el mapeo de Tipo de tasación - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -112,7 +113,7 @@ BEGIN
                      , TAS.GASTO_COM_TASACION*100 GASTO_COM_TASACION          
                      , TAS.TAS_IMPORTE_TAS_FIN*100 IMP_TAS_INTEGRO             
                      , TAS.REF_TASADORA REF_ID_TASADORA             
-                     , NULL /*TTS.DD_TTS_CODIGO*/ TIPO_VAL_EST_TASACION   
+                     , EQV10.DD_CODIGO_CAIXA TIPO_VAL_EST_TASACION   
                      , CASE WHEN TAS.PORC_COSTE_DEFECTO = 1 THEN ''S'' ELSE ''N'' END FLAG_PORC_COSTE_DEFECTO     
                      , TAS.APROV_PARCELA_SUELO APROV_PARCELA               
                      , EQV1.DD_CODIGO_CAIXA DESAROLLO_PLANT             
@@ -158,6 +159,7 @@ BEGIN
                      , CASE WHEN TAS.VISITA_ANT_INMUEBLE = 1 THEN ''S'' ELSE ''N'' END VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_TAS_TASACION TAS
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TTS_TIPO_TASACION TTS ON TAS.DD_TTS_ID = TTS.DD_TTS_ID AND TTS.BORRADO = 0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV10 ON EQV10.DD_NOMBRE_CAIXA = ''TIPO_VAL_EST_TASACION'' AND EQV10.DD_CODIGO_REM = TTS.DD_TTS_CODIGO AND EQV10.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_DSP_DESARROLLO_PLANTEAMIENTO DSP ON DSP.DD_DSP_ID = TAS.DD_DSP_ID AND DSP.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV1 ON EQV1.DD_NOMBRE_CAIXA = ''DESA_PLANTEMIENTO'' AND EQV1.DD_CODIGO_REM = DSP.DD_DSP_CODIGO AND EQV1.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_FSG_FASE_GESTION FSG ON FSG.DD_FSG_ID = TAS.DD_FSG_ID AND FSG.BORRADO = 0

@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=URTASACI
+fichero=cxb_fact
 fecha="_$1"
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
@@ -24,19 +24,19 @@ do
     var=$(ls ${DIR_DESTINO}$fichero*)
     if [ -f $var ]; then
         mv ${DIR_DESTINO}$fichero* ${DIR_BACKUP}
-    fi    
-    
+    fi
+
     ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
 
     echo "$ficheroTxt"
     if [[ "$#" -eq 1 ]]; then
-        ./ftp/ftp_get_from_bc.sh $ficheroTxt
+        ./ftp/ftp_get_from_caixabank.sh $ficheroTxt
     fi
         while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroTxt ]]; do
             sleep 10
             hora_actual=`date +%Y%m%d%H%M%S`
         if [[ "$#" -eq 1 ]]; then
-            ./ftp/ftp_get_from_bc.sh $ficheroTxt
+            ./ftp/ftp_get_from_caixabank.sh $ficheroTxt
         fi
         done
 done

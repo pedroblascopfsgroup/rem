@@ -2563,21 +2563,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
-	onCambioRenunciaExencion: function(checkbox, newValue, oldValue, eOpts) {
-		if(!Ext.isEmpty(oldValue)){
-			var me = this,
-			tipoAplicable = me.lookupReference('tipoAplicable');
-	
-			if(newValue == false) {
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-			} else {
-				tipoAplicable.setDisabled(false);
-				tipoAplicable.allowBlank = false;
-			}
-		}
-	},
 	onCambioCheckPorcentual: function(checkbox, newValue, oldValue, eOpts) {
 			var me = this,
 			ipc = me.lookupReference('checkboxIPC');
@@ -2665,20 +2650,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var me = this,			
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
-			
 			var esVenta = me.getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-			if(esVenta){
-		    	var esBankia = me.getViewModel().get("expediente.esBankia");
-		    	if (esBankia) {
-		    		renunciaExencion.setDisabled(true);
-		    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value) {
-		    			renunciaExencion.setDisabled(false);
+			var esBankia = me.getViewModel().get("expediente.esBankia");
+
+			if(esVenta && esBankia){
+	    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value || CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == value ) {
+	    			tipoAplicable.setDisabled(true);
+	    			tipoAplicable.allowBlank = false;
+	    			if(CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == value ){
+		    			renunciaExencion.setDisabled(true);
 		    			renunciaExencion.reset();
-		    		}else{
-		    			tipoAplicable.setDisabled(false);
-		    			tipoAplicable.allowBlank = false;
-		    		}
-		    	}
+	    			}else{
+	    				renunciaExencion.setDisabled(false);
+	    			}
+	    		}else{
+	    			tipoAplicable.setDisabled(false);
+	    			tipoAplicable.allowBlank = false;
+	    			renunciaExencion.setDisabled(true);
+	    			renunciaExencion.reset();
+	    		}
+	    		
+	    		if(combo.up('fieldset').down('[reference=comboTipoImpuestoFiscalidad]').getValue() == CONST.TIPO_IMPUESTO['ITP']){
+	    			tipoAplicable.reset();
+	    			tipoAplicable.setDisabled(true);
+	    			tipoAplicable.allowBlank = false;
+	    		}
 			}
 	    	
 	},
@@ -3050,89 +3046,73 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				if(!Ext.isEmpty(value.data)){
 					value = value.get('codigo');
 				}
-				var me = this, 
-				tipoAplicable = me.lookupReference('tipoAplicable'), 
-				operacionExenta = me.lookupReference('chkboxOperacionExenta'), 
-				inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'), 
-				renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
-				grupoImpuesto = me.lookupReference('grupoImpuestoRef'),
-				tributosPropiedad= me.lookupReference('chkboxTributosPropiedad');
-				
+			
+				var me = this;
+				var fieldset = combo.up('fieldset'),
+				tipoAplicable = fieldset.down('[reference=tipoAplicable]'), 
+				operacionExenta = fieldset.down('[reference=chkboxOperacionExenta]'), 
+				inversionSujetoPasivo = fieldset.down('[reference=chkboxInversionSujetoPasivo]'), 
+				renunciaExencion = fieldset.down('[reference=chkboxRenunciaExencion]'),
+				grupoImpuesto = fieldset.down('[reference=grupoImpuestoRef]'),
+				tributosPropiedad= fieldset.down('[reference=chkboxTributosPropiedad]');
 				var esVenta = me.getViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-				if(esVenta){
-			    	var esBankia = me.getViewModel().get("expediente.esBankia");
-			    	if(!esBankia){
-			    		grupoImpuesto.setDisabled(true);
-			    	}
-		    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
-		    			tipoAplicable.reset();	    				
-		    			inversionSujetoPasivo.reset();
-		    			tributosPropiedad.reset();
-		    			renunciaExencion.reset();
-		    			
-		    			tipoAplicable.setDisabled(true);
-		    			renunciaExencion.setDisabled(true);
-		    			//tributosPropiedad.setDisabled(true);
-		    			inversionSujetoPasivo.setDisabled(true);
-		    			
-		    			if(esBankia){
-		    				grupoImpuesto.clearValue();
-		    				grupoImpuesto.setDisabled(true);
-		    			}
-		    			
-		    		}else{
-		    			
-		    			tributosPropiedad.allowBlank = false;
-		    			tipoAplicable.allowBlank = false;
-		    			renunciaExencion.allowBlank=false;
-		    			inversionSujetoPasivo.allowBlank=false;
-		    			
-		    			tributosPropiedad.validate();
-		    			renunciaExencion.validate();
-		    			inversionSujetoPasivo.validate();
-		    			
-		    			tipoAplicable.setDisabled(false);
+				
+				if(!esVenta){return;}
+
+		    	var esBankia = me.getViewModel().get("expediente.esBankia");
+		    	if(!esBankia){
+		    		grupoImpuesto.setDisabled(true);
+		    	}
+		    	
+	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
+	    				    				
+	    			inversionSujetoPasivo.reset();
+	    			tributosPropiedad.reset();
+	    			renunciaExencion.reset();
+	    			tipoAplicable.reset();
+	    			tipoAplicable.setDisabled(true);
+	    			renunciaExencion.setDisabled(true);
+	    			inversionSujetoPasivo.setDisabled(true);
+	    			
+	    			if(esBankia){
+	    				grupoImpuesto.clearValue();
+	    				grupoImpuesto.setDisabled(true);
+	    			}
+	    			
+	    		}else{
+	    			
+	    			tributosPropiedad.allowBlank = false;
+	    			tipoAplicable.allowBlank = false;
+	    			inversionSujetoPasivo.allowBlank=false;
+	    			
+	    			tributosPropiedad.validate();
+	    			renunciaExencion.validate();
+	    			inversionSujetoPasivo.validate();
+	    			
+	    			tipoAplicable.setDisabled(false);
+	    			tributosPropiedad.setDisabled(false);
+	    			inversionSujetoPasivo.setDisabled(false);
+	    			
+	    			if(esBankia){
+		    			grupoImpuesto.allowBlank = false;
+		    			grupoImpuesto.setDisabled(false);
 		    			tributosPropiedad.setDisabled(false);
-		    			renunciaExencion.setDisabled(false);
-		    			inversionSujetoPasivo.setDisabled(false);
-		    			
-		    			if(esBankia){
-			    			grupoImpuesto.allowBlank = false;
-			    			grupoImpuesto.setDisabled(false);
-			    			tipoAplicable.setDisabled(false);
-			    			tipoAplicable.setDisabled(false);
-			    			inversionSujetoPasivo.setDisabled(false);
-			    			renunciaExencion.setDisabled(false);
-			    			tributosPropiedad.setDisabled(false);
-		    			}
-		    		}
-				}
+	    			}
+	    			
+	    			if(grupoImpuesto.getValue() == CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] ){
+	    				renunciaExencion.setDisabled(false);
+	    			}else{
+	    				renunciaExencion.reset();
+	    				renunciaExencion.setDisabled(true);
+	    			}
+	    		}
+
 			}
 		} catch (err) {
 			Ext.global.console.log('Error en onCambioTipoImpuesto: '+ err)
 		}
 	},
 
-	onCambioOperacionExenta : function(checkbox, newValue,
-			oldValue, eOpts) {
-		if (!Ext.isEmpty(oldValue)) {
-			var me = this, renunciaExencion = me
-					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
-					.lookupReference('tipoAplicable');
-
-			if (newValue == true) {
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-				renunciaExencion.setReadOnly(false);
-			} else {
-				tipoAplicable.setDisabled(false);
-				tipoAplicable.allowBlank = false;
-				renunciaExencion.reset();
-				renunciaExencion.setReadOnly(true);
-			}
-		}
-	},
 
 	onCambioRenunciaExencion : function(checkbox, newValue,
 			oldValue, eOpts) {

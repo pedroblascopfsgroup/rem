@@ -174,6 +174,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									{
 										xtype : 'comboboxfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
+										reference: 'comboTipoImpuestoFiscalidad', 
 										bind : {
 											store : '{comboTipoImpuesto}',
 											value : '{condiciones.tipoImpuestoCodigo}'
@@ -270,10 +271,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									   xtype: 'checkboxfieldbase',
 									   fieldLabel: HreRem.i18n('fieldlabel.necesidadIf'),
 									   reference: 'necesidadIfExpedienteRef',
-									   //allowBlank: false,
 									   bind : {
 								     		value: '{condiciones.necesidadIf}'
-								     		//,hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
 									   },
 									   hidden: true
 									}

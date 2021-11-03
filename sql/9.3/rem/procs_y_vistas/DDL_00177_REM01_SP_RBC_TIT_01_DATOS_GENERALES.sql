@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15969
@@ -15,6 +15,7 @@
 --##        0.3 Se añaden más mapeos - [HREOS-15634] - Daniel Algaba
 --##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
 --##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
+--##        0.6 Si es diferente de vivienda en subtipo de vivienda se envía 0 (En el caso de no aplicar al tratarse de un bien inmueble no vivienda) - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -66,7 +67,8 @@ BEGIN
                      END ESTADO_POSESORIO
                      , SPS.SPS_FECHA_REVISION_ESTADO FEC_ESTADO_POSESORIO   
                      , ACT.ACT_PORCENTAJE_CONSTRUCCION*100 PORC_OBRA_EJECUTADA
-                     , EQV5.DD_CODIGO_CAIXA SUBTIPO_VIVIENDA
+                     , CASE WHEN EQV3.DD_CODIGO_CAIXA != ''0001'' THEN ''0''
+                            ELSE EQV5.DD_CODIGO_CAIXA END SUBTIPO_VIVIENDA
                      , NULL IND_OCUPANTES_VIVIENDA
                      , NULL PRODUCTO
                      , NULL /*DECODE(TCO.DD_TCO_CODIGO, ''03'', ''N'', ''S'')*/ VENTA

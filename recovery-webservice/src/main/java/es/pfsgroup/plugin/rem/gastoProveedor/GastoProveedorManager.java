@@ -591,6 +591,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.setSolicitudPagoUrgente(false);
 				}
 			}
+			
+			dto.setSubrogado(gasto.getSubrogado());
 		}
 
 		return dto;
@@ -935,6 +937,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gastoProveedor.setSolicitudPagoUrgente(0);
 			}
 		}
+		
+		gastoProveedor.setSubrogado(dto.getSubrogado());
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);
 		

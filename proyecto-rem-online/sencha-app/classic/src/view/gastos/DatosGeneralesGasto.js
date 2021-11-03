@@ -40,7 +40,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 				actionMethods: {read: 'POST'},
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
 			}   	
-    	}); 
+    	});  
 
 		me.setTitle(HreRem.i18n('title.gasto.datos.generales'));
         me.items = [
@@ -116,6 +116,14 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							         	},
 							         	allowBlank: false
 							    	},
+							    	{
+					                	xtype: 'checkboxfieldbase',
+					                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subrogado'),
+					                	bind:	{
+					                		value: '{gasto.subrogado}', 
+					                		hidden:'{!esPropietarioCaixaAlquiler}'
+					                	}			
+				                	},
 							    	{
 							    		xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.suplidos.vinculados'),

@@ -257,6 +257,10 @@ Ext.define('HreRem.model.GastoProveedor', {
     	},
     	{
     		name: 'numeroContratoAlquiler'
+    	},
+    	{
+    		name: 'subrogado',
+    		type: 'boolean'
     	}
    		
     ],

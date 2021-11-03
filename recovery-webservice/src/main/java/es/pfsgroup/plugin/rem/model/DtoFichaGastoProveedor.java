@@ -88,6 +88,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Boolean visibleSuplidos;
    	private String numeroContratoAlquiler;
    	private Boolean solicitudPagoUrgente;
+	private Boolean subrogado;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -494,4 +495,11 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setSolicitudPagoUrgente(Boolean solicitudPagoUrgente) {
 		this.solicitudPagoUrgente = solicitudPagoUrgente;
 	}
+	public Boolean getSubrogado() {
+		return subrogado;
+	}
+	public void setSubrogado(Boolean subrogado) {
+		this.subrogado = subrogado;
+	}
+	
 }

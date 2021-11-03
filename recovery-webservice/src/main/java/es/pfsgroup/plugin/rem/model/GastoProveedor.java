@@ -207,6 +207,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<GastoTasacionActivo> gastoTasacionActivo;
 
+	@Column(name="ALQ_SUBROGADO")
+	private Boolean subrogado;
+	
 	@Version   
 	private Long version;
 
@@ -577,4 +580,13 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setGastoTasacionActivo(List<GastoTasacionActivo> gastoTasacionActivo) {
 		this.gastoTasacionActivo = gastoTasacionActivo;
 	}
+
+	public Boolean getSubrogado() {
+		return subrogado;
+	}
+
+	public void setSubrogado(Boolean subrogado) {
+		this.subrogado = subrogado;
+	}
+	
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211102
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16087
@@ -23,6 +23,7 @@
 --##	    0.10 Se añade paréntesis en consulta - HREOS-15634
 --##	    0.11 Se cambia la llamada de SPs de publicaciones a los nuevos para Caixa - HREOS-15634
 --##	    0.12 Se añade el vaciado en los situaciones comerciales para posteriormente lanzar el SP SCM de vacíos - HREOS-16087
+--##	    0.13 Se recalcula el campo visible gestión comercial cuando pasa a Publicado el activo - HREOS-16087
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -859,6 +860,39 @@ BEGIN
         END LOOP;
 
     SALIDA := SALIDA || '##FIN: SP_CAMBIO_ESTADO_PUBLI_AGR_CONV_CAIXA '|| CHR(10);
+
+--12º Revisamos el campo Visible gestión comercial tras recalcular el estado de publicación de los activos, si es Publicado tiene que estar a Si
+
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+	USING (
+            SELECT ACT.ACT_ID 
+            FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK BCR 
+            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = BCR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
+            JOIN '||V_ESQUEMA_M||'.DD_SIN_SINO SIN ON PAC.PAC_EXCLUIR_VALIDACIONES = SIN.DD_SIN_ID 
+            JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID AND APU.BORRADO = 0 
+            JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0  
+            JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0 AND CRA.DD_CRA_CODIGO = ''03''
+            WHERE (TCO.DD_TCO_CODIGO = ''01'' AND EPV.DD_EPV_CODIGO = ''03''
+            OR TCO.DD_TCO_CODIGO = ''02'' AND (EPV.DD_EPV_CODIGO = ''03'' OR EPA.DD_EPA_CODIGO = ''03'')
+            OR TCO.DD_TCO_CODIGO = ''03'' AND EPA.DD_EPA_CODIGO = ''03'')   
+            AND NVL(SIN.DD_SIN_CODIGO, 0) != ''01''
+            AND NVL(PAC.PAC_CHECK_GESTION_COMERCIAL, 0) <> 1
+            AND BCR.FLAG_EN_REM = '|| FLAG_EN_REM||'
+            ) US ON (US.ACT_ID = PAC.ACT_ID)
+            WHEN MATCHED THEN UPDATE SET
+                 PAC.PAC_CHECK_GESTION_COMERCIAL = 1
+                ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                ,PAC.FECHAMODIFICAR = SYSDATE
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+
+   V_NUM_FILAS := sql%rowcount;
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS PARA PONER VISIBLE GESTIÓN COMERCIAL A SI'|| CHR(10);
 
 COMMIT;
 

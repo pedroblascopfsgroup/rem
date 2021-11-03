@@ -1013,10 +1013,6 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	COD_ALQUILER: '008',
 	 	COD_OTROS: '009'
 	 },
-
-	TIPO_GASTO: {
-	    SERVICIOS_PROFESIONALES_INDEPE: '11'
-	},
 	 
 	 METODO_ATUALIZACION_RENTA:{
 	 	COD_LIBRE: 'LIB',
@@ -1040,7 +1036,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_TASA_CERO: '50'
 	 },
 	TIPO_GASTO: {
-	    SERVICIOS_PROFESIONALES_INDEPE: '11'
+	    SERVICIOS_PROFESIONALES_INDEPE: '11',
+	    ALQUILER: '19'
 	},
 	 
 	 TIPO_OFERTA_ALQUILER_NO_COMERCIAL:{

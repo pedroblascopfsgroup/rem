@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -300,22 +301,29 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					}
 				}
 			}
-			if (gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null) {
-				String codCartera = gasto.getPropietario().getCartera().getCodigo();
-				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
-					if (gasto.getTipoGasto() != null) {
-						String codGasto = gasto.getTipoGasto().getCodigo();
-						if (DDTipoGasto.CODIGO_ALQUILER.equals(codGasto)) {
-							boolean resultado = gastoLineaDetalleDao.tieneListaEntidadesByGastoProveedorAndTipoEntidad(gasto, DDEntidadGasto.CODIGO_ACTIVO);
-							if ((gasto.getNumeroContratoAlquiler() == null || "".equals(gasto.getNumeroContratoAlquiler())) || !resultado) {
-								error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
-								return error;
-								}
-							}
+		
+			if (gasto.getPropietario() != null && gasto.getPropietario() != null) {
+				DDCartera cartera = gasto.getPropietario().getCartera();
+				if (DDCartera.isCarteraBk(cartera) && DDTipoGasto.isTipoGastoAlquiler(gasto.getTipoGasto())) {
+					Filter filtroEntidad =genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",  DDEntidadGasto.CODIGO_ACTIVO);
+					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.gastoProveedor.id", gasto.getId());
+					List<GastoLineaDetalleEntidad> entidades = new ArrayList<GastoLineaDetalleEntidad> ();
+					entidades = genericDao.getList(GastoLineaDetalleEntidad.class, filtroEntidad, filtroGasto);
+						
+					if((gasto.getNumeroContratoAlquiler() == null || gasto.getNumeroContratoAlquiler().isEmpty()) && !entidades.isEmpty()) {
+						error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+						return error;
+					}else if(entidades.isEmpty()){
+						filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",  DDEntidadGasto.CODIGO_SIN_ACTIVOS);
+						entidades = genericDao.getList(GastoLineaDetalleEntidad.class, filtroEntidad, filtroGasto);
+						if(entidades.isEmpty()) {
+							error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+							return error;
 						}
 					}
 				}
 			}
+			
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
@@ -331,6 +339,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
 				return error;
 			}
+		}
 		}
 		return error;
 	}

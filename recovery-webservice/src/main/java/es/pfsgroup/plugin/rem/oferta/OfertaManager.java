@@ -1185,10 +1185,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(ofertaDto.getTitularesConfirmados())) {
 				if(ofertaDto.getTitularesConfirmados()) {
 					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
-					oferta.setTitularesConfirmados(diccionarioSiNo);
+					oferta.setTitularesConfirmadosSINo(diccionarioSiNo);
 				}else {
 					DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
-					oferta.setTitularesConfirmados(diccionarioSiNo);
+					oferta.setTitularesConfirmadosSINo(diccionarioSiNo);
 				}
 			}
 
@@ -3436,8 +3436,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoResponse.setCheckSubasta(ofrCaixa.getCheckSubasta());	
 				}		
 							
-				if(!Checks.esNulo(oferta.getTitularesConfirmados())){
-					dtoResponse.setTitularesConfirmados(oferta.getTitularesConfirmados().getDescripcion());
+				if(!Checks.esNulo(oferta.getTitularesConfirmadosSINo())){
+					dtoResponse.setTitularesConfirmados(oferta.getTitularesConfirmadosSINo().getDescripcion());
 				}
 			}
 		}

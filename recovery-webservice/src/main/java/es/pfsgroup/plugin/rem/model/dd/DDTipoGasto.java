@@ -110,6 +110,14 @@ public class DDTipoGasto implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	
+	public static boolean isTipoGastoAlquiler (DDTipoGasto tipo) {
+		boolean is = false;
+		if(tipo != null && (CODIGO_ALQUILER.equals(tipo.getCodigo()))) {
+			is = true;
+		}
+		return is;
+	}
 }
 
 

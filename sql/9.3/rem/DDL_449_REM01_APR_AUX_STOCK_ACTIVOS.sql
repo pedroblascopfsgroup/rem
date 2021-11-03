@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20211005
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15457
+--## INCIDENCIA_LINK=HREOS-16257
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar
@@ -14,6 +14,7 @@
 --##        0.1 Versión inicial
 --##        0.2 HREOS-15091 Añadir campos DISPONIBLE y COD_MOTIVO_INDISPONIBILIDAD
 --##        0.3 HREOS-15457 Añadir campo DISPONIBLE GESTION
+--##        0.4 HREOS-16257 Añadir campos
 --#########################################
 ----*/
 
@@ -121,6 +122,11 @@ BEGIN
         ,DISPONIBLE VARCHAR2(1 CHAR)
         ,COD_MOTIVO_INDISPONIBILIDAD VARCHAR2(5 CHAR)
         ,GESTION VARCHAR2(1 CHAR)
+        ,CARENCIA VARCHAR2(100 CHAR)
+        ,BONIFICACION_1 VARCHAR2(100 CHAR)
+        ,BONIFICACION_2 VARCHAR2(100 CHAR)
+        ,BONIFICACION_3 VARCHAR2(100 CHAR)
+        ,BONIFICACION_4 VARCHAR2(100 CHAR)
 
 	)';
 

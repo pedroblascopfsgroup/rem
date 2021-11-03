@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=URTASACI
+fichero=HA_EC_CAMP_Agrupadores,HA_EC_CAMP_Perimetros,HA_EC_CAMP_Fases,HA_EC_CAMP_Contenidos
 fecha="_$1"
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
@@ -8,7 +8,7 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     exit 1
 fi
 
-extensionTxt=".txt"
+extensionTxt=".csv"
 
 OIFS=$IFS
 IFS=','
@@ -24,8 +24,8 @@ do
     var=$(ls ${DIR_DESTINO}$fichero*)
     if [ -f $var ]; then
         mv ${DIR_DESTINO}$fichero* ${DIR_BACKUP}
-    fi    
-    
+    fi
+
     ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
 
     echo "$ficheroTxt"

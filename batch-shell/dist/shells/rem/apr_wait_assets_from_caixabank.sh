@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=URTASACI
+fichero=URSTOCK,URSTOCK_ET
 fecha="_$1"
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
@@ -8,7 +8,7 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     exit 1
 fi
 
-extensionTxt=".txt"
+extensionTxt=".TXT"
 
 OIFS=$IFS
 IFS=','

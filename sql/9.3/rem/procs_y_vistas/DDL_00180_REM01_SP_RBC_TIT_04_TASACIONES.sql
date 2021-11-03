@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211022
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15894
+--## INCIDENCIA_LINK=HREOS-15969
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,7 +12,10 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
---##        0.2 Se añaden los campos reción creados y los mapeos necesarios - [HREOS-15894] - Daniel Algaba
+--##        0.3 Se añaden los campos reción creados y los mapeos necesarios - [HREOS-15894] - Daniel Algaba
+--##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
+--##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
+--##        0.6 Se añade el mapeo de Tipo de tasación - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -100,18 +103,17 @@ BEGIN
                      , TASACION.VAL_HIPOTECARIO             
                      , TASACION.VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
-                     JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
                      JOIN (SELECT
                      TAS.ACT_ID
-                     , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_ID DESC) RN
+                     , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_IMPORTE_TAS_FIN DESC) RN
                      , SUBSTR(TAS.TAS_NOMBRE_TASADOR, 0, 10) TASADORA                    
                      , TO_CHAR(TAS.TAS_FECHA_RECEPCION_TASACION,''YYYYMMDD'') FEC_TASACION                
                      , TAS.GASTO_COM_TASACION*100 GASTO_COM_TASACION          
                      , TAS.TAS_IMPORTE_TAS_FIN*100 IMP_TAS_INTEGRO             
                      , TAS.REF_TASADORA REF_ID_TASADORA             
-                     , NULL /*TTS.DD_TTS_CODIGO*/ TIPO_VAL_EST_TASACION   
+                     , EQV10.DD_CODIGO_CAIXA TIPO_VAL_EST_TASACION   
                      , CASE WHEN TAS.PORC_COSTE_DEFECTO = 1 THEN ''S'' ELSE ''N'' END FLAG_PORC_COSTE_DEFECTO     
                      , TAS.APROV_PARCELA_SUELO APROV_PARCELA               
                      , EQV1.DD_CODIGO_CAIXA DESAROLLO_PLANT             
@@ -157,6 +159,7 @@ BEGIN
                      , CASE WHEN TAS.VISITA_ANT_INMUEBLE = 1 THEN ''S'' ELSE ''N'' END VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_TAS_TASACION TAS
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TTS_TIPO_TASACION TTS ON TAS.DD_TTS_ID = TTS.DD_TTS_ID AND TTS.BORRADO = 0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV10 ON EQV10.DD_NOMBRE_CAIXA = ''TIPO_VAL_EST_TASACION'' AND EQV10.DD_CODIGO_REM = TTS.DD_TTS_CODIGO AND EQV10.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_DSP_DESARROLLO_PLANTEAMIENTO DSP ON DSP.DD_DSP_ID = TAS.DD_DSP_ID AND DSP.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV1 ON EQV1.DD_NOMBRE_CAIXA = ''DESA_PLANTEMIENTO'' AND EQV1.DD_CODIGO_REM = DSP.DD_DSP_CODIGO AND EQV1.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_FSG_FASE_GESTION FSG ON FSG.DD_FSG_ID = TAS.DD_FSG_ID AND FSG.BORRADO = 0
@@ -175,13 +178,11 @@ BEGIN
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV8 ON EQV8.DD_NOMBRE_CAIXA = ''PRODUCTO_DESARROLLAR'' AND EQV8.DD_CODIGO_REM = PRD_PREV.DD_PRD_CODIGO AND EQV8.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_SUELO ON SAC_SUELO.DD_SAC_ID = TAS.DD_SAC_ID AND SAC_SUELO.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV9 ON EQV9.DD_NOMBRE_CAIXA = ''SUBTIPO_SUELO'' AND EQV9.DD_CODIGO_REM = SAC_SUELO.DD_SAC_CODIGO AND EQV9.BORRADO = 0
-                     WHERE TAS.BORRADO = 0) TASACION ON RN = 1 AND TASACION.ACT_ID = ACT.ACT_ID
-                     WHERE ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                     AND ACT.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
-                     AND ACT.BORRADO = 0
+                     WHERE TAS.BORRADO = 0
+                     AND TAS.TAS_IMPORTE_TAS_FIN > 1
+                     AND TRUNC(TAS.TAS_FECHA_RECEPCION_TASACION) >= TRUNC(SYSDATE-30)) TASACION ON RN = 1 AND TASACION.ACT_ID = ACT.ACT_ID
+                     WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
-                     AND ACT.ACT_EN_TRAMITE = 0
-                     AND PRO.PRO_DOCIDENTIF IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569'')
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.TASADORA = AUX.TASADORA

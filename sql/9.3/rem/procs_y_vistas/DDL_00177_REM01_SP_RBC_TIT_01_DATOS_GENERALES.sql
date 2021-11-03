@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211020
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-15969
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,9 @@
 --##        0.1 Versión inicial
 --##        0.2 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.3 Se añaden más mapeos - [HREOS-15634] - Daniel Algaba
+--##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
+--##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
+--##        0.6 Si es diferente de vivienda en subtipo de vivienda se envía 0 (En el caso de no aplicar al tratarse de un bien inmueble no vivienda) - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -52,16 +55,20 @@ BEGIN
                      ACT.ACT_NUM_ACTIVO_CAIXA as NUM_IDENTIFICATIVO 
                      , EQV1.DD_CODIGO_CAIXA SOCIEDAD_PATRIMONIAL
                      , EQV2.DD_CODIGO_CAIXA FONDO
-                     , CASE WHEN SPS.SPS_OCUPADO IS NULL AND TTT.DD_TPA_ID IS NULL AND EAL.DD_EAL_ID IS NULL THEN ''P01''
-                           WHEN SPS.SPS_OCUPADO = 1 AND TTT.DD_TPA_CODIGO = ''01'' AND EAL.DD_EAL_CODIGO = ''02'' THEN  ''P02''
-                           WHEN SPS.SPS_OCUPADO = 1 AND TTT.DD_TPA_CODIGO = ''02'' AND EAL.DD_EAL_ID IS NULL THEN ''P03''
-                           WHEN SPS.SPS_VERTICAL = 1 THEN ''P05'' 
-                           WHEN SPS.SPS_OCUPADO = 0 AND TTT.DD_TPA_ID IS NULL AND (EAL.DD_EAL_ID IS NULL OR EAL.DD_EAL_CODIGO = ''01'') THEN ''P06''
-                           ELSE NULL
+                     , CASE WHEN SPS.SPS_OCUPADO IS NULL AND TTT.DD_TPA_ID IS NULL AND EAL.DD_EAL_ID IS NULL THEN ''P01'' -- Sin posesión
+                           WHEN SPS.SPS_OCUPADO = 1 AND TTT.DD_TPA_CODIGO = ''01'' AND EAL.DD_EAL_CODIGO = ''02'' THEN ''P02'' -- Alquilado
+                           WHEN SPS.SPS_OCUPADO = 1 AND (TTT.DD_TPA_CODIGO = ''02'' OR TTT.DD_TPA_CODIGO = ''03'') AND NVL(EAL.DD_EAL_CODIGO,0) != ''02'' THEN ''P03'' -- Reocupado
+                           WHEN SPS.SPS_VERTICAL = 1 THEN ''P05''  -- Vertical
+                           WHEN SPS.SPS_OCUPADO = 0 AND TTT.DD_TPA_ID IS NULL AND NVL(EAL.DD_EAL_CODIGO,0) != ''02'' THEN ''P06'' -- Con posesión
+                           WHEN EAL.DD_EAL_CODIGO = ''02'' THEN ''P02'' -- Alquilado
+                           WHEN EAL.DD_EAL_CODIGO = ''01'' THEN ''P06'' -- Con posesión
+                           WHEN SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL THEN ''P06'' -- Con posesión
+                           ELSE ''P01'' -- Sin posesión
                      END ESTADO_POSESORIO
-                     , NULL FEC_ESTADO_POSESORIO   
+                     , SPS.SPS_FECHA_REVISION_ESTADO FEC_ESTADO_POSESORIO   
                      , ACT.ACT_PORCENTAJE_CONSTRUCCION*100 PORC_OBRA_EJECUTADA
-                     , EQV5.DD_CODIGO_CAIXA SUBTIPO_VIVIENDA
+                     , CASE WHEN EQV3.DD_CODIGO_CAIXA != ''0001'' THEN ''0''
+                            ELSE EQV5.DD_CODIGO_CAIXA END SUBTIPO_VIVIENDA
                      , NULL IND_OCUPANTES_VIVIENDA
                      , NULL PRODUCTO
                      , NULL /*DECODE(TCO.DD_TCO_CODIGO, ''03'', ''N'', ''S'')*/ VENTA
@@ -76,6 +83,7 @@ BEGIN
                      , EQV3.DD_CODIGO_CAIXA CLASE_USO
                      , EQV4.DD_CODIGO_CAIXA SUBTIPO_SUELO
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
                      JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
@@ -96,12 +104,8 @@ BEGIN
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV4 ON EQV4.DD_NOMBRE_CAIXA = ''SUBTIPO_SUELO'' AND EQV4.DD_CODIGO_REM = SAC_SUELO.DD_SAC_CODIGO AND EQV4.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_VIVIENDA ON SAC_VIVIENDA.DD_SAC_ID = ACT.DD_SAC_ID AND SAC_VIVIENDA.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV5 ON EQV5.DD_NOMBRE_CAIXA = ''SUBTIPO_VIVIENDA'' AND EQV5.DD_CODIGO_REM = SAC_SUELO.DD_SAC_CODIGO AND EQV5.BORRADO = 0   
-                     WHERE ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                     AND ACT.DD_CRA_ID = (SELECT DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
-                     AND ACT.BORRADO = 0
+                     WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
-                     AND ACT.ACT_EN_TRAMITE = 0
-                     AND PRO.PRO_DOCIDENTIF IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569'')
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.SOCIEDAD_PATRIMONIAL = AUX.SOCIEDAD_PATRIMONIAL

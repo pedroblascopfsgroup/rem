@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211022
+--## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15894
+--## INCIDENCIA_LINK=HREOS-15969
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_TIT_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -32,7 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15894';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15969';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -48,6 +48,7 @@ DECLARE
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84669332','MBS Bancaja 3, FTA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85082675','MBS Bancaja 4, FTA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85623668','MBS Bancaja 6, FTA'),
+        T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3149', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84054840','BANCAJA 7, FTA'),
 
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3143', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84856319','Caixa Penedés 1, TdA'),
         T_TIPO_DATA('SOCIEDAD_PATRIMONIAL','3143', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V85500866','Caixa Penedes FTGENCAT 1 TDA'),
@@ -69,6 +70,7 @@ DECLARE
         T_TIPO_DATA('FONDO','V84669332', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84669332','MBS Bancaja 3, FTA'),
         T_TIPO_DATA('FONDO','V85082675', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85082675','MBS Bancaja 4, FTA'),
         T_TIPO_DATA('FONDO','V85623668', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V85623668','MBS Bancaja 6, FTA'),
+        T_TIPO_DATA('FONDO','V84054840', 'EDT - europea de titulización','ACT_PRO_PROPIETARIO','V84054840','BANCAJA 7, FTA'),
 
         T_TIPO_DATA('FONDO','V84856319', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V84856319','Caixa Penedés 1, TdA'),
         T_TIPO_DATA('FONDO','V85500866', 'TDA - titulización de activos','ACT_PRO_PROPIETARIO','V85500866','Caixa Penedes FTGENCAT 1 TDA'),
@@ -137,7 +139,11 @@ DECLARE
         T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','05','Unifamiliar aislada'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','2','Vivienda Unifamiliar Adosada','DD_SAC_SUBTIPO_ACTIVO','06','Unifamiliar adosada'),
         T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','07','Unifamiliar pareada'),
-        --T_TIPO_DATA('SUBTIPO_VIVIENDA','0','En el caso de no aplicar al tratarse de un bien inmueble no vivienda','DD_SAC_SUBTIPO_ACTIVO', NULL,'No puede ser no inmueble'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','1','Vivienda Unifamiliar Aislada','DD_SAC_SUBTIPO_ACTIVO','08','Unifamiliar casa de pueblo'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','09','Piso'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','10','Piso dúplex'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','11','Ático'),
+        T_TIPO_DATA('SUBTIPO_VIVIENDA','3','Vivienda en bloque','DD_SAC_SUBTIPO_ACTIVO','12','Estudio/Loft'),
         --Desarrollo planteamiento
         T_TIPO_DATA('DESA_PLANTEMIENTO','U18','Urbanización recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U18','Urbanización recepcionada por el ayuntamiento'),
         T_TIPO_DATA('DESA_PLANTEMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento','DD_DSP_DESA_PLANTEAMIENTO','U19','Urbanización finalizada no recepcionada por el ayuntamiento'),
@@ -197,7 +203,16 @@ DECLARE
         T_TIPO_DATA('METODO_VALORACION','13','otro criterio','DD_MTV_METODO_VALORACION','13','otro criterio'),
         --Tipo de datos utilizados  de inmuebles comparables
         T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','01','Datos de oferta','DD_TDU_TIPO_DAT_UTI_INM_COMP','01','Datos de oferta'),
-        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','02','Transacciones recientes','DD_TDU_TIPO_DAT_UTI_INM_COMP','02','Transacciones recientes')
+        T_TIPO_DATA('TIPO_DAT_UTI_INM_COMPARABLES','02','Transacciones recientes','DD_TDU_TIPO_DAT_UTI_INM_COMP','02','Transacciones recientes'),
+        --Tipo de Valoración Estado Tasación
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','0','DOTACIÓN ESTADÍSTICA ','DD_TTS_TIPO_TASACION','07','Estadística'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','2','COMPLETA ','DD_TTS_TIPO_TASACION','01','Adjudicación'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','03','Asesoramiento comercial'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','04','Dación'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','05','Compra'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','06','Banco de España (BdE)'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','3','DOTACIÓN COMPLETA','DD_TTS_TIPO_TASACION','12','Retasacion BDE'),
+        T_TIPO_DATA('TIPO_VAL_EST_TASACION','4','GARANTIA HIPOTECARIA','DD_TTS_TIPO_TASACION','02','Concesión operación')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

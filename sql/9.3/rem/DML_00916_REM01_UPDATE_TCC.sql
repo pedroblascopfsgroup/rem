@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20210929
+--## FECHA_CREACION=20211029
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15275
@@ -10,7 +10,8 @@
 --## Finalidad: Script para Insertar Registros de validación para el WS en la tabla TCC_TAREA_CONFIG_CAMPOS
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-15275
+--##		0.2 Se añaden casuisticas - HREOS-16077
 --##########################################
 --*/
 
@@ -28,7 +29,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 		V_SQL_DELETE VARCHAR2(4000 CHAR);
 		V_NUM_DELETE NUMBER(16);
-		V_USU_CREAR VARCHAR2(30 CHAR) := '''HREOS-15275'''; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+		V_USU_CREAR VARCHAR2(30 CHAR) := '''HREOS-16077'''; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
 
 		TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(250);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -63,7 +64,8 @@ DECLARE
 		--			 					TAREA					INSTANCIA					CAMPO						 VALOR	 														ACCION			
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'comboQuitar',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'comboQuitar',													'02', 							'='),
-		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaEnvioPropuesta',				 '', 								'IS NOT NULL'),				
+		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaPropuesta',				 '', 								'IS NOT NULL'),
+		T_TIPO_DATA('T017_AgendarFechaFirmaArras',                  '1',                'fechaVencimientoArras',            '',                                 'IS NOT NULL'),
 		T_TIPO_DATA('T017_AgendarFechaFirmaArras',					'1'	,				'fechaEnvio',											 '',	 							'IS NOT NULL'),
 
 		-- comboQuitar = 01
@@ -95,21 +97,38 @@ DECLARE
 		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'comboArras',				'02', 							'='),
 		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'comboResultado',			'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),
 		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'comboResultado',			'01',		 						'='),		
-		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'motivoAplazamiento',			'',		 						'IS NOT NULL'),
+		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'motivoAplazamiento',			'',		 						'IS NOT NULL'),		
+		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T017_FirmaContrato',							'1'	,				'comboFirma',				'01', 							'='),
 
-		-- comboArras = 02   y reagendar = 02
+		-- comboArras = 02, reagendar = 02 y comboFirma = 01
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
 		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboArras',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboArras',				'02', 							'='),
 		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboResultado',			'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),
-		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboResultado',			'02',		 						'='),
+		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboResultado',			'02',		 						'='),	
+		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboFirma',				'',		 						'IS NOT NULL'),		
+		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),						
+		T_TIPO_DATA('T017_FirmaContrato',							'2'	,				'comboFirma',				'01', 							'='),
+
+		-- comboArras = 02, reagendar = 02 y comboFirma = 02
+		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboArras',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboArras',				'02', 							'='),
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboResultado',			'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboResultado',			'02',		 						'='),	
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboFirma',				'',		 						'IS NOT NULL'),		
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),						
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboFirma',				'02', 							'='),
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'fechaFirma',				'',		 						'IS NOT NULL'),	
+		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'numeroProtocolo',				'',		 						'IS NOT NULL'),	
 
 		-- comboArras = 01   
 		
-		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboArras',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
-		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'comboArras',				'01', 							'='),					
-		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'mesesFianza',	 '',	 							'IS NOT NULL'),		
-		T_TIPO_DATA('T017_FirmaContrato',							'3'	,				'importeFianza',			 '', 								'IS NOT NULL')
+		T_TIPO_DATA('T017_FirmaContrato',							'4'	,				'comboArras',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T017_FirmaContrato',							'4'	,				'comboArras',				'01', 							'='),					
+		T_TIPO_DATA('T017_FirmaContrato',							'4'	,				'mesesFianza',	 '',	 							'IS NOT NULL'),		
+		T_TIPO_DATA('T017_FirmaContrato',							'4'	,				'importeFianza',			 '', 								'IS NOT NULL')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -130,15 +149,12 @@ BEGIN
 							-- Recuperar TAP_ID de T013_PosicionamientoYFirma 
 							V_TAREA_T013 := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAREA(1))||''' AND BORRADO = 0';
 							EXECUTE IMMEDIATE V_TAREA_T013 INTO V_NUM_TAREA_T013;
-							-- Recuperar TAP_ID de T004_ResultadoNoTarificada
-							V_TAREA_T004 := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAREA(2))||''' AND BORRADO = 0';
-							EXECUTE IMMEDIATE V_TAREA_T004 INTO V_NUM_TAREA_T004;
 							
-    					 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T013||''' OR TAP_ID = '''||V_NUM_TAREA_T004||'''';
+    					 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T013||'''';
 							 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 							IF V_NUM_TABLAS > 0  THEN			
-								EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T013||''' OR TAP_ID = '''||V_NUM_TAREA_T004||'''';
+								EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T013||'''';
 
 										DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS ELIMINADOS CON ÉXITO. '); 										
 								END IF;

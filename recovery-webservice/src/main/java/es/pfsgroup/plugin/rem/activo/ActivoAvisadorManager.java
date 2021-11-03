@@ -387,15 +387,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
-		boolean alquilado = updateActivoAlquilado(id, activo, activo.getOfertas());
-		
-		if (alquilado) {
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Alquilado");
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);
-		}
-
 		return listaAvisos;
 	}
 	

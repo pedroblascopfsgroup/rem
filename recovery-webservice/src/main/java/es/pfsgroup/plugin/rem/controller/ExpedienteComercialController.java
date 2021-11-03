@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
+import es.pfsgroup.plugin.rem.model.DtoTestigos;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -2898,6 +2899,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTestigos(Long id, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getTestigos(id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2964,6 +2979,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTestigos(DtoTestigos dtoTestigos,  @RequestParam Long idEntidad, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, dtoTestigos);
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveTestigos(dtoTestigos, idEntidad));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -3082,4 +3116,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteTestigos(DtoTestigos dtoTestigos, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, dtoTestigos);
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.deleteTestigos(dtoTestigos));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

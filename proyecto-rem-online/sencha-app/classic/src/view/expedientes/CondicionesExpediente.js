@@ -175,7 +175,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'comboboxfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.tipo.impuesto'),
 										bind : {
-											store : '{comboTiposImpuesto}',
+											store : '{comboTipoImpuesto}',
 											value : '{condiciones.tipoImpuestoCodigo}'
 										},
 										displayField : 'descripcion',
@@ -228,7 +228,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.inversion.sujeto.pasivo'),
 										bind : {
 											value : '{condiciones.inversionDeSujetoPasivo}',
-											readOnly : '{!esOfertaVenta}'
+											readOnly : '{!esOfertaVenta}',
+											hidden: isBK
 										},
 										listeners : {
 											change : 'onCambioInversionSujetoPasivo'

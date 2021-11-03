@@ -1919,6 +1919,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		isCarteraHyTOrBFA: function(get) {
+	    	var codigoCarteraHyT = get('activo.isCarteraHyT'), codigoCarteraBFA = get('activo.isCarteraBFA');	    	
+	    	return codigoCarteraHyT || codigoCarteraBFA;
+		},
+		
 		tieneGestionDnd: function(get){
 			var tieneGestionDnd = get('activo.tieneGestionDndCodigo');
 			//var tieneGestionDndCombo = this.getView().lookupReference('gestionDndCodigo');
@@ -2950,14 +2955,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			
 		comboEstadoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
-			},
-			autoLoad: true
-
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosOfertas'}
+				},
+				autoLoad: true
+	
 	    },
 	    comboTipoRechazoOferta: {
 			model: 'HreRem.model.ComboBase',

@@ -61,6 +61,8 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String maxPrecioVenta;
 	private String observaciones;
 	private Boolean isCarteraBankia;
+	private Boolean plusvaliaComprador;
+	private Date fechaLiquidacionPlusvalia;
 	
 	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
 	private Integer tieneTituloAdicional; 
@@ -531,6 +533,18 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setIsCarteraBankia(Boolean isCarteraBankia) {
 		this.isCarteraBankia = isCarteraBankia;
+	}
+	public Boolean getPlusvaliaComprador() {
+		return plusvaliaComprador;
+	}
+	public void setPlusvaliaComprador(Boolean plusvaliaComprador) {
+		this.plusvaliaComprador = plusvaliaComprador;
+	}
+	public Date getFechaLiquidacionPlusvalia() {
+		return fechaLiquidacionPlusvalia;
+	}
+	public void setFechaLiquidacionPlusvalia(Date fechaLiquidacionPlusvalia) {
+		this.fechaLiquidacionPlusvalia = fechaLiquidacionPlusvalia;
 	}
 	
 }

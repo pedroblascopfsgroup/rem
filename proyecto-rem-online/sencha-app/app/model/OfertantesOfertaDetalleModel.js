@@ -37,7 +37,10 @@ Ext.define('HreRem.model.OfertantesOfertaDetalleModel', {
             	name: 'ADCOMIdDocumentoGDPR'
             },
             {
-            	name: 'vinculoCaixaDesc'
+                name: 'vinculoCaixaDesc'
+            },
+            {
+            	name: 'aceptacionOferta'
             }
             
     ],

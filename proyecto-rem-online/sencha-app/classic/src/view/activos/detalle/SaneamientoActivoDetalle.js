@@ -188,6 +188,30 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								 		}
 									},
 									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.plusvalia.comprador'),
+								        bind: {
+							            	store: '{comboSiNoBoolean}',
+							            	value:'{saneamiento.plusvaliaComprador}',
+							            	readOnly: '{saneamiento.unidadAlquilable}'
+							           	},
+							        	listeners: {
+											change: 'onPlusvaliaCompradorChange'
+										}
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.liquidacion.plusvalia'),
+								 		colspan: 3,
+								 		reference: 'fechaLiquidacionPlusvaliaRef',
+								 		bind: {
+								 			value: '{saneamiento.fechaLiquidacionPlusvalia}',
+								 			readOnly: '{saneamiento.unidadAlquilable}',
+								 			disabled: '{!saneamiento.plusvaliaComprador}'
+								 		},
+								 		maxValue : null 
+									},
+									{
 										xtype:'fieldsettable',
 										defaultType: 'textfieldbase',
 										colspan: 3,

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -441,6 +442,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
 		}
 
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
+		}
+
 		clienteComercialDao.save(cliente);
 		
 		// HREOS-4937 GDPR
@@ -811,6 +822,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 
 
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
+		}
+		
 		clienteComercialDao.saveOrUpdate(cliente);
 		
 		// HREOS-4937

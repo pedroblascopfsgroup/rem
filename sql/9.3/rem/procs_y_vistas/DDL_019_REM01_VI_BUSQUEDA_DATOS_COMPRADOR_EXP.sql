@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20211026
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=15934
+--## INCIDENCIA_LINK=16128
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -25,6 +25,7 @@
 --##		0.11 Versión - HREOS-14704 	- Lara Pablo - Añadidas columnas DD_VIC_CODIGO
 --##		0.12 Versión - HREOS-14641	- Sergio Gomez - Quitar COM_FECHA_NACIMIENTO
 --##		0.13 Versión - HREOS-15099  - Javier Esbri - Añadir campos de comprador y representate
+--##		0.13 Versión - HREOS-16128  - Lara Pablo - Cambiar mapeo de C4C_ID (Cambia de la CEX a la IAP)
 --##########################################
 --*/
 
@@ -143,7 +144,7 @@ BEGIN
 			CEX.CEX_CLI_URSUS_CONYUGE_REM,
 			CEX.CEX_NUM_URSUS_CONYUGE_REM,
 			CEX.CEX_NUM_URSUS_CONYUGE_BH_REM,
-			CEX.CEX_C4C_ID,
+			IAP.C4C_ID,
 			COM.COM_FECHA_NACIOCONST,
 			ECL.DD_ECL_CODIGO AS COD_ESTADO_CONTRASTE,
 			ECL.DD_ECL_DESCRIPCION AS DESC_ESTADO_CONTRASTE,

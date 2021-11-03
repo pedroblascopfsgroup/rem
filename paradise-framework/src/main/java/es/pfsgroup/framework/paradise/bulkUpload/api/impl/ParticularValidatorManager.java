@@ -5893,7 +5893,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE aga.AGR_ID = agr.AGR_ID " 
 				+ "AND agr.dd_tag_id = tag.dd_tag_id "
 				+ "AND act.act_id   = aga.act_id " 
-				+ "AND tag.dd_tag_codigo = '02' OR tag.dd_tag_codigo = '17' OR tag.dd_tag_codigo = '18' " 
+				+ "AND tag.dd_tag_codigo IN ('02','17','18') " 
 				+ "AND act.ACT_NUM_ACTIVO =  :numActivo " 
 				+ "AND agr.agr_fecha_baja is null "
 				+ "AND aga.BORRADO  = 0 " 
@@ -9346,5 +9346,58 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"				WHERE sp.DD_FSP_CODIGO = '05'");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeProvision(String numProvision){
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numProvision", numProvision);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numProvision) || !StringUtils.isNumeric(numProvision))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM PRG_PROVISION_GASTOS WHERE"
+				+ "		 	PRG_NUM_PROVISION = :numProvision "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public List<String> getGastosByNumProvision(String numProvision) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numProvision", numProvision);
+		rawDao.addParams(params);
+		
+		List<Object> resultados = rawDao.getExecuteSQLList("SELECT GPV.GPV_NUM_GASTO_HAYA FROM PRG_PROVISION_GASTOS PRG "
+				+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PRG_ID = PRG.PRG_ID AND GPV.BORRADO = 0 "
+				+ "WHERE PRG.PRG_NUM_PROVISION = :numProvision AND PRG.BORRADO = 0");
+		
+		List<String> listaString = new ArrayList<String>();
+		
+		for (Object valor : resultados) {
+			listaString.add(valor.toString());
+		}
+
+		return listaString;
+	}
+
+	@Override
+    public Boolean existeRecomendacionByCod(String recomendacion) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("recomendacion", recomendacion);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(recomendacion)) {
+				return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+						+ "              FROM DD_REC_RECOMENDACION_RCDC WHERE"
+						+ "              DD_REC_CODIGO = :recomendacion"
+						+ "      AND BORRADO = 0"
+						);
+		return !"0".equals(resultado);
+    }
 }
 

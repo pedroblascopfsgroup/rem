@@ -889,19 +889,25 @@ public class GenericController extends ParadiseJsonController{
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void idPersonaHaya(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
-								   @RequestParam (required = false) String documentoInterlocutor,
-								   @RequestParam (required = false) String documentoProveedor,
-								   @RequestParam (required = false) String codCartera,
-								   @RequestParam (required = false) String codProveedor){
+											  @RequestParam (required = false) String documentoInterlocutor,
+											  @RequestParam (required = false) String documentoProveedor,
+											  @RequestParam (required = false) String codCartera,
+											  @RequestParam (required = false) String codSubCartera,
+											  @RequestParam (required = false) String codProveedor){
 
-		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera));
+		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera,codSubCartera));
 
 		restApi.sendResponse(response, model, request);
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
-	public ModelAndView getTiposImpuestoFiltered(String esBankia) {
-		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia);
+	public ModelAndView getEstadosOfertaWeb() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getEstadosOfertaWeb()));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getTiposImpuestoFiltered(String esBankia, String tipoExpediente) {
+		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia,tipoExpediente);
 		return createModelAndViewJson(new ModelMap("data", lista));	
 	}
  }

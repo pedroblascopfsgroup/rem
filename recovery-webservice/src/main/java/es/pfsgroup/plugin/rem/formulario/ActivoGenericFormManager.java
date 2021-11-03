@@ -734,7 +734,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	
             	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto")) {
+            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto") || item.getNombre().equals("comiteSancionador")) {
             			
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {

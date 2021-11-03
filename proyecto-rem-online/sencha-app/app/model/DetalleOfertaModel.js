@@ -79,6 +79,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		{
 			name: 'checkSubasta',
 			type: 'boolean'
+		},
+		{
+			name:'titularesConfirmados'
 		}
     ],
 

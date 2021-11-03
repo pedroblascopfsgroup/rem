@@ -35,13 +35,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -235,8 +240,9 @@ public class Oferta implements Serializable, Auditable {
     @Column(name="OFR_OFERTA_EXPRESS")
 	private Boolean ofertaExpress;
 
-    @Column(name="OFR_NECESITA_FINANCIACION")
-	private Boolean necesitaFinanciacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_NECESITA_FINANCIACION")
+	private DDSnsSiNoNosabe necesitaFinanciar;
 
     @Column(name="OFR_OBSERVACIONES")
 	private String observaciones;
@@ -358,7 +364,6 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_FECHA_PRIMER_VENCIMIENTO")
     private Date fechaPrimerVencimiento;
-	
 
 	@Column(name = "OFR_FECHA_INICIO_CONTRATO")
     private Date fechaInicioContrato;
@@ -392,6 +397,25 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOA_ID")
 	private DDTipoOfertaAlquiler tipoOfertaAlquiler;
+
+	@Column(name="OFR_FECHA_OFERTA_PENDIENTE")
+	private Date fechaOfertaPendiente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_TFN_ID")
+	private DDTfnTipoFinanciacion tipologiaFinanciacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_ETF_ID")
+	private DDEntidadFinanciera entidadFinanciera;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MJO_ID")
+	private DDMotivoJustificacionOferta motivoJustificacionOferta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_TITULARES_CONFIRMADOS")
+    private DDSinSiNo titularesConfirmados;
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -785,12 +809,12 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaExpress = ofertaExpress;
 	}
 
-	public Boolean getNecesitaFinanciacion() {
-		return necesitaFinanciacion;
+	public DDSnsSiNoNosabe getNecesitaFinanciar() {
+		return necesitaFinanciar;
 	}
 
-	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
-		this.necesitaFinanciacion = necesitaFinanciacion;
+	public void setNecesitaFinanciar(DDSnsSiNoNosabe necesitaFinanciacion) {
+		this.necesitaFinanciar = necesitaFinanciacion;
 	}
 
 	public String getObservaciones() {
@@ -1113,14 +1137,20 @@ public class Oferta implements Serializable, Auditable {
 		this.respDocCliente = respDocCliente;
 	}
 
-
-
 	public OfertaCaixa getOfertaCaixa() {
 		return ofertaCaixa;
 	}
 
 	public void setOfertaCaixa(OfertaCaixa ofertaCaixa) {
 		this.ofertaCaixa = ofertaCaixa;
+	}
+	
+	public Date getFechaOfertaPendiente() {
+		return fechaOfertaPendiente;
+	}
+
+	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
+		this.fechaOfertaPendiente = fechaOfertaPendiente;
 	}
 	
 	public ExpedienteComercial getExpedienteComercial() {
@@ -1226,4 +1256,37 @@ public class Oferta implements Serializable, Auditable {
 	public void setTipoOfertaAlquiler(DDTipoOfertaAlquiler tipoOfertaAlquiler) {
 		this.tipoOfertaAlquiler = tipoOfertaAlquiler;
 	}
+	
+	public DDTfnTipoFinanciacion getTipologiaFinanciacion() {
+		return tipologiaFinanciacion;
+	}
+
+	public void setTipologiaFinanciacion(DDTfnTipoFinanciacion tipoFinanciacion) {
+		this.tipologiaFinanciacion = tipoFinanciacion;
+	}
+
+	public DDEntidadFinanciera getEntidadFinanciera() {
+		return entidadFinanciera;
+	}
+
+	public void setEntidadFinanciera(DDEntidadFinanciera entidadFinanciera) {
+		this.entidadFinanciera = entidadFinanciera;
+	}
+	
+	public DDMotivoJustificacionOferta getMotivoJustificacionOferta() {
+		return motivoJustificacionOferta;
+	}
+
+	public void setMotivoJustificacionOferta(DDMotivoJustificacionOferta motivoJustificacionOferta) {
+		this.motivoJustificacionOferta = motivoJustificacionOferta;
+	}
+	
+	public DDSinSiNo getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+
+	public void setTitularesConfirmados(DDSinSiNo titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
+	}
+	
 }

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR= Julián Dolz
---## FECHA_CREACION=20211016
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15678
+--## INCIDENCIA_LINK=HREOS-16228
 --## PRODUCTO=NO
 --##
 --## Finalidad:
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##        0.1 Cambiar comboResolucion por comboResultado en T015_SancionPatrimonio
 --##########################################
 --*/
 
@@ -54,7 +55,7 @@ DECLARE
       	T_TIPO_DATA('T015_SancionBC'		,'textarea', 	'3'		        ,'observacionesBc'		,null 	        ,null	    			,'Observaciones Bc'),
 		T_TIPO_DATA('T015_SancionBC'		,'textarea', 	'4'		        ,'observaciones'		,null 	        ,null	    			,'Observaciones'),
 	
-    	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'1'			,'comboResolucion'		,'false' 	    ,'DDSiNo'	    		,'Sanción'),
+    	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'1'			,'comboResultado'		,'false' 	    ,'DDSiNo'	    		,'Sanción'),
     	T_TIPO_DATA('T015_SancionPatrimonio'	,'datefield', 	'2'			,'fechaSancion'			,'false' 	    ,null	    			,'Fecha Sanción'),
     	T_TIPO_DATA('T015_SancionPatrimonio'	,'combobox', 	'3'			,'comboMotivoAnulacion'	,null 	        ,'DDMotivoAnulacionExpediente','Motivo Anulación'),
       	T_TIPO_DATA('T015_SancionPatrimonio'	,'textarea', 	'4'			,'observacionesBc'		,null 	        ,null	    			,'Observaciones Bc'),

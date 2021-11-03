@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20210804
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14803
@@ -38,10 +38,10 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('1', '60'),
-		T_TIPO_DATA('2', '30'),
-		T_TIPO_DATA('3', '50'),
-		T_TIPO_DATA('4', '40')	
+    	T_TIPO_DATA('01', '60'),
+		T_TIPO_DATA('02', '30'),
+		T_TIPO_DATA('03', '50'),
+		T_TIPO_DATA('04', '40')	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

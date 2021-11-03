@@ -70,21 +70,39 @@ BEGIN
 
 	END LOOP;
 
-		-- Creamos FK
+-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_'||V_LETRAS_TABLA||'_IAP_ID_REP''';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+IF V_NUM_TABLAS = 0 THEN
+	--No existe la FK y la creamos		
     	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_LETRAS_TABLA||'_IAP_ID_REP FOREIGN KEY (IAP_ID_REP) REFERENCES '||V_ESQUEMA|| '.IAP_INFO_ADC_PERSONA (IAP_ID))';
     	EXECUTE IMMEDIATE V_MSQL;
     	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK creada.');
-	
-	-- Creamos FK
-    	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_LETRAS_TABLA||'_DD_LOC_NAC_ID_REP FOREIGN KEY (DD_LOC_NAC_ID_REP) REFERENCES '||V_ESQUEMA_M|| '.DD_LOC_LOCALIDAD (DD_LOC_ID))';
+ELSE
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK YA EXISTE.');
+END IF;
+
+V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_'||V_LETRAS_TABLA||'_DD_LOC_NAC_ID_REP''';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;		
+IF V_NUM_TABLAS = 0 THEN
+	--No existe la FK y la creamos
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_LETRAS_TABLA||'_DD_LOC_NAC_ID_REP FOREIGN KEY (DD_LOC_NAC_ID_REP) REFERENCES '||V_ESQUEMA_M|| '.DD_LOC_LOCALIDAD (DD_LOC_ID))';
     	EXECUTE IMMEDIATE V_MSQL;
     	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK creada.');
+ELSE
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK YA EXISTE.');
+END IF;
 
-	-- Creamos FK
+V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_'||V_LETRAS_TABLA||'_DD_PAI_NAC_ID_REP''';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;		
+IF V_NUM_TABLAS = 0 THEN
+	--No existe la FK y la creamos
     	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_'||V_LETRAS_TABLA||'_DD_PAI_NAC_ID_REP FOREIGN KEY (DD_PAI_NAC_ID_REP) REFERENCES '||V_ESQUEMA|| '.DD_PAI_PAISES (DD_PAI_ID))';
     	EXECUTE IMMEDIATE V_MSQL;
     	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK creada.');
-
+ELSE
+    	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK YA EXISTE.');
+END IF;
 
 
 	DBMS_OUTPUT.PUT_LINE('[FIN] ACTUALIZADA OFR_TIA_TITULARES_ADICIONALES');

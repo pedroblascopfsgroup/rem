@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -273,6 +274,10 @@ public class ClienteComercial implements Serializable, Auditable {
 	@Column(name = "CLC_ID_PERSONA_HAYA_CAIXA_REPR")
 	private String idPersonaHayaCaixaRepresentante;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLC_ACEPTACION_OFERTA")
+    private DDSinSiNo aceptacionOferta;
+    
 	@Version   
 	private Long version;
 
@@ -802,5 +807,13 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
 		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
+	
+	public DDSinSiNo getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+
+	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
 	}
 }

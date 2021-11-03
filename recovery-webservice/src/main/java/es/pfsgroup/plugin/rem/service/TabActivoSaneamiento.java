@@ -374,6 +374,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 			if (actTituloAdicional.getFechaNotaSimple() != null) {
 				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
 			}
+			if (actTituloAdicional.getPlusvaliaComprador() != null) {
+				activoDto.setPlusvaliaComprador(actTituloAdicional.getPlusvaliaComprador());
+			}
+			if (actTituloAdicional.getFechaLiquidacionPlusvalia() != null) {
+				activoDto.setFechaLiquidacionPlusvalia(actTituloAdicional.getFechaLiquidacionPlusvalia());
+			}
 			
 			puedeEditar = false;
 			
@@ -468,6 +474,21 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			if(activoDto.getFechaRetiradaReg() != null) {
 				actTitulo.setFechaRetiradaReg(activoDto.getFechaRetiradaReg());
+			}
+			if(activoDto.getPlusvaliaComprador() != null) {
+				actTitulo.setPlusvaliaComprador(activoDto.getPlusvaliaComprador());
+			}
+		
+			if(activoDto.getFechaLiquidacionPlusvalia() != null) {
+				actTitulo.setFechaLiquidacionPlusvalia(activoDto.getFechaLiquidacionPlusvalia());
+			}
+			if (activoDto.getPlusvaliaComprador() != null) {
+				actTitulo.setPlusvaliaComprador(activoDto.getPlusvaliaComprador());
+			}
+			if (activoDto.getFechaLiquidacionPlusvalia() != null) {
+				actTitulo.setFechaLiquidacionPlusvalia(activoDto.getFechaLiquidacionPlusvalia());
+			} else {
+				actTitulo.setFechaLiquidacionPlusvalia(null);
 			}
 			
 			genericDao.save(ActivoTitulo.class, actTitulo);

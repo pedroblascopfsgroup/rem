@@ -243,7 +243,7 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
-	@Column(name = "CEX_C4C_ID")
+	@Column(name = "C4C_ID")
 	private String idBC4C;
 	
 	@Column(name = "COM_FECHA_NACIOCONST")

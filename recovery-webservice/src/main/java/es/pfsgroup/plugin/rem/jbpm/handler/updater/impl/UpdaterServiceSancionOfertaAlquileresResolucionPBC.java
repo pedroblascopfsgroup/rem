@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -104,6 +105,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 									pdteDocu = true;
 								}else {
 									ofertaCongelada.setEstadoOferta(pendiente);
+									if (Checks.esNulo(ofertaCongelada.getFechaOfertaPendiente())) ofertaCongelada.setFechaOfertaPendiente(new Date());
 								}
 								genericDao.save(Oferta.class, ofertaCongelada);
 								

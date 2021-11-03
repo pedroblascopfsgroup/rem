@@ -853,6 +853,22 @@ public class ActivoAdapter {
 							}
 						}
 					}
+					
+					if (!Checks.esNulo(activoCarga.getFechaSolicitudCarta())) {
+						beanUtilNotNull.copyProperty(cargaDto, "fechaSolicitudCarta",
+								activoCarga.getFechaSolicitudCarta());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getFechaRecepcionCarta())) {
+						beanUtilNotNull.copyProperty(cargaDto, "fechaRecepcionCarta", 
+								activoCarga.getFechaRecepcionCarta());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getFechaPresentacionRpCarta())) {
+						beanUtilNotNull.copyProperty(cargaDto, "fechaPresentacionRpCarta",
+								activoCarga.getFechaPresentacionRpCarta());
+					}
+
 
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
@@ -1001,6 +1017,21 @@ public class ActivoAdapter {
 
 			beanUtilNotNull.copyProperty(dtoCarga, "descripcionCargaEconomica",
 					cargaSeleccionada.getDescripcionCarga());
+			
+			if (!Checks.esNulo(cargaSeleccionada.getFechaSolicitudCarta())) {
+				beanUtilNotNull.copyProperty(dtoCarga, "fechaSolicitudCarta",
+						cargaSeleccionada.getFechaSolicitudCarta());
+			}
+			
+			if (!Checks.esNulo(cargaSeleccionada.getFechaRecepcionCarta())) {
+				beanUtilNotNull.copyProperty(dtoCarga, "fechaRecepcionCarta", 
+						cargaSeleccionada.getFechaRecepcionCarta());
+			}
+			
+			if (!Checks.esNulo(cargaSeleccionada.getFechaPresentacionRpCarta())) {
+				beanUtilNotNull.copyProperty(dtoCarga, "fechaPresentacionRpCarta",
+						cargaSeleccionada.getFechaPresentacionRpCarta());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter", e);
@@ -4349,6 +4380,8 @@ public class ActivoAdapter {
 			   
 			}
 			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 

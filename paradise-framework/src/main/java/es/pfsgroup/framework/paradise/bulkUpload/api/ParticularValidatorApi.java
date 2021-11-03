@@ -1503,4 +1503,11 @@ public interface ParticularValidatorApi {
 	boolean esClienteEnOfertaCaixa(String numCliente);
 
 	boolean esProveedorOfertaCaixa(String idProveedor);
+	
+	Boolean existeProvision(String idProvision);
+
+	List<String> getGastosByNumProvision(String idEntidad);
+	
+	Boolean existeRecomendacionByCod(String recomendacion);
+
 }

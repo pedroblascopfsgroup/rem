@@ -37,6 +37,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDRangoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -68,8 +70,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
 	
-	@Column(name="COE_SOLICITA_FINANCIACION")
-	private Integer solicitaFinanciacion;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="COE_SOLICITA_FINANCIACION")
+	private DDSnsSiNoNosabe solicitaFinanciacion;
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ESF_ID")
@@ -435,6 +438,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	@Column(name="COE_CHECK_DEPOSITO")
 	private Boolean checkDeposito;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TFN_ID")
+	private DDTfnTipoFinanciacion tipoFinanciacion;
+
 	@Version   
 	private Long version;
 
@@ -465,11 +472,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.expediente = expediente;
 	}
 
-	public Integer getSolicitaFinanciacion() {
+	public DDSnsSiNoNosabe getSolicitaFinanciacion() {
 		return solicitaFinanciacion;
 	}
 
-	public void setSolicitaFinanciacion(Integer solicitaFinanciacion) {
+	public void setSolicitaFinanciacion(DDSnsSiNoNosabe solicitaFinanciacion) {
 		this.solicitaFinanciacion = solicitaFinanciacion;
 	}
 
@@ -1390,6 +1397,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setCheckDeposito(Boolean checkDeposito) {
 		this.checkDeposito = checkDeposito;
+	}
+	
+	public DDTfnTipoFinanciacion getTipoFinanciacion() {
+		return tipoFinanciacion;
+	}
+
+	public void setTipoFinanciacion(DDTfnTipoFinanciacion tipoFinanciacion) {
+		this.tipoFinanciacion = tipoFinanciacion;
 	}
 
 }

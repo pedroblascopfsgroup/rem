@@ -1003,6 +1003,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroMotivoAlquiler = genericDao.createFilter(FilterType.EQUALS, "alquiler", true);
 		Filter filtroMotivoVenta = genericDao.createFilter(FilterType.EQUALS, "venta", true);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		List<DDMotivoRechazoOferta> listaMotivoRechazo = null;
+		List<DDMotivoRechazoOferta> listaTiposFiltered = new ArrayList<DDMotivoRechazoOferta>();
 		
 		if(tipoRechazoOfertaCodigo.equals("A")) {
 			Activo activo = oferta.getActivoPrincipal();
@@ -1011,12 +1013,30 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				Filter filtroVisibleCaixa = genericDao.createFilter(FilterType.EQUALS, "visibleCaixa", true);
 				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroVisibleCaixa);
 			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}else if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-				return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}
 		}else if (tipoRechazoOfertaCodigo.equals("D")) {
-			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+				if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+					listaTiposFiltered.add(motivo);
+				}
+			}
+			return listaTiposFiltered;
 		}
 
 		return new ArrayList<DDMotivoRechazoOferta>();
@@ -2018,20 +2038,24 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera){
+	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera){
 
 		MaestroDePersonas maestroDePersonas = null;
 
 		String idPersonaHayaCaixa = null;
 
-		if (codCartera == null) {
+		if (codCartera == null || codSubCartera == null) {
 			maestroDePersonas = new MaestroDePersonas();
 
 			if (documentoProveedor != null)
 				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(documentoProveedor, codProveedorRem != null ? Long.parseLong(codProveedorRem) : null);
 
 		}else {
-			maestroDePersonas = new MaestroDePersonas(gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),null,null));
+			maestroDePersonas = new MaestroDePersonas(
+					gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(
+							genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),
+							genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codSubCartera)),
+							null));
 
 			if (documentoInterlocutor != null)
 				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumento(documentoInterlocutor);
@@ -2041,9 +2065,23 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia) {
+	public List<DDEstadoOferta> getEstadosOfertaWeb() {
 		
-		if(Boolean.valueOf(esBankia)) {
+		List<DDEstadoOferta> listaDD = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaTiposFiltered = new ArrayList<DDEstadoOferta>();
+	
+		
+		for (DDEstadoOferta estado : listaDD) {
+			if (!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estado.getCodigo()))
+				listaTiposFiltered.add(estado);
+		}
+
+		return listaTiposFiltered;
+	}
+
+	@Override
+	public List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia, String tipoExpediente) {
+		if(Boolean.valueOf(esBankia) && !DDTipoOferta.CODIGO_VENTA.equals(tipoExpediente)) {
 			Filter filtro = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI);
 			return genericDao.getList(DDTiposImpuesto.class, filtro);
 		}else {

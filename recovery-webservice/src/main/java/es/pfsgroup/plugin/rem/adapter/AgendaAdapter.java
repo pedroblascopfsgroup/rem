@@ -89,6 +89,15 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -516,17 +525,21 @@ public class AgendaAdapter {
 	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
+		
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
+    	boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo()) ? true : false;
 
 		DtoGenericForm dto = new DtoGenericForm();
 		dto.setForm(genericForm);
 		String[] valores = new String[genericForm.getItems().size()];
-
+		
 		for (int i = 0; i < genericForm.getItems().size(); i++) {
+			String valorCampo = null;
 			GenericFormItem gfi = genericForm.getItems().get(i);
 			String nombreCampo = gfi.getNombre();
 			for (Map.Entry<String, String> stringStringEntry : camposFormulario.entrySet()) {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
-					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
 						
 						String[] valoresFecha = valorCampo.replace("/", "-").split("-");
@@ -543,6 +556,28 @@ public class AgendaAdapter {
 					}
 					valores[i] = valorCampo;
 					break;
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("aceptacionContraoferta") && !Checks.esNulo(gfi.getValuesBusinessOperation())
+						&& ("DDResolucionComite".equals(gfi.getValuesBusinessOperation()) || "DDRespuestaOfertante".equals(gfi.getValuesBusinessOperation()))){
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valorCampo)) {
+						if (("T013_RespuestaOfertante".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo()) && isBankia) ||
+							"T017_RespuestaOfertanteCES".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo())){ 
+							valores[i] = valorCampo;
+							break;
+						} else {
+							throw new Exception("La tarea no permite contraoferta");
+						}
+					} else {
+						valores[i] = valorCampo;
+						break;
+					}			
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (((tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante") && isBankia && gfi.getNombre().equals("importeOfertante")) ||
+						(tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") && gfi.getNombre().equals("importeContraofertaOfertante")))) {	
+						valores[i] = valorCampo;
+						break;
+					}
 				}
 			}
 		}
@@ -816,6 +851,8 @@ public class AgendaAdapter {
 				
 				DDEstadoOferta ddEstadoOferta;
 				DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+				DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
+				DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
 				DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
 				DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 				DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
@@ -880,10 +917,29 @@ public class AgendaAdapter {
 		    			genericDao.save(Activo.class, activo);
 		    			if (activoDao.isUnidadAlquilable(activo.getId())) {
 		    				activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-		    			}
+						}
+						
+						if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
+							ActivoOferta activoOferta;
+							Oferta oferta;
+							for(int i = 0; i<activoOfertas.size(); i++) {
+								activoOferta = activoOfertas.get(i);
+								oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
+								if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+									ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+									if(!Checks.esNulo(expedienteComercial)) {
+										oferta.setEstadoOferta(tramitada);	
+									}else {
+										oferta.setEstadoOferta(pendiente);
+										if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
+									}
+									genericDao.save(Oferta.class, oferta);
+									
+								}
+							}
+						}
 		                
 						ofertaApi.descongelarOfertas(eco);
-						 
 	
 						if (estadoOfertaBcMod){
 							ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));

@@ -133,6 +133,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean isEmpleadoCaixa;
 
+	private Date fechaOfertaPendiente;
+	
 	private Boolean ofertaEspecial;
 	
 	private Boolean ventaSobrePlano;
@@ -633,6 +635,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIsEmpleadoCaixa(Boolean isEmpleadoCaixa) {
 		this.isEmpleadoCaixa = isEmpleadoCaixa;
+	}
+	
+	public Date getFechaOfertaPendiente() {
+		return fechaOfertaPendiente;
+	}
+
+	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
+		this.fechaOfertaPendiente = fechaOfertaPendiente;
 	}
 	
 	public Boolean getOfertaEspecial() {

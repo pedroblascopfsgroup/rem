@@ -57,6 +57,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private Boolean transferenciasInternacionales = Boolean.FALSE;
 	private Boolean cesionDatos = Boolean.FALSE;
 	private Boolean comunicacionTerceros = Boolean.FALSE;
+	private Boolean aceptacionOfertaTSecundario;
 	
 	//REMVIP-3846
 	@Size(max=50,groups = { Insert.class, Update.class })
@@ -516,7 +517,10 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setCodProvinciaNacimientoRepresentante(String codProvinciaNacimientoRepresentante) {
 		this.codProvinciaNacimientoRepresentante = codProvinciaNacimientoRepresentante;
 	}
-	
-	
-	
+	public Boolean getAceptacionOfertaTSecundario() {
+		return aceptacionOfertaTSecundario;
+	}
+	public void setAceptacionOfertaTSecundario(Boolean aceptacionOfertaTSecundario) {
+		this.aceptacionOfertaTSecundario = aceptacionOfertaTSecundario;
+	}
 }

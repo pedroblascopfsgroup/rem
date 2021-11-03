@@ -354,7 +354,11 @@ public class OfertasController {
 			if (jsonFields!=null) {
 				model.put("id", jsonFields.get("id"));			
 			}
-			model.put("data", listaRespuesta);
+			if (listaRespuesta.isEmpty()) {
+				model.put("data", e.getMessage());
+			} else {
+				model.put("data", listaRespuesta);
+			}
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 

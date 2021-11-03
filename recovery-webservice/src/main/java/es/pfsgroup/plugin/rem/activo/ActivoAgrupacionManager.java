@@ -738,6 +738,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							} else {
 								oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 										DDEstadoOferta.CODIGO_PENDIENTE)));
+								if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 								genericDao.save(Oferta.class, oferta);
 							}
 							ofertaApi.updateStateDispComercialActivosByOferta(oferta);

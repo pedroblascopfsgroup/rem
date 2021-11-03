@@ -221,6 +221,10 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=2)
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	private DoubleDataType minimoAutorizado;
+	
 	private LongDataType idAsistida;
 	
 	private LongDataType codigoCabeceraAsistida;
@@ -368,6 +372,35 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codigoCanalDistVenta;
 	
 	private StringDataType codigoCanalDistAlquiler;
+	
+	@WebcomRequired
+	private DoubleDataType testigoOblPorcentajeDesc;
+	
+	@WebcomRequired
+	private DoubleDataType testigoOblImporteMin;
+	
+	@WebcomRequired
+	private BooleanDataType requiereTestigo;
+	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	@MappedColumn("RECOMENDACION_PORCENTAJE_DESC")
+	private DoubleDataType recomendacionPorcenDescuentoVenta;
+	
+	@WebcomRequired
+	@DecimalDataTypeFormat(decimals=2)
+	@MappedColumn("RECOMENDACION_IMPORTE_MIN")
+	private DoubleDataType recomendacionPrecioMinimoVenta;
+	
+	@WebcomRequired
+	@MappedColumn("RECOMENDACION_REQUERIDA")
+	private StringDataType recomendacionInternaRequerida;
+	
+	@WebcomRequired
+	private StringDataType proDocidentif;
+	
+	@WebcomRequired
+	private StringDataType proNombre; 
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -847,6 +880,12 @@ public class StockDto implements WebcomRESTDto{
 			DoubleDataType anteriorValorAprobadoVenta) {
 		this.anteriorValorAprobadoVenta = anteriorValorAprobadoVenta;
 	}
+	public DoubleDataType getMinimoAutorizado() {
+		return minimoAutorizado;
+	}
+	public void setMinimoAutorizado(DoubleDataType minimoAutorizado) {
+		this.minimoAutorizado = minimoAutorizado;
+	}
 	public LongDataType getIdAsistida() {
 		return idAsistida;
 	}
@@ -1126,15 +1165,13 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setNecesidadIf(BooleanDataType necesidadIf) {
 		this.necesidadIf = necesidadIf;
-	}	
-
+	}
 	public StringDataType getCodDirComercial() {
 		return codDirComercial;
 	}
 	public void setCodDirComercial(StringDataType codDirComercial) {
 		this.codDirComercial = codDirComercial;
 	}
-
 	public DoubleDataType getImporteCampanyaAlquiler() {
 		return importeCampanyaAlquiler;
 	}
@@ -1212,5 +1249,53 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodigoCanalDistAlquiler(StringDataType codigoCanalDistAlquiler) {
 		this.codigoCanalDistAlquiler = codigoCanalDistAlquiler;
+	}
+	public DoubleDataType getTestigoOblPorcentajeDesc() {
+		return testigoOblPorcentajeDesc;
+	}
+	public void setTestigoOblPorcentajeDesc(DoubleDataType testigoOblPorcentajeDesc) {
+		this.testigoOblPorcentajeDesc = testigoOblPorcentajeDesc;
+	}
+	public DoubleDataType getTestigoOblImporteMin() {
+		return testigoOblImporteMin;
+	}
+	public void setTestigoOblImporteMin(DoubleDataType testigoOblImporteMin) {
+		this.testigoOblImporteMin = testigoOblImporteMin;
+	}
+	public BooleanDataType getRequiereTestigo() {
+		return requiereTestigo;
+	}
+	public void setRequiereTestigo(BooleanDataType requiereTestigo) {
+		this.requiereTestigo = requiereTestigo;
+	}
+	public DoubleDataType getRecomendacionPorcenDescuentoVenta() {
+		return recomendacionPorcenDescuentoVenta;
+	}
+	public void setRecomendacionPorcenDescuentoVenta(DoubleDataType recomendacionPorcenDescuentoVenta) {
+		this.recomendacionPorcenDescuentoVenta = recomendacionPorcenDescuentoVenta;
+	}
+	public DoubleDataType getRecomendacionPrecioMinimoVenta() {
+		return recomendacionPrecioMinimoVenta;
+	}
+	public void setRecomendacionPrecioMinimoVenta(DoubleDataType recomendacionPrecioMinimoVenta) {
+		this.recomendacionPrecioMinimoVenta = recomendacionPrecioMinimoVenta;
+	}
+	public StringDataType getRecomendacionInternaRequerida() {
+		return recomendacionInternaRequerida;
+	}
+	public void setRecomendacionInternaRequerida(StringDataType recomendacionInternaRequerida) {
+		this.recomendacionInternaRequerida = recomendacionInternaRequerida;
+	}
+	public StringDataType getProDocidentif() {
+		return proDocidentif;
+	}
+	public void setProDocidentif(StringDataType proDocidentif) {
+		this.proDocidentif = proDocidentif;
+	}
+	public StringDataType getProNombre() {
+		return proNombre;
+	}
+	public void setProNombre(StringDataType proNombre) {
+		this.proNombre = proNombre;
 	}
 }

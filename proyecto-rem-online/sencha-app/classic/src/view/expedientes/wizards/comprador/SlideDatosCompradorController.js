@@ -198,6 +198,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 		
 	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
+		var me = this,
+		wizard = me.getView().up('wizardBase'),
+		esBankia = wizard.expediente.get('esBankia');
+		
 		try{
 			var me = this,
 				wizard = me.getViewModel().getView().up('wizardBase'),
@@ -241,6 +245,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoTipoPersona = me.lookupReference('tipoPersona'),
 				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
 		   	 	campoProvinciaRpr = me.lookupReference('provinciaNacimientoRepresentanteCodigo'),
+		   		fechaNacRep = me.lookupReference('fechaNacimientoRepresentante'),
 		   	 	campoMunicipioRpr = me.lookupReference('localidadNacimientoRepresentanteCodigo'),
 		   	 	campoPaisRpr = me.lookupReference('paisNacimientoRepresentanteCodigo'),
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo'),
@@ -314,6 +319,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 							codigoPaisRte.allowBlank = true;
 							codigoPaisRte.setValue(null);
 						}
+						if (!Ext.isEmpty(fechaNacRep)) {
+							campoMunicipioRpr.allowBlank = true;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -338,19 +346,26 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
 						}
-						if (!Ext.isEmpty(campoProvinciaRpr)) {
+						if (!Ext.isEmpty(campoProvinciaRpr) && esBankia) {
 							campoProvinciaRpr.allowBlank = false;
 						}
-						if (!Ext.isEmpty(campoMunicipioRpr)) {
+						if (!Ext.isEmpty(campoMunicipioRpr)&& esBankia) {
 							campoMunicipioRpr.allowBlank = false;
 						}
-						if (!Ext.isEmpty(campoPaisRpr)) {
+						if (!Ext.isEmpty(campoPaisRpr) && esBankia) {
 							campoPaisRpr.allowBlank = false;
-							campoPaisRpr.setValue("28");
+							if (campoPaisRpr.value == null) {
+								campoPaisRpr.setValue("28");
+							}
 						}
 						if (!Ext.isEmpty(codigoPaisRte)) {
 							codigoPaisRte.allowBlank = false;
-							codigoPaisRte.setValue("28");
+							if (codigoPaisRte.value == null) {
+								codigoPaisRte.setValue("28");
+							}
+						}
+						if (!Ext.isEmpty(fechaNacRep) && esBankia) {
+							campoMunicipioRpr.allowBlank = false;
 						}
 						
 					}
@@ -375,10 +390,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(campoProvincia)) campoProvincia.validate();
 			if(!Ext.isEmpty(campoMunicipio)) campoMunicipio.validate();
 			if(!Ext.isEmpty(campoPais)) campoPais.validate();
-			if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
-			if(!Ext.isEmpty(codigoPaisRte)) codigoPaisRte.validate();
-			if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
-			if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
+			if(esBankia){
+				if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
+				if(!Ext.isEmpty(codigoPaisRte)) codigoPaisRte.validate();
+				if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
+				if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
+				if(!Ext.isEmpty(fechaNacRep)) fechaNacRep.validate();
+			}
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);

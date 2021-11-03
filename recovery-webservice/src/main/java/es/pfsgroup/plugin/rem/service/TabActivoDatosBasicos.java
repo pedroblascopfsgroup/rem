@@ -647,11 +647,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteCodigo", activoBancario.getEstadoExpIncorriente().getCodigo());
 			BeanUtils.copyProperty(activoDto, "estadoExpIncorrienteDescripcion", activoBancario.getEstadoExpIncorriente().getDescripcion());
 		}
-		
-		if (activoBancario != null && activoBancario.getCategoriaComercializacion() != null) {
-			activoDto.setCategoriaComercializacionCod(activoBancario.getCategoriaComercializacion().getCodigo());
-			activoDto.setCategoriaComercializacionDesc(activoBancario.getCategoriaComercializacion().getDescripcion());
-		}
 
 		// En la sección de activo bancario pero no dependiente del mismo.
 		if(!Checks.esNulo(activo.getEntradaActivoBankia())) {
@@ -1263,8 +1258,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
 		
-		if (activoCaixa != null && activoCaixa.getUnidadEconomicaCaixa() != null) {
-			activoDto.setUnidadEconomicaCaixa(activoCaixa.getUnidadEconomicaCaixa());
+		if (activoCaixa != null) {
+			if (activoCaixa.getUnidadEconomicaCaixa() != null) {
+				activoDto.setUnidadEconomicaCaixa(activoCaixa.getUnidadEconomicaCaixa());
+			}
+					
+			if (activoCaixa.getCategoriaComercializacion() != null) {
+				activoDto.setCategoriaComercializacionCod(activoCaixa.getCategoriaComercializacion().getCodigo());
+				activoDto.setCategoriaComercializacionDesc(activoCaixa.getCategoriaComercializacion().getDescripcion());
+			}			
 		}
 
 		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -1854,15 +1856,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(!Checks.esNulo(dto.getEstadoExpIncorrienteCodigo())) {
 					DDEstadoExpIncorrienteBancario estadoExpIncorriente = (DDEstadoExpIncorrienteBancario) diccionarioApi.dameValorDiccionarioByCod(DDEstadoExpIncorrienteBancario.class, dto.getEstadoExpIncorrienteCodigo());
 					activoBancario.setEstadoExpIncorriente(estadoExpIncorriente);
-				}
-				
-				if (dto.getCategoriaComercializacionCod() != null) {
-					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
-					activoBancario.setCategoriaComercializacion(categComerc);
-				}
+				}							
 				
 				activoApi.saveOrUpdateActivoBancario(activoBancario);
 			
+			}
+			
+			Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+			
+			if (activoCaixa != null) {
+				if (dto.getCategoriaComercializacionCod() != null) {
+					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
+					activoCaixa.setCategoriaComercializacion(categComerc);
+				}
 			}
 
 			if(!Checks.esNulo(dto.getEntradaActivoBankiaCodigo())) {

@@ -892,10 +892,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		var me = this;
-    	var disabled = value == 0;
+    	var disabled = value != "01";
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
 		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+		comboFinanciacionTP = me.lookupReference('comboFinanciacionTP');
 		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
 		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
 		comboTipoFinanciacion = me.lookupReference('tipoFinanciacionRef');
@@ -903,9 +904,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
     	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
+		comboFinanciacionTP.setDisabled(disabled);
+    	comboFinanciacionTP.allowBlank = disabled; 
 
     	if(disabled) {
     		comboEntidadFinancieraCodigo.setValue("");
+			comboFinanciacionTP.setValue("");
     		labelCapitalConcedido.setValue("");
     		labelNumeroExpediente.setValue("");
     		comboTipoFinanciacion.reset();
@@ -2316,8 +2320,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
-						campoPaisRte.setValue("28");
-						campoPais.setValue("28");
+						
+						if(campoPaisRte.value == null){
+							campoPaisRte.setValue("28");
+						}
+						
+						if(campoPais.value == null){
+							campoPais.setValue("28");
+						}	
 					}
 				}
 			} else {
@@ -2419,7 +2429,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
-						}else{
+						}else if(campoPaisRte.value == null){
 							campoPaisRte.setValue("28");
 						}
 						campoEstadoCivil.setValue();						
@@ -2429,7 +2439,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoRelacionHre.setValue();
 						campoAntDeudor.setValue();
 						campoRelAntDeudor.setValue();
-						campoPais.setValue("28");
+						
+						if(campoPais.value == null){
+							campoPais.setValue("28");
+						}
 					}
 				}
 				if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -2658,7 +2671,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	var esBankia = me.getViewModel().get("expediente.esBankia");
 		    	if (esBankia) {
 		    		renunciaExencion.setDisabled(true);
-		    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_EXENTO'] == value) {
+		    		if (CONST.TIPO_GRUPO_IMPUESTO['CODIGO_TASA_CERO'] == value) {
 		    			renunciaExencion.setDisabled(false);
 		    			renunciaExencion.reset();
 		    		}else{

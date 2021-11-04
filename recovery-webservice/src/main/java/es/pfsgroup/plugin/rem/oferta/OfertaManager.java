@@ -7380,11 +7380,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean esMayorista(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
 		
-		if(oferta != null && oferta.getActivoPrincipal() != null) {
-			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" ,oferta.getActivoPrincipal().getId()));
-			if (activoCaixa != null && activoCaixa.getCanalDistribucionVenta() != null && activoCaixa.getCanalDistribucionVenta().getCodigo() != null) {
-				return DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionVenta().getCodigo());
-			}
+		if(oferta != null  && oferta.getOfertaCaixa() != null && oferta.getOfertaCaixa().getCanalDistribucionBc()!= null) {
+			return DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getOfertaCaixa().getCanalDistribucionBc().getCodigo());
 		}
 		
 		return false;

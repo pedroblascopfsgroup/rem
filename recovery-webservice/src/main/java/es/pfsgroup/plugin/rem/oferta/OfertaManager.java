@@ -846,18 +846,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		if(!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
-			Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionDC());
-			DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
-			if(ddRecomendacionRCDC == null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionDC());
+			DDRespuestaOfertante recomendacionDC = genericDao.get(DDRespuestaOfertante.class, filtro);
+			if(recomendacionDC == null) {
 				errorsList.put("recomendacionDC", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		
 		if(!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
-			Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionRC());
-			DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
-			if(ddRecomendacionRCDC == null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionRC());
+			DDRespuestaOfertante recomendacionRC = genericDao.get(DDRespuestaOfertante.class, filtro);
+			if(recomendacionRC == null) {
 				errorsList.put("recomendacionRC", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
+		
+		if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionRC());
+			DDRecomendacionRCDC recomendacionRequerida = genericDao.get(DDRecomendacionRCDC.class, filtro);
+			if(recomendacionRequerida == null) {
+				errorsList.put("recomendacionRequerida", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		
@@ -1304,10 +1312,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
 				dto.setCampoCodigo("13");
-				if(ofertaDto.getRecomendacionRequerida()) {
-					dto.setTexto("1");
+				dto.setTexto(ofertaDto.getRecomendacionRequerida());
+				
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionCumplimentada())) {
+				dto.setCampoCodigo("14");
+				if(ofertaDto.getRecomendacionCumplimentada()) {
+					dto.setTexto("SI");
 				}else {
-					dto.setTexto("0");
+					dto.setTexto("NO");
 				}
 				saveTextoOfertaWS(dto, oferta);
 			}
@@ -1963,10 +1978,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(ofertaDto.getRecomendacionRequerida())) {
 				dto.setCampoCodigo("13");
-				if(ofertaDto.getRecomendacionRequerida()) {
-					dto.setTexto("1");
+				dto.setTexto(ofertaDto.getRecomendacionRequerida());
+				
+				saveTextoOfertaWS(dto, oferta);
+				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getRecomendacionCumplimentada())) {
+				dto.setCampoCodigo("14");
+				if(ofertaDto.getRecomendacionCumplimentada()) {
+					dto.setTexto("SI");
 				}else {
-					dto.setTexto("0");
+					dto.setTexto("NO");
 				}
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
@@ -7456,6 +7479,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
 		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA);
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA);
 		} else{
 			filtroTipoTexto = null;
 		}
@@ -7474,16 +7499,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			textoOferta.setTipoTexto(tipoTexto);
 			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
 					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
-				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
-				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
-				if(ddRecomendacionRCDC != null) {
-					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				Filter filtroRespuestaOfertante = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRespuestaOfertante ddRespuestaOfertante = genericDao.get(DDRespuestaOfertante.class, filtroRespuestaOfertante);
+				if(ddRespuestaOfertante != null) {
+					textoOferta.setTexto(ddRespuestaOfertante.getDescripcion());
 				}
 			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
-				if(dto.getTexto().equals("1") ) {
-					textoOferta.setTexto("SI");
-				}else {
-					textoOferta.setTexto("NO");
+				Filter filtroRecomendacionRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroRecomendacionRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
 				}
 			} else {
 				textoOferta.setTexto(dto.getTexto());
@@ -7498,16 +7523,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Modificamos un texto existente
 			if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC.equals(dto.getCampoCodigo()) ||
 					DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC.equals(dto.getCampoCodigo())) {
-				Filter filtroDiccionarioRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
-				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroDiccionarioRCDC);
-				if(ddRecomendacionRCDC != null) {
-					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
+				Filter filtroRespuestaOfertante = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRespuestaOfertante ddRespuestaOfertante = genericDao.get(DDRespuestaOfertante.class, filtroRespuestaOfertante);
+				if(ddRespuestaOfertante != null) {
+					textoOferta.setTexto(ddRespuestaOfertante.getDescripcion());
 				}
 			} else if(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA.equals(dto.getCampoCodigo())){
-				if(dto.getTexto().equals("1") ) {
-					textoOferta.setTexto("SI");
-				}else {
-					textoOferta.setTexto("NO");
+				Filter filtroRecomendacionRCDC = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTexto());
+				DDRecomendacionRCDC ddRecomendacionRCDC = genericDao.get(DDRecomendacionRCDC.class, filtroRecomendacionRCDC);
+				if(ddRecomendacionRCDC != null) {
+					textoOferta.setTexto(ddRecomendacionRCDC.getDescripcion());
 				}
 			} else {
 				textoOferta.setTexto(dto.getTexto());

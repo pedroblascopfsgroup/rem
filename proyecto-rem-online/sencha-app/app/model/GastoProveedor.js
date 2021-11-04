@@ -261,6 +261,9 @@ Ext.define('HreRem.model.GastoProveedor', {
     	{
     		name: 'subrogado',
     		type: 'boolean'
+    	},
+    	{
+    		name:'carteraPropietarioCodigo'
     	}
    		
     ],

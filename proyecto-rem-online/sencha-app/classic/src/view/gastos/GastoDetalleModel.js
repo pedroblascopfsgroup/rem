@@ -380,11 +380,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			if (Ext.isEmpty(gasto)) {
 				return false;
 			} 
-			var nombrePropietario = gasto.get('nombrePropietario');
+			var codCarteraPropietario = gasto.get('carteraPropietarioCodigo');
 			var tipoGasto = gasto.get('tipoGastoCodigo');
 
-			
-			if(nombrePropietario == CONST.NOMBRE_CARTERA2['BANKIA'] && tipoGasto ==  CONST.TIPO_GASTO['ALQUILER']){
+			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] && tipoGasto ==  CONST.TIPO_GASTO['ALQUILER']){
 				return true;
 			}
 			

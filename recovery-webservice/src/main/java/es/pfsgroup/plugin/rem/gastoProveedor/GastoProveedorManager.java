@@ -407,6 +407,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setBuscadorNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setNombrePropietario(gasto.getPropietario().getNombre());
+				
+				if(gasto.getPropietario().getCartera() != null) {
+					dto.setCarteraPropietarioCodigo(gasto.getPropietario().getCartera().getCodigo());
+				}
 			}
 
 			if (!Checks.esNulo(gasto.getDestinatarioGasto())) {

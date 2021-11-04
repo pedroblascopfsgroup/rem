@@ -89,6 +89,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String numeroContratoAlquiler;
    	private Boolean solicitudPagoUrgente;
 	private Boolean subrogado;
+	private String carteraPropietarioCodigo;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -500,6 +501,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setSubrogado(Boolean subrogado) {
 		this.subrogado = subrogado;
+	}
+	public String getCarteraPropietarioCodigo() {
+		return carteraPropietarioCodigo;
+	}
+	public void setCarteraPropietarioCodigo(String carteraPropietarioCodigo) {
+		this.carteraPropietarioCodigo = carteraPropietarioCodigo;
 	}
 	
 }

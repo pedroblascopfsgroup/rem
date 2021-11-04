@@ -314,9 +314,17 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
 						return error;
 					}else if(entidades.isEmpty()){
-						filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",  DDEntidadGasto.CODIGO_SIN_ACTIVOS);
-						entidades = genericDao.getList(GastoLineaDetalleEntidad.class, filtroEntidad, filtroGasto);
-						if(entidades.isEmpty()) {
+						boolean sinActivos = true;
+						List<GastoLineaDetalle> lineas = gasto.getGastoLineaDetalleList();
+						if(lineas != null && !lineas.isEmpty()) {
+							for (GastoLineaDetalle gld : lineas) {
+								if(gld.getLineaSinActivos() != null && gld.getLineaSinActivos() ) {
+									sinActivos = false;
+									break;
+								}
+							}
+						}
+						if(sinActivos) {
 							error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
 							return error;
 						}

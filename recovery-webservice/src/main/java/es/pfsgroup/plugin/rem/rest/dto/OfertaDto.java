@@ -117,6 +117,7 @@ public class OfertaDto implements Serializable {
 	private String importeContraofertaPrescriptor;
 	private Boolean recomendacionRequerida;
 	private Boolean titularesConfirmados;
+	private Boolean aceptacionOfertaTPrincipal;
 	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -520,5 +521,11 @@ public class OfertaDto implements Serializable {
 	}
 	public void setTitularesConfirmados(Boolean titularesConfirmados) {
 		this.titularesConfirmados = titularesConfirmados;
+	}
+	public Boolean getAceptacionOfertaTPrincipal() {
+		return aceptacionOfertaTPrincipal;
+	}
+	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
+		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
 	}
 }

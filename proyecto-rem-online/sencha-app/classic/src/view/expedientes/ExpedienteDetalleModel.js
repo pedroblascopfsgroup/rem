@@ -1653,33 +1653,33 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}
 		},
 		
-//		testigosOferta:{
-//			pageSize: $AC.getDefaultPageSize(),
-//			model: 'HreRem.model.Testigos',
-//			proxy: {
-//				type: 'uxproxy',
-//				remoteUrl: 'expedientecomercial/getTestigos',
-//				extraParams: {id: '{datosbasicosoferta.idOferta}'}
-//			}
-//		},
-//		
-//		comboDDFuenteTestigos: {
-//			model: 'HreRem.model.ComboBase',
-//			proxy: {
-//				type: 'uxproxy',
-//				remoteUrl: 'generic/getDiccionario',
-//				extraParams: {diccionario: 'fuenteTestigos'}
-//			}
-//    	},
-//
-//		comboDDTipoActivo: {
-//			model: 'HreRem.model.ComboBase',
-//			proxy: {
-//				type: 'uxproxy',
-//				remoteUrl: 'generic/getDiccionario',
-//				extraParams: {diccionario: 'tiposActivo'}
-//			}
-//    	},
+		testigosOferta:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Testigos',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getTestigos',
+				extraParams: {id: '{datosbasicosoferta.idOferta}'}
+			}
+		},
+		
+		comboDDFuenteTestigos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'fuenteTestigos'}
+			}
+    	},
+
+		comboDDTipoActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposActivo'}
+			}
+    	},
 		
 		storeMotivoRechazoAntiguoDeudor:{
 			model: 'HreRem.model.ComboBase',

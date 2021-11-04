@@ -14674,6 +14674,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}else {
 				coe.setCheckDeposito(false);
 			}
+			
+			if (!Checks.esNulo(dto.getMesesDeposito())) {
+				coe.setMesesDeposito(dto.getMesesDeposito());
+			}
+			
+			if (!Checks.esNulo(dto.getDepositoActualizable())) {
+				coe.setDepositoActualizable(dto.getDepositoActualizable());
+			}
+						
+			if (!Checks.esNulo(dto.getImporteDeposito())) {
+				coe.setImporteDeposito(dto.getImporteDeposito());
+			}
 			 
 			genericDao.save(CondicionanteExpediente.class, coe);
 			

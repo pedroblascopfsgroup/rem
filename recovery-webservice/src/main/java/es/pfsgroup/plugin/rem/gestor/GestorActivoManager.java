@@ -527,12 +527,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_PBC_CN.equals(codigoTarea)){
 
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_ACT);
-		}else if(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA.equals(codigoTarea)
-				|| ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA.equals(codigoTarea)
-				|| ComercialUserAssigantionService.CODIGO_T017_FIRMA.equals(codigoTarea)
-				|| ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)){
-
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_FOR);
 		}else if(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
 				|| ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea)){
 

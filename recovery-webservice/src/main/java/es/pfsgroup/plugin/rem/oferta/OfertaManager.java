@@ -7931,6 +7931,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
+		if (ofr.getActivoPrincipal() != null && ofr.getActivoPrincipal().getCartera() != null 
+				&& DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())) {
+			
+			if (!Checks.esNulo(dto.getCodigoPostal())) {
+				tit.setCodPostalRepresentante(dto.getCodigoPostal());
+			}
+			
+			if (!Checks.esNulo(dto.getEmail())) {
+				tit.setEmail(dto.getEmail());
+			}
+			
+			if (!Checks.esNulo(dto.getTelefono1())) {
+				tit.setTelefono1(dto.getTelefono1());
+			}	
+		}
+		
 		String descripcionCartera = null;
 		if(ofr.getActivoPrincipal() != null && ofr.getActivoPrincipal().getCartera() != null) {
 			descripcionCartera = ofr.getActivoPrincipal().getCartera().getDescripcion();

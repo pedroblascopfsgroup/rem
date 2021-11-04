@@ -1292,6 +1292,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (!Checks.esNulo(titularAdicional.getLocalidadNacimientoRep())) {
 						compradorExpedienteAdicionalNuevo.setLocalidadNacimientoRepresentante(titularAdicional.getLocalidadNacimientoRep());
 					}
+					
+					if (!Checks.esNulo(titularAdicional.getEmail())) {
+						compradorExpedienteAdicionalNuevo.setEmailRepresentante(titularAdicional.getEmail());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getTelefono1())) {
+						compradorExpedienteAdicionalNuevo.setTelefono1Representante(titularAdicional.getTelefono1());
+					}
 
 					if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 						this.setInterlocutorOferta(compradorExpedienteAdicionalNuevo, false, oferta);

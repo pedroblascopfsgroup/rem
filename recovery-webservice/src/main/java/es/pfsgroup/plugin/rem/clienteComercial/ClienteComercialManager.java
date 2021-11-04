@@ -352,8 +352,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 		
-		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
-			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+//		HREOS-16265 se ha comentado por motivos de envío de datos por parte de HRE
+//		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+//			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+//		}
+		
+//		Faltaría la comrpobación de Caixa para el Cliente
+		
+		if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
+			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostal());
 		}
 		
 		if (!Checks.esNulo(clienteDto.getCodPaisNacimiento())) {

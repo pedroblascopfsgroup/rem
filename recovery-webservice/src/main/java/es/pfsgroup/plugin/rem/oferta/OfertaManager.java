@@ -775,19 +775,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) ? true : false;
 			
 				if (ofertaDto.getCodTarea().equals("01")) {
+					if (!(DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) ||
+							DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
+							DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
+						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+					}
 					if (Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
 						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
 					} else if (Checks.esNulo(ofertaDto.getImporteContraoferta()) && ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
 						errorsList.put("importeContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);						
 					} else if (!ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_ACEPTA)
 							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_RECHAZA)
-							&& !ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)) {
+							&& !(ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)
+									&& DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) 
+									&& isBankia)
+							&& !(ofertaDto.getAceptacionContraoferta().equals(DDRespuestaOfertante.CODIGO_CONTRAOFERTA)
+									&& (DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo())
+											|| DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo())))) {
 						errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_UNKNOWN_KEY);
-					}
-					if (!((DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo()) && isBankia) ||
-						DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES.equals(expedienteComercial.getEstado().getCodigo()) ||
-						DDEstadosExpedienteComercial.CONTRAOFERTADO_CES.equals(expedienteComercial.getEstado().getCodigo()))) {
-						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				} else if (ofertaDto.getCodTarea().equals("02")) {
 					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {

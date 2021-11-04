@@ -341,7 +341,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			
 			//Si todos los estados de las Ofertas = Rechazada -> Se podran agregar activos a al agrupacion
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
-			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado || CONST.ESTADOS_OFERTA['CADUCADA']) {
+			if(CONST.ESTADOS_OFERTA['RECHAZADA'] == estado || CONST.ESTADOS_OFERTA['CADUCADA'] == estado) {
 				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
 					var arrayOfertas = me.getView().getStore();
 					var mostrarTopBarListaActivos = true;
@@ -360,6 +360,19 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				}
 				
             	me.onCambioARechazoOfertaList(me, context.record);
+			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] ){
+			    var idOferta = context.record.get('idOferta');
+			    var url = $AC.getRemoteUrl('ofertas/actualizaEstadoOferta');
+                Ext.Ajax.request({
+                    url: url,
+                	params: {idOferta: idOferta, codigoEstado: estado},
+                	success: function(response, opts){
+                	    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	},
+                    callback: function(record, operation) {
+                        me.getStore().load();
+                    }
+                });
 
             } else {
             	
@@ -412,6 +425,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		
 		var me = this;
 		var hayOfertaAceptada=false;
+		var codigoEstadoAnterior;
+		
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
@@ -422,10 +437,23 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						|| CONST.ESTADOS_EXPEDIENTE['EN_DEVOLUCION'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['VENDIDO'] == codigoEstadoExpediente 
 						|| CONST.ESTADOS_EXPEDIENTE['FIRMADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['BLOQUEO_ADM'] == codigoEstadoExpediente;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
+			}else{
+				codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
 			}
 		}
 		
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+		
+		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
+			    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.tramitar.oferta.no.pendiente"));
+	            return false;
+		}else if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] != codigoEstadoAnterior
+			    && CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.estado.a.pendiente"));
+			return false;
+		}
+		
 		
 		if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));

@@ -368,7 +368,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	CONGELADA: '03',
     	PENDIENTE: '04',
     	PDTE_TITULARES: '05',
-    	CADUCADA: '06'
+    	CADUCADA: '06',
+    	PDTE_DOCUMENTACION: '08'
     },
 
     ESTADOS_EXPEDIENTE: {

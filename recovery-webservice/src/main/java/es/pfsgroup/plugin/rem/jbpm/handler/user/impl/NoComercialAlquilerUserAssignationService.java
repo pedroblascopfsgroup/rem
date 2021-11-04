@@ -44,9 +44,12 @@ public class NoComercialAlquilerUserAssignationService implements UserAssigantio
 
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
-		
-		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento)tareaExterna.getTareaProcedimiento();
-		Usuario gestor = this.getGestorOrSupervisorByCodigo(tareaExterna, tareaProcedimiento.getTipoGestor().getCodigo());
+		//GCOMALQ o GCOM por defecto CODIGO_GESTOR_COMERCIAL_ALQUILERES
+		Usuario gestor = this.getGestorOrSupervisorByCodigo(tareaExterna, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+		if(gestor == null) {
+			EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento)tareaExterna.getTareaProcedimiento();
+			gestor = this.getGestorOrSupervisorByCodigo(tareaExterna, tareaProcedimiento.getTipoGestor().getCodigo());
+		}
 		return gestor;
 	}
 

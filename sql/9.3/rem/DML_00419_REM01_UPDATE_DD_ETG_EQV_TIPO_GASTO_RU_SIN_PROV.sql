@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211102
+--## FECHA_CREACION=20211104
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16167
@@ -102,7 +102,8 @@ DECLARE
 		T_TABLA('16','87','63','3','42','5','','','','Mto Seg. Edif. Electronica, Cra, Cctv Y Control Accesos',''),
 		T_TABLA('16','85','64','3','42','5','','','','Mantenimiento C/ Incendio -Edificios Plataforma- May15_abr16',''),
 		T_TABLA('19','100','65','3','31','9','3','31','10','Fianza comercial','0'),
-		T_TABLA('19','100','66','3','31','11','3','31','12','Fianza subrogada','1')
+		T_TABLA('19','100','66','3','31','11','3','31','12','Fianza subrogada','1'),
+		T_TABLA('01','05','67','2','1','10','','','','IAAEE','')
 
     ); 
     V_TMP_TABLA T_TABLA;

@@ -496,7 +496,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
 
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
-			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			if(clienteDto.getIdClienteWebcom() != null) {
+				cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			}
 		}
 		if (((JSONObject) jsonFields).containsKey("razonSocial")) {
 			cliente.setRazonSocial(clienteDto.getRazonSocial());

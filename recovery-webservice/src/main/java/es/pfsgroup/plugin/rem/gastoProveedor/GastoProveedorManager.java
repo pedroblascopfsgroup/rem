@@ -407,6 +407,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setBuscadorNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setNombrePropietario(gasto.getPropietario().getNombre());
+				
+				if(gasto.getPropietario().getCartera() != null) {
+					dto.setCarteraPropietarioCodigo(gasto.getPropietario().getCartera().getCodigo());
+				}
 			}
 
 			if (!Checks.esNulo(gasto.getDestinatarioGasto())) {
@@ -591,6 +595,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.setSolicitudPagoUrgente(false);
 				}
 			}
+			
+			dto.setSubrogado(gasto.getSubrogado());
 		}
 
 		return dto;
@@ -934,6 +940,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			} else {
 				gastoProveedor.setSolicitudPagoUrgente(0);
 			}
+		}
+		
+		if(dto.getSubrogado() != null) {
+			gastoProveedor.setSubrogado(dto.getSubrogado());
 		}
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);

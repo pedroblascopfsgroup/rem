@@ -793,8 +793,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     esAgrupacionCaixaComercial: function(get){
 	     	var me = this;
-	    	var tipoCartera = me.getData().agrupacionficha.getData().codigoCartera;
-	    	var tipoAgrupacion = me.getData().agrupacionficha.getData().tipoAgrupacionCodigo;	    	
+	    	var tipoCartera = get('agrupacionficha.codigoCartera');
+	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');    	
     		if(tipoCartera == CONST.CARTERA['BANKIA']
     			&& (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
     			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'] 

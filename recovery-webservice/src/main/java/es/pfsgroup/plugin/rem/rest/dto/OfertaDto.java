@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
@@ -91,8 +92,14 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionRC no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String recomendacionRC;
 	private Date fechaRecomendacionRC;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionDC no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String recomendacionDC;
 	private Date fechaRecomendacionDC;
 	private String documentoIdentificativo;
@@ -115,8 +122,13 @@ public class OfertaDto implements Serializable {
 	private String importeInicial;
 	private String importeContraofertaRCDC;
 	private String importeContraofertaPrescriptor;
-	private Boolean recomendacionRequerida;
+	@Diccionary(clase = DDRecomendacionRCDC.class, message = "El codigo recomendacionRequerida no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String recomendacionRequerida;
+	private Boolean recomendacionCumplimentada;
 	private Boolean titularesConfirmados;
+	private Boolean aceptacionOfertaTPrincipal;
 	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -509,16 +521,28 @@ public class OfertaDto implements Serializable {
 	public void setImporteContraofertaPrescriptor(String importeContraofertaPrescriptor) {
 		this.importeContraofertaPrescriptor = importeContraofertaPrescriptor;
 	}
-	public Boolean getRecomendacionRequerida() {
+	public String getRecomendacionRequerida() {
 		return recomendacionRequerida;
 	}
-	public void setRecomendacionRequerida(Boolean recomendacionRequerida) {
+	public void setRecomendacionRequerida(String recomendacionRequerida) {
 		this.recomendacionRequerida = recomendacionRequerida;
+	}
+	public Boolean getRecomendacionCumplimentada() {
+		return recomendacionCumplimentada;
+	}
+	public void setRecomendacionCumplimentada(Boolean recomendacionCumplimentada) {
+		this.recomendacionCumplimentada = recomendacionCumplimentada;
 	}
 	public Boolean getTitularesConfirmados() {
 		return titularesConfirmados;
 	}
 	public void setTitularesConfirmados(Boolean titularesConfirmados) {
 		this.titularesConfirmados = titularesConfirmados;
+	}
+	public Boolean getAceptacionOfertaTPrincipal() {
+		return aceptacionOfertaTPrincipal;
+	}
+	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
+		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
 	}
 }

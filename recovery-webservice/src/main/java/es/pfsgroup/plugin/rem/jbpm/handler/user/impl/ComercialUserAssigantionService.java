@@ -355,10 +355,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 	private boolean isTareaGetUsuarioCaixa(String codigoTarea) {
 		return CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
-				|| CODIGO_T017_PBC_RESERVA.equals(codigoTarea) || CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
-				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea)
-				|| CODIGO_T017_AGENDAR_FIRMA.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea) || CODIGO_T017_FIRMA.equals(codigoTarea)
-				|| CODIGO_T017_DOCUMENTOS_POSTVENTA.equals(codigoTarea) || CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea);
+				|| CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
+				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea);
 	}
 
 	public boolean expedienteTieneReserva(ExpedienteComercial expediente,TareaActivo tareaActivo) {
@@ -767,7 +765,9 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);	
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION); 
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_CONTROLLER); 

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -219,37 +220,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 				
 				
-				if (codigoSubcartera == null 
-					|| (!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
+				if  (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera()) && !DDCartera.isBFA(gasto.getPropietario().getCartera()) && 
+						!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_EGEO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(codigoSubcartera) &&
-						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera))) {
-				
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
-						if(gasto.getGestoria() == null) {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
-									return error;
-								}
-							}
-						}else {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
-									return error;
-								}
+						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera)) {
+					//NO VOLVER A METER LAS VALIDACIONES DE BK!!!
+					if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+								return error;
 							}
 						}
-					}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-									return error;
-								}
-							}
 					}else if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null
@@ -258,9 +243,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 								return error;
 							}
 						}					
-					}else if (DDCartera.CODIGO_CARTERA_BFA.equals(codigoCartera)) {
-						//BFA no necesita CCC ni CPP para poderse autorizar
-						return error;
 					}else{
 						for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
@@ -269,13 +251,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							}
 						}
 					}
-				}else if (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera())){
-					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
-							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
-							return error;
-						}
-					}	
 				}
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
@@ -300,22 +275,37 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					}
 				}
 			}
-			if (gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null) {
-				String codCartera = gasto.getPropietario().getCartera().getCodigo();
-				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
-					if (gasto.getTipoGasto() != null) {
-						String codGasto = gasto.getTipoGasto().getCodigo();
-						if (DDTipoGasto.CODIGO_ALQUILER.equals(codGasto)) {
-							boolean resultado = gastoLineaDetalleDao.tieneListaEntidadesByGastoProveedorAndTipoEntidad(gasto, DDEntidadGasto.CODIGO_ACTIVO);
-							if ((gasto.getNumeroContratoAlquiler() == null || "".equals(gasto.getNumeroContratoAlquiler())) || !resultado) {
-								error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
-								return error;
+		
+			if (gasto.getPropietario() != null && gasto.getPropietario() != null) {
+				DDCartera cartera = gasto.getPropietario().getCartera();
+				if (DDCartera.isCarteraBk(cartera) && DDTipoGasto.isTipoGastoAlquiler(gasto.getTipoGasto())) {
+					Filter filtroEntidad =genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",  DDEntidadGasto.CODIGO_ACTIVO);
+					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.gastoProveedor.id", gasto.getId());
+					List<GastoLineaDetalleEntidad> entidades = new ArrayList<GastoLineaDetalleEntidad> ();
+					entidades = genericDao.getList(GastoLineaDetalleEntidad.class, filtroEntidad, filtroGasto);
+						
+					if((gasto.getNumeroContratoAlquiler() == null || gasto.getNumeroContratoAlquiler().isEmpty()) && !entidades.isEmpty()) {
+						error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+						return error;
+					}else if(entidades.isEmpty()){
+						boolean noMarcadaSinActivos = true;
+						List<GastoLineaDetalle> lineas = gasto.getGastoLineaDetalleList();
+						if(lineas != null && !lineas.isEmpty()) {
+							for (GastoLineaDetalle gld : lineas) {
+								if(gld.getLineaSinActivos() != null && gld.getLineaSinActivos()) {
+									noMarcadaSinActivos = false;
+									break;
 								}
 							}
+						}
+						if((noMarcadaSinActivos) || (!noMarcadaSinActivos && gasto.getNumeroContratoAlquiler() != null && !gasto.getNumeroContratoAlquiler().isEmpty())) {
+							error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+							return error;
 						}
 					}
 				}
 			}
+			
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
@@ -331,6 +321,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
 				return error;
 			}
+		}
 		}
 		return error;
 	}

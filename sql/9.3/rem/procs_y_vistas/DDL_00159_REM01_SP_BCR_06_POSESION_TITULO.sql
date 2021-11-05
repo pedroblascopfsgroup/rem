@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16087
@@ -32,6 +32,7 @@
 --##        0.20 Protegemos los activos titulizados de las bajas y además, los activos que no lleguen en 5 días se darán de baja - [HREOS-15423] - Daniel Algaba
 --##        0.21 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.22 Se añade el check de Perímetro alquiler, marcado cuando esté alquilar y desmarcado si es solo Venta - [HREOS-16087] - Daniel Algaba
+--##        0.23 Añadido posibilidad de revivir activos si vuelven a llegar - [HREOS-16087] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -551,7 +552,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE)) 
                         )US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
-		         PAC.PAC_CHECK_GESTIONAR=1
+               PAC.PAC_INCLUIDO = 1         
+		        ,PAC.PAC_CHECK_GESTIONAR=1
               ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
 		        ,PAC.PAC_CHECK_COMERCIALIZAR=1
               ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
@@ -587,6 +589,36 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    
    SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
 
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO REVIVIMOS ACTIVOS A FORMALIZADOS'||CHR(10);
+   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+                	 USING (				
+                     	 SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 0 AND FLAG_EN_REM = 1 AND AUX.FLAG_FICHEROS = ''I'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE)) 
+                        )US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        PAC.PAC_INCLUIDO = 1         
+                        ,PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
+                        ,PAC.PAC_CHECK_COMERCIALIZAR=1
+                        ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
+                        ,PAC.PAC_CHECK_FORMALIZAR=1
+                        ,PAC.PAC_FECHA_FORMALIZAR=SYSDATE
+                        ,PAC.PAC_CHECK_PUBLICAR=1
+                        ,PAC.PAC_FECHA_PUBLICAR=SYSDATE
+                        ,PAC.PAC_CHECK_ADMISION=1
+                        ,PAC.PAC_FECHA_ADMISION=SYSDATE
+                        ,PAC.PAC_CHECK_GESTION_COMERCIAL=1
+                        ,PAC.PAC_FECHA_GESTION_COMERCIAL=SYSDATE
+                        ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,PAC.FECHAMODIFICAR = SYSDATE
+                        WHERE PAC.PAC_INCLUIDO = 0';
+                
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
    SALIDA := SALIDA || '   [INFO] 8 - PASAMOS NUEVOS ACTIVOS A EN TRÁMITE'||CHR(10);
 
    SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO'||CHR(10);    
@@ -598,7 +630,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         WHERE ACT.ACT_EN_TRAMITE = 0 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE))
                         ) US ON (US.ACT_ID = PAC.ACT_ID)
                         WHEN MATCHED THEN UPDATE SET
-                        PAC.PAC_CHECK_GESTIONAR=0
+                        PAC.PAC_INCLUIDO=1
+                        ,PAC.PAC_CHECK_GESTIONAR=1
                         ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
                         ,PAC.PAC_CHECK_COMERCIALIZAR=0
                         ,PAC.PAC_FECHA_COMERCIALIZAR=SYSDATE
@@ -606,7 +639,7 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         ,PAC.PAC_FECHA_FORMALIZAR=SYSDATE
                         ,PAC.PAC_CHECK_PUBLICAR=0
                         ,PAC.PAC_FECHA_PUBLICAR=SYSDATE
-                        ,PAC.PAC_CHECK_ADMISION=0
+                        ,PAC.PAC_CHECK_ADMISION=1
                         ,PAC.PAC_FECHA_ADMISION=SYSDATE
                         ,PAC.PAC_CHECK_GESTION_COMERCIAL=0
                         ,PAC.PAC_FECHA_GESTION_COMERCIAL=SYSDATE
@@ -634,6 +667,28 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
    EXECUTE IMMEDIATE V_MSQL;
    
    SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
+
+   SALIDA := SALIDA || '      [INFO] 1 - ACT_PAC_PERIMETRO_ACTIVO REVIVIMOS ACTIVOS EN TRÁMITE'||CHR(10);
+   V_MSQL :=  		 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
+               	 USING (				
+                        SELECT ACT.ACT_ID AS ACT_ID
+                        FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
+                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
+                        WHERE ACT.ACT_EN_TRAMITE = 1 AND AUX.FLAG_EN_REM = 1 AND AUX.FLAG_FICHEROS = ''P'' AND (AUX.FEC_VALIDO_A IS NULL OR TO_DATE(AUX.FEC_VALIDO_A, ''yyyymmdd'') > TRUNC(SYSDATE))
+                        ) US ON (US.ACT_ID = PAC.ACT_ID)
+                        WHEN MATCHED THEN UPDATE SET
+                        PAC.PAC_INCLUIDO=1
+                        ,PAC.PAC_CHECK_GESTIONAR=1
+                        ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
+                        ,PAC.PAC_CHECK_ADMISION=1
+                        ,PAC.PAC_FECHA_ADMISION=SYSDATE
+                        ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
+                        ,PAC.FECHAMODIFICAR = SYSDATE
+                        WHERE PAC.PAC_INCLUIDO = 0';
+ 
+   EXECUTE IMMEDIATE V_MSQL;
+   
+   SALIDA := SALIDA || '      [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
    
    ELSIF  FLAG_EN_REM = 0 THEN
    
@@ -651,6 +706,8 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                         PAC.PAC_INCLUIDO=1
                         ,PAC.PAC_CHECK_GESTIONAR=1
                         ,PAC.PAC_FECHA_GESTIONAR=SYSDATE
+                        ,PAC.PAC_CHECK_ADMISION=1
+                        ,PAC.PAC_FECHA_ADMISION=SYSDATE
                         ,PAC.USUARIOMODIFICAR = ''STOCK_BC''
                         ,PAC.FECHAMODIFICAR = SYSDATE';
  

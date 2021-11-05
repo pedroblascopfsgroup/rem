@@ -220,37 +220,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 				
 				
-				if (codigoSubcartera == null 
-					|| (!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
+				if  (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera()) && !DDCartera.isBFA(gasto.getPropietario().getCartera()) && 
+						!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_EGEO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(codigoSubcartera) &&
-						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera))) {
-				
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
-						if(gasto.getGestoria() == null) {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
-									return error;
-								}
-							}
-						}else {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
-									return error;
-								}
+						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera)) {
+					//NO VOLVER A METER LAS VALIDACIONES DE BK!!!
+					if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+								return error;
 							}
 						}
-					}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-									return error;
-								}
-							}
 					}else if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null
@@ -259,9 +243,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 								return error;
 							}
 						}					
-					}else if (DDCartera.CODIGO_CARTERA_BFA.equals(codigoCartera)) {
-						//BFA no necesita CCC ni CPP para poderse autorizar
-						return error;
 					}else{
 						for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
@@ -270,13 +251,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 							}
 						}
 					}
-				}else if (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera())){
-					for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
-							error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS); 
-							return error;
-						}
-					}	
 				}
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
@@ -314,17 +288,17 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 						error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
 						return error;
 					}else if(entidades.isEmpty()){
-						boolean sinActivos = true;
+						boolean noMarcadaSinActivos = true;
 						List<GastoLineaDetalle> lineas = gasto.getGastoLineaDetalleList();
 						if(lineas != null && !lineas.isEmpty()) {
 							for (GastoLineaDetalle gld : lineas) {
-								if(gld.getLineaSinActivos() != null && gld.getLineaSinActivos() ) {
-									sinActivos = false;
+								if(gld.getLineaSinActivos() != null && gld.getLineaSinActivos()) {
+									noMarcadaSinActivos = false;
 									break;
 								}
 							}
 						}
-						if(sinActivos) {
+						if((noMarcadaSinActivos) || (!noMarcadaSinActivos && gasto.getNumeroContratoAlquiler() != null && !gasto.getNumeroContratoAlquiler().isEmpty())) {
 							error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
 							return error;
 						}

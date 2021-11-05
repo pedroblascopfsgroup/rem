@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoViaFenix;
 import es.pfsgroup.plugin.rem.rest.dto.ResponseGestorDocumentalFotos;
 import es.pfsgroup.plugin.rem.restclient.exception.*;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -215,7 +216,13 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("tasaciones", listaTasaciones);
         map.put("valoraciones", listaValoraciones);
         if(activo.getInfoComercial() != null && activo.getInfoComercial().getTipoVia() != null){
-        	map.put("tipoVia", activo.getInfoComercial().getTipoVia().getCodigo());
+        	Filter codigoTipoViaRem = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"codigo", activo.getInfoComercial().getTipoVia());
+        	DDTipoViaFenix tipoViaFenix = genericDao.get(DDTipoViaFenix.class, codigoTipoViaRem);
+        	if(tipoViaFenix != null) {
+        		map.put("tipoVia", tipoViaFenix.getCodigoFenix());
+        	}else {
+        		map.put("tipoVia", null);
+        	}
         }else{
         	map.put("tipoVia", null);
         }
@@ -317,11 +324,9 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
             map = new HashMap<String, Object>();
 
             map.put("tasadora", tasaciones.getNomTasador());
-            if(tasaciones.getTipoTasacion() != null){
-                map.put("tipoTasacion", tasaciones.getTipoTasacion().getCodigo());
-            }else{
-                map.put("tipoTasacion", null);
-            }
+               
+            map.put("tipoTasacion", null);
+            
             map.put("importe", tasaciones.getImporteTasacionFin());
             if(tasaciones.getFechaInicioTasacion() != null) {
                 map.put("fecha", objSDF.format(tasaciones.getFechaInicioTasacion().getTime()));
@@ -354,11 +359,9 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
             }else{
                 map.put("valorador", null);
             }
-            if(valoraciones.getTipoPrecio() != null){
-                map.put("tipoValoracion", valoraciones.getTipoPrecio().getCodigo());
-            }else{
-                map.put("tipoValoracion", null);
-            }
+            
+            map.put("tipoValoracion", null);
+            
             map.put("importe", valoraciones.getImporte());
             if(valoraciones.getFechaAprobacion() != null) {
                 map.put("fecha", objSDF.format(valoraciones.getFechaAprobacion().getTime()));

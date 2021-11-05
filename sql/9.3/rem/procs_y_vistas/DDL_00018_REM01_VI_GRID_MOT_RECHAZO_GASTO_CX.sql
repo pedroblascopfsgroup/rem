@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210604
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14219
+--## INCIDENCIA_LINK=HREOS-16085
 --## PRODUCTO=NO
 --## Finalidad: vista para sacar rechazos de un gasto
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Añadir nuevo campo TIPO_IMPORTE
+--##        0.2 Añadir nuevo campo TIPO_IMPORTE - [HREOS-14219] - Javier Esbri
+--##        0.3 Añadir UNION - [HREOS-16085] - Alejandra García
 --##########################################
 --*/
 
@@ -72,6 +73,30 @@ BEGIN
         '||V_ESQUEMA||'.ACT_RGS_RECHAZOS_GASTOS_SAPBC RGS
         JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = RGS.GPV_ID AND GPV.BORRADO = 0
         LEFT JOIN  '||V_ESQUEMA||'.dd_les_listado_errores_sap LES ON LES.DD_LES_ID = RGS.DD_LES_ID AND LES.BORRADO = 0
+        LEFT JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = RGS.GLD_ID AND GLD.BORRADO = 0
+        LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = RGS.ACT_ID AND ACT.BORRADO = 0
+        WHERE RGS.BORRADO = 0
+        
+  UNION
+  
+    SELECT 
+    RGS.RGS_ID AS RGS_ID, 
+    GPV.GPV_ID AS GASTO_ID, 
+    gpv.gpv_num_gasto_haya AS GPV_NUM_GASTO, 
+    LES.DD_LES_CODIGO AS LES_CODIGO, 
+    LES.DD_RETORNO_CAIXA AS LES_RETORNO,
+    LES.DD_TEXT_MENSAJE_CAIXA AS LES_DESCRIPCION,
+    GLD.GLD_ID AS NUM_LINEA,
+    ACT.ACT_ID AS ACT_ID,
+    act.ACT_NUM_ACTIVO AS NUM_ACTIVO,
+    RGS.MENSAJE_ERROR AS MENSAJE_ERROR,
+    RGS.FECHA_PROCESADO AS FECHA_PROCESADO,
+    RGS.TIPO_IMPORTE AS TIPO_IMPORTE
+
+    FROM 
+        '||V_ESQUEMA||'.ACT_RGS_RECHAZOS_GASTOS_CAIXA RGS
+        JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = RGS.GPV_ID AND GPV.BORRADO = 0
+        LEFT JOIN  '||V_ESQUEMA||'.dd_les_listado_errores_CAIXA LES ON LES.DD_LES_ID = RGS.DD_LES_ID AND LES.BORRADO = 0
         LEFT JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = RGS.GLD_ID AND GLD.BORRADO = 0
         LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = RGS.ACT_ID AND ACT.BORRADO = 0
         WHERE RGS.BORRADO = 0';

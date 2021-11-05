@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210914
+--## FECHA_CREACION=20211102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15126
+--## INCIDENCIA_LINK=HREOS-16085
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario AUX_RESPUESTA_PEDIDOS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-15126] - Alejandra García
+--##        0.2 Añadir campos nuevos - [HREOS-16085] - Alejandra García
 --##########################################
 --*/
 
@@ -67,6 +68,7 @@ BEGIN
 		,PROVEEDOR				VARCHAR2(13 CHAR)
 		,NUMFACTE				NUMBER(9,0)
 		,FECHENTRADA			DATE
+        ,ORIGEN                 VARCHAR2(2 CHAR)
 		,ESTADO					VARCHAR2(12 CHAR)
 		,OBSERVACIONES			VARCHAR2(40 CHAR)
 		,NUMFACTUTF				VARCHAR2(10 CHAR)
@@ -74,7 +76,11 @@ BEGIN
 		,FECHA_ULTIMA_SIT		DATE
 		,CUENTA_ABONO			VARCHAR2(42 CHAR)
 		,REFERENCIA				VARCHAR2(40 CHAR)
-		,CLAVE_FACTURA			VARCHAR2(13 CHAR)
+		,CLAVEFACTURA			VARCHAR2(13 CHAR)
+        ,MOTIVO                 VARCHAR2(70 CHAR)
+        ,SITUACION              VARCHAR2(25 CHAR)
+        ,SERIE                  VARCHAR2(20 CHAR)
+        ,ABONO                  VARCHAR2(1 CHAR)
 		
 	)
 	';
@@ -118,6 +124,10 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.ORIGEN IS ''Origen.''';          
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+
     V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.ESTADO IS ''Valores: Entregada, Anulada, Pagada.''';          
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
@@ -142,9 +152,25 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 
-    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.CLAVE_FACTURA IS ''Clave factura.''';          
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.CLAVEFACTURA IS ''Clave factura.''';          
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.MOTIVO IS ''Campo observaciones de factura.''';          
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');    
+
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.SITUACION IS ''Situación en FAC.''';          
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');    
+
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.SERIE IS ''Serie de la factura.''';          
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');    
+
+    V_MSQL := 'COMMENT ON COLUMN ' || V_ESQUEMA || '.AUX_RESPUESTA_PEDIDOS.ABONO IS ''N-factura de cargo, S-factura de abono.''';          
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');        
     
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 		

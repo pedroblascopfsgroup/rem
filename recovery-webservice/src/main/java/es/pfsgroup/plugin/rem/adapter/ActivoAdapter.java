@@ -4218,7 +4218,7 @@ public class ActivoAdapter {
 					clienteComercial.setLocalidadNacimientoRep(ddMunicipio);
 				}
 				
-				if (dto.getFechaNacimientoRepresentante() != null) {
+				if (dto.getFechaNacimientoRepresentante() != null && !dto.getFechaNacimientoRepresentante().isEmpty()) {
 					clienteComercial.setFechaNacimientoRep(ft.parse(dto.getFechaNacimientoRepresentante()));
 				}
 				

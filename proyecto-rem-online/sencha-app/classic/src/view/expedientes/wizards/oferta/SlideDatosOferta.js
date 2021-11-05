@@ -763,7 +763,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								vtype: 'codigoPostal',
 								maskRe: /^\d*$/, 
 			                	maxLength: 5,
-			                	allowBlank: false
+			                	allowBlank: !isBk
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.email'),
@@ -773,7 +773,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								},
 								name: 'emailNacimiento',
 								vtype: 'email',
-								allowBlank: false
+								allowBlank: !isBk
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.telefono1'),
@@ -782,7 +782,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.telefonoNacimiento1}'
 								},
 								name: 'telefonoNacimiento1',
-								allowBlank: false
+								allowBlank: !isBk
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.telefono2'),

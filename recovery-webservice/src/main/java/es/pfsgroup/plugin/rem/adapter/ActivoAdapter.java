@@ -140,9 +140,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
@@ -361,6 +363,7 @@ public class ActivoAdapter {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
 		String descripcion  = null;
+		
 		boolean resultado = false;
 		try {
 			
@@ -374,15 +377,40 @@ public class ActivoAdapter {
 				activoFoto.setDescripcionFoto(ddDescripcionFoto);
 				activoFoto.setDescripcion(descripcion);
 			}
+			
+			if(!Checks.esNulo(dtoFoto.getSuelos())) {
+				activoFoto.setSuelos(dtoFoto.getSuelos());
+			}
+			
+			if(!Checks.esNulo(dtoFoto.getPlano())) {
+				activoFoto.setPlano(dtoFoto.getPlano());
+			}
 
 			if (gestorDocumentalFotos.isActive()) {
 				PRINCIPAL principal = null;
 				SITUACION situacion = null;
+				SUELOS suelos = null;
+				PLANO plano = null;
+
 				if (dtoFoto.getPrincipal() != null) {
 					if (dtoFoto.getPrincipal()) {
 						principal = PRINCIPAL.SI;
 					} else {
 						principal = PRINCIPAL.NO;
+					}
+				}
+				if (dtoFoto.getSuelos() != null) {
+					if (dtoFoto.getSuelos()) {
+						suelos = SUELOS.SI;
+					} else {
+						suelos = SUELOS.NO;
+					}
+				}
+				if (dtoFoto.getPlano() != null) {
+					if (dtoFoto.getPlano()) {
+						plano = PLANO.SI;
+					} else {
+						plano = PLANO.NO;
 					}
 				}
 				if (dtoFoto.getInteriorExterior() != null) {
@@ -393,7 +421,7 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, descripcion, principal, situacion, dtoFoto.getOrden());
+						null, descripcion, principal, situacion, dtoFoto.getOrden(), suelos, plano);
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}

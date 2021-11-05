@@ -196,9 +196,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -951,6 +953,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoFoto.setInteriorExterior(Boolean.FALSE);
 					}
 				}
+				
+				if (fileItem.getMetadata().containsKey("plano") 
+						&& fileItem.getMetadata().get("plano") != null) {
+					if (fileItem.getMetadata().get("plano").equals("1")) {
+						activoFoto.setPlano(true);
+					} else {
+						activoFoto.setPlano(false);
+					}
+				}
+				
+				if (fileItem.getMetadata().containsKey("suelos") 
+						&& fileItem.getMetadata().get("suelos") != null) {
+					if (fileItem.getMetadata().get("suelos").equals("1")) {
+						activoFoto.setSuelos(true);
+					} else {
+						activoFoto.setSuelos(false);
+					}
+				}
 
 				genericDao.save(ActivoFoto.class, activoFoto);
 
@@ -980,6 +1000,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoFoto activoFoto = null;
 		SITUACION situacion;
 		PRINCIPAL principal;
+		SUELOS suelos;
+		PLANO plano;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
 		orden++;
 
@@ -1008,13 +1030,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				} else {
 					situacion = SITUACION.EXTERIOR;
 				}
+				
+				if (Boolean.valueOf(fileItem.getParameter("suelos"))) {
+					suelos = SUELOS.SI;
+
+				} else {
+					suelos = SUELOS.NO;
+				}
+				
+				if (Boolean.valueOf(fileItem.getParameter("plano"))) {
+					plano = PLANO.SI;
+
+				} else {
+					plano = PLANO.NO;
+				}
+				
 
 				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
 					
 					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
 							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
 							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
-							principal, situacion, orden);
+							principal, situacion, orden, suelos, plano);
 					
 				}
 				activoFoto = new ActivoFoto(fileReponse.getData());
@@ -1033,6 +1070,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoFoto.setFechaDocumento(new Date());
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
 			activoFoto.setOrden(orden);
+			activoFoto.setSuelos(Boolean.valueOf(fileItem.getParameter("suelos")));
+			activoFoto.setPlano(Boolean.valueOf(fileItem.getParameter("plano")));
 
 			Auditoria.save(activoFoto);
 

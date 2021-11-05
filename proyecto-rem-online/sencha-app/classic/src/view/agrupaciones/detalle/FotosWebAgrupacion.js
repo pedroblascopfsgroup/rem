@@ -142,6 +142,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 		                	xtype: 'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
 		                	bind:		'{fechaDocumento}'
+		                },
+		                { 
+		                	name: 'suelos',
+		                	xtype : 'checkboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.suelos'),
+		                	bind:		'{suelos}'
+		                },
+		                { 
+		                	name: 'plano',
+		                	xtype : 'checkboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.plano'),
+		                	bind:		'{plano}'
 		                }
 
 		            ]

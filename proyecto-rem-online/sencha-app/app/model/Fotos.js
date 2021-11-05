@@ -46,6 +46,12 @@ Ext.define('HreRem.model.Fotos', {
     		},
     		{
     			name:'numeroActivo'
+    		},
+    		{
+    			name:'suelos'
+    		},
+    		{
+    			name:'plano'
     		}
 
     ],

@@ -1223,6 +1223,8 @@ public class ActivoController extends ParadiseJsonController {
 					dtoFoto = new DtoFoto();
 					dtoFoto.setId(Long.valueOf(datosFoto[0].substring(1,datosFoto[0].length()-1)));
 					dtoFoto.setOrden(Integer.valueOf(datosFoto[1]) + 1);
+					dtoFoto.setPlano(dto.getPlano());
+					dtoFoto.setSuelos(dto.getSuelos());
 					adapter.saveFoto(dtoFoto);
 				}
 			}else {

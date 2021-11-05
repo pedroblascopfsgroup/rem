@@ -3763,6 +3763,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				params['fechaDocumento'] = form.findField("fechaDocumento")
 						.getValue();
 			}
+			if (form.findField("suelos") != null) {
+				params['suelos'] = form.findField("suelos")
+						.getValue();
+			}
+			if (form.findField("plano") != null) {
+				params['plano'] = form.findField("plano")
+						.getValue();
+			}
 
 			Ext.Ajax.request({
 				url : url,

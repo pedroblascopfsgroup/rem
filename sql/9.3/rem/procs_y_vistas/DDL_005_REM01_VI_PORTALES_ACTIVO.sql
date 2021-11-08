@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
+--## AUTOR=Sergio Gomez
 --## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9845
+--## INCIDENCIA_LINK=HREOS-14232
 --## PRODUCTO=NO
 --## Finalidad: vista para portales de activos
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadir filtro agrupación dada de baja
+--##        0.3 Añadir filtro para que no salgan para Caixa/Bankia
 --##		    0.3 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
@@ -103,8 +104,10 @@ BEGIN
 	  INNER JOIN '|| V_ESQUEMA ||'.V_SIN_INFORME_APROBADO_REM SININF ON SININF.ACT_ID = ACT.ACT_ID
     LEFT JOIN '|| V_ESQUEMA ||'.ACT_CNP_CONFIG_PORTAL CNP ON ACT.DD_CRA_ID = CNP.DD_CRA_ID AND CNP.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID AND EPV.BORRADO = 0
+    INNER JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
     WHERE
     ACT.BORRADO = 0
+    AND CRA.DD_CRA_CODIGO NOT IN (''03'')
     AND EPV.DD_EPV_CODIGO IN (''03'',''04'')
     AND NOT EXISTS (SELECT 1 FROM '|| V_ESQUEMA ||'.ACT_ACTIVO AUX 
                     JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AUX.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0

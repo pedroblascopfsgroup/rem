@@ -883,7 +883,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					if(codMunicipioRte != null && !codMunicipioRte.isEmpty())
 						vDatosComprador.setMunicipioRteCodigo(codMunicipioRte);
 
-					expedienteComercialApi.createComprador(vDatosComprador, expedienteComercial.getId());
+					expedienteComercialApi.createCompradorAndSendToBC(vDatosComprador, expedienteComercial.getId());
 					transactionManager.commit(transaction);
 				} catch (Exception e) {
 					transactionManager.rollback(transaction);
@@ -953,7 +953,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			if(codMunicipioRte != null && !codMunicipioRte.isEmpty())
 				vDatosComprador.setMunicipioRteCodigo(codMunicipioRte);
 			
-			expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			expedienteComercialApi.saveFichaCompradorAndSendToBC(vDatosComprador);
 			transactionManager.commit(transaction);
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);

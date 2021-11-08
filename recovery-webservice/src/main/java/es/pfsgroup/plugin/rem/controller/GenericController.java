@@ -23,6 +23,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -41,16 +42,15 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
@@ -87,6 +87,9 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
 	private UploadApi uploadApi;
+
+	@Autowired
+	private AccionesCaixaController accionesCaixaController;
 	
 
 	
@@ -152,7 +155,7 @@ public class GenericController extends ParadiseJsonController{
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
-			if(subtipoTrabajo != null) {
+			if(!Checks.esNulo(subtipoTrabajo)) {
 				out = genericApi.getDiccionarioTiposDocumentoBySubtipoTrabajo(subtipoTrabajo,entidad);
 			}
 			if(out.isEmpty()) {
@@ -739,6 +742,11 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getcomboSociedadAnteriorBBVA() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSociedadAnteriorBBVA()));	
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion)));	
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -856,6 +864,51 @@ public class GenericController extends ParadiseJsonController{
 		}
 
 		restApi.sendResponse(response, model, request);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/accionComercialCaixa")
+	public void accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+
+		ModelMap modelMap = new ModelMap();
+
+		String respuesta = accionesCaixaController.accionComercialCaixa(model, request, response);
+		modelMap.put("error", respuesta);
+
+		restApi.sendResponse(response, modelMap, request);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView comboEstadoCivilCustom(String codCartera){
+		return createModelAndViewJson(new ModelMap("data", genericApi.comboEstadoCivilCustom(codCartera)));
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTipoOfertas(codCartera, idActivo, idAgrupacion)));	
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public void idPersonaHaya(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
+											  @RequestParam (required = false) String documentoInterlocutor,
+											  @RequestParam (required = false) String documentoProveedor,
+											  @RequestParam (required = false) String codCartera,
+											  @RequestParam (required = false) String codSubCartera,
+											  @RequestParam (required = false) String codProveedor){
+
+		model.put("idPersonaHaya",genericApi.getIdPersonaHayaByDocumentoCarteraOrProveedor(documentoInterlocutor, documentoProveedor, codProveedor,codCartera,codSubCartera));
+
+		restApi.sendResponse(response, model, request);
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getEstadosOfertaWeb() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getEstadosOfertaWeb()));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getTiposImpuestoFiltered(String esBankia) {
+		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia);
+		return createModelAndViewJson(new ModelMap("data", lista));	
 	}
  }
 

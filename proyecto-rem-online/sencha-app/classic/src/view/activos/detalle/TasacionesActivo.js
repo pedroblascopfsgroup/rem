@@ -208,7 +208,31 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        		xtype:'textfield'			   				        		
 			   				        	},
 			   				        	flex:3
-			   				        }
+			   				        },
+			   				        {
+                                        xtype: 'actioncolumn',
+                                        text: HreRem.i18n('fieldlabel.gasto.asociado'),
+                                        dataIndex: 'numGastoHaya',
+                                        items: [{
+                                            tooltip: HreRem.i18n('tooltip.ver.gasto'),
+                                            getClass: function(v, metadata, record ) {
+                                                if (!Ext.isEmpty(record.get("numGastoHaya"))) {
+                                                    return 'fa fa-money blue-medium-color';
+                                                }
+                                            },
+                                            handler: 'onClickAbrirGastoTasacion'
+                                        }],
+                                        renderer: function(value, metadata, record) {
+                                            if(Ext.isEmpty(record.get("numGastoHaya"))) {
+                                                return "";
+                                            } else {
+                                                return '<div style="display:inline; margin-left: 10px; margin-right: 30px; font-size: 11px;">'+ value+'</div>'
+                                            }
+                                        },
+                                        flex     : 3,
+                                        menuDisabled: true,
+                                        hideable: false
+                                    }
 							    	        
 			   				    ],
 			   				    dockedItems : [

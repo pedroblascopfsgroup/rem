@@ -32,7 +32,7 @@ public class AgrupacionValidatorActivoDuplicado extends AgrupacionValidatorCommo
 	@Override
 	public String[] getCodigoTipoAgrupacion() {
 		// TODO Auto-generated method stub
-		return new String[]{DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA, DDTipoAgrupacion.AGRUPACION_ASISTIDA, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA, DDTipoAgrupacion.AGRUPACION_ASISTIDA, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM};
 	}
 	
 

@@ -5,7 +5,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
 			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto',
 			'HreRem.model.GastoRefacturableGridExistenteStore', 'HreRem.model.BusquedaTrabajoGasto',
-			'HreRem.model.LineaDetalleGastoGridModel'],
+			'HreRem.model.LineaDetalleGastoGridModel', 'HreRem.model.TasacionesGasto'],
 
 	data : {
 		gasto : null,
@@ -372,6 +372,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			} else {
 				return false;
 			}
+		},
+		
+		esPropietarioCaixaAlquiler : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} 
+			var codCarteraPropietario = gasto.get('carteraPropietarioCodigo');
+			var tipoGasto = gasto.get('tipoGastoCodigo');
+
+			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] && tipoGasto ==  CONST.TIPO_GASTO['ALQUILER']){
+				return true;
+			}
+			
+			return false;
 		}
 	},
 
@@ -817,6 +833,48 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
-		}
+		},
+		
+		storeRechazosPropietario : {
+			model : 'HreRem.model.RechazosPropietarioGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getRechazosPropietario',				
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
+
+		seleccionTasacionesGasto : {
+			pageSize : $AC.getDefaultPageSize(),
+			model : 'HreRem.model.TasacionesGasto',
+			proxy : {
+				type : 'uxproxy',
+				localUrl : '/tasaciones.json',
+				remoteUrl : 'activo/findTasaciones',
+				actionMethods : {
+					read : 'POST'
+				}
+			},
+			remoteSort : true,
+			remoteFilter : true,
+			listeners : {
+				beforeload : 'paramLoadingTasaciones'
+
+			}
+		},
+
+        storeTasacionesGasto : {
+            pageSize : $AC.getDefaultPageSize(),
+            model : 'HreRem.model.TasacionesGasto',
+            proxy : {
+                type : 'uxproxy',
+                remoteUrl : 'gastosproveedor/getListTasacionesGasto',
+                extraParams : {
+                    idGasto : '{gasto.id}'
+                }
+            }
+        }
 	}
 });

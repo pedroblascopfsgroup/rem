@@ -75,6 +75,9 @@ public class VAdmisionDocumentos implements Serializable {
 
 	@Column(name = "CONSUMO")
 	private String consumo;
+	
+	@Column(name = "LETRA_EMISIONES")
+	private String letraEmisiones;
 
 	@Column(name = "EMISION")
 	private String emision;
@@ -248,6 +251,14 @@ public class VAdmisionDocumentos implements Serializable {
 
 	public void setRegistro(String registro) {
 		this.registro = registro;
+	}
+
+	public String getLetraEmisiones() {
+		return letraEmisiones;
+	}
+
+	public void setLetraEmisiones(String letraEmisiones) {
+		this.letraEmisiones = letraEmisiones;
 	}
 
 	

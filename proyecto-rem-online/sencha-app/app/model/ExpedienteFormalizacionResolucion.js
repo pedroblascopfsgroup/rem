@@ -3,6 +3,7 @@
  */
 Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     extend: 'HreRem.model.Base',
+    idProperty: 'id',
 
     fields: [    
 
@@ -64,14 +65,49 @@ Ext.define('HreRem.model.ExpedienteFormalizacionResolucion', {
     			name:'fechaVenta',
     			type:'date',
     			dateFormat: 'c'
-    		}
+    		},
+    	    {
+    	    	name: 'generacionHojaDatos',
+    	    	type: 'boolean',
+    	    	defaultValue: false
+    	    },
+    	    {
+    			name:'fechaContabilizacion',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    	    {
+    			name:'fechaFirmaContrato',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'numeroProtocoloCaixa'
+    		},
+    	    {
+    	    	name: 'ventaPlazos',
+    	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'ventaCondicionSupensiva',
+    	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'cesionRemate',
+    	    	type: 'boolean'
+    	    },
+    	    {
+    	    	name: 'contratoPrivado',
+    	    	type: 'boolean'
+    	    }
     ],
     
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteformalizacionresolucion.json',
 		api: {
-            read: 'expedientecomercial/getTabExpediente'
+            read: 'expedientecomercial/getTabExpediente',
+            update: 'expedientecomercial/saveFormalizacionResolucion'
         },
 		 extraParams: {tab: 'formalizacion'}
     }

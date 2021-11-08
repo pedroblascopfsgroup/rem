@@ -80,6 +80,42 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_CIERRE_ECONOMICO ="T017_CierreEconomico";
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	public static final String CODIGO_T017_AGENDAR_ARRAS = "T017_AgendarFechaFirmaArras";
+	public static final String CODIGO_T017_CONFIRMAR_ARRAS = "T017_ConfirmarFechaFirmaArras";
+	public static final String CODIGO_T017_AGENDAR_FIRMA = "T017_AgendarPosicionamiento";
+	public static final String CODIGO_T017_CONFIRMAR_FIRMA = "T017_ConfirmarFechaEscritura";
+	public static final String CODIGO_T017_FIRMA = "T017_FirmaContrato";
+	public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
+
+	public static final String USUARIO_REST_BC_DEFAULT = "COMM_CBK";
+	
+	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
+	
+	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
+	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
+	public static final String CODIGO_T015_PBC = "T015_PBC";
+	public static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
+	
+	public class TramiteVentaAppleT017{
+		public static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";
+		public static final String CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA = "T017_ConfirmarFechaEscritura";
+		public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
+	}
+	
+	public class TramiteAlquilerT015{
+		public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
+		public static final String CODIGO_T015_DEFINICION_OFERTA = "T015_DefinicionOferta";
+		public static final String CODIGO_T015_BLOQUEOSCREENING = "T015_BloqueoScreening";
+	}
+	
+	public class TramiteAlquilerNoComercialT018{
+		public static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
+		public static final String CODIGO_T018_SCORING = "T018_Scoring";
+		public static final String CODIGO_T018_DEFINICION_OFERTA = "T015_DefinicionOferta";
+		public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
+		public static final String CODIGO_T018_BLOQUEOSCREENING = "T018_BloqueoScreening";
+		public static final String CODIGO_T018_PBC_ALQUILER = "T018_PbcAlquiler";
+	}
 	
 	private static final Integer CODIGO_SI = 1;
 	
@@ -124,7 +160,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				 	CODIGO_T017_ADVISORY_NOTE,CODIGO_T017_PBC_RESERVA,CODIGO_T017_PBC_VENTA,CODIGO_T017_RECOMENDACION_CES,
 				 	CODIGO_T017_RESOLUCION_PRO_MANZANA,CODIGO_T017_RESOLUCION_EXPEDIENTE,CODIGO_T017_INSTRUCCIONES_RESERVA,CODIGO_T017_OBTENCION_CONTRATO_RESERVA,
 				 	CODIGO_T017_POSICIONAMIENTO_FIRMA,CODIGO_T017_DOCUMENTOS_POSTVENTA,CODIGO_T017_CIERRE_ECONOMICO, CODIGO_T017_RESOLUCION_DIVARIAN, CODIGO_T017_RESOLUCION_ARROW,
-				 	CODIGO_T017_RATIFICACION_COMITE_CES};
+				 	CODIGO_T017_RATIFICACION_COMITE_CES, CODIGO_T017_AGENDAR_ARRAS, CODIGO_T017_CONFIRMAR_ARRAS, CODIGO_T017_AGENDAR_FIRMA, CODIGO_T017_CONFIRMAR_FIRMA,
+					CODIGO_T017_FIRMA, CODIGO_T017_PBC_CN};
 
 	}
 
@@ -191,6 +228,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, 
 					isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, 
 					isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus, isActivoJaipur, isActivoEgeo, isActivoAgora, tieneGBOAR, isActivoBFA).get(codigoTarea);
+		}
+
+		if(isActivoBankia && isTareaGetUsuarioCaixa(codigoTarea)){
+			Usuario user = getUsuarioByTareaCaixa(codigoTarea);
+			if(user != null){
+				return user;
+			}
 		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
@@ -301,6 +345,16 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
+	}
+
+	private Usuario getUsuarioByTareaCaixa(String codigoTarea) {
+		return gestorActivoApi.getUsuarioByTareaCaixa(codigoTarea);
+	}
+
+	private boolean isTareaGetUsuarioCaixa(String codigoTarea) {
+		return CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+				|| CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
+				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea);
 	}
 
 	public boolean expedienteTieneReserva(ExpedienteComercial expediente,TareaActivo tareaActivo) {
@@ -672,7 +726,8 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			}
 		}
 		
-		if(isActivoBankia || isActivoSareb || isActivoBFA) {
+		if(isActivoSareb || isActivoBFA) {
+
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -693,7 +748,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		}
 		
-		if(isActivoApple || isActivoRemaining) {
+		if(isActivoApple || isActivoRemaining || isActivoBankia) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
@@ -708,7 +763,9 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);	
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION); 
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_CONTROLLER); 
@@ -984,17 +1041,23 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 		}
 		
 		//Asignar supervisor apple
-		if(isActivoApple || isActivoBBVA) {
+		if(isActivoApple || isActivoBBVA || isBankia) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_CN, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_ARRAS, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_ARRAS, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION); 
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL); 
 			

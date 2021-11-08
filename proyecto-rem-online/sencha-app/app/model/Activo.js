@@ -1265,8 +1265,67 @@ Ext.define('HreRem.model.Activo', {
 				name: 'estadoExpIncorrienteDescripcion'
 			},
 			{
+				name: 'procedenciaProductoCodigo'
+			},
+			{
+				name: 'procedenciaProductoDescripcion'
+			},
+			{
+				name: 'direccionDos'
+			},
+			{
+				name: 'categoriaComercializacionCod'
+			},
+			{
+				name: 'categoriaComercializacionDesc'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalCod'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalDesc'
+			},
+			{
+    			name: 'plantaEdificioCodigo'
+    		},
+    		{
+    			name: 'plantaEdificioDescripcion'
+    		},
+			{
+    			name: 'escaleraEdificioCodigo'
+    		},
+    		{
+    			name: 'escaleraEdificioDescripcion'
+    		},
+			{
+				name: 'estadoComercialVentaCodigo' 
+			},
+			{
+				name: 'estadoComercialAlquilerCodigo' 
+			},
+			{
+				name: 'numActivoCaixa'
+			},
+			{
+				name: 'bloque'
+			},
+			{
 				name:'esActivoPrincipalAgrupacionRestringida',
 				type: 'boolean'
+			},
+			{
+				name:'unidadEconomicaCaixa'
+			},
+			{
+				name:'dentroAgrupacionObraNuevaBC',
+				calculate: function(data) {
+    				if (Ext.isEmpty(data.unidadEconomicaCaixa)) {
+    					return true;
+    				} else {
+    					return false;
+    				}
+				},
+				depends: 'unidadEconomicaCaixa'
 			},
 			{
 				name: 'disponibleAdministrativoCodigo'

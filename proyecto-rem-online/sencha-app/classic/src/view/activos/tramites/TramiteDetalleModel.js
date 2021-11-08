@@ -127,6 +127,14 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getMotivoAnulacionExpediente'
 			}
-		}
+		},
+
+        comboMotivoAnulacionCaixa: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'activo/getMotivoAnulacionExpedienteCaixa'
+            }
+        }
      }    
 });

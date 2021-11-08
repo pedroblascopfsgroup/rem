@@ -1,0 +1,157 @@
+--/*
+--##########################################
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20210916
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14941
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: Crear y asignar permiso de edición para la pestaña de Garantías al supervisor
+--## VERSIONES:
+--## 		0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+
+DECLARE
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+	ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+	V_SQL VARCHAR2(2000 CHAR);
+	
+	-- EDITAR: NÚMERO DE ITEM
+	V_ITEM VARCHAR2(30 CHAR) := 'HREOS-14941'; -- USUARIOCREAR/USUARIOMODIFICAR.
+	
+	--EDITAR: DATOS DE LA FUNCION
+	V_FUN_CODIGO VARCHAR2(50) := 'TAB_GARANTIAS_EXPEDIENTE';
+	V_FUN_DESCRIPCION VARCHAR2(255) := 'Permite ver la tab de Garantías';
+	
+	-- EDITAR: SI SE DESEA BORRAR PERMISOS PREVIOS PARA ESTA FUNCIÓN, PONER 1
+	V_BORRAR_PERMISOS NUMBER := 1;
+	
+	--EDITAR: PERFILES ASOCIADOS A LA FUNCIÓN
+	TYPE T_PERFIL IS TABLE OF VARCHAR2(150);
+	TYPE T_ARRAY_PERFIL IS TABLE OF T_PERFIL;
+	V_PERFIL T_ARRAY_PERFIL := T_ARRAY_PERFIL(
+		T_PERFIL('HAYASUPER'),
+		T_PERFIL('USUARIOS_BC')
+	); 
+	V_TMP_PERFIL T_PERFIL; 
+	
+	V_NUM NUMBER(16); 
+	V_PEF_ID NUMBER(16);
+	V_FUN_ID NUMBER(16);
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+	
+	-- Inserción en FUN_FUNCIONES
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Comprobando si existe la función '''||V_FUN_CODIGO||'''');
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_FUN_CODIGO||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+	
+	IF V_NUM = 0 THEN
+		DBMS_OUTPUT.PUT_LINE('	[INFO] Insertando en FUN_FUNCIONES...');
+		V_SQL := 'INSERT INTO '||V_ESQUEMA_M||'.FUN_FUNCIONES (
+			FUN_ID, 
+			FUN_DESCRIPCION, 
+			FUN_DESCRIPCION_LARGA, 
+			VERSION, 
+			USUARIOCREAR, 
+			FECHACREAR, 
+			BORRADO 
+		) 
+		VALUES (
+			'||V_ESQUEMA_M||'.S_FUN_FUNCIONES.NEXTVAL,
+			'''||V_FUN_CODIGO||''',
+			'''||V_FUN_DESCRIPCION||''',
+			0,
+			'''||V_ITEM||''',
+			SYSDATE,
+			0
+		)';
+		EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('	[INFO] Hecho.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('	[ERROR] La función ya existe.');
+	END IF;
+	
+	-- Inserción en FUN_PEF
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Inserción de relaciones fun - pef.');
+	FOR I IN V_PERFIL.FIRST .. V_PERFIL.LAST LOOP
+		V_TMP_PERFIL := V_PERFIL(I);
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||V_TMP_PERFIL(1)||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+		
+		IF V_NUM = 0 THEN
+			DBMS_OUTPUT.PUT_LINE('	[INFO] Perfil '''||V_TMP_PERFIL(1)||''' no existe.');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('	[INFO] Comprobando relación '''||V_FUN_CODIGO||''' - '''||V_TMP_PERFIL(1)||'''.');
+			V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF FUN_PEF
+				JOIN '||V_ESQUEMA_M||'.FUN_FUNCIONES FUN ON FUN.FUN_ID = FUN_PEF.FUN_ID
+				JOIN '||V_ESQUEMA||'.PEF_PERFILES PEF ON PEF.PEF_ID = FUN_PEF.PEF_ID
+				WHERE FUN.FUN_DESCRIPCION = '''||V_FUN_CODIGO||''' AND PEF.PEF_CODIGO = '''||V_TMP_PERFIL(1)||'''';
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM;
+			
+			IF V_NUM > 0 THEN
+				DBMS_OUTPUT.PUT_LINE('[INFO] FUN_PEF registro YA existe ('||V_TMP_PERFIL(1)||' - '|| V_FUN_CODIGO ||')');
+			ELSE
+				EXECUTE IMMEDIATE 'SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = :1' INTO V_FUN_ID USING V_FUN_CODIGO;
+				EXECUTE IMMEDIATE 'SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = :1' INTO V_PEF_ID USING V_TMP_PERFIL(1);
+				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (
+					FUN_ID, 
+					PEF_ID, 
+					FP_ID, 
+					VERSION, 
+					USUARIOCREAR, 
+					FECHACREAR, 
+					BORRADO
+				)
+				WITH VALORES AS(
+					SELECT 
+						:1 			FUN_ID, 
+						:2 			PEF_ID, 
+						0 			VERSION, 
+						:3 			USUARIOCREAR, 
+						SYSDATE 	FECHACREAR, 
+						0 			BORRADO
+					FROM DUAL
+				)
+				SELECT 
+					VAL.FUN_ID,
+					VAL.PEF_ID,
+					'||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, 
+					VAL.VERSION,
+					VAL.USUARIOCREAR,
+					VAL.FECHACREAR,
+					VAL.BORRADO
+				FROM VALORES VAL
+				';
+				EXECUTE IMMEDIATE V_SQL USING V_FUN_ID, V_PEF_ID, V_ITEM;
+				DBMS_OUTPUT.PUT_LINE('	[INFO] FUN_PEF registro insertado ('||V_TMP_PERFIL(1)||' - '||V_FUN_CODIGO||'): ' || sql%rowcount);
+			END IF;
+		END IF;
+	END LOOP;
+
+	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+	WHEN OTHERS THEN
+		ERR_NUM := SQLCODE;
+		ERR_MSG := SQLERRM;
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+		DBMS_OUTPUT.put_line(ERR_MSG);
+		ROLLBACK;
+		RAISE;   
+END;
+/
+EXIT;

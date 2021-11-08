@@ -1,0 +1,86 @@
+--/*
+--#########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20210927
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15200
+--## PRODUCTO=NO
+--## 
+--## Finalidad:
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+
+DECLARE
+
+    -- Esquemas
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+    V_ESQUEMA_M VARCHAR2(15 CHAR) := 'REMMASTER';
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    -- Errores
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    -- Usuario
+    V_USUARIO VARCHAR2(50 CHAR) := 'AUX_HREOS_15200_1';
+    -- Tablas
+    V_TABLA_ACTIVO VARCHAR2(100 CHAR):= 'IAP_INFO_ADC_PERSONA';
+    V_TABLA_AUX  VARCHAR2(100 CHAR):= 'AUX_HREOS_15200_2';
+    
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');	
+
+
+       DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZAR '||V_TABLA_ACTIVO||' ');
+  	
+  	 V_MSQL :='INSERT INTO '||V_ESQUEMA||'.IAP_INFO_ADC_PERSONA(IAP_ID,
+			ID_PERSONA_HAYA,
+			DD_CNO_ID,
+			DD_ACE_ID,
+			DD_TSC_ID,
+			DD_TRI_ID,
+			DD_FOJ_ID,
+			DD_ECC_ID,
+			VERSION,
+			USUARIOCREAR,
+			FECHACREAR,
+			BORRADO
+			)SELECT '||V_ESQUEMA||'.S_IAP_INFO_ADC_PERSONA.NEXTVAL, ID_PERSONA_HAYA, 
+			(SELECT DD_CNO_ID FROM '||V_ESQUEMA||'.DD_CNO_CN_OCUPACIONAL WHERE DD_CNO_CODIGO = AUX.CNO), 
+			(SELECT DD_ACE_ID FROM '||V_ESQUEMA||'.DD_ACE_CNAE WHERE DD_ACE_CODIGO = AUX.CNAE),
+			(SELECT DD_TSC_ID FROM '||V_ESQUEMA||'.DD_TSC_TIPO_SOCIO_COMERCIAL WHERE DD_TSC_CODIGO = TIPO_SOCIO), 
+			(SELECT DD_TRI_ID FROM '||V_ESQUEMA||'.DD_TRI_TIPO_ROL_INTERLOCUTOR WHERE DD_TRI_CODIGO = ROL), 
+			(SELECT DD_FOJ_ID FROM '||V_ESQUEMA||'.DD_FOJ_FORMA_JURIDICA WHERE DD_FOJ_CODIGO = FORMA_JURIDICA), 
+			(SELECT DD_ECC_ID FROM '||V_ESQUEMA||'.DD_ECC_ESTADO_COMUNICACION_C4C WHERE DD_ECC_CODIGO = ''01''), 1, ''HREOS-15200'', SYSDATE,0
+			 FROM '||V_ESQUEMA||'.AUX_HREOS_15200_2 AUX WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.IAP_INFO_ADC_PERSONA IAP WHERE IAP.ID_PERSONA_HAYA = AUX.ID_PERSONA_HAYA)
+  	 ';
+
+  	EXECUTE IMMEDIATE V_MSQL;
+
+  	DBMS_OUTPUT.PUT_LINE('  [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' ACTUALIZADAS '||SQL%ROWCOUNT||' FILAS.');
+
+        
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]: IDS MODIFICADOS con éxito');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

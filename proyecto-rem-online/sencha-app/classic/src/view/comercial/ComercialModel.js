@@ -123,8 +123,10 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
     	comboTiposFechaOfertas: {
 	    	data : [
 				        {"codigo":"01", "descripcion": "Fecha de alta"},
-				        {"codigo":"02", "descripcion": "Fecha de firma reserva"}/*,
-				        {"codigo":"03", "descripcion": "Fecha de posicionamiento"}*/
+				        {"codigo":"02", "descripcion": "Fecha de firma reserva"},
+						/*{"codigo":"03", "descripcion": "Fecha de posicionamiento"},*/
+						{"codigo":"04", "descripcion": "Fecha entrada CRM/SF"},
+				        {"codigo":"05", "descripcion": "Fecha de oferta pendiente"}
 			]		
 	    		
     	},

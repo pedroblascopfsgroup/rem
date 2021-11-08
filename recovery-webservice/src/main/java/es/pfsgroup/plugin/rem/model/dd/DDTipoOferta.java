@@ -32,6 +32,7 @@ public class DDTipoOferta implements Auditable, Dictionary {
 		
 	public static final String CODIGO_VENTA= "01";
 	public static final String CODIGO_ALQUILER= "02";
+	public static final String CODIGO_ALQUILER_NO_COMERCIAL= "03";
 	
 	private static final long serialVersionUID = 1L;
 
@@ -122,6 +123,16 @@ public class DDTipoOferta implements Auditable, Dictionary {
 		}	
 		
 		return isVenta;
+	}
+
+	public static boolean isTipoAlquilerNoComercial(DDTipoOferta diccionario) {
+		boolean isNoComercial = false;
+		
+		if(diccionario != null && CODIGO_ALQUILER_NO_COMERCIAL.equals(diccionario.getCodigo())) {
+			isNoComercial = true;
+		}	
+		
+		return isNoComercial;
 	}
 
 }

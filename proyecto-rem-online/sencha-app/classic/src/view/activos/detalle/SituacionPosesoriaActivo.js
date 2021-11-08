@@ -15,7 +15,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	
 	recordClass: "HreRem.model.ActivoSituacionPosesoria",
 	
-    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList'],
+    requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList', 
+    	'HreRem.model.SituacionOcupacionalGridModel'],
 	
     initComponent: function () {
         var me = this;
@@ -146,9 +147,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {
 						        		value: '{situacionPosesoria.diasTapiado}',
 						        		hidden: '{!activo.isCarteraBankia}',
-						        		readOnly: '{isAssetManager}'
+						        		readOnly: true
 						        	},
-					            	labelWidth: 120,
+									labelWidth: 120,
 					            	width: 60
 						        },
 						        {
@@ -334,7 +335,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {				        		
 						        		store: '{comboSiNoPosesionNegociada}',
 					            		value: '{situacionPosesoria.posesionNegociada}',
-					            		readOnly: '{!tienePosesion}'
+					            		readOnly: '{isCarteraBankiayTienePosesion}'
 					            	},
 					            	displayField: 'descripcion',
 					            	valueField: 'codigo'
@@ -347,18 +348,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
-		                		readOnly: '{esSituacionJudicial}'
+		                		readOnly: '{isCarteraBankiaYesSituacionJudicial}'
 		                	},
 		                	style:'margin-left:10px'
 		                },
-		                {
-							xtype: 'checkboxfieldbase',
-							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
-							bind: {
-								value: '{situacionPosesoria.tieneOkTecnico}',
-								readOnly: '{noEditableSareb}'
-							}
-						},
 		                {
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: true,
@@ -390,8 +383,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		}
 			            	},
                             readOnly: true
-				        },
-				        
+				        },				        				        
 						{
 				        	xtype:'fieldset',
 				        	height: '80%',
@@ -436,11 +428,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
 							]
 						},
-				        
-				        
-				        
-				        
-
 				        {
 							xtype: 'textfieldbase',
 							reference: 'disponibilidadJuridicaRef',
@@ -450,6 +437,64 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        		hidden: '{!activo.isCarteraBankia}',				   
 			            		value: '{situacionPosesoria.situacionJuridica}'
 			            	}
+				        },
+						{
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.necesidad.fuerza.publica'),
+				        	colspan:4,
+				        	readOnly: true,
+				        	bind: {
+			            		store: '{comboSiNoFuerzaPublica}', 
+			            		value: '{situacionPosesoria.necesariaFuerzaPublica}',
+			            		hidden: '{!activo.isCarteraBankia}'
+				        	}
+						},{
+							xtype: 'comboboxfieldbase',
+							reference: 'comboVerticalRef',
+							fieldLabel: HreRem.i18n('fieldlabel.vertical'),
+							bind: {
+								store: '{comboSiNoRem}',
+								value : '{situacionPosesoria.vertical}',
+								hidden: '{!activo.isCarteraBankia}',
+			            		readOnly: true
+							},
+			            	style:'margin-left:10px'
+						},
+						{
+							xtype: 'checkboxfieldbase',
+							reference: 'okTecnicoRef',
+							fieldLabel: HreRem.i18n('filedlabel.tiene.ok.tecnico'),
+							bind: {
+								value: '{situacionPosesoria.tieneOkTecnico}',
+								readOnly: '{!activo.aplicaGestion}'
+							}
+							/*,
+    						listeners: {
+			                	change: 'editarComboEstadoTecnico'
+			            	}*/
+						},
+						{
+					        xtype: 'comboboxfieldbasedd',
+					        reference: 'comboEstadoTecnicoRef',
+							fieldLabel: HreRem.i18n('fieldlabel.estado.tecnico'),
+					        bind: {        
+					        	store : '{comboEstadoTecnico}',
+					        	/*disabled: '{!situacionPosesoria.tieneOkTecnico}',*/
+					        	hidden: '{!activo.isCarteraBankia}',
+				            	value: '{situacionPosesoria.estadoTecnicoCodigo}',
+								rawValue: '{situacionPosesoria.estadoTecnicoDescripcion}'
+					        }
+				        },
+				        { 
+							xtype:'datefieldbase', 
+							reference: 'fechaEstadoTecnicoRef',
+							allowBlank: true,
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.tecnico'),
+	                		readOnly: true,
+		                	bind:{
+		                		value: '{situacionPosesoria.fechaEstadoTecnico}',
+		                		hidden: '{!activo.isCarteraBankia}'
+		                	}
 				        }
 					]
                 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190712
+--## AUTOR=Sergio Gomez
+--## FECHA_CREACION=20201216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4808
+--## INCIDENCIA_LINK=HREOS-12421
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,6 +18,8 @@
 --##		REMVIP-3350 Añadir el campo importe contraoferta.
 --##		HREOS-5997 Corrección GENCAT
 --##		REMVIP-4808 Corrección Rendimiento
+--##    HREOS-12420: (Sergio Gomez) Añadir codigo Pdte. Consentimiento 
+--##    HREOS-12421: (Sergio Gomez)Añadir la columna FECHA_ENT_CRM_SF al grid
 --##########################################
 --*/
 
@@ -104,6 +106,7 @@ BEGIN
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
 				OFR.OFR_NECESITA_FINANCIACION AS NECESITA_FINANCIACION,
                 OFR.OFR_OBSERVACIONES AS OBSERVACIONES,
+        OFR.FECHA_ENT_CRM_SF,        
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
 		JOIN '|| V_ESQUEMA ||'.V_FIRST_ACTIVO_OFERTA VAO 				ON VAO.OFR_ID = OFR.OFR_ID
@@ -125,7 +128,7 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_CAP_CANAL_PRESCRIPCION CAP 		ON CAP.DD_CAP_ID = OFR.DD_CAP_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LCO_LOTE_COMERCIAL LCO 			ON OFR.AGR_ID = LCO.AGR_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN 		ON GEN.ACT_ID = VAO.ACT_ID 
-		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'')';
+		WHERE OFR.BORRADO  = 0 AND EOF.DD_EOF_CODIGO IN (''01'',''03'',''04'',''05'')';
         
   EXECUTE IMMEDIATE	V_MSQL;
     

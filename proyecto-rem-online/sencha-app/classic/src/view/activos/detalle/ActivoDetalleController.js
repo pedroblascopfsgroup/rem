@@ -6151,10 +6151,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             } else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != tipoComercializacion){
             	if(CONST.TIPOS_COMERCIALIZACION['VENTA'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(false);
-            	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
+            		chkPerimetroAlquiler.setDisabled(true);
+            	}else if(CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(true);
+            		chkPerimetroAlquiler.setDisabled(false);
             	}
-            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);

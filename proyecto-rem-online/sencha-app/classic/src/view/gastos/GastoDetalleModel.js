@@ -498,9 +498,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
 				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
+				remoteUrl : 'generic/getTiposImpuestoFiltered',
 				extraParams : {
-					diccionario : 'tiposImpuestos'
+					esBankia : 'false'
 				}
 			},
 			autoLoad: true

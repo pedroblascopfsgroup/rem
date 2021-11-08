@@ -357,8 +357,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 //			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 //		}
 		
-//		Faltaría la comrpobación de Caixa para el Cliente
-		
 		if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostal());
 		}

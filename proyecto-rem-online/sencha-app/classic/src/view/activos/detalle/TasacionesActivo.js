@@ -6,9 +6,12 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
     records: ['tasacionBankia', 'tasacion'],
 	recordsClass: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
 	requires: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
-
+    refreshAfterSave: true,
 	listeners: {
-    	//boxready:'cargarTabData'
+    	boxready: function() {
+    		var me = this;
+    		me.lookupController().cargarTabData(me);
+    	}
     },
 	
     initComponent: function () {
@@ -445,7 +448,443 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						readOnly: true
 					}			 
 				]
-            }
+            },
+            {
+				xtype: 'fieldsettable',
+				title: HreRem.i18n('fieldlabel.titulo.datos.basicos.tasacion'),
+				reference: 'datosBasicosTasacion',
+				bind: {
+					hidden: '{!activo.isCarteraTitulizada}'
+				},
+				colspan: 3,
+				items :	[		     				        				    
+					{ 
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.empresa.tasadora'),
+						maxLength: 10,
+						bind:		'{tasacion.nomTasador}'
+					},
+					{ 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						maxValue: null,
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.fecha'),
+						readOnly: true,
+						bind:		'{tasacion.fechaValorTasacion}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.importe.integro'),
+						bind:		'{tasacion.importeTasacionFin}'
+					},
+					{ 
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.referencia.id.tasadora'),
+						maxLength: 20,
+						bind:		'{tasacion.referenciaTasadora}'
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.tipo.valoracion.estado.tasacion'),					
+						reference: 'tipoValoracionEstadoTasacion',
+				        bind: {
+			            	store: '{tipoTasacionStore}',
+			            	value: '{tasacion.tipoTasacionCodigo}'
+			           	}
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.acogida.normativa'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.acogidaNormativa}'
+						}		
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.hipotesis.edificio.terminado'),
+						bind:		'{tasacion.valorHipotesisEdificioTerminadoPromocion}'
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.advertencias'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.advertencias}'
+						}
+					},
+					{ 
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.codigo.sociedad.tasacion.valoracion'),
+						maxLength: 10,
+						bind:		'{tasacion.codigoSociedadTasacionValoracion}'
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.condicionantes'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.condicionantes}'
+						}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.metodo.valoracion'),					
+						reference: 'metodoValoracion',
+				        bind: {
+			            	store: '{comboMetodoValoracion}',
+			            	value: '{tasacion.metodoValoracionCodigo}'
+			           	}
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.terreno'),
+						maxLength: 15,
+						bind:		'{tasacion.valorTerreno}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.terreno.ajustado'),
+						maxLength: 15,
+						bind:		'{tasacion.valorTerrenoAjustado}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.hipotesis.edificio.terminado'),
+						maxLength: 15,
+						bind:		'{tasacion.valorHipotesisEdificioTerminado}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.hipotecario'),
+						maxLength: 15,
+						bind:		'{tasacion.valorHipotecario}'
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.visita.interior.inmueble'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.visitaAnteriorInmueble}'
+						}
+					}
+				]
+    		},
+    		{
+				xtype: 'fieldsettable',
+				title: HreRem.i18n('fieldlabel.titulo.parametros.tasacion'),
+				reference: 'parametrosTasacion',
+				bind: {
+					hidden: '{!activo.isCarteraTitulizada}'
+				},
+				colspan: 3,
+				items :	[
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.adoptada'),
+						maxLength: 6,
+						bind:		'{tasacion.superficieAdoptada}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.parcela.m2'),
+						maxLength: 6,
+						readOnly: true,
+						bind:		'{tasacion.superficieParcela}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.m2'),
+						maxLength: 10,
+						readOnly: true,
+						bind:		'{tasacion.superficie}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.coste.estimado.terminar.obra'),
+						maxLength: 15,
+						bind:		'{tasacion.costeEstimadoTerminarObra}'
+					},
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.coste.destinado.uso.propio'),
+						maxLength: 15,
+						bind:		'{tasacion.costeDestinaUsoPropio}'
+					},
+					{ 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						maxValue: null,
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.coste.fecha.estimada.terminar.obra'),
+						bind:		'{tasacion.fechaEstimadaTerminarObra}'						
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.plazo.finalizar.comercializacion'),
+						maxLength: 3,
+						bind:		'{tasacion.mrdPlazoMaximoFinalizarComercializacion}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.plazo.finalizar.construccion'),
+						maxLength: 3,
+						bind:		'{tasacion.mrdPlazoMaximoFinalizarConstruccion}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.tasa.anualizada.homogenea'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.mrdTasaAnualizadaHomogenea}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.tipo.actualizacion'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.mrdTasaActualizacion}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.margen.beneficio.promotor'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.mreMargenBeneficioPromotor}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.terreno.m2'),
+						maxLength: 15,
+						bind:		'{tasacion.superficieTerreno}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.tasa.anual.variacion.precio.activo'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.tasaAnualMedioVariacionPrecioMercado}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					}
+				]
+    		},
+    		{
+				xtype: 'fieldsettable',
+				title: HreRem.i18n('fieldlabel.titulo.planteamiento.tasacion'),
+				reference: 'planteamientoTasacion',
+				bind: {
+					hidden: '{!activo.isCarteraTitulizada}'
+				},
+				colspan: 3,
+				items :	[
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.aprovechamiento.parcela'),
+						maxLength: 10,
+						bind:		'{tasacion.aprovechamientoParcelaSuelo}'
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.desarrollo.planteamiento'),					
+						reference: 'desarrolloPlanteamiento',
+				        bind: {
+			            	store: '{comboDesarrolloPlanteamiento}',
+			            	value: '{tasacion.desarrolloPlanteamientoCodigo}'
+			           	}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.fase.gestion'),					
+						reference: 'faseGestion',
+				        bind: {
+			            	store: '{comboFaseGestion}',
+			            	value: '{tasacion.faseGestionCodigo}'
+			           	}
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.numero.viviendas'),
+						maxLength: 3,
+						bind:		'{tasacion.numeroViviendas}'
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.porcentaje.ambito.valorado'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.porcentajeAmbitoValorado}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.producto.desarrollar'),					
+						reference: 'productoDesarrollar',
+				        bind: {
+			            	store: '{comboProductoDesarrollar}',
+			            	value: '{tasacion.productoDesarrollarCodigo}'
+			           	}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.proximidad.respecto.nucleo.urbano'),					
+						reference: 'proximidadRespectoNucleoUrbano',
+				        bind: {
+			            	store: '{comboProximidadRespectoNucleoUrbano}',
+			            	value: '{tasacion.proximidadRespectoNucleoUrbanoCodigo}'
+			           	}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.sistema.gestion'),					
+						reference: 'sistemaGestion',
+				        bind: {
+			            	store: '{comboSistemaGestion}',
+			            	value: '{tasacion.sistemaGestionCodigo}'
+			           	}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.tipo.suelo'),					
+						reference: 'tipoSuelo',
+				        bind: {
+			            	store: '{comboTipoSuelo}',
+			            	value: '{tasacion.tipoSueloCodigo}'
+			           	}
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.aprovechamiento.m2'),
+						maxLength: 15,
+						bind:		'{tasacion.aprovechamiento}'
+					},
+					{ 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						maxValue: null,
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.fecha.ultimo.grado.avance.estimado'),
+						bind:		'{tasacion.fechaUltimoGradoAvanceEstimado}'						
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.porcentaje.urbanicacion.ejecutado'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.porcentajeUrbanizacionEjecutado}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{ 
+						xtype: 'numberfieldbase',
+						symbol: HreRem.i18n("symbol.porcentaje"),
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.porcentaje.ambito.valorado'),
+						maskRe: /[0-9.]/,
+						bind:		'{tasacion.porcentajeAmbitoValoradoEntero}',
+	                	validator: function(v) {
+                        	if(!Ext.isEmpty(this.getValue()) && (this.getValue() < 0 || this.getValue() >  100 )){
+                            	return false;
+                        	}
+                            return true;
+                        }
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.producto.prevee.desarrollar'),					
+						reference: 'sistemaGestion',
+				        bind: {
+			            	store: '{comboProductoDesarrollarPrevisto}',
+			            	value: '{tasacion.productoDesarrollarPrevistoCodigo}'
+			           	}
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.producto.proyecto.obra'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.proyectoObra}'
+						}
+					}
+				]
+    		},
+    		{
+				xtype: 'fieldsettable',
+				title: HreRem.i18n('fieldlabel.titulo.otras.variables.tasacion'),
+				reference: 'otrasVariablesTasacion',
+				bind: {
+					hidden: '{!activo.isCarteraTitulizada}'
+				},
+				colspan: 3,
+				items :	[
+					{ 
+						xtype: 'currencyfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.otras.variables.tasacion.gasto.comercializacion.tasacion'),
+						bind:		'{tasacion.gastosComercialesTasacion}'
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.otras.variables.tasacion.flag.coste.por.defecto'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.porcentajeCosteDefecto}'
+						}
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.otras.variables.tasacion.finca.rustica.expectativas.urbanisticas'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.fincaRusticaExpectativasUrbanisticas}'
+						}
+					},
+					{ 
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.otras.variables.tasacion.paralizacion.urbanizacion'),
+						bind: {
+							store: '{comboSinSino}',
+							value: '{tasacion.paralizacionUrbanizacion}'
+						}
+					},
+					{
+						xtype:'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.otras.variables.tasacion.tipo.datos.utilizados.inmuebles.comparables'),					
+						reference: 'tipoDatoUtilizadoInmuebleComparable',
+				        bind: {
+			            	store: '{comboTipoDatoUtilizadoInmuebleComparable}',
+			            	value: '{tasacion.tipoDatoUtilizadoInmuebleComparableCodigo}'
+			           	}
+					}
+				]
+    		}
         ];
         
 		me.addPlugin({ptype: 'lazyitems', items: items });

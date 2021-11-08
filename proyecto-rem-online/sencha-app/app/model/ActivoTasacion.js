@@ -157,15 +157,167 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
     		{
     		    name:'idGasto'
-    		}
+    		},
+    		{
+    		    name:'superficieParcela'
+    		},
+    		{
+    		    name:'superficie'
+    		},
+    		{
+    		    name:'referenciaTasadora'
+    		},
+    		{
+    		    name: 'acogidaNormativa'
+    		},
+    		{
+    		    name: 'valorHipotesisEdificioTerminadoPromocion'
+    		},
+    		{
+    		    name: 'advertencias'
+    		},
+    		{
+    		    name: 'codigoSociedadTasacionValoracion'
+    		},
+    		{
+    		    name: 'condicionantes'
+    		},
+    		{
+    		    name: 'metodoValoracionCodigo'
+    		},
+    		{
+    		    name: 'valorTerreno'
+    		},
+    		{
+    		    name: 'valorTerrenoAjustado'
+    		},
+    		{
+    		    name: 'valorHipotesisEdificioTerminado'
+    		},
+    		{
+    		    name: 'valorHipotecario'
+    		},
+    		{
+    		    name: 'visitaAnteriorInmueble'
+    		},
+    		{
+    		    name: 'superficieAdoptada'
+    		},
+    		{
+    		    name: 'costeEstimadoTerminarObra'
+    		},
+    		{
+    		    name: 'costeDestinaUsoPropio'
+    		},
+    		{
+    		    name: 'fechaEstimadaTerminarObra',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    		    name: 'mrdPlazoMaximoFinalizarComercializacion'
+    		},
+    		{
+    		    name: 'mrdPlazoMaximoFinalizarConstruccion'
+    		},
+    		{
+    		    name: 'mrdTasaAnualizadaHomogenea'
+    		},
+    		{
+    		    name: 'mrdTasaActualizacion'
+    		},
+    		{
+    		    name: 'mreMargenBeneficioPromotor'
+    		},
+    		{
+    		    name: 'superficieTerreno'
+    		},
+    		{
+    		    name: 'tasaAnualMedioVariacionPrecioMercado'
+    		},
+    		{
+    		    name: 'aprovechamientoParcelaSuelo'
+    		},
+    		{
+    		    name: 'desarrolloPlanteamientoCodigo'
+    		},
+    		{
+    		    name: 'faseGestionCodigo'
+    		},
+    		{
+    		    name: 'numeroViviendas'
+    		},
+    		{
+    		    name: 'porcentajeAmbitoValorado'
+    		},
+    		{
+    		    name: 'productoDesarrollarCodigo'
+    		},
+    		{
+    		    name: 'proximidadRespectoNucleoUrbanoCodigo'
+    		},
+    		{
+    		    name: 'sistemaGestionCodigo'
+    		},
+    		{
+    		    name: 'tipoSueloCodigo'
+    		},
+    		{
+    		    name: 'aprovechamiento'
+    		},
+    		{
+    		    name: 'fechaUltimoGradoAvanceEstimado',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    		    name: 'porcentajeUrbanizacionEjecutado'
+    		},
+    		{
+    		    name: 'porcentajeAmbitoValoradoEntero'
+    		},
+    		{
+    		    name: 'productoDesarrollarPrevistoCodigo'
+    		},
+    		{
+    		    name: 'proyectoObra'
+    		},
+    		{
+    		    name: 'gastosComercialesTasacion'
+    		},
+    		{
+    		    name: 'porcentajeCosteDefecto'
+    		},
+    		{
+    		    name: 'fincaRusticaExpectativasUrbanisticas'
+    		},
+    		{
+    		    name: 'paralizacionUrbanizacion'
+    		},
+    		{
+    		    name: 'tipoDatoUtilizadoInmuebleComparableCodigo'
+    		}    		
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById',
+		localUrl: 'tasacion.json',
 		api: {
-            read: 'activo/getTasacionById',
+            read: 'activo/getTasacionByActivoId',
             create: 'activo/createTasacionActivo',
             update: 'activo/saveTasacionActivo'
         },

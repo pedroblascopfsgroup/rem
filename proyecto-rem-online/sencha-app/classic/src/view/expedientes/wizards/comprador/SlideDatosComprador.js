@@ -562,7 +562,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.relacion.hre'),
 						reference: 'relacionHre',
 						name: 'relacionHre',
-						padding: '5px'
+						padding: '5px',
+						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}'
+						}
 					},
 			        {
 						xtype: 'displayfieldbase',
@@ -576,10 +579,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.antiguo.deudor'),
 						reference: 'antiguoDeudor',
 						name: 'antiguoDeudor',
-						padding: '5px',
-						allowBlank: false,
+						padding: '5px',		
 						bind: {
-							store: '{comboSiNoRem}'
+							store: '{comboSiNoRem}',
+							allowBlank: '{!comprador.esCarteraBankia}'
 						}
 					},
 					{
@@ -589,7 +592,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'relacionAntDeudor',
 						padding: '5px',
 						bind: {
-							store: '{comboSiNoRem}'
+							store: '{comboSiNoRem}',
+							allowBlank: '{!comprador.esCarteraBankia}'
 						}
 					},
 					{

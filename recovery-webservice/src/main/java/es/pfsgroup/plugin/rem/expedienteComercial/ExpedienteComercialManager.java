@@ -5606,7 +5606,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
 				comprador.setLocalidadNacimientoComprador(localidad);
 			} else {
-				comprador.setLocalidad(null);
+				comprador.setLocalidadNacimientoComprador(null);
 			}
 			
 			if (dto.getLocalidadNacimientoRepresentanteCodigo() != null) {

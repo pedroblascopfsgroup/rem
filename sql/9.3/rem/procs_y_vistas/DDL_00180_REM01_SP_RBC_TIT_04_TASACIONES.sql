@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211102
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15969
+--## INCIDENCIA_LINK=HREOS-16362
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##        0.4 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
 --##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
 --##        0.6 Se añade el mapeo de Tipo de tasación - [HREOS-15969] - Daniel Algaba
+--##        0.7 Se quita la corrección de comas en decimales - [HREOS-16362] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -105,13 +106,15 @@ BEGIN
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
                      JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BREG ON BREG.BIE_ID = ACT.BIE_ID AND BREG.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL REG ON BREG.BIE_DREG_ID = REG.BIE_DREG_ID AND REG.BORRADO = 0
                      JOIN (SELECT
                      TAS.ACT_ID
                      , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_IMPORTE_TAS_FIN DESC) RN
                      , SUBSTR(TAS.TAS_NOMBRE_TASADOR, 0, 10) TASADORA                    
                      , TO_CHAR(TAS.TAS_FECHA_RECEPCION_TASACION,''YYYYMMDD'') FEC_TASACION                
-                     , TAS.GASTO_COM_TASACION*100 GASTO_COM_TASACION          
-                     , TAS.TAS_IMPORTE_TAS_FIN*100 IMP_TAS_INTEGRO             
+                     , TAS.GASTO_COM_TASACION GASTO_COM_TASACION          
+                     , TAS.TAS_IMPORTE_TAS_FIN IMP_TAS_INTEGRO             
                      , TAS.REF_TASADORA REF_ID_TASADORA             
                      , EQV10.DD_CODIGO_CAIXA TIPO_VAL_EST_TASACION   
                      , CASE WHEN TAS.PORC_COSTE_DEFECTO = 1 THEN ''S'' ELSE ''N'' END FLAG_PORC_COSTE_DEFECTO     
@@ -120,15 +123,15 @@ BEGIN
                      , EQV2.DD_CODIGO_CAIXA FASE_GESTION                
                      , CASE WHEN TAS.ACOGIDA_NORMATIVA = 1 THEN ''S'' ELSE ''N'' END ACO_NORMATIVA               
                      , TAS.NUM_VIVIENDAS NUM_VIVIENDAS               
-                     , TAS.PORC_AMBITO_VAL*100 PORC_AMB_VALORADO           
+                     , TAS.PORC_AMBITO_VAL PORC_AMB_VALORADO           
                      , EQV3.DD_CODIGO_CAIXA PRODUCTO_DESAR              
                      , EQV4.DD_CODIGO_CAIXA PROX_NUCLEO_URB             
                      , EQV5.DD_CODIGO_CAIXA SISTEMA_GESTION             
                      , TAS.SUPERFICIE_ADOPTADA SUPERFICIE_ADOPTADA         
-                     , NULL SUPERFICIE_PARCELA          
-                     , NULL SUPERFICIE                  
+                     , REG.REG_SUPERFICIE_PARCELA SUPERFICIE_PARCELA          
+                     , BREG.BIE_DREG_SUPERFICIE_CONSTRUIDA SUPERFICIE                  
                      , EQV9.DD_CODIGO_CAIXA TIPO_SUELO_TAS              
-                     , TAS.VAL_HIPO_EDI_TERM_PROM*100 VAL_HIP_EDI_TERM_PROM       
+                     , TAS.VAL_HIPO_EDI_TERM_PROM VAL_HIP_EDI_TERM_PROM       
                      , CASE WHEN TAS.ADVERTENCIAS = 1 THEN ''S'' ELSE ''N'' END ADVERTENCIAS                
                      , TAS.APROVECHAMIENTO APROVECHAMIENTO             
                      , TAS.COD_SOCIEDAD_TAS_VAL COD_SOCIEDAD_TAS            
@@ -158,6 +161,9 @@ BEGIN
                      , TAS.VALOR_HIPOTECARIO VAL_HIPOTECARIO             
                      , CASE WHEN TAS.VISITA_ANT_INMUEBLE = 1 THEN ''S'' ELSE ''N'' END VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_TAS_TASACION TAS
+                     JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON TAS.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BREG ON BREG.BIE_ID = ACT.BIE_ID AND BREG.BORRADO = 0
+                     JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL REG ON BREG.BIE_DREG_ID = REG.BIE_DREG_ID AND REG.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TTS_TIPO_TASACION TTS ON TAS.DD_TTS_ID = TTS.DD_TTS_ID AND TTS.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV10 ON EQV10.DD_NOMBRE_CAIXA = ''TIPO_VAL_EST_TASACION'' AND EQV10.DD_CODIGO_REM = TTS.DD_TTS_CODIGO AND EQV10.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_DSP_DESARROLLO_PLANTEAMIENTO DSP ON DSP.DD_DSP_ID = TAS.DD_DSP_ID AND DSP.BORRADO = 0
@@ -183,6 +189,7 @@ BEGIN
                      AND TRUNC(TAS.TAS_FECHA_RECEPCION_TASACION) >= TRUNC(SYSDATE-30)) TASACION ON RN = 1 AND TASACION.ACT_ID = ACT.ACT_ID
                      WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
+                     AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.TASADORA = AUX.TASADORA

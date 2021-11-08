@@ -82,6 +82,8 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;
 
 			DBMS_OUTPUT.PUT_LINE('	[INFO]: Tabla '||V_TEXT_TABLA_BK||' creada a partir de la tabla '||V_TEXT_TABLA||' correctamente.');
+			
+			EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.ACT_ASI_HAYA';
 		END IF;
 
 

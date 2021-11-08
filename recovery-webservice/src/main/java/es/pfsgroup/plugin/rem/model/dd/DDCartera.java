@@ -182,5 +182,14 @@ public class DDCartera implements Auditable, Dictionary {
 		}
 		return isCarteraCerberus;
 	}
+	
+	public static boolean isBFA (DDCartera cartera) {
+		boolean is = false;
+		if(cartera != null && CODIGO_CARTERA_BFA.equals(cartera.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
+	}
 
 }

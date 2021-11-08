@@ -43,6 +43,7 @@ public class DDTiposTextoOferta implements Auditable, Dictionary {
 	public final static String TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC =  "11";
 	public final static String TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR =  "12";
 	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA =  "13";
+	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA =  "14";
 	
 	private static final long serialVersionUID = 1L;
 

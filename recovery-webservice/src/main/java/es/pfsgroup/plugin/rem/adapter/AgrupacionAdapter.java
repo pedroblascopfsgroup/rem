@@ -2906,6 +2906,7 @@ public class AgrupacionAdapter {
 				prescriptor.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(prescriptor.getDocIdentificativo(),prescriptor.getCodigoProveedorRem()));
 				genericDao.save(ActivoProveedor.class,prescriptor);
 			}
+			oferta.setPrescriptor(prescriptor);
 			oferta.setOrigen("REM");
 			oferta.setOfertaExpress(false);
 			if (Checks.esNulo(dto.getVentaDirecta())){

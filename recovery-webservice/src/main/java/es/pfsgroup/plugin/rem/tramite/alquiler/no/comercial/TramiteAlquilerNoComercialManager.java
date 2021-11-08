@@ -110,11 +110,14 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean existeExpedienteComercialByNumExpediente(TareaExterna tareaExterna, String expedienteAnterior)  {
 		boolean existeExpediente = false;
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-		if(expediente != null) {
+		if(expedienteAnterior.isEmpty()) {
 			existeExpediente = true;
+		}else{ 
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+			if(expediente != null) {
+				existeExpediente = true;
+			}
 		}
-		
 		return existeExpediente;
 	}
 	
@@ -131,9 +134,13 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	@Override
 	public boolean isExpedienteFirmado(TareaExterna tareaExterna, String expedienteAnterior) {
 		boolean isFirmado = false;
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-		if(expediente != null && expediente.getEstado() != null && DDEstadosExpedienteComercial.isFirmado(expediente.getEstado())) {
+		if(expedienteAnterior.isEmpty()) {
 			isFirmado = true;
+		}else{
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+			if(expediente != null && expediente.getEstado() != null && DDEstadosExpedienteComercial.isFirmado(expediente.getEstado())) {
+				isFirmado = true;
+			}
 		}
 		return isFirmado;
 	}

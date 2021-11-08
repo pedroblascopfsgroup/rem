@@ -235,3 +235,6 @@ func-rem-modeloHydra|func-rem-func-rem-stockHydra
 rem_mirror|func-rem-onboardingBFA
 func-rem-confirmacionTitulares|func-rem-procesoOfertas
 rem_mirror|func-rem-jupiter
+R-Hydra|R-Hydra-ProcesoOfertas
+R-Hydra-ProcesoOfertas|R-Hydra-ProcesoOfertas-f2
+rem_mirror|R-Hydra-ProcesoOfertas-f2

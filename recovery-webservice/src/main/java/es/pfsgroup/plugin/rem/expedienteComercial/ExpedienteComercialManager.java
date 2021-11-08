@@ -5606,7 +5606,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
 				comprador.setLocalidadNacimientoComprador(localidad);
 			} else {
-				comprador.setLocalidad(null);
+				comprador.setLocalidadNacimientoComprador(null);
 			}
 			
 			if (dto.getLocalidadNacimientoRepresentanteCodigo() != null) {
@@ -14571,7 +14571,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 				if (completada) {
 					dto.setScoringEditable(false);
+					dto.setBloqueDepositoEditable(false);
 				}else {
+					dto.setBloqueDepositoEditable(true);
 					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
 					for (TareaProcedimiento tarea : tareasActivas) {
 						if (!ComercialUserAssigantionService.CODIGO_T015_VERIFICAR_SCORING.equals(tarea.getCodigo())

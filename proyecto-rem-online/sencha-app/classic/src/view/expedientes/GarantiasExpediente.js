@@ -282,13 +282,14 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 							},
 							{
 								xtype : 'fieldset',
-								height : 100,
+								collapsible : true,
+								defaultType : 'displayfieldbase',
+								title : HreRem.i18n("fieldlabel.deposito"),
+								colspan:4,
 								layout : {
 									type : 'table',
 									columns : 2
 								},
-								defaultType : 'textfieldbase',
-								title : HreRem.i18n("fieldlabel.deposito"),
 								bind:{
 									disabled: '{!garantias.bloqueDepositoEditable}'
 								},

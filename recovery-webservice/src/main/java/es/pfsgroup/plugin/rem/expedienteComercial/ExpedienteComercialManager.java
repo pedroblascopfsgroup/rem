@@ -8419,8 +8419,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler());
 		} else {
 			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial());
+			if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(eco.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+				gestoresAincluir.remove(GestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_ALQUILER);
+				
+			}
 		}
-
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		List<EXTDDTipoGestor> listAllTiposGestor = genericDao.getListOrdered(EXTDDTipoGestor.class, order,
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));

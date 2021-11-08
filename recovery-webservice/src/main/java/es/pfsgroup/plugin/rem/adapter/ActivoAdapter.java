@@ -1752,7 +1752,7 @@ public class ActivoAdapter {
 				incluirAlquiler = true;
 			}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
 				incluirVenta = true;
-				incluirAlquiler = false;
+				incluirAlquiler = false;	
 			}
 		}
 		
@@ -1763,7 +1763,8 @@ public class ActivoAdapter {
 			if((incluirAlquiler && !incluirVenta && 
 					(CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()))
 				) || (!incluirAlquiler && incluirVenta && 
-					(CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
+					((!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())) 
+							|| CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
 				
 			} else {
 				DtoListadoGestores dtoGestor = new DtoListadoGestores();
@@ -1802,11 +1803,11 @@ public class ActivoAdapter {
 				.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
 		
 		Boolean incluirVenta;
-		Boolean incluirAlquiler;
-		
+		Boolean incluirAlquiler = false;
+		Activo activo = activoApi.get(idActivo);
 		String tipoComercializacion = null;
-		if(activoApi.get(idActivo).getActivoPublicacion() != null && activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion() != null) {
-			tipoComercializacion =activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
+		if(activo != null && activo.getActivoPublicacion() != null && activo.getActivoPublicacion().getTipoComercializacion() != null) {
+			tipoComercializacion =activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
 		}
 		
 		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
@@ -1814,7 +1815,8 @@ public class ActivoAdapter {
 			incluirAlquiler = true;
 		}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
 			incluirVenta = true;
-			incluirAlquiler = false;
+			incluirAlquiler = false;	
+			
 		}else {
 			incluirVenta = true;
 			incluirAlquiler = true;
@@ -1826,7 +1828,8 @@ public class ActivoAdapter {
 			if((incluirAlquiler && !incluirVenta && 
 					(CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()))
 				) || (!incluirAlquiler && incluirVenta && 
-					(CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
+					((!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())) 
+							|| CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
 				
 			} else {
 				DtoListadoGestores dtoGestor = new DtoListadoGestores();

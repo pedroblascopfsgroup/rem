@@ -37,10 +37,10 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(1500);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('21', '524', 'Caixabank', 'CAIXABANK'),
-	  T_FUNCION('21', '523', 'Caixabank', 'CAIXABANK'),
-      T_FUNCION('202', '525', 'EDT', 'EDT'),
-      T_FUNCION('202', '526', 'TDA', 'TDA')
+      T_FUNCION('03', '161', 'Caixabank', 'CAIXABANK'),
+      T_FUNCION('03', '160', 'Caixabank', 'CAIXABANK'),
+      T_FUNCION('18', '162', 'EDT', 'EDT'),
+      T_FUNCION('18', '163', 'TDA', 'TDA')
     );          
     V_TMP_FUNCION T_FUNCION;
                 
@@ -67,7 +67,7 @@ BEGIN
                 
                 V_MSQL:= 'UPDATE '||V_ESQUEMA||'.MGD_MAPEO_GESTOR_DOC SET 
 					CLIENTE_WS = '''||(V_TMP_FUNCION(4)) ||''',
-                    CLIENTE_GD = '''||(V_TMP_FUNCION(3)) ||''',
+                    			CLIENTE_GD = '''||(V_TMP_FUNCION(3)) ||''',
 					USUARIOMODIFICAR = '''||V_USUARIO||''',
 					FECHAMODIFICAR = SYSDATE
 					WHERE DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||V_TMP_FUNCION(1)||''') 

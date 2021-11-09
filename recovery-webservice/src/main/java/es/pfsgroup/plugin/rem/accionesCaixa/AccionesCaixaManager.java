@@ -449,7 +449,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDDevolucionReserva.CODIGO_SI_SIMPLES));
                 DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION));
+                DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
+                        genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_PENDIENTE));
 
+                reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setDevolucionReserva(devolucionReserva);
                 reserva.setEstadoReserva(estadoReserva);
 
@@ -480,7 +483,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDDevolucionReserva.CODIGO_NO));
                 DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO));
+                DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
+                        genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_PENDIENTE));
 
+                reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setDevolucionReserva(devolucionReserva);
                 reserva.setEstadoReserva(estadoReserva);
 
@@ -538,7 +544,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             if(reserva != null){
                 DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_RESUELTA_DEVUELTA));
+                DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
+                        genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_DEVUELTA));
 
+                reserva.setDevolucionReserva(null);
+                reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setEstadoReserva(estadoReserva);
 
                 genericDao.save(Reserva.class, reserva);
@@ -572,7 +582,21 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
+    public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) throws ParseException {
+        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
+        Reserva reserva = expediente.getReserva();
+        DDDevolucionReserva devolucionReserva = genericDao.get(DDDevolucionReserva.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDDevolucionReserva.CODIGO_NO));
+        DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_NO_PROCEDE));
+        reserva.setEstadoDevolucion(estadoDevolucion);
+        reserva.setDevolucionReserva(devolucionReserva);
+
+        expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+
+        genericDao.save(Reserva.class, reserva);
+        genericDao.save(ExpedienteComercial.class, expediente);
+
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 

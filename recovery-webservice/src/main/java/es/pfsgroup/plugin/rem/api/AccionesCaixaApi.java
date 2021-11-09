@@ -52,7 +52,7 @@ public interface AccionesCaixaApi {
 
     void accionRechazoModTitulares(DtoAccionRechazoCaixa dto);
 
-    void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto);
+    void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws ParseException, Exception;
 

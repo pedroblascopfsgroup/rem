@@ -2,8 +2,8 @@
 
 cd $DIR_INPUT_AUX
 
-lftp -u BDC_texabdc18,klnz18N7epHA9DuE -p 22 sftp://antena.silkplace.es <<EOF
-cd recep/
+lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://Intercambio.haya.es <<EOF
+cd Archivos/recep/
 mget $1
 bye
 EOF

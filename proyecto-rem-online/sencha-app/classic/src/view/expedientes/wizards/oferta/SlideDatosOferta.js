@@ -859,9 +859,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							reference: 'paisNacimientoRepresentanteCodigo',
 							name: 'paisNacimientoRepresentanteCodigo',
 							padding: '5px',
+							hidden: !isBk,
 							bind: {
-								store: '{comboPaises}',
-								hidden: !isBk
+								store: '{comboPaises}'
 							}
 						},
 						{
@@ -872,9 +872,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							padding: '5px',
 							chainedStore: 'comboMunicipioNacimientoRrp',
 							chainedReference: 'localidadNacimientoRepresentanteCodigo',
+							hidden: !isBk,
 							bind: {
 								store: '{comboProvincia}',
-								hidden: !isBk,
 								value: '{oferta.provinciaNacimientoRepresentanteCodigo}'
 							},
 							displayField: 'descripcion',
@@ -889,9 +889,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							reference: 'localidadNacimientoRepresentanteCodigo',
 							name: 'localidadNacimientoRepresentanteCodigo',
 							padding: '5px',
+							hidden: !isBk,
 							bind: {
 								store: '{comboMunicipioNacimientoRrp}',
-								hidden: !isBk,
 								disabled: '{!oferta.provinciaNacimientoRepresentanteCodigo}',
 								value: '{oferta.localidadNacimientoRepresentanteCodigo}'
 							}
@@ -902,10 +902,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				        	name: 'fechaNacimientoRepresentante',
 				        	reference: 'fechaNacimientoRepresentante',
 				        	padding: '5px',
-				        	maxValue: null,
-				        	bind: {
-				        		hidden: !isBk
-				        	}
+				        	hidden: !isBk
 				        },
 						{
 							xtype: 'comboboxfieldbase',
@@ -985,9 +982,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							reference: 'representantePrp',
 							name: 'representantePrp',
 							padding: '5px',
+							hidden: !isBk,
 							bind: {
-								store: '{comboSiNoBoolean}',
-								hidden: !isBk
+								store: '{comboSiNoBoolean}'
 							}
 						}
 					]

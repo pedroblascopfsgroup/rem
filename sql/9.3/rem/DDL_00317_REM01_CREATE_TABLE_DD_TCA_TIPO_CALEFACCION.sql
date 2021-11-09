@@ -28,8 +28,8 @@ DECLARE
     V_COUNT NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(30 CHAR) := 'DD_TIC_TIPO_CALEFACCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TIC'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(30 CHAR) := 'DD_TCA_TIPO_CALEFACCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TCA'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de tipo calefaccion'; -- Vble. para los comentarios de las tablas
     
 BEGIN

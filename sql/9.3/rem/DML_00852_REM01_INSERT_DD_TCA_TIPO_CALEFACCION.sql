@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-15589
 --## PRODUCTO=NO
 --##
---## Finalidad: INSERTAR DD_TIC_TIPO_CALEFACCION
+--## Finalidad: INSERTAR DD_TCA_TIPO_CALEFACCION
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -29,7 +29,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TIC_TIPO_CALEFACCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TCA_TIPO_CALEFACCION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_USUARIO VARCHAR2(250 CHAR) := 'HREOS-15589';
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
@@ -51,7 +51,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_TIC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+					WHERE DD_TCA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
@@ -60,10 +60,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              DD_TIC_ID,
-              DD_TIC_CODIGO,
-              DD_TIC_DESCRIPCION,
-              DD_TIC_DESCRIPCION_LARGA,
+              DD_TCA_ID,
+              DD_TCA_CODIGO,
+              DD_TCA_DESCRIPCION,
+              DD_TCA_DESCRIPCION_LARGA,
               USUARIOCREAR,
               FECHACREAR
               ) VALUES (

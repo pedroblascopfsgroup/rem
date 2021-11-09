@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -8411,14 +8412,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente) {
 
-		List<Object> gestoresAincluir = new ArrayList<Object>();
+		List<Object> gestoresAincluir = new LinkedList<Object>();
 
 		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
 		if (!Checks.esNulo(eco) && !Checks.esNulo(eco.getOferta())
 				&& DDTipoOferta.CODIGO_ALQUILER.equals(eco.getOferta().getTipoOferta().getCodigo())) {
-			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler());
+			gestoresAincluir = new LinkedList<Object>(Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler()));
 		} else {
-			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial());
+			gestoresAincluir = new LinkedList<Object>(Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial()));
 			if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(eco.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 				gestoresAincluir.remove(GestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_ALQUILER);
 				

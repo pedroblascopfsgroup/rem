@@ -576,10 +576,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.antiguo.deudor'),
 						reference: 'antiguoDeudor',
 						name: 'antiguoDeudor',
-						padding: '5px',
-						allowBlank: false,
+						padding: '5px',		
 						bind: {
-							store: '{comboSiNoRem}'
+							store: '{comboSiNoRem}',
+							allowBlank: '{!comprador.esCarteraBankia}'
 						}
 					},
 					{

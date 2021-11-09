@@ -34,6 +34,7 @@ public class DDMotivoIndisponibilidad implements Auditable, Dictionary {
 	
 	public static final String CODIGO_OKUPADO = "01";
 	public static final String CODIGO_OTRA_OFERTA_APROBADA = "02";
+	public static final String CODIGO_ACTIVO_ALQUILADO_O_VENDIDO = "03";
 
 	@Id
 	@Column(name = "DD_MTI_ID")

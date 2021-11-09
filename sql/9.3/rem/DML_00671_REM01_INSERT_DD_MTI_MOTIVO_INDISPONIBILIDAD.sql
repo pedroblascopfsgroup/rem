@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210908
+--## AUTOR=Juan Jose Sanjuan
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14860
+--## INCIDENCIA_LINK=HREOS-16355
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insertar nuevos motivos de indisponibilidad
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Alejandro Valverde HREOS-14860 Version inicial
+--##        0.2 Juan Jose Sanjuan HREOS-16355 Añadir Activo alquilado o vendido
 --##########################################
 --*/
 
@@ -27,7 +28,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#REMMASTER#'; -- Configuracion Esquema Master
     V_TABLA VARCHAR2(25 CHAR):= 'DD_MTI_MOTIVO_INDISPONIB';
     V_MSQL VARCHAR2(4000 CHAR); -- Sentencia a ejecutar
-    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-14860';
+    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-16355';
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.  
     
@@ -39,7 +40,8 @@ DECLARE
     TYPE T_ARRAY_TIPO_DATA IS TABLE OF T_TIPO_DATA; 
 	V_TIPO_DATA T_ARRAY_TIPO_DATA := T_ARRAY_TIPO_DATA(
 	  T_TIPO_DATA('Okupado','01'),
-	  T_TIPO_DATA('Otra oferta con estado aprobada','02')
+	  T_TIPO_DATA('Otra oferta con estado aprobada','02'),
+      T_TIPO_DATA('Activo alquilado o vendido','03')
 	); 
 	V_TMP_TIPO_DATA T_TIPO_DATA;
 

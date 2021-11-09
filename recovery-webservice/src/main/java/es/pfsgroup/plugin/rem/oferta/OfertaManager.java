@@ -1082,9 +1082,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							iap.setAntiguoDeudor(ofertaDto.getEsAntiguoDeudor());
 						}
 						cliente.setInfoAdicionalPersona(iap);
-						if (cliente.getDocumentoRepresentante() != null)
-						cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null));
 						genericDao.save(InfoAdicionalPersona.class, iap);
+						
+						if (cliente.getDocumentoRepresentante() != null)
+							cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null));
 					}
 					String clienteGD = null;
 					

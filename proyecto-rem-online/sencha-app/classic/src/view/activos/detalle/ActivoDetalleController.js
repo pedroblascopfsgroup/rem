@@ -1951,7 +1951,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.url = $AC.getWebPath() + "activo/bajarAdjuntoActivo."
 				+ $AC.getUrlPattern();
 		config.params = {};
-		config.params.id=record.get('ofertaID');
+		config.params.id=record.get('id');
 		config.params.idActivo = record.get("idActivo");
 		config.params.nombreDocumento = record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);

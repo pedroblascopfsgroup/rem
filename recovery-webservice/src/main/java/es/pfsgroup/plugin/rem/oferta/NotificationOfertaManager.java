@@ -426,7 +426,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		ActivoTramite tramite = new ActivoTramite();
 		tramite.setActivo(activo);
 		
-		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expediente.getTrabajo().getId());
 		ActivoTramite activoTramite = genericDao.get(ActivoTramite.class, filtroTramite);
 		
 		String codigoCartera = null;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Julián Dolz
---## FECHA_CREACION=20211028
+--## FECHA_CREACION=20211109
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16090
@@ -34,8 +34,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('25','Comité Titulizada','18'),
-      T_TIPO_DATA('26','HAYA','18')
+      T_TIPO_DATA('27','Comité Titulizada','18'),
+      T_TIPO_DATA('28','HAYA','18')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

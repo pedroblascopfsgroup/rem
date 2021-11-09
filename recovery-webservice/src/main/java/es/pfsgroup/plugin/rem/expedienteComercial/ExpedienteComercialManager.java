@@ -10188,7 +10188,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
 		
-		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expediente.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		try {
@@ -10289,7 +10289,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
 		
-		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expediente.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		if (Checks.esNulo(posicionamiento)) {
@@ -10440,7 +10440,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = this.findOne(idExpediente);
 		Activo activo = expediente.getOferta().getActivoPrincipal();
 		
-		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expediente.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
 
 		if (Checks.esNulo(posicionamiento)) {

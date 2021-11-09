@@ -2891,17 +2891,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			ExpedienteComercial expedienteComercial = this.findOneByTrabajo(trabajoApi.findOne(idTrabajo));
-			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
-				for (DtoAdjunto adj : listaAdjuntos) {
-					DDSubtipoDocumentoExpediente subtipoDocumento = genericDao.get(DDSubtipoDocumentoExpediente.class, 
-							genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula()));
-					if (subtipoDocumento != null && codigoDocumento.equals(subtipoDocumento.getCodigo())) {
-						return true;
+			if(expedienteComercial != null && expedienteComercial.getOferta() != null && expedienteComercial.getOferta().getTipoOferta() != null) {
+				String codigoOferta = expedienteComercial.getOferta().getTipoOferta().getCodigo();
+				try {
+					listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+					Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.tipoOferta.codigo",codigoOferta);
+					for (DtoAdjunto adj : listaAdjuntos) {
+						DDSubtipoDocumentoExpediente subtipoDocumento = genericDao.get(DDSubtipoDocumentoExpediente.class, 
+								genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula()), filterTipo);
+						if (subtipoDocumento != null && codigoDocumento.equals(subtipoDocumento.getCodigo())) {
+							return true;
+						}
 					}
+				} catch (GestorDocumentalException gex) {
+					logger.error(gex.getMessage(), gex);
 				}
-			} catch (GestorDocumentalException gex) {
-				logger.error(gex.getMessage(), gex);
 			}
 		} else {
 			Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);

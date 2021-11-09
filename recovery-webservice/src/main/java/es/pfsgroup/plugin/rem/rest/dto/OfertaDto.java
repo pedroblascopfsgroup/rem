@@ -64,7 +64,6 @@ public class OfertaDto implements Serializable {
 	private Long idClienteComercial;
 	@Size(max=1000)
 	private String observaciones;
-	@NotNull(groups = {Insert.class})
 	@Diccionary(clase = DDSnsSiNoNosabe.class, message = "El codigo DDSnsSiNoNosabe no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })

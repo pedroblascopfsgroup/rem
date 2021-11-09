@@ -399,20 +399,21 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if(iap == null) {
 			String idPersonaHaya = cliente.getIdPersonaHaya();
-			if(idPersonaHaya == null ) {
+			if(idPersonaHaya == null && cliente.getDocumento() != null) {
 				MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
 				idPersonaHaya = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumento());
 				cliente.setIdPersonaHaya(idPersonaHaya);
 			}
-			iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHaya));
+			if (cliente.getIdPersonaHaya() != null) {
+				iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHaya));
+			}
 			if(iap == null && idPersonaHaya != null) {
 				iap = new InfoAdicionalPersona();
 				iap.setAuditoria(Auditoria.getNewInstance());
 				iap.setIdPersonaHaya(idPersonaHaya);
 			}
-		
-			
 		}
+		
 		if(iap != null) {
 			if(clienteDto.getEsPRP() != null) {
 				iap.setPrp(clienteDto.getEsPRP());
@@ -774,18 +775,18 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHayaCaixa());
 
 		if(iap == null) {
-			if (cliente.getIdPersonaHaya() == null){
+			if (cliente.getIdPersonaHaya() == null && cliente.getDocumento() != null){
 				MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
 				cliente.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumento()));
 			}
-			iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", cliente.getIdPersonaHaya()));
+			if (cliente.getIdPersonaHaya() != null) {
+				iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", cliente.getIdPersonaHaya()));
+			}
 			if(iap == null ) {
 				iap = new InfoAdicionalPersona();
 				iap.setAuditoria(Auditoria.getNewInstance());
 				iap.setIdPersonaHaya(cliente.getIdPersonaHaya());
 			}
-			
-			
 		}
 			
 		

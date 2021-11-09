@@ -539,25 +539,21 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.terreno'),
-						maxLength: 15,
 						bind:		'{tasacion.valorTerreno}'
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.terreno.ajustado'),
-						maxLength: 15,
 						bind:		'{tasacion.valorTerrenoAjustado}'
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.hipotesis.edificio.terminado'),
-						maxLength: 15,
 						bind:		'{tasacion.valorHipotesisEdificioTerminado}'
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.valor.hipotecario'),
-						maxLength: 15,
 						bind:		'{tasacion.valorHipotecario}'
 					},
 					{ 
@@ -582,7 +578,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.adoptada'),
-						maxLength: 6,
 						bind:		'{tasacion.superficieAdoptada}'
 					},
 					{ 
@@ -602,13 +597,11 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.coste.estimado.terminar.obra'),
-						maxLength: 15,
 						bind:		'{tasacion.costeEstimadoTerminarObra}'
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.coste.destinado.uso.propio'),
-						maxLength: 15,
 						bind:		'{tasacion.costeDestinaUsoPropio}'
 					},
 					{ 
@@ -672,7 +665,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.terreno.m2'),
-						maxLength: 15,
 						bind:		'{tasacion.superficieTerreno}'
 					},
 					{ 
@@ -702,7 +694,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.aprovechamiento.parcela'),
-						maxLength: 10,
 						bind:		'{tasacion.aprovechamientoParcelaSuelo}'
 					},
 					{
@@ -781,7 +772,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.aprovechamiento.m2'),
-						maxLength: 15,
 						bind:		'{tasacion.aprovechamiento}'
 					},
 					{ 

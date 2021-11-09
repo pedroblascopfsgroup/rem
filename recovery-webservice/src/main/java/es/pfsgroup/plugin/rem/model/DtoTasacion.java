@@ -53,23 +53,23 @@ public class DtoTasacion {
     private String codigoSociedadTasacionValoracion;
     private String condicionantes;
     private String metodoValoracionCodigo;
-    private Long valorTerreno;
-    private Long valorTerrenoAjustado;
-    private Long valorHipotesisEdificioTerminado;
-    private Long valorHipotecario;
+    private Double valorTerreno;
+    private Double valorTerrenoAjustado;
+    private Double valorHipotesisEdificioTerminado;
+    private Double valorHipotecario;
     private String visitaAnteriorInmueble;
-    private Long superficieAdoptada;
-    private Long costeEstimadoTerminarObra;
-    private Long costeDestinaUsoPropio;
+    private Double superficieAdoptada;
+    private Double costeEstimadoTerminarObra;
+    private Double costeDestinaUsoPropio;
     private Date fechaEstimadaTerminarObra;
     private Long mrdPlazoMaximoFinalizarComercializacion;
     private Long mrdPlazoMaximoFinalizarConstruccion;
-    private Long mrdTasaAnualizadaHomogenea;
-    private Long mrdTasaActualizacion;
-    private Long mreMargenBeneficioPromotor;
-    private Long superficieTerreno;
-    private Long tasaAnualMedioVariacionPrecioMercado;
-    private Long aprovechamientoParcelaSuelo;
+    private Double mrdTasaAnualizadaHomogenea;
+    private Double mrdTasaActualizacion;
+    private Double mreMargenBeneficioPromotor;
+    private Double superficieTerreno;
+    private Double tasaAnualMedioVariacionPrecioMercado;
+    private Double aprovechamientoParcelaSuelo;
     private String desarrolloPlanteamientoCodigo;
     private String faseGestionCodigo;
     private Long numeroViviendas;
@@ -78,10 +78,10 @@ public class DtoTasacion {
     private String proximidadRespectoNucleoUrbanoCodigo;
     private String sistemaGestionCodigo;
     private String tipoSueloCodigo;
-    private Long aprovechamiento;
+    private Double aprovechamiento;
     private Date fechaUltimoGradoAvanceEstimado;
-    private Long porcentajeUrbanizacionEjecutado;
-    private Long porcentajeAmbitoValoradoEntero;
+    private Double porcentajeUrbanizacionEjecutado;
+    private Double porcentajeAmbitoValoradoEntero;
     private String productoDesarrollarPrevistoCodigo;
     private String proyectoObra;
     private Double gastosComercialesTasacion;
@@ -366,28 +366,28 @@ public class DtoTasacion {
 	public void setMetodoValoracionCodigo(String metodoValoracionCodigo) {
 		this.metodoValoracionCodigo = metodoValoracionCodigo;
 	}
-	public Long getValorTerreno() {
+	public Double getValorTerreno() {
 		return valorTerreno;
 	}
-	public void setValorTerreno(Long valorTerreno) {
+	public void setValorTerreno(Double valorTerreno) {
 		this.valorTerreno = valorTerreno;
 	}
-	public Long getValorTerrenoAjustado() {
+	public Double getValorTerrenoAjustado() {
 		return valorTerrenoAjustado;
 	}
-	public void setValorTerrenoAjustado(Long valorTerrenoAjustado) {
+	public void setValorTerrenoAjustado(Double valorTerrenoAjustado) {
 		this.valorTerrenoAjustado = valorTerrenoAjustado;
 	}
-	public Long getValorHipotesisEdificioTerminado() {
+	public Double getValorHipotesisEdificioTerminado() {
 		return valorHipotesisEdificioTerminado;
 	}
-	public void setValorHipotesisEdificioTerminado(Long valorHipotesisEdificioTerminado) {
+	public void setValorHipotesisEdificioTerminado(Double valorHipotesisEdificioTerminado) {
 		this.valorHipotesisEdificioTerminado = valorHipotesisEdificioTerminado;
 	}
-	public Long getValorHipotecario() {
+	public Double getValorHipotecario() {
 		return valorHipotecario;
 	}
-	public void setValorHipotecario(Long valorHipotecario) {
+	public void setValorHipotecario(Double valorHipotecario) {
 		this.valorHipotecario = valorHipotecario;
 	}
 	public String getVisitaAnteriorInmueble() {
@@ -396,22 +396,22 @@ public class DtoTasacion {
 	public void setVisitaAnteriorInmueble(String visitaAnteriorInmueble) {
 		this.visitaAnteriorInmueble = visitaAnteriorInmueble;
 	}
-	public Long getSuperficieAdoptada() {
+	public Double getSuperficieAdoptada() {
 		return superficieAdoptada;
 	}
-	public void setSuperficieAdoptada(Long superficieAdoptada) {
+	public void setSuperficieAdoptada(Double superficieAdoptada) {
 		this.superficieAdoptada = superficieAdoptada;
 	}
-	public Long getCosteEstimadoTerminarObra() {
+	public Double getCosteEstimadoTerminarObra() {
 		return costeEstimadoTerminarObra;
 	}
-	public void setCosteEstimadoTerminarObra(Long costeEstimadoTerminarObra) {
+	public void setCosteEstimadoTerminarObra(Double costeEstimadoTerminarObra) {
 		this.costeEstimadoTerminarObra = costeEstimadoTerminarObra;
 	}
-	public Long getCosteDestinaUsoPropio() {
+	public Double getCosteDestinaUsoPropio() {
 		return costeDestinaUsoPropio;
 	}
-	public void setCosteDestinaUsoPropio(Long costeDestinaUsoPropio) {
+	public void setCosteDestinaUsoPropio(Double costeDestinaUsoPropio) {
 		this.costeDestinaUsoPropio = costeDestinaUsoPropio;
 	}
 	public Date getFechaEstimadaTerminarObra() {
@@ -432,40 +432,40 @@ public class DtoTasacion {
 	public void setMrdPlazoMaximoFinalizarConstruccion(Long mrdPlazoMaximoFinalizarConstruccion) {
 		this.mrdPlazoMaximoFinalizarConstruccion = mrdPlazoMaximoFinalizarConstruccion;
 	}
-	public Long getMrdTasaAnualizadaHomogenea() {
+	public Double getMrdTasaAnualizadaHomogenea() {
 		return mrdTasaAnualizadaHomogenea;
 	}
-	public void setMrdTasaAnualizadaHomogenea(Long mrdTasaAnualizadaHomogenea) {
+	public void setMrdTasaAnualizadaHomogenea(Double mrdTasaAnualizadaHomogenea) {
 		this.mrdTasaAnualizadaHomogenea = mrdTasaAnualizadaHomogenea;
 	}
-	public Long getMrdTasaActualizacion() {
+	public Double getMrdTasaActualizacion() {
 		return mrdTasaActualizacion;
 	}
-	public void setMrdTasaActualizacion(Long mrdTasaActualizacion) {
+	public void setMrdTasaActualizacion(Double mrdTasaActualizacion) {
 		this.mrdTasaActualizacion = mrdTasaActualizacion;
 	}
-	public Long getMreMargenBeneficioPromotor() {
+	public Double getMreMargenBeneficioPromotor() {
 		return mreMargenBeneficioPromotor;
 	}
-	public void setMreMargenBeneficioPromotor(Long mreMargenBeneficioPromotor) {
+	public void setMreMargenBeneficioPromotor(Double mreMargenBeneficioPromotor) {
 		this.mreMargenBeneficioPromotor = mreMargenBeneficioPromotor;
 	}
-	public Long getSuperficieTerreno() {
+	public Double getSuperficieTerreno() {
 		return superficieTerreno;
 	}
-	public void setSuperficieTerreno(Long superficieTerreno) {
+	public void setSuperficieTerreno(Double superficieTerreno) {
 		this.superficieTerreno = superficieTerreno;
 	}
-	public Long getTasaAnualMedioVariacionPrecioMercado() {
+	public Double getTasaAnualMedioVariacionPrecioMercado() {
 		return tasaAnualMedioVariacionPrecioMercado;
 	}
-	public void setTasaAnualMedioVariacionPrecioMercado(Long tasaAnualMedioVariacionPrecioMercado) {
+	public void setTasaAnualMedioVariacionPrecioMercado(Double tasaAnualMedioVariacionPrecioMercado) {
 		this.tasaAnualMedioVariacionPrecioMercado = tasaAnualMedioVariacionPrecioMercado;
 	}
-	public Long getAprovechamientoParcelaSuelo() {
+	public Double getAprovechamientoParcelaSuelo() {
 		return aprovechamientoParcelaSuelo;
 	}
-	public void setAprovechamientoParcelaSuelo(Long aprovechamientoParcelaSuelo) {
+	public void setAprovechamientoParcelaSuelo(Double aprovechamientoParcelaSuelo) {
 		this.aprovechamientoParcelaSuelo = aprovechamientoParcelaSuelo;
 	}
 	public String getDesarrolloPlanteamientoCodigo() {
@@ -516,10 +516,10 @@ public class DtoTasacion {
 	public void setTipoSueloCodigo(String tipoSueloCodigo) {
 		this.tipoSueloCodigo = tipoSueloCodigo;
 	}
-	public Long getAprovechamiento() {
+	public Double getAprovechamiento() {
 		return aprovechamiento;
 	}
-	public void setAprovechamiento(Long aprovechamiento) {
+	public void setAprovechamiento(Double aprovechamiento) {
 		this.aprovechamiento = aprovechamiento;
 	}
 	public Date getFechaUltimoGradoAvanceEstimado() {
@@ -528,16 +528,16 @@ public class DtoTasacion {
 	public void setFechaUltimoGradoAvanceEstimado(Date fechaUltimoGradoAvanceEstimado) {
 		this.fechaUltimoGradoAvanceEstimado = fechaUltimoGradoAvanceEstimado;
 	}
-	public Long getPorcentajeUrbanizacionEjecutado() {
+	public Double getPorcentajeUrbanizacionEjecutado() {
 		return porcentajeUrbanizacionEjecutado;
 	}
-	public void setPorcentajeUrbanizacionEjecutado(Long porcentajeUrbanizacionEjecutado) {
+	public void setPorcentajeUrbanizacionEjecutado(Double porcentajeUrbanizacionEjecutado) {
 		this.porcentajeUrbanizacionEjecutado = porcentajeUrbanizacionEjecutado;
 	}
-	public Long getPorcentajeAmbitoValoradoEntero() {
+	public Double getPorcentajeAmbitoValoradoEntero() {
 		return porcentajeAmbitoValoradoEntero;
 	}
-	public void setPorcentajeAmbitoValoradoEntero(Long porcentajeAmbitoValoradoEntero) {
+	public void setPorcentajeAmbitoValoradoEntero(Double porcentajeAmbitoValoradoEntero) {
 		this.porcentajeAmbitoValoradoEntero = porcentajeAmbitoValoradoEntero;
 	}
 	public String getProductoDesarrollarPrevistoCodigo() {
@@ -582,4 +582,5 @@ public class DtoTasacion {
 	public void setTipoDatoUtilizadoInmuebleComparableCodigo(String tipoDatoUtilizadoInmuebleComparableCodigo) {
 		this.tipoDatoUtilizadoInmuebleComparableCodigo = tipoDatoUtilizadoInmuebleComparableCodigo;
 	}
+
 }

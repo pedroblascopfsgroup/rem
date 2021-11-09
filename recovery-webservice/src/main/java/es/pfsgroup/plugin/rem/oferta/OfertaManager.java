@@ -2223,10 +2223,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
-				logger.error("Oferta Express numero " + oferta.getNumOferta() + " expediente creado");
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
-				logger.error("Oferta Express numero " + oferta.getNumOferta() + " tramitación hecha");
-				//ofertaDao.flush();
 				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 				
@@ -7394,21 +7391,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java con los valores: " + (oferta != null) + " && " + (expedienteComercial != null) + " && " + oferta.getOfertaExpress());
-		if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-			logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java linea 6533");
-		}
-		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
 			
 			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
 					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-				if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-					logger.error("Oferta Express numero " + oferta.getNumOferta() + " enviada a CFV en ofertaManager.java linea 6544");
-				}
 				
 			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
 					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {

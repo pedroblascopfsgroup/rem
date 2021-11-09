@@ -14550,12 +14550,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (sra != null) {
 				
-				if(sra.getAseguradoras() != null) {
-					DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"descripcion", sra.getAseguradoras()));
-					if(ddTpoTpoCuenta != null) {
-						dto.setAseguradoraCod(ddTpoTpoCuenta.getCodigo());
+				if(sra.getAseguradoraProveedor() != null) {
+					ActivoProveedor actPve =  genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,"id", sra.getAseguradoraProveedor().getId()));
+					if(actPve != null) {
+						dto.setAseguradoraCod(String.valueOf(actPve.getId()));
 					}
-					dto.setAseguradoraDesc(sra.getAseguradoras());	
+					dto.setAseguradoraDesc(actPve.getNombre());	
 				}
 				
 				if (sra.getFechaVencimientoRentaslBc() != null) {
@@ -14703,9 +14703,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (sra != null) {
 			if(dto.getAseguradoraCod() != null) {
-				DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getAseguradoraCod()));
-				if(ddTpoTpoCuenta != null) {
-					sra.setAseguradoras(ddTpoTpoCuenta.getDescripcion());
+				ActivoProveedor actPve =  genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,"id", Long.parseLong(dto.getAseguradoraCod())));
+			
+				if(actPve != null) {
+					sra.setAseguradoraProveedor(actPve);
 				}
 			}
 			if (dto.getFechaSancionRentas()!= null) {

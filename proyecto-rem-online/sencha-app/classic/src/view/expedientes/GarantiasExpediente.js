@@ -242,11 +242,11 @@ Ext.define('HreRem.view.expedientes.GarantiasExpediente', {
 												reference : 'aseguradoraRef',
 												fieldLabel : HreRem.i18n('fieldlabel.aseguradora'),
 												bind : {
-													store : '{comboTiposPorCuenta}',
+													store : '{comboAseguradoraProveedor}',
 													value : '{garantias.aseguradoraCod}'
 												},
 												displayField : 'descripcion',
-												valueField : 'codigo',
+												valueField : 'id',
 												disabled: true
 											},
 											{

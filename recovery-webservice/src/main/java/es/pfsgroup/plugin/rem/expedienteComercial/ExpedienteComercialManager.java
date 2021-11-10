@@ -14837,24 +14837,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public void createGastoRepercutido(DtoGastoRepercutido dto, Long idExpediente) {
 		ExpedienteComercial eco = this.findOne(idExpediente);
-		
 		if(eco != null) {
-			GastoRepercutido gr = new GastoRepercutido();
-
-			if(dto.getImporte() == null){
-				dto.setImporte(0d);
+			GastoRepercutido gr = null;
+			if(dto.getId() == null) {
+				gr = new GastoRepercutido();
+				gr.setCondicionanteExpediente(eco.getCondicionante());
+				gr.setAuditoria(Auditoria.getNewInstance());
+			}else {
+				gr = genericDao.get(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
 			}
-
-			gr.setCondicionanteExpediente(eco.getCondicionante());
-			gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			
+			if(dto.getTipoGastoCodigo() != null) {
+				gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			}
+			
+			gr.setMeses(dto.getMeses());	
 			gr.setImporte(dto.getImporte());
-			if(!Checks.isFechaNula(dto.getFechaAlta())) {
-				gr.setFechaAlta(dto.getFechaAlta());
-			} else {
-				gr.setFechaAlta(new Date());
-			}
-			gr.setMeses(dto.getMeses());
-			gr.setAuditoria(Auditoria.getNewInstance());
+			gr.setFechaAlta(new Date());
 			
 			genericDao.save(GastoRepercutido.class, gr);
 		}
@@ -14873,7 +14872,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DtoGastoRepercutido dto = new DtoGastoRepercutido();
 					dto.setId(gastoRepercutido.getId());
 					dto.setTipoGastoCodigo(gastoRepercutido.getTipoGastoRepercutido().getCodigo());
-					dto.setImporte(gastoRepercutido.getImporte());
+					if(gastoRepercutido.getImporte() == null) {
+						dto.setImporte(0.0);
+					}else {
+						dto.setImporte(gastoRepercutido.getImporte());
+					}
 					dto.setFechaAlta(gastoRepercutido.getFechaAlta());
 					dto.setMeses(gastoRepercutido.getMeses());
 					dtoList.add(dto);

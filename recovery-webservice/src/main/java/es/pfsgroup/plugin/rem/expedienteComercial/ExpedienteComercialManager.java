@@ -14706,7 +14706,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if (sra != null) {
-			if(dto.getAseguradoraCod() != null) {
+			if(dto.getAseguradoraCod() != null && dto.getAseguradoraCod() != "") {
 				ActivoProveedor actPve =  genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,"id", Long.parseLong(dto.getAseguradoraCod())));
 			
 				if(actPve != null) {

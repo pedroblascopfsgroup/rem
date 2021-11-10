@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16070
@@ -33,26 +33,26 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(1500);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	    T_FUNCION('V84966126', 'Titulizada'),
-        T_FUNCION('V85164648', 'Titulizada'),
-        T_FUNCION('V85587434', 'Titulizada'),
-        T_FUNCION('V84322205', 'Titulizada'),
-        T_FUNCION('V84593961', 'Titulizada'),
-        T_FUNCION('V84669332', 'Titulizada'),
-        T_FUNCION('V85082675', 'Titulizada'),
-        T_FUNCION('V85623668', 'Titulizada'),
-        T_FUNCION('V84856319', 'Titulizada'),
-        T_FUNCION('V85500866', 'Titulizada'),
-        T_FUNCION('V85143659', 'Titulizada'),
-        T_FUNCION('V85594927', 'Titulizada'),
-        T_FUNCION('V85981231', 'Titulizada'),
-        T_FUNCION('V84889229', 'Titulizada'),
-        T_FUNCION('V84916956', 'Titulizada'),
-        T_FUNCION('V85160935', 'Titulizada'),
-        T_FUNCION('V85295087', 'Titulizada'),
-        T_FUNCION('V84175744', 'Titulizada'),
-        T_FUNCION('V84925569', 'Titulizada'),
-        T_FUNCION('V84054840', 'Titulizada')
+	    T_FUNCION('V84966126', 'EDT'),
+        T_FUNCION('V85164648', 'EDT'),
+        T_FUNCION('V85587434', 'EDT'),
+        T_FUNCION('V84322205', 'EDT'),
+        T_FUNCION('V84593961', 'EDT'),
+        T_FUNCION('V84669332', 'EDT'),
+        T_FUNCION('V85082675', 'EDT'),
+        T_FUNCION('V85623668', 'EDT'),
+        T_FUNCION('V84856319', 'TDA'),
+        T_FUNCION('V85500866', 'TDA'),
+        T_FUNCION('V85143659', 'TDA'),
+        T_FUNCION('V85594927', 'TDA'),
+        T_FUNCION('V85981231', 'TDA'),
+        T_FUNCION('V84889229', 'TDA'),
+        T_FUNCION('V84916956', 'TDA'),
+        T_FUNCION('V85160935', 'TDA'),
+        T_FUNCION('V85295087', 'TDA'),
+        T_FUNCION('V84175744', 'TDA'),
+        T_FUNCION('V84925569', 'TDA'),
+        T_FUNCION('V84054840', 'TDA')
     );          
     V_TMP_FUNCION T_FUNCION;
 

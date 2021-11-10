@@ -65,7 +65,8 @@ public class DDTipoPrecio implements Auditable, Dictionary {
 	public static final String CODIGO_TPC_VALOR_RAZONABLE_LBK = "23"; 	// Valor Razonable
 	public static final String CODIGO_TPC_FSV_VENTA_ORIGEN= "26"; 	// FSV Venta Origen
 	public static final String CODIGO_TPC_FSV_RENTA_ORIGEN = "27"; 	// FSV Renta origen
-	
+	public static final String CODIGO_TPC_DES_APR_ALQ = "DAA"; 	// De descuento aprobado alquiler
+	public static final String CODIGO_TPC_DES_PUB_ALQ = "DPA"; 	// De descuento publicado alquiler (web)
 	
 	private static final long serialVersionUID = 1L;
 	

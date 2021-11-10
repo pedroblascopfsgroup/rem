@@ -44,6 +44,8 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	private StringDataType agrEmpresaPromotora;
 	private StringDataType agrEmpresaComercializadora;
 	
+	private LongDataType idAgrupacionBc;
+	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -188,4 +190,11 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	public void setAgrEmpresaComercializadora(StringDataType agrEmpresaComercializadora) {
 		this.agrEmpresaComercializadora = agrEmpresaComercializadora;
 	}
+	public LongDataType getIdAgrupacionBc() {
+		return idAgrupacionBc;
+	}
+	public void setIdAgrupacionBc(LongDataType idAgrupacionBc) {
+		this.idAgrupacionBc = idAgrupacionBc;
+	}
+	
 }

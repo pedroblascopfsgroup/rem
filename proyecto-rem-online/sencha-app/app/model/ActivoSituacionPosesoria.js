@@ -105,7 +105,8 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'indicaPosesion'
         },
         {
-            name: 'tieneOkTecnico'
+            name: 'tieneOkTecnico',
+            type:'boolean'
         },
         {
             name: 'tipoEstadoAlquiler'
@@ -145,8 +146,24 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         {
         	name:  'perteneceActivoREAM',
         	type:'boolean'
+        },
+        {
+        	name: 'necesariaFuerzaPublica'
+        },
+		{
+        	name: 'estadoTecnicoCodigo'
+        },
+        {
+        	name: 'estadoTecnicoDescripcion'
+        },
+        {
+        	name: 'fechaEstadoTecnico',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name: 'vertical'
         }
-        
     ],
 
 	proxy: {

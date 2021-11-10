@@ -32,6 +32,7 @@ public class DDMotivoAnulacionOferta implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public static final String CODIGO_FALTA_DOC_PREVIA = "04";
 
 	@Id
 	@Column(name = "DD_MAO_ID")

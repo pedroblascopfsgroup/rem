@@ -14,7 +14,6 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.funciones.dao.FuncionesDao;
 import es.pfsgroup.plugin.rem.funciones.dto.DtoFunciones;
-import es.pfsgroup.plugin.rem.perfilAdministracion.dto.DtoPerfilAdministracionFilter;
 
 @Repository("FuncionesDao")
 public class FuncionesDaoImpl extends AbstractEntityDao<Funcion, Long> implements FuncionesDao {
@@ -52,6 +51,24 @@ public class FuncionesDaoImpl extends AbstractEntityDao<Funcion, Long> implement
 		}
 		
 		return listaFunciones;
+	}
+	
+	@Override
+	public boolean userHasFunction(String username, String descripcion) {
+
+		HQLBuilder hb = new HQLBuilder("select count(*) from Funcion fun, Perfil pef, ZonaUsuarioPerfil zon, Usuario usu, FuncionPerfil fp");
+		hb.appendWhere("zon.usuario.id = usu.id and usu.username = :username");
+		hb.appendWhere("pef.id = zon.perfil.id");
+		hb.appendWhere("pef.id = fp.perfil.id");
+		hb.appendWhere("fp.funcion.id = fun.id and fun.descripcion = :descripcion");
+		hb.getParameters().put("username", username);
+		hb.getParameters().put("descripcion", descripcion);
+		
+		 
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		HQLBuilder.parametrizaQuery(query, hb);
+	
+		return (((Long)  query.uniqueResult()) != 0L);
 	}
 
 }

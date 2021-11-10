@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -91,7 +94,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {		
+	@Override
+	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
+		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		GestorEntidadDto ge = new GestorEntidadDto();	
@@ -114,7 +119,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					}
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = null;
-						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
+						if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()) || DDCartera.isCarteraBk(activo.getCartera())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						}else {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
@@ -139,7 +144,13 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
 								ge.setIdTipoGestor(tipoGestorComercial.getId());
 								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
-							}	
+							}
+
+							if(DDCartera.isCarteraBk(activo.getCartera())) {
+								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA));
+								expediente.setEstadoBc(estadoBc);
+								estadoBcModificado = true;
+							}
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								// Deniega el expediente
@@ -166,7 +177,12 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
 								
-								
+								if(DDCartera.isCarteraBk(activo.getCartera())) {
+									DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+									expediente.setEstadoBc(estadoBc);
+									estadoBcModificado = true;
+								}
+
 								try {
 									ofertaApi.descongelarOfertas(expediente);
 									ofertaApi.finalizarOferta(ofertaAceptada);
@@ -243,6 +259,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				if(estadoBcModificado) {
+					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+				}
 			}
 		}
 

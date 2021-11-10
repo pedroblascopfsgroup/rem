@@ -8,11 +8,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	saveMultiple: true,
 	refreshAfterSave: true,
 	disableValidation: false,
-	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad', 'activoAdmision'],
-	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.Activo'],
+	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad', 'activoAdmision', 'activoCondicionesDisponibilidadCaixa'],
+	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.Activo', 
+					'HreRem.model.ActivoCondicionesDisponibilidadCaixa'],
 	requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacionActivo', 'HreRem.model.CondicionEspecifica',
 					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.HistoricoEstadosPublicacion',
-					'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', 'HreRem.model.Activo'],
+					'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', 'HreRem.model.Activo', 'HreRem.model.ActivoCondicionesDisponibilidadCaixa'],
 	listeners	: {
 		boxready:'cargarTabData',
         activate:'onActivateTabDatosPublicacion'
@@ -92,6 +93,82 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								}
 							]
 					}, 
+					{
+						xtype: 'fieldsettable',
+						title: HreRem.i18n('title.datos.publicacion.indicadores.caixa'),
+						bind: {
+							hidden: '{!activo.isCarteraBankia}'
+						},
+						items:
+							[
+								{									
+									xtype: 'fieldsettable',
+									defaultType: 'button',
+									border: false,
+									collapsible: false,
+									collapsed: false,
+									items:
+										[
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.publico.venta')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPortalPublicoVenta}'
+												},
+												iconAlign:'left'
+											},
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.inversor.venta')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPublicacionPortalInversorVenta}'
+												},
+												iconAlign:'left'
+											},
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.api.venta')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPublicacionPortalApiVenta}'
+												},
+												iconAlign:'left'
+											},
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.publico.alquiler')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPortalPublicoAlquiler}'
+												},
+												iconAlign:'left'
+											},
+											
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.inversor.alquiler')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPublicacionPortalInversorAlquiler}'
+												},
+												iconAlign:'left'
+											},
+											
+											{
+												cls: 'no-pointer',
+												html: '<div style="color: #000;">'+HreRem.i18n('title.datos.publicacion.portal.api.alquiler')+'</div>',
+												style: 'background: transparent; border: none;',
+												bind: {
+													iconCls:'{getIconClsCondicionantesPublicacionPortalApiAlquiler}'
+												},
+												iconAlign:'left'
+											}
+										]
+								}
+							]
+					},
 // Estados de Publicación Venta.
 					{
 						xtype: 'fieldsettable',
@@ -543,7 +620,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													
 												},
                                                 listeners: {
-                                                     dirtychange: 'onChangeCheckboxPublicarAlquiler'
+                                                     dirtychange: 'onChangeCheckboxPublicarAlquiler'/*
+                                                     change: 'onChangePublicarCaixa'*/
                                                 },
                                                 style:'margin-left:10px'
 											},

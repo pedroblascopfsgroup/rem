@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=Sergio Gomez
 --## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9845
+--## INCIDENCIA_LINK=HREOS-14232
 --## PRODUCTO=NO
 --## Finalidad: vista para portales
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir filtro para que no salgan para Caixa/Bankia
 --##		    0.2 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
 --##########################################
 --*/
@@ -104,8 +105,10 @@ BEGIN
     LEFT JOIN '|| V_ESQUEMA ||'.ACT_CNP_CONFIG_PORTAL CNP ON ACT.DD_CRA_ID = CNP.DD_CRA_ID AND CNP.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID AND TAG.BORRADO = 0
     LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID AND EPV.BORRADO = 0
+    INNER JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
     WHERE 
-    ACT.BORRADO = 0 
+    ACT.BORRADO = 0
+    AND CRA.DD_CRA_CODIGO NOT IN (''03'') 
     AND EPV.DD_EPV_CODIGO IN (''03'',''04'') 
     AND TAG.DD_TAG_CODIGO = ''02''
     AND AGR.AGR_FECHA_BAJA IS NULL';

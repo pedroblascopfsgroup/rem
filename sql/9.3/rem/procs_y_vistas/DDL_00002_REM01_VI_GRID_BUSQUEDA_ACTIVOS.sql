@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillem Rey
---## FECHA_CREACION=20210423
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210722
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11739
+--## INCIDENCIA_LINK=HREOS-14729
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -17,6 +17,7 @@
 --##		0.4 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.5 Guillem Rey -- REMVIP-8040 - APU - Destino Comercial
 --##		0.7 Guillem Rey -- HREOS-11739 - CODIGO PROMOCION BBVA
+--##		0.8 Daniel Algaba -- HREOS-14729 - CODIGO PROMOCION BBVA
 --#########################################
 --*/
 
@@ -63,6 +64,7 @@ BEGIN
 			ACT.ACT_NUM_ACTIVO_SAREB 					AS NUM_ACTIVO_SAREB,
 			ACT.ACT_NUM_ACTIVO_PRINEX 				AS NUM_ACTIVO_PRINEX,
 			ACT.ACT_NUM_ACTIVO_UVEM 					AS NUM_ACTIVO_UVEM,
+			ACT.ACT_NUM_ACTIVO_CAIXA 					AS NUM_ACTIVO_CAIXA,
 			ACT.ACT_NUM_ACTIVO_DIVARIAN			AS NUM_ACTIVO_DIVARIAN,
 			ACT.ACT_RECOVERY_ID 								AS  NUM_RECOVERY,
 	        TPA.DD_TPA_CODIGO 									AS TIPO_ACTIVO_CODIGO,

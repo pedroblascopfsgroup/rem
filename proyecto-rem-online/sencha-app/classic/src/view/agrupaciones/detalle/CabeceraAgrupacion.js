@@ -177,12 +177,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															}	
 									                   	},	
 									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
+									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.externo'),
 															bind: {
 																hidden: '{esAgrupacionPromocionAlquiler}',
 																value: '{agrupacionficha.numAgrupUvem}'
-															}		
-									                   	},									                   
+															},
+															listeners:
+															{
+																afterrender: function(get){
+																	var me=this;
+																	var cartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
+																	
+																	if (cartera == CONST.CARTERA['BANKIA']) {
+																		me.setFieldLabel(HreRem.i18n('fieldlabel.numero.agrupacion.caixa'));
+																	}
+																}
+															}
+									                   	},
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 										                	bind: 		'{agrupacionficha.nombre}'

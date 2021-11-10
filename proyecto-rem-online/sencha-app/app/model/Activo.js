@@ -1357,6 +1357,14 @@ Ext.define('HreRem.model.Activo', {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['TITULIZADA'];
     			},
     			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraTitulizadayBankia',
+    			calculate: function(data) { 
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['TITULIZADA'] 
+							|| data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA']);
+    			},
+    			depends: ['entidadPropietariaCodigo']
     		}
     ],
     

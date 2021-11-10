@@ -1047,6 +1047,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
+		var carteraTitulizada = me.getViewModel().getData().activo.getData().isCarteraTitulizada;
     	
     	var fieldsettableTituloAdicional =me.lookupReference('fieldsettableTituloAdicional');
     	var tipoTituloAdicional = me.lookupReference('tipoTituloAdicional');
@@ -1066,7 +1067,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	fechaRetiradaDefinitivaRegistroAdicional.setDisabled(disabled);
     	fechaPresentacionHaciendaAdicional.setDisabled(disabled);
     	fieldlabelFechaNotaSimpleAdicional.setDisabled(disabled);
-    	
+
+		if (carteraTitulizada != null && carteraTitulizada == true) {
+    		situacionTituloAdicional.setReadOnly(false);
+    	} else {
+    		situacionTituloAdicional.setReadOnly(true);
+    	}
     	    	
     	if(disabled){
     		fieldsettableTituloAdicional.hide();
@@ -8623,11 +8629,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	isNotCarteraBankiaSaneamiento: function(get){
     	var me = this;
     	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+		var carteraTitulizada = me.getViewModel().getData().activo.getData().isCarteraTitulizada;
     	var fechaEstadoTitularidad =me.lookupReference('fechaEstadoTitularidadRef');
+		var estadoTitulo = me.lookupReference('estadoTitulo');
+		var fechaInscripcionRegRef = me.lookupReference('fechaInscripcionRegRef');
+		var fechaPres1Registro = me.lookupReference('fechaPres1Registro');
+		var fechaPres2Registro = me.lookupReference('fechaPres2Registro');
+		var fechaEnvioAuto = me.lookupReference('fechaEnvioAuto');
+		
     	if (carteraBankia != null && carteraBankia == true) {
     		fechaEstadoTitularidad.setHidden(false);
     	} else {
     		fechaEstadoTitularidad.setHidden(true);
+    	}
+		if (carteraTitulizada != null && carteraTitulizada == true) {
+    		estadoTitulo.setReadOnly(false);
+			fechaInscripcionRegRef.setReadOnly(false);
+			fechaPres1Registro.setHidden(false);
+			fechaPres2Registro.setHidden(false);
+			fechaEnvioAuto.setHidden(false);
+    	} else {
+    		estadoTitulo.setReadOnly(true);
+			fechaInscripcionRegRef.setReadOnly(true);
+			fechaPres1Registro.setHidden(true);
+			fechaPres2Registro.setHidden(false);
+			fechaEnvioAuto.setHidden(false);
     	}
 	
 	},

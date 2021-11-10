@@ -81,7 +81,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						fieldLabel : HreRem
 								.i18n('fieldlabel.solicita.financiacion'),
 						bind : {
-							store : '{comboSiNoRem}',
+							store : '{comboDDSNS}',
 							value : '{financiacion.solicitaFinanciacion}'
 						},
 						displayField : 'descripcion',
@@ -90,28 +90,42 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							change : 'onHaCambiadoSolicitaFinanciacion'
 						}
 					},
-					{
-						xtype : 'comboboxfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.new.entidad.financiera'),
+					{						
+						xtype: 'comboboxfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.new.entidad.financiera'),
 						bind : {
-							store : '{comboEntidadFinanciera}',
+							store : '{comboEntidadFinancieraFiltro}',
 							value : '{financiacion.entidadFinancieraCodigo}'
-						},
-						listeners: {
-							change: 'onChangeComboEntidadFinanciera'
-						},
+						},						
 						reference : 'comboEntidadFinancieraCodigo',
 						displayField : 'descripcion',
 						valueField : 'codigo',
 						allowblank: false,
-						disabled : true
+						disabled : true,
+						filtradoEspecial: true,
+					    listeners: {						     
+    						 change: 'onChangeComboEntidadFinanciera'    			
+					    }					    
+					},
+					{
+						xtype : 'textfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.otra.entidad.financiera'),
+						bind : {
+							value:'{financiacion.otraEntidadFinanciera}',
+							hidden:'{!esBankia}'
+						},
+						reference : 'otraEntidadFinancieraRef',
+						editable: false,
+						disabled: true						
 					},
 					{
 						xtype : 'textfieldbase',
 						fieldLabel : HreRem
 								.i18n('fieldlabel.entidad.financiera'),
-						bind : '{financiacion.entidadFinanciacion}',
+						bind : {
+							value:'{financiacion.entidadFinanciacion}',
+							hidden:'{esBankia}'
+						},
 						reference : 'entidadFinanciacion',
 						readOnly : true,
 						allowblank: true
@@ -300,6 +314,21 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						}
 						// hidden: true
 					}, 
+					
+					{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem
+								.i18n('fieldlabel.financiacion.totalparcial'),
+						bind : {
+							store : '{comboTipoFinanciacionTP}',
+							value : '{financiacion.financiacionTPCodigo}'
+						},
+						reference : 'comboFinanciacionTP',
+						displayField : 'descripcion',
+						valueField : 'codigo',
+						allowblank: false,
+						disabled : true
+					},
 
 					{
 						xtype : 'comboboxfieldbase',
@@ -347,11 +376,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						title : HreRem.i18n('title.posicionamiento'),
 						secFunToEdit: 'EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE',
 						reference : 'listadoposicionamiento',
-						idPrincipal : 'expediente.id',
+						idPrincipal : 'expediente.id', 
 						topBar : true,
 						bind : {
-							store : '{storePosicionamientos}',
-							topBar : '{!esExpedienteBloqueado}'
+							store : '{storePosicionamientos}', 
+							topBar : '{puedeAnyadirRegistrosPosicionamiento}'
 						},
 						listeners : {
 							rowdblclick : 'comprobacionesDobleClick',
@@ -359,20 +388,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							rowclick : 'onRowClickPosicionamiento'
 						},
 						columns : [{
-									text : HreRem.i18n('fieldlabel.fecha.aviso'),
-									dataIndex : 'fechaAviso',
-									// formatter: 'date("d/m/Y")',
-									flex : 1,
-									editor : {
-										xtype : 'datefield',
-										reference : 'fechaAvisoRef',
-										listeners : {
-											change : 'changeFecha'
-										}
-									},
-									hidden : true,
-									renderer : dateColoredRender
-								}, {
 									text : HreRem.i18n('fieldlabel.hora.aviso'),
 									dataIndex : 'horaAviso',
 									// formatter: 'date("H:i")',
@@ -395,6 +410,12 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								}, {
 									text : HreRem.i18n('fieldlabel.fecha.alta'),
 									dataIndex : 'fechaAlta',
+									// formatter: 'date("d/m/Y")',
+									flex : 1,
+									renderer : dateColoredRender
+								}, {
+									text: HreRem.i18n('title.column.fecha.envio'),
+     		            			dataIndex : 'fechaEnvioPos',
 									// formatter: 'date("d/m/Y")',
 									flex : 1,
 									renderer : dateColoredRender
@@ -438,37 +459,20 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									flex : 1,
 									renderer : function(value, meta, record) {
 										var me = this;
-										if (Ext.isEmpty(value)
-												&& meta.record
-														.get('fechaFinPosicionamiento')) {
+										if (Ext.isEmpty(value)&& meta.record.get('fechaFinPosicionamiento')) {
 											return '<span style="color: #DF0101;">-</span>';
-										} else if (Ext.isEmpty(value)
-												&& !meta.record
-														.get('fechaFinPosicionamiento')) {
+										} else if (Ext.isEmpty(value)&& !meta.record.get('fechaFinPosicionamiento')) {
 											return '-';
 										} else {
-											var comboEditor = me.columns
-													&& me
-															.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor
-													? me
-															.down('gridcolumn[dataIndex=idProveedorNotario]')
-															.getEditor()
-													: me.getEditor ? me
-															.getEditor() : null;
+											var comboEditor = me.columns && me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor ? me.down('gridcolumn[dataIndex=idProveedorNotario]').getEditor()
+													: me.getEditor ? me.getEditor() : null;
 											if (!Ext.isEmpty(comboEditor)) {
-												var store = comboEditor
-														.getStore(), record = store
-														.findRecord("id", value);
+												var store = comboEditor.getStore(), record = store.findRecord("id", value);
 												if (!Ext.isEmpty(record)) {
-													if (meta.record
-															.get('fechaFinPosicionamiento')) {
-														return '<span style="color: #DF0101;">'
-																+ record
-																		.get("descripcion")
-																+ '</span>';
+													if (meta.record.get('fechaFinPosicionamiento')) {
+														return '<span style="color: #DF0101;">'+ record.get("descripcion") + '</span>';
 													} else {
-														return record
-																.get("descripcion");
+														return record.get("descripcion");
 													}
 												} else {
 													comboEditor.setValue(value);
@@ -490,20 +494,79 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 										}),
 										reference : 'notariaRef',
 										displayField : 'descripcion',
-										valueField : 'id'
+										valueField : 'id',
+										allowBlank : false
 									}
+								}, {   
+									text: HreRem.i18n('title.column.fecha.respuesta.bc'),
+			     		        	dataIndex: 'fechaValidacionBCPos',
+			     		        	//formatter: 'date("d/m/Y")',
+			     		        	flex: 1,
+									renderer : dateColoredRender
+			     				}, {
+			     					text: HreRem.i18n('title.column.validacion.bc'),
+			     		        	dataIndex: 'validacionBCPosiDesc',
+			     		        	flex: 1,
+									renderer : coloredRender
+			     				}, {
+									text : HreRem.i18n('fieldlabel.fecha.aviso'),
+									dataIndex : 'fechaAviso',
+									//formatter: 'date("d/m/Y")',
+									flex : 1,
+									renderer : dateColoredRender
 								}, {
-									text : HreRem
-											.i18n('fieldlabel.motivo.aplazamiento'),
+			     					text: HreRem.i18n('title.column.comentarios.bc'),
+			     					dataIndex: 'observacionesBcPos',
+			     					flex: 1,
+									renderer : coloredRender
+			     				}, {
+			                        text: HreRem.i18n('fieldlabel.observaciones'),
+			                        dataIndex: 'observacionesRem',
+			                        editor: {
+			                            xtype: 'textarea',
+			                            cls: 'grid-no-seleccionable-field-editor'
+			                        },
+			                        flex: 2,
+									renderer : coloredRender
+			                    }, {
+									text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
 									dataIndex : 'motivoAplazamiento',
 									flex : 1,
 									editor : {
 										xtype : 'textarea',
-										reference : 'motivoAplazamientoRef'
+										reference : 'motivoAplazamientoRef'										
 										//allowBlank : false
 									},
+									bind:{
+										hidden: '{esBankia}'
+									},
 									renderer : coloredRender
-								}, {
+								},
+								{
+									text : HreRem.i18n('fieldlabel.motivo.aplazamiento'),
+									dataIndex : 'motivoAnulacionBc',
+									flex : 1,
+						        	editor: {
+										xtype: 'combobox',
+										reference : 'motivoAplazamientoBcRef',
+										store: new Ext.data.Store({
+											model: 'HreRem.model.ComboBase',
+											proxy: {
+												type: 'uxproxy',
+												remoteUrl: 'generic/getDiccionario',
+												extraParams: {diccionario: 'motivoAnulacionBc'} 
+											},
+											autoLoad: true
+										}),
+										displayField: 'descripcion',
+				    					valueField: 'codigo'
+									},
+									bind:{
+										hidden: '{!esBankia}'
+									},
+									renderer : coloredRender
+								},
+								{
 									dataIndex : 'fechaHoraPosicionamiento',
 									formatter : 'date("d/m/Y H:i")',
 									hidden : true,
@@ -540,91 +603,105 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 
 						saveSuccessFn : function() {
 							var me = this;
-							me
-									.up('form')
-									.down('gridBase[reference=listadoNotarios]')
-									.getStore().load();
+							me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
 						},
 
 						deleteSuccessFn : function() {
 							var me = this;
-							me
-									.up('form')
-									.down('gridBase[reference=listadoNotarios]')
-									.getStore().load();
+							me.up('form').down('gridBase[reference=listadoNotarios]').getStore().load();
 						},
 						onDeleteClick : function(btn) {
-							var me = this, seleccionados = btn.up('grid')
-									.getSelection(), gridStore = btn.up('grid')
-									.getStore();
+							var me = this, seleccionados = btn.up('grid').getSelection(), gridStore = btn.up('grid').getStore();
 
-							if (Ext.isArray(seleccionados)
-									&& seleccionados.length != 0) {
-
-								if (!Ext.isEmpty(me.selection
-										.get('motivoAplazamiento'))) {
+							if (Ext.isArray(seleccionados) && seleccionados.length != 0) {
+								if (!Ext.isEmpty(me.selection .get('motivoAplazamiento'))) {
 									Ext.Msg.show({
-										title : HreRem
-												.i18n("title.ventana.eliminar.posicionamiento"),
-										message : HreRem
-												.i18n("text.ventana.eliminar.posicionamiento"),
+										title : HreRem.i18n("title.ventana.eliminar.posicionamiento"),
+										message : HreRem.i18n("text.ventana.eliminar.posicionamiento"),
 										buttons : Ext.Msg.YESNO,
 										icon : Ext.Msg.QUESTION,
 										fn : function(btn) {
 											if (btn === 'yes') {
-
 												me.selection.erase({
 													params : {
 														id : me.selection.data.id
 													},
-													success : function(a,
-															operation, c) {
-														me
-																.fireEvent(
-																		"infoToast",
-																		HreRem
-																				.i18n("msg.operacion.ok"));
+													success : function(a,operation, c) {
+														me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 														me.deleteSuccessFn();
 														me.getStore().reload();
 													},
 
-													failure : function(a,
-															operation) {
+													failure : function(a,operation) {
 														var data = {};
 														try {
-															data = Ext
-																	.decode(operation._response.responseText);
-														} catch (e) {
-														};
-														if (!Ext
-																.isEmpty(data.msg)) {
-															me
-																	.fireEvent(
-																			"errorToast",
-																			data.msg);
+															data = Ext.decode(operation._response.responseText);
+														} catch (e) {};
+														if (!Ext.isEmpty(data.msg)) {
+															me.fireEvent("errorToast",data.msg);
 														} else {
-															me
-																	.fireEvent(
-																			"errorToast",
-																			HreRem
-																					.i18n("msg.operacion.ko"));
+															me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 														}
 														me.deleteSuccessFn()
 													}
 												});
-
 											}
 										}
 									});
 								} else {
-									me
-											.fireEvent(
-													"errorToast",
-													HreRem
-															.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.eliminar.posicionamiento.motivo"));
 								}
 							}
-						}
+						},
+						onAddClick: function(btn){
+				            var me = this;
+				            var rec = Ext.create(me.getStore().config.model);
+				            
+				            var listaReg = me.getStore().getData().items;
+				            var reg = listaReg[0];
+				            if(!Ext.isEmpty(reg)){
+					            var validacionBCcodigo = reg.getData().validacionBCPosi;
+					            var estadosAnyadir = [CONST.ESTADO_VALIDACION_BC['CODIGO_ANULADA'] ,CONST.ESTADO_VALIDACION_BC['CODIGO_APLAZADA'], CONST.ESTADO_VALIDACION_BC['CODIGO_RECHAZADA_BC']];
+					            if (!estadosAnyadir.includes(validacionBCcodigo)) {
+									me.fireEvent("errorToast", HreRem.i18n("msg.fallo.insertar.registro.fae"));
+									return;
+								}
+				            }
+				            
+				            
+							if(reg == null || me.comprobarFechaEnviada(reg)){
+								me.getStore().sorters.clear();
+					            me.editPosition = 0;
+					            rec.setId(null);
+					            me.getStore().insert(me.editPosition, rec);
+					            me.rowEditing.isNew = true;
+					            me.rowEditing.startEdit(me.editPosition, 0);
+					            me.disableAddButton(true);
+					            me.disablePagingToolBar(true);
+					            me.disableRemoveButton(true);
+					
+					            //me.comprobarEdicionGrid();
+							}else{
+								me.fireEvent("errorToast", HreRem.i18n("msg.existe.fecha.validada"));
+							}
+				            
+				       },
+				       comprobarFechaEnviada: function(reg){
+				       	
+				       		if(reg.data != null){
+				       			if(reg.data.motivoAplazamiento != null){
+				       				return true;
+				       			}else if(reg.data.fechaEnvioPos == null){
+				       				return true;
+				       			}else if(reg.data.fechaEnvioPos != null && reg.data.validacionBCPosiDesc == 'Deniega'){
+				       				return true;
+				       			}else{
+				       				return false;
+				       			}
+				       		}
+				       		
+				       		return true;
+				       }
 					}, {
 						xtype : 'gridBase',
 						reference : 'listadoNotarios',
@@ -728,13 +805,38 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							formatter : 'date("d/m/Y")',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.fecha.venta'),
-							bind : '{resolucion.fechaVenta}'
+							bind :{
+								value:'{resolucion.fechaVenta}',
+								hidden: '{esBankia}'
+							}
 
-						}, {
+						},
+						{
+							xtype : 'datefieldbase',
+							readOnly: 'true',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.formalizacion.fecha.venta'),
+							bind : {
+								value:'{resolucion.fechaFirmaContrato}',
+								hidden: '{!esBankia}'
+							}
+
+						},
+						{
 							xtype : 'button',
 							reference : 'btnGenerarFacturaVenta',
 							text : HreRem.i18n('btn.generar.factura.venta'),
 							handler : 'onClickGenerarFacturaPdf',
+							margin : '10 10 10 10',
+							bind : {
+								visible : '{expediente.isCarteraBankia}'
+							}
+						},
+						{
+							xtype : 'button',
+							reference : 'btnGenerarPropuestaAprobacionOferta',
+							text : HreRem.i18n('btn.generar.pdf'),
+							handler : 'onClickGenerarPdfPropuestaAprobacionOferta',
 							margin : '10 10 10 10',
 							bind : {
 								visible : '{expediente.isCarteraBankia}'
@@ -752,7 +854,68 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							readOnly: 'true',
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.numero.protocolo'),
-							bind : '{resolucion.numProtocolo}'
+							bind :{
+								value:'{resolucion.numProtocolo}',
+								hidden: '{esBankia}'
+							}
+						},
+						{
+							xtype : 'textfieldbase',
+							readOnly: 'true',
+							fieldLabel : HreRem.i18n('fieldlabel.formalizacion.numero.protocolo'),
+							bind :{
+								value: '{resolucion.numeroProtocoloCaixa}',
+								readOnly: true,
+								hidden: '{!esBankia}'
+							}
+						},
+						{
+							xtype: 'datefieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+							bind : {
+								value: '{resolucion.fechaContabilizacion}',
+								visible: '{expediente.isCarteraBankia}',
+								hidden: '{!esBankia}'
+							},
+							formatter: 'date("d/m/Y")',
+							readOnly: true
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.plazos'),
+						   reference: 'ventaplazosref',
+						   bind : {
+					     		value: '{resolucion.ventaPlazos}',
+					     		hidden: '{!esBankia}'
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.venta.condicion.supensiva'),
+						   reference: 'ventansupensivaref',
+						   bind : {
+					     		value: '{resolucion.ventaCondicionSupensiva}',
+					     		hidden: '{!esBankia}',
+					     		readOnly: true
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.cesion.remate'),
+						   reference: 'cesionremateref',
+						   bind : {
+					     		value: '{resolucion.cesionRemate}',
+					     		hidden: '{!esBankia}'
+						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.contrato.privado'),
+						   reference: 'contratoprivadoref',
+						   bind : {
+					     		value: '{resolucion.contratoPrivado}',
+					     		hidden: '{!esBankia}'
+						   }
 						}]
 					}]
 				}, {

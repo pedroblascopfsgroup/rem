@@ -98,6 +98,7 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String MATRICULA_CONTRATO = "OP-29-CNCV-04";
     public static final String MATRICULA_CONTRATO_ARRAS_PENITENCIALES= "OP-08-CNCV-90";
     public static final String MATRICULA_DEPOSITO_DESPUBLICACION_ACTIVO= "OP-08-CERA-DE";
+    public static final String CODIGO_PROPUESTA_APROBACION_OFERTA= "69";
 
 	private static final long serialVersionUID = 5218121084059952387L;
 

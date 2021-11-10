@@ -108,5 +108,14 @@ public class DDApruebaDeniega implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	
+	public static String getCodigoAprueba() {
+		return CODIGO_APRUEBA;
+	}
+	
+	public static String getCodigoDeniega() {
+		return CODIGO_DENIEGA;
+	}
 
 }

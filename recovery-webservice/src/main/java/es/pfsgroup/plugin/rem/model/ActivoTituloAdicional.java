@@ -74,6 +74,12 @@ public class ActivoTituloAdicional implements Serializable, Auditable{
 	@Column(name = "TIA_FECHA_NOTA_SIMPLE")
 	private Date fechaNotaSimple;
 	
+	@Column(name = "TIA_PLUSVALIA_COMPRADOR")
+	private Boolean plusvaliaComprador;
+	
+	@Column(name = "TIA_FECHA_LIQUIDACION_PLUSVALIA")
+	private Date fechaLiquidacionPlusvalia;
+	
 	@Version   
 	private Long version;
 	
@@ -97,8 +103,6 @@ public class ActivoTituloAdicional implements Serializable, Auditable{
 	public void setActivo(Activo activo) {
 		this.activo = activo;
 	}
-
-
 
 	public DDTipoTituloAdicional getTipoTitulo() {
 		return tipoTitulo;
@@ -179,11 +183,21 @@ public class ActivoTituloAdicional implements Serializable, Auditable{
 	public void setTituloAdicional(Integer tituloAdicional) {
 		this.tituloAdicional = tituloAdicional;
 	}
-	
-	
-	
-	
-	
-	
+
+	public Boolean getPlusvaliaComprador() {
+		return plusvaliaComprador;
+	}
+
+	public void setPlusvaliaComprador(Boolean plusvaliaComprador) {
+		this.plusvaliaComprador = plusvaliaComprador;
+	}
+
+	public Date getFechaLiquidacionPlusvalia() {
+		return fechaLiquidacionPlusvalia;
+	}
+
+	public void setFechaLiquidacionPlusvalia(Date fechaLiquidacionPlusvalia) {
+		this.fechaLiquidacionPlusvalia = fechaLiquidacionPlusvalia;
+	}
 
 }

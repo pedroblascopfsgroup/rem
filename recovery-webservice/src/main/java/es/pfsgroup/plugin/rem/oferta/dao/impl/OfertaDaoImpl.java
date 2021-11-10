@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -39,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 
 @Repository("OfertaDao")
 public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements OfertaDao {
@@ -47,6 +50,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static final String TIPO_FECHA_ALTA = "01";
 	public static final String TIPO_FECHA_FIRMA_RESERVA = "02";
 	public static final String TIPO_FECHA_POSICIONAMIENTO = "03";
+	public static final String TIPO_FECHA_ENTRADA_CRMSF = "04";
+	public static final String TIPO_FECHA_OFR_PENDIENTE = "05";
 	public static final String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
 	public static final String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
 	public static final String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
@@ -58,7 +63,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
+
 	//HREOS-6229
 	@SuppressWarnings("unchecked")
 	@Override
@@ -428,6 +437,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaCreacion", fechaDesde, fechaHasta);
 				} else if (TIPO_FECHA_FIRMA_RESERVA.equals(dto.getTipoFecha())) {
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaFirmaReserva", fechaDesde, fechaHasta);
+				} else if (TIPO_FECHA_OFR_PENDIENTE.equals(dto.getTipoFecha())) {
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaOfertaPendiente", fechaDesde, fechaHasta);
 				}
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
@@ -516,5 +527,26 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}
 		}
 		return ofertasTramitadas;
+	}
+
+	@Override
+	public Boolean replicateOfertaFlush(Long numOferta) {
+		flush();
+		return caixaBcRestClient.callReplicateOferta(numOferta);
+		
+	}
+
+	@Override
+	public Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto) {
+		flush();
+		return caixaBcRestClient.callReplicateOfertaWithDto(dto);
+
+	}
+
+	@Override
+	public Boolean pbcFlush(LlamadaPbcDto dto) {
+		flush();
+		return caixaBcRestClient.callPbc(dto);
+
 	}
 }

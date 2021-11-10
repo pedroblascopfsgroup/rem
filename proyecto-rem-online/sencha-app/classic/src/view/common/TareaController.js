@@ -23,7 +23,6 @@ Ext.define('HreRem.view.common.TareaController', {
 //			    icon: Ext.Msg.QUESTION,
 //			    fn: function(btn) {
 //	        		if (btn === 'yes') { 
-	        			
 	        			if(tarea.down('form').getForm().isValid()) {
 		        			tarea.mask("Guardando....");
 		        			if(tarea.getInitialConfig().codigoTarea == CONST.TAREAS['T015_DEFINICIONOFERTA']){

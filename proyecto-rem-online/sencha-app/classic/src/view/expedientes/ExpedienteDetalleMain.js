@@ -38,21 +38,27 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		var bloqueado;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		var tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+		var isBK = me.lookupController().getViewModel().get('expediente').get('esBankia');
 		
     	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
-    	me.down('reservaexpediente').setDisabled(reservaDisabled);
-		if(me.down('expedientedetalle').getActiveTab().getConfig().reference != "ofertaexpedienteref"){
-			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
-		}else{
+		if(!isBK){
+    		me.down('reservaexpediente').setDisabled(reservaDisabled);
+		}
+		
+		if(me.down('expedientedetalle').getActiveTab().getConfig().reference === "ofertaexpedienteref"){
 			var comboClaseOferta = me.down('ofertaexpediente').down('[name="claseOferta"]');
 			comboClaseOferta.events.change.fire(comboClaseOferta, comboClaseOferta.getValue(), comboClaseOferta.getValue());
+		}else if(me.down('expedientedetalle').getActiveTab().getConfig().reference != 'reservaExpediente'){
+			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		}
+
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
 
 		// HREOS-4366 - HREOS 4374
-		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){				
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler || me.getViewModel().get('expediente.tipoExpedienteCodigo') ===  tipoExpedienteAlquilerNoComercial){				
 			var tabReserva = me.down('reservaexpediente'),
 			tabFormalizacionVenta = me.down('formalizacionexpediente');
 
@@ -78,7 +84,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		}
 		
 		var tabScoring= me.down('scoringexpediente');
-		if(!me.getViewModel().get('expediente.definicionOfertaScoring')){				
+		if(!me.getViewModel().get('expediente.definicionOfertaScoring') || isBK){				
 			tabScoring.tab.setVisible(false);
 		}else{
 			tabScoring.tab.setVisible(true);

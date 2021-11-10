@@ -50,9 +50,12 @@ public class DDPaises implements Auditable, Dictionary {
 	 
 	@Column(name = "DD_PAI_DESCRIPCION")   
 	private String descripcion;
-	    
+    
 	@Column(name = "DD_PAI_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	@Column(name = "DD_PAI_COD_ISO")   
+	private String codigoISO;
 	    
 	
 	    
@@ -112,6 +115,14 @@ public class DDPaises implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoISO() {
+		return codigoISO;
+	}
+
+	public void setCodigoISO(String codigoISO) {
+		this.codigoISO = codigoISO;
 	}
 
 }

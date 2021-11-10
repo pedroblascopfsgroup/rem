@@ -70,6 +70,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
 
+
+         'saneamientoactivo cargasactivogrid': {
+            abrirFormulario: 'abrirFormularioAnyadirCarga',
+         	onClickRemove: 'onClickRemoveCarga',
+         	onClickPropagation :  'onClickPropagation'
+         },
+         
+         'datospublicacionactivo historicocondicioneslist': {
+          	onClickPropagation :  'onClickPropagationHistoricoCondiciones'
+         },
+         
+         'tituloinformacionregistralactivo calificacionnegativagrid': {
+          	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+          
+          'informecomercialactivo historicomediadorgrid': {
+           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+           
+           'adjuntosplusvalias gridBase': {
+               abrirFormulario: 'abrirFormularioAdjuntarDocumentosPlusvalia',
+               onClickRemove: 'borrarDocumentoAdjuntoPlusvalia', 
+               download: 'downloadDocumentoAdjuntoPlusvalia', 
+               afterupload: function(grid) {
+               	grid.getStore().load();
+               },
+               afterdelete: function(grid) {
+               	grid.getStore().load();
+               }
+           },
+          
+
 		'uxvalidargeolocalizacion' : {
 			actualizarCoordenadas : 'actualizarCoordenadas'
 		},
@@ -467,6 +499,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (tabData.models[0].name == "datospublicacion"
 					|| tabData.models[0].name == "activocargas"
 					|| tabData.models[0].name == "activocondicionantesdisponibilidad"
+					|| tabData.models[0].name == "activocondicionesdisponibilidadcaixa"
 					|| tabData.models[0].name == "activotrabajo"
 					|| tabData.models[0].name == "activotrabajosubida"
 					|| tabData.models[0].name == "activotramite"
@@ -1311,11 +1344,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonEditar : function(btn) {
 		var me = this;
 		if (btn.up('tabpanel').getActiveTab().xtype === 'comercialactivo') {
-			Ext.Array.each(btn.up('tabpanel').getActiveTab()
-							.query(' > container > component[isReadOnlyEdit]'),
-					function(field, index) {
-						field.fireEvent('edit');
-					});
+			var activeTab = btn.up('tabpanel').getActiveTab();
+			var arrayContainerHijos = activeTab.down('[reference=activoComercialBloqueRef]').query('fieldsettable > component[isReadOnlyEdit]');
+			var arrayContainer = activeTab.query(' > container > component[isReadOnlyEdit]');
+			var array = arrayContainer.concat(arrayContainerHijos);
+			
+			Ext.Array.each(array,
+				function(field, index) {
+					field.fireEvent('edit');
+				}
+			);
 		} else {
 			Ext.Array.each(btn.up('tabpanel').getActiveTab()
 							.query('component[isReadOnlyEdit]'), function(
@@ -1470,6 +1508,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['porcPropiedad'] = form.findField("porcPropiedad").getValue();
 		params['tipoGradoPropiedadCodigo'] = form
 				.findField("tipoGradoPropiedad").getValue();
+		params['anyoConcesion'] = form.findField("anyoConcesion").getValue();
+		params['fechaFinConcesion'] = form.findField("fechaFinConcesion").getValue();
 		params['tipoPersonaCodigo'] = form.findField("tipoPersona").getValue();
 		params['nombre'] = form.findField("nombre").getValue();
 		params['tipoDocIdentificativoCodigo'] = form.findField("tipoDoc")
@@ -1538,6 +1578,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		params['porcPropiedad'] = form.findField("porcPropiedad").getValue();
 		params['tipoGradoPropiedadCodigo'] = form
 				.findField("tipoGradoPropiedad").getValue();
+		params['anyoConcesion'] = form.findField("anyoConcesion").getValue();
+		params['fechaFinConcesion'] = form.findField("fechaFinConcesion").getValue();
 		params['tipoPersonaCodigo'] = form.findField("tipoPersona").getValue();
 		params['nombre'] = form.findField("nombre").getValue();
 		params['tipoDocIdentificativoCodigo'] = form.findField("tipoDoc")
@@ -1918,7 +1960,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.url = $AC.getWebPath() + "activo/bajarAdjuntoActivo."
 				+ $AC.getUrlPattern();
 		config.params = {};
-		config.params.id = record.get('id');
+		config.params.id=record.get('id');
 		config.params.idActivo = record.get("idActivo");
 		config.params.nombreDocumento = record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
@@ -1926,11 +1968,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	downloadDocumentoAdjuntoPromocion : function(grid, record) {
 
-		var me = this, config = {};
-
-		config.url = $AC.getWebPath()
-				+ "promocion/bajarAdjuntoActivoPromocion."
-				+ $AC.getUrlPattern();
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id = record.get('id');
 		config.params.idActivo = record.get("idActivo");
@@ -2474,7 +2515,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				razonSocialCliente : bindRecord.razonSocialCliente,
 				deDerechoTanteo : bindRecord.deDerechoTanteo,
 				claseOferta : bindRecord.claseOferta,
-				numOferPrincipal : bindRecord.numOferPrincipal
+				numOferPrincipal : bindRecord.numOferPrincipal,
+				vinculoCaixaCodigo : bindRecord.vinculoCaixaCodigo
 			});
 		} else {
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -2497,7 +2539,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				razonSocialCliente : bindRecord.razonSocialCliente,
 				deDerechoTanteo : bindRecord.deDerechoTanteo,
 				claseOferta : bindRecord.claseOferta,
-				numOferPrincipal : bindRecord.numOferPrincipal
+				numOferPrincipal : bindRecord.numOferPrincipal,
+				vinculoCaixaCodigo : bindRecord.vinculoCaixaCodigo
 			});
 		}
 
@@ -5705,7 +5748,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					var ventanaWizard = null;
 					var carteraInternacional = datos.carteraInternacional;
 					var ventanaAnyadirOferta;
-
 					if (!Ext.isEmpty(btn.up('wizardaltaoferta'))) {
 
 						ventanaWizard = btn.up('wizardaltaoferta');
@@ -6121,10 +6163,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(true);
             	}
+            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);
             }else{
+            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);
@@ -6551,8 +6595,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
 
 	   	 if (!newValue) {
-		    		comboTipoAlquiler.setValue(null);
-		            comboAdecuacion.setValue(null);
+		    comboTipoAlquiler.setValue(null);
+		    comboAdecuacion.setValue(null);
 	   	 } 
 	},
 
@@ -7428,13 +7472,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me = this;
 		if (!Ext.isEmpty(record)) {
 			idOferta = record.data.idOferta;
-			if (idOferta
-					&& !Ext.isEmpty(me.view
-							.down('[reference=cloneExpedienteButton]'))) {
-				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
-				me.view.down('[reference=cloneExpedienteButton]')
-						.setDisabled(hideButton);
-			}
+			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'] && record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['CADUCADA'];
+	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
+			}	
 		}
 	},
 
@@ -8234,10 +8275,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	btn.up('window').hide();
     },
-
-
-
-	onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
+       
+	downloadDocumentoAdjuntoOfertasController: function(grid, record, idDocumento) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/baj" +
+				"arAdjuntoOfertante."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('ofertaID');
+		config.params.idDocumento=idDocumento;
+		if(idDocumento != null) {
+			me.fireEvent("downloadFile", config);
+		}
+    },
+    onClickBotonAnyadirGastoAsociadoAdquisicion : function(btn) {
 
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
@@ -8553,8 +8605,145 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (grid.getStore() != null) {
 			grid.getStore().load();
 		}
-		
     },
+    onChangeCodPostal: function(type,newValue,oldValue){
+    	var me = this;
+    	var distritoCaixaValue = me.lookupReference('distritoCaixaRef');
+    	distritoCaixaValue.value = "";
+    	var distritoCaixa = me.getViewModel().getData().comboDistritoCodPostal;
+    	
+    	if (distritoCaixa != null || distritoCaixa != undefined) {
+    		distritoCaixa.getProxy().setExtraParams({'codPostal':newValue});
+    		distritoCaixa.load();
+    	}
+    },
+
+ 	
+ 	editarComboEstadoTecnico: function(get){
+ 		var me = this;
+ 		var tieneOkTencnicoCheckeado = me.lookupReference('okTecnicoRef');
+ 		var estadoTecnico = me.lookupReference('comboEstadoTecnicoRef');
+ 		
+	    if(tieneOkTencnicoCheckeado.value == true || tieneOkTencnicoCheckeado.checked == true){
+	    	estadoTecnico.setDisabled(false);
+	    	estadoTecnico.disabled = false;
+	    }else {
+	    	estadoTecnico.setValue(null);
+	    	estadoTecnico.setDisabled(true);
+	    	estadoTecnico.disabled = true;
+	    }
+	},
+	isNotCarteraBankiaSaneamiento: function(get){
+    	var me = this;
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var fechaEstadoTitularidad =me.lookupReference('fechaEstadoTitularidadRef');
+    	if (carteraBankia != null && carteraBankia == true) {
+    		fechaEstadoTitularidad.setHidden(false);
+    	} else {
+    		fechaEstadoTitularidad.setHidden(true);
+    	}
+	
+	},
+	
+	mostrarIsCarteraCaixa: function(get){
+    	var me = this;
+
+    	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+    	var descuentosVigentes = me.lookupReference('descuentosVigentesRef');
+    	var preciosVigentes = me.lookupReference('preciosVigentesRef');
+    	var preciosVigentesCaixa = me.lookupReference('preciosVigentesRefCaixa');
+    	
+    	if (carteraBankia != null && carteraBankia == true) {
+			descuentosVigentes.setHidden(false);
+			preciosVigentesCaixa.setHidden(false);
+			preciosVigentes.setHidden(true);
+    	}else{
+    		descuentosVigentes.setHidden(true);
+    		preciosVigentesCaixa.setHidden(true);
+    		preciosVigentes.setHidden(false);
+    	}
+    },
+
+	onClickAbrirGastoTasacion : function(grid, rowIndex, colIndex) {
+		var me = this, record = grid.getStore().getAt(rowIndex);
+		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
+
+	},/*,
+    onChangePublicarCaixa: function(get){
+    	var me = this;    	
+    	var carteraCaixa;
+    }
+    }*/
+
+    onClickModificarDeposito: function(btn){
+    	var me = this;
+    	var activo = me.getViewModel().get('activo');
+    	var deposito = me.getViewModel().get('detalleOfertaModel').get('dtoDeposito');
+    	var cuentaBancariaVirtual = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaVirtual');
+    	var cuentaBancariaCliente = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaCliente');
+    	var parent = btn.up('ofertascomercialactivo');
+		var ventana = Ext.create("HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito", {	
+			deposito: deposito, activo: activo, parent: parent, cuentaBancariaVirtual: cuentaBancariaVirtual,cuentaBancariaCliente: cuentaBancariaCliente
+		});
+    	
+		 ventana.show();
+    },
+    
+	onClickCancelarModificarDeposito : function(btn) {
+		var window = btn.up('window');
+		window.destroy();
+	},
+	
+	onClickSaveModificarDeposito : function(btn) {
+		var me = this;
+		var window = btn.up('window');
+		var array = window.query('container > component[editable]');
+		var params={idOferta:idOferta, id:window.deposito.id};
+		for(i = 0; i < array.length;i++){ 
+			params[array[i].reference] =array[i].value;
+		}
+		if(!window.down('form').isFormValid()){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.campos"));
+			return;
+		}
+
+		url = $AC.getRemoteUrl('ofertas/updateDepositoOferta');
+		Ext.Ajax.request({
+			url : url,
+			method : 'POST',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback : function(record, operation) {
+				var model = me.getViewModel().get('detalleOfertaModel');
+				model.setId(idOferta);
+				model.load({
+					success : function(idOferta) {}
+				});
+				window.destroy();
+			}
+		});
+	},
+	
+	onSelectEstadoDeposito: function(combo, value){
+		var me = this;
+		var window = combo.up('window');
+		var devuelto = false;
+		var ingresado = false;
+		if(CONST.ESTADO_DEPOSITO['COD_DEVUELTO'] == combo.getValue()){
+			devuelto = true;
+		}
+		if(CONST.ESTADO_DEPOSITO['COD_INGRESADO'] == combo.getValue()){
+			ingresado = true;
+		} 
+		window.down('[reference=fechaIngresoDeposito]').allowBlank=!ingresado;
+		window.down('[reference=fechaDevolucionDeposito]').allowBlank=!devuelto;
+		window.down('[reference=ibanDevolucionDeposito]').allowBlank=!devuelto;
+	},
     
     onChangeComboGestionDnd: function(combo){
     	var me = this;
@@ -8565,5 +8754,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			comboEstadoFisico.setDisabled(true);
 		}
+    },
+    
+    onPlusvaliaCompradorChange: function(combo, value){
+    	var me = this,
+    	disabled = value == 'false';
+    	
+    	var fechaLiquidacionPlusvaliaRef = me.lookupReference('fechaLiquidacionPlusvaliaRef');
+    	
+    	fechaLiquidacionPlusvaliaRef.setDisabled(disabled);	
+    	if(disabled) {
+    		fechaLiquidacionPlusvaliaRef.setValue(null);
+    	}
     }
 });
+

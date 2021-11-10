@@ -23,4 +23,8 @@ public interface GastoLineaDetalleDao extends AbstractDao<GastoLineaDetalle, Lon
 	void saveGastoLineaDetalle(GastoLineaDetalle gasto);
 
 	void actualizarDiariosLbk(Long idGasto, String userName);
+
+	boolean tieneListaEntidadesByGastoProveedorAndTipoEntidad(GastoProveedor gpv, String codigoEntidadGasto);
+
+	
 }

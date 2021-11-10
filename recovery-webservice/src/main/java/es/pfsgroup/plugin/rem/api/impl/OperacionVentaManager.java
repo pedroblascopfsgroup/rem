@@ -334,7 +334,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			mapaValores.put("renuncia",FileUtilsREM.stringify(condExp.getRenunciaExencion()));
 
 			if(condExp.getSolicitaFinanciacion() != null) {
-				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion().getCodigo().equals("01") ? "Si" : "No"));
 			}else{
 				mapaValores.put("financiacion", FileUtilsREM.stringify(null));
 			}
@@ -607,7 +607,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			mapaValores.put("renuncia",FileUtilsREM.stringify(condExp.getRenunciaExencion()));
 
 			if(condExp.getSolicitaFinanciacion() != null) {
-				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion() == 1 ? "Si" : "No"));
+				mapaValores.put("financiacion",FileUtilsREM.stringify(condExp.getSolicitaFinanciacion().getCodigo().equals("01") ? "Si" : "No"));
 			}else{
 				mapaValores.put("financiacion",FileUtilsREM.stringify(null));
 			}

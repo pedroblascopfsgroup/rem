@@ -60,6 +60,9 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String observacionesExpropiacion;
 	private String maxPrecioVenta;
 	private String observaciones;
+	private Boolean isCarteraBankia;
+	private Boolean plusvaliaComprador;
+	private Date fechaLiquidacionPlusvalia;
 	
 	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
 	private Integer tieneTituloAdicional; 
@@ -84,6 +87,8 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String estadoVentaCodigo;
 	private String estadoVentaDescripcion;
 	private Boolean puedeEditarCalificacionNegativaAdicional;
+	
+	private Date fechaEstadoTitularidadActivoInmobiliario;	
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -516,6 +521,30 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	}
 	public void setPuedeEditarCalificacionNegativaAdicional(Boolean puedeEditarCalificacionNegativaAdicional) {
 		this.puedeEditarCalificacionNegativaAdicional = puedeEditarCalificacionNegativaAdicional;
+	}
+	public Date getFechaEstadoTitularidadActivoInmobiliario() {
+		return fechaEstadoTitularidadActivoInmobiliario;
+	}
+	public void setFechaEstadoTitularidadActivoInmobiliario(Date fechaEstadoTitularidadActivoInmobiliario) {
+		this.fechaEstadoTitularidadActivoInmobiliario = fechaEstadoTitularidadActivoInmobiliario;
+	}
+	public Boolean getIsCarteraBankia() {
+		return isCarteraBankia;
+	}
+	public void setIsCarteraBankia(Boolean isCarteraBankia) {
+		this.isCarteraBankia = isCarteraBankia;
+	}
+	public Boolean getPlusvaliaComprador() {
+		return plusvaliaComprador;
+	}
+	public void setPlusvaliaComprador(Boolean plusvaliaComprador) {
+		this.plusvaliaComprador = plusvaliaComprador;
+	}
+	public Date getFechaLiquidacionPlusvalia() {
+		return fechaLiquidacionPlusvalia;
+	}
+	public void setFechaLiquidacionPlusvalia(Date fechaLiquidacionPlusvalia) {
+		this.fechaLiquidacionPlusvalia = fechaLiquidacionPlusvalia;
 	}
 	
 }

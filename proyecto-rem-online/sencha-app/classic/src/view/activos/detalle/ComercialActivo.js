@@ -82,6 +82,51 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        
 					// Fila 1
 				        {
+				        	xtype : 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('header.estado.comercial.venta'),
+				        	reference: 'estadoComercialVentaRef',
+				        	readOnly: true,
+				        	bind : {
+							      store : '{comboEstadoComercialVenta}',
+							      value : '{comercial.estadoComercialVentaCodigo}' ,
+							      hidden: '{!isCarteraBankia}'
+							}
+				        },
+				        {
+				        	xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.comercial.venta'),
+				        	reference: 'fechaEstadoComericalVentaRef',
+				        	allowBlank: true,
+				        	readOnly: true,
+				        	bind : {
+				        		value: '{comercial.fechaEstadoComercialVenta}',
+				        		hidden: '{!isCarteraBankia}'
+				        	}
+						},
+				        {
+				        	xtype : 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('header.estado.comercial.alquiler'),
+				        	reference: 'estadoComercialAlquilerRef',
+				        	readOnly: true,
+				        	bind : {
+							      store : '{comboEstadoComercialAlquiler}',
+							      value : '{comercial.estadoComercialAlquilerCodigo}',
+							      hidden: '{!isCarteraBankia}'
+							}
+
+				        },
+				        {
+				        	xtype: 'datefieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.comercial.alquiler'),
+				        	reference: 'fechaEstadoComericalAlquilerRef',
+				        	allowBlank: true,
+				        	readOnly: true,
+				        	bind : {
+				        		value: '{comercial.fechaEstadoComercialAlquiler}',
+				        		hidden: '{!isCarteraBankia}'
+				        	}
+						},
+				        {
 						   xtype: 'checkboxfieldbase',
 						   fieldLabel: HreRem.i18n('fieldlabel.venta.externa'),
 						   reference: 'checkVentaExterna',
@@ -254,11 +299,168 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	fieldLabel: HreRem.i18n('fieldlabel.combo.obra.nueva.f.comercializacion'),
 				        	reference: 'activoObraNuevaComercializacionFecha',
 				        	readOnly:true,
+				        	colspan:2,
 				        	 bind: {
 				        	 	value:'{comercial.activoObraNuevaComercializacionFecha}'
 				        	 }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.necesidadIf'),
+						   reference: 'necesidadIfActivoRef',
+						   //allowBlank: false,
+						   bind : {
+					     		value: '{comercial.necesidadIfActivo}'
+					     		//hidden: '{esCarteraSarebBbvaBankiaCajamarLiberbank}'
+						   },
+						   hidden: true
+						},
+						{
+			    			xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							collapsible: true,
+							reference: 'informacionBC',
+							title: HreRem.i18n('title.informacion.BC'),
+							colspan:3,
+							bind:{
+								hidden: '{!isCarteraBankia}'
+							},
+							items :
+								[
+									{
+									   xtype: 'checkboxfieldbase',
+									   fieldLabel: HreRem.i18n('fieldlabel.necesidad.arras'),
+									   reference: 'checkNecesidadArrasRef',
+									   allowBlank: true,
+									   bind : {
+								     		value: '{comercial.necesidadArras}',
+								     		readOnly: '{isCarteraBankia}'
+									   }						   
+									},
+									{ 
+										xtype: 'comboboxfieldbase',
+										fieldLabel:	HreRem.i18n('fieldlabel.canal.venta.bc'),
+										reference: 'canalVentaBC',
+										bind: {
+											readOnly: '{!esSuperUsuario}',
+											store: '{comboTipoComercializarActivo}',
+											value: '{comercial.canalPublicacionVentaCodigo}'
+										}
+									},
+									{ 
+										xtype: 'comboboxfieldbase',
+										fieldLabel:	HreRem.i18n('fieldlabel.canal.alquiler.bc'),
+										reference: 'canalAlquilerBC',
+										bind: {
+											readOnly: '{!esSuperUsuario}',
+											store: '{comboTipoComercializarActivo}',
+											value: '{comercial.canalPublicacionAlquilerCodigo}'
+										}
+									},
+									{ 
+										xtype: 'textareafieldbase',
+										fieldLabel:	HreRem.i18n('fieldlabel.motivo.necesidad.arras'),
+										reference: 'motivosNecesidadRef',
+										bind: {								
+											value: '{comercial.motivosNecesidadArras}',
+											disabled: '{!comercial.necesidadArras}',
+											readOnly: '{isCarteraBankia}'
+										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel:	HreRem.i18n('fieldlabel.tributacion.propuesta.cliente.exento.iva'),
+										reference: 'tributacionPropuestaClienteExentoIvaRef',										
+										bind: {
+											editable:true,
+											readOnly: false,
+											store: '{comboTributPropClienteExentoIva}',
+											value: '{comercial.tributacionPropuestaClienteExentoIvaCod}'
+										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel:	HreRem.i18n('fieldlabel.tributacion.propuesta.venta'),
+										reference: 'tributacionPropuestaVentaRef',
+
+										bind: {
+											editable:true,
+											
+											store: '{comboTributacionPropuestaVenta}',
+											value: '{comercial.tributacionPropuestaVentaCod}'
+										}
+									},
+									{
+									   xtype: 'checkboxfieldbase',
+									   fieldLabel: HreRem.i18n('fieldlabel.cartera.concentrada'),
+									   reference: 'carteraConcentradaRef',
+									   readOnly: true,
+									   bind : {
+								     		value: '{comercial.carteraConcentrada}'
+									   }						   
+									},
+									{
+									   xtype: 'checkboxfieldbase',
+									   fieldLabel: HreRem.i18n('fieldlabel.activo.aamm'),
+									   reference: 'activoAAMMRef',
+									   readOnly: true,
+									   bind : {
+								     		value: '{comercial.activoAAMM}'
+									   }						   
+									},
+									{
+									   xtype: 'checkboxfieldbase',
+									   fieldLabel: HreRem.i18n('fieldlabel.activo.promociones.estrategicas'),
+									   reference: 'activoPromocionesEstrategicasRef',
+									   readOnly: true,
+									   bind : {
+								     		value: '{comercial.activoPromocionesEstrategicas}'
+									   }						   
+									},
+									{
+							        	xtype: 'datefieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio.concurrencia'),
+							        	reference: 'fechaInicioConcurrenciaRef',
+							        	bind : {
+							        		readOnly: true,
+							        		value: '{comercial.fechaInicioConcurrencia}'
+							        	}
+									},
+									{
+							        	xtype: 'datefieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin.concurrencia'),
+							        	reference: 'fechaFinConcurrenciaRef',
+							        	bind : {
+							        		readOnly: true,
+							        		value: '{comercial.fechaFinConcurrencia}'
+							        	}
+									},{
+							        	xtype: 'displayfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.campanya.venta'),
+							        	reference: 'campanyaVentaRef',
+							        	bind : {
+							        		value: '{comercial.campanyaVenta}'
+							        	}
+									},{
+							        	xtype: 'displayfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.campanya.alquiler'),
+							        	reference: 'campanyaAlquilerRef',
+							        	bind : {
+							        		value: '{comercial.campanyaAlquiler}'
+							        	}
+									},
+									{
+										xtype:'comboboxfieldbasedd',
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
+										bind: {											
+											store: '{comboTipoTransmision}',
+											value: '{comercial.tipoTransmisionCodigo}',
+											rawValue: '{comercial.tipoTransmisionDescripcion}'
+										}
+									}
+									
+								]
 						}
-						
 				]
 			}, 
 			{

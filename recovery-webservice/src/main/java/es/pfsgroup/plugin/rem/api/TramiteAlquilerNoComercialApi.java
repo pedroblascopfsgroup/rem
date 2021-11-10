@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
-import java.util.Map;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
@@ -9,7 +8,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface TramiteAlquilerNoComercialApi {
 	
-	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
+	Boolean existeTareaT018Scoring(TareaExterna tareaExterna);
 
 	String getCodigoSubtipoOfertaByIdExpediente(Long idExpediente);
 
@@ -26,6 +25,8 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean isTramiteT018Aprobado(List<String> tareasActivas);
 
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
+
+	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
 	
 }
 

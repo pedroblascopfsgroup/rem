@@ -3819,7 +3819,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
-	
+		var comboReqAnalisisTec =me.down('[name=comboReqAnalisisTec]');
+		me.deshabilitarCampo(comboReqAnalisisTec);
+		
+		comboRespuesta.addListener('focus', function(combo) {
+				combo.getStore().removeAt(2);//QUITAR CON DUDAS
+		});
+		
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		
 		Ext.Ajax.request({
@@ -3841,12 +3847,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			if(CONST.TIPO_RESOLUCION_DUDAS['APRUEBA'] !== comboRespuesta.getValue()){
 				me.habilitarCampo(comboMotivoAnulacion);
 				me.campoObligatorio(comboMotivoAnulacion);
-
+				comboReqAnalisisTec.setValue('');
+				me.deshabilitarCampo(comboReqAnalisisTec);
 			}else{
 				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);
+				me.habilitarCampo(comboReqAnalisisTec);
+				me.campoObligatorio(comboReqAnalisisTec);
 			}
         });
+        
 	},
 	
 	T018_ScoringBcValidacion: function(){

@@ -809,6 +809,11 @@
             	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
 				return tramiteAlquilerManager.checkGarantiasNinguna(tareaExterna, expedienteAnterior);
             }
+            
+            def existeTareaT018Scoring = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.existeTareaT018Scoring(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

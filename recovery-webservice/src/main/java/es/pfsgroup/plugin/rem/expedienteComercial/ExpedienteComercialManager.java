@@ -14670,9 +14670,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (dto.getMesesAval() != null) {
 				coe.setMesesAval(dto.getMesesAval().intValue());
 			}
-			if (dto.getFechaVencimiento() != null) {
+			if (!Checks.isFechaNula(dto.getFechaVencimiento())) {
 				coe.setFechaVencimientoAvalBc(dto.getFechaVencimiento());
-			}			
+			}else {
+				coe.setFechaVencimientoAvalBc(null);
+			}	
 			if (dto.getDocumento() != null) {
 				coe.setDocumentoFiador(dto.getDocumento());
 			}			
@@ -14712,10 +14714,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(actPve != null) {
 					sra.setAseguradoraProveedor(actPve);
 				}
+			}else {
+				sra.setAseguradoraProveedor(null);
 			}
-			if (dto.getFechaSancionRentas()!= null) {
+			if (!Checks.isFechaNula(dto.getFechaSancionRentas())) {
 				sra.setFechaVencimientoRentaslBc(dto.getFechaSancionRentas());
-			}			
+			}else {
+				sra.setFechaVencimientoRentaslBc(null);
+			}	
 			if (dto.getMesesRentas() != null) {
 				sra.setMesesAval(dto.getMesesRentas().intValue());
 			}else {

@@ -529,10 +529,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
     
 	isValidRecord: function (record, context) {
-		
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
+        var activo = me.lookupController().getViewModel().get('activo');
 
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
@@ -560,6 +560,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		if(me.lookupViewModel().get('activo.tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['LIBRE'] && (me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['ALQUILADO'] || me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['VENDIDO'])) {
+			if(!activo.get('isCarteraBankia') && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
+                me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.solo.tramitar.pendiente"));
+                return false;
+			}
 			return true;
 		}
 		else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){

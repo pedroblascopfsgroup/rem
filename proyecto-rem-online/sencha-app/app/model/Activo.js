@@ -1284,7 +1284,14 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'tieneGestionDndDescripcion'
-			}
+			},
+			{
+    			name: 'isSubcarteraJaguar',
+    			calculate: function(data) {
+    				return data.subcarteraCodigo == CONST.SUBCARTERA['JAGUAR'];
+    			},
+    			depends: 'subcarteraCodigo'
+    		}
     ],
     
 	proxy: {

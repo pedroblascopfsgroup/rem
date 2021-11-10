@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDProcedenciaProducto;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -569,8 +570,19 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<GastoAsociadoAdquisicion> gastosAsociados;
     
+    @Column(name = "ACT_NECESIDAD_IF")
+    private Boolean necesidadIfActivo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRP_ID")
+    private DDProcedenciaProducto procedenciaProducto; 
+
+    @Column(name = "ACT_NUM_ACTIVO_CAIXA")
+    private String numActivoCaixa;
+
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private ActivoAdmisionRevisionTitulo admisionRevisionTitulo;
+
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_GESTION_DND")
@@ -2174,6 +2186,28 @@ public class Activo implements Serializable, Auditable {
 		this.tipoTransmision = tipoTransmision;
 	}
 
+	public Boolean getNecesidadIfActivo() {
+		return necesidadIfActivo;
+	}
+
+	public void setNecesidadIfActivo(Boolean necesidadIfActivo) {
+		this.necesidadIfActivo = necesidadIfActivo;
+	}
+	
+	public DDProcedenciaProducto getProcedenciaProducto() {
+		return procedenciaProducto;
+	}
+
+	public void setProcedenciaProducto(DDProcedenciaProducto procedenciaProducto) {
+		this.procedenciaProducto = procedenciaProducto;
+	}
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
+	}
 	public ActivoAdmisionRevisionTitulo getAdmisionRevisionTitulo() {
 		return admisionRevisionTitulo;
 	}

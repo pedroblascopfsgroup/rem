@@ -175,6 +175,10 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			if (activo.getInfoAdministrativa().getMaxPrecioModuloAlquiler() != null) {
+				activoDto.setMaxPrecioModuloAlquiler(String.valueOf(activo.getInfoAdministrativa().getMaxPrecioModuloAlquiler()));
+			}
 		}
 		
 		
@@ -246,6 +250,10 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 					Filter filterEstadoVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVentaCodigo());
 					DDEstadoVenta ddEstadoVenta = genericDao.get(DDEstadoVenta.class, filterEstadoVenta); 
 					infoAdministrativa.setEstadoVenta(ddEstadoVenta);	
+				}
+				
+				if (dto.getMaxPrecioModuloAlquiler() != null) {
+					infoAdministrativa.setMaxPrecioModuloAlquiler(Double.parseDouble(dto.getMaxPrecioModuloAlquiler()));
 				}
 			}
 			

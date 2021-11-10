@@ -4,14 +4,15 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
     reference	: 'ofertanteslistdetalleofertaref',
 	topBar		: false,
 	idPrincipal : 'oferta.id',
+	controller : 'activodetalle',
     bind		: {
         store: '{storeOfertantesOfertaDetalle}'
     },
 
     initComponent: function () {
-
      	var me = this;
-
+     	var isCarteraBk = me.getController().getViewModel().get('activo').get('isCarteraBankia');
+     	
 		me.columns = [
 		        {
 		        	dataIndex: 'id',
@@ -73,7 +74,69 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	dataIndex: 'regimenMatrimonial',
 		        	text: HreRem.i18n('header.regimen.matrimonial'),
 		        	flex:2
-		        }
+		        },
+		        {
+		        	dataIndex: 'aceptacionOferta',
+		        	text: HreRem.i18n('header.aceptacion.oferta'),
+		        	flex:2
+		        },{
+					   xtype: 'actioncolumn',
+				      flex: 1,
+				      hideable: false,
+				      text: HreRem.i18n('column.ofertantes.documento.identificativo'),
+				        items: [{
+				           	iconCls: 'ico-download',
+				           	tooltip: "Documento Identificativo",
+				            handler: function(grid, rowIndex, colIndex) {
+				            	var record = grid.getRecord(rowIndex);
+					            var grid = me;
+					            var idDocumento = record.get('aDCOMIdDocumentoIdentificativo');			
+					            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
+		            		},
+		            		isDisabled: function(view, rowIndex, colIndex, item, record) {
+		                        if (record.get('aDCOMIdDocumentoIdentificativo') != null) {
+		                        	return false
+		                        }
+		                        return true;
+		                    }
+				        }]
+				   },{
+					  xtype: 'actioncolumn',
+				      flex: 1,
+				      hideable: false,
+				      text: HreRem.i18n('column.ofertantes.documento.gdpr'),
+				        items: [{
+				           	iconCls: 'ico-download',
+				           	tooltip: "Documento GDPR",
+				            handler: function(grid, rowIndex) {
+				            	var record = grid.getRecord(rowIndex);
+					            var grid = me;			
+					            var idDocumento = record.get('aDCOMIdDocumentoGDPR');			
+					            grid.getController().downloadDocumentoAdjuntoOfertasController(grid, record, idDocumento);
+		            		},
+		            		isDisabled: function(view, rowIndex, colIndex, item, record) {
+		                        if (record.get('aDCOMIdDocumentoGDPR') != null) {
+		                        	return false
+		                        }
+		                        return true;
+		                    }
+				        }]        
+				   },{
+			        	dataIndex: 'ADCOMIdDocumentoIdentificativo',
+			        	text: HreRem.i18n('fieldlabel.proveedores.id'),
+			        	flex:0.4,
+			        	hidden:true
+			        },{
+			        	dataIndex: 'ADCOMIdDocumentoGDPR',
+			        	text: HreRem.i18n('fieldlabel.proveedores.id'),
+			        	flex:0.4,
+			        	hidden:true
+			        },{
+			        	dataIndex: 'vinculoCaixaDesc',
+			        	text: HreRem.i18n('fieldlabel.vinculo.caixa'),
+			        	flex:1,
+			        	hidden:!isCarteraBk
+			        }
 	    ];
 
 	    me.dockedItems = [

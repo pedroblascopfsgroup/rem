@@ -6,6 +6,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoScreening;
 
 /**
  * Interfaz para manejar el acceso a datos de los trámites de Activo.
@@ -75,5 +76,21 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	public ActivoTramite getTramiteComercialVigenteByTrabajo(Long idTrabajo);
 	
 	public Boolean creaTareaValidacion(String username, String idExpediente);
+
+	ActivoTramite getTramiteComercialVigenteByTrabajoT017(Long idTrabajo);
+
+	ActivoTramite getTramiteComercialVigenteByTrabajoT015(Long idTrabajo);
+	
+	ActivoTramite getTramiteComercialVigenteByTrabajoT018(Long idTrabajo);
+	
+	Boolean creaTareas(DtoScreening dto);
+
+	/**
+	 * Devuelve el ActivoTramite segun el id del trabajo y el tipo de tramite.
+	 * @param idTrabajo
+	 * @param codTipoTramite
+	 * @return ActivoTamite
+	 */
+	ActivoTramite getTramiteComercialVigenteByTrabajoYCodTipoTramite(Long idTrabajo, String codTipoTramite);
 
 }

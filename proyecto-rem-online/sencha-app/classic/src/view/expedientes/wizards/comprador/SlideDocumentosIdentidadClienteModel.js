@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {
-					diccionario: 'tiposDocumentos'
+					diccionario: 'tipoDeDocumento'
 				}
 			}
 		}

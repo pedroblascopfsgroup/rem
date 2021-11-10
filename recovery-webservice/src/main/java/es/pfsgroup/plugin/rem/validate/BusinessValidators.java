@@ -30,6 +30,7 @@ public interface BusinessValidators {
 	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";
 	public static final String ERROR_ESTADO_PUBLICACION_NOT_EQUAL = "El activo tiene un estado de publicación distinto al de la agrupación.";
 	public static final String ERROR_DESTINO_COMERCIAL_NOT_EQUAL = "El activo no tiene el mismo destino comercial que la agrupación";
+	public static final String ERROR_ACTIVO_CARTERA_BANKIA_TO_AGR_RESTRINGIDAS = "El activo pertenece a Caixa";
 	
 	/**
 	 * C�digo de tipo de operaci�n para el que aplica este validador.

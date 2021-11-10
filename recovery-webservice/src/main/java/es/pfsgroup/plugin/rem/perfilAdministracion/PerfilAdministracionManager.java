@@ -18,9 +18,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.funciones.dto.DtoFunciones;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.VBusquedaPerfiles;
@@ -42,6 +44,9 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	@Override
 	public String managerName() {
@@ -90,13 +95,36 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 		}
 		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.username", userName);
 		Filter filtroPerfil = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", codPerfil);
-		List<ZonaUsuarioPerfil> zonaUsuPefList = genericDao.getList(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroUsuarioBorrado = genericDao.createFilter(FilterType.EQUALS, "usuario.auditoria.borrado", false);
+		Filter filtroPerfilBorrado = genericDao.createFilter(FilterType.EQUALS, "perfil.auditoria.borrado", false);
+		List<ZonaUsuarioPerfil> zonaUsuPefList = genericDao.getList(ZonaUsuarioPerfil.class, filtroUsuario, filtroPerfil,filtroBorrado, filtroUsuarioBorrado, filtroPerfilBorrado);
 		
 		if(zonaUsuPefList == null || zonaUsuPefList.isEmpty()) {
 			return false;
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public List<DtoAdjunto> devolverAdjuntosPorPerfil(List<DtoAdjunto> adjuntos){
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		if(this.usuarioHasPerfil(PERFIL_TASADORA, usuario.getUsername())) {
+			adjuntos = this.filtrarAdjuntos(adjuntos, MATRICULAS_TASADORA);
+		}
+		return adjuntos;
+	}
+	
+	private List<DtoAdjunto> filtrarAdjuntos(List<DtoAdjunto> adjuntos, List<String> matriculas){
+		for(int i = 0; i < adjuntos.size();i++) {
+			DtoAdjunto adjunto = adjuntos.get(i);
+			if(!matriculas.contains(adjunto.getMatricula())) {
+				adjuntos.remove(adjunto);
+				i--;
+			}
+		}
+		return adjuntos;
 	}
 }
 

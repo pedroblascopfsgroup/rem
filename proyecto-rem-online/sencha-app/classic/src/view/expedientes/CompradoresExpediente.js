@@ -21,18 +21,20 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     initComponent: function () {
 		var me = this;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var tipoExpedienteAlquilerNoComercial = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
 		var title = HreRem.i18n('title.compradores');
 		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
 		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
-	
-		
-		
-		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+		var isAlquiler = false;
+		var tipoDelExpediente = me.lookupViewModel().get('expediente.tipoExpedienteCodigo');
+		var bloqueado = me.lookupViewModel().get('expediente.bloqueado');
+		if(tipoDelExpediente === tipoExpedienteAlquiler || tipoDelExpediente === tipoExpedienteAlquilerNoComercial ){
 			title = HreRem.i18n('title.inquilinos');
 			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
 			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
-			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
+			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");	
+			isAlquiler = true;
 		};
 
 		me.setTitle(title);
@@ -60,7 +62,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     	};
     	
     	var cartera= function(){
-    		if(me.lookupViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'] && me.lookupViewModel().get('expediente.tipoExpedienteCodigo') != tipoExpedienteAlquiler){
+    		if(me.lookupViewModel().get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'] && tipoDelExpediente != tipoExpedienteAlquiler  && tipoDelExpediente != tipoExpedienteAlquilerNoComercial ){
     			return false;
     		}else{
     			return true;
@@ -74,32 +76,9 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 				xtype: 'fieldset',
             	title:  title,
             	items : [
-            		{
-						xtype: 'button',
-						text: HreRem.i18n('btn.enviar.compradores'),
-						handler: 'enviarTitularesUvem',
-						margin: '10 5 5 10',
-						bind: {
-							disabled:'{habilitarBotonEnviar}',
-							hidden: '{!esEditableCompradores}'
-						}
-					},
-					{
-						xtype: 'button',
-						text: HreRem.i18n('btn.validar.compradores'),
-						handler: 'validarCompradores',
-						margin: '10 5 5 10',
-						visible:true,
-						hidden: cartera(),
-				        hideable: !cartera(),
-						bind: {
-//							hidden: '{!esEditableCompradores}',
-							disabled: '{habilitarBotonValidar}'
-						}			        
-					},
                 	{
 					    xtype		: 'gridBase',
-					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),
+					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']) && !bloqueado,
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
 						activateButton: true,
@@ -270,7 +249,20 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-						   }   
+						   },{
+
+							   text: HreRem.i18n('header.fecha.acep.gpdr'),
+							   dataIndex: 'fechaAcepGdpr'
+						   },
+						   {
+
+							   text: HreRem.i18n('header.estado.bc'),
+							   dataIndex: 'estadoComunicacionBCDescripcion',
+							   flex: 1,
+					           renderer: coloredRender
+					          
+						   } 
+
 						  ],
 					    dockedItems : [
 					        {

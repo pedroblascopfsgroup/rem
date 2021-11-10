@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -25,6 +26,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -43,6 +46,9 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresAceptacionCliente.class);
     
@@ -58,37 +64,46 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
-		
+		boolean estadoBcModificado = false;
 		Boolean aceptacionContraoferta = false;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(ACEPTACION_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					aceptacionContraoferta = true;
-										
-					for(TareaActivo tareaActivo : tramite.getTareas()) {
-						if("T015_VerificarScoring".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
-							break;
-						} else if("T015_VerificarSeguroRentas".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
-							break;
-						} 
-					}
+					if(oferta != null && oferta.getActivoPrincipal() != null && !DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 					
-					if(Checks.esNulo(estadoExpedienteComercial)) {
-						estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-								genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SANCION));
-					}					
-					
-					expedienteComercial.setEstado(estadoExpedienteComercial);
-					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
-
+						for(TareaActivo tareaActivo : tramite.getTareas()) {
+							if("T015_VerificarScoring".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+								estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+										genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
+								break;
+							} else if("T015_VerificarSeguroRentas".equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+								estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+										genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
+								break;
+							} 
+						}
+						
+						if(Checks.esNulo(estadoExpedienteComercial)) {
+							estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
+									genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SANCION));
+						}					
+						
+						expedienteComercial.setEstado(estadoExpedienteComercial);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
+					}else if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
+						estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SCORING));
+						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_CONTRAOFERTA_ACEPTADA));
+						
+						expedienteComercial.setEstado(estadoExpedienteComercial);
+						expedienteComercial.setEstadoBc(estadoBc);		
+						estadoBcModificado = true;
+					}	
 					List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 					
 					Double importeContraoferta = oferta.getImporteContraOferta();
@@ -112,6 +127,16 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
 					expedienteComercial.setOferta(oferta);
+					
+					if(oferta != null && oferta.getActivoPrincipal() != null && !DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+						expedienteComercial.setEstadoBc(estadoBc);	
+						estadoBcModificado = true;
+					} else if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
+						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+						expedienteComercial.setEstadoBc(estadoBc);	
+						estadoBcModificado = true;
+					}
 				}
 			}
 			
@@ -143,6 +168,10 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 			}
 		}
 		expedienteComercialApi.update(expedienteComercial,false);
+		
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		}
 	}
 
 	public String[] getCodigoTarea() {

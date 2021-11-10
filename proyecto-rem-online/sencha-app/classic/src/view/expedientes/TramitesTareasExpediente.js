@@ -9,6 +9,7 @@ Ext.define('HreRem.view.expedientes.TramitesTareasExpediente', {
     	
     	var me = this;
     	me.setTitle(HreRem.i18n('title.tramites.tareas'));
+
     	var items= [
     	
 			{
@@ -32,6 +33,12 @@ Ext.define('HreRem.view.expedientes.TramitesTareasExpediente', {
 				        }, */ 
 				        {
 				            dataIndex: 'tipoTramite',
+				            text: HreRem.i18n("header.tipo.tramite"),
+				            flex: 1,
+				            hidden: true
+				        },
+				        {
+				            dataIndex: 'nombre',
 				            text: HreRem.i18n("header.tipo.tramite"),
 				            flex: 1
 				        },
@@ -90,7 +97,7 @@ Ext.define('HreRem.view.expedientes.TramitesTareasExpediente', {
 		var me = this; 
 		me.recargar = false;
 		var listadoTareasTramiteExpediente = me.down("[reference=listadoTareasTramiteExpediente]");
-		
+
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoTareasTramiteExpediente.getStore().load();
     }

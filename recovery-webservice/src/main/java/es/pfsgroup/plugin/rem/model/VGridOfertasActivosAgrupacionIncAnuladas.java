@@ -81,6 +81,9 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
 	
     @Column(name="GENCAT")
 	private Boolean gencat;
+    
+    @Column(name="EST_CODIGO_C4C")
+    private String codigoEstadoC4C;
 
 	public Long getId() {
 		return id;
@@ -256,6 +259,14 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
 
 	public void setGencat(Boolean gencat) {
 		this.gencat = gencat;
+	}
+
+	public String getCodigoEstadoC4C() {
+		return codigoEstadoC4C;
+	}
+
+	public void setCodigoEstadoC4C(String codigoEstadoC4C) {
+		this.codigoEstadoC4C = codigoEstadoC4C;
 	}	
 	
 

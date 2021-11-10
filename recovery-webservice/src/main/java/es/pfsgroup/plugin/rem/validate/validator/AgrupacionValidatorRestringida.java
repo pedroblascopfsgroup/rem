@@ -17,6 +17,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
+import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -46,7 +48,7 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {		
-		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_RESTRINGIDA,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER,DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM};
 	}
 
 	// TODO refactorizar este validador, creando validadores independientes hasta que se pueda eliminar 
@@ -59,7 +61,9 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 		if(!Checks.estaVacio(ofertasActivo)) {
 			for(ActivoOferta ofertaActivo : ofertasActivo) {
 				if(!Checks.esNulo(ofertaActivo)) {
-					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
+							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)
+							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
 						incluidoAgrupacionRestringida = true;
 						Oferta oferta = ofertaActivo.getPrimaryKey().getOferta();
 						if(!Checks.esNulo(oferta.getEstadoOferta())){
@@ -78,33 +82,92 @@ public class AgrupacionValidatorRestringida extends AgrupacionValidatorCommonImp
 		if (primerActivoAgrupacion == null) return "";
 		Activo primerActivo = primerActivoAgrupacion.getActivo();
 		if (primerActivo == null) return "";
-
-		ActivoRestringida restringida = (ActivoRestringida) agrupacion;
-		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 		
-		if (Checks.esNulo(restringida.getCodigoPostal())) {
-			return ERROR_CP_NULL;
-		} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
-			return ERROR_CP_NOT_EQUAL;
-		}
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+			ActivoRestringida restringida = (ActivoRestringida) agrupacion;
+			NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
+			
+			/*if (Checks.esNulo(restringida.getCodigoPostal())) {
+				return ERROR_CP_NULL;
+			} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
+				return ERROR_CP_NOT_EQUAL;
+			}*/
 
-		if (Checks.esNulo(restringida.getProvincia())) {
-			return ERROR_PROV_NULL;
-		} else if (!restringida.getProvincia().equals(pobl.getProvincia())) {
-			return ERROR_PROV_NOT_EQUAL;
-		}
-				
-		if (Checks.esNulo(restringida.getLocalidad())) {
-			return ERROR_LOC_NULL;
-		} else if (!restringida.getLocalidad().equals(pobl.getLocalidad())) {
-			return ERROR_LOC_NOT_EQUAL;
-		}
+			if (Checks.esNulo(restringida.getProvincia())) {
+				return ERROR_PROV_NULL;
+			} else if (!restringida.getProvincia().equals(pobl.getProvincia())) {
+				return ERROR_PROV_NOT_EQUAL;
+			}
+					
+			if (Checks.esNulo(restringida.getLocalidad())) {
+				return ERROR_LOC_NULL;
+			} else if (!restringida.getLocalidad().equals(pobl.getLocalidad())) {
+				return ERROR_LOC_NOT_EQUAL;
+			}
+			
+			if (Checks.esNulo(activo.getPropietariosActivo())) {
+				return ERROR_PROPIETARIO_NULL;
+			} else if(!isValidOwner(activo, primerActivo)) {	
+				return ERROR_PROPIETARIO_NOT_EQUAL;
+			}
 		
-		if (Checks.esNulo(activo.getPropietariosActivo())) {
-			return ERROR_PROPIETARIO_NULL;
-		} else if(!isValidOwner(activo, primerActivo)) {	
-			return ERROR_PROPIETARIO_NOT_EQUAL;
-		}	
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)) {
+			ActivoRestringidaAlquiler restringida = (ActivoRestringidaAlquiler) agrupacion;
+			NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
+			
+			/*if (Checks.esNulo(restringida.getCodigoPostal())) {
+				return ERROR_CP_NULL;
+			} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
+				return ERROR_CP_NOT_EQUAL;
+			}*/
+
+			if (Checks.esNulo(restringida.getProvincia())) {
+				return ERROR_PROV_NULL;
+			} else if (!restringida.getProvincia().equals(pobl.getProvincia())) {
+				return ERROR_PROV_NOT_EQUAL;
+			}
+					
+			if (Checks.esNulo(restringida.getLocalidad())) {
+				return ERROR_LOC_NULL;
+			} else if (!restringida.getLocalidad().equals(pobl.getLocalidad())) {
+				return ERROR_LOC_NOT_EQUAL;
+			}
+			
+			if (Checks.esNulo(activo.getPropietariosActivo())) {
+				return ERROR_PROPIETARIO_NULL;
+			} else if(!isValidOwner(activo, primerActivo)) {	
+				return ERROR_PROPIETARIO_NOT_EQUAL;
+			}
+		
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM)) {
+			ActivoRestringidaObrem restringida = (ActivoRestringidaObrem) agrupacion;
+			NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
+			
+			/*if (Checks.esNulo(restringida.getCodigoPostal())) {
+				return ERROR_CP_NULL;
+			} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
+				return ERROR_CP_NOT_EQUAL;
+			}*/
+
+			if (Checks.esNulo(restringida.getProvincia())) {
+				return ERROR_PROV_NULL;
+			} else if (!restringida.getProvincia().equals(pobl.getProvincia())) {
+				return ERROR_PROV_NOT_EQUAL;
+			}
+					
+			if (Checks.esNulo(restringida.getLocalidad())) {
+				return ERROR_LOC_NULL;
+			} else if (!restringida.getLocalidad().equals(pobl.getLocalidad())) {
+				return ERROR_LOC_NOT_EQUAL;
+			}
+			
+			if (Checks.esNulo(activo.getPropietariosActivo())) {
+				return ERROR_PROPIETARIO_NULL;
+			} else if(!isValidOwner(activo, primerActivo)) {	
+				return ERROR_PROPIETARIO_NOT_EQUAL;
+			}
+		
+		}
 
 		
 //TODO: Quiza el tipo(Alq/venta) al que hace referencia sea el campo Dpto. Comercial

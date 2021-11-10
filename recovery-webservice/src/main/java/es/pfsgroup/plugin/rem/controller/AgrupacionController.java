@@ -14,6 +14,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,26 +59,6 @@ import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
-import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoFoto;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
-import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VGridBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -122,6 +105,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 
 	@Resource
 	private Properties appProperties;
@@ -837,9 +823,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
-			boolean success = !Checks.esNulo(adapter.createOfertaAgrupacion(dtoOferta));
-			model.put("success", success);
+			Oferta oferta = adapter.createOfertaAgrupacion(dtoOferta);
+			boolean success = oferta != null;
 
+			model.put("success", success);
 		} catch (JsonViewerException jvex) {
 			model.put("msg", jvex.getMessage());
 			model.put("success", false);

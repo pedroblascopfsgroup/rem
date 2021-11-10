@@ -255,6 +255,112 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'nombreConyugeURSUS'
+		},
+		{
+			name:'idBC4C'
+		},
+		{
+			name:'compradorPrp',
+			type:'boolean'
+		},
+		{
+			name:'representantePrp',
+			type:'boolean'
+		},
+		{
+			name:'fechaNacimientoConstitucion',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'formaJuridica' 
+		},
+		{
+			name:'codEstadoContraste'
+		},
+		{
+			name:'usufructuario'
+		},
+		{
+			name: 'fechaNacimientoComprador',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'localidadNacimientoCompradorCodigo'
+		},
+		{
+			name: 'localidadNacimientoCompradorDescripcion'
+		},
+		{
+			name: 'fechaNacimientoRepresentante',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'localidadNacimientoRepresentanteCodigo'
+		},
+		{
+			name: 'localidadNacimientoRepresentanteDescripcion'
+		},
+		{
+			name: 'paisNacimientoRepresentanteCodigo'
+		},
+		{
+			name: 'paisNacimientoRepresentanteDescripcion'
+		},
+		{
+			name: 'vinculoCaixaCodigo'
+		},
+		{
+			name:'paisNacimientoCompradorCodigo'
+		},
+		{
+			name:'fechaNacimientoRepresentante',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'paisNacimientoCompradorCodigo'
+		},
+		{
+			name:'paisNacimientoCompradorDescripcion'
+		},
+		{
+			name:'paisNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'paisNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'provinciaNacimientoCompradorCodigo'
+		},
+		{
+			name:'provinciaNacimientoCompradorDescripcion'
+		},
+		{
+			name:'provinciaNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'provinciaNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'localidadNacimientoCompradorCodigo'
+		},
+		{
+			name:'localidadNacimientoCompradorDescripcion'
+		},
+		{
+			name:'localidadNacimientoRepresentanteCodigo'
+		},
+		{
+			name:'localidadNacimientoRepresentanteDescripcion'
+		},
+		{
+			name:'sociedad'
+		},
+		{
+			name:'oficinaTrabajo'
 		}
 		
 		

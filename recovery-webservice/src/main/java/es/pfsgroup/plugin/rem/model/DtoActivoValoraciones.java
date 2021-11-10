@@ -56,6 +56,11 @@ public class DtoActivoValoraciones extends WebDto{
     
     private Date fechaVentaHaya;
     private String liquidez;
+    
+    private Boolean precioVentaNegociable;
+    private Boolean precioAlquilerNegociable;    
+    private Boolean campanyaPrecioVentaNegociable;
+    private Boolean campanyaPrecioAlquilerNegociable;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -245,6 +250,30 @@ public class DtoActivoValoraciones extends WebDto{
 	}
 	public void setFsvRentaOrigen(String fsvRentaOrigen) {
 		this.fsvRentaOrigen = fsvRentaOrigen;
+	}
+	public Boolean getPrecioVentaNegociable() {
+		return precioVentaNegociable;
+	}
+	public void setPrecioVentaNegociable(Boolean precioVentaNegociable) {
+		this.precioVentaNegociable = precioVentaNegociable;
+	}
+	public Boolean getPrecioAlquilerNegociable() {
+		return precioAlquilerNegociable;
+	}
+	public void setPrecioAlquilerNegociable(Boolean precioAlquilerNegociable) {
+		this.precioAlquilerNegociable = precioAlquilerNegociable;
+	}
+	public Boolean getCampanyaPrecioVentaNegociable() {
+		return campanyaPrecioVentaNegociable;
+	}
+	public void setCampanyaPrecioVentaNegociable(Boolean campanyaPrecioVentaNegociable) {
+		this.campanyaPrecioVentaNegociable = campanyaPrecioVentaNegociable;
+	}
+	public Boolean getCampanyaPrecioAlquilerNegociable() {
+		return campanyaPrecioAlquilerNegociable;
+	}
+	public void setCampanyaPrecioAlquilerNegociable(Boolean campanyaPrecioAlquilerNegociable) {
+		this.campanyaPrecioAlquilerNegociable = campanyaPrecioAlquilerNegociable;
 	}
 	
 	

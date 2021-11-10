@@ -23,6 +23,14 @@ public class ComercialAlquilerUserAssignationService implements UserAssigantionS
 	private static final String CODIGO_T015_RESOLUCION_PBC = "T015_ResolucionPBC";
 	private static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
 	private static final String CODIGO_T015_VERIFICAR_SEGURO_RENTAS = "T015_VerificarSeguroRentas";
+	private static final String CODIGO_T015_BLOQUEO_SCREENING = "T015_BloqueoScreening";
+	private static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
+	private static final String CODIGO_T015_SANCIONBC = "T015_SancionBC";
+	private static final String CODIGO_T015_PBC = "T015_PBC";
+	private static final String CODIGO_T015_ENVIO_CONTRATO = "T015_EnvioContrato";
+	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
+	private static final String CODIGO_T015_AGENDAR_FECHA_FIRMA = "T015_AgendarFechaFirma";
+	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -37,7 +45,8 @@ public class ComercialAlquilerUserAssignationService implements UserAssigantionS
 		return new String[]{CODIGO_T015_ACEPTACION_CLIENTE, CODIGO_T015_CIERRE_CONTRATO, 
 				CODIGO_T015_DEFINICION_OFERTA, CODIGO_T015_ELEVAR_A_SANCION, CODIGO_T015_FIRMA,
 				CODIGO_T015_POSICIONAMIENTO, CODIGO_T015_RESOLUCION_EXPEDIENTE, CODIGO_T015_RESOLUCION_PBC,
-				CODIGO_T015_VERIFICAR_SCORING, CODIGO_T015_VERIFICAR_SEGURO_RENTAS};
+				CODIGO_T015_VERIFICAR_SCORING, CODIGO_T015_VERIFICAR_SEGURO_RENTAS,CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES,
+				CODIGO_T015_PBC, CODIGO_T015_ENVIO_CONTRATO,CODIGO_T015_AGENDAR_FECHA_FIRMA};
 	}
 
 	@Override

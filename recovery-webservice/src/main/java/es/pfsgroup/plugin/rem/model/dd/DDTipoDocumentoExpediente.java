@@ -37,7 +37,8 @@ public class DDTipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String CODIGO_FORMALIZACION = "04";
     public static final String CODIGO_SANCION = "05";
     public static final String CODIGO_DOCUMENTO_ALQUILER = "06";
-    
+    public static final String CODIGO_DOCUMENTO_ALQUILER_NO_COMERCIAL = "09";
+    public static final String CODIGO_DOCUMENTOS_COMPRADORES = "08";
 	    
 	/**
 	 * 

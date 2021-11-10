@@ -2,9 +2,11 @@ package es.pfsgroup.plugin.rem.factory.observaciones;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,9 @@ public abstract class GridObservaciones extends GridObservacionesConstants {
 	@Autowired
 	protected GenericABMDao genericDao;
 
+	@Autowired
+	private ActivoDao activoDao;
+
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	protected Activo getActivoById(Long id) {
@@ -49,12 +54,7 @@ public abstract class GridObservaciones extends GridObservacionesConstants {
 	protected List<DtoObservacion> getObservacionesListByIdAndCodes(Long id, String[] codes) {
 		List<DtoObservacion> listaDtoObservaciones = new ArrayList<DtoObservacion>();
 		if (id != null) {
-			List<Filter> fCodes = new ArrayList<Filter>();
-			fCodes.add(genericDao.createFilter(FilterType.EQUALS, ACT_ID, id));
-			for (String code : codes) {
-				fCodes.add(genericDao.createFilter(FilterType.SIMILARY, TIPO_OBSERVACION_CODIGO, code));
-			}
-			List<ActivoObservacion> observaciones = genericDao.getList(ActivoObservacion.class, fCodes);
+			List<ActivoObservacion> observaciones = activoDao.getObservacionesActivo(id, codes);
 			listaDtoObservaciones = getDtoListObservaciones(observaciones);
 		}
 

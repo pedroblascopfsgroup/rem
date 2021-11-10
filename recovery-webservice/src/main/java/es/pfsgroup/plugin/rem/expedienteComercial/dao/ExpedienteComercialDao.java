@@ -100,4 +100,6 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 
 	Float getPorcentajeCompra(Long idExpediente);
 	
+	void flush();
+	
 }

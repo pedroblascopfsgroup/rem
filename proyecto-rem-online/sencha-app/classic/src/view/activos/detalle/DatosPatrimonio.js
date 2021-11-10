@@ -184,6 +184,36 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							}
 						},
 						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.acuerdo.pago'),
+							colspan: 1,
+							bind: {
+								store: '{comboSinSino}',
+								value: '{patrimonio.acuerdoPago}',
+								hidden: '{!patrimonio.isCarteraTitulizada}'	
+							}
+						},	
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.moroso'),
+							colspan: 1,
+							bind: {
+								store: '{comboSinSino}',
+								value: '{patrimonio.moroso}',
+								hidden: '{!patrimonio.isCarteraTitulizada}'	
+							}
+						},	
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.activo.estrategico'),
+							colspan: 1,
+							bind: {
+								store: '{comboSinSino}',
+								value: '{patrimonio.activoPromoEstrategico}',
+								hidden: '{!patrimonio.isCarteraTitulizada}'	
+							}
+						},	
+						{
 							xtype: 'displayfieldbase',
 							colspan: 3,
 							readOnly:true,

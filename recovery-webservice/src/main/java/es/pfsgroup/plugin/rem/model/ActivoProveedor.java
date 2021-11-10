@@ -20,10 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
@@ -242,6 +239,12 @@ public class ActivoProveedor implements Serializable, Auditable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_MEDIADOR_REL")
     private ActivoProveedor mediadorRelacionado;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
+	private InfoAdicionalPersona infoAdicionalPersona;
+
 
 	@Version   
 	private Long version;
@@ -709,6 +712,13 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setMediadorRelacionado(ActivoProveedor mediadorRelacionado) {
 		this.mediadorRelacionado = mediadorRelacionado;
-	}	
-	
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
 }

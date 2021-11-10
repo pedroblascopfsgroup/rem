@@ -38,6 +38,50 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'observaciones'
+		},
+		{
+			name:'fechaEntradaCRMSF',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'empleadoCaixa',
+			type: 'boolean'
+		},
+		{
+			name:'importeDeposito'
+		},
+		{
+			name:'fechaIngresoDeposito',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'estadoCodigo'
+		},
+		{
+			name:'fechaDevolucionDeposito',
+			type:'date',
+    		dateFormat: 'c'
+		},
+		{
+			name: 'ibanDevolucionDeposito'
+		},
+		{
+			name: 'cuentaBancariaVirtual'
+		},
+		{
+			name: 'cuentaBancariaCliente'
+		},
+		{
+			name: 'numOfertaCaixa'
+		},
+		{
+			name: 'checkSubasta',
+			type: 'boolean'
+		},
+		{
+			name:'titularesConfirmados'
 		}
     ],
 

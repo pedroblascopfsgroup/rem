@@ -42,6 +42,8 @@ public class DtoTasacion {
     private String observaciones;
     private Boolean ilocalizable;
     private String externoBbva;
+    private Long numGastoHaya;
+    private Long idGasto;
 
 
 	public Long getId() {
@@ -251,9 +253,19 @@ public class DtoTasacion {
 		this.ilocalizable = ilocalizable;
 	}
 
-	
-	
-    
-    
-	
+	public Long getNumGastoHaya() {
+		return numGastoHaya;
+	}
+
+	public void setNumGastoHaya(Long numGastoHaya) {
+		this.numGastoHaya = numGastoHaya;
+	}
+
+	public Long getIdGasto() {
+		return idGasto;
+	}
+
+	public void setIdGasto(Long idGasto) {
+		this.idGasto = idGasto;
+	}
 }

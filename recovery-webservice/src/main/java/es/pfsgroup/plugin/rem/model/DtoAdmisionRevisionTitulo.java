@@ -93,8 +93,7 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	//
 	private String tipoTituloActivoRef;
 	private String subtipoTituloActivoRef;
-	
-	
+    
 	private boolean update = false;
 	
 	public Long getId() {
@@ -548,6 +547,4 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 		this.tipoTituloActivoRef = tipoTituloActivoRef;
 	}
 	
-	
-
 }

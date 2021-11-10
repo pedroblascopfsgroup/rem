@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -265,5 +266,10 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	
 	public Date getFechaFirmaByIdExpediente(String idExpediente) {
 		return reservaDao.getFechaFirmaReservaByIdExpediente(Long.parseLong(idExpediente));
+	}
+	
+	@Override
+	public boolean tieneReservaFirmada(ExpedienteComercial eco) {
+		return DDEstadosReserva.tieneReservaFirmada(eco.getReserva());
 	}
 }

@@ -72,7 +72,25 @@ Ext.define('HreRem.view.activos.detalle.CargasActivoGrid', {
 		        		}
 	                },
 		        	flex: 1
-				 }
+				 },
+				 {
+	                text : HreRem.i18n('header.fecha.solicitud.carta.pago'),
+	                dataIndex : 'fechaSolicitudCarta',
+	                flex : 1,
+		            formatter: 'date("d/m/Y")'
+	              },
+	              {
+		            text : HreRem.i18n('header.fecha.recepcion.carta.pago'),
+		            dataIndex : 'fechaRecepcionCarta',
+		            flex : 1,
+		            formatter: 'date("d/m/Y")'
+		          },
+		          {
+			        text : HreRem.i18n('header.fecha.presentacion.carta.pago'),
+			        dataIndex : 'fechaPresentacionRpCarta', 
+			        flex : 1,
+		            formatter: 'date("d/m/Y")'
+			      }
 
         ];
 

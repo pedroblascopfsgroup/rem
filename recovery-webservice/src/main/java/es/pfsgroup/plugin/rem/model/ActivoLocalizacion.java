@@ -24,6 +24,9 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 
 
@@ -71,8 +74,14 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TUB_ID")
 	private DDTipoUbicacion tipoUbicacion;
-
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PLN_ID")
+	private DDPlantaEdificio plantaEdificio;	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ESE_ID")
+	private DDEscaleraEdificio escaleraEdificio;
 	
 	@Version   
 	private Long version;
@@ -82,6 +91,15 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	
 	
+	@Column(name = "LOC_DIRECCION_DOS")
+	private String direccionDos;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DIC_ID")
+	private DDDistritoCaixa distritoCaixa;
+	
+	@Column(name = "LOC_BLOQUE")
+	private String bloque;
 
 	public Long getId() {
 		return id;
@@ -153,7 +171,46 @@ public class ActivoLocalizacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}  									
+	}
+
+	public String getDireccionDos() {
+		return direccionDos;
+	}
+
+	public void setDireccionDos(String direccionDos) {
+		this.direccionDos = direccionDos;
+	}
+
+	public DDDistritoCaixa getDistritoCaixa() {
+		return distritoCaixa;
+	}
+
+	public void setDistritoCaixa(DDDistritoCaixa distritoCaixa) {
+		this.distritoCaixa = distritoCaixa;
+	}
 	
+	public DDPlantaEdificio getPlantaEdificio() {
+		return plantaEdificio;
+	}
+
+	public void setPlantaEdificio(DDPlantaEdificio plantaEdificio) {
+		this.plantaEdificio = plantaEdificio;
+	}
+
+	public DDEscaleraEdificio getEscaleraEdificio() {
+		return escaleraEdificio;
+	}
+
+	public void setEscaleraEdificio(DDEscaleraEdificio escaleraEdificio) {
+		this.escaleraEdificio = escaleraEdificio;
+	}
+
+	public String getBloque() {
+		return bloque;
+	}
+
+	public void setBloque(String bloque) {
+		this.bloque = bloque;
+	}  									
 	
 }

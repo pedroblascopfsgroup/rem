@@ -676,6 +676,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					load: function(store, records) {
 						store.insert(0, [{
 							descripcion: "--",
+							codigo: "null",
 							id: null
 						}]);
 					}

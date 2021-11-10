@@ -17,5 +17,7 @@ public interface FuncionesApi {
 	 * @return Devuelve un booleano si el usuario tiene la función.
 	 */
 	boolean elUsuarioTieneFuncion(String funcionString, Usuario usuario);
+
+	boolean userHasFunction(String username, String descripcion);
 	
 }

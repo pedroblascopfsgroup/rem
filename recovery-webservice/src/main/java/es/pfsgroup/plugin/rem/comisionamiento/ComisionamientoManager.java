@@ -82,7 +82,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 		Long prescriptorVisita = (visita == null || visita.getPrescriptor() == null) ? null : visita.getPrescriptor().getId();
 		Long realizadorVisita = (visita == null || visita.getProveedorVisita() == null) ? null : visita.getProveedorVisita().getId();
-		Long prescriptorOferta = oferta.getPrescriptor().getId();
+		Long prescriptorOferta = oferta.getPrescriptor() != null ? oferta.getPrescriptor().getId() : null;
 		Long prescriptorOriLead = oferta.getProveedorPrescriptorRemOrigenLead() != null ? 
 				oferta.getProveedorPrescriptorRemOrigenLead().getId() : null;
 		

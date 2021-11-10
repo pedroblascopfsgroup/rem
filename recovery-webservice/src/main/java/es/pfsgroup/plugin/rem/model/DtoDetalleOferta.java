@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
 
 public class DtoDetalleOferta {
 
@@ -16,7 +17,14 @@ public class DtoDetalleOferta {
 	private String ofertaExpress;
 	private String necesitaFinanciacion;
 	private String observaciones;
-	
+	private Date fechaEntradaCRMSF;
+	private Boolean empleadoCaixa;
+	DtoDeposito dtoDeposito;
+	private String cuentaBancariaVirtual;
+	private String cuentaBancariaCliente;
+	private String numOfertaCaixa;
+	private Boolean checkSubasta;
+	private String titularesConfirmados;
 
 
 	public String getId() {
@@ -90,6 +98,55 @@ public class DtoDetalleOferta {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Date getFechaEntradaCRMSF() {
+		return fechaEntradaCRMSF;
+	}
+	public void setFechaEntradaCRMSF(Date fechaEntradaCRMSF) {
+		this.fechaEntradaCRMSF = fechaEntradaCRMSF;
+	}
+	public Boolean getEmpleadoCaixa() {
+		return empleadoCaixa;
+	}
+	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
+		this.empleadoCaixa = empleadoCaixa;
+	}
+	public DtoDeposito getDtoDeposito() {
+		return dtoDeposito;
+	}
+	public void setDtoDeposito(DtoDeposito dtoDeposito) {
+		this.dtoDeposito = dtoDeposito;
+	}
+	public String getCuentaBancariaVirtual() {
+		return cuentaBancariaVirtual;
+	}
+	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
+		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
+	}
+	public String getCuentaBancariaCliente() {
+		return cuentaBancariaCliente;
+	}
+	public void setCuentaBancariaCliente(String cuentaBancariaCliente) {
+		this.cuentaBancariaCliente = cuentaBancariaCliente;
+	}
+	public String getNumOfertaCaixa() {
+		return numOfertaCaixa;
+	}
+	public void setNumOfertaCaixa(String numOfertaCaixa) {
+		this.numOfertaCaixa = numOfertaCaixa;
+	}
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
+	
+	public String getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(String titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
 	}
 	
 }

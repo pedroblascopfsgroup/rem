@@ -72,6 +72,9 @@ Ext.define('HreRem.model.AdmisionDocumento', {
     			name: 'consumo'
     		},
     		{
+    			name: 'letraEmisiones'
+    		},
+    		{
     			name: 'emision'
     		},
     		{

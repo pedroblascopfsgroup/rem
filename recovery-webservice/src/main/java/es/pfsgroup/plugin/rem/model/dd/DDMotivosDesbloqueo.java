@@ -32,9 +32,11 @@ public class DDMotivosDesbloqueo implements Auditable, Dictionary {
 	/**
 	 * 
 	 */
+	public static final String DESBLOQUEO_OTROS = "04";
 	private static final long serialVersionUID = 1L;
 	
-
+	public static final String DESBLOQUEO_SCREENING = "DBLOQS";
+	
 	@Id
 	@Column(name = "DD_MDE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosDesbloqueoGenerator")

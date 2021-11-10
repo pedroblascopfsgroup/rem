@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private OfertaApi ofertaApi;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 	
 	@Override
 	public String managerName() {
@@ -390,24 +394,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
+			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		if(iap == null) {
-			String idPersonaHaya = cliente.getIdPersonaHaya();
-			if(idPersonaHaya == null && cliente.getDocumento() != null) {
-				MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-				idPersonaHaya = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumento());
-				cliente.setIdPersonaHaya(idPersonaHaya);
-			}
-			if (cliente.getIdPersonaHaya() != null) {
-				iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHaya));
-			}
-			if(iap == null && idPersonaHaya != null) {
-				iap = new InfoAdicionalPersona();
-				iap.setAuditoria(Auditoria.getNewInstance());
-				iap.setIdPersonaHaya(idPersonaHaya);
-			}
-		}
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		
 		if(iap != null) {
 			if(clienteDto.getEsPRP() != null) {
@@ -419,21 +409,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		InfoAdicionalPersona iapRep = null;
 
-		if (cliente.getDocumentoRepresentante() != null)
-		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
-
-		if(iapRep == null && cliente.getDocumentoRepresentante() != null) {
-			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-			String idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumentoRepresentante()); 
-			iapRep = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHayaRep));
-			if(iapRep == null && idPersonaHayaRep != null) {
-				iapRep = new InfoAdicionalPersona();
-				iapRep.setAuditoria(Auditoria.getNewInstance());
-				iapRep.setIdPersonaHaya(idPersonaHayaRep);
-			}
-			
-				
-		}
+		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
+		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
 		
 		if(iapRep != null) {
 			if(clienteDto.getEsPRPRepresentante() != null) {
@@ -766,23 +743,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 
+		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
+			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHayaCaixa());
-
-		if(iap == null) {
-			if (cliente.getIdPersonaHaya() == null && cliente.getDocumento() != null){
-				MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-				cliente.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumento()));
-			}
-			if (cliente.getIdPersonaHaya() != null) {
-				iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", cliente.getIdPersonaHaya()));
-			}
-			if(iap == null ) {
-				iap = new InfoAdicionalPersona();
-				iap.setAuditoria(Auditoria.getNewInstance());
-				iap.setIdPersonaHaya(cliente.getIdPersonaHaya());
-			}
-		}
 			
 		
 		if(clienteDto.getEsPRP() != null) {
@@ -796,19 +760,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		InfoAdicionalPersona iapRep = null;
 
-		if (cliente.getDocumentoRepresentante() != null){
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null);
-
-		}
-		if(iapRep == null && cliente.getDocumentoRepresentante() != null) {
-			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-			String idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumentoRepresentante()); 
-			iapRep = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHayaRep));
-			if(iapRep == null ) {
-				iapRep = new InfoAdicionalPersona();
-				iapRep.setAuditoria(Auditoria.getNewInstance());
-				iapRep.setIdPersonaHaya(idPersonaHayaRep);
-			}
+		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
 		}
 
 		if (iapRep != null){

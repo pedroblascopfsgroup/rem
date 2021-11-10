@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -261,6 +262,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -2644,18 +2648,15 @@ public class AgrupacionAdapter {
 				}
 			}
 
+			if (clienteComercial.getIdPersonaHayaCaixa() == null || clienteComercial.getIdPersonaHayaCaixa().trim().isEmpty() )
 			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+
+			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty())
+				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
 
 			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
-			if(iap == null) {
-				iap = new InfoAdicionalPersona();
-				iap.setAuditoria(Auditoria.getNewInstance());
-				iap.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}else if(clienteComercial.getInfoAdicionalPersona() == null) {
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
+			clienteComercial.setInfoAdicionalPersona(iap);
 			
 			if (dto.getSociedadEmpleadoCaixa() != null) {
 				iap.setSociedad(dto.getSociedadEmpleadoCaixa());
@@ -2825,17 +2826,10 @@ public class AgrupacionAdapter {
 
 				 */
 
+				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
 
-				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),null);
-
-				if(iapRep == null) {
-					iapRep = new InfoAdicionalPersona();
-					iapRep.setAuditoria(Auditoria.getNewInstance());
-					iapRep.setIdPersonaHaya(clienteComercial.getIdPersonaHaya());
-					iapRep.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-					clienteComercial.setInfoAdicionalPersonaRep(iapRep);
-				}
+				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 
 				if (dto.getRepresentantePrp() != null) {
 					iapRep.setPrp(dto.getRepresentantePrp());

@@ -2774,7 +2774,7 @@ public class AgrupacionAdapter {
 					clienteComercial.setLocalidadNacimientoRep(ddMunicipio);
 				}
 				
-				if (dto.getFechaNacimientoRepresentante() != null) {
+				if (!Checks.isFechaNula(dto.getFechaNacimientoRepresentante())) {
 					clienteComercial.setFechaNacimientoRep(ft.parse(dto.getFechaNacimientoRepresentante()));
 				}
 				

@@ -1515,7 +1515,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEntradaActivoBankia}',
-									hidden: '{!activo.isCarteraBankia}',
+									hidden: '{!activo.isCarteraTitulizadayBankia}',
 									value: '{activo.entradaActivoBankiaCodigo}',
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}

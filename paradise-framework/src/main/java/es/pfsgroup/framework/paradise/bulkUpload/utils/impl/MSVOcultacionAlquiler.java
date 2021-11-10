@@ -53,6 +53,7 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 	private static final String AGRUPACION_ACTIVO_OCULTO = "Hay activos que están ocultos";
 	private static final String NO_ES_ACTIVO_PRINCIPAL = "El activo no es el activo principal de la agrupación restringida";
 	private static final String AGRUPACION_RESTRINGIDA = "02";
+	
 
 	private static final Integer MAX_CHAR_TEXTO_LIBRE = 250;
 
@@ -475,7 +476,7 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
+				if((particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA))
 						&& !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))){
 						listaFilas.add(i);
 					}

@@ -42,6 +42,13 @@ public class DDEstadosCiviles implements Auditable, Dictionary {
 	public static final String CODIGO_ESTADO_SEPARADO_LEGAL = "06";
 	public static final String CODIGO_ESTADO_RELIGIOSO = "07";
 	public static final String CODIGO_ESTADO_NULIDAD_MATRIMONIAL = "08";
+	
+	public static final String COD_SOLTERO_C4C = "1";
+	public static final String COD_CASADO_C4C = "2";
+	public static final String COD_DIVORCIADO_C4C = "3";
+	public static final String COD_VIUDO_C4C = "4";
+	public static final String COD_SEPARADO_C4C = "5";
+	public static final String COD_PAREJA_HECHO_C4C = "6";
 
 
 	@Id
@@ -57,7 +64,10 @@ public class DDEstadosCiviles implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_ECV_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;	
+	
+	@Column(name = "DD_ECV_CODIGO_C4C")
+	private String codigoC4C;
 
 	@Version   
 	private Long version;
@@ -111,6 +121,14 @@ public class DDEstadosCiviles implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 
 }

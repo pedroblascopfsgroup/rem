@@ -55,6 +55,11 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Date fechaInstalacionVigilancia;
 	private Date fechaDesinstalacionVigilancia;
 	private Boolean perteneceActivoREAM;
+	private String necesariaFuerzaPublica;
+	private String estadoTecnicoCodigo;
+	private String estadoTecnicoDescripcion;
+	private Date fechaEstadoTecnico;
+	private Integer vertical;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -297,6 +302,35 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	public void setConTituloDescripcion(String conTituloDescripcion) {
 		this.conTituloDescripcion = conTituloDescripcion;
 	}
-
+	public String getNecesariaFuerzaPublica() {
+		return necesariaFuerzaPublica;
+	}
+	public void setNecesariaFuerzaPublica(String necesariaFuerzaPublica) {
+		this.necesariaFuerzaPublica = necesariaFuerzaPublica;
+	}
+	public String getEstadoTecnicoCodigo() {
+		return estadoTecnicoCodigo;
+	}
+	public void setEstadoTecnicoCodigo(String estadoTecnicoCodigo) {
+		this.estadoTecnicoCodigo = estadoTecnicoCodigo;
+	}
+	public String getEstadoTecnicoDescripcion() {
+		return estadoTecnicoDescripcion;
+	}
+	public void setEstadoTecnicoDescripcion(String estadoTecnicoDescripcion) {
+		this.estadoTecnicoDescripcion = estadoTecnicoDescripcion;
+	}
+	public Date getFechaEstadoTecnico() {
+		return fechaEstadoTecnico;
+	}
+	public void setFechaEstadoTecnico(Date fechaEstadoTecnico) {
+		this.fechaEstadoTecnico = fechaEstadoTecnico;
+	}
+	public Integer getVertical() {
+		return vertical;
+	}
+	public void setVertical(Integer vertical) {
+		this.vertical = vertical;
+	}
 	
 }

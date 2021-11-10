@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,7 +23,11 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDGarantiasAdicionales;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoringServicer;
 
 
 
@@ -71,6 +76,31 @@ public class ScoringAlquiler implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RAT_ID")
+	private DDRatingScoringServicer ratingScoringServicer;  
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RSE_ID")
+	private DDResultadoScoringServicer resultadoScoringServicer;  
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_GAO_ID")
+	private DDGarantiasAdicionales garantiasAdicionales;  
+	
+	@Column(name = "SCO_IMPORTE_GARANTIAS_AD")
+    private Double importeGarantiasAdicionales;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RSB_ID")
+	private DDResultadoScoring resultadoScoringBc;
+	
+	@Column(name = "SCO_FECHA_SANCION_BC")
+	private Date fechaSancionBc;
+	
+	@Column(name = "SCO_NUM_EXPEDIENTE")
+	private String numeroExpedienteBc;
 	
 	@Version   
 	private Long version;
@@ -150,4 +180,60 @@ public class ScoringAlquiler implements Serializable, Auditable {
 		this.resultadoScoring = resultadoScoring;
 	}
 
+	public DDRatingScoringServicer getRatingScoringServicer() {
+		return ratingScoringServicer;
+	}
+
+	public void setRatingScoringServicer(DDRatingScoringServicer ratingScoringServicer) {
+		this.ratingScoringServicer = ratingScoringServicer;
+	}
+
+	public DDResultadoScoringServicer getResultadoScoringServicer() {
+		return resultadoScoringServicer;
+	}
+
+	public void setResultadoScoringServicer(DDResultadoScoringServicer resultadoScoringServicer) {
+		this.resultadoScoringServicer = resultadoScoringServicer;
+	}
+
+	public DDGarantiasAdicionales getGarantiasAdicionales() {
+		return garantiasAdicionales;
+	}
+
+	public void setGarantiasAdicionales(DDGarantiasAdicionales garantiasAdicionales) {
+		this.garantiasAdicionales = garantiasAdicionales;
+	}
+
+	public Double getImporteGarantiasAdicionales() {
+		return importeGarantiasAdicionales;
+	}
+
+	public void setImporteGarantiasAdicionales(Double importeGarantiasAdicionales) {
+		this.importeGarantiasAdicionales = importeGarantiasAdicionales;
+	}
+
+	public DDResultadoScoring getResultadoScoringBc() {
+		return resultadoScoringBc;
+	}
+
+	public void setResultadoScoringBc(DDResultadoScoring resultadoScoringBc) {
+		this.resultadoScoringBc = resultadoScoringBc;
+	}
+
+	public Date getFechaSancionBc() {
+		return fechaSancionBc;
+	}
+
+	public void setFechaSancionBc(Date fechaSancionBc) {
+		this.fechaSancionBc = fechaSancionBc;
+	}
+
+	public String getNumeroExpedienteBc() {
+		return numeroExpedienteBc;
+	}
+
+	public void setNumeroExpedienteBc(String numeroExpedienteBc) {
+		this.numeroExpedienteBc = numeroExpedienteBc;
+	}
+	
 }

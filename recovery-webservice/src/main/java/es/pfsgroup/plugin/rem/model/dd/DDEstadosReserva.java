@@ -17,6 +17,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.plugin.rem.model.Reserva;
 
 /**
  * Modelo que gestiona el diccionario de los tipos de estado de una reserva
@@ -52,6 +53,9 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 	
 	@Column(name = "DD_ERE_CODIGO")   
 	private String codigo;
+	
+	@Column(name = "DD_ERE_CODIGO_C4C")   
+	private String codigoC4C;
 	 
 	@Column(name = "DD_ERE_DESCRIPCION")   
 	private String descripcion;
@@ -116,8 +120,22 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
+	}
+
 	 
-	
+	public static final boolean tieneReservaFirmada(Reserva reserva) {
+		boolean is = false;
+		if(reserva != null && reserva.getEstadoReserva() != null && CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 	
 	
 }

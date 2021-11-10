@@ -345,7 +345,7 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     	if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]){
     		comboVenta.setDisabled(false);
     		comboAlquiler.setDisabled(true);
-    	} else if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+    	} else if(!Ext.isEmpty(tipoOferta) && (tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"] || tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"])){
     		comboAlquiler.setDisabled(false);
     		comboVenta.setDisabled(true);
     	}

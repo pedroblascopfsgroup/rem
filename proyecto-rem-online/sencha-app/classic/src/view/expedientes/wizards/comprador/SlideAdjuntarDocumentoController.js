@@ -735,7 +735,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		model = null,
 		data = window.oferta.data,
 		ventanaDetalle = window.down('slidedatosoferta');
-
 		bindRecord = ventanaDetalle.getForm().getValues();
 		if(Ext.isDefined(data.idActivo)){
 			model = Ext.create('HreRem.model.OfertaComercialActivo', {
@@ -759,7 +758,45 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				vinculoCaixaCodigo: bindRecord.vinculoCaixa,
+				fechaNacimientoConstitucion:bindRecord.fechaNacimientoConstitucion,
+	            paisNacimientoCompradorCodigo:bindRecord.paisNacimientoCompradorCodigo,
+	            localidadNacimientoCompradorCodigo:bindRecord.localidadNacimientoCompradorCodigo,
+	            codigoPais:bindRecord.codigoPais,
+	            provinciaCodigo:bindRecord.provinciaCodigo,
+	            municipioCodigo:bindRecord.municipioCodigo,
+	            direccion:bindRecord.direccionTodos,
+	            prp:bindRecord.prp,
+	            tipologivaVentaCod:bindRecord.tipologivaVentaCod,
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
+	            provinciaNacimiento:bindRecord.provinciaNacimiento,
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion,
+	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
+	            emailNacimiento:bindRecord.emailNacimiento,
+	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2,
+	            checkSubasta:bindRecord.checkSubasta,
+	            codTipoDocumentoRte:bindRecord.codTipoDocumentoRte,
+	            numDocumentoRte:bindRecord.numDocumentoRte,
+	            nombreRazonSocialRte:bindRecord.nombreRazonSocialRte,
+	            apellidosRte:bindRecord.apellidosRte,
+	            paisNacimientoRepresentanteCodigo:bindRecord.paisNacimientoRepresentanteCodigo,
+	            provinciaNacimientoRepresentanteCodigo:bindRecord.provinciaNacimientoRepresentanteCodigo,
+	            localidadNacimientoRepresentanteCodigo:bindRecord.localidadNacimientoRepresentanteCodigo,
+	            fechaNacimientoRepresentante:bindRecord.fechaNacimientoRepresentante,
+	            codigoPaisRte:bindRecord.codigoPaisRte,
+	            provinciaRteCodigo:bindRecord.provinciaRteCodigo,
+	            municipioRteCodigo:bindRecord.municipioRteCodigo,
+	            codigoPostalRte:bindRecord.codigoPostalRte,
+	            direccionRte:bindRecord.direccionRte,
+	            emailRte:bindRecord.emailRte,
+	            telefono1Rte:bindRecord.telefono1Rte,
+	            telefono2Rte:bindRecord.telefono2Rte,
+	            representantePrp:bindRecord.representantePrp,
+	            sociedadEmpleadoCaixa:bindRecord.sociedadEmpleadoCaixa,
+	            oficinaEmpleadoCaixa:bindRecord.oficinaEmpleadoCaixa,
+	            antiguoDeudor:bindRecord.antiguoDeudor
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -783,12 +820,49 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
 				numOferPrincipal: bindRecord.numOferPrincipal,
-				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal,
+				vinculoCaixaCodigo: bindRecord.vinculoCaixa,
+				fechaNacimientoConstitucion:bindRecord.fechaNacimientoConstitucion,
+	            paisNacimientoCompradorCodigo:bindRecord.paisNacimientoCompradorCodigo,
+	            localidadNacimientoCompradorCodigo:bindRecord.localidadNacimientoCompradorCodigo,
+	            codigoPais:bindRecord.codigoPais,
+	            provinciaCodigo:bindRecord.provinciaCodigo,
+	            municipioCodigo:bindRecord.municipioCodigo,
+	            direccion:bindRecord.direccionTodos,
+	            prp:bindRecord.prp,
+	            localidadNacimientoCompradorDescripcion:bindRecord.localidadNacimientoCompradorDescripcion,
+	            tipologivaVentaCod:bindRecord.tipologivaVentaCod,
+	            provinciaNacimiento:bindRecord.provinciaNacimiento,
+	            provinciaNacimientoDescripcion:bindRecord.provinciaNacimientoDescripcion,
+	            codigoPostalNacimiento:bindRecord.codigoPostalNacimiento,
+	            emailNacimiento:bindRecord.emailNacimiento,
+	            telefonoNacimiento1:bindRecord.telefonoNacimiento1,
+	            telefonoNacimiento2:bindRecord.telefonoNacimiento2,
+	            checkSubasta:bindRecord.checkSubasta,
+	            codTipoDocumentoRte:bindRecord.codTipoDocumentoRte,
+	            numDocumentoRte:bindRecord.numDocumentoRte,
+	            nombreRazonSocialRte:bindRecord.nombreRazonSocialRte,
+	            apellidosRte:bindRecord.apellidosRte,
+	            paisNacimientoRepresentanteCodigo:bindRecord.paisNacimientoRepresentanteCodigo,
+	            provinciaNacimientoRepresentanteCodigo:bindRecord.provinciaNacimientoRepresentanteCodigo,
+	            localidadNacimientoRepresentanteCodigo:bindRecord.localidadNacimientoRepresentanteCodigo,
+	            fechaNacimientoRepresentante:bindRecord.fechaNacimientoRepresentante,
+	            codigoPaisRte:bindRecord.codigoPaisRte,
+	            provinciaRteCodigo:bindRecord.provinciaRteCodigo,
+	            municipioRteCodigo:bindRecord.municipioRteCodigo,
+	            codigoPostalRte:bindRecord.codigoPostalRte,
+	            direccionRte:bindRecord.direccionRte,
+	            emailRte:bindRecord.emailRte,
+	            telefono1Rte:bindRecord.telefono1Rte,
+	            telefono2Rte:bindRecord.telefono2Rte,
+	            representantePrp:bindRecord.representantePrp,
+	            sociedadEmpleadoCaixa:bindRecord.sociedadEmpleadoCaixa,
+	            oficinaEmpleadoCaixa:bindRecord.oficinaEmpleadoCaixa,
+	            antiguoDeudor:bindRecord.antiguoDeudor
 			});
 		}
-
+ 
 		me.getViewModel().set('oferta', model);
-
 		me.onSaveFormularioCompletoOferta(form, window);
 	}
 

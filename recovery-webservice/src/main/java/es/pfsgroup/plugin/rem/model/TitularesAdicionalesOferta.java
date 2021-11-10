@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,13 +15,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -31,6 +32,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -165,6 +167,72 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     
     @Column(name = "TIA_CODPOSTAL_RTE")
     private String codPostalRepresentante;
+
+	@Column(name = "TIA_C4C_ID")
+	private Long idC4c;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA")
+	private String idPersonaHaya;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
+	private InfoAdicionalPersona infoAdicionalPersona;
+    
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ADCOM_DOC_IDENT")
+    private AdjuntoComprador adcomIdDocumentoIdentificativo;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ADCOM_GDPR")
+    private AdjuntoComprador adcomIdDocumentoGDPR;
+
+    @Column(name = "FECHA_ACEP_GDPR")
+    private Date fechaAcepGdpr;
+
+    @Column(name = "TIA_FECHA_NACIMIENTO")
+    private Date fechaNacimiento;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID")
+	private Localidad localidadNacimiento;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID")
+    private DDPaises paisNacimiento;
+    
+    @Column(name = "TIA_FECHA_NACIMIENTO_REP")
+    private Date fechaNacimientoRep;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID_REP")
+	private Localidad localidadNacimientoRep;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID_REP")
+    private DDPaises paisNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID_REP")
+	private InfoAdicionalPersona infoAdicionalPersonaRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
+	@Column(name = "TIA_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TIA_ACEPTACION_OFERTA")
+    private DDSinSiNo aceptacionOferta;
     
     @Version   
 	private Long version;
@@ -463,4 +531,149 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public Long getVersion() {
 		return version;
 	}
+
+	public AdjuntoComprador getAdcomIdDocumentoIdentificativo() {
+		return adcomIdDocumentoIdentificativo;
+	}
+
+	public void setAdcomIdDocumentoIdentificativo(AdjuntoComprador adcomIdDocumentoIdentificativo) {
+		this.adcomIdDocumentoIdentificativo = adcomIdDocumentoIdentificativo;
+	}
+
+	public AdjuntoComprador getAdcomIdDocumentoGDPR() {
+		return adcomIdDocumentoGDPR;
+	}
+
+	public void setAdcomIdDocumentoGDPR(AdjuntoComprador adcomIdDocumentoGDPR) {
+		this.adcomIdDocumentoGDPR = adcomIdDocumentoGDPR;
+	}
+
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
+
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public Localidad getLocalidadNacimiento() {
+		return localidadNacimiento;
+	}
+
+	public void setLocalidadNacimiento(Localidad localidadNacimiento) {
+		this.localidadNacimiento = localidadNacimiento;
+	}
+
+	public DDPaises getPaisNacimiento() {
+		return paisNacimiento;
+	}
+
+	public void setPaisNacimiento(DDPaises paisNacimiento) {
+		this.paisNacimiento = paisNacimiento;
+	}
+
+	public Date getFechaNacimientoRep() {
+		return fechaNacimientoRep;
+	}
+
+	public void setFechaNacimientoRep(Date fechaNacimientoRep) {
+		this.fechaNacimientoRep = fechaNacimientoRep;
+	}
+
+	public Localidad getLocalidadNacimientoRep() {
+		return localidadNacimientoRep;
+	}
+
+	public void setLocalidadNacimientoRep(Localidad localidadNacimientoRep) {
+		this.localidadNacimientoRep = localidadNacimientoRep;
+	}
+
+	public DDPaises getPaisNacimientoRep() {
+		return paisNacimientoRep;
+	}
+
+	public void setPaisNacimientoRep(DDPaises paisNacimientoRep) {
+		this.paisNacimientoRep = paisNacimientoRep;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersonaRep() {
+		return infoAdicionalPersonaRep;
+	}
+
+	public void setInfoAdicionalPersonaRep(InfoAdicionalPersona infoAdicionalPersonaRep) {
+		this.infoAdicionalPersonaRep = infoAdicionalPersonaRep;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
+	
+	public DDSinSiNo getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+
+	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
+	}
+	
 }

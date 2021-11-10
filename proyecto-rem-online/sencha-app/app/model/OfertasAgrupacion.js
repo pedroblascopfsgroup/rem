@@ -60,6 +60,11 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     	{
     		name: 'gencat'
     	},
+		{
+			name:'fechaEntradaCRMSF',
+			type:'date',
+    		dateFormat: 'c'
+		},
     	{
     		name: 'ventaCartera',
 			type: 'boolean'

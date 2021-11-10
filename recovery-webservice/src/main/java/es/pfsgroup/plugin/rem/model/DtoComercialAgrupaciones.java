@@ -15,6 +15,11 @@ public class DtoComercialAgrupaciones extends WebDto {
 	private Boolean tramitable;
 	private String motivoAutorizacionTramitacionCodigo;
 	private String observacionesAutoTram;
+	private String necesidadArras;
+	private String canalVentaBc;
+	private String canalAlquilerBc;
+	private String codCartera;
+	private String codAgrupacion;
 
 
 	public Boolean getTramitable() {
@@ -34,5 +39,35 @@ public class DtoComercialAgrupaciones extends WebDto {
 	}
 	public void setObservacionesAutoTram(String observacionesAutoTram) {
 		this.observacionesAutoTram = observacionesAutoTram;
+	}
+	public String getNecesidadArras() {
+		return necesidadArras;
+	}
+	public void setNecesidadArras(String necesidadArras) {
+		this.necesidadArras = necesidadArras;
+	}
+	public String getCanalVentaBc() {
+		return canalVentaBc;
+	}
+	public void setCanalVentaBc(String canalVentaBc) {
+		this.canalVentaBc = canalVentaBc;
+	}
+	public String getCanalAlquilerBc() {
+		return canalAlquilerBc;
+	}
+	public void setCanalAlquilerBc(String canalAlquilerBc) {
+		this.canalAlquilerBc = canalAlquilerBc;
+	}
+	public String getCodCartera() {
+		return codCartera;
+	}
+	public void setCodCartera(String codCartera) {
+		this.codCartera = codCartera;
+	}
+	public String getCodAgrupacion() {
+		return codAgrupacion;
+	}
+	public void setCodAgrupacion(String codAgrupacion) {
+		this.codAgrupacion = codAgrupacion;
 	}
 }

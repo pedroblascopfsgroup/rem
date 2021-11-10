@@ -699,4 +699,13 @@ public class HQLBuilder {
 		this.stringBuilder.append(" GROUP BY "+groupBy);
 	}
 	
+	public static void addFiltroDifferentSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor) {
+		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
+			hqlBuilder.appendWhere(nombreCampo.concat(" <> :").concat(nombreParametro));
+			hqlBuilder.getParametros().putObject(nombreParametro, valor);
+		}
+	}
+
+	
 }

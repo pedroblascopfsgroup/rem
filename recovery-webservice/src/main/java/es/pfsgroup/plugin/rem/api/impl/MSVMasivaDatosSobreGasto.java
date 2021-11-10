@@ -46,6 +46,9 @@ public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
 	private final String NOMENGLATURA_ALBARAN_UNO = "Albarán";
 	private final String NOMENGLATURA_ALBARAN_DOS = "Albaran";
 	private final String NOMENGLATURA_ALBARAN_TRES = "A";
+	private final String NOMENCLATURA_PROVISION_UNO = "Pro";
+	private final String NOMENCLATURA_PROVISION_DOS = "Provisión";
+	private final String NOMENCLATURA_PROVISION_TRES = "Provision";
 	private String fechaConta;
 	private String fechaPago;
 
@@ -87,12 +90,15 @@ public class MSVMasivaDatosSobreGasto extends AbstractMSVActualizador {
 			}else if(NOMENGLATURA_PREFACTURA_UNO.equalsIgnoreCase(entidad) || NOMENGLATURA_PREFACTURA_DOS.equalsIgnoreCase(entidad)) {
 				Filter filter = genericDao.createFilter(FilterType.EQUALS, "prefactura.numPrefactura", Long.parseLong(exc.dameCelda(fila, COL_ID_GASTO)));
 				salvarGastos(filter,exc,fila);
-			}else {
+			}else if(NOMENGLATURA_ALBARAN_DOS.equalsIgnoreCase(entidad) || NOMENGLATURA_ALBARAN_UNO.equalsIgnoreCase(entidad) || NOMENGLATURA_ALBARAN_TRES.equalsIgnoreCase(entidad)) {
 				List<Prefactura> listaPrefactura = genericDao.getList(Prefactura.class, genericDao.createFilter(FilterType.EQUALS, "albaran.numAlbaran", Long.parseLong(exc.dameCelda(fila, COL_ID_GASTO))));
 				for (Prefactura prefactura : listaPrefactura) {
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "prefactura.numPrefactura", prefactura.getNumPrefactura());
 					salvarGastos(filter,exc,fila);
 				}
+			} else if (NOMENCLATURA_PROVISION_UNO.equalsIgnoreCase(entidad) || NOMENCLATURA_PROVISION_DOS.equalsIgnoreCase(entidad) || NOMENCLATURA_PROVISION_TRES.equalsIgnoreCase(entidad)) {
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "provision.numProvision", Long.parseLong(exc.dameCelda(fila, COL_ID_GASTO)));
+				salvarGastos(filter,exc,fila);
 			}
 			
 		} catch (Exception e) {

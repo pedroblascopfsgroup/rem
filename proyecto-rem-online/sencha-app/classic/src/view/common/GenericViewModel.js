@@ -562,6 +562,33 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadoAdecuacionSareb'}
 				}
-    		}
+    		},
+
+            comboTipoImpositivoItp: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'tipoImpositivoItp'}
+                }
+            },
+
+            comboTipoImpositivoIva: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'tipoImpositivoIva'}
+                }
+            },
+
+            comboImpuestoAdquisicion: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'impuestoAdquisicion'}
+                }
+            }
      }    
 });

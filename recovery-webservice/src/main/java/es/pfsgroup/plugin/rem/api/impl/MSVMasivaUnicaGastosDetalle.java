@@ -691,9 +691,12 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					
 					if(listaGastoProveedor != null && !listaGastoProveedor.isEmpty()) {
 						for (GastoProveedor gastoProveedor : listaGastoProveedor) {
-							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
-								gastoLineaDetalleApi.actualizarDiariosLbk(gastoProveedor.getId());
+							if (gastoProveedor.getPropietario() != null && gastoProveedor.getCartera() != null) {
+								if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+									gastoLineaDetalleApi.actualizarDiariosLbk(gastoProveedor.getId());
+								}
 							}
+							
 						}
 					}
 					

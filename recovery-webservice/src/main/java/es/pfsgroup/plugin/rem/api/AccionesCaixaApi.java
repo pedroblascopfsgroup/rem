@@ -36,15 +36,16 @@ public interface AccionesCaixaApi {
 
     void accionAprobarModTitulares(DtoOnlyExpedienteYOfertaCaixa dto);
 
-    void accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto);
+    @Transactional
+    void accionDevolverArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) throws ParseException;
 
-    void accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto);
+    void accionIncautarArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) throws ParseException;
 
     void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto);
 
     void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto);
 
-    void accionDevolArrasCont(DtoAccionRechazoCaixa dto);
+    void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionDevolReservaCont(DtoAccionRechazoCaixa dto);
 

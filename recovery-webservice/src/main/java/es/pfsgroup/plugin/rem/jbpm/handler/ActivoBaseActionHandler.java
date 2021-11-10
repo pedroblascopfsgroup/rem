@@ -760,6 +760,11 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				} else {
 					tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
 				}
+
+                if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera != null ? cartera.getCodigo() : null) && expedienteComercial.getFechaDevolucionEntregas() != null){
+                    tareaActivo.setUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username",ComercialUserAssigantionService.USUARIO_REST_BC_DEFAULT)));
+                }
+
 			}
 			
 		}else if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) 

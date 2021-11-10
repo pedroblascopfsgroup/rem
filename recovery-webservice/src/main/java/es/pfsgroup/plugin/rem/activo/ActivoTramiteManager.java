@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -21,6 +22,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -925,5 +927,89 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			return true;
 		}
 
+	}
+	
+	@Override 
+	public boolean isTramiteVenta(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_VENTA.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
+	
+	@Override 
+	public boolean isTramiteVentaApple(TipoProcedimiento procedimiento) {
+		boolean isTramiteVentaApple = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(procedimiento.getCodigo())) {
+			isTramiteVentaApple = true;
+		}
+		
+		return isTramiteVentaApple;
+	}
+	
+	@Override
+	public TareaExterna getTareaActivaByCodigoAndTramite(Long idTramite, String codigoTarea) {
+		TareaActivo tarAct = null;
+		TareaExterna tareaExterna = null;
+		
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		if(!Checks.esNulo(listaTareas)){
+			for(int i=0; i<listaTareas.size(); i++){
+				tarAct = listaTareas.get(i);
+				if(Checks.esNulo(tarAct.getFechaFin()) && tarAct.getTareaExterna() != null && tarAct.getTareaExterna().getTareaProcedimiento() != null
+					&& codigoTarea.equals(tarAct.getTareaExterna().getTareaProcedimiento().getCodigo())){
+					tareaExterna = tarAct.getTareaExterna();
+				}
+			}
+		}
+
+		return tareaExterna;
+	}
+	
+	@Override 
+	public boolean isTramiteAlquiler(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
+	
+	@Override 
+	public boolean isTramiteAlquilerNoComercial(TipoProcedimiento procedimiento) {
+		boolean isTramiteVenta = false;
+		
+		if(procedimiento != null && CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(procedimiento.getCodigo())) {
+			isTramiteVenta = true;
+		}
+		
+		return isTramiteVenta;
+	}
+	
+	@Override
+	public Set<TareaExterna> getTareasActivasByExpediente(ExpedienteComercial eco){
+		Trabajo trabajo = eco.getTrabajo();
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+		Set<TareaExterna> tareasActivas = tramite.getTareasExternasActivas();
+		
+		return tareasActivas;
+	}
+	
+	@Override
+	public TipoProcedimiento getTipoTramiteByExpediente(ExpedienteComercial eco){
+		Trabajo trabajo = eco.getTrabajo();
+		TipoProcedimiento tp = null;
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+		if(tramite != null) {
+			tp = tramite.getTipoTramite();
+		}
+		
+		return tp;
 	}
 }

@@ -205,6 +205,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name: 'numActivoUvem'
 									},
 									{
+										fieldLabel: HreRem.i18n('fieldlabel.id.activo.caixa'),
+						                name: 'numActivoCaixa'
+									},
+									{
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.divarian'),
 							        	labelWidth:	150,
 							        	name: 'numActivoDivarian'

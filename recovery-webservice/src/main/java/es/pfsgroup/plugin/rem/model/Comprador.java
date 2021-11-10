@@ -19,9 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -29,8 +27,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -149,6 +146,36 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="NOMBRE_CONYUGE_URSUS")
     private String nombreConyugeURSUS;
+    
+    @Column(name="COM_FECHA_NACIOCONST")
+    private Date fechaNacimientoConstitucion;
+    
+    @Column(name="COM_FORMA_JURIDICA")
+    private String formaJuridica;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_NAC_ID")
+	private Localidad localidadNacimientoComprador;
+    
+    @Column(name="COM_PRP")
+    private Boolean compradorPrp;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID")
+	private DDPaises paisNacimientoComprador;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
+	private InfoAdicionalPersona infoAdicionalPersona;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+
+	@Column(name = "COM_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
 
 	public Long getId() {
 		return id;
@@ -395,7 +422,69 @@ public class Comprador implements Serializable, Auditable {
 	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
 		this.nombreConyugeURSUS = nombreConyugeURSUS;
 	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public String getFormaJuridica() {
+		return formaJuridica;
+	}
+
+	public void setFormaJuridica(String formaJuridica) {
+		this.formaJuridica = formaJuridica;
+	}
+
+	public Localidad getLocalidadNacimientoComprador() {
+		return localidadNacimientoComprador;
+	}
+
+	public void setLocalidadNacimientoComprador(Localidad localidadNacimientoComprador) {
+		this.localidadNacimientoComprador = localidadNacimientoComprador;
+	}
+
+	public Boolean getCompradorPrp() {
+		return compradorPrp;
+	}
+
+	public void setCompradorPrp(Boolean compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public DDPaises getPaisNacimientoComprador() {
+		return paisNacimientoComprador;
+	}
+
+	public void setPaisNacimientoComprador(DDPaises paisNacimientoComprador) {
+		this.paisNacimientoComprador = paisNacimientoComprador;
+	}
+
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
 	
-	
-	
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
 }

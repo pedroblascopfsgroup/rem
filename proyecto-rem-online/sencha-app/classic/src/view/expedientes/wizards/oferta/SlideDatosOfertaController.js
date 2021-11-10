@@ -11,6 +11,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 			field.fireEvent('edit');
 			if(index == 0) field.focus(); 		
 		});
+		if(me.getView().isBankia){
+			me.getViewModel().getStore("comboTipoDocumento").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
 	},
 
 	onClickCancelar: function() {
@@ -153,7 +158,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
         var form = ventanaDetalle.getForm();
         if(form.isValid()){
             var valueDestComercial,destinoComercialActivo;
-
             if(wizard.oferta)
             {
                 if(ventanaDetalle.config.xtype.indexOf('slideadjuntardocumento') >= 0 ){
@@ -166,8 +170,25 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                     wizard.oferta.data.destinoComercialActivo = destinoComercialActivo;
                 }
             }
-
-            if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
+           
+		if(destinoComercialActivo === valueDestComercial 
+			|| destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"] 
+        	|| (destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"]) 
+        	|| (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){
+				if(wizard.lookupController().getView().getViewModel().get('isCarteraBankia')){
+	            	 var tipoComercializacionCodigo = wizard.down('[xtype=slidedatosoferta]').down('[name=tipoOferta]').value;
+	                 if(CONST.TIPOS_OFERTA["VENTA"] === tipoComercializacionCodigo){
+	                 	if(Ext.isEmpty(wizard.lookupController().getView().getViewModel().get('canalVentaBC').selection)){
+	     					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.venta.bc"));
+	     					return;
+	     				}
+	                 }else if(CONST.TIPOS_OFERTA["ALQUILER"] === tipoComercializacionCodigo){
+	                 	if(Ext.isEmpty(wizard.lookupController().getView().getViewModel().get('canalAlquilerBC').selection)){
+	     					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.alquiler.bc"));
+	     					return;
+	     				}
+	                 }
+            	}
             	if (me.view.up().lookupController().getViewModel().get('activo.isCarteraLiberbank') && valueDestComercial == "Venta"){
             		var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
         			var numOferta = form.findField('numOferPrincipal').value;
@@ -444,6 +465,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
             }else{
                 me.fireEvent("errorToast", HreRem.i18n("wizardOferta.operacion.ko.nueva.oferta")+valueDestComercial);
             }
+        } else {
+        	if(!Ext.isEmpty(form.findField('nombrePrescriptor')) && Ext.isEmpty(form.findField('nombrePrescriptor').value)){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.prescriptor"));
+        	}else{
+        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador"));
+        	}
         }
     },
     
@@ -507,6 +534,66 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		    	callback: function(options, success, response){
 				}  		     
 			});	 
+		},
+		onChangeComboProvincia: function(combo) {
+			var me = this,
+				form = me.getView(),
+				chainedCombo = form.lookupReference(combo.chainedReference);
+			
+			if (Ext.isEmpty(combo.getValue())) {
+				chainedCombo.clearValue();
+			}
+
+			chainedCombo.getStore().load({
+				params: {
+					codigoProvincia: combo.getValue()
+				},
+				callback: function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
+					}
+				}
+			});
+			
+			if (form.lookupReference(chainedCombo.chainedReference) != null) {
+				var chainedDos = form.lookupReference(chainedCombo.chainedReference);
+				if (!chainedDos.isDisabled()) {
+					chainedDos.clearValue();
+					chainedDos.getStore().removeAll();
+					chainedDos.setDisabled(true);
+				}
+			}
+		},
+		
+		getComboTipoOferta: function(combo){
+			var me = this;
+			combo.getStore().getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("activo.entidadPropietariaCodigo"),
+				'idActivo': me.getViewModel().get("activo.id"),
+				'idAgrupacion': combo.up("wizardBase").oferta.data.idAgrupacion
+			});
+					
+			combo.getStore().load({
+				callback : function(records, operation, success) {
+					if (!Ext.isEmpty(records) && records.length > 0) {
+						if (combo.selectFirst == true) {
+							combo.setSelection(1);
+						};
+						combo.setDisabled(false);
+					} else {
+						combo.setDisabled(true);
+					}
+				}
+			});
+			/*
+			combo.bindStore(storeTipoOferta);
+			
+			storeTipoOferta.getProxy().setExtraParams({
+				'codCartera' : me.getViewModel().get("oferta.entidadPropietariaCodigo")
+			});
+			*/
 		}
 
 });

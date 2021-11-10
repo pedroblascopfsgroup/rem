@@ -392,6 +392,9 @@ public class ExpedienteComercialAdapter {
 	public String uploadDocumento(WebFileItem webFileItem) throws Exception {
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
+		if (expedienteComercial == null) {
+			expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"numExpediente",Long.parseLong(webFileItem.getParameter("idEntidad"))));
+		}
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		List<Long> listaExpComercial = new ArrayList<Long>();
 		

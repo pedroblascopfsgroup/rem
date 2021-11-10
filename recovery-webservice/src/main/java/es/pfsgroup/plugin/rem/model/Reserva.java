@@ -128,7 +128,22 @@ public class Reserva implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MAA_ID")
-	private DDMotivoAmpliacionArras motivoAmpliacionArras;    
+	private DDMotivoAmpliacionArras motivoAmpliacionArras;
+
+	@Column(name="RES_FECHA_CONT_ARRAS")
+	private Date fechaContArras;
+    
+    @Column(name="RES_FECHA_PROR_PROP_ARRAS")
+    private Date fechaPropuestaProrrogaArras;
+    
+    @Column(name="RES_FECHA_COM_CLIENTE")
+    private Date fechaComunicacionCliente;
+    
+    @Column(name="RES_FECHA_COM_CLIENTE_RESC")
+    private Date fechaComunicacionClienteRescision;
+    
+    @Column(name="RES_FECHA_RESCISION")
+    private Date fechaFirmaRescision;
     
     @Version   
 	private Long version;
@@ -328,6 +343,45 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setMotivoAmpliacionArras(DDMotivoAmpliacionArras motivoAmpliacionArras) {
 		this.motivoAmpliacionArras = motivoAmpliacionArras;
+	}
+
+	public Date getFechaContArras() {
+		return fechaContArras;
+	}
+
+	public void setFechaContArras(Date fechaContArras) {
+		this.fechaContArras = fechaContArras;
+	}
+	public Date getFechaPropuestaProrrogaArras() {
+		return fechaPropuestaProrrogaArras;
+	}
+
+	public void setFechaPropuestaProrrogaArras(Date fechaPropuestaProrrogaArras) {
+		this.fechaPropuestaProrrogaArras = fechaPropuestaProrrogaArras;
+	}
+
+	public Date getFechaComunicacionCliente() {
+		return fechaComunicacionCliente;
+	}
+
+	public void setFechaComunicacionCliente(Date fechaComunicacionCliente) {
+		this.fechaComunicacionCliente = fechaComunicacionCliente;
+	}
+
+	public Date getFechaComunicacionClienteRescision() {
+		return fechaComunicacionClienteRescision;
+	}
+
+	public void setFechaComunicacionClienteRescision(Date fechaComunicacionClienteRescision) {
+		this.fechaComunicacionClienteRescision = fechaComunicacionClienteRescision;
+	}
+
+	public Date getFechaFirmaRescision() {
+		return fechaFirmaRescision;
+	}
+
+	public void setFechaFirmaRescision(Date fechaFirmaRescision) {
+		this.fechaFirmaRescision = fechaFirmaRescision;
 	} 
-   
+
 }

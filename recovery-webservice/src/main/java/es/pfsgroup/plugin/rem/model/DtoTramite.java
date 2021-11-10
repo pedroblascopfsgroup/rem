@@ -103,6 +103,14 @@ public class DtoTramite extends WebDto {
 	
 	private String codigoEstadoExpedienteComercial;
 	
+	private String codigoEstadoExpediente;
+	
+	private String codigoEstadoExpedienteBC;
+
+	private String fechaContabilizacion;
+
+	private String fechaContabilizacionPropietario;
+	
 	
 	
 	public Long getIdTramite() {
@@ -471,5 +479,37 @@ public class DtoTramite extends WebDto {
 
 	public void setCodigoEstadoExpedienteComercial(String codigoEstadoExpedienteComercial) {
 		this.codigoEstadoExpedienteComercial = codigoEstadoExpedienteComercial;
+	}
+
+	public String getCodigoEstadoExpediente() {
+		return codigoEstadoExpediente;
+	}
+
+	public void setCodigoEstadoExpediente(String codigoEstadoExpediente) {
+		this.codigoEstadoExpediente = codigoEstadoExpediente;
+	}
+
+	public String getCodigoEstadoExpedienteBC() {
+		return codigoEstadoExpedienteBC;
+	}
+
+	public void setCodigoEstadoExpedienteBC(String codigoEstadoExpedienteBC) {
+		this.codigoEstadoExpedienteBC = codigoEstadoExpedienteBC;
+	}
+
+	public String getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(String fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public String getFechaContabilizacionPropietario() {
+		return fechaContabilizacionPropietario;
+	}
+
+	public void setFechaContabilizacionPropietario(String fechaContabilizacionPropietario) {
+		this.fechaContabilizacionPropietario = fechaContabilizacionPropietario;
 	}
 }

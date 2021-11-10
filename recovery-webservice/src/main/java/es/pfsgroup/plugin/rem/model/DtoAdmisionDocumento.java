@@ -36,6 +36,7 @@ public class DtoAdmisionDocumento extends WebDto {
 	private String dataIdDocumento;
 	private String letraConsumo;
 	private String consumo;
+	private String letraEmisiones;
 	private String emision;
 	private String registro;
 	
@@ -242,6 +243,14 @@ public class DtoAdmisionDocumento extends WebDto {
 
 	public void setRegistro(String registro) {
 		this.registro = registro;
+	}
+
+	public String getLetraEmisiones() {
+		return letraEmisiones;
+	}
+
+	public void setLetraEmisiones(String letraEmisiones) {
+		this.letraEmisiones = letraEmisiones;
 	}
 
 	

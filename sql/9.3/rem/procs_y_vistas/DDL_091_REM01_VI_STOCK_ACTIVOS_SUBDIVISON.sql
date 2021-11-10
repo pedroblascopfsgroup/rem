@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200825
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5221
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos y subdivisiones.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -76,7 +77,7 @@ BEGIN
 		    NVL (VIV.VIV_NUM_PLANTAS_INTERIOR, 0)
 		)SUBD
 		INNER JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
-		INNER JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID';
+		LEFT JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID';
 
   	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
 

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 
@@ -52,6 +54,8 @@ public class DtoPropietario extends WebDto {
 	private String provinciaContactoCodigo;
 	private String localidadContactoCodigo;
 	private String descripcion;
+	private Integer anyoConcesion;	
+	private Date fechaFinConcesion;
 	
 	
 	public long getId() {
@@ -276,6 +280,18 @@ public class DtoPropietario extends WebDto {
 	}
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+	public Integer getAnyoConcesion() {
+		return anyoConcesion;
+	}
+	public void setAnyoConcesion(Integer anyoConcesion) {
+		this.anyoConcesion = anyoConcesion;
+	}
+	public Date getFechaFinConcesion() {
+		return fechaFinConcesion;
+	}
+	public void setFechaFinConcesion(Date fechaFinConcesion) {
+		this.fechaFinConcesion = fechaFinConcesion;
 	}
 	
 	

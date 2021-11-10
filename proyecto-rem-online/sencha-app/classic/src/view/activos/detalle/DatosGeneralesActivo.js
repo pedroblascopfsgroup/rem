@@ -157,6 +157,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']); 
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'suministrosactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_SUMINISTROS']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informefiscalactivo', ocultarBotonesEdicion:true })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 	    }
 
     	me.addPlugin({ptype: 'lazyitems', items: items});

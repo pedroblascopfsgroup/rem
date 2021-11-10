@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.admision.exception.AdmisionException;
 import es.pfsgroup.plugin.rem.api.AdmisionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoAgendaRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionRevisionTitulo;
@@ -345,6 +346,8 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 			beanUtilNotNull.copyProperty(dto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
 		}
 		beanUtilNotNull.copyProperty(dto, "subtipoTituloCodigo", getCode(activo.getSubtipoTitulo()));
+		beanUtilNotNull.copyProperty(dto, "subtipoTituloDescripcion", activo.getSubtipoTitulo().getDescripcion());
+		
 		if(activo.getTipoTitulo() != null) {
 			beanUtilNotNull.copyProperty(dto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
 		}
@@ -364,7 +367,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		}
 		if(revisionTitulo.getSubtipoTitActRef() != null) {
 			beanUtilNotNull.copyProperty(dto, "subtipoTituloActivoRef", revisionTitulo.getSubtipoTitActRef().getDescripcion());	
-		}
+		}		
 		
 		return dto;
 	}

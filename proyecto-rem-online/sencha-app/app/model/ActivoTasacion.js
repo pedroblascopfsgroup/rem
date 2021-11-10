@@ -151,6 +151,12 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
 			{
     			name:'externoBbva'
+    		},
+    		{
+    		    name:'numGastoHaya'
+    		},
+    		{
+    		    name:'idGasto'
     		}
     ],
     

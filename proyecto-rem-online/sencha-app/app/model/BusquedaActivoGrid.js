@@ -109,6 +109,9 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
           		name:'numActivoUvem'
         	},
 			{
+          		name:'numActivoCaixa'
+        	},
+			{
           		name:'numActivoDivarian'
         	},
 			{

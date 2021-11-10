@@ -101,7 +101,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!visibilidadPestanyaDocumentos}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_DOCUMENTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
-		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'}});
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionagrupacion', /*bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'},*/ funPermEdition: ['EDITAR_TAB_DATOS_PUBLICACION']})}, ['TAB_DATOS_PUBLICACION']),
+//		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!habilitarPestanyaDatosPublicacionAgrupacion}'}});
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
  
         me.addPlugin({ptype: 'lazyitems', items: items});
@@ -133,13 +134,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 			//Se comprueba si es de tipo proyecto
 			var agrupacionProyecto = false;
 			var agrupacionPromocionAlquiler = false;
+			var agrupacionesCaixa = false;
 			var tipoAgrupacion =  me.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
+			var tipoCartera =  me.lookupController().getViewModel().get('agrupacionficha.codigoCartera');
 	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 	     		agrupacionProyecto = true;
 	     	}
 	     	else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
 	     		agrupacionPromocionAlquiler = true;
-	     	}
+	     	} else if (tipoCartera == CONST.CARTERA['BANKIA'] && (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'] 
+	     				|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
+	     		agrupacionesCaixa = true;
+			}
 				// Si la pestaña recibida no tiene asignadas funciones de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
 		    		editionEnabled();
@@ -163,7 +170,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 				    	else{
 						    $AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
 						}
-			    	}
+			    	} else if (agrupacionesCaixa) {
+			    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+					}
 			    	else{
 					    $AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 					}

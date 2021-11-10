@@ -11,6 +11,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 
 @Service("agrupacionAvisoRestringidaSinPrincipal")
@@ -26,7 +27,9 @@ public class AgrupacionAvisoRestringidaSinPrincipal implements AgrupacionAvisado
 		
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if (agrupacion.getTipoAgrupacion() != null && agrupacion.getTipoAgrupacion().getId() == 2) {
+		if (agrupacion.getTipoAgrupacion() != null && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
 			
 			//Long principal = agrupacionApi.haveActivoPrincipal(agrupacion.getId());
 			

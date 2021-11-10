@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
@@ -82,16 +83,20 @@ import es.pfsgroup.plugin.rem.model.DtoTestigosOpcionales;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaCaixa;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VEsCondicionado;
+import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
@@ -1123,7 +1128,9 @@ public interface ActivoApi {
 	 */
 	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
 
-	/**
+    List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpedienteCaixa();
+
+    /**
 	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
 	 * @param idProveedor
 	 * @return
@@ -1452,16 +1459,35 @@ public interface ActivoApi {
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 	
+
+	//Método que obtiene un archivo de ofertantes
+	FileItem getFileItemOfertante(DtoAdjunto dtoAdjunto, AdjuntoComprador adjuntoComprador);
+
 	List<DtoHistoricoOcupadoTitulo> getListHistoricoOcupadoTitulo(Long idActivo);
+
 	public void updateHonorarios (Activo activo, List<ActivoOferta> listaActivoOfertas);
-	
+
 	public Page getPublicacionGrid(DtoPublicacionGridFilter dto);
+
+	public boolean isIfNecesarioActivo(Activo activo);
+
+	public void rellenarIfNecesario(Activo activo);
+
+	public List<DDDistritoCaixa> getComboTipoDistritoByCodPostal(String codPostal);
 
 	public VSinInformeAprobadoRem getSinInformeAprobadoREM(Long idActivo);
 	
+	List<VGridDescuentoColectivos> getDescuentoColectivos(Long id) throws Exception;
+
 	public List<ActivoTrabajo> getActivoTrabajos(Long idActivo);
+	
+	List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long id);
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
 	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
+	
+    Page findTasaciones(DtoFiltroTasaciones dto);
+
+    void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 }

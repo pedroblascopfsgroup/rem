@@ -15,6 +15,21 @@ Ext.define('HreRem.model.ComercialAgrupacion', {
         		},
         		{
         			name: 'observacionesAutoTram'
+        		},
+        		{
+        			name: 'necesidadArras'
+        		},
+        		{
+        			name: 'canalVentaBc'
+        		},
+        		{
+        			name: 'canalAlquilerBc'
+        		},
+        		{
+        			name: 'codCartera'
+        		},
+        		{
+        			name: 'codAgrupacion'
         		}
     ],
     

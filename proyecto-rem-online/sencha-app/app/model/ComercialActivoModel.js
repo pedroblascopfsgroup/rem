@@ -88,6 +88,91 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'activoObraNuevaComercializacionFecha',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name: 'necesidadIfActivo',
+			type: 'boolean'
+		},
+		{
+			name: 'necesidadArras',
+			type: 'boolean'
+		},
+		{
+			name: 'motivosNecesidadArras'
+		},
+		{
+			name: 'estadoComercialVentaCodigo'
+		},
+		{
+			name: 'estadoComercialVentaDescripcion'
+		},
+		{
+			name: 'estadoComercialAlquilerCodigo'
+		},
+		{
+			name: 'estadoComercialAlquilerDescripcion'
+		},
+		{
+			name: 'fechaEstadoComercialVenta',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'fechaEstadoComercialAlquiler',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'canalPublicacionVentaCodigo'
+		},
+		{
+			name: 'canalPublicacionAlquilerCodigo'
+		},
+		{
+			name: 'tributacionPropuestaClienteExentoIvaCod'
+		},
+		{
+			name: 'tributacionPropuestaClienteExentoIvaDesc'
+		},
+		{
+			name: 'tributacionPropuestaVentaCod'
+		},
+		{
+			name: 'tributacionPropuestaVentaDesc'
+		},
+		{
+			name: 'carteraConcentrada',
+			type: 'boolean'
+		},
+		{
+			name: 'activoAAMM',
+			type: 'boolean'
+		},
+		{
+			name: 'activoPromocionesEstrategicas',
+			type: 'boolean'
+		},
+		{
+			name: 'fechaInicioConcurrencia',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'fechaFinConcurrencia',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'campanyaVenta'
+		},
+		{
+			name:'campanyaAlquiler'
+		},
+		{
+			name: 'tipoTransmisionCodigo'
+		},
+		{
+			name: 'tipoTransmisionDescripcion'
 		}
     ],
     

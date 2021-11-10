@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 
 @Component
@@ -59,14 +61,17 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 				genericDao.createFilter(FilterType.EQUALS, "expediente.id",expediente.getId()));
 
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_FINANCIACION))) {
+			Filter solFinanciacion = null;
 			if (exc.dameCelda(fila, COL_FINANCIACION).trim().equals("@")) {
 				coe.setSolicitaFinanciacion(null);
 				coe.setEntidadFinanciera(null);
 			} else if (NO.equals(exc.dameCelda(fila, COL_FINANCIACION))) {
-				coe.setSolicitaFinanciacion(0);
+				solFinanciacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "02");
+				
 				coe.setEntidadFinanciera(null);
 			} else {
-				coe.setSolicitaFinanciacion(1);
+				solFinanciacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "01");
+				
 				if (!Checks.esNulo(exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA))) {
 					DDEntidadFinanciera entidadFinanciera = genericDao.get(DDEntidadFinanciera.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -74,6 +79,11 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 					coe.setEntidadFinanciera(entidadFinanciera);
 				}
 			}
+			if (!Checks.esNulo(solFinanciacion)) {
+				DDSnsSiNoNosabe sns = genericDao.get(DDSnsSiNoNosabe.class,solFinanciacion);
+				coe.setSolicitaFinanciacion(sns);
+			}
+			
 		}
 		
 		String fechaPosPrevista = exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA);

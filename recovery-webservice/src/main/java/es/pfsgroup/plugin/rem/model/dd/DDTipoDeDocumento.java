@@ -62,6 +62,9 @@ private static final long serialVersionUID = 1L;
 	    
 	@Column(name = "DD_TDI_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
+	
+	@Column(name = "DD_TDI_CODIGO_C4C")   
+	private String codigoC4C;	  
 
 	@Version   
 	private Long version;
@@ -115,6 +118,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoC4C() {
+		return codigoC4C;
+	}
+
+	public void setCodigoC4C(String codigoC4C) {
+		this.codigoC4C = codigoC4C;
 	}
 	
 	

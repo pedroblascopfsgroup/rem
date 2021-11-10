@@ -84,6 +84,7 @@ public interface GastoLineaDetalleApi {
 	List<VElementosLineaDetalle> getTodosElementosAfectados (Long idLinea);
 
 	List<Activo> devolverActivoDePromocionesDeLineasDeGasto(Long idLineaDetalleGasto);
-	
+
+    boolean asignarTasacionesGastos(Long idGasto, Long[] tasaciones);
 }
 

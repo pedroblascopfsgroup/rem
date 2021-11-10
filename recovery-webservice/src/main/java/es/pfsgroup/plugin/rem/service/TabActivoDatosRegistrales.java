@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
@@ -75,8 +77,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -146,6 +150,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_PARCELA     = "msg.error.superficie.parcela.UAs";
+	private static final String MENSAJE_ERROR_SUPERFICIE_PARCELA_UTIL     = "msg.error.superficie.util.parcela.UAs";
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -176,7 +181,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if (activo.getInfoRegistral() != null && !esUA) {
 			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
-		}	
+		}
+
+		if(activo.getInfoRegistral() != null){
+			String nomReg = activo.getInfoRegistral().getRegNombreRegistro() != null ? activo.getInfoRegistral().getRegNombreRegistro() : "";
+			String numReg = activo.getInfoRegistral().getRegNumRegistro() != null ? activo.getInfoRegistral().getRegNumRegistro() : "";
+			activoDto.setNombreRegistro(nomReg + " " + numReg);
+		}
 		
 		if(esUA && !Checks.esNulo(activoMatriz)){
 			if (!Checks.esNulo(activoMatriz.getInfoRegistral())) {
@@ -256,6 +267,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getSuperficieUtil())) {
 					BeanUtils.copyProperty(activoDto, "superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
+				}
+				if (activo.getInfoRegistral() != null  && activo.getInfoRegistral().getSuperficieParcelaUtil() != null) {
+					activoDto.setSuperficieParcelaUtil(activo.getInfoRegistral().getSuperficieParcelaUtil().toString());
 				}
 				
 				if (!Checks.esNulo(activo.getTipoTitulo())) {
@@ -545,6 +559,32 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion() != null) {
 			activoDto.setFechaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
+		}
+			
+		Filter filtroInfoRegistral = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoInfoRegistral activoInfoRegistral = genericDao.get(ActivoInfoRegistral.class, filtroInfoRegistral);
+		
+		if (activoInfoRegistral != null) {
+			if (activoInfoRegistral.getSuperficieBajoRasante() != null) {
+				activoDto.setSuperficieBajoRasante(activoInfoRegistral.getSuperficieBajoRasante());
+			}
+			if (activoInfoRegistral.getSuperficieSobreRasante() != null) {
+				activoDto.setSuperficieSobreRasante(activoInfoRegistral.getSuperficieSobreRasante());
+			}
+		}
+		
+		Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+		
+		if (activoCaixa != null) {
+			if (activoCaixa.getSociedadOrigen() != null) {
+				activoDto.setSociedadOrigenCodigo(activoCaixa.getSociedadOrigen().getCodigo());
+				activoDto.setSociedadOrigenDescripcion(activoCaixa.getSociedadOrigen().getDescripcion());
+			}
+			if (activoCaixa.getBancoOrigen() != null) {
+				activoDto.setBancoOrigenCodigo(activoCaixa.getBancoOrigen().getCodigo());
+				activoDto.setBancoOrigenDescripcion(activoCaixa.getBancoOrigen().getDescripcion());
+			}
 		}
 		
 		return activoDto;
@@ -1073,6 +1113,37 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activo.getSituacionPosesoria().setFechaTomaPosesion(dto.getFechaPosesion());
 			}
 			
+			Filter filtroInfoRegistral = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoInfoRegistral activoInfoRegistral = genericDao.get(ActivoInfoRegistral.class, filtroInfoRegistral);
+			
+			if (activoInfoRegistral != null) {
+				if (dto.getSuperficieBajoRasante() != null) {
+					activoInfoRegistral.setSuperficieBajoRasante(dto.getSuperficieBajoRasante());
+				}
+				if (dto.getSuperficieSobreRasante() != null) {
+					activoInfoRegistral.setSuperficieSobreRasante(dto.getSuperficieSobreRasante());
+				}
+			}
+			
+			Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
+			
+			if (activoCaixa != null) {
+				if (dto.getSociedadOrigenCodigo() != null) {
+					Filter filtroSociedadOrigen = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getSociedadOrigenCodigo());
+					DDSociedadOrigen sociedadOrigen = genericDao.get(DDSociedadOrigen.class, filtroSociedadOrigen);
+					activoCaixa.setSociedadOrigen(sociedadOrigen);
+				}
+				if (dto.getBancoOrigenCodigo() != null) {
+					Filter filtroBancoOrigen = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							dto.getBancoOrigenCodigo());
+					DDBancoOrigen bancoOrigen = genericDao.get(DDBancoOrigen.class, filtroBancoOrigen);
+					activoCaixa.setBancoOrigen(bancoOrigen);
+				}
+			}
+			
+			
 		} catch (JsonViewerException jvex) {
 			throw jvex;
 		} catch (IllegalAccessException e) {
@@ -1173,11 +1244,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		float superficie_util = 0;
 		float superficie_repercusion = 0;
 		float superficie_parcela = 0;
+		float superficie_parcela_util = 0;
 		
 		float superficieConstruidaActivoMatriz = 0;
 		float superficieUtilActivoMatriz = 0;
 		float superficieElementosComunesActivoMatriz = 0;
 		float superficieParcelaActivoMatriz = 0;
+		float superficieParcelaUtilActivoMatriz = 0;
 		
 		for (Activo ua : listaUAs) {
 			if (isUA) {
@@ -1193,6 +1266,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					}
 					if(!Checks.esNulo(activoDto.getSuperficieParcela())) {
 						ua.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
+					}
+					if (activoDto.getSuperficieParcelaUtil() != null) {
+						ua.getInfoRegistral().setSuperficieParcelaUtil(Float.valueOf(activoDto.getSuperficieParcelaUtil()));
 					}
 				}
 			}
@@ -1211,6 +1287,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if(!Checks.esNulo(ua.getInfoRegistral().getSuperficieElementosComunes())) {
 					superficie_parcela += ua.getInfoRegistral().getSuperficieParcela();
 				}
+				if (ua.getInfoRegistral().getSuperficieParcelaUtil() != null) {
+					superficie_parcela_util += ua.getInfoRegistral().getSuperficieUtil();
+				}
 			}
 		}
 		if(!isUA) {
@@ -1225,6 +1304,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			if(!Checks.esNulo(activoDto.getSuperficieParcela())) {
 				activoMatriz.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
+			}
+			if (activoDto.getSuperficieParcelaUtil() != null) {
+				activoMatriz.getInfoRegistral().setSuperficieParcelaUtil(Float.valueOf(activoDto.getSuperficieParcelaUtil()));
 			}
 		}
 		if(!Checks.esNulo(activoMatriz)) {
@@ -1242,6 +1324,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieParcela())) {
 				superficieParcelaActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieParcela();
 			}
+			if (activoMatriz.getInfoRegistral().getSuperficieParcelaUtil() != null) {
+				superficieParcelaUtilActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieParcelaUtil();
+			}
 			if(superficie_construida > superficieConstruidaActivoMatriz) {
 				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA));
 			}else if(superficie_util > superficieUtilActivoMatriz) {
@@ -1250,6 +1335,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_REPERCUSION));
 			}else if(superficie_parcela > superficieParcelaActivoMatriz) {
 				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
+			}else if(superficie_parcela_util > superficieParcelaUtilActivoMatriz) {
+				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA_UTIL));
 			}
 		}
 

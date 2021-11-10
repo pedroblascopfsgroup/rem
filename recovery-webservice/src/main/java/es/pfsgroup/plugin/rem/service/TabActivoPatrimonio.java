@@ -163,6 +163,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoPatrimonioDto.setCesionUsoDescripcion( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getDescripcion());
 			activoPatrimonioDto.setTramiteAlquilerSocial(Checks.esNulo(activoP.getTramiteAlquilerSocial()) ?  DDSinSiNo.CODIGO_NO: activoP.getTramiteAlquilerSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			
+			activoPatrimonioDto.setAcuerdoPago(Checks.esNulo(activoP.getAcuerdopago()) ? DDSinSiNo.CODIGO_NO: activoP.getAcuerdopago().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
+			activoPatrimonioDto.setMoroso(Checks.esNulo(activoP.getMoroso()) ? DDSinSiNo.CODIGO_NO: activoP.getMoroso().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
+			activoPatrimonioDto.setActivoPromoEstrategico(Checks.esNulo(activoP.getActivoPromoEstrategico()) ? DDSinSiNo.CODIGO_NO: activoP.getActivoPromoEstrategico().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
+			
 		}
 		
 		if(!Checks.esNulo(activo))
@@ -187,6 +191,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoPatrimonioDto.setIsCarteraCerberusDivarianOBBVA(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
 					|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()));
+			
+			activoPatrimonioDto.setIsCarteraTitulizada(DDCartera.CODIGO_CARTERA_TITULIZADA.equals(activo.getCartera().getCodigo()));
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
@@ -446,6 +452,18 @@ public class TabActivoPatrimonio implements TabActivoService {
 				perimetroActivo.setAplicaComercializar(0);
 			}	
 			activoPatrimonio.setTramiteAlquilerSocial(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial()));
+		}
+		
+		if (activoPatrimonioDto.getAcuerdoPago() != null) {
+			activoPatrimonio.setAcuerdoPago(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getAcuerdoPago()));			
+		}
+		
+		if (activoPatrimonioDto.getMoroso() != null) {
+			activoPatrimonio.setMoroso(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getMoroso()));
+		}
+		
+		if (activoPatrimonioDto.getActivoPromoEstrategico() != null) {
+			activoPatrimonio.setActivoPromoEstrategico(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getActivoPromoEstrategico()));
 		}
 
 		activoPatrimonioDao.save(activoPatrimonio);

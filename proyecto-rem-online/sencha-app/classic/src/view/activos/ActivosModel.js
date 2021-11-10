@@ -362,8 +362,44 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams:  {codSubcartera: '{comboSubcarteraRef.value}'}
 				}
 			},
+
+			comboPlanta: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'plantaEdificio'}
+					}
+			},
+
+			comboEscalera: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'escaleraEdificio'}
+					}
+			},
+
+			comboEstadoComercialVenta: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'estadoComercialVenta'} 
+					}
+			},
+
+			comboEstadoComercialAlquiler: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'estadoComercialAlquiler'} 
+					}
+			},
 			
-            comboGestionDnd: {
+			comboGestionDnd: {
 				model: 'HreRem.model.ComboBase',
 					proxy: {
 						type: 'uxproxy',

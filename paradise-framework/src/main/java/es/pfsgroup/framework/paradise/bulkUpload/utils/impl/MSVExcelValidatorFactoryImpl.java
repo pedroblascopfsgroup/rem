@@ -266,6 +266,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVValidatorCargaCamposAccesibilidad cargaCamposAccesibilidad;
+	
+	@Autowired
+	private MSVConfiguracionRecomendacionValidator msvConfigRecomendacion;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -453,6 +456,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return fechaTituloYposesion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PORCENTAJE_CONSTRUCCION.equals(codTipoOperacion)) {
 			return actualizarPorcentajeConstruccion;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(codTipoOperacion)) {
+			return msvConfigRecomendacion;
 		}
 
 		return null;

@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.controller.ResolucionComiteController;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceResolucionComite;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -413,6 +414,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 			} else {
 				unidadGestion = actPpal.getNumActivo();
 				cuerpo += "Activo: " + actPpal.getNumActivo() + ".\n";
+				if (!Checks.esNulo(actPpal.getNumActivoCaixa())) {
+					cuerpo += "Número del inmueble BC: " + actPpal.getNumActivoCaixa() + ".\n";
+				}
 			}
 			if (!Checks.esNulo(resol.getComite()) && !Checks.esNulo(resol.getComite().getDescripcion())) {
 				cuerpo += "Comité decisor: " + resol.getComite().getDescripcion() + ".\n";

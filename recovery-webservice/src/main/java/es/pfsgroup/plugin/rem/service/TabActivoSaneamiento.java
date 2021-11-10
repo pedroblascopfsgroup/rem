@@ -23,10 +23,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoFiscalidadAdquisicion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -45,6 +46,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoImpuestoCompra;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
@@ -388,6 +391,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 			if (actTituloAdicional.getFechaNotaSimple() != null) {
 				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
 			}
+			if (actTituloAdicional.getPlusvaliaComprador() != null) {
+				activoDto.setPlusvaliaComprador(actTituloAdicional.getPlusvaliaComprador());
+			}
+			if (actTituloAdicional.getFechaLiquidacionPlusvalia() != null) {
+				activoDto.setFechaLiquidacionPlusvalia(actTituloAdicional.getFechaLiquidacionPlusvalia());
+			}
 			
 			puedeEditar = false;
 			
@@ -409,7 +418,21 @@ public class TabActivoSaneamiento implements TabActivoService{
 		}else {
 			activoDto.setTieneTituloAdicional(0);
 		}
-			
+		
+		if (actTitulo != null) {
+			if (actTitulo.getFechaEstadoTitularidadActivoInmobiliario() != null) {
+				activoDto.setFechaEstadoTitularidadActivoInmobiliario(actTitulo.getFechaEstadoTitularidadActivoInmobiliario());
+			}
+		}
+		
+		Filter filtroActivoFiscalidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoFiscalidadAdquisicion activoFiscalidad = genericDao.get(ActivoFiscalidadAdquisicion.class, filtroActivoFiscalidad);
+		
+		if(activoDao.isCarteraCaixa(activo.getId())){
+			activoDto.setIsCarteraBankia(true);
+		}else {
+			activoDto.setIsCarteraBankia(false);
+		}
 				
 		 
 		return activoDto;
@@ -425,6 +448,8 @@ public class TabActivoSaneamiento implements TabActivoService{
 			ActivoTitulo  actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
 
 			ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
+			ActivoFiscalidadAdquisicion activoFiscalidad = genericDao.get(ActivoFiscalidadAdquisicion.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 
 			if(actTitulo == null) {
 				actTitulo = new ActivoTitulo();
@@ -467,6 +492,21 @@ public class TabActivoSaneamiento implements TabActivoService{
 			if(activoDto.getFechaRetiradaReg() != null) {
 				actTitulo.setFechaRetiradaReg(activoDto.getFechaRetiradaReg());
 			}
+			if(activoDto.getPlusvaliaComprador() != null) {
+				actTitulo.setPlusvaliaComprador(activoDto.getPlusvaliaComprador());
+			}
+		
+			if(activoDto.getFechaLiquidacionPlusvalia() != null) {
+				actTitulo.setFechaLiquidacionPlusvalia(activoDto.getFechaLiquidacionPlusvalia());
+			}
+			if (activoDto.getPlusvaliaComprador() != null) {
+				actTitulo.setPlusvaliaComprador(activoDto.getPlusvaliaComprador());
+			}
+			if (activoDto.getFechaLiquidacionPlusvalia() != null) {
+				actTitulo.setFechaLiquidacionPlusvalia(activoDto.getFechaLiquidacionPlusvalia());
+			} else {
+				actTitulo.setFechaLiquidacionPlusvalia(null);
+			}
 			
 			genericDao.save(ActivoTitulo.class, actTitulo);
 			
@@ -504,9 +544,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			genericDao.save(ActivoTituloAdicional.class, actTituloAdicional);
-			
-			
-			
 			
 		}
 

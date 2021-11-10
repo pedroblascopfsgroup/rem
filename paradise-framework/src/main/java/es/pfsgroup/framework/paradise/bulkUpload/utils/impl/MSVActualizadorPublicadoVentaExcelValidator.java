@@ -379,7 +379,7 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 
 		try {
 			for(i = 1; i < this.numFilasHoja; i++) {
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA) 
+				if ((particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) 
 					&&!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, 0)))){
 						listFilas.add(i);
 					}

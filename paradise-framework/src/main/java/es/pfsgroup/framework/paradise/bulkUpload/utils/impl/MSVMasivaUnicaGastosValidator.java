@@ -73,7 +73,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final String IRPF_PORCENTAJE_VACIO= "Si el campo 'IRPF Base' está informado, 'IRPF Porcentaje' no puede estar vacío.";
 	public static final String LBK_CLAVE_SUBCLAVE_VACIO= "Si el gasto es de Unicaja y el campo 'Retención garantía Base' está informado, los campos 'IRPF Clave' y 'IRPF Subclave' no pueden estar vacíos.";
 	public static final String PARTICIPACION_AL_CIEN_PORCIENTO= "Dentro de cada grupo la participación de cada elemento debe sumar un total de 100%.";
-	public static final String BANKIA_SOLO_UNO= "Si el gasto es de CaixaBank, solo podrá añadir uno por carga masiva";
 	
 	public static final String C_PAGO_CONEXION_SOLO_BANKIA= "El campo 'Check pago a conexión' solo se puede rellenar si el gasto es de CaixaBank";
 	public static final String NUM_CONEXION_SOLO_BANKIA= "El campo 'Número de conexión' solo se puede rellenar si el gasto es de CaixaBank";
@@ -260,7 +259,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(LBK_CLAVE_SUBCLAVE_VACIO, esLbkClaveSubclaveVacio(exc));
 			mapaErrores.put(PARTICIPACION_AL_CIEN_PORCIENTO, participacionSumaCien(exc));
 			mapaErrores.put(ELEMENTOS_PERTENECER_MISMA_CARTERA, elementoMismaCartera(exc));
-			mapaErrores.put(BANKIA_SOLO_UNO, bankiaMasDeUnaLinea(exc));
 			mapaErrores.put(C_PAGO_CONEXION_SOLO_BANKIA, campoSoloParaCarteraByCode(exc, COL_C_PAGO_CONEXION, COD_BANKIA));
 			mapaErrores.put(NUM_CONEXION_SOLO_BANKIA, campoSoloParaCarteraByCode(exc, COL_NUM_CONEXION, COD_BANKIA));
 			mapaErrores.put(F_CONEXION_SOLO_BANKIA, campoSoloParaCarteraByCode(exc, COL_F_CONEXION, COD_BANKIA));
@@ -333,7 +331,6 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(PARTICIPACION_SIN_ELEMENTO).isEmpty()
 					|| !mapaErrores.get(ELEMENTO_SIN_TIPO).isEmpty()
 					|| !mapaErrores.get(TIPO_SIN_ELEMENTO).isEmpty()
-					|| !mapaErrores.get(BANKIA_SOLO_UNO).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(EMISOR_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(IRPF_BASE_VACIA).isEmpty()

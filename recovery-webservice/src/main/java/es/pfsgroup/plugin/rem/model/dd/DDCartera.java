@@ -46,8 +46,11 @@ public class DDCartera implements Auditable, Dictionary {
 	public static final String CODIGO_CARTERA_JAIPUR = "09";
 	public static final String CODIGO_CARTERA_EGEO = "13";
 	public static final String CODIGO_CARTERA_BBVA = "16";
+	public static final String CODIGO_CAIXA = "03";
+	public static final String CODIGO_CARTERA_BFA = "17";
 	public static final String CODIGO_CARTERA_SIN_DEFINIR = "05";
 	public static final String CODIGO_CARTERA_OTRAS_CARTERAS = "04";
+	public static final String CODIGO_CARTERA_TITULIZADA = "18";
 		/**
 	 * 
 	 */
@@ -178,6 +181,15 @@ public class DDCartera implements Auditable, Dictionary {
 			isCarteraCerberus = true;
 		}
 		return isCarteraCerberus;
+	}
+	
+	public static boolean isBFA (DDCartera cartera) {
+		boolean is = false;
+		if(cartera != null && CODIGO_CARTERA_BFA.equals(cartera.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
 	}
 
 }

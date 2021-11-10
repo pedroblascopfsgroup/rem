@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.api.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,6 @@ import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -108,6 +103,12 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
+	
+	@Autowired
+	private TramiteVentaApi tramiteVentaApi;
+
+	@Autowired
+	private ReplicacionOfertasApi replicacionOfertasApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -227,6 +228,12 @@ public class AgendaController extends TareaController {
 				if(!esBulk || (esBulk && cumpleCondiciones)) {
 					
 					success = adapter.save(request.getParameterMap());
+
+					if(success){
+						String idTarea = adapter.getIdTareaFormParameterMap(request.getParameterMap());
+
+						replicacionOfertasApi.callReplicateOferta(Long.parseLong(idTarea), success);
+					}
 					
 					if(esBulk && cumpleCondiciones) {
 						bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
@@ -501,6 +508,7 @@ public class AgendaController extends TareaController {
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
 						}else if(CODIGO_T017.equals(codigo)) {
+							tramiteVentaApi.guardarEstadoAnulacionExpedienteBK(idExpediente);
 							salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 						}
 						

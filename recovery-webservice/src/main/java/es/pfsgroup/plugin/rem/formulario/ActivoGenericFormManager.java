@@ -93,6 +93,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	
 	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
 	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
+	public static final String CODIGO_T017 = "T017";
 	
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -240,7 +241,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 		            	
 		            	String codigoComite = null;
 						try {
-							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+							if (DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo()) 
+									&& !"T017".equals(tareaActivoApi.getByIdTareaExterna(tarea.getId()).getTramite().getTipoTramite().getCodigo())
+									&& !"T015".equals(tareaActivoApi.getByIdTareaExterna(tarea.getId()).getTramite().getTipoTramite().getCodigo())) {
+								codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+							}							
 						} catch (Exception e) {
 							e.printStackTrace();
 							throw e;
@@ -729,7 +734,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	
             	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto")) {
+            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto") || item.getNombre().equals("comiteSancionador")) {
             			
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
@@ -737,7 +742,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				if (!Checks.esNulo(expediente)){
             					if(trabajoApi.checkFormalizacion(tareaExterna) && !expedienteComercialApi.esOmega(tareaExterna)){
             						String codigoComite = null;
-			            			if(trabajoApi.checkBankia(tareaExterna)){
+			            			if(trabajoApi.checkBankia(tareaExterna) &&
+											!CODIGO_T017.equals(tareaActivoApi.getByIdTareaExterna(tareaExterna.getId()).getTramite().getTipoTramite().getCodigo())){
 										try {
 											if(!expediente.getOferta().getVentaDirecta()){
 												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());

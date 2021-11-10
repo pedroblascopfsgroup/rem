@@ -25,9 +25,9 @@ import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenerarFacturaVentaActivosApi;
+import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.ParamReportsApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -49,13 +49,16 @@ public class OperacionVentaController {
 		private ParamReportsApi paramReportsApi;
 
 		@Autowired
-		private ExpedienteComercialApi expedienteComercialManager;
+		private ExpedienteComercialApi expedienteComercialApi;
 
 		@Autowired
 		private ExcelReportGeneratorApi excelReportGeneratorApi;
 		
 		@Autowired
 		private GenerarFacturaVentaActivosApi facturaVentaApi;
+		
+		@Autowired
+		private GenerarPdfAprobacionOfertasApi pdfAprobacionOfertasApi;
 		
 		@Autowired
 		private ExcelReportGeneratorApi reportApi;
@@ -139,7 +142,7 @@ public class OperacionVentaController {
 				List<Object> dataSource = null;			
 				File fileSalidaTemporal = null;
 				
-				ExpedienteComercial expediente = expedienteComercialManager.findOneByNumExpediente(numExpediente);
+				ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
 				
 				Oferta oferta = null;
 				Activo activo = null;
@@ -194,7 +197,7 @@ public class OperacionVentaController {
 		@RequestMapping(method = RequestMethod.GET)
 		public void operacionVentaFacturaPDF(Long numExpediente, HttpServletRequest request, HttpServletResponse response) {
 			
-			ExpedienteComercial expediente = expedienteComercialManager.findOneByNumExpediente(numExpediente);
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
 			
 			try {
 				
@@ -204,5 +207,21 @@ public class OperacionVentaController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}	
+		}
+						
+		@RequestMapping(method = RequestMethod.GET)
+		public void generarPdfPropuestaAprobacionOferta(Long numExpediente, HttpServletRequest request, HttpServletResponse response) {
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(numExpediente);
+			Oferta oferta = expediente.getOferta();
+			
+			try {
+				File file = pdfAprobacionOfertasApi.getDocumentoPropuestaVenta(oferta);
+				reportApi.sendReport(file, response);
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			
 }

@@ -75,6 +75,7 @@ public class DtoActivoGridFilter extends WebDto {
 	private Long gestoria;
 	private String equipoGestion;
 	private String codPromocionBbva;
+	private String numActivoCaixa;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -498,6 +499,11 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setCodPromocionBbva(String codPromocionBbva) {
 		this.codPromocionBbva = codPromocionBbva;
 	}
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
+	}
 	
-
 }

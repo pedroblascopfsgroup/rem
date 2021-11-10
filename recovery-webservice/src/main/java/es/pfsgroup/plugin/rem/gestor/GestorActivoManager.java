@@ -60,6 +60,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public static final String USERNAME_GRUPO_CES_REMAINING = "grucoces1";
 	public static final String USERNAME_GRUPO_DIVARIAN = "grucodivarian";
 	public static final String USERNAME_GRUPO_BACKOFFICE_APPLE = "grusbackoffman";
+	public static final String USERNAME_GRUPO_BC_FOR = "grupobc03";
+	public static final String USERNAME_GRUPO_FOR = "gestformdivarian";
+	public static final String USERNAME_GRUPO_BOARDING = "gruboarding";
+	public static final String USERNAME_GRUPO_ACT = "grupgact";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -514,6 +518,27 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			return null;
 		}
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public Usuario getUsuarioByTareaCaixa(String codigoTarea){
+		Filter filtro = null;
+
+		if(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_PBC_CN.equals(codigoTarea)){
+
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_ACT);
+		}else if(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea)){
+
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BC_FOR);
+		}else if(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea)){
+
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BOARDING);
+		}
+
+		return filtro != null ? genericDao.get(Usuario.class, filtro) : null;
+	}
  	
  	@Override
  	@Transactional(readOnly = false)
@@ -574,19 +599,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			}
  		}
 		return null;
-	}  
- 	/* Se comenta por que no lo llama nadie ni llama a nada, pero se anyadio recientemente, por si hay necesidad de recuperarlo pronto
- 	@Override
- 	public List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos){
-		ArrayList<String> idGrupos = new ArrayList<String>();
-		List<ConfiguracionAccesoGestoria> config = new ArrayList<ConfiguracionAccesoGestoria>();
-		for (int i = 0 ; i < grupos.size(); i++) {
-			idGrupos.add(grupos.get(i).getUsuario().getId().toString());
-		}
-		if ( !idGrupos.isEmpty() )
-			config = gestorActivoDao.getConfiguracionGestorias(idGrupos);
-		return config;
- 	}*/
+	}
 
  	@Override
  	@Transactional(readOnly = false)

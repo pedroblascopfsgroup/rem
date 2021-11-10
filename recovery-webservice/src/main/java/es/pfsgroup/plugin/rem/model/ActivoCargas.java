@@ -108,6 +108,15 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name="CRG_RECOVERY_ID")
     private Long cargaRecoveryId;
     
+    @Column(name="CRG_FECHA_SOLICITUD_CARTA")
+    private Date fechaSolicitudCarta;
+    
+    @Column(name="CRG_FECHA_RECEPCION_CARTA")
+    private Date fechaRecepcionCarta;
+    
+    @Column(name="CRG_FECHA_PRESENTACION_CARTA")
+    private Date fechaPresentacionRpCarta;
+    
 	@Version   
 	private Long version;
 	
@@ -256,6 +265,30 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setCargaRecoveryId(Long cargaRecoveryId) {
 		this.cargaRecoveryId = cargaRecoveryId;
+	}
+
+	public Date getFechaSolicitudCarta() {
+		return fechaSolicitudCarta;
+	}
+
+	public void setFechaSolicitudCarta(Date fechaSolicitudCarta) {
+		this.fechaSolicitudCarta = fechaSolicitudCarta;
+	}
+
+	public Date getFechaRecepcionCarta() {
+		return fechaRecepcionCarta;
+	}
+
+	public void setFechaRecepcionCarta(Date fechaRecepcionCarta) {
+		this.fechaRecepcionCarta = fechaRecepcionCarta;
+	}
+
+	public Date getFechaPresentacionRpCarta() {
+		return fechaPresentacionRpCarta;
+	}
+
+	public void setFechaPresentacionRpCarta(Date fechaPresentacionRpCarta) {
+		this.fechaPresentacionRpCarta = fechaPresentacionRpCarta;
 	}
 	
 }

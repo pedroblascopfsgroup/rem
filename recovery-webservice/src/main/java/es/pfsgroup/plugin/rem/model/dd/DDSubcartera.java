@@ -41,7 +41,6 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_SAR_INMOBILIARIO = "04";
 	public static final String CODIGO_BAN_ASISTIDA = "05";
 	public static final String CODIGO_BAN_BH = "06";
-	public static final String CODIGO_BAN_BFA = "07";
 	public static final String CODIGO_BAN_BK = "08";
 	public static final String CODIGO_BAN_TITULIZADA = "09";
 	public static final String CODIGO_BANKIA_SOLVIA = "14";
@@ -49,6 +48,8 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_HYT_INMOBILIARIO = "16";
 	public static final String CODIGO_LIBERBANK_INMOBILIARIO = "18";
 	public static final String CODIGO_BANKIA_SAREB_PRE_IBERO = "19";
+	public static final String CODIGO_BAN_CAIXABANK = "160";
+	public static final String CODIGO_BAN_LIVING_CENTER = "161";
 	public static final String CODIGO_JAIPUR_INMOBILIARIO = "37";
 	public static final String CODIGO_JAIPUR_FINANCIERO = "38";
 	public static final String CODIGO_AGORA_INMOBILIARIO = "135";
@@ -75,9 +76,13 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_LBKN_LIBERBANK = "56";
 	public static final String CODIGO_LBKN_MOSCATA = "57";
 	public static final String CODIGO_LBKN_RETAMAR = "60";
+	public static final String CODIGO_BFA_BFA = "07";
 	public static final String CODIGO_MAPFRE = "66";
 	public static final String CODIGO_THIRD_PARTIES_1_TO_1 = "68";
 	public static final String CODIGO_JAGUAR = "70";
+	public static final String CODIGO_TITULIZADA_EDT = "162";
+	public static final String CODIGO_TITULIZADA_TDA = "163";
+	
 	
 	
 	

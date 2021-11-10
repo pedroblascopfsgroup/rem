@@ -16,6 +16,8 @@ import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -41,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -495,6 +498,18 @@ public class GenericAdapter {
 				
 				clienteNuevo.setId(idCliente);
 				clienteNuevo.setIdClienteWebcom(idClienteWebcom);
+				
+				
+				clienteNuevo.setFechaNacimiento(clienteOfertaOrigen.getFechaNacimiento());
+				clienteNuevo.setPaisNacimiento(clienteOfertaOrigen.getPaisNacimiento());
+				clienteNuevo.setLocalidadNacimiento(clienteOfertaOrigen.getLocalidadNacimiento());
+				clienteNuevo.setPais(clienteOfertaOrigen.getPais());
+				clienteNuevo.setProvincia(clienteOfertaOrigen.getProvincia());
+				clienteNuevo.setMunicipio(clienteOfertaOrigen.getMunicipio());
+				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setDireccion(clienteOfertaOrigen.getDireccion());
+				clienteNuevo.setInfoAdicionalPersona(clienteOfertaOrigen.getInfoAdicionalPersona());
+
 				
 				genericDao.update(ClienteComercial.class, clienteNuevo);
 				

@@ -109,4 +109,7 @@ public interface TareaActivoApi {
         
         public void terminarTarea(TareaExterna tareaExterna, Usuario usuarioLogado);
 
-    }
+		boolean getSiTareaCompletada(Long idTramite, String nombreTarea);
+
+    	public String getValorCampoTarea(String codTarea, Long numExpediente, String nombreCampo);
+}

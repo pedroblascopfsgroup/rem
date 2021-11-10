@@ -59,6 +59,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaInscripcionReg;
 	private Date fechaRetiradaReg;
 	private Date fechaNotaSimple;
+	private Double superficieBajoRasante;
+	private Double superficieSobreRasante;
 	
 	// Mapeados a mano
 	private String estadoDivHorizontalCodigo;
@@ -157,6 +159,14 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String origenAnteriorActivoBbvaDescripcion;
 	private Long idAsuntoRecAlaska;
 	private Date fechaPosesion;
+	
+	private String superficieParcelaUtil;
+	
+	private String sociedadOrigenCodigo;
+	private String sociedadOrigenDescripcion;
+	private String bancoOrigenCodigo;
+	private String bancoOrigenDescripcion;
+	private String nombreRegistro;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -916,5 +926,55 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setTipoPlazaDescripcion(String tipoPlazaDescripcion) {
 		this.tipoPlazaDescripcion = tipoPlazaDescripcion;
+	}
+	public Double getSuperficieBajoRasante() {
+		return superficieBajoRasante;
+	}
+	public void setSuperficieBajoRasante(Double superficieBajoRasante) {
+		this.superficieBajoRasante = superficieBajoRasante;
+	}
+	public Double getSuperficieSobreRasante() {
+		return superficieSobreRasante;
+	}
+	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
+		this.superficieSobreRasante = superficieSobreRasante;
+	}
+	public String getSuperficieParcelaUtil() {
+		return superficieParcelaUtil;
+	}
+	public void setSuperficieParcelaUtil(String superficieParcelaUtil) {
+		this.superficieParcelaUtil = superficieParcelaUtil;
+	}
+	public String getSociedadOrigenCodigo() {
+		return sociedadOrigenCodigo;
+	}
+	public void setSociedadOrigenCodigo(String sociedadOrigenCodigo) {
+		this.sociedadOrigenCodigo = sociedadOrigenCodigo;
+	}
+	public String getSociedadOrigenDescripcion() {
+		return sociedadOrigenDescripcion;
+	}
+	public void setSociedadOrigenDescripcion(String sociedadOrigenDescripcion) {
+		this.sociedadOrigenDescripcion = sociedadOrigenDescripcion;
+	}
+	public String getBancoOrigenCodigo() {
+		return bancoOrigenCodigo;
+	}
+	public void setBancoOrigenCodigo(String bancoOrigenCodigo) {
+		this.bancoOrigenCodigo = bancoOrigenCodigo;
+	}
+	public String getBancoOrigenDescripcion() {
+		return bancoOrigenDescripcion;
+	}
+	public void setBancoOrigenDescripcion(String bancoOrigenDescripcion) {
+		this.bancoOrigenDescripcion = bancoOrigenDescripcion;
+	}
+
+	public String getNombreRegistro() {
+		return nombreRegistro;
+	}
+
+	public void setNombreRegistro(String nombreRegistro) {
+		this.nombreRegistro = nombreRegistro;
 	}
 }

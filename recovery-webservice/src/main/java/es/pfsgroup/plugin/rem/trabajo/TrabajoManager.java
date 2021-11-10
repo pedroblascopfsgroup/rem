@@ -182,6 +182,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -3051,6 +3052,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			boolean esDivarian = false;
 			boolean esBBVA = false;
 			boolean esJaguar = false;
+			boolean isBankia = false;
+			
 			if(expedienteComercial == null) {
 				expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			}
@@ -3074,7 +3077,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					esJaguar = DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
 								DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()) ? true : false;
 					
-					if (!esApple && !esDivarian && !esBBVA && !esJaguar) {
+					if(DDCartera.isCarteraBk(activo.getCartera())) {
+						isBankia = true;
+					}
+					
+					if (!esApple && !esDivarian && !esBBVA && !isBankia && !esJaguar) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);
@@ -3084,8 +3091,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 		}
+		
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
+		}
+
+		
+		if(DDTipoOferta.isTipoAlquilerNoComercial(expedienteComercial.getOferta().getTipoOferta())){
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL);
 		}
 
 		if (Checks.esNulo(tipoTramite.getId())) {

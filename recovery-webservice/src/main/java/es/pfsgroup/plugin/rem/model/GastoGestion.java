@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -137,6 +138,16 @@ public class GastoGestion implements Serializable, Auditable {
     
     @Column(name="GGE_FECHA_RECEPCION_PRPTRIO")
     private Date fechaRecepcionPropietario;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="GGE_REPERCUTIDO")
+    private DDSinSiNo gestionGastoRepercutido;
+    
+    @Column(name="GGE_FECHA_REPERCUSION")
+    private Date fechaGestionGastoRepercusion;
+    
+    @Column(name="GGE_MOTIVO_RECHAZO")
+    private String motivoRechazoGestionGasto;
     
 	@Version   
 	private Long version;
@@ -363,6 +374,28 @@ public class GastoGestion implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDSinSiNo getGestionGastoRepercutido() {
+		return gestionGastoRepercutido;
+	}
 
+	public void setGestionGastoRepercutido(DDSinSiNo gestionGastoRepercutido) {
+		this.gestionGastoRepercutido = gestionGastoRepercutido;
+	}
 
+	public Date getFechaGestionGastoRepercusion() {
+		return fechaGestionGastoRepercusion;
+	}
+
+	public void setFechaGestionGastoRepercusion(Date fechaGestionGastoRepercusion) {
+		this.fechaGestionGastoRepercusion = fechaGestionGastoRepercusion;
+	}
+
+	public String getMotivoRechazoGestionGasto() {
+		return motivoRechazoGestionGasto;
+	}
+
+	public void setMotivoRechazoGestionGasto(String motivoRechazoGestionGasto) {
+		this.motivoRechazoGestionGasto = motivoRechazoGestionGasto;
+	}
+	
 }

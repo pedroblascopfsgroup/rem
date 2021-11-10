@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200601
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210721
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5994
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -22,6 +22,7 @@
 --##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##		1.1 José A. Gigante - HREOS-8998-9055-9265 - Historificación de cambios al cambiar el canal de publicación
 --##		1.3 Carles Molins - REMVIP-5994
+--##		1.4 Daniel Algaba - HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
 --##########################################
 --*/
 
@@ -118,7 +119,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
   PROCEDURE PLP$LIMPIAR_ALQUILER(nAGR_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
-	--V0.2
+	--V1.4
     V_MSQL := '
       MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
           USING '||vQUERY_SINACT||'
@@ -972,6 +973,12 @@ ELSE
                         /*    OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
+                              OR(     TAG.DD_TAG_CODIGO = ''17''	/*Restringida alquiler*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
+                              OR(     TAG.DD_TAG_CODIGO = ''18''	/*Restringida OBREM*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
                             )                                                        
                       WHERE AGA.ACT_ID = ACT.ACT_ID
                         AND AGA.BORRADO = 0
@@ -989,6 +996,12 @@ ELSE
                         /*    OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
+                              OR(     TAG.DD_TAG_CODIGO = ''17''	/*Restringida alquiler*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
+                              OR(     TAG.DD_TAG_CODIGO = ''18''	/*Restringida OBREM*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
                             )                                                                                   
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
@@ -1006,6 +1019,12 @@ ELSE
                        /*     OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
+                              OR(     TAG.DD_TAG_CODIGO = ''17''	/*Restringida alquiler*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
+                              OR(     TAG.DD_TAG_CODIGO = ''18''	/*Restringida OBREM*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
                             )                                                        
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'

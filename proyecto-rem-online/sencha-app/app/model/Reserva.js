@@ -52,7 +52,103 @@ Ext.define('HreRem.model.Reserva', {
     		name: 'fechaAmpliacionArras',
     		type : 'date',
 			dateFormat: 'c'
-    	}    	
+    	},
+    	{
+    		name: 'fechaPropuestaProrrogaArras',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaComunicacionCliente',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaComunicacionClienteRescision',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+    	{
+    		name: 'fechaFirmaRescision',
+    		type : 'date',
+			dateFormat: 'c'
+    	},
+		{
+			name: 'inscripcionTitulo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'tanteoDL',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'selloCalidad',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasTecnicos',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'posesion',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasCatastrales',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'autorizacionVpo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'fechaContabilizacionArras',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'inscripcionTituloMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'tanteoDLMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'selloCalidadMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasTecnicosMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'posesionMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'temasCatastralesMotivo',
+			type: 'boolean'
+			
+		},
+		{
+			name: 'autorizacionVpoMotivo',
+			type: 'boolean'
+			
+		}
+		
     ],
 
     proxy: {

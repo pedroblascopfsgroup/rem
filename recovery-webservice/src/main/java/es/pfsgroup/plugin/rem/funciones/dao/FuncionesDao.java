@@ -9,5 +9,7 @@ import es.pfsgroup.plugin.rem.funciones.dto.DtoFunciones;
 public interface FuncionesDao extends AbstractDao<Funcion, Long> {
 
 	List<DtoFunciones> getFunciones(DtoFunciones funciones);
+
+	boolean userHasFunction(String username, String descripcion);
 	
 }

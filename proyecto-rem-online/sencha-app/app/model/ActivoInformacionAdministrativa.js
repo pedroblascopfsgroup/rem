@@ -173,7 +173,9 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
 			{
     			name:'estadoVentaDesripcion'
     		},
-    		
+    		{
+    			name:'maxPrecioModuloAlquiler'
+    		},
     		
 
     		

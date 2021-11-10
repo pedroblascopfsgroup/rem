@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -333,14 +335,70 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
 		boolean resultado = false;
 
+		Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
 		try {
 			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
 					isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
+			if (activo != null && DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())) {
+				//TODO todo lo que hacía más las validaciones de Caixa
+				ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" , activo.getId()));
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" , activo.getId()));
+				if (activoCaixa != null && activoPublicacion != null) {
+					boolean publicableCaixa = this.deshabilitarCheckPublicarVentaAlquilerCaixa(activoCaixa, activoPublicacion);
+					if (!publicableCaixa) {
+						resultado = true;
+					}
+				}
+				
+			}
+			
 		} catch(Exception e) {
 			logger.error("Error en el método deshabilitarCheckPublicarVenta" , e);
 		}
 
 		return resultado;	
+	}
+	
+	private boolean deshabilitarCheckPublicarVentaAlquilerCaixa(ActivoCaixa activoCaixa, ActivoPublicacion activoPublicacion) {
+		boolean resultado = false;
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
+			resultado = this.estadoComercializacionVentaCaixa(activoCaixa, activoPublicacion);
+		}else if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
+			resultado = this.estadoComercializacionAlquilerCaixa(activoCaixa, activoPublicacion);
+		}else if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activoPublicacion.getTipoComercializacion().getCodigo())) {
+			resultado = this.estadoComercializacionVentaCaixa(activoCaixa, activoPublicacion) && this.estadoComercializacionAlquilerCaixa(activoCaixa, activoPublicacion); 
+		}
+		return resultado;
+	}
+
+	private boolean estadoComercializacionVentaCaixa(ActivoCaixa activoCaixa, ActivoPublicacion activoPublicacion) {
+		boolean resultado = false;
+		if (activoPublicacion.getPortal() != null && DDPortal.CODIGO_HAYA.equals(activoPublicacion.getPortal().getCodigo())) {
+			if (activoCaixa.getPublicacionPortalPublicoVenta() != null && activoCaixa.getPublicacionPortalPublicoVenta()) {
+				resultado = true;
+			}
+		}else if (activoPublicacion.getPortal() != null && DDPortal.CODIGO_INVERSORES.equals(activoPublicacion.getPortal().getCodigo())) {
+			if (activoCaixa.getPublicacionPortalInversorVenta() != null && activoCaixa.getPublicacionPortalInversorVenta()) {
+				resultado = true;
+			}
+		}
+		//Para las de Portal Api aún no hay definición, por lo que de momento se deja pendiente		
+		return resultado;
+	}
+	
+	private boolean estadoComercializacionAlquilerCaixa(ActivoCaixa activoCaixa, ActivoPublicacion activoPublicacion) {
+		boolean resultado = false;
+		if (activoPublicacion.getPortal() != null && DDPortal.CODIGO_HAYA.equals(activoPublicacion.getPortal().getCodigo())) {
+			if (activoCaixa.getPublicacionPortalPublicoAlquiler() != null && activoCaixa.getPublicacionPortalPublicoAlquiler()){
+				resultado = true;
+			}
+		}else if (activoPublicacion.getPortal() != null && DDPortal.CODIGO_INVERSORES.equals(activoPublicacion.getPortal().getCodigo())) {
+			if (activoCaixa.getPublicacionPortalInversorAlquiler() != null && activoCaixa.getPublicacionPortalInversorAlquiler()){
+				resultado = true;
+			}
+		}
+		//Para las de Portal Api aún no hay definición, por lo que de momento se deja pendiente
+		return resultado;
 	}
 	
 	/**
@@ -475,7 +533,19 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if(hagoElRestoComprobaciones) {
 				resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
 				!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
-			}
+			}		
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			if (activo != null && DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())) {
+				//TODO todo lo que hacía más las validaciones de Caixa
+				ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" , activo.getId()));
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.id" , activo.getId()));
+				if (activoCaixa != null && activoPublicacion != null) {
+					boolean publicableCaixa = this.deshabilitarCheckPublicarVentaAlquilerCaixa(activoCaixa, activoPublicacion);
+					if (!publicableCaixa) {
+						resultado = true;
+					}
+				}				
+			}			
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
 		}

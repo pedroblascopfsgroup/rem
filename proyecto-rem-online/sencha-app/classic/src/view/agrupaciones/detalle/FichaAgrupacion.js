@@ -107,11 +107,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						},
 						{
 		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.externo'),
 		                	bind		: {
 			            		value: '{agrupacionficha.numAgrupUvem}',
 			            		hidden:'{muestraUvem}'
-			            	}		
+			            	},			            	
+							listeners:
+							{
+								afterrender: function(get){
+									var me=this;
+									var cartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
+									
+									if (cartera == CONST.CARTERA['BANKIA']) {
+										me.setFieldLabel(HreRem.i18n('fieldlabel.numero.agrupacion.caixa'));
+									}
+								}
+							}
 						},
 		                {
 							xtype		: 'comboboxfieldbase',
@@ -218,7 +229,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.codigoPostal}',
 								readOnly: '{isCampoReadOnly}'
 							},
-							allowBlank	:	'{esAgrupacionLoteComercial}',
+//							allowBlank	:	'{esAgrupacionLoteComercial}',
+							allowBlank	:	'{esAgrupacionLoteComercialOrRestringida}',
 							maskRe		: /^\d*$/,
 							vtype		: 'codigoPostal'
 						},

@@ -12,6 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -47,7 +48,6 @@ import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ElementosLineasExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -76,14 +76,14 @@ import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
-import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
+import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
+import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -1662,6 +1662,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getRechazosPropietario(Long idGasto) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<VGridMotivosRechazoGastoCaixa> motivosRechazoList = gastoProveedorApi.getMotivosRechazoGasto(idGasto);
+			model.put("data", motivosRechazoList);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+	}
+		
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getGastoExists(String numGastoHaya, ModelMap model) {
 		try {
@@ -1684,5 +1699,57 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTasacionesGasto(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
+
+		try {
+
+			List<VTasacionesGastos> lista = gastoProveedorApi.getListTasacionesGasto(idGasto);
+
+			model.put("data", lista);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "trabajos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastoTasacion(@RequestParam Long id,  ModelMap model) {
+
+		try {
+			boolean success = gastoProveedorApi.deleteGastoTasacion(id);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView asignarTasacionesGastos(Long idGasto, Long[] tasaciones, ModelMap model) {
+		try {
+
+			boolean success = gastoLineaDetalleApi.asignarTasacionesGastos(idGasto, tasaciones);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en GastosProveedorController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

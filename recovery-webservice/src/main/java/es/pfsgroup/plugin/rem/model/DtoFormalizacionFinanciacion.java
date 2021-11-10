@@ -10,7 +10,7 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 
 	private String id; // ID del expediente.
 	private String numExpedienteRiesgo;
-	private Integer solicitaFinanciacion;
+	private String solicitaFinanciacion;
 	private String tiposFinanciacionCodigo;
 	private String tiposFinanciacionCodigoBankia;
 	private String estadosFinanciacion;
@@ -22,6 +22,8 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	private Date fechaInicioExpediente;
 	private String entidadFinancieraCodigo;
 	private Date fechaPosicionamientoPrevista;
+	private String otraEntidadFinanciera;
+	private String financiacionTPCodigo;
 
 	
 	
@@ -31,10 +33,10 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	public void setNumExpedienteRiesgo(String numExpedienteRiesgo) {
 		this.numExpedienteRiesgo = numExpedienteRiesgo;
 	}
-	public Integer getSolicitaFinanciacion() {
+	public String getSolicitaFinanciacion() {
 		return solicitaFinanciacion;
 	}
-	public void setSolicitaFinanciacion(Integer solicitaFinanciacion) {
+	public void setSolicitaFinanciacion(String solicitaFinanciacion) {
 		this.solicitaFinanciacion = solicitaFinanciacion;
 	}
 	public String getTiposFinanciacionCodigo() {
@@ -108,6 +110,19 @@ public class DtoFormalizacionFinanciacion extends WebDto {
 	}
 	public void setFechaPosicionamientoPrevista(Date fechaPosicionamientoPrevista) {
 		this.fechaPosicionamientoPrevista = fechaPosicionamientoPrevista;
+	}
+	public String getOtraEntidadFinanciera() {
+		return otraEntidadFinanciera;
+	}
+	public void setOtraEntidadFinanciera(String otraEntidadFinanciera) {
+		this.otraEntidadFinanciera = otraEntidadFinanciera;
+	}
+	
+	public String getFinanciacionTPCodigo() {
+		return financiacionTPCodigo;
+	}
+	public void setFinanciacionTPCodigo(String financiacionTPCodigo) {
+		this.financiacionTPCodigo = financiacionTPCodigo;
 	}
 
 

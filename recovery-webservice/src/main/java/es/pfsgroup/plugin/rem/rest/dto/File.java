@@ -14,6 +14,7 @@ public class File implements Serializable {
 	private String resource_type;
 	private HashMap<String, String> metadata;
 	private String basename;
+	private String modified_by_app;
 
 	public Long getId() {
 		return id;
@@ -79,4 +80,13 @@ public class File implements Serializable {
 		this.basename = basename;
 	}
 
+	public String getModified_by_app() {
+		return modified_by_app;
+	}
+
+	public void setModified_by_app(String modified_by_app) {
+		this.modified_by_app = modified_by_app;
+	}
+	
+	
 }

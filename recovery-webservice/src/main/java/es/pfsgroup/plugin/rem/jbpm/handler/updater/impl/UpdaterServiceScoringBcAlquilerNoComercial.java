@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -22,7 +21,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAccionNoComercial;
 
 @Component
 public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterService {
@@ -53,34 +52,24 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		String estadoExpediente = null;
 		String estadoBc = null;
 		String fechaResolucion = null;
-		String comboResultado = null;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
 		
-
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.SI.equals(valor.getValor())) {
+				if(DDTipoAccionNoComercial.COD_PTE_ANALISIS_TECNICO.equals(valor.getValor())) {
 					aprueba = true;
-					
-					ExpedienteComercial ecoAnt = expedienteComercial.getExpedienteAnterior();
-					if(ecoAnt != null && ecoAnt.getOferta() != null && DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-						estadoExpediente = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-						estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
-					}else {
-						estadoExpediente = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
-					}
-					
-					comboResultado = valor.getValor();
-
-				}else {
+					estadoExpediente = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+					estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+				}else if(DDTipoAccionNoComercial.COD_PTE_NEGOCIACION.equals(valor.getValor())){
+					aprueba = true;
+					estadoExpediente = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+					estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+				}else if(DDTipoAccionNoComercial.COD_RECHAZO_COMERCIAL.equals(valor.getValor())){
 					estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
 					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 				}
-				
-
 			}
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -97,10 +86,8 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		if(!aprueba) {	
 			ofertaApi.rechazarOferta(oferta);
 		}
-		
 
 		expedienteComercialApi.update(expedienteComercial,false);
-
 	}
 
 	public String[] getCodigoTarea() {

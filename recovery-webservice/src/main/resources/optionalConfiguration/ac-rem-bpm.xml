@@ -761,9 +761,9 @@
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.avanzaAprobarPbcAlquiler(tareaExterna);
 			}
-			def avanzaScoringBC = {
+			def avanzaScoringBC(String codigo) {
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
-				return tramiteAlquilerNoComercialManager.avanzaScoringBC(tareaExterna);
+				return tramiteAlquilerNoComercialManager.avanzaScoringBC(tareaExterna, codigo);
 			}
 
 			def existeExpedienteComercialByNumExpediente(String expedienteAnterior) {

@@ -3836,14 +3836,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(!$AU.userHasFunction('AV_ALQNC_SCORING_BC')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
+			me.ocultarCampo(comboRespuesta);
+		}else{
+			me.desocultarCampo(comboRespuesta);
 		}
+		
+		comboRespuesta.addListener('focus', function(combo) {
+			combo.getStore().remove(combo.getStore().findRecord('codigo','CLROD'));
+			combo.getStore().remove(combo.getStore().findRecord('codigo','SCOR'));
+		});
 	
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		comboRespuesta.addListener('change', function(combo) {
-			if(CONST.COMBO_SIN_SINO['NO'] === comboRespuesta.getValue()){
+			if('RECH' === comboRespuesta.getValue()){
 				me.habilitarCampo(comboMotivoAnulacion);
 				me.campoObligatorio(comboMotivoAnulacion);
-
 			}else{
 				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion); 

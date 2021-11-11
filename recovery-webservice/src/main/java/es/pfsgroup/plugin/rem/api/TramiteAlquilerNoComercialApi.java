@@ -14,7 +14,7 @@ public interface TramiteAlquilerNoComercialApi {
 
 	DtoTiposAlquilerNoComercial getInfoCaminosAlquilerNoComercial(Long idExpediente);
 
-	String avanzaScoringBC(TareaExterna tareaExterna);
+	String avanzaScoringBC(TareaExterna tareaExterna, String codigo);
 
 	boolean existeExpedienteComercialByNumExpediente(TareaExterna tareaExterna, String expedienteAnterior);
 

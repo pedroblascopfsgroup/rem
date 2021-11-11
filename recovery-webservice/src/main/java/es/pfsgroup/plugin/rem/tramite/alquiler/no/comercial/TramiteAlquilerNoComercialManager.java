@@ -23,7 +23,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
@@ -41,15 +40,17 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	
 	private static final String CODIGO_SI = "01";
 	
+	private static final String CODIGO_PTE_ANALISIS_TECNICO = "ANTEC";
+	
+	
+	
 	private enum T018_PbcAlquilerDecisiones{
 		subrogacionAcepta, renovacionNovacionOrigenSubrogacion, renovacionNovacionOrigenNoSubrogacion;
 	}
 	
 	private enum T018_ScoringBcDecisiones{
-		origenSubrogacion, origenNoSubrogacion;
+		ANTEC, NEG;
 	}
-	
-
 		
 	@Override
 	public Boolean existeTareaT018Scoring(TareaExterna tareaExterna) {
@@ -69,21 +70,15 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 	
 	@Override
-	public String avanzaScoringBC(TareaExterna tareaExterna) {
+	public String avanzaScoringBC(TareaExterna tareaExterna, String codigo) {
 		String avanzaBPM= null;
 		
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if(eco != null) {
-			ExpedienteComercial ecoAnt = eco.getExpedienteAnterior();
-			if(ecoAnt != null && ecoAnt.getOferta() != null) {
-				if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-					avanzaBPM = T018_ScoringBcDecisiones.origenSubrogacion.name();
-				}else {
-					avanzaBPM = T018_ScoringBcDecisiones.origenNoSubrogacion.name();
-				}
-			}
+		if(CODIGO_PTE_ANALISIS_TECNICO.equals(codigo)) {
+			avanzaBPM = T018_ScoringBcDecisiones.ANTEC.name();
+		}else {
+			avanzaBPM = T018_ScoringBcDecisiones.NEG.name();
 		}
-		
+
 		return avanzaBPM;
 	}
 	

@@ -317,7 +317,7 @@ Ext.define('HreRem.model.ActivoTasacion', {
 		type: 'uxproxy',
 		localUrl: 'tasacion.json',
 		api: {
-            read: 'activo/getTasacionByActivoId',
+            read: 'activo/getTasacionById',
             create: 'activo/createTasacionActivo',
             update: 'activo/saveTasacionActivo'
         },

@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAccionNoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
@@ -51,53 +52,43 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
-		boolean aprueba = false;
-		boolean requiereAnalisisT = false;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
 		String estadoExpediente = null;
 		String estadoBc = null;
+		String codigoResultado = null;
 		
 		CondicionanteExpediente coe = expedienteComercial.getCondicionante();
 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDSiNo.SI.equals(valor.getValor())) {
-					aprueba = true;
-				}
-			}else if(REQUIERE_ANALISIS_T.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-				if(DDSiNo.SI.equals(valor.getValor())) {
-					requiereAnalisisT = true;
-				}
+				codigoResultado = valor.getValor();
 			}
 		}
-
-		if(aprueba) {
-			if(DDTipoOfertaAlquiler.isRenovacion(oferta.getTipoOfertaAlquiler())) {
-				estadoExpediente=  DDEstadosExpedienteComercial.PTE_SCORING;
-				estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING;
-			}else if(DDTipoOfertaAlquiler.isSubrogacion(oferta.getTipoOfertaAlquiler())){
+		
+		if(codigoResultado != null) {
+			if(DDTipoAccionNoComercial.COD_PTE_ANALISIS_TECNICO.equals(codigoResultado)) {
+				estadoExpediente =  DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+				estadoBc =  DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+			}
+			if(DDTipoAccionNoComercial.COD_PTE_CLROD.equals(codigoResultado)) {
+				estadoExpediente =  DDEstadosExpedienteComercial.PTE_CL_ROD;
+				estadoBc =  DDEstadoExpedienteBc.PTE_CL_ROD;
+			}
+			if(DDTipoAccionNoComercial.COD_PTE_NEGOCIACION.equals(codigoResultado)) {
 				estadoExpediente =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
 				estadoBc =  DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
-			}else if(DDTipoOfertaAlquiler.isAlquilerSocial(oferta.getTipoOfertaAlquiler())) {
-				if(coe.getVulnerabilidadDetectada() != null && coe.getVulnerabilidadDetectada()) {
-					if(requiereAnalisisT) {
-						estadoExpediente =  DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-						estadoBc =  DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
-					}else {
-						estadoExpediente =  DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-						estadoBc =  DDEstadoExpedienteBc.PTE_NEGOCIACION;
-					}
-				}else {
-					estadoExpediente =  DDEstadosExpedienteComercial.PTE_CL_ROD;
-					estadoBc =  DDEstadoExpedienteBc.PTE_CL_ROD;
-				}
 			}
-		}else {
-			estadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-			ofertaApi.rechazarOferta(oferta);
+			if(DDTipoAccionNoComercial.COD_PTE_SCORING.equals(codigoResultado)) {
+				estadoExpediente=  DDEstadosExpedienteComercial.PTE_SCORING;
+				estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING;
+			}
+			if(DDTipoAccionNoComercial.COD_RECHAZO_COMERCIAL.equals(codigoResultado)) {
+				estadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
+				estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				ofertaApi.rechazarOferta(oferta);
+			}
 		}
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpediente));

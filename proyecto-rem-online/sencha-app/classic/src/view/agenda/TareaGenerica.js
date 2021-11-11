@@ -3772,47 +3772,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T018_AnalisisBcValidacion: function(){
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
-		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
-		var comboIsVulnerable = me.down('[name=isVulnerable]');
-		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
 		var textAreaObservacionesBc = me.down('[name=observacionesBC]');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		
+		me.campoObligatorio(comboRespuesta);
+		me.campoObligatorio(textAreaObservacionesBc);
 		
 		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(textAreaObservacionesBc);
-		}
-		
-		me.bloquearObligatorio(comboTipoOferta);
-		me.bloquearCampo(comboIsVulnerable);
-		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-
-		var url =  $AC.getRemoteUrl('expedientecomercial/getInfoCaminosAlquilerNoComercial');
-		Ext.Ajax.request({
-			url: url,
-			params: {idExpediente : idExpediente},
-		    success: function(response, opts) {
-		    	var data = Ext.decode(response.responseText);
-		    	var dto = data.data;
-		    	if(!Ext.isEmpty(dto)){			    		
-		    		comboTipoOferta.setValue(dto.codigoTipoAlquiler);
-		    		comboIsVulnerable.setValue(dto.isVulnerable);
-		    	}
-		    }
-		});
-		
-		comboRespuesta.addListener('change', function(combo) {
-			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
-				if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue() && CONST.COMBO_SIN_SINO['SI'] === comboIsVulnerable.getValue()){
-					me.habilitarCampo(comboIsVulnerableAnalisisT);
-					me.campoObligatorio(comboIsVulnerableAnalisisT);
-				}
-			}else{
-				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-				me.borrarCampo(comboIsVulnerableAnalisisT)
-			}
-
-        });				
+		}				
 	},
 	
 	T018_ScoringValidacion: function(){

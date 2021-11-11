@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Jesus Jativa
---## FECHA_CREACION=20211109
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20211111
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16375
+--## INCIDENCIA_LINK=HREOS-16376
 --## PRODUCTO=NO
 --## Finalidad: Tabla historico de sanciones BC
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Eliminar FK a RBC y añadir FK a DD_CBC
 --##########################################
 --*/
 
@@ -48,98 +49,97 @@ BEGIN
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
+	IF V_NUM_TABLAS = 0 THEN
+		 	
+		-- Creamos la tabla
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
+		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+		(
+				HSB_ID 								    NUMBER(16,0)				NOT NULL,
+				ECO_ID  								NUMBER(16,0)                NOT NULL,
+				DD_CBC_ID  								NUMBER(16,0)                NOT NULL,
+				DD_APD_ID								NUMBER(16,0)                NOT NULL,
+				HSB_OBSERVACIONES_BC        			VARCHAR2(240 CHAR),
+				VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
+				USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
+				FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 
+				USUARIOMODIFICAR 						VARCHAR2(50 CHAR), 
+				FECHAMODIFICAR 							TIMESTAMP (6), 
+				USUARIOBORRAR 							VARCHAR2(50 CHAR), 
+				FECHABORRAR 							TIMESTAMP (6), 
+				BORRADO 								NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE			
+		)
+		LOGGING 
+		NOCOMPRESS 
+		NOCACHE
+		NOPARALLEL
+		NOMONITORING
+		';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
+
+		-- Creamos indice	
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(HSB_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');	
 		
+		-- Creamos primary key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (HSB_ID) USING INDEX)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
+
+		V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_ECO_ID_FK FOREIGN KEY (ECO_ID) REFERENCES ECO_EXPEDIENTE_COMERCIAL (ECO_ID)
+		ON DELETE SET NULL ENABLE';
+		EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] ... FK Expediente Comercial Creada');
+
+		V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_CBC_ID_FK FOREIGN KEY (DD_CBC_ID) REFERENCES DD_CBC_COMITE_BC (DD_CBC_ID)
+		ON DELETE SET NULL ENABLE';
+		EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] ... FK a DD_CBC Creada');
+
+		V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_DD_APD_ID_FK FOREIGN KEY (DD_APD_ID) REFERENCES DD_APD_APRUEBA_DENIEGA (DD_APD_ID)
+		ON DELETE SET NULL ENABLE';
+		EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] ... FK a DD_APD Creada');
+		
+		-- Comprobamos si existe la secuencia
+		V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
+		IF V_NUM_TABLAS = 0 THEN
+			-- Creamos sequence
+			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+			EXECUTE IMMEDIATE V_MSQL;		
+			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+			
+		END IF;
+
+		
+		
+		-- Creamos comentario	
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');	
+		
+		--Creamos comentarios para las columnas
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.HSB_ID IS ''Código identificador único del registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ECO_ID IS ''Clave ajena al expediente comercial.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CBC_ID IS ''Clave ajena al diccionario comité.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_APD_ID IS ''Clave ajena al diccionario Aprueba/Deniega.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.HSB_OBSERVACIONES_BC IS ''Campo para registrar observaciones.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.'' ';	
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.'' ';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.'' ';
+
+
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
+	
 	END IF;
-	
-	-- Comprobamos si existe la secuencia
-	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
-		
-	END IF; 	
-	
-	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-	(
-			HSB_ID 								    NUMBER(16,0)				NOT NULL,
-			ECO_ID  								NUMBER(16,0)                NOT NULL,
-			RBC_ID  								NUMBER(16,0)                NOT NULL,
-			DD_APD_ID								NUMBER(16,0)                NOT NULL,
-			HSB_OBSERVACIONES_BC        			VARCHAR2(240 CHAR),
-			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
-			USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
-			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 
-			USUARIOMODIFICAR 						VARCHAR2(50 CHAR), 
-			FECHAMODIFICAR 							TIMESTAMP (6), 
-			USUARIOBORRAR 							VARCHAR2(50 CHAR), 
-			FECHABORRAR 							TIMESTAMP (6), 
-			BORRADO 								NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE			
-	)
-	LOGGING 
-	NOCOMPRESS 
-	NOCACHE
-	NOPARALLEL
-	NOMONITORING
-	';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
-
-	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(HSB_ID) TABLESPACE '||V_TABLESPACE_IDX;		
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');	
-	
-	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (HSB_ID) USING INDEX)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
-
-	V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_ECO_ID_FK FOREIGN KEY (ECO_ID) REFERENCES ECO_EXPEDIENTE_COMERCIAL (ECO_ID)
-	ON DELETE SET NULL ENABLE';
-
-	V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_RBC_ID_FK FOREIGN KEY (RBC_ID) REFERENCES RBC_RESPUESTA_RES_COMITE_BC (RBC_ID)
-    ON DELETE SET NULL ENABLE';
-
-    V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA||' ADD CONSTRAINT HSB_DD_APD_ID_FK FOREIGN KEY (DD_APD_ID) REFERENCES DD_APD_APRUEBA_DENIEGA (DD_APD_ID)
-    ON DELETE SET NULL ENABLE';
-
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_FK... FK creada.');
-	
-	-- Creamos sequence
-	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
-	
-	-- Creamos comentario	
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');	
-	
-	--Creamos comentarios para las columnas
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.HSB_ID IS ''Código identificador único del registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ECO_ID IS ''Clave ajena al expediente comercial.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.RBC_ID IS ''Clave ajena a respuesta comite BC.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_APD_ID IS ''Clave ajena al diccionario Aprueba/Deniega.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.HSB_OBSERVACIONES_BC IS ''Campo para registrar observaciones.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.'' ';	
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.'' ';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.'' ';
-
-
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
-	
 
 	COMMIT;
 

@@ -2745,7 +2745,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSancionesBk(ModelMap model, WebDto webDto, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getSancionesBk(idExpediente));
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getListHistoricoSancionesBC(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,12 +16,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 
 
 
@@ -53,12 +53,12 @@ public class HistoricoSancionesBc implements Serializable, Auditable {
     private ExpedienteComercial expedienteComercial;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "RBC_ID")
-    private RespuestaComiteBC respuestaComiteBC;
+    @JoinColumn(name = "DD_CBC_ID")
+    private DDComiteBc comiteBc;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "DD_APD_ID")
-    private DDApruebaDeniega ddApruebaDeniega;
+    private DDApruebaDeniega resultado;
 
     @Column(name = "HSB_OBSERVACIONES_BC")
     private String obserbacionesBc;
@@ -95,22 +95,6 @@ public class HistoricoSancionesBc implements Serializable, Auditable {
         this.expedienteComercial = expedienteComercial;
     }
 
-    public RespuestaComiteBC getRespuestaComiteBC() {
-        return respuestaComiteBC;
-    }
-
-    public void setRespuestaComiteBC(RespuestaComiteBC respuestaComiteBC) {
-        this.respuestaComiteBC = respuestaComiteBC;
-    }
-
-    public DDApruebaDeniega getDdApruebaDeniega() {
-        return ddApruebaDeniega;
-    }
-
-    public void setDdApruebaDeniega(DDApruebaDeniega ddApruebaDeniega) {
-        this.ddApruebaDeniega = ddApruebaDeniega;
-    }
-
     public String getObserbacionesBc() {
         return obserbacionesBc;
     }
@@ -126,4 +110,21 @@ public class HistoricoSancionesBc implements Serializable, Auditable {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+	public DDApruebaDeniega getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(DDApruebaDeniega resultado) {
+		this.resultado = resultado;
+	}
+
+	public DDComiteBc getComiteBc() {
+		return comiteBc;
+	}
+
+	public void setComiteBc(DDComiteBc comiteBc) {
+		this.comiteBc = comiteBc;
+	}
+    
 }

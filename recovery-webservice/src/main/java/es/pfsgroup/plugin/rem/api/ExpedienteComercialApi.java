@@ -1412,8 +1412,6 @@ public interface ExpedienteComercialApi {
 	void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto)throws IllegalAccessException, InvocationTargetException;
 
 	void updateActualizacionRenta(Long id, DtoActualizacionRenta dto) throws IllegalAccessException, InvocationTargetException;
-
-	List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente);
 	
 	boolean saveFormalizacionResolucion(DtoFormalizacionResolucion dto);
 
@@ -1476,4 +1474,6 @@ public interface ExpedienteComercialApi {
 	boolean saveTestigos(DtoTestigos dto, Long id);
 
 	boolean deleteTestigos(DtoTestigos dto);
+
+	List<DtoRespuestaBCGenerica> getListHistoricoSancionesBC(Long idExpediente);
 }

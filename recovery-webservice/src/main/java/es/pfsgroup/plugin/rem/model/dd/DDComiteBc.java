@@ -19,34 +19,32 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de comités sancionadores
- * @author Jose Villel
- *
+ * @author Javier Esbri
  */
 @Entity
-@Table(name = "DD_APD_APRUEBA_DENIEGA", schema = "${entity.schema}")
+@Table(name = "DD_CBC_COMITE_BC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDApruebaDeniega implements Auditable, Dictionary {
+public class DDComiteBc implements Auditable, Dictionary {
 	
-	public static final String CODIGO_APRUEBA = "01";
-	public static final String CODIGO_DENIEGA = "02";
+	public static final String CODIGO_PTCLROD = "01";
+	public static final String CODIGO_COMITE_COMERCIAL = "02";
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_APD_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDApruebaDeniegaGenerator")
-	@SequenceGenerator(name = "DDApruebaDeniegaGenerator", sequenceName = "S_DD_APD_APRUEBA_DENIEGA")
+	@Column(name = "DD_CBC_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDComiteBcGenerator")
+	@SequenceGenerator(name = "DDComiteBcGenerator", sequenceName = "S_DD_CBC_COMITE_BC")
 	private Long id;
 	    
-	@Column(name = "DD_APD_CODIGO")   
+	@Column(name = "DD_CBC_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_APD_DESCRIPCION")   
+	@Column(name = "DD_CBC_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_APD_DESCRIPCION_LARGA")   
+	@Column(name = "DD_CBC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	
 
@@ -103,14 +101,13 @@ public class DDApruebaDeniega implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-	
-	public static String getCodigoAprueba() {
-		return CODIGO_APRUEBA;
+
+	public static String getCodigoPtclrod() {
+		return CODIGO_PTCLROD;
 	}
-	
-	public static String getCodigoDeniega() {
-		return CODIGO_DENIEGA;
+
+	public static String getCodigoComiteComercial() {
+		return CODIGO_COMITE_COMERCIAL;
 	}
 
 }

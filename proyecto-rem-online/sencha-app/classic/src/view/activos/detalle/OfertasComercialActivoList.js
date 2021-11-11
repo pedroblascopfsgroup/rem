@@ -687,7 +687,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var ofertasData = me.getNavigationModel().store.data.items;
 		var ofertaSeleccionadaData = selectionModel.getSelection()[0].data;
 
-		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] && ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
+		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] || ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
 		
 		if (!sePuedeClonarExpediente) {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.anulada"));

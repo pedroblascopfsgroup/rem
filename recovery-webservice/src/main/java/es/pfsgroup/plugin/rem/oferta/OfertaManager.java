@@ -1075,10 +1075,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 						cliente.setInfoAdicionalPersona(iap);
 						genericDao.save(InfoAdicionalPersona.class, iap);
-						
-						if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
-							cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
 					}
+
+					if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
+						cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
+
 					String clienteGD = null;
 					
 					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())) {
@@ -8030,7 +8031,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			tit.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumento()));
 
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersona(),tit.getIdPersonaHayaCaixa(),tit.getIdPersonaHaya());
-		
+
+		tit.setInfoAdicionalPersona(iap);
+
 		if(iap != null) {
 			if(dto.getPrp() != null) {
 				iap.setPrp(dto.getPrp());
@@ -8048,14 +8051,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(dto.getEsAntiguoDeudor() != null) {
 				iap.setAntiguoDeudor(dto.getEsAntiguoDeudor());
 			}
-			tit.setInfoAdicionalPersona(iap);
 			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
 
-
 		InfoAdicionalPersona iapRep = null;
-
-
 
 
 		if(tit.getDocumentoRepresentante() != null) {
@@ -8066,12 +8065,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
 
 		}
-		
+
+		tit.setInfoAdicionalPersonaRep(iapRep);
+
 		if(iapRep != null) {
 			if(dto.getPrpRepresentante() != null) {
 				iapRep.setPrp(dto.getPrpRepresentante());
 			}
-			tit.setInfoAdicionalPersonaRep(iapRep);
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
 		}
 

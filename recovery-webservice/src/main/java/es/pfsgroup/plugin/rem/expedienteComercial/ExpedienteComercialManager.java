@@ -14249,17 +14249,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
 			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento()));
 		}
-		if (comprador.getIdPersonaHaya() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()){
+		if (comprador.getIdPersonaHaya() == null){
 			String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(comprador.getDocumento());
 			comprador.setIdPersonaHaya(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 		}
 
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(comprador.getInfoAdicionalPersona(),comprador.getIdPersonaHayaCaixa(),comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-
-		iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-		genericDao.save(InfoAdicionalPersona.class, iap);
-
 		comprador.setInfoAdicionalPersona(iap);
+
+		if (iap != null){
+			iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+			genericDao.save(InfoAdicionalPersona.class, iap);
+		}
 
 		if (compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
 
@@ -14273,17 +14274,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
-
-			if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
-				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
-
-			}else {
-				System.out.println("No se ha podido obtener idPersonaHayaCaixa para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
-			}
-
 			compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
 
+			if (iapRepresentante != null){
+				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
+			}
 		}
 	}
 	@Override

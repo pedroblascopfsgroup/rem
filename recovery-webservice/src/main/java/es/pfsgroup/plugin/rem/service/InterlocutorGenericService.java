@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class InterlocutorGenericService {
 
-    private MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-
-
     public String getIdPersonaHayaClienteHayaByDocumento(String documento){
+        MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
         return maestroDePersonas.getIdPersonaHayaByDocumento(documento);
     }
 

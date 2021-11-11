@@ -4091,27 +4091,28 @@ public class ActivoAdapter {
 
 			clienteComercial.setInfoAdicionalPersona(iap);
 
-			if(dto.getVinculoCaixaCodigo() != null) {
-				DDVinculoCaixa vinculoCaixa = (DDVinculoCaixa) utilDiccionarioApi.dameValorDiccionarioByCod(DDVinculoCaixa.class,dto.getVinculoCaixaCodigo());
-				iap.setVinculoCaixa(vinculoCaixa);
-				clienteComercial.setInfoAdicionalPersona(iap);
+			if (iap != null){
+				if(dto.getVinculoCaixaCodigo() != null) {
+					DDVinculoCaixa vinculoCaixa = (DDVinculoCaixa) utilDiccionarioApi.dameValorDiccionarioByCod(DDVinculoCaixa.class,dto.getVinculoCaixaCodigo());
+					iap.setVinculoCaixa(vinculoCaixa);
+				}
+
+				if (dto.getSociedadEmpleadoCaixa() != null) {
+					iap.setSociedad(dto.getSociedadEmpleadoCaixa());
+				}
+
+				if (dto.getOficinaEmpleadoCaixa() != null) {
+					iap.setOficinaTrabajo(dto.getOficinaEmpleadoCaixa());
+				}
+
+				if (dto.getAntiguoDeudor() != null) {
+					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
+				}
+
+				genericDao.save(InfoAdicionalPersona.class, iap);
+
 			}
-			
-			if (dto.getSociedadEmpleadoCaixa() != null) {
-				iap.setSociedad(dto.getSociedadEmpleadoCaixa());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
-			
-			if (dto.getOficinaEmpleadoCaixa() != null) {
-				iap.setOficinaTrabajo(dto.getOficinaEmpleadoCaixa());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
-			
-			if (dto.getAntiguoDeudor() != null) {
-				iap.setAntiguoDeudor(dto.getAntiguoDeudor());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
-				
+
 			Filter filtroNuevosCamposClc = null;
 			
 			if(dto.getFechaNacimientoConstitucion() != null && !dto.getFechaNacimientoConstitucion().equals("")) {
@@ -4268,22 +4269,20 @@ public class ActivoAdapter {
 
 					InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 
+					clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 
-					if (dto.getRepresentantePrp() != null) {
-						iapRep.setPrp(dto.getRepresentantePrp());
+					if (iapRep != null){
+						if (dto.getRepresentantePrp() != null) {
+							iapRep.setPrp(dto.getRepresentantePrp());
+						}
+						iapRep.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+						genericDao.save(InfoAdicionalPersona.class,iapRep);
 					}
 
-					iapRep.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-
-					genericDao.save(InfoAdicionalPersona.class,iapRep);
-
-					clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 				}
 
 			}
-			
-			genericDao.save(InfoAdicionalPersona.class, iap);
-			
+
 			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);
 			
 			Oferta oferta = new Oferta();

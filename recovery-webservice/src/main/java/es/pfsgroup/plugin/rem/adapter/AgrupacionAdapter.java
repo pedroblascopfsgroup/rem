@@ -2657,20 +2657,20 @@ public class AgrupacionAdapter {
 			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
 			clienteComercial.setInfoAdicionalPersona(iap);
-			
-			if (dto.getSociedadEmpleadoCaixa() != null) {
-				iap.setSociedad(dto.getSociedadEmpleadoCaixa());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
-			
-			if (dto.getOficinaEmpleadoCaixa() != null) {
-				iap.setOficinaTrabajo(dto.getOficinaEmpleadoCaixa());
-				clienteComercial.setInfoAdicionalPersona(iap);
-			}
-			
-			if (dto.getAntiguoDeudor() != null) {
-				iap.setAntiguoDeudor(dto.getAntiguoDeudor());
-				clienteComercial.setInfoAdicionalPersona(iap);
+
+			if (iap != null){
+				if (dto.getSociedadEmpleadoCaixa() != null) {
+					iap.setSociedad(dto.getSociedadEmpleadoCaixa());
+				}
+
+				if (dto.getOficinaEmpleadoCaixa() != null) {
+					iap.setOficinaTrabajo(dto.getOficinaEmpleadoCaixa());
+				}
+
+				if (dto.getAntiguoDeudor() != null) {
+					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
+				}
+				genericDao.save(InfoAdicionalPersona.class, iap);
 			}
 			
 			Filter filtro = null;
@@ -2830,18 +2830,16 @@ public class AgrupacionAdapter {
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
 
 				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
-
-				if (dto.getRepresentantePrp() != null) {
-					iapRep.setPrp(dto.getRepresentantePrp());
-				}
-				genericDao.save(InfoAdicionalPersona.class,iapRep);
-
 				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 
-			}
-			
-			genericDao.save(InfoAdicionalPersona.class, iap);
+				if (iapRep != null){
+					if (dto.getRepresentantePrp() != null) {
+						iapRep.setPrp(dto.getRepresentantePrp());
+					}
+					genericDao.save(InfoAdicionalPersona.class,iapRep);
+				}
 
+			}
 			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 

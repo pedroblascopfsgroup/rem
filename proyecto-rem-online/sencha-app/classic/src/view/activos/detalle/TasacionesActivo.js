@@ -266,73 +266,93 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.fechaTasacion'),
 						width:		250,
-						bind:		'{tasacion.fechaValorTasacion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.fechaValorTasacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.fechaSolTasacion'),
 						width:		250,
-						bind:		'{tasacion.fechaSolicitudTasacion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.fechaSolicitudTasacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.fechaRecepcionTasacion'),
 						width:		250,
-						bind:		'{tasacion.fechaRecepcionTasacion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.fechaRecepcionTasacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.codFirmaTasadora'),
 						width:		250,
-						bind:		'{tasacion.codigoFirma}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.codigoFirma}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.nomTasador'),
 						width:		250,
-						bind:		'{tasacion.nomTasador}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.nomTasador}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.importeValorTasacion'),
 						width:		250,
-						bind:		'{tasacion.importeValorTasacion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.importeValorTasacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.importeTasacionFin'),
 						width:		250,
-						bind:		'{tasacion.importeTasacionFin}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.importeTasacionFin}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeRepoNetoActual'),
 						width:		250,
-						bind:		'{tasacion.costeRepoNetoActual}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeRepoNetoActual}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeRepoNetoFin'),
 						width:		250,
-						bind:		'{tasacion.costeRepoNetoFinalizado}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeRepoNetoFinalizado}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.coefMercadoEstado'),
 						width:		250,
-						bind:		'{tasacion.coeficienteMercadoEstado}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.coeficienteMercadoEstado}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},	       				     
 					{ 
 						xtype: 'numberfieldbase',
@@ -345,107 +365,137 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.coefPondValorAnadido'),
 						width:		250,
-						bind:		'{tasacion.coeficientePondValorAnanyadido}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.coeficientePondValorAnanyadido}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.tipoTasacion'),
 						width:		250,
-						bind:		'{tasacion.tipoTasacionDescripcion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.tipoTasacionDescripcion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.valorReperSueloConst'),
 						width:		250,
-						bind:		'{tasacion.valorReperSueloConst}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.valorReperSueloConst}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeConstConstruido'),
 						width:		250,
-						bind:		'{tasacion.costeConstConstruido}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeConstConstruido}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.indiceDepreciacionFisica'),
 						width:		250,
-						bind:		'{tasacion.indiceDepreFisica}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.indiceDepreFisica}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.indiceDepreciacionFuncional'),
 						width:		250,
-						bind:		'{tasacion.indiceDepreFuncional}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.indiceDepreFuncional}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.indiceTotalDepreciacion'),
 						width:		250,
-						bind:		'{tasacion.indiceTotalDepre}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.indiceTotalDepre}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeConstruccionDepreciada'),
 						width:		250,
-						bind:		'{tasacion.costeConstDepreciada}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeConstDepreciada}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeUnitarioRepoNeto'),
 						width:		250,
-						bind:		'{tasacion.costeUnitarioRepoNeto}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeUnitarioRepoNeto}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.costeReposicion'),
 						width:		250,
-						bind:		'{tasacion.costeReposicion}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.costeReposicion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						symbol: HreRem.i18n("symbol.porcentaje"),
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.porcentajeObra'),
 						width:		250,
-						bind:		'{tasacion.porcentajeObra}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.porcentajeObra}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.importeValorTerminado'),
 						width:		250,
-						bind:		'{tasacion.importeValorTerminado}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.importeValorTerminado}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.identifTextoAsociado'),
 						width:		250,
-						bind:		'{tasacion.idTextoAsociado}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.idTextoAsociado}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.importeValorLegalFinca'),
 						width:		250,
-						bind:		'{tasacion.importeValorLegalFinca}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.importeValorLegalFinca}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					},
 					{ 
 						xtype: 'currencyfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.importeValorSolar'),
 						width:		250,
-						bind:		'{tasacion.importeValorSolar}',
-						readOnly: true
+						bind:  {
+							value: '{tasacion.importeValorSolar}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					    }
 					}			 
 				]
             },

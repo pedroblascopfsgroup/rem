@@ -421,13 +421,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			success : function(record) {
 				me.getViewModel().set("tasacion", record);
 				fieldset.unmask();
-			}
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
 		});
 		modelBankia.setId(idActivo);
 		modelBankia.load({
 			success: function(record) {
 				me.getViewModel().set("tasacionBankia", record);
-			}
+				fieldset.unmask();
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
 		});
 	},
 	
@@ -450,13 +457,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						success: function(record) {
 							me.getViewModel().set("tasacion", record);
 							fieldset.unmask();
-						}
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
 					});
 					modelBankia.setId(idActivo);
 					modelBankia.load({
 						success: function(record) {
 							me.getViewModel().set("tasacionBankia", record);
-						}
+							fieldset.unmask();
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
 					});
 				}
 			}

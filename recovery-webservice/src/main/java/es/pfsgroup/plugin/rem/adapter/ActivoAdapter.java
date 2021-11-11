@@ -1473,8 +1473,10 @@ public class ActivoAdapter {
 					BeanUtils.copyProperty(dtoTasacion, "fechaValorTasacion", tasacionSeleccionada.getValoracionBien().getFechaValorTasacion());
 				
 				if (tasacionSeleccionada.getActivo().getInfoRegistral() != null && tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien() != null) {
-					BeanUtils.copyProperty(dtoTasacion, "superficieParcela", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie().toString()));
-					BeanUtils.copyProperty(dtoTasacion, "superficie", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().toString()));
+					if (tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie() != null)
+						BeanUtils.copyProperty(dtoTasacion, "superficieParcela", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie().toString()));
+					if (tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null)
+						BeanUtils.copyProperty(dtoTasacion, "superficie", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().toString()));
 				}
 				
 				if (tasacionSeleccionada.getAcogidaNormativa() != null)

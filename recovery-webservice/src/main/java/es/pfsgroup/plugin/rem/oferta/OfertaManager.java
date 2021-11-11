@@ -7336,8 +7336,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if (actOfr.getPrimaryKey().getActivo() != null &&
 						(DDSituacionComercial.CODIGO_ALQUILADO.equals(actOfr.getPrimaryKey().getActivo().getSituacionComercial().getCodigo()) ||
-								DDSituacionComercial.CODIGO_VENDIDO.equals(actOfr.getPrimaryKey().getActivo().getSituacionComercial().getCodigo())
-								&& (!DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta)))) {
+								DDSituacionComercial.CODIGO_VENDIDO.equals(actOfr.getPrimaryKey().getActivo().getSituacionComercial().getCodigo()))
+								&& (!DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta))) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
 					error.put("disponible", "false");

@@ -141,7 +141,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind : {
 								value : '{datosbasicosoferta.ventaCartera}',
 								readOnly : 'true',
-								hidden : '{esTipoAlquiler}'
+								hidden : '{esAlquilerOAlquilerNoComercial}'
 							}
 						},
 						{
@@ -426,7 +426,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        }
 						},
 						bind : {
-							hidden : '{esTipoAlquiler}' 
+							hidden : '{esAlquilerOAlquilerNoComercial}' 
 						},
 						items : [
 							{
@@ -709,7 +709,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        columns: 3
 						    },
 							bind : {
-								hidden: '{esBankiaAlquiler}'
+								hidden: '{esAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{
@@ -767,7 +767,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        columns: 2
 						    },
 							bind : {
-								hidden: '{!esBankiaAlquiler}'
+								hidden: '{!esAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{

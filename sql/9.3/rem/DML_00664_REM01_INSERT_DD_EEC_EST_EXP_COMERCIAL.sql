@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14748
 --## PRODUCTO=NO
---## Finalidad:  Script que añade en DD_SEC_SUBEST_EXP_COMERCIAL los datos añadidos en T_ARRAY_DATA.
+--## Finalidad:  Script que añade en DD_EEC_SUBEST_EXP_COMERCIAL los datos añadidos en T_ARRAY_DATA.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,14 +35,14 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-	T_TIPO_DATA('44','Pendiente de sanción','Pendiente de sanción','0','1'),
-	T_TIPO_DATA('45','Congelada','Congelada','0','1'),
-	T_TIPO_DATA('46','Descartada','Descartada','0','1'),
-	T_TIPO_DATA('47','Pendiente firma contrato reserva','Pendiente firma contrato reserva','0','1'),
-	T_TIPO_DATA('48','Pendiente de scoring','Pendiente de scoring','0','1'),
-	T_TIPO_DATA('49','Pendiente posicionamiento y firma','Pendiente posicionamiento y firma','0','1'),
-	T_TIPO_DATA('50','Pendiente envio contrato a firma','Pendiente envio contrato a firma','0','1'),
-	T_TIPO_DATA('51','Pendiente de firma','Pendiente de firma','0','1')
+	T_TIPO_DATA('144','Pendiente de sanción','Pendiente de sanción','0','1'),
+	T_TIPO_DATA('145','Congelada','Congelada','0','1'),
+	T_TIPO_DATA('146','Descartada','Descartada','0','1'),
+	T_TIPO_DATA('147','Pendiente firma contrato reserva','Pendiente firma contrato reserva','0','1'),
+	T_TIPO_DATA('148','Pendiente de scoring','Pendiente de scoring','0','1'),
+	T_TIPO_DATA('149','Pendiente posicionamiento y firma','Pendiente posicionamiento y firma','0','1'),
+	T_TIPO_DATA('150','Pendiente envio contrato a firma','Pendiente envio contrato a firma','0','1'),
+	T_TIPO_DATA('151','Pendiente de firma','Pendiente de firma','0','1')
 
     ); 
 

@@ -36,11 +36,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-	T_TIPO_DATA('52','Pendiente registro de firmas en sistema','Pendiente registro de firmas en sistema','0','1'),
-	T_TIPO_DATA('53','Finalizada','Finalizada','0','1'),
-	T_TIPO_DATA('54','Cancelada','Cancelada','0','1'),
-  T_TIPO_DATA('55','Borrador','Borrador','0','0'),
-  T_TIPO_DATA('53','Finalizada','Finalizada','0','0')
+	T_TIPO_DATA('152','Pendiente registro de firmas en sistema','Pendiente registro de firmas en sistema','0','1'),
+	T_TIPO_DATA('153','Finalizada','Finalizada','0','1'),
+	T_TIPO_DATA('154','Cancelada','Cancelada','0','1'),
+ 	T_TIPO_DATA('155','Borrador','Borrador','0','0'),
+  	T_TIPO_DATA('153','Finalizada','Finalizada','0','0')
 
     ); 
 

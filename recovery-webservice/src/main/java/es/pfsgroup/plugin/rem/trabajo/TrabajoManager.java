@@ -500,10 +500,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public Object getTrabajoById(Long id, String pestana) {
 
-		Trabajo trabajo = findOne(id);
 		Object dto = null;
 
 		try {
+			
+			Trabajo trabajo = findOne(id);
 
 			if (PESTANA_FICHA.equals(pestana)) {
 				dto = trabajoToDtoFichaTrabajo(trabajo);
@@ -3459,6 +3460,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if(trabajo.getIdentificadorReam() != null) {
 			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
+		}
+		
+		if(trabajo.getRefacturacionTrabajo() != null) {
+			dtoTrabajo.setRefacturacionTrabajoDescripcion(trabajo.getRefacturacionTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getCalculoMargenTrabajo() != null) {
+			dtoTrabajo.setTipoCalculoMargenDescripcion(trabajo.getCalculoMargenTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getPorcentajeMargen() != null) {
+			dtoTrabajo.setPorcentajeMargen(trabajo.getPorcentajeMargen());
+		}
+		
+		if(trabajo.getImporteMargen() != null) {
+			dtoTrabajo.setImporteMargen(trabajo.getImporteMargen());
 		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());

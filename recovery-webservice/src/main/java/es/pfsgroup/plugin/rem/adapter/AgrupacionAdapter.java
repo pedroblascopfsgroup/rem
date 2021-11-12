@@ -2568,6 +2568,12 @@ public class AgrupacionAdapter {
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			String codigoEstado = this.getEstadoNuevaOferta(agrupacion);
+			
+			Boolean permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(agrupacion.getActivoPrincipal(), dto.getTipoOferta());
+			
+			if (permiteOfertaNoComercialActivoAlquilado) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;
+			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);

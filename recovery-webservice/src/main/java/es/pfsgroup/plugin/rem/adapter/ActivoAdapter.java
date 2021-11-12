@@ -4003,6 +4003,12 @@ public class ActivoAdapter {
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			String codigoEstado = this.getEstadoNuevaOferta(activo);
+			
+			Boolean permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(activo, dto.getTipoOferta());
+			
+			if (permiteOfertaNoComercialActivoAlquilado) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);

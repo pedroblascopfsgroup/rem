@@ -9539,5 +9539,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 	}
+	
+	@Override
+	public boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta) {
+		
+		if (DDCartera.isCarteraBk(activo.getCartera()) && ofertaApi.isActivoConOfertaYExpedienteBlocked(activo) 
+				&& DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo())
+						&& DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(codTipoOferta)) {
+			return true;
+		}
+		return false;
+	}
 }
 

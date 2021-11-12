@@ -3270,7 +3270,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			// Económicas-Financiación
 			Integer solFinanciacion = null;
 			if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())){
-				solFinanciacion = condiciones.getSolicitaFinanciacion().getCodigo().equals("01") ? 1 : 0;
+				solFinanciacion = DDSnsSiNoNosabe.CODIGO_SI.equals(condiciones.getSolicitaFinanciacion().getCodigo()) ? 1 : 0;
 			}
 			dto.setSolicitaFinanciacion(solFinanciacion);
 			if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {

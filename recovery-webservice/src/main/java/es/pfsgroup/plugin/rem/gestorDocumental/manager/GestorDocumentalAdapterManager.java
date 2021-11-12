@@ -656,11 +656,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		List<DtoAdjunto> list;
 
 		String codigoEstado = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codigoEstado = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
 			}
 		}
 
@@ -739,11 +739,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
 		String codigoEstado = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codigoEstado = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
 			}
 		}		
 
@@ -930,11 +930,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		String estadoExpediente = "Alta";
 		String codClase = null;
-		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) && !Checks.esNulo(expedienteComercial.getOferta().getTipoOferta())){
-			if(DDTipoOferta.CODIGO_ALQUILER.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
-				codClase = "08";
-			} else if(DDTipoOferta.CODIGO_VENTA.equalsIgnoreCase(expedienteComercial.getOferta().getTipoOferta().getCodigo())){
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
 				codClase = "06";
+			}else{
+				codClase = "08";
 			}
 		}
 		
@@ -1002,6 +1002,51 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return mgd.getClienteGestorDocumental();
+	}
+	
+	@Override
+	public String getMaestroPersonasByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+		if(Checks.esNulo(subcartera)) {
+			return "";
+		}
+
+		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
+		if(Checks.esNulo(actPro)){
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					return "";
+				}
+			}
+		} else {
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
+						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
+			}
+		}
+		
+		return mgd.getClienteMaestroActivos();
 	}
 
 	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {
@@ -1733,7 +1778,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
 		}
-		return;
+
 	
 	}
 	

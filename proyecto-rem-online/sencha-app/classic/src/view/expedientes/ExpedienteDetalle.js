@@ -10,7 +10,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas','HreRem.model.DatosBasicosOferta',
-				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente'],
+				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente',
+				'HreRem.view.expedientes.GarantiasExpediente'],
 
 	bloqueado: false,
 	procesado: false,
@@ -73,7 +74,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	            		return false;
 	        		}
 	        		// Si la pestaña necesita botones de edición
-	        		if(!tabNext.ocultarBotonesEdicion) {
+	        		if(tabNext.reference === 'reservaExpediente'){
+	        			tabPanel.evaluarBotonesEdicion(tabNext);
+	        		}else if(!tabNext.ocultarBotonesEdicion) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
 	        		return true;
@@ -112,13 +115,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 
 		initComponent: function () {
 	        var me = this;
-
 	        var items = [];
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'condicionesexpediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
+	        if (me.lookupController().getViewModel().get('expediente').get('esBankia')) {
+	        	var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+	        	var tipoExpediente = dataExpediente.tipoExpedienteCodigo;
+	        	if (dataExpediente.esBankia && (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpediente || CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'] == tipoExpediente)) {
+	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'garantiasexpediente', ocultarBotonesEdicion: false})}, ['TAB_GARANTIAS_EXPEDIENTE']); //TAB_OFERTA_EXPEDIENTES
+	        	}
+	        	
+	        }
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosexpediente', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES']);
-	        
+
 	        if(me.lookupController().getViewModel().get('expediente').get('isSubcarteraApple')){
 	        	if ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['GESTBOARDING'])
 	        			|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_FORM'])|| $AU.userIsRol(CONST.PERFILES['SUPERVISOR_FORM'])) {
@@ -126,7 +136,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        	} else {
 	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: true})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        	}
-	        } else {
+	        } else if(me.lookupController().getViewModel().get('expediente').get('esBankia')){ 
+	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', ocultarBotonesEdicion: true , funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
+			}else{
 	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}, funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        }
 	        
@@ -145,8 +157,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
 			}
 			
-	        items.push({xtype: 'scoringexpediente'});
-	        items.push({xtype: 'segurorentasexpediente'});
+			items.push({xtype: 'scoringexpediente'});
+        	items.push({xtype: 'segurorentasexpediente'});
+
 
 	        me.addPlugin({ptype: 'lazyitems', items: items});
 	        me.callParent();
@@ -154,8 +167,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 
 		evaluarBotonesEdicion: function(tab) {
 			var me = this;
-			me.bloquearExpediente(tab,me.bloqueado);
+			if(tab.reference === 'reservaExpediente'){
+				var tabAnterior = tab.up('expedientedetallemain').down('[reference=condicionesExpediente]');
+				me.bloquearExpedienteReserva(tab,me.bloqueado, tabAnterior);
+			}else{
+				me.bloquearExpediente(tab,me.bloqueado);
+
+			}
 		},
+
 	    bloquearExpediente: function(tab,bloqueado) {    	
 			var me = this;
 			me.bloqueado = bloqueado;
@@ -163,7 +183,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			var editionEnabled = function() {
 				me.down("[itemId=botoneditar]").setVisible(true);
 			}
-			
 			if(!bloqueado){
 				// Si la pestaña recibida no tiene asignados roles de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
@@ -171,6 +190,39 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				} else {
 					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 				}
+			}else{
+				me.down("[itemId=botoneditar]").setVisible(false);
+			}
+		},
+		
+		bloquearExpedienteReserva: function(tab,bloqueado, tabAnterior) {    	
+			var me = this;
+			me.bloqueado = bloqueado;
+			me.down("[itemId=botoneditar]").setVisible(false);
+			var editionEnabled = function() {
+				me.down("[itemId=botoneditar]").setVisible(true);
+			}
+			if(!bloqueado){
+				// Si la pestaña recibida no tiene asignados roles de edicion
+				
+				if(Ext.isEmpty(tab.funPermEdition)) {
+					editionEnabled();
+				} else {
+					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				}
+				var editarReserva = true;
+				if(!Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]'))){
+					if(Ext.isEmpty(tabAnterior.down('[reference=tieneReserva]').value) || tabAnterior.down('[reference=tieneReserva]').value == CONST.COMBO_SI_NO['NO']){
+						editarReserva = false;
+					}
+				}else{
+					var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
+		        	if(dataExpediente.solicitaReserva === "0" || !dataExpediente.tieneReserva){
+		        		editarReserva = false;
+		    		}
+				}
+				me.down("[itemId=botoneditar]").setVisible(editarReserva);
+
 			}else{
 				me.down("[itemId=botoneditar]").setVisible(false);
 			}

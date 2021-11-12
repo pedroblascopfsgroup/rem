@@ -13,6 +13,14 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNum
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -60,7 +68,10 @@ public class OfertaDto implements Serializable {
 	@Size(max=1000)
 	private String observaciones;
 	@NotNull(groups = {Insert.class})
-	private Boolean financiacion;
+	@Diccionary(clase = DDSnsSiNoNosabe.class, message = "El codigo DDSnsSiNoNosabe no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String financiacion;
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
@@ -85,10 +96,20 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
-	private String recomendacionRc;
-	private Date fechaRecomendacionRc;
-	private String recomendacionDc;
-	private Date fechaRecomendacionDc;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionRC no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String recomendacionRC;
+	private Date fechaRecomendacionRC;
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionDC no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String recomendacionDC;
+	private Date fechaRecomendacionDC;
+	private String documentoIdentificativo;
+	private String nombreDocumentoIdentificativo;
+	private String documentoGDPR;
+	private String nombreDocumentoGDPR;
 	private Boolean docResponsabilidadPrescriptor;
 	private String porcentajeDescuento;
 	private String justificacionOferta;
@@ -115,6 +136,39 @@ public class OfertaDto implements Serializable {
 	private String codSubestadoExpediente;
 	private String codOfertaSalesforce;
 	private String idOfertaSalesforce;
+	private Date fechaAcepGdpr;
+	@Diccionary(clase = DDVinculoCaixa.class, message = "El vinculoCaixa no existe")
+	private String vinculoCaixa;	
+	@Diccionary(clase = DDTipoSocioComercial.class, message = "El sociedadEmpleadoGrupoCaixa no existe")
+	private String sociedadEmpleadoGrupoCaixa;
+	@IsNumber(message = "Debe ser un número")
+	private Integer oficinaEmpleadoCaixa;
+	private Boolean esAntiguoDeudor;
+	private Date fechaCreacion;
+	private String recomendacionObservaciones;
+	private String importeInicial;
+	private String importeContraofertaRCDC;
+	private String importeContraofertaPrescriptor;
+	@Diccionary(clase = DDRecomendacionRCDC.class, message = "El codigo recomendacionRequerida no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String recomendacionRequerida;
+	private Boolean recomendacionCumplimentada;
+	private Boolean titularesConfirmados;
+	private Boolean aceptacionOfertaTPrincipal;
+	@Diccionary(clase = DDTfnTipoFinanciacion.class, message = "El codigo DDTfnTipoFinanciacion no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String tipoFinanciacion;
+	@Diccionary(clase = DDEntidadFinanciera.class, message = "El codigo DDEntidadFinanciera no existe", groups = { Insert.class,
+			Update.class },foreingField="codigoSF")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String entidadFinanciacion;
+	@Diccionary(clase = DDMotivoJustificacionOferta.class, message = "El codigo DDMotivoJustificacionOferta no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String codMotivoJustificacionOferta;
+	private List<TestigosOfertaDto> testigos;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -249,10 +303,10 @@ public class OfertaDto implements Serializable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Boolean getFinanciacion() {
+	public String getFinanciacion() {
 		return financiacion;
 	}
-	public void setFinanciacion(Boolean financiacion) {
+	public void setFinanciacion(String financiacion) {
 		this.financiacion = financiacion;
 	}
 	public Boolean getIsExpress() {
@@ -363,29 +417,54 @@ public class OfertaDto implements Serializable {
 	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
 		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
 	}
-	public String getRecomendacionRc() {
-		return recomendacionRc;
+	public String getRecomendacionRC() {
+		return recomendacionRC;
 	}
-	public void setRecomendacionRc(String recomendacionRc) {
-		this.recomendacionRc = recomendacionRc;
+	public void setRecomendacionRC(String recomendacionRC) {
+		this.recomendacionRC = recomendacionRC;
 	}
-	public Date getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
+	public Date getFechaRecomendacionRC() {
+		return fechaRecomendacionRC;
 	}
-	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
+	public void setFechaRecomendacionRC(Date fechaRecomendacionRC) {
+		this.fechaRecomendacionRC = fechaRecomendacionRC;
 	}
-	public String getRecomendacionDc() {
-		return recomendacionDc;
+	public String getRecomendacionDC() {
+		return recomendacionDC;
 	}
-	public void setRecomendacionDc(String recomendacionDc) {
-		this.recomendacionDc = recomendacionDc;
+	public void setRecomendacionDC(String recomendacionDC) {
+		this.recomendacionDC = recomendacionDC;
 	}
-	public Date getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
+	public Date getFechaRecomendacionDC() {
+		return fechaRecomendacionDC;
 	}
-	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
+	public void setFechaRecomendacionDC(Date fechaRecomendacionDC) {
+		this.fechaRecomendacionDC = fechaRecomendacionDC;
+	}
+
+	public String getDocumentoIdentificativo() {
+		return documentoIdentificativo;
+	}
+	public void setDocumentoIdentificativo(String documentoIdentificativo) {
+		this.documentoIdentificativo = documentoIdentificativo;
+	}
+	public String getNombreDocumentoIdentificativo() {
+		return nombreDocumentoIdentificativo;
+	}
+	public void setNombreDocumentoIdentificativo(String nombreDocumentoIdentificativo) {
+		this.nombreDocumentoIdentificativo = nombreDocumentoIdentificativo;
+	}
+	public String getDocumentoGDPR() {
+		return documentoGDPR;
+	}
+	public void setDocumentoGDPR(String documentoGDPR) {
+		this.documentoGDPR = documentoGDPR;
+	}
+	public String getNombreDocumentoGDPR() {
+		return nombreDocumentoGDPR;
+	}
+	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
+		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
 	}
 	public Boolean getDocResponsabilidadPrescriptor() {
 		return docResponsabilidadPrescriptor;
@@ -542,5 +621,116 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdOfertaSalesforce(String idOfertaSalesforce) {
 		this.idOfertaSalesforce = idOfertaSalesforce;
+	}
+	public Date getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+	public void setFechaAcepGdpr(Date fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
+	public String getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+	public void setVinculoCaixa(String vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
+	}
+	public String getSociedadEmpleadoGrupoCaixa() {
+		return sociedadEmpleadoGrupoCaixa;
+	}
+	public void setSociedadEmpleadoGrupoCaixa(String sociedadEmpleadoGrupoCaixa) {
+		this.sociedadEmpleadoGrupoCaixa = sociedadEmpleadoGrupoCaixa;
+	}
+	public Integer getOficinaEmpleadoCaixa() {
+		return oficinaEmpleadoCaixa;
+	}
+	public void setOficinaEmpleadoCaixa(Integer oficinaEmpleadoCaixa) {
+		this.oficinaEmpleadoCaixa = oficinaEmpleadoCaixa;
+	}
+	public Boolean getEsAntiguoDeudor() {
+		return esAntiguoDeudor;
+	}
+	public void setEsAntiguoDeudor(Boolean esAntiguoDeudor) {
+		this.esAntiguoDeudor = esAntiguoDeudor;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+	
+	public String getRecomendacionObservaciones() {
+		return recomendacionObservaciones;
+	}
+	public void setRecomendacionObservaciones(String recomendacionObservaciones) {
+		this.recomendacionObservaciones = recomendacionObservaciones;
+	}
+	public String getTipoFinanciacion() {
+		return tipoFinanciacion;
+	}
+	public void setTipoFinanciacion(String tipoFinanciacion) {
+		this.tipoFinanciacion = tipoFinanciacion;
+	}
+	public String getEntidadFinanciacion() {
+		return entidadFinanciacion;
+	}
+	public void setEntidadFinanciacion(String entidadFinanciacion) {
+		this.entidadFinanciacion = entidadFinanciacion;
+	}
+	public String getCodMotivoJustificacionOferta() {
+		return codMotivoJustificacionOferta;
+	}
+	public void setCodMotivoJustificacionOferta(String codMotivoJustificacionOferta) {
+		this.codMotivoJustificacionOferta = codMotivoJustificacionOferta;
+	}
+	public List<TestigosOfertaDto> getTestigos() {
+		return testigos;
+	}
+	public void setTestigos(List<TestigosOfertaDto> testigos) {
+		this.testigos = testigos;
+	}
+	public String getImporteInicial() {
+		return importeInicial;
+	}
+	public void setImporteInicial(String importeInicial) {
+		this.importeInicial = importeInicial;
+	}
+	public String getImporteContraofertaRCDC() {
+		return importeContraofertaRCDC;
+	}
+	public void setImporteContraofertaRCDC(String importeContraofertaRCDC) {
+		this.importeContraofertaRCDC = importeContraofertaRCDC;
+	}
+	public String getImporteContraofertaPrescriptor() {
+		return importeContraofertaPrescriptor;
+	}
+	public void setImporteContraofertaPrescriptor(String importeContraofertaPrescriptor) {
+		this.importeContraofertaPrescriptor = importeContraofertaPrescriptor;
+	}
+	public String getRecomendacionRequerida() {
+		return recomendacionRequerida;
+	}
+	public void setRecomendacionRequerida(String recomendacionRequerida) {
+		this.recomendacionRequerida = recomendacionRequerida;
+	}
+	public Boolean getRecomendacionCumplimentada() {
+		return recomendacionCumplimentada;
+	}
+	public void setRecomendacionCumplimentada(Boolean recomendacionCumplimentada) {
+		this.recomendacionCumplimentada = recomendacionCumplimentada;
+	}
+	public Boolean getTitularesConfirmados() {
+		return titularesConfirmados;
+	}
+	public void setTitularesConfirmados(Boolean titularesConfirmados) {
+		this.titularesConfirmados = titularesConfirmados;
+	}
+	public Boolean getAceptacionOfertaTPrincipal() {
+		return aceptacionOfertaTPrincipal;
+	}
+	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
+		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
 	}
 }

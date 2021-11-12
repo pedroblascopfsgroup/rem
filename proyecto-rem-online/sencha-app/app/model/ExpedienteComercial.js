@@ -220,9 +220,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'definicionOfertaScoring',
        			type: 'boolean'
     		},
-       		{
-       			name: 'codigoEstado'
-    		},
     		{
     			name: 'subcarteraCodigo'
 			},
@@ -333,7 +330,57 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
 			{
     			name: 'codigoSubestado'
-    		}
+			},
+			{
+    			name: 'codigoEstadoBc'
+    		},
+    		{
+    			name: 'estadoPbcCn'
+    		},
+    		{
+    			name: 'estadoPbcArras'
+    		},
+    		{
+    			name: 'fechaReservaDeposito',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaContabilizacion',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaFirmaContrato',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'isEmpleadoCaixa',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'clasificacionCodigo'
+    		},
+    		{
+    			name:'mesesDuracionCntAlquiler'
+    		},
+    		{
+    			name:'motivoRechazoAntiguoDeudCod'
+    		},
+    		{
+    			name:'detalleAnulacionCntAlquiler'
+    		},
+    		{
+    			name:'tipoOfertaAlquilerCodigo'
+    		},
+    		{
+    			name: 'codigoEstadoComunicacionC4C'
+    		},
+            {
+                name: 'estadoPbcAlquiler'
+            }
+    		
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

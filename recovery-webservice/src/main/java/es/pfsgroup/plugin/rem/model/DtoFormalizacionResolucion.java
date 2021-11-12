@@ -21,6 +21,7 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
+	private String id;
 	private Long idFormalizacion;
 	private Long idExpediente;
 	private String nombreNotario;
@@ -36,6 +37,19 @@ public class DtoFormalizacionResolucion extends WebDto {
 	private Double importe;
 	private Date fechaVenta;
 	private String numProtocolo;
+	private Boolean generacionHojaDatos;
+	private Date fechaContabilizacion;
+	
+	private Date fechaFirmaContrato;
+	private String numeroProtocoloCaixa;
+	
+	private Boolean ventaPlazos;
+	private Boolean ventaCondicionSupensiva;
+	private Boolean cesionRemate;
+	private Boolean contratoPrivado;
+	
+	private Date fechaInicioCnt;
+	private Date fechaFinCnt;
 	
 	
 	public Long getIdFormalizacion() {
@@ -128,8 +142,71 @@ public class DtoFormalizacionResolucion extends WebDto {
 	public void setNumProtocolo(String numProtocolo) {
 		this.numProtocolo = numProtocolo;
 	}
+	public Boolean getGeneracionHojaDatos() {
+		return generacionHojaDatos;
+	}
+	public void setGeneracionHojaDatos(Boolean generacionHojaDatos) {
+		this.generacionHojaDatos = generacionHojaDatos;
+	}
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
+	}
+	public String getNumeroProtocoloCaixa() {
+		return numeroProtocoloCaixa;
+	}
+	public void setNumeroProtocoloCaixa(String numeroProtocoloCaixa) {
+		this.numeroProtocoloCaixa = numeroProtocoloCaixa;
+	}
+	public Boolean getVentaPlazos() {
+		return ventaPlazos;
+	}
+	public void setVentaPlazos(Boolean ventaPlazos) {
+		this.ventaPlazos = ventaPlazos;
+	}
+	public Boolean getVentaCondicionSupensiva() {
+		return ventaCondicionSupensiva;
+	}
+	public void setVentaCondicionSupensiva(Boolean ventaCondicionSupensiva) {
+		this.ventaCondicionSupensiva = ventaCondicionSupensiva;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public Boolean getCesionRemate() {
+		return cesionRemate;
+	}
+	public void setCesionRemate(Boolean cesionRemate) {
+		this.cesionRemate = cesionRemate;
+	}
+	public Boolean getContratoPrivado() {
+		return contratoPrivado;
+	}
+	public void setContratoPrivado(Boolean contratoPrivado) {
+		this.contratoPrivado = contratoPrivado;
+	}
+	public Date getFechaInicioCnt() {
+		return fechaInicioCnt;
+	}
+	public void setFechaInicioCnt(Date fechaInicioCnt) {
+		this.fechaInicioCnt = fechaInicioCnt;
+	}
+	public Date getFechaFinCnt() {
+		return fechaFinCnt;
+	}
+	public void setFechaFinCnt(Date fechaFinCnt) {
+		this.fechaFinCnt = fechaFinCnt;
+	}
 	
-	
-
-   		
 }

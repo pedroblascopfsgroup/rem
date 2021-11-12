@@ -1,13 +1,10 @@
 package es.pfsgroup.plugin.rem.tareasactivo;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
+import es.pfsgroup.plugin.rem.activo.dao.TareaValoresDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.exe.Token;
@@ -129,6 +126,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
 	private ValidateJbpmApi validateJbpmApi;
+
+	@Autowired
+	private TareaValoresDao tareaValoresDao;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -523,6 +523,22 @@ public class TareaActivoManager implements TareaActivoApi {
 		return !tareaCompletada.isEmpty();
 	}
 	
+	@Override
+	public boolean getSiTareaCompletada(Long idTramite, String nombreTarea) {
+		List<TareaActivo> tareasTramite = getTareasActivoByIdTramite(idTramite);
+		List <String>  tareaCompletada = new ArrayList<String>() ;
+		for (TareaActivo tareaActivo : tareasTramite) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
+			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
+			if (!Checks.esNulo(tareaExterna) 
+					&& !Checks.esNulo(tareaExterna.getTareaProcedimiento())
+					&& nombreTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& (!Checks.esNulo(tareaActivo.getFechaFin()) || !Checks.esNulo(tareaActivo.getFechaFin())))
+				tareaCompletada.add(tareaExterna.getTareaProcedimiento().getCodigo());
+		}
+		return !tareaCompletada.isEmpty();
+	}
+	
 	@Transactional
 	@Override
 	public TareaActivo tareaOfertaDependiente(Oferta oferta) {
@@ -667,5 +683,10 @@ public class TareaActivoManager implements TareaActivoApi {
 		tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
 		
 	}
-	
+
+	@Override
+	public String getValorCampoTarea(String codTarea, Long numExpediente, String nombreCampo){
+		return tareaValoresDao.getValorCampoTarea(codTarea, numExpediente, nombreCampo);
+	}
+
 }

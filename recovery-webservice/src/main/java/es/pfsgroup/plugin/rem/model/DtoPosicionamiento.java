@@ -2,10 +2,16 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.annotations.Check;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 
 
 /**
@@ -35,6 +41,14 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 	private Date fechaFinPosicionamiento;
 	private String lugarFirma;
 	private Date fechaHoraFirma;
+	
+	private Date fechaEnvioPos;
+	private String validacionBCPosi;
+	private Date fechaValidacionBCPos;
+	private String observacionesBcPos;
+	private String observacionesRem;
+	private String validacionBCPosiDesc;
+	private String motivoAnulacionBc;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -132,6 +146,49 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 			return o.getFechaAlta().compareTo(this.getFechaAlta());
 		}
 	}
+	public Date getFechaEnvioPos() {
+		return fechaEnvioPos;
+	}
+	public void setFechaEnvioPos(Date fechaEnvioPos) {
+		this.fechaEnvioPos = fechaEnvioPos;
+	}
+	public String getValidacionBCPosi() {
+		return validacionBCPosi;
+	}
+	public void setValidacionBCPosi(String validacionBCPosi) {
+		this.validacionBCPosi = validacionBCPosi;
+	}
+	public Date getFechaValidacionBCPos() {
+		return fechaValidacionBCPos;
+	}
+	public void setFechaValidacionBCPos(Date fechaValidacionBCPos) {
+		this.fechaValidacionBCPos = fechaValidacionBCPos;
+	}
+	public String getObservacionesBcPos() {
+		return observacionesBcPos;
+	}
+	public void setObservacionesBcPos(String observacionesBcPo) {
+		this.observacionesBcPos = observacionesBcPo;
+	}
+	public String getObservacionesRem() {
+		return observacionesRem;
+	}
+	public void setObservacionesRem(String observacionesRem) {
+		this.observacionesRem = observacionesRem;
+	}
+	public String getValidacionBCPosiDesc() {
+		return validacionBCPosiDesc;
+	}
+	public void setValidacionBCPosiDesc(String validacionBCPosiDesc) {
+		this.validacionBCPosiDesc = validacionBCPosiDesc;
+	}
+	public String getMotivoAnulacionBc() {
+		return motivoAnulacionBc;
+	}
+	public void setMotivoAnulacionBc(String motivoAnulacionBc) {
+		this.motivoAnulacionBc = motivoAnulacionBc;
+	}
+	
 	
    	
 }

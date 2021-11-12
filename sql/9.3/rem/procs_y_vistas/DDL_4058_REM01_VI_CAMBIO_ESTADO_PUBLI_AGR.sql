@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190516
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20210721
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.8.4
---## INCIDENCIA_LINK=REMVIP-3995
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-14686
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Oscar Diestre -HREOS-5358- Corregidas por coma simple
 --##		0.6 Carles Molins -REMVIP-3995- Incidencia Precios
 --##    	0.7 David Gonzalez -HREOS-6184- Ajustes joins
+--##    0.8 Daniel Algaba -HREOS-14686-  Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
 --##########################################
 --*/
 
@@ -124,6 +125,12 @@ BEGIN
                               )     
                             OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                                )
+                            OR(     TAG.DD_TAG_CODIGO = ''17''	/*Restringida alquiler*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                                )
+                            OR(     TAG.DD_TAG_CODIGO = ''18''	/*Restringida OBREM*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                                 )
                             )    
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
@@ -285,6 +292,20 @@ BEGIN
  
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR.ES_CONDICIONADO_PUBLI IS ''Campo calculado en la vista V_ACT_ESTADO_DISP'' ';
     EXECUTE IMMEDIATE V_MSQL;        
+    
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
 END;
 /
 

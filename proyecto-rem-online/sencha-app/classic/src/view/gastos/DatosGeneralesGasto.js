@@ -31,6 +31,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     initComponent: function () {
 
         var me = this;
+        var tipoGasto = me.lookupController().getViewModel().get('gasto').get('tipoGastoCodigo');
         
         var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
@@ -39,7 +40,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 				actionMethods: {read: 'POST'},
 				remoteUrl: 'gastosproveedor/searchProveedoresByNif'
 			}   	
-    	}); 
+    	});  
 
 		me.setTitle(HreRem.i18n('title.gasto.datos.generales'));
         me.items = [
@@ -97,8 +98,32 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		store: '{comboTiposGasto}',
 							           		value: '{gasto.tipoGastoCodigo}'
 							         	},
+							         	listeners:{
+							         		change: function(get){
+     												var me = this;
+     												var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+     												var numeroContratoAlquiler = me.nextSibling('[reference=numeroContratoAlquilerRef]');
+     												//EL COD 19 es de Tipo Alquiler. No está en el Constants, por lo que se hace así
+     												if (cartera == CONST.CARTERA['BANKIA'] && me.getValue() == '19') {
+     													numeroContratoAlquiler.setHidden(false);
+     												}else{
+     													numeroContratoAlquiler.setHidden(true);
+     													/*if (numeroContratoAlquiler.getValue() != "") {
+     														numeroContratoAlquiler.setValue(null);
+     													}*/
+     												}
+							         		}
+							         	},
 							         	allowBlank: false
 							    	},
+							    	{
+					                	xtype: 'checkboxfieldbase',
+					                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subrogado'),
+					                	bind:	{
+					                		value: '{gasto.subrogado}', 
+					                		hidden:'{!esPropietarioCaixaAlquiler}'
+					                	}			
+				                	},
 							    	{
 							    		xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.suplidos.vinculados'),
@@ -124,6 +149,32 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		disabled: '{!gasto.suplidoVinculadoNo}',
 							           		hidden: '{!gasto.visibleSuplidos}'
 							         	}
+							    	},
+							    	{
+							    		xtype: 'textfieldbase',
+							    		fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
+							    		reference: 'numeroContratoAlquilerRef',
+							    		name: 'numeroContratoAlquiler',
+							    		bind: {
+							    			value: '{gasto.numeroContratoAlquiler}'
+							    		},
+							    		maxLength: 15,
+							    		validator: function(value){
+							    			if (value.length == 0) {
+							    				return true;
+							    			}else{
+							    				return value.match(/^[0-9]{4}-[0-9]{10}$/) ? true : 'Formato nº contrato: XXXX-XXXXXXXXXX donde X debe ser numérico';
+							    			}							    			
+							    		},
+							    		listeners:{
+							    			change:  
+							    				function(field, newValue, oldValue, eOpts){
+     												if(newValue.length >= 4 && newValue.length < 14 && !newValue.includes("-")){
+     													field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,14)); 										         		
+										     		}
+													field.validate();
+     											}
+							    		}
 							    	},
 									{		                
 									    xtype: 'checkboxfieldbase',
@@ -465,7 +516,21 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								    ]
 								}
 							]
-			           }
+			           },
+			           {
+                           xtype:'fieldsettable',
+                           title: HreRem.i18n('title.gasto.tasaciones.incluidas.factura'),
+                           defaultType: 'textfieldbase',
+                           colspan: 3,
+                           items :
+                               [
+                                   {
+                                       xtype: 'tasacionesgastogrid',
+                                       reference: 'tasacionesgastogrid',
+                                       tipoGasto: tipoGasto
+                                   }
+                               ]
+                       }
     	];
 
 	    me.callParent(); 

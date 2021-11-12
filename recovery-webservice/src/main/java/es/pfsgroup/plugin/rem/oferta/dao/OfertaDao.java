@@ -7,11 +7,9 @@ import java.util.List;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
-import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 
 
 public interface OfertaDao extends AbstractDao<Oferta, Long>{
@@ -85,6 +83,8 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	
 	public void flush();
 	
+	public Boolean replicateOfertaFlush(Long numOferta);
+	
 	public Oferta getOfertaPrincipal(Long numOferta);
 
 	/**
@@ -111,4 +111,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 
 	public Oferta getOfertaByIdOfertaHayaHomeOrNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem);
 	
+	Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto);
+
+	Boolean pbcFlush(LlamadaPbcDto dto);
 }

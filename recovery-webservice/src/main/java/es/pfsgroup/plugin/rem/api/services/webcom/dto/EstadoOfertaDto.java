@@ -34,6 +34,8 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DateDataType fechaVenta;
 	private DateDataType fechaReserva;
 	private DateDataType fechaAlquiler;
+	private BooleanDataType necesidadIf;
+	private BooleanDataType exclusionIf;
 	private DoubleDataType importe;
 	private StringDataType codOrigenOferta;
 	private DoubleDataType mesesCarencia;
@@ -162,6 +164,18 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	}
 	public void setFechaAlquiler(DateDataType fechaAlquiler) {
 		this.fechaAlquiler = fechaAlquiler;
+	}
+	public BooleanDataType getNecesidadIf() {
+		return necesidadIf;
+	}
+	public void setNecesidadIf(BooleanDataType necesidadIf) {
+		this.necesidadIf = necesidadIf;
+	}
+	public BooleanDataType getExclusionIf() {
+		return exclusionIf;
+	}
+	public void setExclusionIf(BooleanDataType exclusionIf) {
+		this.exclusionIf = exclusionIf;
 	}
 	public DoubleDataType getImporte() {
 		return importe;
@@ -295,5 +309,6 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setCodOfertaSalesforce(StringDataType codOfertaSalesforce) {
 		this.codOfertaSalesforce = codOfertaSalesforce;
 	}
+
 
 }

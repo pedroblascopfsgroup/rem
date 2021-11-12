@@ -16,6 +16,7 @@
 --##		0.4 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.5 REMVIP-4622 - Ocultación alquilado
 --##		0.6 HREOS-14935 - Añadir motivo ocultación Reserva Alquiler
+--##		0.6 HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
 --########################################## 
 --*/
 
@@ -48,7 +49,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
 	  vQUERY := ' (SELECT 1
 				   FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
 				   JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-				   JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
+				   JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02''/*Restringida*/ ,''17''/*Restringida alquiler*/,''18''/*Restringida OBREM*/)	
 					   AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
 				  WHERE AGA.ACT_ID = ACT.ACT_ID 
 					AND AGA.BORRADO = 0

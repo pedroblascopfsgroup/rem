@@ -75,6 +75,23 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String CONTRAOFERTA_DENEGADA = "29";
 	public static final String PTE_CONTRASTE_LISTAS = "42";
 	public static final String PDTE_RESPUESTA_OFERTANTE_CES = "43";
+	public static final String PTE_PBC_CN = "44"; 
+	public static final String PTE_PBC_ARRAS = "45"; 
+	public static final String PTE_PBC_VENTAS = "46"; 
+	public static final String PTE_AGENDAR_ARRAS = "47"; 
+	public static final String PTE_AGENDAR_FIRMA = "48"; 
+	public static final String PTE_FIRMA_ARRAS = "49"; 
+	public static final String PENDIENTE_GARANTIAS_ADICIONALES = "50"; 
+	public static final String PTE_AGENDAR = "51"; 
+	public static final String PTE_ENVIO = "52"; 
+	
+	public static final String PTE_SCREENING_Y_ANALISIS_BC = "53";
+	public static final String PTE_CL_ROD = "54";
+	public static final String PTE_ANALISIS_TECNICO = "55";
+	public static final String PTE_NEGOCIACION = "56";
+	public static final String PTE_PBC_ALQUILER_HRE = "57";
+	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "58";
+	public static final String PTE_REVISAR_CONDICIONES_BC = "59";
 	
 	//Estados Alquiler
 	public static final String PENDIENTE_SANCION = "44";
@@ -183,6 +200,14 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 
 	public void setEstadoAlquiler(Boolean estadoAlquiler) {
 		this.estadoAlquiler = estadoAlquiler;
+	}
+	
+	public static boolean isFirmado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && FIRMADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
 	}
 
 }

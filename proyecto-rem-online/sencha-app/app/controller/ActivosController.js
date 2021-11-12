@@ -42,6 +42,10 @@ Ext.define('HreRem.controller.ActivosController', {
 				{
 					ref: 'configuracionMain',
 					selector: 'configuracionmain'
+				},
+				{
+				    ref: 'gastodetallemain',
+				    selector: 'gastodetallemain'
 				}
 					
 	],
@@ -84,7 +88,8 @@ Ext.define('HreRem.controller.ActivosController', {
         	abrirDetalleProveedor: 'abrirDetalleProveedor',
         	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById',
         	abrirDetallePlusvalia: 'abrirDetallePlusvalia',
-        	abrirDetalleGasto: 'abrirDetalleGasto'
+        	abrirDetalleGasto: 'abrirDetalleGasto',
+        	abrirDetalleGastoTasacion: 'abrirDetalleGastoTasacion'
     	},
 
     	'tareagenerica' : {
@@ -229,7 +234,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	'gastodetallemain': {
     		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
     		abrirDetalleTrabajo: 'abrirDetalleTrabajo',
-    		refrescarGasto: 'refrescarDetalleGasto'
+    		refrescarGasto: 'refrescarDetalleGasto',
+    		abrirDetalleActivoPreciosTasacion: 'abrirDetalleActivoPreciosTasacion'
     	},
     	
     	'gencatcomercialactivo':{
@@ -1192,6 +1198,17 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleGastoById(id, titulo);    	
     	    	
     },
+
+    abrirDetalleGastoTasacion: function(record, refLinks) {
+       var me = this,
+       numGasto = record.get("numGastoHaya"),
+       id = record.get("idGasto"),
+       titulo = Ext.isEmpty(numGasto)? null : 'Gasto ' + numGasto;
+
+       me.redirectTo('activos', true);
+       me.abrirDetalleGastoById(id, titulo, refLinks);
+
+    },
     
     abrirDetallePlusvalia: function(record) {
     	var me = this,
@@ -1320,6 +1337,14 @@ Ext.define('HreRem.controller.ActivosController', {
 	       	}
 		});
 
+    },
+
+    abrirDetalleActivoPreciosTasacion: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+		me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PRECIOS_TASACION']);
     }
     
 });

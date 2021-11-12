@@ -115,7 +115,9 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer estadoPbc;
 	private Integer estadoPbcR;
 	private Date fechaVenta;
-	
+	private Integer estadoPbcAlquiler;
+
+
 
 	private Integer alquilerOpcionCompra;
 	private String codigoEstado;
@@ -124,6 +126,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean ocultarPestTanteoRetracto;
 	
 	private String estadoReserva;
+	private String estadoReservaCod;
 	private String codDevolucionReserva;
 	
 	private Boolean bloqueado;
@@ -160,6 +163,27 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String subestadoExpediente;
 	private String codigoSubestado;
+	private String codigoEstadoBc;
+	
+	private Integer estadoPbcCn;
+	
+	private Integer estadoPbcArras;
+	
+	private Date fechaContabilizacion;
+	
+	private Date fechaReservaDeposito;
+	
+	private Date fechaFirmaContrato;
+	
+	private String clasificacionCodigo;
+	
+	private Long mesesDuracionCntAlquiler;
+	
+	private String motivoRechazoAntiguoDeudCod; 
+	
+	private String detalleAnulacionCntAlquiler;
+	
+	private String codigoEstadoComunicacionC4C;
 	
 	public Long getId() {
 		return id;
@@ -827,4 +851,107 @@ public class DtoFichaExpediente extends WebDto {
 	}
 	
 	
+	public String getCodigoEstadoBc() {
+		return codigoEstadoBc;
+	}
+
+	public void setCodigoEstadoBc(String codigoEstadoBc) {
+		this.codigoEstadoBc = codigoEstadoBc;
+	}
+
+	public Integer getEstadoPbcCn() {
+		return estadoPbcCn;
+	}
+
+	public void setEstadoPbcCn(Integer estadoPbcCn) {
+		this.estadoPbcCn = estadoPbcCn;
+	}
+
+	public Integer getEstadoPbcArras() {
+		return estadoPbcArras;
+	}
+
+	public void setEstadoPbcArras(Integer estadoPbcArras) {
+		this.estadoPbcArras = estadoPbcArras;
+	}
+
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+
+	public String getEstadoReservaCod() {
+		return estadoReservaCod;
+	}
+
+	public void setEstadoReservaCod(String estadoReservaCod) {
+		this.estadoReservaCod = estadoReservaCod;
+	}
+
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
+	}
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
+
+	public Long getMesesDuracionCntAlquiler() {
+		return mesesDuracionCntAlquiler;
+	}
+
+	public void setMesesDuracionCntAlquiler(Long mesesDuracionCntAlquiler) {
+		this.mesesDuracionCntAlquiler = mesesDuracionCntAlquiler;
+	}
+
+	public String getMotivoRechazoAntiguoDeudCod() {
+		return motivoRechazoAntiguoDeudCod;
+	}
+
+	public void setMotivoRechazoAntiguoDeudCod(String motivoRechazoAntiguoDeudCod) {
+		this.motivoRechazoAntiguoDeudCod = motivoRechazoAntiguoDeudCod;
+	}
+
+	public String getDetalleAnulacionCntAlquiler() {
+		return detalleAnulacionCntAlquiler;
+	}
+
+	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
+		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
+
+	public String getCodigoEstadoComunicacionC4C() {
+		return codigoEstadoComunicacionC4C;
+	}
+
+	public void setCodigoEstadoComunicacionC4C(String codigoEstadoComunicacionC4C) {
+		this.codigoEstadoComunicacionC4C = codigoEstadoComunicacionC4C;
+	}
+
+	public Integer getEstadoPbcAlquiler() {
+		return estadoPbcAlquiler;
+	}
+
+	public void setEstadoPbcAlquiler(Integer estadoPbcAlquiler) {
+		this.estadoPbcAlquiler = estadoPbcAlquiler;
+	}
 }

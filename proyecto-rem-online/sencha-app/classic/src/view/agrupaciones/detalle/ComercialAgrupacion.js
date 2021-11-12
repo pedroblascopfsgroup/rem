@@ -83,6 +83,47 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 				]
 			},
 			{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: true,
+				reference: 'informacionBC',
+				title: HreRem.i18n('title.informacion.BC'),
+				colspan:3,
+				bind:{
+					hidden: '{!esAgrupacionCaixaComercial}'
+				},
+				items :
+					[
+						{
+							xtype: 'displayfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.necesidad.arras'),
+				        	reference: 'necesidadArrasRef',
+							//maxLength: 250,
+							bind:{
+								value: '{comercialagrupacion.necesidadArras}'
+							}
+						},
+						{
+							xtype: 'displayfieldbase',
+				        	fieldLabel:	HreRem.i18n('fieldlabel.canal.venta.bc'),
+				        	reference: 'necesidadArrasRef',
+							//maxLength: 250,
+							bind:{
+								value: '{comercialagrupacion.canalVentaBc}'
+							}
+						},
+						{
+							xtype: 'displayfieldbase',
+				        	fieldLabel:	HreRem.i18n('fieldlabel.canal.alquiler.bc'),
+				        	reference: 'necesidadArrasRef',
+							//maxLength: 250,
+							bind:{
+								value: '{comercialagrupacion.canalAlquilerBc}'
+							}
+						}						
+					]
+			},
+			{
 				xtype: 'comercialagrupaciontabs'
 			}
     	];

@@ -18,6 +18,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 
         var me = this;
 		me.setTitle(HreRem.i18n('title.ficha'));
+
+		var storeAnulacion  = me.lookupViewModel().get('expediente.isCarteraBankia') ? '{storeMotivoAnulacionCaixa}' : '{storeMotivoAnulacion}';
         var items= [
 
 			{   
@@ -26,6 +28,32 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.expediente.ficha.objeto'), 
 				items :
 					[
+						{   
+							xtype : 'fieldsettable',
+							defaultType : 'displayfieldbase',
+							title : 'Pruebas Screening',
+							collapsible: false,
+							bind: {
+								hidden: !$AU.userIsRol("HAYASUPER")
+							},
+							colspan: 3,
+							items : [ 
+									{
+										text : "Boton para lanzar BoqueoScreening",
+					                	xtype: "button" ,
+					                	handler: 'pruebaBloqueo',
+					                	scale: "large",
+					                	margin: '0 0 10 0'
+					                },	
+					                {
+					                	text : "Boton para lanzar DesboqueoScreening",
+					                	xtype: "button",
+					                	handler: 'pruebaDesBloqueo',
+					                	scale: "large",
+					                	margin: '0 0 10 0'
+					                }
+					            ]
+						},	
 		                {
 		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.num.expediente'),
@@ -69,8 +97,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							cls: 'cabecera-info-field',
 							bind :{ 
 								value: '{expediente.tipoInquilino}',
-								hidden: '{esOfertaVenta}',
-									store :'{comboTiposInquilino}'
+								hidden: '{esOfertaVentaOrCarteraCaixa}',
+                                store :'{comboTiposInquilino}'
 							}
 		                },
 
@@ -85,7 +113,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							hidden: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
-
 						{
 							fieldLabel:  HreRem.i18n('fieldlabel.subestado'),
 		                	xtype: 'comboboxfieldbase',
@@ -95,18 +122,56 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 								value: '{expediente.codigoSubestado}',
 								hidden: '{!expediente.esActivoHayaHome}'								
 							}
+						},
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoExpedienteBc}',
+								value: '{expediente.codigoEstadoBc}',
+								readOnly: '{expediente.noEsOfertaFinalGencat}',
+								hidden: '{!esBankia}'
+							},
+							
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.bc')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	readOnly: true,
+		                	bind: {
+								store: '{comboEstadoComunicacionC4C}',
+								value: '{expediente.codigoEstadoComunicacionC4C}',
+								hidden: '{!esBankia}'
+							},
+							
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.comunicacion.c4c')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{storeClasificacion}',
+								value: '{expediente.clasificacionCodigo}',
+								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+							},
+                            readOnly: true,
+		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion')
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{storeTipoOfertaAlquiler}',
+								value: '{datosbasicosoferta.tipoOfertaAlquilerCodigo}',
+								hidden: '{!esAlquilerNoComercial}'
+							},
+							readOnly: true,
+		                	fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.subtipo.oferta')
 		                }
 						
 					]
            },
-           {   
+           {    
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',				
 				title: HreRem.i18n('title.titulo.alquiler'),
-				layout: {
-					type: 'table',
-					columns: 1
-				},
 				bind: {
 					hidden: '{esOfertaVentaFicha}',
 					disabled: '{esOfertaVentaFicha}'
@@ -124,9 +189,20 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
-					        	bind: '{expediente.fechaInicioAlquiler}',
+					        	bind: {
+					        		value:'{expediente.fechaInicioAlquiler}'
+					        	},
 					        	readOnly: true,
 					        	maxValue: null
+					        },
+					        {
+				        		xtype:'numberfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.meses.duracion.alquiler'),
+					        	bind: {
+					        		value:'{expediente.mesesDuracionCntAlquiler}',
+					        		hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+					        	},
+					        	readOnly: true
 					        },
 					        {
 				        		xtype:'datefieldbase',
@@ -135,6 +211,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 					        	bind: '{expediente.fechaFinAlquiler}',
 					        	readOnly: true,
 					        	maxValue: null
+					        },
+					    	{ 
+					        	xtype : 'currencyfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.importe.renta.oferta'),
+								bind : {
+									value:'{expediente.importeRentaAlquiler}',
+									hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+								},
+                                readOnly: true
 					        },
 							{ 
 								xtype: 'textfieldbase',
@@ -200,6 +285,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		'{expediente.fechaAltaOferta}'
 	                	//,readOnly: true
 	                },
+	                { 	//PARA CAIXA
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
+						reference: 'fechaReservaRef',
+	                	bind:		{
+	                		value: '{expediente.fechaReservaDeposito}',
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
+	                	}
+	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -212,7 +308,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		{
-	                		value: '{expediente.fechaReserva}'
+	                		value: '{expediente.fechaReserva}',
+	                		hidden: '{esBankia}'
 	                	},
 	                	listeners: {
 							render: 'tareaDefinicionDeOferta'
@@ -235,6 +332,18 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		'{expediente.fechaSancion}'
 	                	//,readOnly: true
 	                },
+	                {   //PAra Caixa
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva.arras'),
+	                	colspan: 2,
+	                	bind: {
+	                		value: '{expediente.fechaReserva}',
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
+	                	}
+	                },
+	                
 	                { 
 						xtype: 'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -249,10 +358,21 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 	                	bind:		{
 	                		value: '{expediente.fechaVenta}',
-	                		fieldLabel:'{fechaVentaEsAlquiler}'
+	                		fieldLabel:'{fechaVentaEsAlquiler}',
+	                		hidden: '{esBankia}'
 	                		}
 	                	//,readOnly: true
 	                	//readOnly: !$AU.userIsRol("HAYASUPER")
+	                },
+	                {
+	                	xtype:'datefieldbase',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
+						formatter: 'date("d/m/Y")',
+	                	bind:		{
+	                		value: '{expediente.fechaFirmaContrato}',
+	                		readOnly: true,
+	                		hidden: '{!esBankia}'
+	                		}	                	
 	                },
 	                {
 	                	xtype:'datefieldbase',
@@ -272,6 +392,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                		value: '{expediente.fechaContabilizacionReserva}',
 	                		readOnly: '{fechaContabilizacionReservaReadOnly}',
 	                		hidden: '{!esOfertaVentaEsCajamar}'
+	                	}		
+	                },
+	                //PARA CAIXA
+	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion'),
+	                	bind: {
+	                		value: '{expediente.fechaContabilizacion}',
+	                		hidden: '{!esOfertaVentaEsCaixa}',
+	                		readOnly: true
 	                	}		
 	                },
 	            	{ 
@@ -332,8 +463,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
-							bind: '{expediente.fechaAnulacion}',
-							readOnly: true,
+							bind: {
+								value: '{expediente.fechaAnulacion}',
+								readOnly: '{!esBankia}'
+							},
 							listeners: {
 								change: 'onFechaAnulacionChange'
 							}
@@ -350,9 +483,43 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 		                	reference: 'comboMotivoAnulacion',
 		                	readOnly: true,
-				        	bind: '{getMotivoAnulacionOrRechazo}'
+				        	bind: {
+				        		value: '{getMotivoAnulacionOrRechazo}',
+				        		hidden: '{esBankia}'
+				        	}
+				        },
+				        { 
+							xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+		                	reference: 'comboMotivoAnulacionEditable',
+				        	bind: {
+				        		store:  storeAnulacion,
+			            		value: '{expediente.codMotivoAnulacion}',
+			            		hidden: '{!esBankia}'
+			            	}
+				        },
+				        { 
+							xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.rechazo.antiguo.deudor'),
+		                	reference: 'comboMotivoRechazoAntiguoDeudorRef',
+				        	bind: {
+				        		store: '{storeMotivoRechazoAntiguoDeudor}',
+			            		value: '{expediente.motivoRechazoAntiguoDeudCod}',
+			            		hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
+			            	}
+				        },
+				        { 
+							xtype: 'textareafieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion.detalle'),
+		                	reference: 'detalleAnulacionRef',
+		                	colspan: 3,
+				        	bind: {
+				        		value: '{expediente.detalleAnulacionCntAlquiler}',
+				        		hidden: '{!esBankia}'
+				        	}
 				        },
 						{    
+				        	title: HreRem.i18n('title.arras'),
 			                xtype:'fieldsettable',
 			                fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 							defaultType: 'displayfield',
@@ -428,6 +595,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboRiesgoReputacional',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -437,6 +605,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						{
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPBCreserva',
+							colspan:2,
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.reserva'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
@@ -445,14 +614,46 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            	}
 		                },
 		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.cn'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esBankiaVenta}',
+		                		value: '{expediente.estadoPbcCn}'
+		                	}
+		                },
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.arras'),
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+		                		store: '{comboAceptadoRechazado}',
+		                		hidden: '{!esOfertaVenta}',
+		                		value: '{expediente.estadoPbcArras}'
+		                	}
+		                },
+		                {
 		                	xtype: 'comboboxfieldbase',
 							reference: 'comboEstadoPbc',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.venta'),
+
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
+			                    hidden: '{!esOfertaVenta}',
 								value: '{expediente.estadoPbc}'
 			            	}
-		                }
+		                },
+                        {
+                            xtype: 'comboboxfieldbase',
+                            reference: 'comboEstadoPbcAlquiler',
+                            fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.alquiler'),
+
+                            bind: {
+                                store: '{comboAceptadoRechazado}',
+                                hidden: '{esOfertaVenta}',
+                                value: '{expediente.estadoPbcAlquiler}'
+                            },
+                            readOnly: true
+                        }
 		        ]
             }
            

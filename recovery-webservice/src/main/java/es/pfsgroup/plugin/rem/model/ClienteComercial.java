@@ -18,9 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -33,8 +31,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -231,6 +231,62 @@ public class ClienteComercial implements Serializable, Auditable {
     
     @Column(name = "CLC_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
+
+	@Column(name = "CLC_C4C_ID")
+	private Long idC4c;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
+	private InfoAdicionalPersona infoAdicionalPersona;
+
+	@Column(name = "CLC_FECHA_NACIMIENTO")
+	private Date fechaNacimiento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_PAI_NAC_ID")
+	private DDPaises paisNacimiento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID")
+	private Localidad localidadNacimiento;
+
+    @Column(name = "CLC_FECHA_NACIMIENTO_REP")
+    private Date fechaNacimientoRep;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_LOC_NAC_ID_REP")
+	private Localidad localidadNacimientoRep;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_ID_REP")
+    private DDPaises paisNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IAP_ID_REP")
+	private InfoAdicionalPersona infoAdicionalPersonaRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_REL_ID")
+	private DDRegimenLaboral regimenLaboral;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID")
+	private DDProvincia provinciaNacimiento;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
+
+	@Column(name = "CLC_ID_PERSONA_HAYA_CAIXA")
+	private String idPersonaHayaCaixa;
+
+	@Column(name = "CLC_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLC_ACEPTACION_OFERTA")
+    private DDSinSiNo aceptacionOferta;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOC_ID")
@@ -908,5 +964,125 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setEmail3(String email3) {
 		this.email3 = email3;
+	}
+	
+	public DDRegimenLaboral getRegimenLaboral() {
+		return regimenLaboral;
+	}
+
+	public void setRegimenLaboral(DDRegimenLaboral regimenLaboral) {
+		this.regimenLaboral = regimenLaboral;
+	}   
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersona() {
+		return infoAdicionalPersona;
+	}
+
+	public void setInfoAdicionalPersona(InfoAdicionalPersona infoAdicionalPersona) {
+		this.infoAdicionalPersona = infoAdicionalPersona;
+	}
+
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public DDPaises getPaisNacimiento() {
+		return paisNacimiento;
+	}
+
+	public void setPaisNacimiento(DDPaises paisNacimiento) {
+		this.paisNacimiento = paisNacimiento;
+	}
+
+	public Localidad getLocalidadNacimiento() {
+		return localidadNacimiento;
+	}
+
+	public void setLocalidadNacimiento(Localidad localidadNacimiento) {
+		this.localidadNacimiento = localidadNacimiento;
+	}
+
+	public Date getFechaNacimientoRep() {
+		return fechaNacimientoRep;
+	}
+
+	public void setFechaNacimientoRep(Date fechaNacimientoRep) {
+		this.fechaNacimientoRep = fechaNacimientoRep;
+	}
+
+	public Localidad getLocalidadNacimientoRep() {
+		return localidadNacimientoRep;
+	}
+
+	public void setLocalidadNacimientoRep(Localidad localidadNacimientoRep) {
+		this.localidadNacimientoRep = localidadNacimientoRep;
+	}
+
+	public DDPaises getPaisNacimientoRep() {
+		return paisNacimientoRep;
+	}
+
+	public void setPaisNacimientoRep(DDPaises paisNacimientoRep) {
+		this.paisNacimientoRep = paisNacimientoRep;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalPersonaRep() {
+		return infoAdicionalPersonaRep;
+	}
+
+	public void setInfoAdicionalPersonaRep(InfoAdicionalPersona infoAdicionalPersonaRep) {
+		this.infoAdicionalPersonaRep = infoAdicionalPersonaRep;
+	}
+
+	public DDProvincia getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+
+	public void setProvinciaNacimiento(DDProvincia provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+	public String getIdPersonaHayaCaixa() {
+		return idPersonaHayaCaixa;
+	}
+
+	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
+		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
+	}
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
+	
+	public DDSinSiNo getAceptacionOferta() {
+		return aceptacionOferta;
+	}
+
+	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
+		this.aceptacionOferta = aceptacionOferta;
 	}
 }

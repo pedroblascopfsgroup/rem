@@ -1439,20 +1439,30 @@ public class ActivoAdapter {
 
 	}
 
-	public DtoTasacion getTasacionByActivoId(Long id) {
+	public DtoTasacion getTasacionById(Long id) {
 
 		DtoTasacion dtoTasacion = new DtoTasacion();
 
-		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
-		Filter filtroFecha = genericDao.createFilter(FilterType.NOTNULL, "valoracionBien.fechaValorTasacion");
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Order order = new Order(OrderType.DESC, "valoracionBien.fechaValorTasacion");		
-		List<ActivoTasacion> listTasaciones = genericDao.getListOrdered(ActivoTasacion.class, order, filtroId, filtroFecha, filtroBorrado);
-		ActivoTasacion tasacionSeleccionada = null;
-		if (listTasaciones != null && !listTasaciones.isEmpty())
-			tasacionSeleccionada = listTasaciones.get(0);
-
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
+		ActivoTasacion tasacionSeleccionada = genericDao.get(ActivoTasacion.class, filtroId, filtroBorrado);
+	
 		if (tasacionSeleccionada != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			Date tempDate = cal.getTime();
+			cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE)-1);
+			tempDate = cal.getTime();
+			
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", tasacionSeleccionada.getActivo().getId());
+			Filter filtroFechaModif = genericDao.createFilter(FilterType.NOTNULL, "auditoria.fechaModificar");
+			Order order = new Order(OrderType.DESC, "auditoria.fechaModificar");
+			
+			List<ActivoTasacion> tasacionesRecientes = genericDao.getListOrdered(ActivoTasacion.class, order, filtroActivoId, filtroFechaModif, filtroBorrado);
+			
+			if(tasacionesRecientes != null && !tasacionesRecientes.isEmpty() && tasacionesRecientes.get(0).getAuditoria().getFechaModificar().after(tempDate))
+				tasacionSeleccionada = tasacionesRecientes.get(0);
+						
 			try {
 				BeanUtils.copyProperties(dtoTasacion, tasacionSeleccionada);
 				if (tasacionSeleccionada.getTipoTasacion() != null) {
@@ -1466,8 +1476,10 @@ public class ActivoAdapter {
 					BeanUtils.copyProperty(dtoTasacion, "fechaValorTasacion", tasacionSeleccionada.getValoracionBien().getFechaValorTasacion());
 				
 				if (tasacionSeleccionada.getActivo().getInfoRegistral() != null && tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien() != null) {
-					BeanUtils.copyProperty(dtoTasacion, "superficieParcela", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie().toString()));
-					BeanUtils.copyProperty(dtoTasacion, "superficie", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().toString()));
+					if (tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie() != null)
+						BeanUtils.copyProperty(dtoTasacion, "superficieParcela", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficie().toString()));
+					if (tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida() != null)
+						BeanUtils.copyProperty(dtoTasacion, "superficie", Double.parseDouble(tasacionSeleccionada.getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().toString()));
 				}
 				
 				if (tasacionSeleccionada.getAcogidaNormativa() != null)

@@ -409,18 +409,72 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.ActivoTasacion'),
-		idTasacion = record.get("id");
+		modelBankia = Ext.create('HreRem.model.TasacionBankiaModel'),
+		idTasacion = record.get("id"),
+		idActivo = me.getViewModel().get("activo.id");
 		
-		var fieldset =  me.lookupReference('detalleTasacion');
+		var fieldset = me.lookupReference('tasacionesactivoref');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 
 		model.setId(idTasacion);
 		model.load({
-					success : function(record) {
-						me.getViewModel().set("tasacion", record);
-						fieldset.unmask();
-					}
-				});
+			success : function(record) {
+				me.getViewModel().set("tasacion", record);
+				fieldset.unmask();
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
+		});
+		modelBankia.setId(idActivo);
+		modelBankia.load({
+			success: function(record) {
+				me.getViewModel().set("tasacionBankia", record);
+				fieldset.unmask();
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
+		});
+	},
+	
+	cargarTabDataTasaciones: function (tab) {
+		var me = this, gridTasaciones = tab.down('[reference="gridHistoricoTasacionesRef"]'),
+			fieldset = me.lookupReference('tasacionesactivoref');
+		
+		gridTasaciones.setStore(me.getViewModel().getStore("storeTasacionesGrid"));
+		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+		
+		gridTasaciones.getStore().load({
+			callback : function(records, operation, success) {
+				if (!Ext.isEmpty(records) && records.length > 0) {
+					var model = Ext.create('HreRem.model.ActivoTasacion'),
+						modelBankia = Ext.create('HreRem.model.TasacionBankiaModel'),
+						idTasacion = this.data.items[0].id,
+						idActivo = me.getViewModel().get("activo.id");
+					model.setId(idTasacion);
+					model.load({
+						success: function(record) {
+							me.getViewModel().set("tasacion", record);
+							fieldset.unmask();
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
+					});
+					modelBankia.setId(idActivo);
+					modelBankia.load({
+						success: function(record) {
+							me.getViewModel().set("tasacionBankia", record);
+							fieldset.unmask();
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
+					});
+				}
+			}
+		});
 	},
 
 	onSaveFormularioCompleto : function(btn, form, restringida) {

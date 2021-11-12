@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
     extend: 'HreRem.view.common.FormBase',
-    xtype: 'tasacionesactivo',    
+    xtype: 'tasacionesactivo',
+    reference: 'tasacionesactivoref',
     scrollable: 'y',
     saveMultiple: true,
     records: ['tasacionBankia', 'tasacion'],
@@ -8,10 +9,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 	requires: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
     refreshAfterSave: true,
 	listeners: {
-    	boxready: function() {
-    		var me = this;
-    		me.lookupController().cargarTabData(me);
-    	}
+		boxready : 'cargarTabDataTasaciones'
     },
 	
     initComponent: function () {
@@ -105,6 +103,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 							{
 								xtype: 'gridBaseEditableRow',
 								idPrincipal: 'activo.id',
+								reference: 'gridHistoricoTasacionesRef',
 								topBar: true,
 								removeButton: false,
 			   					cls	: 'panel-base shadow-panel',
@@ -511,7 +510,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.empresa.tasadora'),
-						maxLength: 10,
 						bind:		'{tasacion.nomTasador}'
 					},
 					{ 
@@ -530,7 +528,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.referencia.id.tasadora'),
-						maxLength: 20,
 						bind:		'{tasacion.referenciaTasadora}'
 					},
 					{
@@ -566,7 +563,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.codigo.sociedad.tasacion.valoracion'),
-						maxLength: 10,
 						bind:		'{tasacion.codigoSociedadTasacionValoracion}'
 					},
 					{ 
@@ -633,14 +629,12 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.parcela.m2'),
-						maxLength: 6,
 						readOnly: true,
 						bind:		'{tasacion.superficieParcela}'
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.superficie.m2'),
-						maxLength: 10,
 						readOnly: true,
 						bind:		'{tasacion.superficie}'
 					},
@@ -664,13 +658,11 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.plazo.finalizar.comercializacion'),
-						maxLength: 3,
 						bind:		'{tasacion.mrdPlazoMaximoFinalizarComercializacion}'
 					},
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.parametros.tasacion.plazo.finalizar.construccion'),
-						maxLength: 3,
 						bind:		'{tasacion.mrdPlazoMaximoFinalizarConstruccion}'
 					},
 					{ 
@@ -767,7 +759,6 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 					{ 
 						xtype: 'numberfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.planteamiento.tasacion.numero.viviendas'),
-						maxLength: 3,
 						bind:		'{tasacion.numeroViviendas}'
 					},
 					{ 
@@ -935,7 +926,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabDataTasaciones(me);
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});

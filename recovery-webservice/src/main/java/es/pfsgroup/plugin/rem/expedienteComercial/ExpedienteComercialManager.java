@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CexDto;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -426,6 +427,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -14247,53 +14251,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador,Oferta oferta){
 
 		
-		if(comprador.getIdPersonaHayaCaixa() == null) {
+		if(comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
 			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento()));
 		}
-		if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null) {
-			compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante()));
+		if (comprador.getIdPersonaHaya() == null){
+			String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(comprador.getDocumento());
+			comprador.setIdPersonaHaya(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 		}
+
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(comprador.getInfoAdicionalPersona(),comprador.getIdPersonaHayaCaixa(),comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-
-
-		if(iap == null && comprador.getIdPersonaHaya() != null) {
-			iap = new InfoAdicionalPersona();
-			iap.setAuditoria(Auditoria.getNewInstance());
-			iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-			iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-		}
-		iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-		genericDao.save(InfoAdicionalPersona.class, iap);
-
 		comprador.setInfoAdicionalPersona(iap);
 
-		if (compradorExpediente.getDocumentoRepresentante() != null){
+		if (iap != null){
+			iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+			genericDao.save(InfoAdicionalPersona.class, iap);
+		}
 
-			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+		if (compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
 
 			if (compradorExpediente.getIdPersonaHayaRepresentante() == null){
-				String idPersonaHaya = ofertaApi.getIdPersonaHayaByDocumento(expedienteID,getNombreCarteraExpediente(expedienteID),compradorExpediente.getDocumentoRepresentante());
-				compradorExpediente.setIdPersonaHayaRepresentante(StringUtils.isNumeric(idPersonaHaya) ? Long.parseLong(idPersonaHaya) : null);
+				String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(compradorExpediente.getDocumentoRepresentante());
+				compradorExpediente.setIdPersonaHayaRepresentante(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 			}
 
-			if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
-
-				if(iapRepresentante == null){
-					iapRepresentante = new InfoAdicionalPersona();
-					iapRepresentante.setAuditoria(Auditoria.getNewInstance());
-					iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
-					iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-				}
-				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
-
-
-			}else {
-				System.out.println("No se ha podido obtener idPersonaHayaCaixa para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
+			if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante()));
 			}
 
+			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
 			compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
 
+			if (iapRepresentante != null){
+				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
+			}
 		}
 	}
 	@Override

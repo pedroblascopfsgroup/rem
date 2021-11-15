@@ -597,6 +597,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 			dto.setSubrogado(gasto.getSubrogado());
+			
+			dto.setClaveFactura(gasto.getClaveFactura());
 		}
 
 		return dto;
@@ -944,6 +946,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(dto.getSubrogado() != null) {
 			gastoProveedor.setSubrogado(dto.getSubrogado());
+		}
+		
+		if(dto.getClaveFactura() != null) {
+			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);

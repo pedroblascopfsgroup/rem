@@ -72,24 +72,21 @@ BEGIN
               SUBD.DORMITORIOS,
               SUBD.PLANTAS
 							FROM (
-									SELECT ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0) PLANTAS, NVL(SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)),0) DORMITORIOS, 
-									NVL(SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)),0) BANYOS,
+									SELECT ACT.ACT_ID, 
+                  ACT.DD_TPA_ID, 
+                  ACT.DD_SAC_ID, 
+                  ICO.ICO_NUM_PLANTAS as PLANTAS,
+                  ICO.ICO_NUM_DORMITORIOS as DORMITORIOS,
 									ORA_HASH(
 												  act.dd_tpa_id
 			                                   || act.dd_sac_id
-			                                   || NVL (viv.viv_num_plantas_interior, 0)
-			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
-			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
+			                                   || NVL (ICO.ICO_NUM_PLANTAS, 0)
+			                                   || NVL (ICO.ICO_NUM_DORMITORIOS, 0)
 											) ID
                                     FROM ' || V_ESQUEMA || '.act_activo act
                                     JOIN ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.V_MAX_ACT_HIC_EST_INF_COM MAXHIC ON (MAXHIC.ACT_ID = ACT.ACT_ID AND MAXHIC.POS = 1) 
-                                     LEFT JOIN ' || V_ESQUEMA || '.DD_AIC_ACCION_INF_COMERCIAL AIC ON AIC.DD_AIC_ID = MAXHIC.DD_AIC_ID AND AIC.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.BIE_DATOS_REGISTRALES BIEDREG ON ACT.BIE_ID = BIEDREG.BIE_ID AND BIEDREG.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID 
-                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0
                                     WHERE ACT.BORRADO = 0
-									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
+									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, ICO.ICO_NUM_PLANTAS, ICO.ICO_NUM_DORMITORIOS
 							) SUBD
 							JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
 							LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID

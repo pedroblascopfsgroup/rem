@@ -370,6 +370,20 @@ public class DiccionarioTargetClassMap{
 		mapa.put("siNoNosabe", DDSnsSiNoNosabe.class);
 		mapa.put("fuenteTestigos", DDFuenteTestigos.class);
 		mapa.put("recomendacionRCDC", DDRecomendacionRCDC.class);
+		mapa.put("admision", DDAdmision.class);
+		mapa.put("clasificacion", DDClasificacion.class);
+		mapa.put("disponibilidad", DDDisponibilidad.class);
+		mapa.put("estadoConservacionEdificio", DDEstadoConservacionEdificio.class);
+		mapa.put("estadoInformeMediador", DDEstadoInformeMediador.class);
+		mapa.put("estadoMobiliario", DDEstadoMobiliario.class);
+		mapa.put("estadoOcupacional", DDEstadoOcupacional.class);
+		mapa.put("exteriorInterior", DDExteriorInterior.class);
+		mapa.put("tipoCalefaccion", DDTipoCalefaccion.class);
+		mapa.put("tipoPuerta", DDTipoPuerta.class);
+		mapa.put("usoActivo", DDUsoActivo.class);
+		mapa.put("valoracionUbicacion", DDValoracionUbicacion.class);
+		mapa.put("ratingCocina", DDRatingCocina.class);
+		mapa.put("tipoClimatizacion", DDTipoClimatizacion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

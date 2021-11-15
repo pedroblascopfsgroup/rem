@@ -25,7 +25,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  *
  */
 @Entity
-@Table(name = "DD_TIC_TIPO_CALEFACCION", schema = "${entity.schema}")
+@Table(name = "DD_TCA_TIPO_CALEFACCION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoCalefaccion implements Auditable, Dictionary {
@@ -43,18 +43,18 @@ public class DDTipoCalefaccion implements Auditable, Dictionary {
 	private static final long serialVersionUID = 2307957295534774606L;
 
 	@Id
-	@Column(name = "DD_TIC_ID")
+	@Column(name = "DD_TCA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoCalefaccionGenerator")
-	@SequenceGenerator(name = "DDTipoCalefaccionGenerator", sequenceName = "S_DD_TIC_TIPO_CALEFACCION")
+	@SequenceGenerator(name = "DDTipoCalefaccionGenerator", sequenceName = "S_DD_TCA_TIPO_CALEFACCION")
 	private Long id;
 	
-	@Column(name = "DD_TIC_CODIGO")   
+	@Column(name = "DD_TCA_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TIC_DESCRIPCION")   
+	@Column(name = "DD_TCA_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TIC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TCA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
 	

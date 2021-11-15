@@ -246,6 +246,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
    	  	HQLBuilder.addFiltroWhereInSiNotNull(hb, "aa.activo.id", activosID);
+   	  	HQLBuilder.addFiltroIsNull(hb, "aa.agrupacion.fechaBaja");
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
    	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
 

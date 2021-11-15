@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15969
+--## INCIDENCIA_LINK=HREOS-16362
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.3 Se cambia la cartera por la nuevo Titulizada - [HREOS-15634] - Daniel Algaba
 --##        0.4 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
+--##        0.5 Se quita la corrección de comas en decimales - [HREOS-16362] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -52,7 +53,7 @@ BEGIN
                   SELECT       
                      ACT.ACT_NUM_ACTIVO_CAIXA as NUM_IDENTIFICATIVO 
                      , TO_CHAR(VENTA.FEC_VENTA,''YYYYMMDD'') FEC_VENTA
-                     , VENTA.IMP_VENTA*100 IMP_VENTA
+                     , VENTA.IMP_VENTA IMP_VENTA
                      , VENTA.NIF_COMPRADOR NIF_COMPRADOR
                      , NULL INGRESOS_COMPRADOR
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
@@ -74,6 +75,7 @@ BEGIN
                         WHERE OFR.BORRADO = 0) VENTA ON VENTA.ACT_ID = ACT.ACT_ID
                      WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
+                     AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.FEC_VENTA = AUX.FEC_VENTA

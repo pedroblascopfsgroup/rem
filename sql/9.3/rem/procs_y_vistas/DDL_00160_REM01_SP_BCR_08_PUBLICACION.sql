@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211103
+--## FECHA_CREACION=20211109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16087
+--## INCIDENCIA_LINK=HREOS-16321
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -24,6 +24,8 @@
 --##	    0.11 Se cambia la llamada de SPs de publicaciones a los nuevos para Caixa - HREOS-15634
 --##	    0.12 Se añade el vaciado en los situaciones comerciales para posteriormente lanzar el SP SCM de vacíos - HREOS-16087
 --##	    0.13 Se recalcula el campo visible gestión comercial cuando pasa a Publicado el activo - HREOS-16087
+--##	    0.14 Protegemos las creación de registros en la APU para activos nuevos - HREOS-16321
+--##	    0.15 Se recalcula los activos que nos están consistentes con los flags BC - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -543,11 +545,12 @@ BEGIN
                              CAI.CBX_PUBL_PORT_INV_VENTA=0  AND CAI.CBX_PUBL_PORT_INV_ALQUILER=0  THEN NULL
                     END AS DD_POR_CODIGO
                     ,ACT.ACT_ID AS ACT_ID
-               FROM (SELECT DISTINCT ACT_ID FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL) TMP
-               JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=TMP.ACT_ID AND ACT.BORRADO=0
+               FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+               JOIN '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO
                JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAI ON CAI.ACT_ID=ACT.ACT_ID AND CAI.BORRADO=0
                JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
                JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID=TCO.DD_TCO_ID
+               WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
                ) AUX
                LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON AUX.DD_POR_CODIGO=POR.DD_POR_CODIGO
 
@@ -572,6 +575,43 @@ BEGIN
 ------------------------------------------------------------------------------------------------
 
 --1º Validaciones en función de los destinos comerciales e indicadores API
+    IF FLAG_EN_REM = 1 THEN
+        V_MSQL :=  'INSERT  INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+                                ACT_ID
+                            )
+                            SELECT
+                                ACT.ACT_ID AS ACT_ID
+                            FROM '||V_ESQUEMA||'.AUX_APR_BCR_STOCK AUX 
+                            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
+                            JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAI ON CAI.ACT_ID=ACT.ACT_ID AND CAI.BORRADO=0
+                            JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID=APU.ACT_ID
+                            JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID=TCO.DD_TCO_ID
+                            LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON APU.DD_POR_ID = POR.DD_POR_ID
+                            JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
+                            WHERE AUX.FLAG_EN_REM = 1
+                            AND AUX.FLAG_OFERTA_VIVA = 0
+                            AND (CASE
+                                    WHEN TCO.DD_TCO_CODIGO=''01'' AND CAI.CBX_PUBL_PORT_API_VENTA=1 THEN  1
+                                    WHEN TCO.DD_TCO_CODIGO=''03'' AND CAI.CBX_PUBL_PORT_API_ALQUILER=1 THEN 1
+                                    WHEN TCO.DD_TCO_CODIGO=''02'' AND (CAI.CBX_PUBL_PORT_API_VENTA=1 OR CAI.CBX_PUBL_PORT_API_ALQUILER=1) THEN 1
+                                    ELSE 0
+                                END <> NVL(PAC.PAC_CHECK_COMERCIALIZAR, 0)
+                                OR CASE
+                                    WHEN TCO.DD_TCO_CODIGO = ''01'' AND POR.DD_POR_CODIGO = ''01'' AND CAI.CBX_PUBL_PORT_PUBL_VENTA = 1 THEN  1
+                                    WHEN TCO.DD_TCO_CODIGO = ''01'' AND POR.DD_POR_CODIGO = ''02'' AND CAI.CBX_PUBL_PORT_INV_VENTA = 1 THEN  1
+                                    WHEN TCO.DD_TCO_CODIGO = ''03'' AND POR.DD_POR_CODIGO = ''01'' AND CAI.CBX_PUBL_PORT_PUBL_ALQUILER = 1 THEN  1
+                                    WHEN TCO.DD_TCO_CODIGO = ''03'' AND POR.DD_POR_CODIGO = ''02'' AND CAI.CBX_PUBL_PORT_INV_ALQUILER = 1 THEN  1
+                                    WHEN TCO.DD_TCO_CODIGO = ''02'' AND POR.DD_POR_CODIGO = ''01'' AND (CAI.CBX_PUBL_PORT_PUBL_VENTA=1 OR CAI.CBX_PUBL_PORT_PUBL_ALQUILER=1) THEN 1
+                                    WHEN TCO.DD_TCO_CODIGO = ''02'' AND POR.DD_POR_CODIGO = ''02'' AND (CAI.CBX_PUBL_PORT_INV_VENTA=1 OR CAI.CBX_PUBL_PORT_INV_ALQUILER=1) THEN 1
+                                    ELSE 0
+                                END <> NVL(PAC_CHECK_PUBLICAR, 0))';
+        EXECUTE IMMEDIATE V_MSQL;
+
+
+        V_NUM_FILAS := sql%rowcount;
+        SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' ACTIVOS CON EL PERÍMETRO DISCORDANTE CON LOS FLAGS BC'|| CHR(10);
+    END IF;
+
     V_MSQL :=  'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                 USING (
                         SELECT
@@ -627,7 +667,7 @@ BEGIN
 
 
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' ACTIVOS RECALCULADO EL PERÍMETRO'|| CHR(10);
 
    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_ACT_DESTINO_COMERCIAL TMP_DEL
                WHERE TMP_DEL.ACT_ID IN (SELECT DISTINCT AGA.ACT_ID
@@ -650,7 +690,7 @@ BEGIN
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
                 JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
-                JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
+                JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND AGR.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
                 WHERE (TRUNC(PAC.FECHACREAR) = TRUNC(SYSDATE) AND PAC.USUARIOCREAR = ''STOCK_BC''
                 OR TRUNC(PAC.FECHAMODIFICAR) = TRUNC(SYSDATE) AND PAC.USUARIOMODIFICAR = ''STOCK_BC'')
@@ -755,7 +795,8 @@ BEGIN
                         LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV ON EQV.DD_NOMBRE_CAIXA=''DESTINO_COMERCIAL'' AND EQV.DD_CODIGO_CAIXA = AUX.DESTINO_COMERCIAL AND EQV.BORRADO=0
                         LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO_NUEVO ON TCO_NUEVO.DD_TCO_CODIGO = EQV.DD_CODIGO_REM
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT.BORRADO=0
-                        WHERE AUX.FLAG_EN_REM = 0';
+                        WHERE AUX.FLAG_EN_REM = 0
+                        AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU WHERE APU.BORRADO = 0 AND APU.ACT_ID = ACT.ACT_ID)';
 
         EXECUTE IMMEDIATE V_MSQL;
 

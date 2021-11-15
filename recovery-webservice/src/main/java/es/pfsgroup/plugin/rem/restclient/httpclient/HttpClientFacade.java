@@ -89,7 +89,7 @@ public class HttpClientFacade {
 			logger.error("Respuesta httpClient [url=" + serviceUrl + ", method=" + sendMethod
 					+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 
-			return jsonRespuesta;
+			return execute(httpclient, method);
 		} catch (HttpClientException e) {
 			logger.error("error ws", e);
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";

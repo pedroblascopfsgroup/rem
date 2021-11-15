@@ -65,11 +65,11 @@ public class BusinessValidatorAgrupacionRestringido extends BusinessCommonValida
 		ActivoRestringida restringida = (ActivoRestringida) agrupacion;
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 		
-		if (Checks.esNulo(restringida.getCodigoPostal())) {
+		/*if (Checks.esNulo(restringida.getCodigoPostal())) {
 			return ERROR_CP_NULL;
 		} else if (!restringida.getCodigoPostal().equals(pobl.getCodPostal())) {
 			return ERROR_CP_NOT_EQUAL;
-		}
+		}*/
 
 		if (Checks.esNulo(restringida.getProvincia())) {
 			return ERROR_PROV_NULL;

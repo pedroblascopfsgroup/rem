@@ -39,6 +39,8 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	public static final String AGRUPACION_LOTE_COMERCIAL_ALQUILER = "15";
 	public static final String AGRUPACION_COMERCIAL_ALQUILER = AGRUPACION_LOTE_COMERCIAL_ALQUILER;
 	public static final String AGRUPACION_PROMOCION_ALQUILER = "16";
+	public static final String AGRUPACION_RESTRINGIDA_ALQUILER = "17";
+	public static final String AGRUPACION_RESTRINGIDA_OB_REM = "18";
 	
 	/**
 	 * 
@@ -59,8 +61,6 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TAG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
-	
 	    
 	@Version   
 	private Long version;
@@ -119,5 +119,30 @@ public class DDTipoAgrupacion implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-
+	
+	public static boolean isRestringidaObrem(DDTipoAgrupacion agrupacion) {
+		boolean isRestringidaObrem = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getCodigo()))) {
+			isRestringidaObrem = true;
+		}		
+		return isRestringidaObrem;
+	}
+	
+	public static boolean isRestringidaAlquiler(DDTipoAgrupacion agrupacion) {
+		boolean isRestringidaAlquiler = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getCodigo()))) {
+			isRestringidaAlquiler = true;
+		}		
+		return isRestringidaAlquiler;
+	}
+	
+	public static boolean isRestringida(DDTipoAgrupacion agrupacion) {
+		boolean isRestringida = false;
+		if(agrupacion != null && (AGRUPACION_RESTRINGIDA.equals(agrupacion.getCodigo()))) {
+			isRestringida = true;
+		}		
+		return isRestringida;
+	}
+	
+	
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -43,6 +44,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.PerfilApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -62,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
@@ -81,11 +84,13 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -107,11 +112,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Autowired
 	private GenericAdapter adapter;
+	
+	@Autowired
+	private PerfilApi perfilApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private static final String isIntegradoQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String isIntegradoQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String isPrincipalQueryString ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
+	private static final String isPrincipalQueryStringIn ="select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = :actId and act.agrupacion.tipoAgrupacion.codigo in (:codAgrupacion)";
 	private static final String activoAgrupacionQueryString ="select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = :actId and act.agrupacion.tipoAgrupacion.codigo = :codAgrupacion";
 
 	@Override
@@ -433,12 +446,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
-		HQLBuilder hb = new HQLBuilder(isIntegradoQueryString);
+		HQLBuilder hb = new HQLBuilder(isIntegradoQueryStringIn);
 
-		 Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		List<String> agrupaciones = new ArrayList<String>();
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM);
+
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-		
+		 q.setParameterList("codAgrupacion", agrupaciones);
+
 		return ((Long) q.uniqueResult()).intValue();
 	}
 
@@ -455,11 +473,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
-		HQLBuilder hb = new HQLBuilder(isPrincipalQueryString);
+		HQLBuilder hb = new HQLBuilder(isPrincipalQueryStringIn);
+
+		List<String> agrupaciones = new ArrayList<String>();
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER);
+		agrupaciones.add(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM);
 
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		 q.setParameter("actId", id);
-		 q.setParameter("codAgrupacion", DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+		 q.setParameterList("codAgrupacion", agrupaciones);
 		return ((Long) q.uniqueResult()).intValue();
 	}
 
@@ -467,8 +490,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
 		HQLBuilder hb = new HQLBuilder(
 				"select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
-						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
-						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+						+ id + " and (act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA
+						+ " or act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER
+						+ " or act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM + ")");
 		List <ActivoAgrupacionActivo> activoAgrupacionlist = (List<ActivoAgrupacionActivo>) getHibernateTemplate().find(hb.toString());
 		
 		if (activoAgrupacionlist != null && !activoAgrupacionlist.isEmpty()) {
@@ -683,10 +710,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto) {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));
+		
+		if(perfilApi.usuarioHasPerfil(PerfilApi.COD_PERFIL_USUARIO_BC, usuarioLogado.getUsername())) {
+			HQLBuilder.addFiltroDifferentSiNotNull(hb, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+		}
 
 		hb.orderBy("hist.tipoPrecio", HQLBuilder.ORDER_ASC);
 
@@ -2053,6 +2085,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoCaixa", dto.getNumActivoCaixa());
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
@@ -2394,5 +2427,74 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere("aga.agrupacion.id ="+ agrId + " and aga.activo.id !=" +idActivoPrincipal + "");
 		
 		return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+
+	@Override
+	public boolean isCarteraCaixa(Long idActivo) {
+		if (idActivo != null) {
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			return isCarteraCaixa(activo);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isCarteraCaixa(Activo activo) {
+		return (activo != null && activo.getCartera() != null)
+				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo());
+	}
+
+	@Override
+	public Page findTasaciones(DtoFiltroTasaciones dto) {
+		HQLBuilder hb = new HQLBuilder(" from VTasacionesGastosBusqueda tas");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.idTasacion",
+				dto.getIdTasacion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.numActivo",
+				dto.getNumActivo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.idTasacionExt",
+				dto.getIdTasacionExt());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.codigoFirmaTasacion",
+				dto.getCodigoFirmaTasacion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tas.fechaRecepcionTasacion",
+				dto.getFechaRecepcionTasacion());
+
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoObservacion aob");
+
+		hb.appendWhere("aob.activo.id = :idActivo");
+		hb.appendWhere("aob.auditoria.borrado = 0");
+
+		if (!Checks.esNulo(codTiposObservacion))
+			hb.appendWhere("aob.tipoObservacion.codigo in ( :codTiposObservacion )");
+		Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+
+		if(codTiposObservacion != null) {
+			q.setParameterList("codTiposObservacion", Arrays.asList(codTiposObservacion));
+		}
+
+		if(idActivo != null){
+			q.setParameter("idActivo", idActivo);
+		}
+
+		return (List<ActivoObservacion>) q.list();
+	}
+
+	private Object convertirEnStringComas(List<String> cadena) {
+		String r = null;
+		for (String cad : cadena){
+			if (!Checks.esNulo(r)){
+				r = r + ',' + "'" + cad + "'";
+			}else{
+				r = "'" + cad + "'";
+			}
+		}
+		return r;
 	}
 }

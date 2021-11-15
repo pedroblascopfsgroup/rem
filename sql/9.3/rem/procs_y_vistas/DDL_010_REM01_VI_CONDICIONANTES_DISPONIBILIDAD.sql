@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20211001
+--## FECHA_CREACION=20210607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10516
+--## INCIDENCIA_LINK=REMVIP-9845
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -38,7 +38,6 @@
 --#	        0.24 Remus OVidiu - REMVIP-9765 - Añadido LEFT JOIN con la vista V_FECHA_POSESION_ACTIVO para el calculo correcto de la fecha de posesion
 --##		0.25 Juan Bautista Alfonso - REMVIP-9845 - Añadido LEFT JOIN con V_SIN_INFORME_APROBADO_REM para obtener el campo SIN_INFROME_APROBADO_REM
 --##		0.26 Juan Bautista Alfonso - REMVIP-9845 - Sustitución de obtención de campos ES_CONDICIONADO y SIN_INFORME_APROBADO_REM para que no usen la tabla V_COND_DISPONIBILIDAD
---##		0.27 Juan Bautista Alfonso - REMVIP-10516 - Añadido filtro por borrado logico en ACT_TIT_TITULO y añadido distinct para quitar duplicados
 --##########################################
 --*/
 
@@ -99,7 +98,7 @@ AS
           sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo,
           est_disp_com_codigo2,borrado
 
-     FROM (SELECT DISTINCT act.act_id,
+     FROM (SELECT act.act_id,
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) THEN 1
                 ELSE
                     CASE WHEN (FPOS.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) THEN 1
@@ -168,7 +167,7 @@ AS
                   (SELECT act_tit.act_id
                      FROM REM01.act_reg_info_registral act_reg
                      LEFT JOIN REM01.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
-                     JOIN REM01.ACT_TIT_TITULO act_tit ON act_tit.act_id = act_reg.act_id AND act_tit.borrado = 0
+                     JOIN REM01.ACT_TIT_TITULO act_tit ON act_tit.act_id = act_reg.act_id
                      JOIN REM01.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID
                     WHERE aba.dd_cla_id = 1 OR act_tit.TIT_FECHA_INSC_REG IS NOT NULL) tit ON tit.act_id = act.act_id                                                            -- PENDIENTE DE INSCRIPCIÓN
                   LEFT JOIN REM01.act_reg_info_registral reg1 ON reg1.act_id = act.act_id

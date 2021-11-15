@@ -198,7 +198,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = :numActivo "
-				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
+				+ "			    AND tipoAgr.DD_TAG_CODIGO IN ('02','17','18') "
 				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "
@@ -2475,7 +2475,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(!Checks.esNulo(numActivo)){
 			params.put("numActivo", numActivo);
 			rawDao.addParams(params);
-			query= "SELECT DISTINCT(act.DD_CRA_ID) "
+			query= "SELECT DISTINCT(ACT.DD_CRA_ID) "
 				+ "		 FROM ACT_ACTIVO act ";
 			query= query.concat(" WHERE act.ACT_NUM_ACTIVO = :numActivo ");
 			cartera= rawDao.getExecuteSQL(query);
@@ -2483,10 +2483,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else if(!Checks.esNulo(numAgrupacion)){
 			params.put("numAgrupacion", numAgrupacion);
 			rawDao.addParams(params);
-			query= "SELECT DISTINCT(act.DD_CRA_ID) "
-				+ "		 FROM ACT_AGR_AGRUPACION agr ";
-			query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM = :numAgrupacion ");
-			cartera= rawDao.getExecuteSQL(query);
+			cartera= rawDao.getExecuteSQL("SELECT DISTINCT(act.DD_CRA_ID) "
+					+ "		 FROM ACT_AGR_AGRUPACION AGR "
+					+ "		 INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+					+ "		 INNER JOIN ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID "
+					+ "		 WHERE AGR.AGR_NUM_AGRUP_REM = :numAgrupacion ");
 		}
 
 		else if(!Checks.esNulo(numExpediente)){
@@ -5892,7 +5893,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE aga.AGR_ID = agr.AGR_ID " 
 				+ "AND agr.dd_tag_id = tag.dd_tag_id "
 				+ "AND act.act_id   = aga.act_id " 
-				+ "AND tag.dd_tag_codigo = '02' " 
+				+ "AND tag.dd_tag_codigo IN ('02','17','18') " 
 				+ "AND act.ACT_NUM_ACTIVO =  :numActivo " 
 				+ "AND agr.agr_fecha_baja is null "
 				+ "AND aga.BORRADO  = 0 " 
@@ -8199,6 +8200,54 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND OFR.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+
+	public Boolean esOfertaCaixa(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND DD_CRA_CODIGO = '03' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	public boolean esClienteEnOfertaCaixa(String numCliente) {
+		if (Checks.esNulo(numCliente) || !StringUtils.isNumeric(numCliente)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE DD_CRA_CODIGO = '03' "
+				+ "AND OFR.CLC_ID = "+numCliente+" "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	public boolean esProveedorOfertaCaixa(String idProveedor) {
+		if (Checks.esNulo(idProveedor) || !StringUtils.isNumeric(idProveedor)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("select COUNT(DISTINCT pve.pve_id) from ofr_ofertas OFR\n" +
+				"join eco_expediente_comercial ECO ON ofr.ofr_id = eco.ofr_id\n" +
+				"JOIN GCO_GESTOR_ADD_ECO GCO ON gco.eco_id = eco.eco_id\n" +
+				"JOIN GEE_GESTOR_ENTIDAD GEE ON gee.gee_id = gco.gee_id\n" +
+				"JOIN ACT_PVC_PROVEEDOR_CONTACTO PVC ON pvc.usu_id = gee.usu_id\n" +
+				"JOIN ACT_PVE_PROVEEDOR PVE ON pve.pve_id = pvc.pve_id\n" +
+				"JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID\n" +
+				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID\n" +
+				"JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID\n" +
+				"WHERE DD_CRA_CODIGO = '03'\n" +
+				"AND pve.pve_id = "+idProveedor+" ");
+		return !"0".equals(resultado);
+	}
 	
 	@Override
 	public Boolean esOfertaVendida(String numOferta) {
@@ -9332,5 +9381,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return listaString;
 	}
+
+	@Override
+    public Boolean existeRecomendacionByCod(String recomendacion) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("recomendacion", recomendacion);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(recomendacion)) {
+				return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+						+ "              FROM DD_REC_RECOMENDACION_RCDC WHERE"
+						+ "              DD_REC_CODIGO = :recomendacion"
+						+ "      AND BORRADO = 0"
+						);
+		return !"0".equals(resultado);
+    }
 }
 

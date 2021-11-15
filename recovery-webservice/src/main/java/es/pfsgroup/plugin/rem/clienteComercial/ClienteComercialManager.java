@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -23,18 +26,18 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
@@ -51,6 +54,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	private OfertaApi ofertaApi;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 	
 	@Override
 	public String managerName() {
@@ -344,8 +356,83 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 		
-		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
-			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+//		HREOS-16265 se ha comentado por motivos de envío de datos por parte de HRE
+//		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+//			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+//		}
+		
+		if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
+			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostal());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodPaisNacimiento())) {
+			cliente.setPaisNacimiento(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimiento())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodPaisNacimientoRepresentante())) {
+			cliente.setPaisNacimientoRep(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimientoRepresentante())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodMunicipioNacimiento())) {
+			cliente.setLocalidadNacimiento(genericDao.get(Localidad.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioNacimiento())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodMunicipioNacimientoRepresentante())) {
+			cliente.setLocalidadNacimientoRep(genericDao.get(Localidad.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioNacimientoRepresentante())));
+		}
+		if(clienteDto.getFechaNacimiento() != null) {
+			cliente.setFechaNacimiento(clienteDto.getFechaNacimiento());
+		}
+		if(clienteDto.getFechaNacimientoRepresentante() != null) {
+			cliente.setFechaNacimientoRep(clienteDto.getFechaNacimientoRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaNacimiento())) {
+			DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaNacimiento()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaNacimiento(provincia);
+			}
+		}
+		
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaNacimientoRepresentante())) {
+			DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaNacimientoRepresentante()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaNacimientoRep(provincia);
+			}
+		}
+
+		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
+			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		cliente.setInfoAdicionalPersona(iap);
+
+		if(iap != null) {
+			if(clienteDto.getEsPRP() != null) {
+				iap.setPrp(clienteDto.getEsPRP());
+			}
+			genericDao.save(InfoAdicionalPersona.class, iap);
+		}
+
+		InfoAdicionalPersona iapRep = null;
+
+		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
+		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+		cliente.setInfoAdicionalPersonaRep(iapRep);
+
+		if(iapRep != null) {
+			if(clienteDto.getEsPRPRepresentante() != null) {
+				iapRep.setPrp(clienteDto.getEsPRPRepresentante());
+			}
+			genericDao.save(InfoAdicionalPersona.class, iapRep);
+		}
+
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
 		}
 
 		clienteComercialDao.save(cliente);
@@ -368,11 +455,21 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		genericDao.save(ClienteGDPR.class, clienteGDPR);
 
+		//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), OfertaApi.CLIENTE_HAYA);
+
 
 	}
 
 	@Override
 	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
+
+		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
+		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
+		DtoInterlocutorBC newData = new DtoInterlocutorBC();
+
+		if (isRelevanteBC){
+			oldData.clienteToDto(cliente);
+		}
 
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
 			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
@@ -617,6 +714,84 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
 		
+		if (!Checks.esNulo(clienteDto.getCodPaisNacimiento())) {
+			cliente.setPaisNacimiento(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimiento())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodPaisNacimientoRepresentante())) {
+			cliente.setPaisNacimientoRep(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimientoRepresentante())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodMunicipioNacimiento())) {
+			cliente.setLocalidadNacimiento(genericDao.get(Localidad.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioNacimiento())));
+		}
+		if (!Checks.esNulo(clienteDto.getCodMunicipioNacimientoRepresentante())) {
+			cliente.setLocalidadNacimientoRep(genericDao.get(Localidad.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioNacimientoRepresentante())));
+		}
+		if(clienteDto.getFechaNacimiento() != null) {
+			cliente.setFechaNacimiento(clienteDto.getFechaNacimiento());
+		}
+		if(clienteDto.getFechaNacimientoRepresentante() != null) {
+			cliente.setFechaNacimientoRep(clienteDto.getFechaNacimientoRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaNacimiento())) {
+			DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaNacimiento()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaNacimiento(provincia);
+			}
+		}
+		
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaNacimientoRepresentante())) {
+			DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaNacimientoRepresentante()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaNacimientoRep(provincia);
+			}
+		}
+
+		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
+			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHayaCaixa());
+		cliente.setInfoAdicionalPersona(iap);
+
+		if (iap != null){
+			if(clienteDto.getEsPRP() != null) {
+				iap.setPrp(clienteDto.getEsPRP());
+			}
+
+			genericDao.save(InfoAdicionalPersona.class, iap);
+
+		}
+
+		
+		InfoAdicionalPersona iapRep = null;
+
+		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+			cliente.setInfoAdicionalPersonaRep(iapRep);
+		}
+
+
+
+		if (iapRep != null){
+			if(clienteDto.getEsPRPRepresentante() != null) {
+				iapRep.setPrp(clienteDto.getEsPRPRepresentante());
+			}
+			genericDao.save(InfoAdicionalPersona.class, iapRep);
+		}
+
+
+
+		if(!Checks.esNulo(clienteDto.getAceptacionOfertaTPrincipal())) {
+			if(clienteDto.getAceptacionOfertaTPrincipal()) {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}else {
+				DDSinSiNo diccionarioSiNo = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+				cliente.setAceptacionOferta(diccionarioSiNo);
+			}
+		}
+		
 		clienteComercialDao.saveOrUpdate(cliente);
 		
 		// HREOS-4937
@@ -686,7 +861,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				}
 				
 				genericDao.save(ClienteGDPR.class, clienteGDPRNew);
+
 			}
+		}
+
+		if (isRelevanteBC){
+			newData.clienteToDto(cliente);
+			interlocutorCaixaService.callReplicateClientAsync(oldData,newData,cliente);
 		}
 
 	}

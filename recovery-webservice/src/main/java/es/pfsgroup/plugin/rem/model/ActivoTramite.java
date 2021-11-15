@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -265,4 +267,16 @@ public class ActivoTramite implements Serializable, Auditable{
 	public void setFechaFin(Date fechaFin){
 		this.fechaFin = fechaFin;
 	}
+	
+	public Set<TareaExterna> getTareasExternasActivas() {
+		Set<TareaExterna> tareasActivas = new HashSet<TareaExterna>();
+		 for (TareaActivo tareaActivo : tareas) {
+			if(!tareaActivo.getTareaFinalizada()) {
+				tareasActivas.add(tareaActivo.getTareaExterna());
+			}
+		}
+		return tareasActivas;
+	}
+
+		
 }

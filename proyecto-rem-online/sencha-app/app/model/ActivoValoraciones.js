@@ -152,8 +152,23 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		},
     		{
     			name:'fsvRentaOrigen'
+    		},
+    		{
+    			name: 'precioVentaNegociable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'precioAlquilerNegociable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'campanyaPrecioVentaNegociable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'campanyaPrecioAlquilerNegociable',
+    			type: 'boolean'
     		}
-    		
     ],
     
 	proxy: {

@@ -63,6 +63,31 @@ Ext.define('HreRem.model.Posicionamiento', {
 			},
 			{
     			name: 'lugarFirma'
+    		},
+        	{
+                name: 'fechaEnvioPos',
+                type:'date',
+                dateFormat: 'c'
+            },
+    		{
+    			name: 'fechaValidacionBCPos',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'validacionBCPosi'
+    		},
+    		{
+    			name: 'observacionesRem'
+    		},
+            {
+                name: 'observacionesBcPos'
+            },
+    		{
+    			name: 'validacionBCPosiDesc'
+    		},
+    		{
+    			name: 'motivoAnulacionBc'
     		}
     ],
     

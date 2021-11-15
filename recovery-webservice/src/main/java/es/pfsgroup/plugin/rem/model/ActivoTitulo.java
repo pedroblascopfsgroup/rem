@@ -86,7 +86,10 @@ public class ActivoTitulo implements Serializable, Auditable {
 	@Column(name = "TIT_FEC_MARCAJE_INSC")
 	private Date fechaMarcajeInscripcion;
 	
-	@Column(name = "TIT_PLUSVALIA_COMPRADOR")
+    @Column(name = "FECHA_EST_TIT_ACT_INM")
+	private Date fechaEstadoTitularidadActivoInmobiliario;
+	
+    @Column(name = "TIT_PLUSVALIA_COMPRADOR")
 	private Boolean plusvaliaComprador;
 	
 	@Column(name = "TIT_FECHA_LIQUIDACION_PLUSVALIA")
@@ -212,6 +215,14 @@ public class ActivoTitulo implements Serializable, Auditable {
 
 	public void setFechaMarcajeInscripcion(Date fechaMarcajeInscripcion) {
 		this.fechaMarcajeInscripcion = fechaMarcajeInscripcion;
+	}
+
+	public Date getFechaEstadoTitularidadActivoInmobiliario() {
+		return fechaEstadoTitularidadActivoInmobiliario;
+	}
+
+	public void setFechaEstadoTitularidadActivoInmobiliario(Date fechaEstadoTitularidadActivoInmobiliario) {
+		this.fechaEstadoTitularidadActivoInmobiliario = fechaEstadoTitularidadActivoInmobiliario;
 	}
 
 	public Boolean getPlusvaliaComprador() {

@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -47,27 +50,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
-import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
-import es.pfsgroup.plugin.rem.model.DtoMediador;
-import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
-import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
-import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
-import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
-import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.EntidadProveedor;
-import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
@@ -141,6 +123,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
 	
 	@Resource
 	MessageService messageServices;
@@ -312,8 +297,15 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Transactional(readOnly = false)
 	public boolean saveProveedorById(DtoActivoProveedor dto) throws Exception {
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.valueOf(dto.getId()));
+		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
+		DtoInterlocutorBC newData = new DtoInterlocutorBC();
+		boolean relevanteBC = interlocutorCaixaService.isProveedorInvolucradoBC(proveedor);
 
 		try {
+			if (relevanteBC){
+				oldData.proveedorToDto(proveedor);
+			}
+
 			beanUtilNotNull.copyProperty(proveedor, "id", dto.getId());
 			beanUtilNotNull.copyProperty(proveedor, "nombre", dto.getNombreProveedor());
 			beanUtilNotNull.copyProperty(proveedor, "fechaAlta", dto.getFechaAltaProveedor());
@@ -536,6 +528,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 
 		proveedoresDao.save(proveedor);
+
+		if (relevanteBC){
+			newData.proveedorToDto(proveedor);
+			interlocutorCaixaService.callReplicateClientAsync(oldData,newData,proveedor);
+		}
 
 		return true;
 	}
@@ -1169,6 +1166,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			auditoria.setFechaCrear(new Date());
 			proveedor.setAuditoria(auditoria);
 			
+			proveedor.setFechaAlta(new Date());			
 			proveedoresDao.save(proveedor);
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

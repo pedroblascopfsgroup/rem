@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -60,19 +61,19 @@ public class ActivoPropietarioActivo implements Serializable, Auditable {
 		
 	 @Column(name = "PAC_PORC_PROPIEDAD")
 	 private Float porcPropiedad;
-	 
-
-
 		
+	 @Column(name = "PAC_ANYO_CONCES")
+	 private Integer anyoConcesion;
+	
+	 @Column(name = "PAC_FEC_FIN_CONCES")
+     private Date fechaFinConcesion;
+
 	 @Version   
 	 private Long version;
 
 	 @Embedded
 	 private Auditoria auditoria;
 	 
-	 
-	 
-
 	public Long getId() {
 		return id;
 	}
@@ -129,6 +130,21 @@ public class ActivoPropietarioActivo implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	 
+	public Integer getAnyoConcesion() {
+		return anyoConcesion;
+	}
+
+	public void setAnyoConcesion(Integer anyoConcesion) {
+		this.anyoConcesion = anyoConcesion;
+	}
+
+	public Date getFechaFinConcesion() {
+		return fechaFinConcesion;
+	}
+
+	public void setFechaFinConcesion(Date fechaFinConcesion) {
+		this.fechaFinConcesion = fechaFinConcesion;
+	}
+
 }
 

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210510
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20210811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-13845
+--## INCIDENCIA_LINK=HREOS-14716
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Version inicial - [HREOS-13845] - Daniel Algaba
+--##        0.2 Añadir nuevo registro "BC" - [HREOS-14716] - Alejandra García
 --##########################################
 --*/
 
@@ -34,7 +35,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('03','PRISMA')
+      T_TIPO_DATA('03','PRISMA'),
+      T_TIPO_DATA('BC','Building Center')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -65,7 +67,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               '''||TRIM(V_TMP_TIPO_DATA(2))||''',
               0,
-              ''HREOS-13845'',
+              ''HREOS-14716'',
               SYSDATE,
               0)';
             EXECUTE IMMEDIATE V_MSQL;

@@ -10,7 +10,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm(),
 			visualizar = wizard.visualizar;
-
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
@@ -46,6 +45,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		Ext.Array.each(me.getView().query('field[isReadOnlyEdit]'), function(field) {
 			field.setReadOnly(!wizard.modoEdicion);
 		});
+		if(me.getView().up().expediente.data.esBankia){
+			me.getViewModel().getStore("comboTipoDocumento").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
 		
 	},
 
@@ -194,6 +198,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 		
 	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
+		var me = this,
+		wizard = me.getView().up('wizardBase'),
+		esBankia = wizard.expediente.get('esBankia');
+		
 		try{
 			var me = this,
 				wizard = me.getViewModel().getView().up('wizardBase'),
@@ -236,8 +244,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
 				campoTipoPersona = me.lookupReference('tipoPersona'),
 				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
-				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
-				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge');
+		   	 	campoProvinciaRpr = me.lookupReference('provinciaNacimientoRepresentanteCodigo'),
+		   		fechaNacRep = me.lookupReference('fechaNacimientoRepresentante'),
+		   	 	campoMunicipioRpr = me.lookupReference('localidadNacimientoRepresentanteCodigo'),
+		   	 	campoPaisRpr = me.lookupReference('paisNacimientoRepresentanteCodigo'),
+				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo'),
+				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
+				codigoPaisRte = me.lookupReference('paisRte');
 
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					if(!Ext.isEmpty(campoEstadoCivil)){
@@ -292,6 +305,23 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = true;
 						}
+						if (!Ext.isEmpty(campoProvinciaRpr)) {
+							campoProvinciaRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)) {
+							campoMunicipioRpr.allowBlank = true;
+						}
+						if (!Ext.isEmpty(campoPaisRpr)) {
+							campoPaisRpr.allowBlank = true;
+							campoPaisRpr.setValue(null);
+						}
+						if (!Ext.isEmpty(codigoPaisRte)) {
+							codigoPaisRte.allowBlank = true;
+							codigoPaisRte.setValue(null);
+						}
+						if (!Ext.isEmpty(fechaNacRep)) {
+							campoMunicipioRpr.allowBlank = true;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -316,6 +346,28 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
 						}
+						if (!Ext.isEmpty(campoProvinciaRpr) && esBankia) {
+							campoProvinciaRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoMunicipioRpr)&& esBankia) {
+							campoMunicipioRpr.allowBlank = false;
+						}
+						if (!Ext.isEmpty(campoPaisRpr) && esBankia) {
+							campoPaisRpr.allowBlank = false;
+							if (campoPaisRpr.value == null) {
+								campoPaisRpr.setValue("28");
+							}
+						}
+						if (!Ext.isEmpty(codigoPaisRte)) {
+							codigoPaisRte.allowBlank = false;
+							if (codigoPaisRte.value == null) {
+								codigoPaisRte.setValue("28");
+							}
+						}
+						if (!Ext.isEmpty(fechaNacRep) && esBankia) {
+							campoMunicipioRpr.allowBlank = false;
+						}
+						
 					}
 				}
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -338,6 +390,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(campoProvincia)) campoProvincia.validate();
 			if(!Ext.isEmpty(campoMunicipio)) campoMunicipio.validate();
 			if(!Ext.isEmpty(campoPais)) campoPais.validate();
+			if(esBankia){
+				if(!Ext.isEmpty(campoPaisRpr)) campoPaisRpr.validate();
+				if(!Ext.isEmpty(codigoPaisRte)) codigoPaisRte.validate();
+				if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
+				if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
+				if(!Ext.isEmpty(fechaNacRep)) fechaNacRep.validate();
+			}
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);
@@ -787,8 +846,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	        var xxx; 
 	         
 	        texto = texto.toUpperCase(); 
-	         
-	        var regular = new RegExp(/^[ABCDEFGHJKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+
+	        var regular = new RegExp(/^[ABCDEFGHJKLMNPQRSUVW]\d\d\d\d\d\d\d[0-9,A-J]$/g);
          	if (!regular.exec(texto)) {
 				return false;		
 			}
@@ -865,11 +924,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 		form.updateRecord();
 		
-		if(me.getViewModel().get("comprador").data.esCarteraBankia){
-			me.discrepanciasVeracidadDatosComprador();
-		} else {
+//		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+//			me.discrepanciasVeracidadDatosComprador();
+//		} else {
 			me.continuarSiguienteSlide();
-		}
+//		}
 	},
 	
 	continuarSiguienteSlide: function() {
@@ -1038,6 +1097,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			return true;
 		} else {
 			return false;
+		}
+	},
+	
+	verCampoEstadoContraste: function(){
+		if ($AU.userIsRol('HAYASUPER')) {
+			return false;
+		}else{
+			return true;
 		}
 	}
 });

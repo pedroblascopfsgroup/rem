@@ -176,6 +176,9 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	@Column(name="SPS_FECHAMODIFICAR_CON_TITULO")
 	private Date fechaModificarConTitulo;
+	
+	@Column(name = "SPS_VERTICAL")
+	private Integer vertical;
 
 	@Version   
 	private Long version;
@@ -520,6 +523,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setFechaModificarConTitulo(Date fechaModificarConTitulo) {
 		this.fechaModificarConTitulo = fechaModificarConTitulo;
+	}
+
+	public Integer getVertical() {
+		return vertical;
+	}
+
+	public void setVertical(Integer vertical) {
+		this.vertical = vertical;
 	}
 	
 	

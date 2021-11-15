@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -441,6 +442,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 	
 	@Resource
     private Properties appProperties;
@@ -1045,28 +1049,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 				if (!Checks.esNulo(cliente)) {
 
+					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty())
 					cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumento()));
+					if (cliente.getIdPersonaHayaCaixaRepresentante() == null || cliente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 					cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumentoRepresentante()));
+					if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
+						cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
+
 
 					InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
-					if(iap == null) {
-						String idPersonaHaya = cliente.getIdPersonaHaya();
-						if(idPersonaHaya == null ) {
-							MaestroDePersonas maestroDePersonas = new MaestroDePersonas(OfertaApi.CLIENTE_HAYA);
-							idPersonaHaya = maestroDePersonas.getIdPersonaHayaByDocumento(cliente.getDocumento()); 
-						}
-						iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHaya));
-						if(iap == null && idPersonaHaya != null) {
-							iap = new InfoAdicionalPersona();
-							iap.setAuditoria(Auditoria.getNewInstance());
-							iap.setIdPersonaHaya(idPersonaHaya);
-						}
-						if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
-							DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
-							iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
-						}
-						
-					}
+
 					if(iap != null) {
 						if(ofertaDto.getVinculoCaixa() != null) {
 							DDVinculoCaixa vinculoCaixa = genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getVinculoCaixa()));
@@ -1083,10 +1075,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 						cliente.setInfoAdicionalPersona(iap);
 						genericDao.save(InfoAdicionalPersona.class, iap);
-						
-						if (cliente.getDocumentoRepresentante() != null)
-							cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),null));
 					}
+
+					if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
+						cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
+
 					String clienteGD = null;
 					
 					if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())) {
@@ -2021,38 +2014,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ClienteComercial cliente = oferta.getCliente();
 				InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
 				 
-				if(iap == null) {
-					iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya",  cliente.getIdPersonaHaya()));
-					if(iap == null ) {
-						iap = new InfoAdicionalPersona();
-						iap.setAuditoria(Auditoria.getNewInstance());
-						iap.setIdPersonaHaya(oferta.getCliente().getIdPersonaHaya());		
+				if (iap != null){
+
+					if(ofertaDto.getVinculoCaixa() != null) {
+						iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getVinculoCaixa())));
+						modificado = true;
 					}
-					
-					modificado = true;
+					if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
+						iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
+						modificado = true;
+					}
+
+					if(ofertaDto.getOficinaEmpleadoCaixa() != null) {
+						iap.setOficinaTrabajo(Integer.toString(ofertaDto.getOficinaEmpleadoCaixa()));
+						modificado = true;
+					}
+					if(ofertaDto.getEsAntiguoDeudor() != null) {
+						iap.setAntiguoDeudor(ofertaDto.getEsAntiguoDeudor());
+						modificado = true;
+					}
+
+					cliente.setInfoAdicionalPersona(iap);
+
+					genericDao.save(InfoAdicionalPersona.class, iap);
+
 				}
-					
-				if(ofertaDto.getVinculoCaixa() != null) {
-					iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getVinculoCaixa())));
-					modificado = true;
-				}
-				if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
-					iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
-					modificado = true;
-				}
-				
-				if(ofertaDto.getOficinaEmpleadoCaixa() != null) {
-					iap.setOficinaTrabajo(Integer.toString(ofertaDto.getOficinaEmpleadoCaixa()));
-					modificado = true;
-				}
-				if(ofertaDto.getEsAntiguoDeudor() != null) {
-					iap.setAntiguoDeudor(ofertaDto.getEsAntiguoDeudor());
-					modificado = true;
-				}
-				
-				cliente.setInfoAdicionalPersona(iap);
-				
-				genericDao.save(InfoAdicionalPersona.class, iap);
 			}
 
 			if (modificado) {
@@ -2224,10 +2210,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
-				logger.error("Oferta Express numero " + oferta.getNumOferta() + " expediente creado");
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
-				logger.error("Oferta Express numero " + oferta.getNumOferta() + " tramitación hecha");
-				//ofertaDao.flush();
 				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 				
@@ -7395,21 +7378,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java con los valores: " + (oferta != null) + " && " + (expedienteComercial != null) + " && " + oferta.getOfertaExpress());
-		if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-			logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en ofertaManager.java linea 6533");
-		}
-		
 		if (oferta != null && expedienteComercial != null && esOfertaValidaCFVByCarteraSubcartera(oferta) && (oferta.getOfertaEspecial() == null || !oferta.getOfertaEspecial()) && (oferta.getOfertaExpress() == null || !oferta.getOfertaExpress())) {
 			
 			if (CODIGO_T013_DEFINICION_OFERTA.equals(codigo) 
 					&& ((checkAtribuciones(oferta) && perimetro.getAplicaFormalizar() == 1))) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
-				
-				if (oferta != null && expedienteComercial != null && oferta.getOfertaExpress()) {
-					logger.error("Oferta Express numero " + oferta.getNumOferta() + " enviada a CFV en ofertaManager.java linea 6544");
-				}
 				
 			} else if (CODIGO_T013_RESOLUCION_COMITE.equals(codigo) 
 					|| CODIGO_T013_RATIFICACION_COMITE.equals(codigo)) {
@@ -7991,6 +7965,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_SIN_DEFINIR))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_SIN_DEFINIR_INMB));
+			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_OTRAS_CARTERAS))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_OTRAS_CARTERAS_INMB));
+			 
+		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_TITULIZADA))
+		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_TITULIZADA_EDT) || codSubcartera.equals(DDSubcartera.CODIGO_TITULIZADA_TDA));
 
 			 
 		 }
@@ -8033,37 +8013,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
+		if (ofr.getActivoPrincipal() != null && ofr.getActivoPrincipal().getCartera() != null 
+				&& DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())) {
+			
+			if (!Checks.esNulo(dto.getCodigoPostal())) {
+				tit.setCodPostalRepresentante(dto.getCodigoPostal());
+			}
+			
+			if (!Checks.esNulo(dto.getEmail())) {
+				tit.setEmail(dto.getEmail());
+			}
+			
+			if (!Checks.esNulo(dto.getTelefono1())) {
+				tit.setTelefono1(dto.getTelefono1());
+			}	
+		}
+		
 		String descripcionCartera = null;
 		if(ofr.getActivoPrincipal() != null && ofr.getActivoPrincipal().getCartera() != null) {
 			descripcionCartera = ofr.getActivoPrincipal().getCartera().getDescripcion();
 		}
 
+		if (tit.getIdPersonaHayaCaixa() == null || tit.getIdPersonaHayaCaixa().trim().isEmpty())
 		tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumento()));
-		tit.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante()));
 
+		if (tit.getIdPersonaHaya() == null)
+			tit.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumento()));
 
-		MaestroDePersonas maestroDePersonas = new MaestroDePersonas(descripcionCartera);
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersona(),tit.getIdPersonaHayaCaixa(),tit.getIdPersonaHaya());
-		if(iap == null) {
-			String idPersonaHaya = tit.getIdPersonaHaya();
-			if(idPersonaHaya == null) {
-				idPersonaHaya = maestroDePersonas.getIdPersonaHayaByDocumento(tit.getDocumento()); 		
-			}
-			iap = genericDao.get(InfoAdicionalPersona.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idPersonaHaya));
-						
-			if(iap == null && idPersonaHaya != null) {
-				iap = new InfoAdicionalPersona();
-				iap.setAuditoria(Auditoria.getNewInstance());
-				iap.setIdPersonaHaya(idPersonaHaya);
-			}
-			
-			if(ofr.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())){
-				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
-				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
-			}
-			
-		}
-		
+
+		tit.setInfoAdicionalPersona(iap);
+
 		if(iap != null) {
 			if(dto.getPrp() != null) {
 				iap.setPrp(dto.getPrp());
@@ -8081,40 +8061,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(dto.getEsAntiguoDeudor() != null) {
 				iap.setAntiguoDeudor(dto.getEsAntiguoDeudor());
 			}
-			tit.setInfoAdicionalPersona(iap);
 			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
 
-		String idPersonaHayaRep = null;
-
 		InfoAdicionalPersona iapRep = null;
-		if (tit.getDocumentoRepresentante() != null){
-			idPersonaHayaRep = maestroDePersonas.getIdPersonaHayaByDocumento(tit.getDocumentoRepresentante());
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),idPersonaHayaRep);
+
+
+		if(tit.getDocumentoRepresentante() != null) {
+
+			if (tit.getIdPersonaHayaCaixaRepresentante() == null || tit.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
+				tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante()));
+
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
+
 		}
 
-		if(iapRep == null && tit.getDocumentoRepresentante() != null) {
+		tit.setInfoAdicionalPersonaRep(iapRep);
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),idPersonaHayaRep);
-						
-			if(iapRep == null && idPersonaHayaRep != null) {
-				iapRep = new InfoAdicionalPersona();
-				iapRep.setAuditoria(Auditoria.getNewInstance());
-				iapRep.setIdPersonaHaya(idPersonaHayaRep);	
-			}
-			
-			if(ofr.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofr.getActivoPrincipal().getCartera())){
-				DDEstadoComunicacionC4C estadoComunicacionC4C = genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO));
-				iap.setEstadoComunicacionC4C(estadoComunicacionC4C);
-			}
-			
-		}
-		
 		if(iapRep != null) {
 			if(dto.getPrpRepresentante() != null) {
 				iapRep.setPrp(dto.getPrpRepresentante());
 			}
-			tit.setInfoAdicionalPersonaRep(iapRep);
 			genericDao.save(InfoAdicionalPersona.class, iapRep);
 		}
 

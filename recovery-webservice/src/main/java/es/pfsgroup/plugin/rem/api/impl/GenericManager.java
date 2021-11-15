@@ -733,7 +733,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			// del activo
 			if (!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
 				if (DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
-					listaTiposGestor.remove(tipoGestorComercialAlquileres);
+					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+						listaTiposGestor.remove(tipoGestorComercialAlquileres);	
+					}
 					listaTiposGestor.remove(tipoSupervisorComercialAlquileres);
 				}
 				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {

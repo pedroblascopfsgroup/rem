@@ -180,46 +180,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	cargarTabDataMultiple : function(form, index, models, nameModels) {
-
-		if ("tasacionBankia" != nameModels[index] && "tasacion" != nameModels[index]) {
-			var me = this, id = me.getViewModel().get("activo.id");
+		var me = this, id = me.getViewModel().get("activo.id");
 		
-			models[index].setId(id);
+		models[index].setId(id);
 
-			if (Ext.isDefined(models[index].getProxy().getApi().read)) {
-				// Si la API tiene metodo de lectura (read).
-				models[index].load({
-							success : function(record) {
-								if (!Ext.isEmpty(me.getViewModel())) {
-									me.getViewModel()
-											.set(nameModels[index], record);
-									index++;
+		if (Ext.isDefined(models[index].getProxy().getApi().read)) {
+			// Si la API tiene metodo de lectura (read).
+			models[index].load({
+						success : function(record) {
+							if (!Ext.isEmpty(me.getViewModel())) {
+								me.getViewModel()
+										.set(nameModels[index], record);
+								index++;
 
-									if (index < models.length) {
-										me.cargarTabDataMultiple(form, index,
-												models, nameModels);
-									} else {
-										form.unmask();
-									}
+								if (index < models.length) {
+									me.cargarTabDataMultiple(form, index,
+											models, nameModels);
+								} else {
+									form.unmask();
 								}
-							},
-							failure : function(a, operation) {
-								form.unmask();
 							}
-						});
-			} else {
-				// Si la API no contiene metodo de lectura (read).
-				me.getViewModel().set(nameModels[index], models[index]);
-				index++;
-
-				if (index < models.length) {
-					me.cargarTabDataMultiple(form, index, models, nameModels);
-				} else {
-					form.unmask();
-				}
-			}
+						},
+						failure : function(a, operation) {
+							form.unmask();
+						}
+					});
 		} else {
-			form.unmask();
+			// Si la API no contiene metodo de lectura (read).
+			me.getViewModel().set(nameModels[index], models[index]);
+			index++;
+
+			if (index < models.length) {
+				me.cargarTabDataMultiple(form, index, models, nameModels);
+			} else {
+				form.unmask();
+			}
 		}
 	},
 
@@ -414,18 +409,72 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		form = grid.up("form"),
 		model = Ext.create('HreRem.model.ActivoTasacion'),
-		idTasacion = record.get("id");
+		modelBankia = Ext.create('HreRem.model.TasacionBankiaModel'),
+		idTasacion = record.get("id"),
+		idActivo = me.getViewModel().get("activo.id");
 		
-		var fieldset =  me.lookupReference('detalleTasacion');
+		var fieldset = me.lookupReference('tasacionesactivoref');
 		fieldset.mask(HreRem.i18n("msg.mask.loading"));
 
 		model.setId(idTasacion);
 		model.load({
-					success : function(record) {
-						me.getViewModel().set("tasacion", record);
-						fieldset.unmask();
-					}
-				});
+			success : function(record) {
+				me.getViewModel().set("tasacion", record);
+				fieldset.unmask();
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
+		});
+		modelBankia.setId(idActivo);
+		modelBankia.load({
+			success: function(record) {
+				me.getViewModel().set("tasacionBankia", record);
+				fieldset.unmask();
+			},
+		    failure: function(operation) {		    	
+		    	fieldset.unmask();
+		    }
+		});
+	},
+	
+	cargarTabDataTasaciones: function (tab) {
+		var me = this, gridTasaciones = tab.down('[reference="gridHistoricoTasacionesRef"]'),
+			fieldset = me.lookupReference('tasacionesactivoref');
+		
+		gridTasaciones.setStore(me.getViewModel().getStore("storeTasacionesGrid"));
+		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+		
+		gridTasaciones.getStore().load({
+			callback : function(records, operation, success) {
+				if (!Ext.isEmpty(records) && records.length > 0) {
+					var model = Ext.create('HreRem.model.ActivoTasacion'),
+						modelBankia = Ext.create('HreRem.model.TasacionBankiaModel'),
+						idTasacion = this.data.items[0].id,
+						idActivo = me.getViewModel().get("activo.id");
+					model.setId(idTasacion);
+					model.load({
+						success: function(record) {
+							me.getViewModel().set("tasacion", record);
+							fieldset.unmask();
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
+					});
+					modelBankia.setId(idActivo);
+					modelBankia.load({
+						success: function(record) {
+							me.getViewModel().set("tasacionBankia", record);
+							fieldset.unmask();
+						},
+					    failure: function(operation) {		    	
+					    	fieldset.unmask();
+					    }
+					});
+				}
+			}
+		});
 	},
 
 	onSaveFormularioCompleto : function(btn, form, restringida) {
@@ -1052,6 +1101,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var me = this,
     	disabled = value == 0;
+		var carteraTitulizada = me.getViewModel().getData().activo.getData().isCarteraTitulizada;
     	
     	var fieldsettableTituloAdicional =me.lookupReference('fieldsettableTituloAdicional');
     	var tipoTituloAdicional = me.lookupReference('tipoTituloAdicional');
@@ -1071,7 +1121,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	fechaRetiradaDefinitivaRegistroAdicional.setDisabled(disabled);
     	fechaPresentacionHaciendaAdicional.setDisabled(disabled);
     	fieldlabelFechaNotaSimpleAdicional.setDisabled(disabled);
-    	
+
+		if (carteraTitulizada != null && carteraTitulizada == true) {
+    		situacionTituloAdicional.setReadOnly(false);
+    	} else {
+    		situacionTituloAdicional.setReadOnly(true);
+    	}
     	    	
     	if(disabled){
     		fieldsettableTituloAdicional.hide();
@@ -4755,7 +4810,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	createTabData : function(form) {
 		var me = this, tabData = {};
-
 		tabData.id = me.getViewModel().get("activo.id");
 		tabData.models = [];
 
@@ -5512,8 +5566,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 										idActivo : idActivo
 									},
 									success : function(response, opts) {
-										var activosPropagables = Ext
-												.decode(response.responseText).data.activosPropagables;
+										var activosPropagables = null;
+										if (Ext.decode(response.responseText).data != null) {
+											activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+										}
 										var tabPropagableData = null;
 										if (me.getViewModel() != null) {
 											if (me.getViewModel().get('activo') != null) {
@@ -6159,10 +6215,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             } else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != tipoComercializacion){
             	if(CONST.TIPOS_COMERCIALIZACION['VENTA'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(false);
-            	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
+            		chkPerimetroAlquiler.setDisabled(true);
+            	}else if(CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(true);
+            		chkPerimetroAlquiler.setDisabled(false);
             	}
-            	chkPerimetroAlquiler.setDisabled(false);
 				subrogadoCheckbox.setValue(false);
 				comboTipoInquilino.setDisabled(true);
 				comboTipoInquilino.setValue(null);
@@ -8635,11 +8692,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	isNotCarteraBankiaSaneamiento: function(get){
     	var me = this;
     	var carteraBankia = me.getViewModel().getData().activo.getData().isCarteraBankia;
+		var carteraTitulizada = me.getViewModel().getData().activo.getData().isCarteraTitulizada;
     	var fechaEstadoTitularidad =me.lookupReference('fechaEstadoTitularidadRef');
+		var estadoTitulo = me.lookupReference('estadoTitulo');
+		var fechaInscripcionRegRef = me.lookupReference('fechaInscripcionRegRef');
+		var fechaPres1Registro = me.lookupReference('fechaPres1Registro');
+		var fechaPres2Registro = me.lookupReference('fechaPres2Registro');
+		var fechaEnvioAuto = me.lookupReference('fechaEnvioAuto');
+		
     	if (carteraBankia != null && carteraBankia == true) {
     		fechaEstadoTitularidad.setHidden(false);
     	} else {
     		fechaEstadoTitularidad.setHidden(true);
+    	}
+		if (carteraTitulizada != null && carteraTitulizada == true) {
+    		estadoTitulo.setReadOnly(false);
+			fechaInscripcionRegRef.setReadOnly(false);
+			fechaPres1Registro.setHidden(false);
+			fechaPres2Registro.setHidden(false);
+			fechaEnvioAuto.setHidden(false);
+    	} else {
+    		estadoTitulo.setReadOnly(true);
+			fechaInscripcionRegRef.setReadOnly(true);
+			fechaPres1Registro.setHidden(true);
+			fechaPres2Registro.setHidden(false);
+			fechaEnvioAuto.setHidden(false);
     	}
 	
 	},

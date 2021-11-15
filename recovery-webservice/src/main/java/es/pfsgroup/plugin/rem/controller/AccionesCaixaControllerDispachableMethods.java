@@ -381,14 +381,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOLVER_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOLVER_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteOfertaCaixaYFecha>() {
             @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
+            public Class<DtoOnlyExpedienteOfertaCaixaYFecha> getArgumentType() {
+                return DtoOnlyExpedienteOfertaCaixaYFecha.class;
             }
 
             @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+            public Boolean execute(DtoOnlyExpedienteOfertaCaixaYFecha dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionDevolverArras(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -402,14 +402,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTAR_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
+        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTAR_ARRAS, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteOfertaCaixaYFecha>() {
             @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
+            public Class<DtoOnlyExpedienteOfertaCaixaYFecha> getArgumentType() {
+                return DtoOnlyExpedienteOfertaCaixaYFecha.class;
             }
 
             @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
+            public Boolean execute(DtoOnlyExpedienteOfertaCaixaYFecha dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionIncautarArras(dto);
                     if ("false".equals(mm.getModel().get("success").toString())

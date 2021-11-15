@@ -142,6 +142,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	}
 				                
 				                },
+								{
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.reo.preinmueble'),
+				                	name: 'combopreinmueble',
+				                	reference: 'combopreinmuebleRef',
+				                	bind: {	
+					                	readOnly : '{!esUnRolPreinmueble}',
+				                		store: '{comboSiNoNSRem}',
+				                		value: '{activo.enTramite}',
+				                		hidden: '{!activo.isCarteraTitulizada}'
+				                	}
+				                
+				                },
 				                {
 				                	xtype: 'displayfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.agrupacion.obra.nueva.bc'),
@@ -1502,7 +1515,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEntradaActivoBankia}',
-									hidden: '{!activo.isCarteraBankia}',
+									hidden: '{!activo.isCarteraTitulizadayBankia}',
 									value: '{activo.entradaActivoBankiaCodigo}',
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}

@@ -940,14 +940,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    },
 	    
-	    esSuperUsuarioAndNoUA: function(get){
+	    esUnRolPreinmueble: function(get){
+	    	var isOneRol = false;
+	    	isOneRol= $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || 
+				$AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+    		return isOneRol;
+	    },
+	    
+		esSuperUsuarioAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {
 	    		UA = get('activo.unidadAlquilable');
 	    	}
     		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
 	    },
-	    
+
 	    esSuperUsuarioCalidadDatoAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {
@@ -4192,7 +4201,87 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboMunicipioSinFiltro'
 			},
 			autoLoad: true
+		},
+		comboMetodoValoracion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'metodoValoracion'}
+			},
+			autoLoad: true
+		},
+		comboDesarrolloPlanteamiento: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'desarrolloPlanteamiento'}
+			},
+			autoLoad: true
+		},
+		comboFaseGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'faseGestion'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollar: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollar'}
+			},
+			autoLoad: true
+		},
+		comboProximidadRespectoNucleoUrbano: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'proximidadRespectoNucleoUrbano'}
+			},
+			autoLoad: true
+		},
+		comboSistemaGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'sistemaGestion'}
+			},
+			autoLoad: true
+		},
+		comboTipoSuelo: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposActivo'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollarPrevisto: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
+			},
+			autoLoad: true
+		},
+		comboTipoDatoUtilizadoInmuebleComparable: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
+			},
+			autoLoad: true
 		}
-
 	 }
 });

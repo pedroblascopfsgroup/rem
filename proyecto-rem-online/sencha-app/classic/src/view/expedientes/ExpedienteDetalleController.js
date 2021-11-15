@@ -5629,7 +5629,9 @@ comprobarFormatoModificar: function() {
 			fechaSancionRentas.allowBlank=false;
 			fechaSancionRentas.setDisabled(false);
 			mesesRentas.setDisabled(false);
+			mesesRentas.allowBlank=false;
 			importeRentas.setDisabled(false);
+			importeRentas.allowBlank=false;
 		}else{
 			aseguradora.allowBlank=true;
 			aseguradora.setValue(null);

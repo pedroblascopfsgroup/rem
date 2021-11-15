@@ -146,7 +146,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind:{
 								store:'{storeClasificacion}',
 								value:'{datosbasicosoferta.clasificacionCodigo}',
-								hidden: '{!esBankiaAlquiler}'
+								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 							}
 						},
 						{
@@ -156,7 +156,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind:{
 								store:'{storeClaseContrato}',
 								value:'{datosbasicosoferta.claseContratoCodigo}',
-								hidden: '{!esBankiaAlquiler}'
+								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 							}
 						},
 						{
@@ -693,7 +693,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							border: false,
 							layout: {
 						        type: 'table',
-						        columns: 3
+						        columns: 2
 						    },
 							bind : {
 								hidden: '{esBankiaAlquiler}'
@@ -751,10 +751,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							border: false,
 							layout: {
 						        type: 'table',
-						        columns: 2
+						        columns: 1
 						    },
 							bind : {
-								hidden: '{!esBankiaAlquiler}'
+								hidden: '{!esBankiaAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{

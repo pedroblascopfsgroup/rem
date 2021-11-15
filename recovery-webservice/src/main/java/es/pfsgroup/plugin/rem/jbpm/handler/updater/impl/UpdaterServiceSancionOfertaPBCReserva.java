@@ -213,12 +213,12 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 				}else if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())){
 					estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 					estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
-				}else {
-					estadoExp = DDEstadosExpedienteComercial.RESERVADO;
-					
 				}
 				
-				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoExp)));
+				if (estadoExp != null){
+					expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoExp)));
+				}
+
 				if(estadoBc != null && expediente.getEstadoBc() != null &&!estadoBc.equals(expediente.getEstadoBc().getCodigo())) {
 					cambiaEstadoBc = true;
 					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));

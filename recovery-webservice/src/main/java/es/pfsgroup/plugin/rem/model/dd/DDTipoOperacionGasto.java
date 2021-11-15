@@ -115,5 +115,14 @@ public class DDTipoOperacionGasto implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isAbono(DDTipoOperacionGasto tipoOperacion) {
+		boolean is = false;
+		if(tipoOperacion != null && (ABONO_FACURA_RECTIFICADA.equals(tipoOperacion.getCodigo()))) {
+			is = true;
+		}
+		
+		return is;
+	}
 
 }

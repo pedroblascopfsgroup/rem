@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20211020
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15855
+--## INCIDENCIA_LINK=HREOS-16321
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -18,6 +18,7 @@
 --##	      0.6 Corrección de latitud y longitud - HREOS-15423
 --##	      0.7 Mejora de validaciones para latitud y longitud - HREOS-15423
 --##	      0.8 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855
+--##	      0.9 Se modifica la población para cruzar por el código, que es el código INE - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -199,8 +200,7 @@ BEGIN
                               FROM '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV_TVI WHERE EQV_TVI.DD_NOMBRE_CAIXA = ''COMPLEMENTO'' AND EQV_TVI.BORRADO = 0)
                                        EQV_TVI ON EQV_TVI.RN = 1 AND EQV_TVI.DD_CODIGO_CAIXA = APR.COMPLEMENTO
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA TVI ON TVI.DD_TVI_CODIGO = EQV_TVI.DD_CODIGO_REM AND TVI.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV2 ON EQV2.DD_NOMBRE_CAIXA = ''POBLACION'' AND EQV2.DD_CODIGO_CAIXA = APR.POBLACION AND EQV2.BORRADO = 0
-                  LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = EQV2.DD_CODIGO_REM AND LOC.BORRADO = 0
+                  LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = APR.POBLACION AND LOC.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV3 ON EQV3.DD_NOMBRE_CAIXA = ''REGION'' AND EQV3.DD_CODIGO_CAIXA = APR.REGION AND EQV3.BORRADO = 0
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_CODIGO = EQV3.DD_CODIGO_REM AND PRV.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV4 ON EQV4.DD_NOMBRE_CAIXA = ''PAIS'' AND EQV4.DD_CODIGO_CAIXA = APR.PAIS AND EQV4.BORRADO = 0

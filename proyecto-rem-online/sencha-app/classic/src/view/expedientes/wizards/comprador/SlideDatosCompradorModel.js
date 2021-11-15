@@ -104,7 +104,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 		},
 		storeProblemasVenta: {
 			model: 'HreRem.model.DatosClienteUrsus',
-			autoLoad: true,
+			autoLoad: false,
 			autoSync: true,
 			proxy: {
 				type: 'uxproxy',

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211020
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-16362
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-15217 - Daniel Algaba
+--##        0.1 Cambiamos algunos campos de longitud - HREOS-16362 - Daniel Algaba
 --##########################################
 --*/
 
@@ -112,7 +113,7 @@ BEGIN
         SISTEMA_GESTION             VARCHAR2(3 CHAR),
         SUPERFICIE_ADOPTADA         VARCHAR2(6 CHAR),
         SUPERFICIE_PARCELA          VARCHAR2(6 CHAR),
-        SUPERFICIE                  VARCHAR2(6 CHAR),
+        SUPERFICIE                  VARCHAR2(10 CHAR),
         TIPO_SUELO_TAS              VARCHAR2(3 CHAR),
         VAL_HIP_EDI_TERM_PROM       VARCHAR2(12 CHAR),
         ADVERTENCIAS                VARCHAR2(2 CHAR),
@@ -131,8 +132,8 @@ BEGIN
         TIPO_ACTUALIZACION          VARCHAR2(5 CHAR),
         MARGEN_BEN_PROMOTOR         VARCHAR2(5 CHAR),
         PARALIZACION_URB            VARCHAR2(1 CHAR),
-        PORC_URB_EJECUTADO          VARCHAR2(5 CHAR),
-        PORC_AMBITO_VAL             VARCHAR2(5 CHAR),
+        PORC_URB_EJECUTADO          VARCHAR2(7 CHAR),
+        PORC_AMBITO_VAL             VARCHAR2(7 CHAR),
         PRODUCTO_DESA               VARCHAR2(2 CHAR),
         PROYECTO_OBRA               VARCHAR2(1 CHAR),
         SUPERFICIE_TERRENO          VARCHAR2(15 CHAR),

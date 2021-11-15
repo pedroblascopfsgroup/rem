@@ -238,3 +238,6 @@ func-rem-confirmacionTitulares|func-rem-procesoOfertas
 rem_mirror|func-rem-jupiter
 R-Hydra|R-Hydra-ProcesoOfertas
 R-Hydra-ProcesoOfertas|R-Hydra-ProcesoOfertas-f2
+rem_mirror|R-Hydra-ProcesoOfertas-f2
+rem_mirror|func-rem-onboardingTitulizada
+func-rem-onboardingTitulizada|R-Hydra-ProcesoOfertas-f2

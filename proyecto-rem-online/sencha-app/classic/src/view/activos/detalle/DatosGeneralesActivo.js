@@ -16,8 +16,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-
-			if(tab.ocultarBotonesEdicion) {
+			 if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
@@ -170,13 +169,13 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
  		me.getActiveTab().funcionRecargar();
      },
      
-     evaluarBotonesEdicion: function(tab) {    	
+     evaluarBotonesEdicion: function(tab) {
      	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-
+		var userValidAndTramite = false;
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true" && !me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			// Si la pestaña recibida no tiene asignadas funciones de edicion 
@@ -185,6 +184,16 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    	} else {
 	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 	    	} 
+		}
+		userValidAndTramite = (
+				$AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || 
+				$AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+				) &&  me.lookupController().getViewModel().get('activo').get('isActivoEnTramite');
+	
+		if(userValidAndTramite) {
+			editionEnabled();
 		}
     },
     

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20210825
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-XXXXX
+--## INCIDENCIA_LINK=HREOS-16321
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -23,6 +23,7 @@
 --##        0.10  HREOS-14648 -  Daniel Algaba - Se cambia la longitud de CARTERA_VENTA_ACTIVOS y CARTERA_VENTA_CREDITOS A 4
 --##        0.11  HREOS-14838 -  Daniel Algaba - Nuevos campos ORIGEN_REGULATORIO, TXT_COMERCIAL_CAS y TXT_COMERCIAL_ENG
 --##        0.12  HREOS-XXXXX -  Alejandra García - Cambiar longitud al campo MOT_NECESIDAD_ARRAS
+--##        0.13  HREOS-16321 -  Daniel Algaba - Añadimos flag de oferta viva
 --##########################################
 --*/
 
@@ -55,10 +56,10 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(500 CHAR);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)'),
-      T_COL('AUX_APR_RBC_STOCK','',''),
-      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)',''),
-      T_COL('AUX_APR_RBC_DELTA','','')
+  	  T_COL('AUX_APR_BCR_STOCK',',FLAG_EN_REM NUMBER (1)',',FLAG_FICHEROS VARCHAR2(1 CHAR)',',FLAG_OFERTA_VIVA NUMBER (1)'),
+      T_COL('AUX_APR_RBC_STOCK','','',''),
+      T_COL('AUX_APR_BCR_DELTA',',FLAG_EN_REM NUMBER (1)','',''),
+      T_COL('AUX_APR_RBC_DELTA','','','')
 	  
    );  
   V_TMP_COL T_COL;
@@ -270,6 +271,8 @@ BEGIN
         '||V_TMP_COL(2)||'
 
         '||V_TMP_COL(3)||'
+
+        '||V_TMP_COL(4)||'
 
 
         

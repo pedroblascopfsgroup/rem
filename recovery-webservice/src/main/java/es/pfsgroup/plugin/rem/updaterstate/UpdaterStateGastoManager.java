@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Service("updaterStateGastoManager")
@@ -99,6 +100,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_FECHA_DEVENGO_ESPECIAL = "msg.error.validacion.fecha.devengo.especial";
 	
 	public static final SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	
+	private static final String VALIDACION_TIPO_OPERACION_ABONO = "msg.error.tipo.operacion.abono";
 	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
@@ -319,6 +322,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(!Checks.esNulo(contabilidadGasto) && ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && Checks.isFechaNula(contabilidadGasto.getFechaDevengoEspecial())
 					&& gasto.getFechaEmision().after(fechaEmisionGastoPosterior)){
 				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
+				return error;
+			}
+			
+			if( DDCartera.isCarteraBk(gasto.getPropietario().getCartera()) && DDTipoOperacionGasto.isAbono(gasto.getTipoOperacion()) 
+					&& Checks.esNulo(gasto.getGastoProveedorAbonado())){
+				error = messageServices.getMessage(VALIDACION_TIPO_OPERACION_ABONO); 
 				return error;
 			}
 		}

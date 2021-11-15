@@ -221,8 +221,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							   dataIndex: 'numeroClienteUrsus',
 							   flex: 1,
 					           renderer: coloredRender,
-					           hidden: cartera(),
-					           hideable: !cartera()
+					           hidden: true,
+					           hideable: false
 						   },{
 							   xtype: 'actioncolumn',
 							      width: 30,
@@ -247,8 +247,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							   dataIndex: 'problemasUrsus',
 							   flex: 1,
 					           renderer: coloredRender,
-					           hidden: cartera(),
-					           hideable: !cartera()
+					           hidden: true,
+					           hideable: false
 						   },{
 
 							   text: HreRem.i18n('header.fecha.acep.gpdr'),

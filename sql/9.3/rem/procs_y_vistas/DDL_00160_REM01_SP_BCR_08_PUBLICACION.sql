@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211109
+--## FECHA_CREACION=20211115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16321
@@ -26,6 +26,7 @@
 --##	    0.13 Se recalcula el campo visible gestión comercial cuando pasa a Publicado el activo - HREOS-16087
 --##	    0.14 Protegemos las creación de registros en la APU para activos nuevos - HREOS-16321
 --##	    0.15 Se recalcula los activos que nos están consistentes con los flags BC - HREOS-16321
+--##	    0.16 Filtramos activos para solo lanzar los que no están en estados publicación No publicado, ya sea de venta o alquiler - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,9 +57,13 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
    V_FECHA_FIN VARCHAR2(100 CHAR);
 
    CURSOR ACTIVOS IS
-        SELECT DISTINCT ACT_ID
-        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL
-        WHERE EJECUTADO = 0 OR EJECUTADO IS NULL;
+        SELECT DISTINCT TMP.ACT_ID
+        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL TMP
+        JOIN #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = TMP.ACT_ID AND APU.BORRADO = 0
+        LEFT JOIN #ESQUEMA#.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+		LEFT JOIN #ESQUEMA#.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0	
+        WHERE NVL(TMP.EJECUTADO, 0) = 0
+        AND (EPV.DD_EPV_CODIGO <> 1 OR EPA.DD_EPA_CODIGO <> 1);
 
    ACT_ID NUMBER(16);
 

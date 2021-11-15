@@ -44,75 +44,85 @@ DECLARE
     
 BEGIN
     
-	-- Verificar si la tabla ya existe
-	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_AUX||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA_AUX||'... Ya existe. Procedemos a borrarla.');
-		V_MSQL := 'DROP TABLE ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'';
-            	EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'... Tabla borrada.');
-    	END IF;
-    	
-	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA_AUX||'...');
-	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'
-	    (
-		OFR_ID                      NUMBER(16,0)
-		,OFR_ENTIDAD_ORIGEN         VARCHAR2(10 CHAR)
-	    )
-	    LOGGING 
-	    NOCOMPRESS 
-	    NOCACHE
-	    NOPARALLEL
-	    NOMONITORING
-	    ';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'... Tabla creada.');
-	        
-	-- Insertamos los valores en la tabla auxiliar mientras vamos dejando a null cada campo que ya hemos insertado
-	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TABLA_AUX||'] ');
-	FOR ENTOFR IN ENTIDAD_OFERTA LOOP
+    	-- Comprobamos si existe columna OFR_ORIGEN con el tipo correcto (si es así no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''OFR_ORIGEN'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	
-		V_OFR_ID:=ENTOFR.OFR_ID;   
-		V_OFR_ENTIDAD:=ENTOFR.OFR_ORIGEN;
-    		
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_AUX||' (OFR_ID, OFR_ENTIDAD_ORIGEN) VALUES ('||V_OFR_ID||', '''||V_OFR_ENTIDAD||''')';
-		EXECUTE IMMEDIATE V_MSQL;
-		V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET OFR_ORIGEN = NULL WHERE OFR_ID = '||V_OFR_ID||'';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA_AUX||' insertados correctamente.');
-	      
-    	END LOOP;
-    	
-    	-- Cambiar el DATA_TYPE
-    	V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''OFR_ORIGEN''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 0 THEN	  
-		DBMS_OUTPUT.PUT_LINE('[INFO] No existe la columna OFR_ORIGEN en la tabla '||V_ESQUEMA||'.'||V_TABLA||'... no se modifica nada.');
-	ELSE
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||'' ||
-			  ' MODIFY OFR_ORIGEN NUMBER(16,0)';
-	    	
-		EXECUTE IMMEDIATE V_MSQL;
-	END IF;
-    	
-    	-- Añadiendo FK
-    	DBMS_OUTPUT.PUT_LINE('[ADD_CONSTRAINT FK_OFR_ORIGEN]');
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' AND CONSTRAINT_NAME = ''FK_OFR_ORIGEN''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 0 THEN
-	    DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo FK FK_OFR_ORIGEN');  
-	    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT FK_OFR_ORIGEN FOREIGN KEY(OFR_ORIGEN) REFERENCES '||V_TABLA_DD||'(DD_SOR_ID)';
-	ELSE
-	    DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción FK_OFR_ORIGEN ya existe.');
-	END IF;  
-	
-	-- Añadiendo comentario en la columna
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.OFR_ORIGEN IS ''Identificador único del diccionario de Sistema Origen''';
-        EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna OFR_ORIGEN creado.'); 
+
+		-- Verificar si la tabla ya existe
+		V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_AUX||''' and owner = '''||V_ESQUEMA||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;	
+		IF V_NUM_TABLAS = 1 THEN
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA_AUX||'... Ya existe. Procedemos a borrarla.');
+			V_MSQL := 'DROP TABLE ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'';
+		    	EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'... Tabla borrada.');
+	    	END IF;
+	    	
+		-- Creamos la tabla
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA_AUX||'...');
+		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'
+		    (
+			OFR_ID                      NUMBER(16,0)
+			,OFR_ENTIDAD_ORIGEN         VARCHAR2(10 CHAR)
+		    )
+		    LOGGING 
+		    NOCOMPRESS 
+		    NOCACHE
+		    NOPARALLEL
+		    NOMONITORING
+		    ';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA_AUX||'... Tabla creada.');
+			
+		-- Insertamos los valores en la tabla auxiliar mientras vamos dejando a null cada campo que ya hemos insertado
+		DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TABLA_AUX||'] ');
+		FOR ENTOFR IN ENTIDAD_OFERTA LOOP
+		
+			V_OFR_ID:=ENTOFR.OFR_ID;   
+			V_OFR_ENTIDAD:=ENTOFR.OFR_ORIGEN;
+	    		
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_AUX||' (OFR_ID, OFR_ENTIDAD_ORIGEN) VALUES ('||V_OFR_ID||', '''||V_OFR_ENTIDAD||''')';
+			EXECUTE IMMEDIATE V_MSQL;
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET OFR_ORIGEN = NULL WHERE OFR_ID = '||V_OFR_ID||'';
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA_AUX||' insertados correctamente.');
+		      
+	    	END LOOP;
+	    	
+	    	-- Cambiar el DATA_TYPE
+	    	V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''OFR_ORIGEN''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+		
+		IF V_NUM_TABLAS = 0 THEN	  
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la columna OFR_ORIGEN en la tabla '||V_ESQUEMA||'.'||V_TABLA||'... no se modifica nada.');
+		ELSE
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||'' ||
+				  ' MODIFY OFR_ORIGEN NUMBER(16,0)';
+		    	
+			EXECUTE IMMEDIATE V_MSQL;
+		END IF;
+	    	
+	    	-- Añadiendo FK
+	    	DBMS_OUTPUT.PUT_LINE('[ADD_CONSTRAINT FK_OFR_ORIGEN]');
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' AND CONSTRAINT_NAME = ''FK_OFR_ORIGEN''';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+		IF V_NUM_TABLAS = 0 THEN
+		    DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo FK FK_OFR_ORIGEN');  
+		    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT FK_OFR_ORIGEN FOREIGN KEY(OFR_ORIGEN) REFERENCES '||V_TABLA_DD||'(DD_SOR_ID)';
+		ELSE
+		    DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción FK_OFR_ORIGEN ya existe.');
+		END IF;  
+		
+		-- Añadiendo comentario en la columna
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.OFR_ORIGEN IS ''Identificador único del diccionario de Sistema Origen''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna OFR_ORIGEN creado.'); 
+
+	ELSE	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' ya contiene la columna OFR_ORIGEN con el tipo correcto.');
+	END IF;
     
     DBMS_OUTPUT.PUT_LINE('[FIN] Script finalizado correctamente');
 

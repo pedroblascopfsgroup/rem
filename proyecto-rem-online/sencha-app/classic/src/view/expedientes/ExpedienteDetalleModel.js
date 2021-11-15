@@ -1849,6 +1849,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getTiposImpuestoFiltered',
 				extraParams: {esBankia: '{expediente.esBankia}'}
 			}   
+    	},
+    	
+    	comboAseguradoraProveedor: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboEspecial',
+				extraParams: {
+					diccionario: 'DDSegurosVigentes'
+				}
+			}
     	}
     }
 });

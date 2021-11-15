@@ -502,23 +502,35 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 			     		        	dataIndex: 'fechaValidacionBCPos',
 			     		        	//formatter: 'date("d/m/Y")',
 			     		        	flex: 1,
-									renderer : dateColoredRender
+									renderer : dateColoredRender,
+									bind:{
+										hidden: '{!esBankia}'
+									}
 			     				}, {
 			     					text: HreRem.i18n('title.column.validacion.bc'),
 			     		        	dataIndex: 'validacionBCPosiDesc',
 			     		        	flex: 1,
-									renderer : coloredRender
+									renderer : coloredRender,
+									bind:{
+										hidden: '{!esBankia}'
+									}
 			     				}, {
 									text : HreRem.i18n('fieldlabel.fecha.aviso'),
 									dataIndex : 'fechaAviso',
 									//formatter: 'date("d/m/Y")',
 									flex : 1,
-									renderer : dateColoredRender
+									renderer : dateColoredRender,
+									bind:{
+										hidden: '{!esBankia}'
+									}
 								}, {
 			     					text: HreRem.i18n('title.column.comentarios.bc'),
 			     					dataIndex: 'observacionesBcPos',
 			     					flex: 1,
-									renderer : coloredRender
+									renderer : coloredRender,
+									bind:{
+										hidden: '{!esBankia}'
+									}
 			     				}, {
 			                        text: HreRem.i18n('fieldlabel.observaciones'),
 			                        dataIndex: 'observacionesRem',

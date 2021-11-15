@@ -88,6 +88,10 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 	
     @Column(name="SRE_IMPORTE_BC")
     private Double importeRentasBc;
+    
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private ActivoProveedor aseguradoraProveedor;
 
 	public Long getId() {
 		return id;
@@ -192,6 +196,13 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 	public void setImporteRentasBc(Double importeRentasBc) {
 		this.importeRentasBc = importeRentasBc;
 	}
-	
+
+	public ActivoProveedor getAseguradoraProveedor() {
+		return aseguradoraProveedor;
+	}
+
+	public void setAseguradoraProveedor(ActivoProveedor aseguradoraProveedor) {
+		this.aseguradoraProveedor = aseguradoraProveedor;
+	}
 	
 }

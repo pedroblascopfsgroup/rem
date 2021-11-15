@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CexDto;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -425,6 +427,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -3265,7 +3270,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			// Económicas-Financiación
 			Integer solFinanciacion = null;
 			if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())){
-				solFinanciacion = condiciones.getSolicitaFinanciacion().getCodigo().equals("01") ? 1 : 0;
+				solFinanciacion = DDSnsSiNoNosabe.CODIGO_SI.equals(condiciones.getSolicitaFinanciacion().getCodigo()) ? 1 : 0;
 			}
 			dto.setSolicitaFinanciacion(solFinanciacion);
 			if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
@@ -8415,16 +8420,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente) {
 
-		List<Object> gestoresAincluir = new ArrayList<Object>();
+		List<Object> gestoresAincluir = new LinkedList<Object>();
 
 		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
 		if (!Checks.esNulo(eco) && !Checks.esNulo(eco.getOferta())
 				&& DDTipoOferta.CODIGO_ALQUILER.equals(eco.getOferta().getTipoOferta().getCodigo())) {
-			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler());
+			gestoresAincluir = new LinkedList<Object>(Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercialAlquiler()));
 		} else {
-			gestoresAincluir = Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial());
+			gestoresAincluir = new LinkedList<Object>(Arrays.asList(gestorExpedienteApi.getCodigosTipoGestorExpedienteComercial()));
+			if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(eco.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+				gestoresAincluir.remove(GestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_ALQUILER);
+				
+			}
 		}
-
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		List<EXTDDTipoGestor> listAllTiposGestor = genericDao.getListOrdered(EXTDDTipoGestor.class, order,
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
@@ -14204,53 +14213,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador,Oferta oferta){
 
 		
-		if(comprador.getIdPersonaHayaCaixa() == null) {
+		if(comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
 			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento()));
 		}
-		if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null) {
-			compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante()));
+		if (comprador.getIdPersonaHaya() == null){
+			String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(comprador.getDocumento());
+			comprador.setIdPersonaHaya(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 		}
+
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(comprador.getInfoAdicionalPersona(),comprador.getIdPersonaHayaCaixa(),comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-
-
-		if(iap == null && comprador.getIdPersonaHaya() != null) {
-			iap = new InfoAdicionalPersona();
-			iap.setAuditoria(Auditoria.getNewInstance());
-			iap.setIdPersonaHaya(comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
-			iap.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-		}
-		iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-		genericDao.save(InfoAdicionalPersona.class, iap);
-
 		comprador.setInfoAdicionalPersona(iap);
 
-		if (compradorExpediente.getDocumentoRepresentante() != null){
+		if (iap != null){
+			iap.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+			genericDao.save(InfoAdicionalPersona.class, iap);
+		}
 
-			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+		if (compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
 
 			if (compradorExpediente.getIdPersonaHayaRepresentante() == null){
-				String idPersonaHaya = ofertaApi.getIdPersonaHayaByDocumento(expedienteID,getNombreCarteraExpediente(expedienteID),compradorExpediente.getDocumentoRepresentante());
-				compradorExpediente.setIdPersonaHayaRepresentante(StringUtils.isNumeric(idPersonaHaya) ? Long.parseLong(idPersonaHaya) : null);
+				String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(compradorExpediente.getDocumentoRepresentante());
+				compradorExpediente.setIdPersonaHayaRepresentante(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 			}
 
-			if (compradorExpediente.getIdPersonaHayaRepresentante() != null){
-
-				if(iapRepresentante == null){
-					iapRepresentante = new InfoAdicionalPersona();
-					iapRepresentante.setAuditoria(Auditoria.getNewInstance());
-					iapRepresentante.setIdPersonaHaya(compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
-					iapRepresentante.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-				}
-				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
-				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
-
-
-			}else {
-				System.out.println("No se ha podido obtener idPersonaHayaCaixa para el representante con el documento "+compradorExpediente.getDocumentoRepresentante());
+			if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante()));
 			}
 
+			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
 			compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
 
+			if (iapRepresentante != null){
+				iapRepresentante.setRolInterlocutor(genericDao.get(DDRolInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDRolInterlocutor.COD_CLIENTE_FINAL)));
+				genericDao.save(InfoAdicionalPersona.class, iapRepresentante);
+			}
 		}
 	}
 	@Override
@@ -14511,12 +14507,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			if (sra != null) {
 				
-				if(sra.getAseguradoras() != null) {
-					DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"descripcion", sra.getAseguradoras()));
-					if(ddTpoTpoCuenta != null) {
-						dto.setAseguradoraCod(ddTpoTpoCuenta.getCodigo());
+				if(sra.getAseguradoraProveedor() != null) {
+					ActivoProveedor actPve =  genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,"id", sra.getAseguradoraProveedor().getId()));
+					if(actPve != null) {
+						dto.setAseguradoraCod(String.valueOf(actPve.getId()));
 					}
-					dto.setAseguradoraDesc(sra.getAseguradoras());	
+					dto.setAseguradoraDesc(actPve.getNombre());	
 				}
 				
 				if (sra.getFechaVencimientoRentaslBc() != null) {
@@ -14540,7 +14536,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 				if (completada) {
 					dto.setScoringEditable(false);
+					dto.setBloqueDepositoEditable(false);
 				}else {
+					dto.setBloqueDepositoEditable(true);
 					List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
 					for (TareaProcedimiento tarea : tareasActivas) {
 						if (!ComercialUserAssigantionService.CODIGO_T015_VERIFICAR_SCORING.equals(tarea.getCodigo())
@@ -14625,9 +14623,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (dto.getMesesAval() != null) {
 				coe.setMesesAval(dto.getMesesAval().intValue());
 			}
-			if (dto.getFechaVencimiento() != null) {
+			if (!Checks.isFechaNula(dto.getFechaVencimiento())) {
 				coe.setFechaVencimientoAvalBc(dto.getFechaVencimiento());
-			}			
+			}else {
+				coe.setFechaVencimientoAvalBc(null);
+			}	
 			if (dto.getDocumento() != null) {
 				coe.setDocumentoFiador(dto.getDocumento());
 			}			
@@ -14661,15 +14661,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if (sra != null) {
-			if(dto.getAseguradoraCod() != null) {
-				DDTiposPorCuenta ddTpoTpoCuenta =  genericDao.get(DDTiposPorCuenta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getAseguradoraCod()));
-				if(ddTpoTpoCuenta != null) {
-					sra.setAseguradoras(ddTpoTpoCuenta.getDescripcion());
+			if(dto.getAseguradoraCod() != null && dto.getAseguradoraCod() != "") {
+				ActivoProveedor actPve =  genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,"id", Long.parseLong(dto.getAseguradoraCod())));
+			
+				if(actPve != null) {
+					sra.setAseguradoraProveedor(actPve);
 				}
+			}else {
+				sra.setAseguradoraProveedor(null);
 			}
-			if (dto.getFechaSancionRentas()!= null) {
+			if (!Checks.isFechaNula(dto.getFechaSancionRentas())) {
 				sra.setFechaVencimientoRentaslBc(dto.getFechaSancionRentas());
-			}			
+			}else {
+				sra.setFechaVencimientoRentaslBc(null);
+			}	
 			if (dto.getMesesRentas() != null) {
 				sra.setMesesAval(dto.getMesesRentas().intValue());
 			}else {
@@ -14791,24 +14796,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public void createGastoRepercutido(DtoGastoRepercutido dto, Long idExpediente) {
 		ExpedienteComercial eco = this.findOne(idExpediente);
-		
 		if(eco != null) {
-			GastoRepercutido gr = new GastoRepercutido();
-
-			if(dto.getImporte() == null){
-				dto.setImporte(0d);
+			GastoRepercutido gr = null;
+			if(dto.getId() == null) {
+				gr = new GastoRepercutido();
+				gr.setCondicionanteExpediente(eco.getCondicionante());
+				gr.setAuditoria(Auditoria.getNewInstance());
+			}else {
+				gr = genericDao.get(GastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
 			}
-
-			gr.setCondicionanteExpediente(eco.getCondicionante());
-			gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			
+			if(dto.getTipoGastoCodigo() != null) {
+				gr.setTipoGastoRepercutido(genericDao.get(DDTipoGastoRepercutido.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoGastoCodigo())));
+			}
+			
+			gr.setMeses(dto.getMeses());	
 			gr.setImporte(dto.getImporte());
-			if(!Checks.isFechaNula(dto.getFechaAlta())) {
-				gr.setFechaAlta(dto.getFechaAlta());
-			} else {
-				gr.setFechaAlta(new Date());
-			}
-			gr.setMeses(dto.getMeses());
-			gr.setAuditoria(Auditoria.getNewInstance());
+			gr.setFechaAlta(new Date());
 			
 			genericDao.save(GastoRepercutido.class, gr);
 		}
@@ -14827,7 +14831,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DtoGastoRepercutido dto = new DtoGastoRepercutido();
 					dto.setId(gastoRepercutido.getId());
 					dto.setTipoGastoCodigo(gastoRepercutido.getTipoGastoRepercutido().getCodigo());
-					dto.setImporte(gastoRepercutido.getImporte());
+					if(gastoRepercutido.getImporte() == null) {
+						dto.setImporte(0.0);
+					}else {
+						dto.setImporte(gastoRepercutido.getImporte());
+					}
 					dto.setFechaAlta(gastoRepercutido.getFechaAlta());
 					dto.setMeses(gastoRepercutido.getMeses());
 					dtoList.add(dto);

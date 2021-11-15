@@ -1,0 +1,104 @@
+--/*
+--##########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20211115
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10759
+--## PRODUCTO=SI
+--##
+--## Finalidad: Script que actualiza la fecha venta. 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--## 		0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+	V_MSQL VARCHAR2(4000 CHAR);
+	V_SQL VARCHAR2(4000 CHAR);
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_NUM NUMBER(16); -- Vble. para validar la existencia de un registro.
+	err_num NUMBER; -- Numero de errores
+	err_msg VARCHAR2(2048); -- Mensaje de error
+	V_USR VARCHAR2(30 CHAR) := 'REMVIP-10759'; -- USUARIOCREAR/USUARIOMODIFICAR.
+	
+	TYPE T_ACT IS TABLE OF VARCHAR2(50);
+	TYPE T_ARRAY_ACT IS TABLE OF T_ACT; 
+	V_ACT T_ARRAY_ACT := T_ARRAY_ACT(   
+		T_ACT('90353273','22/10/2021'),
+		T_ACT('90350688','22/10/2021'),
+		T_ACT('90350536','22/10/2021'),
+		T_ACT('90346042','22/10/2021'),
+		T_ACT('90337587','29/09/2021'),
+		T_ACT('90346164','01/07/2021'),
+		T_ACT('90343606','22/10/2021'),
+		T_ACT('90341618','22/10/2021'),
+		T_ACT('90342375','23/09/2021'),
+		T_ACT('90343493','27/05/2021'),
+		T_ACT('90343151','27/05/2021'),
+		T_ACT('90340294','22/10/2021'),
+		T_ACT('90339659','22/10/2021'),
+		T_ACT('90339582','22/10/2021'),
+		T_ACT('90337982','24/09/2021'),
+		T_ACT('90337875','21/10/2021'),
+		T_ACT('90332083','22/10/2021'),
+		T_ACT('90335737','19/10/2021'),
+		T_ACT('90330706','22/10/2021')
+
+	); 
+	V_TMP_ACT T_ACT;
+
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualización masiva de campos:');
+
+	FOR I IN V_ACT.FIRST .. V_ACT.LAST LOOP
+		V_TMP_ACT := V_ACT(I);
+		
+		V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||V_TMP_ACT(1)||'';
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
+		
+		IF V_NUM > 0 THEN
+			
+			EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO 
+			USING(
+				SELECT T1.OFR_ID FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL T1
+				JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = T1.OFR_ID AND OFR.OFR_NUM_OFERTA = '||V_TMP_ACT(1)||'
+			) T2
+			ON (
+				ECO.OFR_ID = T2.OFR_ID
+			)
+			WHEN MATCHED THEN UPDATE SET
+				ECO.ECO_FECHA_VENTA = '''||V_TMP_ACT(2)||''', 
+				ECO.USUARIOMODIFICAR = '''||V_USR||''',
+				ECO.FECHAMODIFICAR = SYSDATE
+			';
+			
+			DBMS_OUTPUT.PUT_LINE('	[INFO] Actualizada la oferta '||V_TMP_ACT(1)||' con ECO_FECHA_VENTA = '''||V_TMP_ACT(2)||'''.');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('	[WRN] No existe la oferta '||V_TMP_ACT(1)||'.');
+		END IF;
+	END LOOP;
+	
+	--ROLLBACK;
+	COMMIT;
+
+EXCEPTION
+	WHEN OTHERS THEN
+		ERR_NUM := SQLCODE;
+		ERR_MSG := SQLERRM;
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+		DBMS_OUTPUT.put_line(ERR_MSG);
+		ROLLBACK;
+		RAISE;   
+END;
+
+/
+
+EXIT;

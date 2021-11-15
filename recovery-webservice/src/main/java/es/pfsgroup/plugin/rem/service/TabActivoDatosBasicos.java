@@ -348,6 +348,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
 		}
 		
+		if (activo.getEnTramite() != null) {
+			BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());;
+		}
+		
 		if (activo.getSubtipoTitulo() != null) {
 			BeanUtils.copyProperty(activoDto, "subtipoTitulo", activo.getSubtipoTitulo().getDescripcion());
 			BeanUtils.copyProperty(activoDto, "subtipoTituloCodigo", activo.getSubtipoTitulo().getCodigo());
@@ -565,7 +569,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
-		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
 		
 		
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
@@ -708,6 +711,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		if(!Checks.esNulo(activo.getCodigoPromocionPrinex())) {
 			BeanUtils.copyProperty(activoDto, "codigoPromocionPrinex", activo.getCodigoPromocionPrinex());
+		}
+		
+		if(!Checks.esNulo(activo.getEnTramite())) {
+			BeanUtils.copyProperty(activoDto, "enTramite", activo.getEnTramite());
 		}
 
 		if(!Checks.esNulo(activo.getActivoBNK()) && !Checks.esNulo(activo.getActivoBNK().getAcbCoreaeTexto())){
@@ -1397,6 +1404,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			if(!Checks.esNulo(dto.getNombreCarteraPerimetro())) {
 				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
+			}
+
+			if(!Checks.esNulo(dto.getEnTramite())) {
+				activo.setEnTramite(dto.getEnTramite());
 			}
 			
 			if(!Checks.esNulo(dto.getPorcentajeConstruccion())) {

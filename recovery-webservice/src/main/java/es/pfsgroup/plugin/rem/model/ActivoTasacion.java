@@ -170,7 +170,7 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean porcentajeCosteDefecto;
 	
 	@Column(name = "APROV_PARCELA_SUELO")
-    private Long aprovechamientoPacerlaSuelo; 
+    private Double aprovechamientoParcelaSuelo; 
 	
     @ManyToOne
     @JoinColumn(name = "DD_DSP_ID")
@@ -202,7 +202,7 @@ public class ActivoTasacion implements Serializable, Auditable {
     private DDSistemaGestion sistemaGestion; 
     
 	@Column(name = "SUPERFICIE_ADOPTADA")
-    private Long superficieAdoptada; 
+    private Double superficieAdoptada; 
 	
     @ManyToOne
     @JoinColumn(name = "DD_SAC_ID")
@@ -215,7 +215,7 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean advertencias;
 	
 	@Column(name = "APROVECHAMIENTO")
-    private Long aprovechamiento; 
+    private Double aprovechamiento; 
 	
 	@Column(name = "COD_SOCIEDAD_TAS_VAL")
     private String codigoSociedadTasacionValoracion; 
@@ -224,10 +224,10 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean condicionantes;
 	
 	@Column(name = "COSTE_EST_TER_OBRA")
-    private Long costeEstimadoTerminarObra; 
+    private Double costeEstimadoTerminarObra; 
 	
 	@Column(name = "COSTE_DEST_PROPIO")
-    private Long costeDestinaUsoPropio; 
+    private Double costeDestinaUsoPropio; 
 	
     @Column(name = "FEC_ULT_AVANCE_EST")
     private Date fechaUltimoGradoAvanceEstimado;  
@@ -249,22 +249,22 @@ public class ActivoTasacion implements Serializable, Auditable {
     private Long mrdPlazoMaximoFinalizarConstruccion; 
 	
 	@Column(name = "MET_RES_DIN_TAS_ANU")
-    private Long mrdTasaAnualizadaHomogenea; 
+    private Double mrdTasaAnualizadaHomogenea; 
 	
 	@Column(name = "MET_RES_DIN_TIPO_ACT")
-    private Long mrdTasaActualizacion; 
+    private Double mrdTasaActualizacion; 
 	
 	@Column(name = "MET_RES_EST_MAR_PROM")
-    private Long mreMargenBeneficioPromotor; 
+    private Double mreMargenBeneficioPromotor; 
 	
 	@Column(name = "PARALIZACION_URB")
 	private Boolean paralizacionUrbanizacion;
 	
 	@Column(name = "PORC_URB_EJECUTADO")
-    private Long porcentajeUrbanizacionEjecutado;
+    private Double porcentajeUrbanizacionEjecutado;
 	
 	@Column(name = "PORC_AMBITO_VAL_ENT")
-    private Long porcentajeAmbitoValoradoEntero;
+    private Double porcentajeAmbitoValoradoEntero;
 	
     @ManyToOne
     @JoinColumn(name = "DD_PRD_ID_PREV")
@@ -274,26 +274,26 @@ public class ActivoTasacion implements Serializable, Auditable {
 	private Boolean proyectoObra;
 	
 	@Column(name = "SUPERFICIE_TERRENO")
-    private Long superficioTerreno;
+    private Double superficieTerreno;
 	
 	@Column(name = "TAS_ANU_VAR_MERCADO")
-    private Long tasaAnualMedioVariacionPrecioMercado;
+    private Double tasaAnualMedioVariacionPrecioMercado;
 	
     @ManyToOne
     @JoinColumn(name = "DD_TDU_ID")
     private DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable;
 	
 	@Column(name = "VALOR_TERRENO")
-    private Long valorTerreno;
+    private Double valorTerreno;
 	
 	@Column(name = "VALOR_TERRENO_AJUS")
-    private Long valorTerrenoAjustado;
+    private Double valorTerrenoAjustado;
 	
 	@Column(name = "VAL_HIPO_EDI_TERM")
-    private Long valorHipotesisEdificioTerminado;
+    private Double valorHipotesisEdificioTerminado;
 	
 	@Column(name = "VALOR_HIPOTECARIO")
-    private Long valorHipotecario;
+    private Double valorHipotecario;
 	
 	@Column(name = "VISITA_ANT_INMUEBLE")
 	private Boolean visitaAnteriorInmueble;
@@ -594,12 +594,12 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.porcentajeCosteDefecto = porcentajeCosteDefecto;
 	}
 
-	public Long getAprovechamientoPacerlaSuelo() {
-		return aprovechamientoPacerlaSuelo;
+	public Double getAprovechamientoParcelaSuelo() {
+		return aprovechamientoParcelaSuelo;
 	}
 
-	public void setAprovechamientoPacerlaSuelo(Long aprovechamientoPacerlaSuelo) {
-		this.aprovechamientoPacerlaSuelo = aprovechamientoPacerlaSuelo;
+	public void setAprovechamientoParcelaSuelo(Double aprovechamientoParcelaSuelo) {
+		this.aprovechamientoParcelaSuelo = aprovechamientoParcelaSuelo;
 	}
 
 	public DDDesarrolloPlanteamiento getDesarrolloPlanteamiento() {
@@ -666,11 +666,11 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.sistemaGestion = sistemaGestion;
 	}
 
-	public Long getSuperficieAdoptada() {
+	public Double getSuperficieAdoptada() {
 		return superficieAdoptada;
 	}
 
-	public void setSuperficieAdoptada(Long superficieAdoptada) {
+	public void setSuperficieAdoptada(Double superficieAdoptada) {
 		this.superficieAdoptada = superficieAdoptada;
 	}
 
@@ -698,11 +698,11 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.advertencias = advertencias;
 	}
 
-	public Long getAprovechamiento() {
+	public Double getAprovechamiento() {
 		return aprovechamiento;
 	}
 
-	public void setAprovechamiento(Long aprovechamiento) {
+	public void setAprovechamiento(Double aprovechamiento) {
 		this.aprovechamiento = aprovechamiento;
 	}
 
@@ -722,19 +722,19 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.condicionantes = condicionantes;
 	}
 
-	public Long getCosteEstimadoTerminarObra() {
+	public Double getCosteEstimadoTerminarObra() {
 		return costeEstimadoTerminarObra;
 	}
 
-	public void setCosteEstimadoTerminarObra(Long costeEstimadoTerminarObra) {
+	public void setCosteEstimadoTerminarObra(Double costeEstimadoTerminarObra) {
 		this.costeEstimadoTerminarObra = costeEstimadoTerminarObra;
 	}
 
-	public Long getCosteDestinaUsoPropio() {
+	public Double getCosteDestinaUsoPropio() {
 		return costeDestinaUsoPropio;
 	}
 
-	public void setCosteDestinaUsoPropio(Long costeDestinaUsoPropio) {
+	public void setCosteDestinaUsoPropio(Double costeDestinaUsoPropio) {
 		this.costeDestinaUsoPropio = costeDestinaUsoPropio;
 	}
 
@@ -786,27 +786,27 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.mrdPlazoMaximoFinalizarConstruccion = mrdPlazoMaximoFinalizarConstruccion;
 	}
 
-	public Long getMrdTasaAnualizadaHomogenea() {
+	public Double getMrdTasaAnualizadaHomogenea() {
 		return mrdTasaAnualizadaHomogenea;
 	}
 
-	public void setMrdTasaAnualizadaHomogenea(Long mrdTasaAnualizadaHomogenea) {
+	public void setMrdTasaAnualizadaHomogenea(Double mrdTasaAnualizadaHomogenea) {
 		this.mrdTasaAnualizadaHomogenea = mrdTasaAnualizadaHomogenea;
 	}
 
-	public Long getMrdTasaActualizacion() {
+	public Double getMrdTasaActualizacion() {
 		return mrdTasaActualizacion;
 	}
 
-	public void setMrdTasaActualizacion(Long mrdTasaActualizacion) {
+	public void setMrdTasaActualizacion(Double mrdTasaActualizacion) {
 		this.mrdTasaActualizacion = mrdTasaActualizacion;
 	}
 
-	public Long getMreMargenBeneficioPromotor() {
+	public Double getMreMargenBeneficioPromotor() {
 		return mreMargenBeneficioPromotor;
 	}
 
-	public void setMreMargenBeneficioPromotor(Long mreMargenBeneficioPromotor) {
+	public void setMreMargenBeneficioPromotor(Double mreMargenBeneficioPromotor) {
 		this.mreMargenBeneficioPromotor = mreMargenBeneficioPromotor;
 	}
 
@@ -818,19 +818,19 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.paralizacionUrbanizacion = paralizacionUrbanizacion;
 	}
 
-	public Long getPorcentajeUrbanizacionEjecutado() {
+	public Double getPorcentajeUrbanizacionEjecutado() {
 		return porcentajeUrbanizacionEjecutado;
 	}
 
-	public void setPorcentajeUrbanizacionEjecutado(Long porcentajeUrbanizacionEjecutado) {
+	public void setPorcentajeUrbanizacionEjecutado(Double porcentajeUrbanizacionEjecutado) {
 		this.porcentajeUrbanizacionEjecutado = porcentajeUrbanizacionEjecutado;
 	}
 
-	public Long getPorcentajeAmbitoValoradoEntero() {
+	public Double getPorcentajeAmbitoValoradoEntero() {
 		return porcentajeAmbitoValoradoEntero;
 	}
 
-	public void setPorcentajeAmbitoValoradoEntero(Long porcentajeAmbitoValoradoEntero) {
+	public void setPorcentajeAmbitoValoradoEntero(Double porcentajeAmbitoValoradoEntero) {
 		this.porcentajeAmbitoValoradoEntero = porcentajeAmbitoValoradoEntero;
 	}
 
@@ -850,19 +850,19 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.proyectoObra = proyectoObra;
 	}
 
-	public Long getSuperficioTerreno() {
-		return superficioTerreno;
+	public Double getSuperficieTerreno() {
+		return superficieTerreno;
 	}
 
-	public void setSuperficioTerreno(Long superficioTerreno) {
-		this.superficioTerreno = superficioTerreno;
+	public void setSuperficieTerreno(Double superficieTerreno) {
+		this.superficieTerreno = superficieTerreno;
 	}
 
-	public Long getTasaAnualMedioVariacionPrecioMercado() {
+	public Double getTasaAnualMedioVariacionPrecioMercado() {
 		return tasaAnualMedioVariacionPrecioMercado;
 	}
 
-	public void setTasaAnualMedioVariacionPrecioMercado(Long tasaAnualMedioVariacionPrecioMercado) {
+	public void setTasaAnualMedioVariacionPrecioMercado(Double tasaAnualMedioVariacionPrecioMercado) {
 		this.tasaAnualMedioVariacionPrecioMercado = tasaAnualMedioVariacionPrecioMercado;
 	}
 
@@ -875,35 +875,35 @@ public class ActivoTasacion implements Serializable, Auditable {
 		this.tipoDatoUtilizadoInmuebleComparable = tipoDatoUtilizadoInmuebleComparable;
 	}
 
-	public Long getValorTerreno() {
+	public Double getValorTerreno() {
 		return valorTerreno;
 	}
 
-	public void setValorTerreno(Long valorTerreno) {
+	public void setValorTerreno(Double valorTerreno) {
 		this.valorTerreno = valorTerreno;
 	}
 
-	public Long getValorTerrenoAjustado() {
+	public Double getValorTerrenoAjustado() {
 		return valorTerrenoAjustado;
 	}
 
-	public void setValorTerrenoAjustado(Long valorTerrenoAjustado) {
+	public void setValorTerrenoAjustado(Double valorTerrenoAjustado) {
 		this.valorTerrenoAjustado = valorTerrenoAjustado;
 	}
 
-	public Long getValorHipotesisEdificioTerminado() {
+	public Double getValorHipotesisEdificioTerminado() {
 		return valorHipotesisEdificioTerminado;
 	}
 
-	public void setValorHipotesisEdificioTerminado(Long valorHipotesisEdificioTerminado) {
+	public void setValorHipotesisEdificioTerminado(Double valorHipotesisEdificioTerminado) {
 		this.valorHipotesisEdificioTerminado = valorHipotesisEdificioTerminado;
 	}
 
-	public Long getValorHipotecario() {
+	public Double getValorHipotecario() {
 		return valorHipotecario;
 	}
 
-	public void setValorHipotecario(Long valorHipotecario) {
+	public void setValorHipotecario(Double valorHipotecario) {
 		this.valorHipotecario = valorHipotecario;
 	}
 
@@ -914,7 +914,7 @@ public class ActivoTasacion implements Serializable, Auditable {
 	public void setVisitaAnteriorInmueble(Boolean visitaAnteriorInmueble) {
 		this.visitaAnteriorInmueble = visitaAnteriorInmueble;
 	}
-
+	
 	public Boolean getIlocalizable() {
 		return ilocalizable;
 	}

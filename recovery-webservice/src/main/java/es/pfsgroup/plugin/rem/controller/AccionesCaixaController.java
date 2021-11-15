@@ -327,7 +327,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionDevolverArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+    public ModelAndView accionDevolverArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionDevolverArras(dto);
@@ -341,7 +341,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionIncautarArras(DtoOnlyExpedienteYOfertaCaixa dto) {
+    public ModelAndView accionIncautarArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionIncautarArras(dto);

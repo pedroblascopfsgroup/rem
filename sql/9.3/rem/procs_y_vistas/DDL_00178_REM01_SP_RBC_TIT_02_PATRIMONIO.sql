@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211102
+--## FECHA_CREACION=20211108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15969
@@ -14,7 +14,7 @@
 --##        0.2 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.3 Se añaden mapeos de campos creados en REM y se cambia la cartera por la nuevo Titulizada - [HREOS-15969] - Daniel Algaba
 --##        0.4 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
---##        0.5 Se pone siempre el campo Activo estratéigo a nulo - [HREOS-15969] - Daniel Algaba
+--##        0.5 Se pone siempre el campo Activo estratégico a nulo - [HREOS-15969] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,7 +56,7 @@ BEGIN
                      , CASE WHEN PTA.ACUERDO_PAGO = 1 THEN ''S'' ELSE ''N'' END ACUERDO_PAGO
                      , CASE WHEN EAL.DD_EAL_CODIGO = ''02'' THEN ''S'' ELSE ''N'' END ALQUILADO
                      , CASE WHEN PTA.MOROSO = 1 THEN ''S'' ELSE ''N'' END MOROSO
-                     , NULL END ACTIVO_PROMO_ESTRATEG
+                     , NULL ACTIVO_PROMO_ESTRATEG
                      , CASE WHEN PTA.PTA_TRAMITE_ALQ_SOCIAL = 1 THEN ''S'' ELSE ''N'' END ALQUILER_GESTION
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
                      JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND DD_CRA_CODIGO = ''18''
@@ -65,6 +65,7 @@ BEGIN
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER EAL ON EAL.DD_EAL_ID = PTA.DD_EAL_ID AND EAL.BORRADO = 0
                      WHERE ACT.BORRADO = 0
                      AND PAC.PAC_INCLUIDO = 1
+                     AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
                   ) AUX ON (RBC_TIT.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN UPDATE SET
                      RBC_TIT.ACUERDO_PAGO = AUX.ACUERDO_PAGO

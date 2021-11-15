@@ -129,27 +129,27 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.registro'),
 								 		bind: {
 								 			value: '{saneamiento.fechaPres1Registro}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference : 'fechaPres1Registro'
 									},
 									{
 										xtype:'datefieldbase',
 								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.auto.adicion'),
 								 		bind: {
 								 			value: '{saneamiento.fechaEnvioAuto}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference: 'fechaEnvioAuto'
 									},
 									{
 										xtype:'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.segunda.presentacion.registro'),
 								 		bind: {
 								 			value: '{saneamiento.fechaPres2Registro}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference : 'fechaPres2Registro'
 									},
 									{
 										xtype:'datefieldbase',
@@ -167,8 +167,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									 				combo.setValue('03');
 									 			
 									 		}
-								 		}
-								 		
+								 		},
+										reference: 'fechaInscripcionRegRef'								 		
 									},
 									{
 										xtype:'datefieldbase',
@@ -294,7 +294,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        	xtype: 'comboboxfieldbasedd',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
 								 		reference: 'situacionTituloAdicional',
-								 		readOnly: true,
 							        	bind: 
 							        		{
 						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO

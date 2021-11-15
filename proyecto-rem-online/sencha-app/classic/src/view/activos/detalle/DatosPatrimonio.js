@@ -210,7 +210,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							bind: {
 								store: '{comboSinSino}',
 								value: '{patrimonio.activoPromoEstrategico}',
-								hidden: '{!patrimonio.isCarteraTitulizada}'	
+								hidden: true	
 							}
 						},	
 						{

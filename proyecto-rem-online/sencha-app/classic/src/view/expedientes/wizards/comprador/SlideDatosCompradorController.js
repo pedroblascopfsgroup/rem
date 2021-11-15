@@ -924,11 +924,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 		form.updateRecord();
 		
-		if(me.getViewModel().get("comprador").data.esCarteraBankia){
-			me.discrepanciasVeracidadDatosComprador();
-		} else {
+//		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+//			me.discrepanciasVeracidadDatosComprador();
+//		} else {
 			me.continuarSiguienteSlide();
-		}
+//		}
 	},
 	
 	continuarSiguienteSlide: function() {

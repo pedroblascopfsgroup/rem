@@ -358,6 +358,14 @@ public class DiccionarioTargetClassMap{
 		mapa.put("subtipoOfertaAlquiler",  DDSubtipoOfertaAlquiler.class);
 		mapa.put("claseContratoAlquiler", DDClaseContratoAlquiler.class);
 		mapa.put("tipoDeDocumento", DDTipoDeDocumento.class);
+		mapa.put("metodoValoracion", DDMetodoValoracion.class);
+		mapa.put("desarrolloPlanteamiento", DDDesarrolloPlanteamiento.class);
+		mapa.put("faseGestion", DDFaseGestion.class);
+		mapa.put("productoDesarrollar", DDProductoDesarrollar.class);
+		mapa.put("proximidadRespectoNucleoUrbano", DDProximidadRespectoNucleoUrbano.class);
+		mapa.put("sistemaGestion", DDSistemaGestion.class);
+		mapa.put("productoDesarrollarPrevisto", DDProductoDesarrollar.class);
+		mapa.put("tipoDatoUtilizadoInmuebleComparable", DDTipoDatoUtilizadoInmuebleComparable.class);
 		mapa.put("tipoFinanciacion", DDTfnTipoFinanciacion.class);
 		mapa.put("siNoNosabe", DDSnsSiNoNosabe.class);
 		mapa.put("fuenteTestigos", DDFuenteTestigos.class);

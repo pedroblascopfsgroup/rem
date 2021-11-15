@@ -227,8 +227,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						// Guardamos el usuario que realiza la tarea
 						TareaExterna tex = valor.getTareaExterna();
 						if (!Checks.esNulo(tex)) {
-							TareaNotificacion tar = tex.getTareaPadre();
-							peticionario = tar.getAuditoria().getUsuarioBorrar();
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							peticionario = usuarioLogado.getUsername();
 						}
 						expediente.setPeticionarioAnulacion(peticionario);
 

@@ -379,6 +379,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
             {
                 name: 'estadoPbcAlquiler'
+            },
+            {
+            	name: 'peticionarioAnulacion'
             }
     		
     ],

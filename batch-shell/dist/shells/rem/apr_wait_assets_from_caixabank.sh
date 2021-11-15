@@ -15,7 +15,7 @@ IFS=','
 arrayfichero=$fichero
 
 #Calculo de hora limite
-hora_limite=`date --date="$MAX_WAITING_MINUTES minutes" +%Y%m%d%H%M%S`
+hora_limite=`date --date="130 minutes" +%Y%m%d%H%M%S`
 hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 

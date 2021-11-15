@@ -31,6 +31,7 @@ public interface GestorExpedienteComercialApi {
 	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
 	public static final String CODIGO_GESTOR_CONTROLLER = "GCONT";
 	public static final String CODIGO_GESTOR_CIERRE_VENTA = "GCV";
+	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
 	
 	/**
 	 * Guarda el gestor en el expediente, y si se sustituye por otro, lo guarda en el histórico.

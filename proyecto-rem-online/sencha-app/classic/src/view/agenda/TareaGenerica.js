@@ -4041,6 +4041,33 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
 	},
 	
+   T018_CierreContratoValidacion: function(){
+    	var me = this;
+    	me.down('[name=docOK]').noObligatorio=false;
+    	me.down('[name=ncontratoPrinex]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=docOK]'));
+    	me.campoObligatorio(me.down('[name=ncontratoPrinex]'));
+    	me.down('[name=ncontratoPrinex]').minLength=9;
+    	me.down('[name=ncontratoPrinex]').maxLength=9;
+    	
+    	me.setFechaActual(me.down('[name=fechaValidacion]'));
+
+    	me.down('[name=ncontratoPrinex]').addListener('change', function(field, newValue, oldValue, eOpts){
+ 
+     		if(newValue.length >= 4 && newValue.length < 8
+				&& !newValue.includes("-")){
+     			field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8)); 
+         		
+     		}
+			
+			field.validate();
+     	});
+		me.down('[name=ncontratoPrinex]').validator = new Function("value",
+			"return value.match(/^[0-9]{4}-[0-9]{4}$/) ? true : 'Formato nº contrato: XXXX-XXXX donde X debe ser numérico'");
+		
+		me.down('[name=ncontratoPrinex]').validate();
+    },
+	
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

@@ -8,24 +8,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAccionNoComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
 public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterService {
@@ -45,6 +46,8 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 	private static final String REQUIERE_ANALISIS_T = "isVulnerableAnalisisT";
 
 	private static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
+	
+	private static final String OBSERVACIONESBC = "observacionesBC";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -59,15 +62,24 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 		String codigoResultado = null;
 		
 		CondicionanteExpediente coe = expedienteComercial.getCondicionante();
-
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				codigoResultado = valor.getValor();
 			}
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
 		
 		if(codigoResultado != null) {
+			dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+			
+			
 			if(DDTipoAccionNoComercial.COD_PTE_ANALISIS_TECNICO.equals(codigoResultado)) {
 				estadoExpediente =  DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
 				estadoBc =  DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
@@ -87,9 +99,14 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 			if(DDTipoAccionNoComercial.COD_RECHAZO_COMERCIAL.equals(codigoResultado)) {
 				estadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
 				estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				ofertaApi.rechazarOferta(oferta);
 			}
 		}
+		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpediente));
 		estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc));

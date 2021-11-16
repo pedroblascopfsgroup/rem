@@ -89,7 +89,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
 	private static final Integer RESERVA_SI = 1;
-
+	private static final String OBSERVACIONES = "observaciones";
 	
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -105,7 +105,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
-						
+				DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+				dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+				
 				for (TareaExternaValor valor : valores) {
 	
 					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -253,6 +256,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
 					}
+					
+					if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						dtoHistoricoBC.setObservacionesBC(valor.getValor());
+					}
 				}
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
@@ -262,6 +269,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				if(estadoBcModificado) {
 					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
+				
+				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);
+				
+				genericDao.save(HistoricoSancionesBc.class, historico);
 			}
 		}
 

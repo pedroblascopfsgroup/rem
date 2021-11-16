@@ -20,9 +20,13 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
@@ -44,6 +48,8 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 	private static final String COMBO_RESULTADO = "comboResolucion";
 	private static final String FECHA_SANCION = "fechaSancion";
 	
+	private static final String OBSERVACIONESBC = "observacionesBC";
+	
 	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -59,6 +65,9 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		String fechaSancion = null;
 		boolean aprueba = false;
 		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 
 		for(TareaExternaValor valor :  valores){
 			
@@ -69,7 +78,11 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 			}
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				fechaSancion = valor.getValor();
-			}	
+			}
+
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
 		
 		if (aprueba) {
@@ -82,7 +95,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			resultadoScoring = DDResultadoCampo.RESULTADO_RECHAZADO;
 			Oferta oferta = expedienteComercial.getOferta();
-			
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}
@@ -105,13 +118,15 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		}
 		scoring.setResultadoScoring(genericDao.get(DDResultadoCampo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", resultadoScoring))); 
 		genericDao.save(ScoringAlquiler.class, scoring);
-
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		estadoBcModificado = true;
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
 		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndScoringBc(expedienteComercial, resultadoScoring, fechaSancion));

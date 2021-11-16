@@ -22,15 +22,18 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDResolucionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 
 @Component
@@ -60,6 +63,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	private static final String REF_CIRCUITO_CLIENTE = "refCircuitoCliente";
 	private static final String FECHA_ELEVACION = "fechaElevacion";
 	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	
 	private static final String CODIGO_T015_ELEVAR_A_SANCION = "T015_ElevarASancion";
 
@@ -70,6 +74,9 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		String peticionario = null;
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 
@@ -122,12 +129,21 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				oferta.setImporteContraOferta(Double.parseDouble(valor.getValor().replace(",",".")));
 			}
+			
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
 		
 		expedienteComercial.setOferta(oferta);
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), expedienteComercial.getEstado());
 
 		expedienteComercialApi.update(expedienteComercial,false);
+		
+
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+				
+		genericDao.save(HistoricoSancionesBc.class, historico);
 	}
 
 	public String[] getCodigoTarea() {

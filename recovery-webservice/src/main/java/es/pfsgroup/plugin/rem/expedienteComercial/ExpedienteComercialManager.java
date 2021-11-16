@@ -1444,6 +1444,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getTipologiaVentaCod() != null) {
 				ofrCx.setTipologiaVentaBc(genericDao.get(DDTipologiaVentaBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getTipologiaVentaCod())));
 			}
+			if (dto.getRiesgoOperacionBcCodigo() != null) {
+				Filter r = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRiesgoOperacionBcCodigo());
+				riesgoOperacion = genericDao.get(DDRiesgoOperacion.class, r);
+				
+				if (riesgoOperacion != null) {
+					ofrCx.setRiesgoOperacion(riesgoOperacion);
+				}
+			}
 		}
 		
 		if(dto.getClasificacionCodigo() != null) {
@@ -2295,6 +2303,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				if(ofrCaixa.getTipologiaVentaBc() != null) {
 					dto.setTipologiaVentaCod(ofrCaixa.getTipologiaVentaBc().getCodigo());
+				}
+				if (ofrCaixa.getRiesgoOperacion() != null) {
+					dto.setRiesgoOperacionBcCodigo(ofrCaixa.getRiesgoOperacion().getCodigo());
+					dto.setRiesgoOperacionBcDescripcion(ofrCaixa.getRiesgoOperacion().getDescripcion());
 				}
 			}
 

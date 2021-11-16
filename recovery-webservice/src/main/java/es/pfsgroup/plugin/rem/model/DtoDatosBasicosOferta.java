@@ -171,6 +171,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String tipologiaVentaCod;
 	
+	private String riesgoOperacionBcCodigo;
+	
+	private String riesgoOperacionBcDescripcion;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -836,4 +840,21 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setTipologiaVentaCod(String tipologiaVentaCod) {
 		this.tipologiaVentaCod = tipologiaVentaCod;
 	}
+
+	public String getRiesgoOperacionBcCodigo() {
+		return riesgoOperacionBcCodigo;
+	}
+
+	public void setRiesgoOperacionBcCodigo(String riesgoOperacionBcCodigo) {
+		this.riesgoOperacionBcCodigo = riesgoOperacionBcCodigo;
+	}
+
+	public String getRiesgoOperacionBcDescripcion() {
+		return riesgoOperacionBcDescripcion;
+	}
+
+	public void setRiesgoOperacionBcDescripcion(String riesgoOperacionBcDescripcion) {
+		this.riesgoOperacionBcDescripcion = riesgoOperacionBcDescripcion;
+	}
+	
 }

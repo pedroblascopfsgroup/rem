@@ -459,6 +459,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								    rawValue : '{datosbasicosoferta.riesgoOperacionDescripcion}',
 									readOnly : '{readOnlyDatosCfv}'
 								}
+							},
+							{
+								xtype : 'comboboxfieldbasedd',
+								fieldLabel : HreRem.i18n('fieldlabel.riesgo.operacion.bc'),
+								bind : {
+									store : '{comboRiesgoOperacion}',
+								    value : '{datosbasicosoferta.riesgoOperacionBcCodigo}',
+								    rawValue : '{datosbasicosoferta.riesgoOperacionBcDescripcion}',
+								    hidden: '{!esBankia}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
 							}
 						]
 					},

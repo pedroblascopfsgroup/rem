@@ -63,7 +63,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	private static final String REF_CIRCUITO_CLIENTE = "refCircuitoCliente";
 	private static final String FECHA_ELEVACION = "fechaElevacion";
 	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
-	private static final String OBSERVACIONES = "observaciones";
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	
 	private static final String CODIGO_T015_ELEVAR_A_SANCION = "T015_ElevarASancion";
 
@@ -130,7 +130,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				oferta.setImporteContraOferta(Double.parseDouble(valor.getValor().replace(",",".")));
 			}
 			
-			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				dtoHistoricoBC.setObservacionesBC(valor.getValor());
 			}
 		}

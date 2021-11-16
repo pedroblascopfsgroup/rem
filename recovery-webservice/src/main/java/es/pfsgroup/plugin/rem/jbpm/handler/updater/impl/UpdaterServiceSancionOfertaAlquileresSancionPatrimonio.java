@@ -44,7 +44,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
     
 	private static final String COMBO_RESULTADO = "comboResultado";
 	
-	private static final String OBSERVACIONES = "observaciones";
+	private static final String OBSERVACIONESBC = "observacionesBC";
 
 	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
 
@@ -97,7 +97,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 				}
 			}
 			
-			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				dtoHistoricoBC.setObservacionesBC(valor.getValor());
 			}
 		}

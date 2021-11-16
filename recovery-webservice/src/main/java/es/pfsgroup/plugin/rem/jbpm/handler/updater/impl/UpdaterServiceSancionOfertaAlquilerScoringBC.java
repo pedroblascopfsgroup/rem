@@ -48,7 +48,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 	private static final String COMBO_RESULTADO = "comboResolucion";
 	private static final String FECHA_SANCION = "fechaSancion";
 	
-	private static final String OBSERVACIONES = "observaciones";
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	
 	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 
@@ -80,7 +80,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 				fechaSancion = valor.getValor();
 			}
 
-			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 				dtoHistoricoBC.setObservacionesBC(valor.getValor());
 			}
 		}

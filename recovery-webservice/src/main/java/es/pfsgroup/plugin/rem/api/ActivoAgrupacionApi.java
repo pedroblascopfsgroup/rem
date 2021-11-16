@@ -61,16 +61,16 @@ public interface ActivoAgrupacionApi {
     @BusinessOperationDefinition("activoAgrupacionManager.haveActivoRestringidaAndObraNueva")
     public Long haveActivoRestringidaAndObraNueva(Long id);
     
-    @BusinessOperationDefinition("activoAgrupacionManager.uploadFoto")
-    public String uploadFoto(WebFileItem fileItem);
+    @BusinessOperationDefinition("activoAgrupacionManager.uploadFotos")
+    public String uploadFotos(List<WebFileItem> webFileItemList);
     
     public String uploadFoto(File fileItem) throws Exception;
     
     @BusinessOperationDefinition("activoAgrupacionManager.getFotosActivosAgrupacionById")
     public List<ActivoFoto> getFotosActivosAgrupacionById(Long id);
 
-    @BusinessOperationDefinition("activoAgrupacionManager.uploadFotoSubdivision")
-	String uploadFotoSubdivision(WebFileItem fileItem);
+    @BusinessOperationDefinition("activoAgrupacionManager.uploadFotosSubdivision")
+	String uploadFotosSubdivision(List<WebFileItem> webFileItemList);
     
     public String uploadFotoSubdivision(File fileItem) throws Exception;
 

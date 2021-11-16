@@ -973,79 +973,84 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoManager.uploadFoto")
+	@BusinessOperation(overrides = "activoManager.uploadFotos")
 	@Transactional(readOnly = false)
-	public String uploadFoto(WebFileItem fileItem) {
-		Activo activo = this.get(Long.parseLong(fileItem.getParameter("idEntidad")));
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
-		TIPO tipo = null;
-		FileResponse fileReponse = null;
-		ActivoFoto activoFoto = null;
-		SITUACION situacion;
-		PRINCIPAL principal;
-		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		orden++;
-
-		try {
-			if (gestorDocumentalFotos.isActive()) {
-				if (tipoFoto.getCodigo().equals("01")) {
-					tipo = TIPO.WEB;
-
-				} else if (tipoFoto.getCodigo().equals("02")) {
-					tipo = TIPO.TECNICA;
-
-				} else if (tipoFoto.getCodigo().equals("03")) {
-					tipo = TIPO.TESTIGO;
-				}
-
-				if (Boolean.valueOf(fileItem.getParameter("principal"))) {
-					principal = PRINCIPAL.SI;
-
+	public String uploadFotos(List<WebFileItem> fileItemList) {
+		if (fileItemList == null || fileItemList.isEmpty())
+			throw new JsonViewerException("Error al subir la/s foto/s");
+		
+		for (WebFileItem fileItem : fileItemList) {
+			Activo activo = this.get(Long.parseLong(fileItem.getParameter("idEntidad")));
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+			DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
+			TIPO tipo = null;
+			FileResponse fileReponse = null;
+			ActivoFoto activoFoto = null;
+			SITUACION situacion;
+			PRINCIPAL principal;
+			Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
+			orden++;
+	
+			try {
+				if (gestorDocumentalFotos.isActive()) {
+					if (tipoFoto.getCodigo().equals("01")) {
+						tipo = TIPO.WEB;
+	
+					} else if (tipoFoto.getCodigo().equals("02")) {
+						tipo = TIPO.TECNICA;
+	
+					} else if (tipoFoto.getCodigo().equals("03")) {
+						tipo = TIPO.TESTIGO;
+					}
+	
+					if (Boolean.valueOf(fileItem.getParameter("principal"))) {
+						principal = PRINCIPAL.SI;
+	
+					} else {
+						principal = PRINCIPAL.NO;
+					}
+	
+					if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
+						situacion = SITUACION.INTERIOR;
+	
+					} else {
+						situacion = SITUACION.EXTERIOR;
+					}
+	
+					if (fileItem.getParameter("codigoDescripcionFoto") != null) {
+						
+						fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+								fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
+								genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
+								principal, situacion, orden);
+						
+					}
+					activoFoto = new ActivoFoto(fileReponse.getData());
+	
 				} else {
-					principal = PRINCIPAL.NO;
+					activoFoto = new ActivoFoto(fileItem.getFileItem());
 				}
+	
+				activoFoto.setActivo(activo);
+				activoFoto.setTipoFoto(tipoFoto);
+				activoFoto.setTamanyo(fileItem.getFileItem().getLength());
+				activoFoto.setNombre(fileItem.getFileItem().getFileName());
+				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
+				activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
+				activoFoto.setFechaDocumento(new Date());
+				activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
+				activoFoto.setOrden(orden);
+	
+				Auditoria.save(activoFoto);
+	
+				activo.getFotos().add(activoFoto);
+	
+				activoDao.save(activo);
 
-				if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
-					situacion = SITUACION.INTERIOR;
-
-				} else {
-					situacion = SITUACION.EXTERIOR;
-				}
-
-				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
-					
-					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
-							principal, situacion, orden);
-					
-				}
-				activoFoto = new ActivoFoto(fileReponse.getData());
-
-			} else {
-				activoFoto = new ActivoFoto(fileItem.getFileItem());
+			} catch (Exception e) {
+				logger.error("Error en activoManager", e);
 			}
-
-			activoFoto.setActivo(activo);
-			activoFoto.setTipoFoto(tipoFoto);
-			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
-			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
-			activoFoto.setFechaDocumento(new Date());
-			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
-			activoFoto.setOrden(orden);
-
-			Auditoria.save(activoFoto);
-
-			activo.getFotos().add(activoFoto);
-
-			activoDao.save(activo);
-
-		} catch (Exception e) {
-			logger.error("Error en activoManager", e);
 		}
 
 		return null;

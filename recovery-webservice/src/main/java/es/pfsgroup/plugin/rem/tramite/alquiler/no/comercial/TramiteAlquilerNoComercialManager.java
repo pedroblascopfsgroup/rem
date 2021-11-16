@@ -123,13 +123,24 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 	
 	@Override
-	public boolean isExpedienteTipoAlquilerNoComercial(TareaExterna tareaExterna, String expedienteAnterior) {
-		boolean is = false;
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-		if(expediente != null && expediente.getOferta() != null && DDTipoOferta.isTipoAlquilerNoComercial(expediente.getOferta().getTipoOferta())) {
-			is = true;
+	public boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior) {
+		boolean isMismoActivo = false;
+		if(expedienteAnterior.isEmpty()) {
+			isMismoActivo = true;
+		}else{
+			ExpedienteComercial expedienteInsertado = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+			ExpedienteComercial expediente = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+			
+			if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null 
+			&& expedienteInsertado != null && expedienteInsertado.getOferta() != null && expedienteInsertado.getOferta().getActivoPrincipal() != null) {
+				Long idActivoOriginal = expediente.getOferta().getActivoPrincipal().getId();
+				Long idActivoInsertado = expedienteInsertado.getOferta().getActivoPrincipal().getId();
+				if(idActivoInsertado == idActivoOriginal && expediente.getId() != expedienteInsertado.getId()) {
+					isMismoActivo = true;
+				}
+			}
 		}
-		return is;
+		return isMismoActivo;
 	}
 	
 	@Override
@@ -139,7 +150,8 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 			isFirmado = true;
 		}else{
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-			if(expediente != null && expediente.getEstado() != null && DDEstadosExpedienteComercial.isFirmado(expediente.getEstado())) {
+			if(expediente != null && expediente.getEstado() != null && (DDEstadosExpedienteComercial.isFirmado(expediente.getEstado()) 
+				|| DDEstadosExpedienteComercial.isVendido(expediente.getEstado()) || DDEstadosExpedienteComercial.isAlquilado(expediente.getEstado()))) {
 				isFirmado = true;
 			}
 		}

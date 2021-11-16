@@ -814,6 +814,10 @@
 				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.existeTareaT018Scoring(tareaExterna);
 			}
+			 def isExpedienteDelMismoActivo(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isExpedienteDelMismoActivo(tareaExterna, expedienteAnterior);
+            } 
            
   			 ]]></value>
   		</list>

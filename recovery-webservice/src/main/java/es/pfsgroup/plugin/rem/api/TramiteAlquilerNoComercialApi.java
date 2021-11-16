@@ -18,8 +18,6 @@ public interface TramiteAlquilerNoComercialApi {
 
 	boolean existeExpedienteComercialByNumExpediente(TareaExterna tareaExterna, String expedienteAnterior);
 
-	boolean isExpedienteTipoAlquilerNoComercial(TareaExterna tareaExterna, String expedienteAnterior);
-
 	boolean isExpedienteFirmado(TareaExterna tareaExterna, String expedienteAnterior);
 
 	boolean isTramiteT018Aprobado(List<String> tareasActivas);
@@ -27,6 +25,8 @@ public interface TramiteAlquilerNoComercialApi {
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 
 	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
+
+	boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior);
 	
 }
 

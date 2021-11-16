@@ -68,7 +68,9 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 		
 		TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER);
 		
-		if(tareaExternaAnterior == null && aprueba) {
+		if(tareaExternaAnterior != null 
+				&& !ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING.equals(tareaExternaAnterior.getTareaProcedimiento().getCodigo()) 
+				&& aprueba) {
 			estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
 			estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 		}else {

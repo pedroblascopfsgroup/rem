@@ -93,20 +93,20 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "58";
 	public static final String PTE_REVISAR_CONDICIONES_BC = "59";
 	
-	//Estados Alquiler
-	public static final String PENDIENTE_SANCION = "44";
-	public static final String CONGELADA = "45";
-	public static final String DESCARTADA = "46";
+	//Estados Alquiler HayaHome
+	public static final String PENDIENTE_SANCION = "144";
+	public static final String CONGELADA = "145";
+	public static final String DESCARTADA = "146";
 	
-	public static final String PDTE_FIRMA_CONTRATO_RESERVA = "47";
-	public static final String PTE_SCORING = "48";
-	public static final String PDTE_POSICIONAMIENTO_FIRMA = "49";
-	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "50";
-	public static final String PDTE_FIRMA = "51";
-	public static final String PDTE_REGISTRO_FIRMAS_SISTEMA = "52";
-	public static final String FINALIZADA = "53";
-	public static final String CANCELADA = "54";
-	public static final String BORRADOR = "55";
+	public static final String PDTE_FIRMA_CONTRATO_RESERVA = "147";
+	public static final String PTE_SCORING = "148";
+	public static final String PDTE_POSICIONAMIENTO_FIRMA = "149";
+	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "150";
+	public static final String PDTE_FIRMA = "151";
+	public static final String PDTE_REGISTRO_FIRMAS_SISTEMA = "152";
+	public static final String FINALIZADA = "153";
+	public static final String CANCELADA = "154";
+	public static final String BORRADOR = "155";
 	
 	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";

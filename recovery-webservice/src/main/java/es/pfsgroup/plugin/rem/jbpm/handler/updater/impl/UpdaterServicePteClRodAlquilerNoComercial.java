@@ -19,9 +19,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.RespuestaComiteBC;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -60,7 +64,9 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		DDResolucionComite resolucionComite = null;
 		String sancionCLROD = null;
 		RespuestaComiteBC respuestaComiteBc = new RespuestaComiteBC();
-				
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -92,6 +98,7 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			
 			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				respuestaComiteBc.setObservacionesBcRBC(valor.getValor());
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
 			}
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -113,6 +120,13 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			}
 			
 		}
+		
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_PTCLROD);
+		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
 		
 		genericDao.save(RespuestaComiteBC.class, respuestaComiteBc);
 		

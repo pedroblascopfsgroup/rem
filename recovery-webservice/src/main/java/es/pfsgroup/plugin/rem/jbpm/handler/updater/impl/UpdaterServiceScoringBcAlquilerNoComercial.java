@@ -17,8 +17,12 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAccionNoComercial;
@@ -41,6 +45,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 	private static final String FECHA_RESOLUCION = "fechaResolucion";
 
 	private static final String CODIGO_T018_SCORING_BC = "T018_ScoringBc";
+	private static final String OBSERVACIONES = "observaciones";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -54,6 +59,10 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		String fechaResolucion = null;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -69,13 +78,22 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 				}else if(DDTipoAccionNoComercial.COD_RECHAZO_COMERCIAL.equals(valor.getValor())){
 					estadoExpediente = DDEstadosExpedienteComercial.ANULADO;
 					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}
 			}
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				fechaResolucion = valor.getValor();
 			}	
+			
+			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
+		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpediente));
 		estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc));

@@ -15,29 +15,24 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
-
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -45,12 +40,11 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	@Autowired
 	private OfertaApi ofertaApi;
 	
-	@Autowired
-	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionPatrimonio.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	
+	private static final String OBSERVACIONES = "observaciones";
 
 	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
 
@@ -62,6 +56,10 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -98,9 +96,18 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				}
 			}
+			
+			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
 		
 		expedienteComercialApi.update(expedienteComercial,false);
+		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
+
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));

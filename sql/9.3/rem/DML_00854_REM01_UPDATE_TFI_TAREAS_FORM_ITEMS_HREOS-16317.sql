@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211110
+--## FECHA_CREACION=20211116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16317
@@ -56,7 +56,7 @@ BEGIN
 				-- Si existe se modifica.
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS '||
 						  ' SET TFI_ORDEN = '||V_TMP_TIPO_DATA_2(1)||' '||
-						  ' ,TFI_BUSINESS_OPERATION = '||V_TMP_TIPO_DATA_2(5)||' '||
+						  ' ,TFI_BUSINESS_OPERATION = '''||V_TMP_TIPO_DATA_2(5)||''' '||
 						  ' ,USUARIOMODIFICAR = ''HREOS-16317'' ,FECHAMODIFICAR = SYSDATE '||
 						  ' WHERE TFI_NOMBRE = '''||V_TMP_TIPO_DATA_2(3)||''' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T018_ScoringBc'') 
 		        ';

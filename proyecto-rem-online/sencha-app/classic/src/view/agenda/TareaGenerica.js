@@ -2369,6 +2369,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     					me.habilitarCampo(importeContraoferta);
 						me.campoObligatorio(importeContraoferta);
 						me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+						importeContraoferta.allowBlank = false;
     				}else{
     					me.deshabilitarCampo(importeContraoferta);
 						me.campoNoObligatorio(importeContraoferta);

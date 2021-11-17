@@ -246,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '03' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
             if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
             	allowEdit = true;
             }
@@ -489,7 +489,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	saveFn: function (editor, grid, context) {
 		var me = grid;
-		if (me.isValidRecord(context.record)) {	
+		if (me.isValidRecord(context.record)) {
 			me.mask(HreRem.i18n("msg.mask.espere"));
     		context.record.save({
                 params: {
@@ -551,9 +551,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			    codigoTipoOfertaAnterior = me.getStore().getData().items[i].data.codigoTipoOferta;
 			}
 		}
-		
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
-		
+        if(hayOfertaAceptada
+            && CONST.ESTADOS_OFERTA['CONGELADA'] == codigoEstadoAnterior
+            && CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo){
+                me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+                return false;
+        }
+
 		//Si no está en estado "Pendiente", no se puede tramitar
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
 		    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
@@ -582,6 +587,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
 		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
+			return false;
+		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
 		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211109
+--## FECHA_CREACION=20211116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16321
@@ -26,6 +26,8 @@
 --##	    0.13 Se recalcula el campo visible gestión comercial cuando pasa a Publicado el activo - HREOS-16087
 --##	    0.14 Protegemos las creación de registros en la APU para activos nuevos - HREOS-16321
 --##	    0.15 Se recalcula los activos que nos están consistentes con los flags BC - HREOS-16321
+--##	    0.16 Filtramos activos para solo lanzar los que no están en estados publicación No publicado, ya sea de venta o alquiler - HREOS-16321
+--##	    0.17 Historificación portales - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,9 +58,13 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
    V_FECHA_FIN VARCHAR2(100 CHAR);
 
    CURSOR ACTIVOS IS
-        SELECT DISTINCT ACT_ID
-        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL
-        WHERE EJECUTADO = 0 OR EJECUTADO IS NULL;
+        SELECT DISTINCT TMP.ACT_ID
+        FROM #ESQUEMA#.TMP_ACT_DESTINO_COMERCIAL TMP
+        JOIN #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = TMP.ACT_ID AND APU.BORRADO = 0
+        LEFT JOIN #ESQUEMA#.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+		LEFT JOIN #ESQUEMA#.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0	
+        WHERE NVL(TMP.EJECUTADO, 0) = 0
+        AND (EPV.DD_EPV_CODIGO <> 1 OR EPA.DD_EPA_CODIGO <> 1);
 
    ACT_ID NUMBER(16);
 
@@ -563,9 +569,83 @@ BEGIN
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
-
    V_NUM_FILAS := sql%rowcount;
-   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FUSIONADAS'|| CHR(10);
+   SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' PORTALES CAMBIADOS'|| CHR(10);
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+                USING (
+                    SELECT TMP.AHP_ID FROM (SELECT ROW_NUMBER() OVER(PARTITION BY AHP.ACT_ID ORDER BY AHP.FECHACREAR DESC) RN, AHP.AHP_ID
+                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AHP.ACT_ID
+                    JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID
+                    WHERE ACT.BORRADO = 0
+                        AND ACT.DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
+                        AND AHP.BORRADO = 0
+                        AND AHP.AHP_FECHA_INI_VENTA IS NOT NULL
+                        AND AHP.AHP_FECHA_FIN_VENTA IS NULL
+                        AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                        AND NVL(APU.DD_POR_ID,0) <> NVL(AHP.DD_POR_ID,0)
+                    ) TMP WHERE RN = 1
+                ) AUX
+                    ON (AHP.AHP_ID = AUX.AHP_ID)
+                WHEN MATCHED THEN
+                    UPDATE SET AHP.AHP_FECHA_FIN_VENTA = SYSDATE
+                    , AHP.USUARIOMODIFICAR = ''STOCK_BC_PORTALES''
+                    , AHP.FECHAMODIFICAR = SYSDATE';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' FINALIZADOS EN LA AHP'|| CHR(10);
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION (AHP_ID,ACT_ID
+                ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
+                ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V
+                ,AHP_CHECK_OCULTAR_PRECIO_V,AHP_CHECK_PUB_SIN_PRECIO_V
+                ,DD_MTO_A_ID
+                ,AHP_MOT_OCULTACION_MANUAL_A,AHP_CHECK_PUBLICAR_A
+                ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
+                ,AHP_CHECK_PUB_SIN_PRECIO_A
+                ,AHP_FECHA_INI_VENTA
+                ,DD_POR_ID
+                ,VERSION
+                ,USUARIOCREAR,FECHACREAR
+                ,BORRADO
+                ,ES_CONDICONADO_ANTERIOR)
+                SELECT '||V_ESQUEMA||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, APU.ACT_ID
+                ,APU.DD_TPU_A_ID,APU.DD_TPU_V_ID,APU.DD_EPV_ID,APU.DD_EPA_ID,APU.DD_TCO_ID,APU.DD_MTO_V_ID
+                ,APU.APU_MOT_OCULTACION_MANUAL_V,APU.APU_CHECK_PUBLICAR_V,APU.APU_CHECK_OCULTAR_V
+                ,APU.APU_CHECK_OCULTAR_PRECIO_V,APU.APU_CHECK_PUB_SIN_PRECIO_V
+                ,APU.DD_MTO_A_ID
+                ,APU.APU_MOT_OCULTACION_MANUAL_A,APU.APU_CHECK_PUBLICAR_A
+                ,APU.APU_CHECK_OCULTAR_A,APU.APU_CHECK_OCULTAR_PRECIO_A
+                ,APU.APU_CHECK_PUB_SIN_PRECIO_A
+                ,SYSDATE AHP_FECHA_INI_VENTA
+                ,APU.DD_POR_ID
+                ,APU.VERSION
+                ,''STOCK_BC_PORTALES'' USUARIOCREAR
+                ,SYSDATE FECHACREAR
+                ,0 BORRADO
+                ,APU.ES_CONDICONADO_ANTERIOR
+                FROM (SELECT ROW_NUMBER() OVER(PARTITION BY AHP.ACT_ID ORDER BY AHP.FECHACREAR DESC) RN, AHP.ACT_ID
+                FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AHP.ACT_ID
+                JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID
+                WHERE ACT.BORRADO = 0
+                    AND ACT.DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''03'')
+                    AND AHP.BORRADO = 0
+                    AND AHP.AHP_FECHA_INI_VENTA IS NOT NULL
+                    AND AHP.AHP_FECHA_FIN_VENTA IS NOT NULL
+                    AND AHP.USUARIOMODIFICAR = ''STOCK_BC_PORTALES''
+                    AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                    AND NVL(APU.DD_POR_ID,0) <> NVL(AHP.DD_POR_ID,0)
+                ) AUX
+                JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = AUX.ACT_ID AND APU.BORRADO = 0
+                WHERE AUX.RN = 1
+                AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AUX_AHP WHERE AUX_AHP.AHP_FECHA_INI_VENTA IS NOT NULL AND AUX_AHP.AHP_FECHA_FIN_VENTA IS NULL AND AUX_AHP.ACT_ID = APU.ACT_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_NUM_FILAS := sql%rowcount;
+    SALIDA := SALIDA || '##INFO: ' || V_NUM_FILAS ||' NUEVOS EN AHP'|| CHR(10);
 
 
 

@@ -87,15 +87,15 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB INFORME COMERCIAL
 		 */
-		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformeComercial>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformacionComercial>() {
 
 			@Override
-			public Class<DtoActivoInformeComercial> getArgumentType() {
-				return DtoActivoInformeComercial.class;
+			public Class<DtoActivoInformacionComercial> getArgumentType() {
+				return DtoActivoInformacionComercial.class;
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoInformeComercial dto, HttpServletRequest request) {
+			public void execute(Long id, DtoActivoInformacionComercial dto, HttpServletRequest request) {
 				if (dto != null ){
 					this.controller.saveActivoInformeComercial(dto, id, new ModelMap(), request);
 				}

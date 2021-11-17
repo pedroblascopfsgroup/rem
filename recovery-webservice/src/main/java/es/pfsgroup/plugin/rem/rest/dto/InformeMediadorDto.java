@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -58,7 +59,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "fechaEmisionInforme")
 	private Date fechaAccion;
-
+	
 	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(procesar = false)
 	private Long idUsuarioRemAccion;
@@ -184,7 +185,7 @@ public class InformeMediadorDto implements Serializable {
 	
 	@EntityDefinition(procesar = false)
 	@NotNull(groups = { Insert.class, Update.class })
-	private Boolean anejoGarage;
+	private Boolean anejoGaraje;
 	
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDRatingCocina.class,foreingField="codigo", 
@@ -666,12 +667,12 @@ public class InformeMediadorDto implements Serializable {
 		this.anejoTrastero = anejoTrastero;
 	}
 
-	public Boolean getAnejoGarage() {
-		return anejoGarage;
+	public Boolean getAnejoGaraje() {
+		return anejoGaraje;
 	}
 
-	public void setAnejoGarage(Boolean anejoGarage) {
-		this.anejoGarage = anejoGarage;
+	public void setAnejoGaraje(Boolean anejoGaraje) {
+		this.anejoGaraje = anejoGaraje;
 	}
 
 	public String getCocinaRating() {

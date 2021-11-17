@@ -531,9 +531,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoInformeComercial(DtoActivoInformeComercial activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
+	public ModelAndView saveActivoInformeComercial(DtoActivoInformacionComercial activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
-			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORME_COMERCIAL);
+			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORMACION_COMERCIAL);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			
 			Activo activo = activoApi.get(id);
@@ -543,12 +543,12 @@ public class ActivoController extends ParadiseJsonController {
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
-			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORME_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORMACION_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORME_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORMACION_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);

@@ -631,7 +631,7 @@ public class ActivoAdapter {
 				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
 					ActivoVivienda vivTemp = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
 					if(DDTipoInfoComercial.COD_VIVIENDA.equals(activo.getInfoComercial().getTipoInfoComercial().getCodigo()) || vivTemp != null) {					
-						activo.getInfoComercial().getDistribucion().add(distribucionNueva);						
+						//activo.getInfoComercial().getDistribucion().add(distribucionNueva);						
 					}
 				}
 			}			
@@ -1117,7 +1117,7 @@ public class ActivoAdapter {
 		List<DtoDistribucion> listaNoExistentes = new ArrayList<DtoDistribucion>();
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
-			for (int q = 0; q < activo.getInfoComercial().getDistribucion().size(); q++) {
+			/*for (int q = 0; q < activo.getInfoComercial().getDistribucion().size(); q++) {
 				ActivoDistribucion activoDistribucion = activo.getInfoComercial().getDistribucion().get(q);
 				Integer numPlantaDistro = activoDistribucion.getNumPlanta();
 
@@ -1125,7 +1125,7 @@ public class ActivoAdapter {
 						(!Checks.esNulo(numPlantaDistro) && (numPlantaDistro + 1) == (numPlanta + 1))) {
 					listaDistribucionesExistentes.add(activoDistribucion.getTipoHabitaculo().getCodigo());
 				}
-			}
+			}*/
 
 			List<DDTipoHabitaculo> habitaculos = (List<DDTipoHabitaculo>) utilDiccionarioApi.dameValoresDiccionario(DDTipoHabitaculo.class);
 			for (DDTipoHabitaculo habitaculo : habitaculos) {
@@ -1147,7 +1147,7 @@ public class ActivoAdapter {
 
 		ActivoInfoComercial infoComercial = activo.getInfoComercial();
 
-		if (!Checks.esNulo(infoComercial.getDistribucion())) {
+		/*if (!Checks.esNulo(infoComercial.getDistribucion())) {
 			for (int i = 0; i < infoComercial.getDistribucion().size(); i++) {
 				DtoDistribucion distribucionDto = new DtoDistribucion();
 				try {
@@ -1165,7 +1165,7 @@ public class ActivoAdapter {
 				}
 				listaDtoDistribucion.add(distribucionDto);
 			}
-		}
+		}*/
 
 		return listaDtoDistribucion;
 	}

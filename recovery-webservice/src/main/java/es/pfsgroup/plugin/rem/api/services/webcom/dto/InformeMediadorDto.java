@@ -18,24 +18,30 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
-	@WebcomRequired
 	private LongDataType idInformeMediadorWebcom;
 	private LongDataType idProveedorRemAnterior;
+	@WebcomRequired
 	private LongDataType idProveedorRem;
 	private BooleanDataType posibleInforme;
 	private StringDataType motivoNoPosibleInforme;
 	private DateDataType recepcionLlavesHaya;
+	@WebcomRequired
 	private DateDataType envioLlavesAApi;
+	@WebcomRequired
 	private StringDataType fincaRegistral;
 	private LongDataType numeroRegistro;
+	@WebcomRequired
 	private StringDataType referenciaCatastral;
 	private DoubleDataType valorAprobadoVenta;
 	private DateDataType fechaValorAprobadoVenta;
 	private DoubleDataType valorAprobadoRenta;
 	private DateDataType fechaValorAprobadoRenta;
 	private BooleanDataType riesgoOcupacion;
+	@WebcomRequired
 	private DateDataType fechaPosesion;
-	private DateDataType ultimaModificacion;
+	@WebcomRequired
+	@MappedColumn("ULTIMA_MODIFICACION")
+	private DateDataType ultimaModificacionInforme;
 	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
 	private DateDataType fechaContratoDatosOcupacionales;
 	@MappedColumn("PLAZO_CONTRATO_DATOS_OCU")
@@ -50,30 +56,45 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DoubleDataType derramaImporteDatosAdministracion;
 	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
 	private StringDataType detalleDerramaDatosAdministracion;
+	@WebcomRequired
 	private StringDataType codTipoActivo;
+	@WebcomRequired
 	private StringDataType codSubtipoInmueble;
 	private StringDataType codTipoVivienda;
 	private DateDataType fechaUltimaVisita;
+	@WebcomRequired
 	private StringDataType codTipoVia;
+	@WebcomRequired
 	private StringDataType nombreCalle;
+	@WebcomRequired
 	private StringDataType numeroCalle;
+	@WebcomRequired
 	private StringDataType escalera;
+	@WebcomRequired
 	private StringDataType planta;
+	@WebcomRequired
 	private StringDataType puerta;
+	@WebcomRequired
 	private StringDataType codMunicipio;
 	private StringDataType codPedania;
+	@WebcomRequired
 	private StringDataType codProvincia;
+	@WebcomRequired
 	private StringDataType codigoPostal;
 	private StringDataType zona;
 	private StringDataType codUbicacion;
 	private StringDataType codDistrito;
+	@WebcomRequired
 	private DoubleDataType lat;
+	@WebcomRequired
 	private DoubleDataType lng;
+	@WebcomRequired
 	private DateDataType fechaRecepcionLlavesApi;
 	private StringDataType codMunicipioRegistro;
 	private StringDataType codRegimenProteccion;
 	private DoubleDataType valorMaximoVpo;
 	private StringDataType codTipoPropiedad;
+	@WebcomRequired
 	private DoubleDataType porcentajePropiedad;
 	private DoubleDataType valorEstimadoVenta;
 	private DateDataType fechaValorEstimadoVenta;
@@ -83,12 +104,17 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DateDataType fechaValorEstimadoRenta;
 	@MappedColumn("JUSTIFICACION_VALOR_EST_RENTA")
 	private StringDataType justificacionValorEstimadoRenta;
+	@WebcomRequired
 	private DoubleDataType utilSuperficie;
+	@WebcomRequired
 	private DoubleDataType construidaSuperficie;
+	@WebcomRequired
 	private DoubleDataType registralSuperficie;
 	private DoubleDataType parcelaSuperficie;
 	private StringDataType codEstadoConservacion;
+	@WebcomRequired
 	private LongDataType anyoConstruccion;
+	@WebcomRequired
 	private LongDataType anyoRehabilitacion;
 	private StringDataType codOrientacion;
 	private BooleanDataType ultimaPlanta;
@@ -131,6 +157,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private DoubleDataType otrasReformasNecesariasImporteAproximado;
 	private StringDataType distribucionInterior;
 	private BooleanDataType divisible;
+	@WebcomRequired
 	private BooleanDataType ascensor;
 	private LongDataType numeroAscensores;
 	private StringDataType descripcionPlantas;
@@ -151,7 +178,9 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType existeAnteriorUso;
 	private StringDataType anteriorUso;
 	private LongDataType numeroEstancias;
+	@WebcomRequired
 	private LongDataType numeroBanyos;
+	@WebcomRequired
 	private LongDataType numeroAseos;
 	@MappedColumn("MTS_LINEALES_FACHADA_PPAL")
 	private DoubleDataType metrosLinealesFachadaPrincipal;
@@ -159,6 +188,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType existeAnejoTrastero;
 	private StringDataType anejoTrastero;
 	private StringDataType anejoGarage;
+	@WebcomRequired
 	private LongDataType numeroPlazasGaraje;
 	private DoubleDataType superficiePlazasGaraje;
 	private StringDataType codSubtipoPlazasGaraje;
@@ -427,7 +457,67 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	
 	//Solicitud HREOS-1398
 	private BooleanDataType aceptado;
+	@WebcomRequired
 	private StringDataType motivoRechazo;
+	
+	@WebcomRequired
+	private LongDataType idInformeMediadorRem;
+	@WebcomRequired
+	private StringDataType codTipoVenta; 
+	@WebcomRequired
+	private StringDataType estadoInforme;
+	@WebcomRequired
+	private StringDataType codCartera;
+	@WebcomRequired
+	private StringDataType codSubCartera;
+	@WebcomRequired
+	private BooleanDataType perimetroMacc;
+	@WebcomRequired
+	private StringDataType codEstadoPublicacion;
+	@WebcomRequired
+	private StringDataType codSubfasePublicacion;
+	@WebcomRequired
+	private LongDataType codigoAgrupacionObraNueva;
+	@WebcomRequired
+	private LongDataType idLoteRem;
+	@WebcomRequired
+	private BooleanDataType esActivoPrincipal;
+	@WebcomRequired
+	private StringDataType nombreGestorComercial;
+	@WebcomRequired
+	private StringDataType emailGestorComercial;
+	@WebcomRequired
+	private StringDataType nombreGestorPublicaciones;
+	@WebcomRequired
+	private StringDataType emailGestorPublicaciones;
+	@WebcomRequired
+	private StringDataType codEstadoFisico;
+	@WebcomRequired
+	private BooleanDataType publicado;
+	@WebcomRequired
+	private StringDataType codDetallePublicacion;
+	@WebcomRequired
+	private StringDataType codEstadoComercial;
+	@WebcomRequired
+	private StringDataType codEstadoOcupacional;
+	@WebcomRequired
+	private StringDataType codCee;
+	@WebcomRequired
+	private LongDataType numeroDormitorios;
+	@WebcomRequired
+	private BooleanDataType terraza;
+	@WebcomRequired
+	private BooleanDataType patio;
+	@WebcomRequired
+	private BooleanDataType rehabilitado;
+	@WebcomRequired
+	private StringDataType licenciaApertura;
+	@WebcomRequired
+	private DateDataType fechaRecepcionInforme;
+	@WebcomRequired
+	private StringDataType ultimaModificacionInformePor;
+	@WebcomRequired
+	private StringDataType primerEnvioInformeCompletado;
 	
 	@NestedDto(groupBy="idActivoHaya", type=PlantaDto.class)
 	private List<PlantaDto> plantas;
@@ -550,11 +640,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setFechaPosesion(DateDataType fechaPosesion) {
 		this.fechaPosesion = fechaPosesion;
 	}
-	public DateDataType getUltimaModificacion() {
-		return ultimaModificacion;
+	public DateDataType getUltimaModificacionInforme() {
+		return ultimaModificacionInforme;
 	}
-	public void setUltimaModificacion(DateDataType ultimaModificacion) {
-		this.ultimaModificacion = ultimaModificacion;
+	public void setUltimaModificacionInforme(DateDataType ultimaModificacionInforme) {
+		this.ultimaModificacionInforme = ultimaModificacionInforme;
 	}
 	public DateDataType getFechaContratoDatosOcupacionales() {
 		return fechaContratoDatosOcupacionales;

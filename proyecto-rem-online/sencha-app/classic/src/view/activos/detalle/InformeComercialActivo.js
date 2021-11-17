@@ -8,19 +8,17 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     saveMultiple: true,
     refreshAfterSave: true,
     records		: ['infoComercial','activoInforme'], 
-    recordsClass: ['HreRem.model.ActivoInformeComercial','HreRem.model.Activo'],    
-    requires	: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
+    recordsClass: ['HreRem.model.ActivoInformacionComercial','HreRem.model.Activo'],    
+    requires	: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformacionComercial', 'HreRem.model.Distribuciones',
     'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
     'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
     'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo','HreRem.view.activos.detalle.InfoEdificioCompleto',
     'HreRem.view.activos.detalle.InfoVarios','HreRem.view.activos.detalle.DistribucionPlantasActivoList', 'HreRem.view.activos.detalle.TestigosOpcionalesGrid'],
     
     listeners: {
-    	boxready: function() { // Anyadir seccion por tipo de activo.
+    	boxready: function() {
     		var me = this;
 			
-    		this.cargarDatosSegunTipoActivoDelMediador(me,me.lookupViewModel().get('activo.tipoActivoMediadorCodigo'));
-
 	    	me.lookupController().cargarTabData(me);
     	}
     },
@@ -35,6 +33,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		var tienePosibleInformeMediador = me.lookupViewModel().get('activo.tienePosibleInformeMediador');
 		
 		var esUA = me.lookupViewModel().get('activo.unidadAlquilable');
+		
+		//var isVivienda = me.lookupViewModel().get('activo.tipoActivoMediadorCodigo') == CONST.TIPOS_ACTIVO['VIVIENDA'];
 		
         me.setTitle(HreRem.i18n('title.informe.comercial.activo'));
 
@@ -97,15 +97,20 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								},
 								{
 									xtype: 'datefieldbase',
+									fieldLabel: 'Fecha envío llaves API',
+									bind: '{infoComercial.envioLlavesApi}',
+									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
-									bind: '{infoComercial.fechaRecepcionLlaves}',
+									bind: '{infoComercial.recepcionLlavesApi}',
 									readOnly: true
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
-									bind: '{infoComercial.fechaUltimaVisita}',
-									colspan: 2,
+									bind: '{infoComercial.fechaVisita}',
 									readOnly: true
 								},
 							// Fila 3
@@ -644,64 +649,59 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.valores.economicos'),
 							defaultType: 'textfieldbase',
-							layout: {
-							    type: 'table',
-								columns: 2
-							},
+							colspan: 3,
 							items :
 								[
 								 	// Venta
 									{
-										xtype: 'currencyfieldbase', 
-										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta'),
+										fieldLabel: 'Valor estimado mínimo venta',
+										width:		280,
+										bind:		'{infoComercial.valorEstimadoMinVenta}',
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									},
+									{
+										fieldLabel:'Valor estimado máximo venta',
+										width:		280,
+										bind:		'{infoComercial.valorEstimadoMaxVenta}',
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									},
+									{
+										fieldLabel: 'Valor final de venta recomendado',
 										width:		280,
 										bind:		'{infoComercial.valorEstimadoVenta}',
-										editable: true,
 										renderer: function(value) {
 			   				        		return Ext.util.Format.currency(value);
 			   				        	}
 									},
-									{
-										xtype: 'textareafieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.justificacion.venta'),
-										bind:		'{infoComercial.justificacionVenta}',
-										margin: '0 0 26 0',
-										rowspan: 2,
-										width: 600,
-										maxWidth: 600
-					                },
-					                {
-					                	xtype: 'datefieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
-										bind: '{infoComercial.fechaEstimacionVenta}',
-							            margin: '0 0 26 0',
-							            width: 280
-					                },
 					                // Alquiler
 									{
-										xtype: 'currencyfieldbase', 
-										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.alquiler'),
+										fieldLabel: 'Valor estimado mínimo renta',
 										width:		280,
-										bind:		'{infoComercial.valorEstimadoRenta}',
-										editable: true,
+										bind:		'{infoComercial.valorEstimadoMinRenta}',
 										renderer: function(value) {
 			   				        		return Ext.util.Format.currency(value);
 			   				        	}
 									},
 									{
-										xtype: 'textareafieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.justificacion.renta'),
-										bind:		'{infoComercial.justificacionRenta}',
-										rowspan: 2,
-										width: 600,
-										maxWidth: 600
-					                },
-					                {
-					                	xtype: 'datefieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta.fecha'),
-										bind: '{infoComercial.fechaEstimacionRenta}',
-							            width: 280
-					                }
+										fieldLabel:'Valor estimado máximo renta',
+										width:		280,
+										bind:		'{infoComercial.valorEstimadoMaxRenta}',
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									},
+									{
+										fieldLabel: 'Valor final de renta recomendado',
+										width:		280,
+										bind:		'{infoComercial.valorEstimadoVenta}',
+										renderer: function(value) {
+			   				        		return Ext.util.Format.currency(value);
+			   				        	}
+									}
 							]
 						}
 				]
@@ -716,273 +716,929 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							collapsible: false,
+							title:'Datos del activo',
 							colspan: 3,
-							border: false,
-							layout: {
-				                type: 'hbox'
-				            },
 							items :[
-								{ // Primer cuadro.
-									xtype:'fieldsettable',
-									defaultType: 'textfieldbase',
-									collapsible: false,
-									border: false,
-									layout: {
-										type: 'table',
-										columns: 1
-									},
-									padding: '0 0 0 0',
-									items :
-										[
-											{ 
-												xtype: 'comboboxfieldbasedd',
-												editable: false,
-												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.activo'),
-												bind: {
-													store: '{comboEstadoConservacion}',
-													value: '{infoComercial.estadoConservacionCodigo}',
-													rawValue: '{infoComercial.estadoConservacionDescripcion}'
-												},
-												displayField: 'descripcion',
-												valueField: 'codigo'
-											},
-											{ 
-									        	xtype: 'comboboxfieldbasedd',
-									        	editable: false,
-									        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion.activo'),
-									        	bind: {
-								            		store: '{comboEstadoConstruccion}',
-								            		value: '{infoComercial.estadoConstruccionCodigo}',
-								    				hidden: '{infoComercial.isSuelo}',
-								            		rawValue: '{infoComercial.estadoConstruccionDescripcion}'
-								            	},
-								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
-									        },
-											{
-												fieldLabel: HreRem.i18n('fieldlabel.anyo.construccion.activo'),
-												bind: {
-													value: '{infoComercial.anyoConstruccion}',
-													hidden: '{infoComercial.isSuelo}'
-												},
-												listeners: {
-													change: 'onAnyoChange'
-												},
-												maskRe: /^\d*$/,
-												vtype: 'anyo'
-											},
-											{
-										 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion.activo'),
-										 		bind: {
-							                		value: '{infoComercial.anyoRehabilitacion}',
-								    				hidden: '{infoComercial.isSuelo}'
-							                	},
-							                	listeners: {
-													change: 'onAnyoChange'
-												},
-												maskRe: /^\d*$/,
-												vtype: 'anyo'
-											},
-											{ 
-												xtype: 'comboboxfieldbasedd',
-												editable: false,
-												fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion.edificio'),
-												bind: {
-													store: '{comboEstadoConservacion}',
-													value: '{infoComercial.estadoConservacionEdificioCodigo}',
-													rawValue: '{infoComercial.estadoConservacionEdificioDescripcion}'
-												}
-											},
-											{
-										 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion.edificio'),
-										 		bind: {
-							                		value: '{infoComercial.anyoRehabilitacionEdificio}',
-								    				hidden: '{infoComercial.isSuelo}'
-							                	},
-							                	listeners: {
-													change: 'onAnyoChange'
-												},
-												maskRe: /^\d*$/,
-												vtype: 'anyo'
-											},
-											{
-												xtype: 'textfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.numero.plantas'),
-												maxLength:	3,
-												bind: {
-													value: '{infoComercial.numPlantas}'
-												}
-											},
-											{
-												xtype : 'comboboxfieldbase',
-											    fieldLabel : HreRem.i18n('fieldlabel.ascensor'),
-											    bind : {
-											      store : '{comboSiNoRem}',
-											      value : '{infoComercial.ascensor}'
-											    }
-											},
-											{
-												xtype: 'textfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.numero.ascensores'),
-												maxLength:	2,
-												bind: {
-													value: '{infoComercial.numAscensores}'
-												}
-											}
-										]
-								},
-								{
-						        	xtype: 		'textareafieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.descripcion.comercial'),
-							 		height: 	230,
-							 		maxLength:	500,
-					            	bind:		'{infoComercial.descripcionComercial}',
-							 		labelAlign: 'top'
-								},
-								{ // Checkboxes reformas necesarias.
-									xtype:'fieldsettable',
-									defaultType: 'textfieldbase',
-									title:HreRem.i18n('title.reformas.necesarias'),
-									collapsible: false,
-									height: 230,
-									border: true,
-									layout: {
-										type: 'table',
-										columns: 2
-									},
-									padding: '0 0 0 15',
-									items :
-										[
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.fachada'),
-												bind: '{infoComercial.reformaFachada}'
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.escalera'),
-												bind: '{infoComercial.reformaEscalera}'
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.portal'),
-												bind: '{infoComercial.reformaPortal}'
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.ascensor'),
-												bind: '{infoComercial.reformaAscensor}'
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.cubierta'),
-												bind: '{infoComercial.reformaCubierta}'
-											},
-											{
-												xtype: 'checkboxfieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.otras.zonas'),
-												bind: '{infoComercial.reformaOtrasZonasComunes}'
-											},
-											{
-												xtype: 'textareafieldbase',
-												fieldLabel: HreRem.i18n('fieldlabel.otros'),
-												bind: '{infoComercial.reformaOtroDescEdificio}',
-												colspan: 2,
-												maxLength: 250,
-												labelAlign: 'top'
-											}
-										]
-								}
-							]
+									/*{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboTipoComercializacionActivo}'
+						            	},
+										fieldLabel: 'Tipo venta'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboCarteraIM}'
+						            	},
+										fieldLabel: 'Cartera'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSubcarteraIM}'
+						            	},
+										fieldLabel: 'Subcartera'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}'
+						            	},
+										fieldLabel: 'Perímetro MACC'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSituacionComercial}'
+						            	},
+										fieldLabel: 'Estado comercial'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}'
+						            	},
+										fieldLabel: 'Publicado'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{storeFasesDePublicacion}'
+						            	},
+										fieldLabel: 'Fase publicación'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSubfasePublicacion}'
+						            	},
+										fieldLabel: 'Subfase publicación',
+										colspan: 2
+					                },
+									{ 
+										fieldLabel: 'Ref. Catastral'
+					                },
+									{ 
+										fieldLabel: 'Finca registral'
+					                },
+									{ 
+										fieldLabel: 'Porcentaje propiedad'
+					                },*/
+									{ 
+										fieldLabel: 'Codigo agrupación ON',
+										bind:		'{infoComercial.codAgrupacionON}'
+					                },
+									{ 
+										fieldLabel: 'Lote',
+										bind:		'{infoComercial.idLote}'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.activoPrincipalCod}',
+						            		rawValue: '{infoComercial.activoPrincipalDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Activo principal'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboRegimenProteccion}',
+						            		value: '{infoComercial.regimenInmuebleCod}',
+						            		rawValue: '{infoComercial.regimenInmuebleDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Régimen del inmueble'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoOcupacional}',
+						            		value: '{infoComercial.estadoOcupacionalCod}',
+						            		rawValue: '{infoComercial.estadoOcupacionalDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado ocupacional'
+					                },
+									/*{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Fecha posesión'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}'
+						            	},
+										fieldLabel: 'Visitable'
+					                },
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Fecha visita al inmueble',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Envío llaves al API'
+					                },
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Recepción llaves',
+										colspan: 2
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboCalificacionEnergetica}'
+						            	},
+										fieldLabel: 'Certificado E.Energética'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoFisico}'
+						            	},
+										fieldLabel: 'Estado físico'
+					                },*/
+									{ 
+										fieldLabel: 'Año construcción',
+										maskRe: /^\d*$/,
+										vtype: 'anyo',
+										bind:		'{infoComercial.anyoConstruccion}'
+					                },
+									/*{ 
+										fieldLabel: 'Superfície construida'
+					                },*/
+									{ 
+										fieldLabel: 'Superfície registral',
+										bind:		'{infoComercial.superficieRegistral}'
+					                }/*,
+									{ 
+										fieldLabel: 'Mediador asignado'
+					                },
+									{ 
+										fieldLabel: 'Gestor publicaciones'
+					                },
+									{ 
+										vtype: 'email',
+										fieldLabel: 'Email gestor publicaciones',
+										colspan: 2
+					                },
+									{ 
+										fieldLabel: 'Gestor comercial'
+					                },
+									{ 
+										vtype: 'email',
+										fieldLabel: 'Email gestor comercial'
+					                }	*/						
+								]
 						},
-						{
-				        	xtype: 		'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.entorno.comunicaciones'),
-							height: 	285,
-							maxLength:	500,
-			            	bind:		'{infoComercial.entornoComunicaciones}',
-					 		labelAlign: 'top'
-						},
-						{
-				        	xtype: 		'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.entorno.infraestructuras'),
-							height: 	285,
-							maxLength:	500,
-			            	bind:		'{infoComercial.entornoInfraestructuras}',
-					 		labelAlign: 'top'
-						},
-						{
-							xtype: "propuestaActivosVinculadosList", reference: "propuestaActivosVinculadosList"
-						},
-						{
-				        	xtype: 		'textareafieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.descripcion.edificio'),
-							height: 	230,
-							maxLength:	3000,
-			            	bind:		'{infoComercial.ediDescripcion}',
-					 		labelAlign: 'top'
-						},
-
-					// Datos de la Comunidad
 						{
 							xtype:'fieldsettable',
-							title:HreRem.i18n('title.datos.comunidad'),
 							defaultType: 'textfieldbase',
-							colspan: 2,
+							title:'Características del activo',
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.visitableCod}',
+						            		rawValue: '{infoComercial.visitableDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Visitable fecha de la visita',/// no visitable
+										readOnly	: true 
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.ocupadoCod}',
+						            		rawValue: '{infoComercial.ocupadoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Ocupado',//'Situación ocupación fecha de la visita',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Dormitorios',
+										bind:		'{infoComercial.dormitorios}'
+					                },
+									{ 
+										fieldLabel: 'Baños',
+										bind:		'{infoComercial.banyos}'
+					                },
+									{ 
+										fieldLabel: 'Aseos',
+										bind:		'{infoComercial.aseos}'
+					                },
+									{ 
+										fieldLabel: 'Salones',
+										bind:		'{infoComercial.salones}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Estancias',
+										bind:		'{infoComercial.estancias}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Plantas',
+										bind:		'{infoComercial.plantas}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.ascensorCod}',
+						            		rawValue: '{infoComercial.ascensorDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Ascensor'
+					                },
+									{ 
+										fieldLabel: 'Plazas de garaje',
+										bind:		'{infoComercial.plazasGaraje}',
+										colspan: 2
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.terrazaCod}',
+						            		rawValue: '{infoComercial.terrazaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Terraza'
+					                },
+									{ 
+										fieldLabel: 'Superficie terraza principal',
+										bind:		'{infoComercial.superficieTerraza}',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.patioCod}',
+						            		rawValue: '{infoComercial.patioDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Patio'
+					                },
+									{ 
+										fieldLabel: 'Superficie patio',
+										bind:		'{infoComercial.superficiePatio}',
+										colspan: 2,
+										readOnly	: true
+					                },
+									/*{ 
+										fieldLabel: 'Superficie útil'
+					                },*/
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.rehabilitadoCod}',
+						            		rawValue: '{infoComercial.rehabilitadoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Rehabilitado'
+					                },
+									{ 
+										fieldLabel: 'Año rehabilitación',
+										bind:		'{infoComercial.anyoRehabilitacion}',
+										maskRe: /^\d*$/,
+										vtype: 'anyo'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoConservacionIM}',
+						            		value: '{infoComercial.estadoConservacionCod}',
+						            		rawValue: '{infoComercial.estadoConservacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado conservación',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.anejoGarajeCod}',
+						            		rawValue: '{infoComercial.anejoGarajeDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Anejo garaje',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.anejoTrasteroCod}',
+						            		rawValue: '{infoComercial.anejoTrasteroDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Anejo trastero',
+										readOnly	: true
+					                }						
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:'Características principales del activo',
+							colspan: 3,
+							items :[
+									{ 
+										fieldLabel: 'Orientación',
+										bind:		'{infoComercial.orientacion}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboExteriorInterior}',
+						            		value: '{infoComercial.extIntCod}',
+						            		rawValue: '{infoComercial.extIntDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Exterior/Interior',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboRatingCocina}',
+						            		value: '{infoComercial.cocRatingCod}',
+						            		rawValue: '{infoComercial.cocRatingDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Cocina rating',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.cocAmuebladaCod}',
+						            		rawValue: '{infoComercial.cocAmuebladaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Cocina amueblada',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.armEmpotradosCod}',
+						            		rawValue: '{infoComercial.armEmpotradosDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Armarios empotrados',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Calefacción',
+										bind:		'{infoComercial.calefaccion}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboTipoCalefaccion}',
+						            		value: '{infoComercial.tipoCalefaccionCod}',
+						            		rawValue: '{infoComercial.tipoCalefaccionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Tipo calefacción',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboTipoClimatizacion}',
+						            		value: '{infoComercial.aireAcondCod}',
+						            		rawValue: '{infoComercial.aireAcondDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Aire acondicionado',
+										readOnly	: true
+					                }					
+								]
+						}
+				]
+            },
+// Otras características del activo
+			{
+				xtype:'fieldsettable',
+				title:'Otras características del activo',
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
 							collapsible: false,
-							height: 	230,
-							items :	[
-									{
-										xtype : 'comboboxfieldbase',
-									    fieldLabel : HreRem.i18n('fieldlabel.comunidad.propietarios.constituida'),
-									    bind : {
-									      store : '{comboSiNoRem}',
-									      value : '{infoComercial.inscritaComunidad}'
-									    }
-										// TODO: Revisar si el cambio de este combo afecta a otros datos de comunidad y rehabilitarlo si es el caso.
-//									    ,
-//										listeners: {
-//									    	change: 'onComunidadNoConstituida'
-//										}
-									},
-									{
-										xtype: 'numberfieldbase',
-										maxLength: 9,
-										decimalPrecision: 2,
-										renderer: Ext.util.Format.numberRenderer('0,000.00'),
-										fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
-										bind : '{infoComercial.cuotaOrientativaComunidad}'
-									},
-									{
-										xtype: 'numberfieldbase',
-										maxLength: 17,
-										decimalPrecision: 2,
-										renderer: Ext.util.Format.numberRenderer('0,000.00'),
-										fieldLabel : HreRem.i18n('fieldlabel.derrama.orientativa'),
-										bind : '{infoComercial.derramaOrientativaComunidad}'
-									},
-									{
-										fieldLabel : HreRem.i18n('fieldlabel.nombre.presidente'),							
-										bind : '{infoComercial.nomPresidenteComunidad}'
-									},
-									{
-										fieldLabel : HreRem.i18n('fieldlabel.telefono'),
-										vtype: 'telefono',
-										bind : '{infoComercial.telPresidenteComunidad}',
-										colspan: 2
-									},
-									{
-										fieldLabel : HreRem.i18n('fieldlabel.nombre.administrador'),
-										bind : '{infoComercial.nomAdministradorComunidad}'
-									}, 
-									{
-										fieldLabel : HreRem.i18n('fieldlabel.telefono'),
-										vtype: 'telefono',
-										bind : '{infoComercial.telAdministradorComunidad}',
-										colspan: 2
-									}
-							]
+							border: false,
+							bind: {
+				        		hidden: '{!infoComercial.isVivienda}'
+							},
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoConservacionEdificio}',
+						            		value: '{infoComercial.estadoConservacionEdiCod}',
+						            		rawValue: '{infoComercial.estadoConservacionEdiDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado conservación edificio',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Número de plantas edificio',
+										bind:		'{infoComercial.plantasEdificio}',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboTipoPuerta}',
+						            		value: '{infoComercial.puertaAccesoCod}',
+						            		rawValue: '{infoComercial.puertaAccesoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Puerta de acceso',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoPuertasIntCod}',
+						            		rawValue: '{infoComercial.estadoPuertasIntDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado puertas interiores',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoPersianasCod}',
+						            		rawValue: '{infoComercial.estadoPersianasDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado persianas',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoVentanasCod}',
+						            		rawValue: '{infoComercial.estadoVentanasDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado ventanas',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoPinturaCod}',
+						            		rawValue: '{infoComercial.estadoPinturaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado pintura',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoSoladosCod}',
+						            		rawValue: '{infoComercial.estadoSoladosDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado solados',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboEstadoMobiliario}',
+						            		value: '{infoComercial.estadoBanyosCod}',
+						            		rawValue: '{infoComercial.estadoBanyosDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Estado baños',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboAdmision}',
+						            		value: '{infoComercial.admiteMascotaCod}',
+						            		rawValue: '{infoComercial.admiteMascotaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Admite mascota',
+										readOnly	: true
+					                }					
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							collapsible: false,
+							border: false,
+							bind: {
+				        		hidden: '{infoComercial.isVivienda}'
+							},
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.licenciaAperturaCod}',
+						            		rawValue: '{infoComercial.licenciaAperturaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Licencia apertura'
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.salidaHumoCod}',
+						            		rawValue: '{infoComercial.salidaHumoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Salida de humos',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.aptoUsoCod}',
+						            		rawValue: '{infoComercial.aptoUsoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Apto para uso',
+										readOnly	: true
+					                },
+									/*{ 
+										xtype: 'comboboxfieldbasedd',
+										fieldLabel: 'Accesibilidad',
+										bind: {
+						            		store: '{falta combo}',
+						            		value: '{infoComercial.accesibilidadCod}',
+						            		rawValue: '{infoComercial.accesibilidadDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										colspan: 2,
+										readOnly	: true
+					                },*/
+									{ 
+										fieldLabel: 'Edificabilidad m2 techo',
+										bind:		'{infoComercial.edificabilidadTecho}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Superficie suelo m2',
+										bind:		'{infoComercial.superficieSuelo}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Porcentaje urbanización ejecutada',
+										bind:		'{infoComercial.porcUrbEjecutada}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboClasificacion}',
+						            		value: '{infoComercial.clasificacionCod}',
+						            		rawValue: '{infoComercial.clasificacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Clasificación',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboUsoActivo}',
+						            		value: '{infoComercial.usoCod}',
+						            		rawValue: '{infoComercial.usoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Uso',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Fachada principal: metros lineales',
+										bind:		'{infoComercial.metrosFachada}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.almacenCod}',
+						            		rawValue: '{infoComercial.almacenDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Almacen',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Almacen m2',
+										bind:		'{infoComercial.metrosAlmacen}',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.supVentaExpoCod}',
+						            		rawValue: '{infoComercial.supVentaExpoDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Superficie venta / exposición',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Superficie venta / exposición m2 construidos',
+										bind:		'{infoComercial.metrosSupVentaExpo}',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.entreplantaCod}',
+						            		rawValue: '{infoComercial.entreplantaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Entreplanta',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Altura libre',
+										bind:		'{infoComercial.alturaLibre}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Tanto % edificación ejecutada',
+										bind:		'{infoComercial.porcEdiEjecutada}',
+										readOnly	: true
+					                }					
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:'Equipamientos',
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.zonaVerdeCod}',
+						            		rawValue: '{infoComercial.zonaVerdeDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Zonas verdes',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.jardinCod}',
+						            		rawValue: '{infoComercial.jardinDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Jardín',
+										colspan: 2,
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.zonaDeportivaCod}',
+						            		rawValue: '{infoComercial.zonaDeportivaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Zonas deportivas',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.gimnasioCod}',
+						            		rawValue: '{infoComercial.gimnasioDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Gimnasio',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.piscinaCod}',
+						            		rawValue: '{infoComercial.piscinaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Piscina',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.conserjeCod}',
+						            		rawValue: '{infoComercial.conserjeDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Conserje',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.accesoMovReducidaCod}',
+						            		rawValue: '{infoComercial.accesoMovReducidaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Accesible personas movilidad reducida',
+										readOnly	: true
+					                }					
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:'Comunicaciones y servicios',
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboComunicacionUbicacion}',
+						            		value: '{infoComercial.ubicacionCod}',
+						            		rawValue: '{infoComercial.ubicacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Ubicación',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboValoracionUbicacion}',
+						            		value: '{infoComercial.valUbicacionCod}',
+						            		rawValue: '{infoComercial.valUbicacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: 'Valoración ubicación',
+										readOnly	: true
+					                }				
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:'Descripción comercial',
+							colspan: 3,
+							items :[
+									{ 
+								 		xtype: 		'textareafieldbase',
+										bind:		'{infoComercial.descripcionComercial}',
+								 		maxWidth:	1600,
+								 		height: 	120,
+										readOnly	: true
+								   }				
+								]
+						}
+				]
+            },
+// Otra Información de interes
+			{
+				xtype:'fieldsettable',
+				title:'Otra información de interés',
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							collapsible: false,
+							border: false,
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Fecha recepción informe',
+										bind:		'{infoComercial.fechaRecepcionInforme}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Última modificación informe',
+										bind:		'{infoComercial.fechaModificadoInforme}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Última modificación informe por',
+										bind:		'{infoComercial.modificadoInforme}',
+										readOnly	: true
+					                },
+									{ 
+										xtype: 'datefieldbase',
+										fieldLabel: 'Primer envío informe completado',
+										bind:		'{infoComercial.fechaCompletadoInforme}',
+										readOnly	: true
+					                },
+									{ 
+										fieldLabel: 'Primer envío informe completado por',
+										bind:		'{infoComercial.completadoInforme}',
+										readOnly	: true
+					                }					
+								]
 						}
 				]
             },
@@ -990,7 +1646,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
             //Testigos Opcionales
 			{
 				xtype:'fieldsettable',
-				title:HreRem.i18n('fieldlabel.testigos.opcionales'),
+				title:'Testigos de mercado',
 				defaultType: 'textfieldbase',
 				items :
 					[
@@ -1007,18 +1663,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		var me = this; 
 		me.recargar = false;
 		
-		var codigoTipoActivoMediador = me.lookupController().lookupReference('tipoActivoMediadorInforme').getValue();
-		//Necesario en caso de que cambien el tipo de activo en Mediador.
-		var nuevoContainer = me.borrarContainerTipoActivoMediador(me, codigoTipoActivoMediador);
-		
 		me.lookupController().cargarTabData(me);
 
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
 		});
-		
-		if(nuevoContainer)
-			me.cargarDatosSegunTipoActivoDelMediador(me, codigoTipoActivoMediador);
     },
 
     actualizarCoordenadas: function(latitud, longitud) {
@@ -1026,66 +1675,5 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 
     	me.up('activosdetallemain').lookupReference('latitudmediador').setValue(latitud);
     	me.up('activosdetallemain').lookupReference('longitudmediador').setValue(longitud);
-    },
-    
-    cargarDatosSegunTipoActivoDelMediador: function(me, codigoTipoActivoMediador) {
-    	
-    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['SUELO']) {
-	     	me.add({    
-				xtype:'infoindustrialysuelo',
-				title: HreRem.i18n('title.suelo')
-        	});
-		}
-    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['VIVIENDA']) {
-	     	me.add({    
-				xtype:'infovivienda'
-        	});
-		}
-		if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']) {
-	     	me.add({                    
-				xtype:'infolocalcomercial'
-	        });
-		}
-		if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['INDUSTRIAL']) {
-	     	me.add({    
-				xtype:'infoindustrialysuelo',
-				title: HreRem.i18n('title.industrial')
-        	});
-		}
-    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']) {
-		     me.add({    
-	        	xtype: 'infoedificiocompleto'
-	        });	 
-    	}
-    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']) {
-	     	me.add({    
-	     		xtype:'infoindustrialysuelo',
-				title: HreRem.i18n('title.suelo')
-        	});
-		}
-    	if(codigoTipoActivoMediador == CONST.TIPOS_ACTIVO['OTROS']) {
-	     	me.add({    
-				xtype:'infovarios'
-        	});
-		}
-    	
-    },
-    
-    borrarContainerTipoActivoMediador: function(me, codigoTipoActivoMediador) {
-    	for(var i=0 ; i < me.items.items.length ; i++) {
-    		var xtipo = me.items.getAt(i).getXType();
-    		
-    		if((xtipo == 'infovivienda' && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['VIVIENDA'])
-    			|| (xtipo == 'infolocalcomercial'  && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'])
-    			|| (xtipo == 'infoedificiocompleto'  && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'])
-    			|| (xtipo == 'infoindustrialysuelo'  && (codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['SUELO'] && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['INDUSTRIAL'] && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']) )
-    			|| (xtipo == 'infovarios' && codigoTipoActivoMediador != CONST.TIPOS_ACTIVO['OTROS']))
-    		{
-    			me.remove(me.items.getAt(i));
-    			return true;
-    		}
-    	}
-    	
-    	return false;
     }
 });

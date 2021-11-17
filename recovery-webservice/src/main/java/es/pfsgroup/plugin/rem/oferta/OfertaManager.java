@@ -1313,7 +1313,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(prescriptor) && DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(prescriptor.getTipoProveedor().getDescripcion())) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 				}else {
-					oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+					if (ofertaDto.getDocResponsabilidadPrescriptor() != null) {
+						oferta.setOfrDocRespPrescriptor(ofertaDto.getDocResponsabilidadPrescriptor());
+					} else {
+						oferta.setOfrDocRespPrescriptor(true);
+					}
 				}
 			}else {
 				oferta.setOfrDocRespPrescriptor(true);

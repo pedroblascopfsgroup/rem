@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211108
+--## FECHA_CREACION=20211118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16362
+--## INCIDENCIA_LINK=HREOS-16438
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##        0.5 Se refactoriza la consulta para que solo mire si son de la cartera Titulizada y están en perímetro - [HREOS-15969] - Daniel Algaba
 --##        0.6 Se añade el mapeo de Tipo de tasación - [HREOS-15969] - Daniel Algaba
 --##        0.7 Se quita la corrección de comas en decimales - [HREOS-16362] - Daniel Algaba
+--##        0.7 Nuevo diccionario de tasadora para Caixa - [HREOS-16438] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -111,7 +112,7 @@ BEGIN
                      JOIN (SELECT
                      TAS.ACT_ID
                      , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_IMPORTE_TAS_FIN DESC) RN
-                     , SUBSTR(TAS.TAS_NOMBRE_TASADOR, 0, 10) TASADORA                    
+                     , TCX.DD_TCX_CODIGO_CAIXA TASADORA                    
                      , TO_CHAR(TAS.TAS_FECHA_RECEPCION_TASACION,''YYYYMMDD'') FEC_TASACION                
                      , TAS.GASTO_COM_TASACION GASTO_COM_TASACION          
                      , TAS.TAS_IMPORTE_TAS_FIN IMP_TAS_INTEGRO             
@@ -184,6 +185,7 @@ BEGIN
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV8 ON EQV8.DD_NOMBRE_CAIXA = ''PRODUCTO_DESARROLLAR'' AND EQV8.DD_CODIGO_REM = PRD_PREV.DD_PRD_CODIGO AND EQV8.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC_SUELO ON SAC_SUELO.DD_SAC_ID = TAS.DD_SAC_ID AND SAC_SUELO.BORRADO = 0
                      LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_TIT_CAIXA_REM EQV9 ON EQV9.DD_NOMBRE_CAIXA = ''SUBTIPO_SUELO'' AND EQV9.DD_CODIGO_REM = SAC_SUELO.DD_SAC_CODIGO AND EQV9.BORRADO = 0
+                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TCX_TASADORA_CAIXA TCX ON TCX.DD_TCX_ID = TAS.DD_TCX_ID AND TCX.BORRADO = 0
                      WHERE TAS.BORRADO = 0
                      AND TAS.TAS_IMPORTE_TAS_FIN > 1
                      AND TRUNC(TAS.TAS_FECHA_RECEPCION_TASACION) >= TRUNC(SYSDATE-30)) TASACION ON RN = 1 AND TASACION.ACT_ID = ACT.ACT_ID

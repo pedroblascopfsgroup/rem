@@ -1,19 +1,21 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## AUTOR=Juan José Sanjuan 
+--## FECHA_CREACION=20211115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-15322
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##    0.1 Versión inicial
 --##		0.2 Se actualiza para nivelar los ID's de esta vista y V_ACTIVOS_SUBDIVISION
 --##		0.3 Se añade codigo subtipo activo
---##        0.4 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
+--##    0.4 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
+--##    0.5 Se limpia la subselect del FROM y se deja los joins necesarios, se cambia el numero de plantas y dormitorios
+--##        para que saquen la información de la tabla ACT_ICO_INFO_COMERCIAL - Juan José Sanjuan  - 20211115 - HREOS-15322
 --##########################################
 --*/
 

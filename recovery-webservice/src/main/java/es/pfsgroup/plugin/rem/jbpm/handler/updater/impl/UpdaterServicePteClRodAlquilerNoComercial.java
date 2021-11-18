@@ -49,7 +49,7 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 	private static final String SANCION_CL_ROD = "sancionCLROD";
 	private static final String FECHA_RESOLUCION = "fechaResolucion";
 	private static final String OBSERVACIONES = "observaciones";
-
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	private static final String CODIGO_T018_PTE_CL_ROD = "T018_PteClRod";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -98,7 +98,10 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			
 			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				respuestaComiteBc.setObservacionesBcRBC(valor.getValor());
-				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
+			
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());	
 			}
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

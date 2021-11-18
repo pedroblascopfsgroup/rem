@@ -3776,11 +3776,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var textAreaObservacionesBc = me.down('[name=observacionesBC]');
 		
 		me.campoObligatorio(comboRespuesta);
-		me.campoObligatorio(textAreaObservacionesBc);
 		
 		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
-			me.bloquearObligatorio(textAreaObservacionesBc);
+			me.bloquearCampo(textAreaObservacionesBc);
 		}				
 	},
 	

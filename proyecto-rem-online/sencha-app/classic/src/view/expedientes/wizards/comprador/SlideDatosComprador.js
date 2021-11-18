@@ -564,13 +564,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'relacionHre',
 						padding: '5px'
 					},
-			        {
-						xtype: 'displayfieldbase',
-			        	fieldLabel:  HreRem.i18n('fieldlabel.campo.vacio'),
-			        	padding: '5px',
-			        	readOnly: true,
-			        	allowBlank:true
-			        },
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+						name: 'nacionalidadCodigo',
+						reference: 'nacionalidadCodigo',
+						padding: '5px',
+						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}',
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
 					{
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.antiguo.deudor'),

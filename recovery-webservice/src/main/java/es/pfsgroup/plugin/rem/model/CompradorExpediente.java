@@ -262,6 +262,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
 	private String idPersonaHayaCaixaRepresentante;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_ISO")
+    private DDPaises nacionalidadCodigo;
 
 	@Version   
 	private Long version;
@@ -864,4 +868,13 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
 		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
 	}
+
+	public DDPaises getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(DDPaises nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+	
 }

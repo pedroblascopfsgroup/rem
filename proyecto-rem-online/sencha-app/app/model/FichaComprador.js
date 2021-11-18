@@ -361,6 +361,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'oficinaTrabajo'
+		},
+		{
+			name:'nacionalidadCodigo'
 		}
 		
 		

@@ -132,6 +132,7 @@ public class DtoOfertasFilter extends WebDto {
     private String sociedadEmpleadoCaixa;
     private String oficinaEmpleadoCaixa;
     private Boolean antiguoDeudor;
+    private String nacionalidadCodigo;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -790,6 +791,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setAntiguoDeudor(Boolean antiguoDeudor) {
 		this.antiguoDeudor = antiguoDeudor;
+	}
+	public String getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+	public void setNacionalidadCodigo(String nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
 	}
 	
 }

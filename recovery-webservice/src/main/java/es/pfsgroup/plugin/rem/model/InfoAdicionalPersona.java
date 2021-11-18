@@ -90,6 +90,9 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	@Column(name = "IAP_ID_PERSONA_HAYA_CAIXA")
 	private String idPersonaHayaCaixa;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID")
+    private DDPaises nacionalidadCodigo;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -251,4 +254,13 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	public void setIdPersonaHayaCaixa(String idPersonaHayaCaixa) {
 		this.idPersonaHayaCaixa = idPersonaHayaCaixa;
 	}
+
+	public DDPaises getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(DDPaises nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+	
 }

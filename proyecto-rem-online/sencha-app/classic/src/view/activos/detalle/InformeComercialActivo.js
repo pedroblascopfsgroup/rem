@@ -865,8 +865,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										maskRe: /^\d*$/,
 										vtype: 'anyo',
 										bind:		'{infoComercial.anyoConstruccion}'
-					                },
-									/*{ 
+					                }/*,
+									{ 
 										fieldLabel: 'Superfície construida'
 					                },
 									{ 

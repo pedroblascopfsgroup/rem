@@ -1473,8 +1473,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 		Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
 		Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
-		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", filtroSi));
-		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", filtroNo));
+		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,filtroSi);
+		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,filtroNo);
 		
 				
 		/*informe.getCodEstadoInforme()
@@ -1565,8 +1565,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		for (int i = 0; i < informe.getCodesOrientacion().size(); i++) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodesOrientacion().get(i));
 			DDTipoOrientacion ddOrientacion = genericDao.get(DDTipoOrientacion.class, filtro);
-			orientacion.concat(ddOrientacion.getDescripcion());
-			if (i != informe.getCodesOrientacion().size()-1) orientacion.concat(",");
+			orientacion += ddOrientacion.getDescripcion();
+			if (i != informe.getCodesOrientacion().size()-1) orientacion += ",";
 		}
 		informeEntity.setOrientacion(orientacion);
 	
@@ -1574,8 +1574,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		for (int i = 0; i < informe.getCodesCalefaccion().size(); i++) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodesCalefaccion().get(i));
 			DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, filtro);
-			calefaccion.concat(ddClimatizacion.getDescripcion());
-			if (i != informe.getCodesCalefaccion().size()-1) calefaccion.concat(",");
+			calefaccion += ddClimatizacion.getDescripcion();
+			if (i != informe.getCodesCalefaccion().size()-1) calefaccion += ",";
 		}
 		informeEntity.setCalefaccion(calefaccion);
 		
@@ -1728,21 +1728,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		if (!Checks.esNulo(testigos) && !Checks.estaVacio(testigos)) {
 			if (!Checks.esNulo(informeEntity)){
 				for (TestigosOpcionalesDto testigo : testigos) {
-					Filter filtroIco = genericDao.createFilter(FilterType.EQUALS, "infoComercial.id", informeEntity.getId());
-					InformeTestigosOpcionales infoTestOpc = genericDao.get(InformeTestigosOpcionales.class, filtroIco);
-					
-					if (!Checks.esNulo(infoTestOpc)) {
+					InformeTestigosOpcionales infoTestOpc = new InformeTestigosOpcionales();
+					infoTestOpc.setInfoComercial(informeEntity);
+					infoTestOpc = saveTestigo(infoTestOpc,testigo);
 						
-						infoTestOpc = saveTestigo(infoTestOpc,testigo);
-						
-					} else {
-						
-						infoTestOpc = new InformeTestigosOpcionales();
-						infoTestOpc.setInfoComercial(informeEntity);
-						infoTestOpc = saveTestigo(infoTestOpc,testigo);
-						
-					}
-					
 					genericDao.save(InformeTestigosOpcionales.class, infoTestOpc);
 				}
 			}

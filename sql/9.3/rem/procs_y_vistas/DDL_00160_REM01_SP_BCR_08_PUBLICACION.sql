@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211116
+--## FECHA_CREACION=20211118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16321
@@ -28,6 +28,7 @@
 --##	    0.15 Se recalcula los activos que nos están consistentes con los flags BC - HREOS-16321
 --##	    0.16 Filtramos activos para solo lanzar los que no están en estados publicación No publicado, ya sea de venta o alquiler - HREOS-16321
 --##	    0.17 Historificación portales - HREOS-16321
+--##	    0.18 Filtramos agrupaciones para solo lanzar los que no están en estados publicación No publicado, ya sea de venta o alquiler - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -69,9 +70,16 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
    ACT_ID NUMBER(16);
 
     CURSOR AGRUPACIONES IS
-        SELECT DISTINCT AGR_ID
-        FROM #ESQUEMA#.TMP_AGR_DESTINO_COMERCIAL
-        WHERE EJECUTADO = 0 OR EJECUTADO IS NULL;
+        SELECT DISTINCT TMP.AGR_ID
+        FROM #ESQUEMA#.TMP_AGR_DESTINO_COMERCIAL TMP
+        WHERE NVL(TMP.EJECUTADO, 0) = 0
+        AND EXISTS (SELECT 1
+        FROM #ESQUEMA#.ACT_AGR_AGRUPACION AGR
+        JOIN #ESQUEMA#.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID AND AGA.BORRADO = 0
+        JOIN #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = AGA.ACT_ID AND APU.BORRADO = 0
+        JOIN #ESQUEMA#.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+        JOIN #ESQUEMA#.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
+        WHERE (EPV.DD_EPV_CODIGO <> '01' OR EPA.DD_EPA_CODIGO <> '01') AND AGR.AGR_ID = TMP.AGR_ID);
 
    AGR_ID NUMBER(16);
 

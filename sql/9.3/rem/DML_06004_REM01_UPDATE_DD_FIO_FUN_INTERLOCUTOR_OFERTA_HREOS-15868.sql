@@ -36,7 +36,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			                DESCRIPCION                               DESCRIPCION_LARGA   
-		T_TIPO_DATA('Z56', 'Z57', 'API Custodio (rem3)')
+		T_TIPO_DATA('Z56', 'Z57', 'API Custodio')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

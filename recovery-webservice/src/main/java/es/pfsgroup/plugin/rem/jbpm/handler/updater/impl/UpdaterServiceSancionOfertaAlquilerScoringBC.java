@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -97,6 +98,12 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 			Oferta oferta = expedienteComercial.getOferta();
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 			if(oferta != null) {
+				try {
+					expedienteComercial.setFechaAnulacion(ft.parse(fechaSancion));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
 				ofertaApi.finalizarOferta(oferta);
 			}
 

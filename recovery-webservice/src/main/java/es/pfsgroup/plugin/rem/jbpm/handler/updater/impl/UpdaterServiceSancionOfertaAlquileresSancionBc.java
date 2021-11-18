@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -98,6 +99,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 			Oferta oferta = expedienteComercial.getOferta();
 			
 			if(oferta != null) {
+				expedienteComercial.setFechaAnulacion(new Date());
 				ofertaApi.finalizarOferta(oferta);
 			}
 

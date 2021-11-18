@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -101,7 +103,12 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
 		
-		if(!aprueba) {	
+		if(!aprueba) {
+			try {
+				expedienteComercial.setFechaAnulacion(ft.parse(fechaResolucion));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			ofertaApi.rechazarOferta(oferta);
 		}
 

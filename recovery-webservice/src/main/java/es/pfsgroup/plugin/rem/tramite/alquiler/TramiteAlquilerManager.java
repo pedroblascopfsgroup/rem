@@ -13,6 +13,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -274,7 +275,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
 		boolean camposRellenos = false;
 		
-		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null) {
+		if(!Checks.isFechaNula(eco.getFechaAnulacion()) && eco.getMotivoAnulacion() != null) {
 			camposRellenos = true;
 		}
 		

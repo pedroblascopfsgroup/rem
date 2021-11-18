@@ -35,6 +35,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -209,6 +210,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -15079,5 +15081,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return historico;
 	}
+	@Override
+	public String getMotivoRechazoAccionRechazo(DDTipoOferta tipoOferta, String codigoTarea, String motivo){
+        if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
+			
+			if(DDTipoOferta.isTipoAlquiler(tipoOferta)) {
+				if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION.equals(codigoTarea)) {
+					motivo = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_GARANTIAS;
+				}
+				else if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(codigoTarea)){
+					 motivo = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_PROPIEDAD;
+				}
+			}
+			
+        }
+       return motivo;
+    }
 
 }

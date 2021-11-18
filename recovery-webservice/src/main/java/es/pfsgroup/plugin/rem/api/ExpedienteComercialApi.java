@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -1480,5 +1481,5 @@ public interface ExpedienteComercialApi {
 
 	HistoricoSancionesBc dtoRespuestaToHistoricoSancionesBc(DtoRespuestaBCGenerica dto, ExpedienteComercial eco);
 	
-	
+	String getMotivoRechazoAccionRechazo(DDTipoOferta tipoOferta, String codigoTarea, String motivo);
 }

@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 
@@ -94,6 +95,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 			
 			if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				
 				DDMotivoAnulacionOferta motivoAnulacion = genericDao.get(DDMotivoAnulacionOferta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", valor.getValor()));
 				expedienteComercial.setMotivoAnulacionAlquiler(motivoAnulacion);
 				
@@ -106,6 +108,8 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				
 				expedienteComercial.setFechaAnulacion(new Date());
 				expedienteComercial.setPeticionarioAnulacion(peticionario);
+				
+				ofertaApi.finalizarOferta(oferta);
 			}
 			
 			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) { 

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -70,7 +71,8 @@ public class UpdaterServiceResolucionComiteAlquilerNoComercial implements Update
 				}else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
-					ofertaApi.rechazarOferta(oferta);
+					expedienteComercial.setFechaAnulacion(new Date());
+					ofertaApi.finalizarOferta(oferta);
 				}
 				
 				expedienteComercial.setEstado(estadoExpedienteComercial);

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -26,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAccionNoComercial;
 
 @Component
@@ -100,7 +102,8 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 				estadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
 				estadoBc =  DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 				dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
-				ofertaApi.rechazarOferta(oferta);
+				expedienteComercial.setFechaAnulacion(new Date());
+				ofertaApi.finalizarOferta(oferta);
 			}
 		}
 		

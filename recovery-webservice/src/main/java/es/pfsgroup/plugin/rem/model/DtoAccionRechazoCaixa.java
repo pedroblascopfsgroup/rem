@@ -19,6 +19,8 @@ public class DtoAccionRechazoCaixa extends WebDto {
     private String estadoBc;
 
     private String fechaReal;
+    
+    private String observacionesBc;
 
     public Long getIdExpediente() {
         return idExpediente;
@@ -83,4 +85,12 @@ public class DtoAccionRechazoCaixa extends WebDto {
     public void setFechaReal(String fechaReal) {
         this.fechaReal = fechaReal;
     }
+
+	public String getObservacionesBc() {
+		return observacionesBc;
+	}
+
+	public void setObservacionesBc(String observacionesBc) {
+		this.observacionesBc = observacionesBc;
+	}
 }

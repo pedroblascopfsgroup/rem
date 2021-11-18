@@ -49,7 +49,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 	private static final String COMBO_RESULTADO = "comboResolucion";
 	private static final String FECHA_SANCION = "fechaSancion";
 	
-	private static final String OBSERVACIONESBC = "observacionesBC";
+	private static final String OBSERVACIONESBC = "observacionesBc";
 	
 	private static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
 

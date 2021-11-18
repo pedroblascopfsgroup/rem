@@ -52,7 +52,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	private static final String RESULTADO_PBC = "comboResolucion";
 	private static final String OBSERVACIONES = "observaciones";
-	private static final String OBSERVACIONESBC = "observacionesBC";
+	private static final String OBSERVACIONESBC = "observacionesBc";
 
 	private static final String CODIGO_T015_SANCION_BC = "T015_SancionBC";
 

@@ -46,7 +46,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
     
 	private static final String COMBO_RESULTADO = "comboResultado";
 	
-	private static final String OBSERVACIONESBC = "observacionesBC";
+	private static final String OBSERVACIONESBC = "observacionesBc";
 
 	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
 

@@ -246,10 +246,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			//Informacion general
 			//informeComercial.setCodAgrupacionON();
 			//informeComercial.setIdLote();
-			if (!Checks.esNulo(activoInfoComercial.getActivoPrincipal())) {
-				informeComercial.setActivoPrincipalCod(activoInfoComercial.getActivoPrincipal().getCodigo());
-				informeComercial.setActivoPrincipalDesc(activoInfoComercial.getActivoPrincipal().getDescripcion());
-			}
+			//informeComercial.setActivoPrincipal();
 			if (!Checks.esNulo(activoInfoComercial.getRegimenProteccion())) {
 				informeComercial.setRegimenInmuebleCod(activoInfoComercial.getRegimenProteccion().getCodigo());
 				informeComercial.setRegimenInmuebleDesc(activoInfoComercial.getRegimenProteccion().getDescripcion());
@@ -260,8 +257,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInfoComercial.getAnyoConstruccion())) 
 				informeComercial.setAnyoConstruccion(activoInfoComercial.getAnyoConstruccion());
-			if (!Checks.esNulo(activoInfoComercial.getSuperficieRegistral())) 
-				informeComercial.setSuperficieRegistral(activoInfoComercial.getSuperficieRegistral().doubleValue());
 			
 			//Caracteristicas del activo
 			if (!Checks.esNulo(activoInfoComercial.getVisitable())) {
@@ -607,13 +602,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				actInfoComercial.setMaxRenta(activoInformeDto.getValorEstimadoMaxRenta().floatValue());
 			
 			//Informacion general
-			//informeComercial.setCodAgrupacionON();
-			//informeComercial.setIdLote();
-			
-			if (!Checks.esNulo(activoInformeDto.getActivoPrincipalCod())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getActivoPrincipalCod());
-				actInfoComercial.setActivoPrincipal(genericDao.get(DDSinSiNo.class, filtro));
-			}
 			if (!Checks.esNulo(activoInformeDto.getRegimenInmuebleCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getRegimenInmuebleCod());
 				actInfoComercial.setRegimenProteccion(genericDao.get(DDTipoVpo.class, filtro));
@@ -624,8 +612,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInformeDto.getAnyoConstruccion())) 
 				actInfoComercial.setAnyoConstruccion(activoInformeDto.getAnyoConstruccion());
-			if (!Checks.esNulo(activoInformeDto.getSuperficieRegistral())) 
-				actInfoComercial.setSuperficieRegistral(activoInformeDto.getSuperficieRegistral().floatValue());
 			
 			//Caracteristicas del activo
 			if (!Checks.esNulo(activoInformeDto.getDormitorios())) 

@@ -68,14 +68,12 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	//Informacion general
 	private Integer codAgrupacionON;
 	private Integer idLote;
-	private String activoPrincipalCod;
-	private String activoPrincipalDesc;
+	private String activoPrincipal;
 	private String regimenInmuebleCod;
 	private String regimenInmuebleDesc;
 	private String estadoOcupacionalCod;
 	private String estadoOcupacionalDesc;
 	private Integer anyoConstruccion;
-	private Double superficieRegistral;
 
 	//Caracteristicas del activo
 	private String visitableCod;
@@ -310,17 +308,11 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	public void setIdLote(Integer idLote) {
 		this.idLote = idLote;
 	}
-	public String getActivoPrincipalCod() {
-		return activoPrincipalCod;
+	public String getActivoPrincipal() {
+		return activoPrincipal;
 	}
-	public void setActivoPrincipalCod(String activoPrincipalCod) {
-		this.activoPrincipalCod = activoPrincipalCod;
-	}
-	public String getActivoPrincipalDesc() {
-		return activoPrincipalDesc;
-	}
-	public void setActivoPrincipalDesc(String activoPrincipalDesc) {
-		this.activoPrincipalDesc = activoPrincipalDesc;
+	public void setActivoPrincipal(String activoPrincipal) {
+		this.activoPrincipal = activoPrincipal;
 	}
 	public String getRegimenInmuebleCod() {
 		return regimenInmuebleCod;
@@ -369,12 +361,6 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setAnyoConstruccion(Integer anyoConstruccion) {
 		this.anyoConstruccion = anyoConstruccion;
-	}
-	public Double getSuperficieRegistral() {
-		return superficieRegistral;
-	}
-	public void setSuperficieRegistral(Double superficieRegistral) {
-		this.superficieRegistral = superficieRegistral;
 	}
 	public String getVisitableCod() {
 		return visitableCod;

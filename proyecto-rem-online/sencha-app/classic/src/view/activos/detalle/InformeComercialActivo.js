@@ -215,10 +215,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										bind: {
 							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
 							        		value: '{infoComercial.nombreProveedor}'
-							        	}
-									},
-									{
-										
+							        	},
+						            	colspan: 2
 									}
 								]
 						},
@@ -787,22 +785,18 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },*/
 									{ 
 										fieldLabel: 'Codigo agrupación ON',
-										bind:		'{infoComercial.codAgrupacionON}'
+										bind:		'{infoComercial.codAgrupacionON}',
+										readOnly	: true
 					                },
 									{ 
 										fieldLabel: 'Lote',
-										bind:		'{infoComercial.idLote}'
+										bind:		'{infoComercial.idLote}',
+										readOnly	: true
 					                },
 									{ 
-										xtype: 'comboboxfieldbasedd',
-							        	bind: {
-						            		store: '{comboSinSino}',
-						            		value: '{infoComercial.activoPrincipalCod}',
-						            		rawValue: '{infoComercial.activoPrincipalDesc}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo',
-										fieldLabel: 'Activo principal'
+										bind:		'{infoComercial.activoPrincipal}',
+										fieldLabel: 'Activo principal',
+										readOnly	: true
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -874,11 +868,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },
 									/*{ 
 										fieldLabel: 'Superfície construida'
-					                },*/
+					                },
 									{ 
 										fieldLabel: 'Superfície registral',
 										bind:		'{infoComercial.superficieRegistral}'
-					                }/*,
+					                },
 									{ 
 										fieldLabel: 'Mediador asignado'
 					                },

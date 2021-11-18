@@ -226,10 +226,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ICO_ADMITE_MASCOTAS")
 	private DDAdmision admiteMascotas;	
-	
-	@ManyToOne
-	@JoinColumn(name = "ICO_ACTIVO_PRINCIPAL")
-	private DDSinSiNo activoPrincipal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ESO_ID")
@@ -393,9 +389,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name="ICO_FECHA_ENVIO_LLAVES_API")
 	private Date envioLlavesApi;
-
-	@Column(name="ICO_SUP_REGISTRAL")
-	private Float superficieRegistral;
 
 	@Column(name="ICO_NUM_DORMITORIOS")
 	private Long numDormitorios;
@@ -800,14 +793,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.admiteMascotas = admiteMascotas;
 	}
 
-	public DDSinSiNo getActivoPrincipal() {
-		return activoPrincipal;
-	}
-
-	public void setActivoPrincipal(DDSinSiNo activoPrincipal) {
-		this.activoPrincipal = activoPrincipal;
-	}
-
 	public DDEstadoOcupacional getEstadoOcupacional() {
 		return estadoOcupacional;
 	}
@@ -1134,14 +1119,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setEnvioLlavesApi(Date envioLlavesApi) {
 		this.envioLlavesApi = envioLlavesApi;
-	}
-
-	public Float getSuperficieRegistral() {
-		return superficieRegistral;
-	}
-
-	public void setSuperficieRegistral(Float superficieRegistral) {
-		this.superficieRegistral = superficieRegistral;
 	}
 
 	public Long getNumDormitorios() {

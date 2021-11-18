@@ -71,11 +71,11 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		
 
 	 { name: 'envioLlavesApi' },
-	 /*{ name: 'recepcionLlavesApi' },
+	 { name: 'recepcionLlavesApi' },
 	 { name: 'autorizacionWeb' },
 	 { name: 'fechaAutorizacionHasta' },
 	 { name: 'recepcionLlavesEspejo' },
-	 { name: 'autorizacionWebEspejo' },*/
+	 { name: 'autorizacionWebEspejo' },
 	 { name: 'codigoProveedor' },
 	 { name: 'nombreProveedor' },
 	 { name: 'tipoActivoCodigo' },
@@ -127,14 +127,12 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	//Datos activo
 	 { name: 'codAgrupacionON' },
 	 { name: 'idLote' },
-	 { name: 'activoPrincipalCod' },
-	 { name: 'activoPrincipalDesc' },
+	 { name: 'activoPrincipal' },
 	 { name: 'regimenInmuebleCod' },
 	 { name: 'regimenInmuebleDesc' },
 	 { name: 'estadoOcupacionalCod' },
 	 { name: 'estadoOcupacionalDesc' },
 	 { name: 'anyoConstruccion' },
-	 { name: 'superficieRegistral' },
 
 	//Caracteristicas del activo
 	 { name: 'visitableCod' },

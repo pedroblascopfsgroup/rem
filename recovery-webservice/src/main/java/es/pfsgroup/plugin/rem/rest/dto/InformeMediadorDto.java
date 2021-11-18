@@ -401,8 +401,22 @@ public class InformeMediadorDto implements Serializable {
 	private List<TestigosOpcionalesDto> testigos;
 
 	
-	
-	
+	public Date getFechaAccion() {
+		return fechaAccion;
+	}
+
+	public void setFechaAccion(Date fechaAccion) {
+		this.fechaAccion = fechaAccion;
+	}
+
+	public Long getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
+	}
+
+	public void setIdUsuarioRemAccion(Long idUsuarioRemAccion) {
+		this.idUsuarioRemAccion = idUsuarioRemAccion;
+	}
+
 	public Long getIdInformeMediadorWebcom() {
 		return idInformeMediadorWebcom;
 	}

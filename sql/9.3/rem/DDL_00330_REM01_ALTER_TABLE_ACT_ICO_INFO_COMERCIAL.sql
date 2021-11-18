@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20211109
+--## FECHA_CREACION=20211118
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16330
@@ -37,11 +37,8 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(250);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-    T_COL('ADD_COLUMN', 'ICO_ACTIVO_PRINCIPAL', 'NUMBER(16,0)', 'Indicador activo principal'),
-    T_COL('ADD_CONSTRAINT', 'FK_ICO_ACTIVO_PRINCIPAL', 'ICO_ACTIVO_PRINCIPAL','DD_SIN_SINO','DD_SIN_ID','1'),
     T_COL('ADD_COLUMN', 'DD_ESO_ID', 'NUMBER(16,0)', 'Id Estado ocupacional'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_DD_ESO_ID', 'DD_ESO_ID','DD_ESO_ESTADO_OCUPACIONAL','DD_ESO_ID',''),
-    T_COL('ADD_COLUMN', 'ICO_SUP_REGISTRAL', 'NUMBER(13,2)', 'Superficie registral activo'),
     T_COL('ADD_COLUMN', 'ICO_NUM_DORMITORIOS', 'NUMBER(11,0)', 'Indicador numero dormitorios activo'),
     T_COL('ADD_COLUMN', 'ICO_NUM_BANYOS', 'NUMBER(11,0)', 'Indicador numero banyos activo'),
     T_COL('ADD_COLUMN', 'ICO_NUM_GARAJE', 'NUMBER(11,0)', 'Indicador numero plazas garaje activo'),

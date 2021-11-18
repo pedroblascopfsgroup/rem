@@ -42,7 +42,6 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	
 	public static final String COD_ASEGURADORA = "03";
 	public static final String COD_MEDIADOR = "04";
-	public static final String COD_NOTARIO = "21";
 	public static final String COD_OFICINA_BANKIA = "28";
 	public static final String COD_OFICINA_CAJAMAR = "29";
 	public static final String COD_FUERZA_VENTA_DIRECTA="18";
@@ -57,8 +56,21 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_GESTIONDIRECTA = "37";
 	public static final String COD_SALESFORCE = "33";
 	public static final String COD_OFICINA_LIBERBANK = "38";
-	public static final String COD_SUMINISTRO = "25";
 	public static final String COD_SUELOS_DND = "43";
+	
+	public static final String COD_COMUNIDAD_DE_PROPIETARIOS = "07";
+	public static final String COD_COMPLEJO_INMOBILIARIO = "08";
+	public static final String COD_ENTIDAD_DE_CONSERVACION = "09";
+	public static final String COD_JUNTA_DE_COMPENSACION = "10";
+	public static final String COD_AGRUPACION_DE_INTERES_URBANISTICO = "11";
+	public static final String COD_AYUNTAMIENTO_MUNICIPAL = "13";
+	public static final String COD_DIPUTACION_PROVINCIAL = "14";
+	public static final String COD_CONSEJERIA_AUTONOMICO = "15";
+	public static final String COD_HACIENDA_ESTATAL = "16";
+	public static final String COD_OTRA_ADMINISTRACION_PUBLICA = "17";
+	public static final String COD_NOTARIO = "21";
+	public static final String COD_REGISTRO = "24";
+	public static final String COD_SUMINISTRO = "25";
 	
 	public static final List<String> CODIGOS_OFICINAS = new ArrayList<String>(Arrays.asList(COD_OFICINA_BANKIA, COD_OFICINA_CAJAMAR, COD_OFICINA_LIBERBANK));
 

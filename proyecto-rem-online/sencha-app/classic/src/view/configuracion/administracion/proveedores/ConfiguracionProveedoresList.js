@@ -14,8 +14,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
      	me.listeners = {
     			rowdblclick: 'abrirPestanyaProveedor'
     	    };
-     	me.topBar = $AU.userHasFunction(['ADD_QUITAR_PROVEEDORES']);
-
+    
+     	me.topBar = ($AU.userHasFunction(['ADD_QUITAR_PROVEEDORES']) || $AU.userHasFunction(['ADD_PROVEEDORES_HOMOLOGABLES']));
 		me.columns = [
 		        {
 		            dataIndex: 'id',

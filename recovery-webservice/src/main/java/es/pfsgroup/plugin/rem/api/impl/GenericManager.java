@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -48,6 +49,7 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -55,6 +57,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -242,11 +245,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
+	@Autowired
+	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
 	@Autowired 
 	private PerfilApi perfilApi;
-		
+	
 	@Autowired
 	private RestApi restApi;
+	
+	private static final String ADD_PROVEEDORES_HOMOLOGABLES = "ADD_PROVEEDORES_HOMOLOGABLES";
 
 
 
@@ -510,7 +521,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getDiccionarioTipoProveedor") // DDTipoProveedor
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor) {
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean usuHasFunction = particularValidator.userHasFunction(ADD_PROVEEDORES_HOMOLOGABLES,usu.getId());
+		
 		List<DDTipoProveedor> listaTipoProveedor = new ArrayList<DDTipoProveedor>();
+		List<DDTipoProveedor> nuevaListaTipoProveedor = new ArrayList<DDTipoProveedor>();
 
 		if (!Checks.esNulo(codigoTipoProveedor)) {
 			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
@@ -522,10 +537,35 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						tipo.getCodigo());
 				listaTipoProveedor =  genericDao.getListOrdered(DDTipoProveedor.class, order,
 						filterSubtipo);
+				
 			}
 		}
-
-		return listaTipoProveedor;
+		
+		if(usuHasFunction && listaTipoProveedor != null && !listaTipoProveedor.isEmpty() && !Checks.esNulo(codigoTipoProveedor)) {
+			for (DDTipoProveedor subTipoProveedor : listaTipoProveedor) {
+				if(subTipoProveedor != null) {
+					if(DDTipoProveedor.COD_COMUNIDAD_DE_PROPIETARIOS.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_COMPLEJO_INMOBILIARIO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_ENTIDAD_DE_CONSERVACION.equals(subTipoProveedor.getCodigo()) ||		
+					   DDTipoProveedor.COD_JUNTA_DE_COMPENSACION.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_AGRUPACION_DE_INTERES_URBANISTICO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_AYUNTAMIENTO_MUNICIPAL.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_DIPUTACION_PROVINCIAL.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_CONSEJERIA_AUTONOMICO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_HACIENDA_ESTATAL.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_OTRA_ADMINISTRACION_PUBLICA.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_NOTARIO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_REGISTRO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_SUMINISTRO.equals(subTipoProveedor.getCodigo())
+					   ) {
+						nuevaListaTipoProveedor.add(subTipoProveedor);
+					}
+				}
+			}
+			return nuevaListaTipoProveedor;
+		} else {
+			return listaTipoProveedor;
+		}
 	}
 
 	@Override

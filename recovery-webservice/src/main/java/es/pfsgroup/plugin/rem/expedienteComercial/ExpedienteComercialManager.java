@@ -5650,6 +5650,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			
+			if (dto.getNacionalidadRprCodigo() != null ) {
+				nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+				if (nacionalidad != null) {
+					compradorExpediente.setNacionalidadRprCodigo(nacionalidad);
+				}
+			}
+			
 			if (esNuevo) {
 				
 				Oferta oferta = expedienteComercial.getOferta();
@@ -6522,6 +6529,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
 					if (nacionalidad != null) {
 						compradorExpediente.setNacionalidadCodigo(nacionalidad);
+					}
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null ) {
+					nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					if (nacionalidad != null) {
+						compradorExpediente.setNacionalidadRprCodigo(nacionalidad);
 					}
 				}
 

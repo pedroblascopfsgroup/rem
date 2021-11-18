@@ -240,12 +240,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 			        	}
 			        },
 			        {
-			        	xtype: 'displayfieldbase',
-			        	fieldLabel:  HreRem.i18n('fieldlabel.campo.vacio'),
-			        	padding: '5px',
-			        	readOnly: true,
-			        	allowBlank:true
-			        },
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+						name: 'nacionalidadCodigo',
+						reference: 'nacionalidadCodigo',
+						padding: '5px',
+						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}',
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
+					},
 					{
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
@@ -566,18 +571,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 					},
 					{
 						xtype: 'comboboxfieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
-						name: 'nacionalidadCodigo',
-						reference: 'nacionalidadCodigo',
-						padding: '5px',
-						bind: {
-							allowBlank: '{!comprador.esCarteraBankia}',
-							store: '{comboPaises}',
-							hidden: '{!comprador.esCarteraBankia}'
-						}
-					},
-					{
-						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.antiguo.deudor'),
 						reference: 'antiguoDeudor',
 						name: 'antiguoDeudor',
@@ -824,6 +817,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'apellidosRte',
 						name: 'apellidosRte',
 						padding: '5px'
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+						name: 'nacionalidadRprCodigo',
+						reference: 'nacionalidadRprCodigo',
+						padding: '5px',
+						bind: {
+							allowBlank: '{!comprador.esCarteraBankia}',
+							store: '{comboPaises}',
+							hidden: '{!comprador.esCarteraBankia}'
+						}
 					},
 					{
 						xtype: 'comboboxfieldbase',

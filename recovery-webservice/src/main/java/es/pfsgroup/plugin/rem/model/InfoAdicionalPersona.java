@@ -93,6 +93,10 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PAI_ID")
     private DDPaises nacionalidadCodigo;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_RPR")
+    private DDPaises nacionalidadRprCodigo;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -261,6 +265,14 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 
 	public void setNacionalidadCodigo(DDPaises nacionalidadCodigo) {
 		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public DDPaises getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(DDPaises nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}
 	
 }

@@ -188,6 +188,9 @@ Ext.define('HreRem.model.OfertaComercial', {
     		},
     		{
     			name:'nacionalidadCodigo'
+    		},
+    		{
+    			name:'nacionalidadRprCodigo'
     		}
             
     ],

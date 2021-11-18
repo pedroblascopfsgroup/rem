@@ -1107,6 +1107,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (iap.getNacionalidadCodigo() != null) {
 						compradorExpedienteNuevo.setNacionalidadCodigo(iap.getNacionalidadCodigo());
 					}
+					
+					if (iap.getNacionalidadRprCodigo() != null) {
+						compradorExpedienteNuevo.setNacionalidadRprCodigo(iap.getNacionalidadRprCodigo());
+					}
 				}
 			}
 

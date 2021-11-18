@@ -252,6 +252,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
 				codigoPaisRte = me.lookupReference('paisRte');
 				nacionalidadCodigo = me.lookupReference('nacionalidadCodigo');
+				nacionalidadRprCodigo = me.lookupReference('nacionalidadRprCodigo');
 
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					if(!Ext.isEmpty(campoEstadoCivil)){
@@ -323,8 +324,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if (!Ext.isEmpty(fechaNacRep)) {
 							campoMunicipioRpr.allowBlank = true;
 						}
-						if (!Ext.isEmpty(nacionalidadCodigo)) {
+						if (!Ext.isEmpty(nacionalidadCodigo) && esBankia) {
 							nacionalidadCodigo.allowBlank = false;
+						}
+						if (!Ext.isEmpty(nacionalidadRprCodigo)) {
+							nacionalidadRprCodigo.allowBlank = true;
 						}
 											
 					} else {
@@ -374,6 +378,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if (!Ext.isEmpty(nacionalidadCodigo)) {
 							nacionalidadCodigo.allowBlank = true;
 						}
+						if (!Ext.isEmpty(nacionalidadRprCodigo) && esBankia) {
+							nacionalidadRprCodigo.allowBlank = false;
+						}
 					}
 				}
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -403,6 +410,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
 				if(!Ext.isEmpty(fechaNacRep)) fechaNacRep.validate();
 				if(!Ext.isEmpty(nacionalidadCodigo)) nacionalidadCodigo.validate();
+				if(!Ext.isEmpty(nacionalidadRprCodigo)) nacionalidadRprCodigo.validate();
 			}
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	

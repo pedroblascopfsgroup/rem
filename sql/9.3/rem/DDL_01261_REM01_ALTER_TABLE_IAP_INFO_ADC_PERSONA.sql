@@ -38,7 +38,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER('DD_PAI_ID',		 				'NUMBER(16,0)',						'FK a la tabla DD_PAI_PAISES ISO.')
+    	T_ALTER('DD_PAI_ID',		 				'NUMBER(16,0)',						'FK a la tabla DD_PAI_PAISES Nacionalidad Comprador '),
+		T_ALTER('DD_PAI_ID_RPR',		 			'NUMBER(16,0)',						'FK a la tabla DD_PAI_PAISES Nacionalidad Representante ')
 		);
     V_T_ALTER T_ALTER;
     
@@ -47,7 +48,8 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 						CAMPO FK 					TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_DD_PAI_ID_IAP',						'DD_PAI_ID',				V_ESQUEMA||'.DD_PAI_PAISES',				'DD_PAI_ID'			)
+    	T_FK(	'FK_DD_PAI_ID_IAP',					'DD_PAI_ID',			V_ESQUEMA||'.DD_PAI_PAISES',				'DD_PAI_ID'			),
+		T_FK(	'FK_DD_PAI_ID_RPR_IAP',				'DD_PAI_ID_RPR',		V_ESQUEMA||'.DD_PAI_PAISES',				'DD_PAI_ID'			)
     );
     V_T_FK T_FK;
     
@@ -57,33 +59,6 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 	
-	-- Verificar si la FK ya existe. Si ya existe, se elimina
-		V_MSQL := 'SELECT COUNT(1) FROM all_constraints WHERE OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = ''FK_DD_PAI_ID_IAP''';
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS > 0 THEN
-			--Si existe se elimina.
-			
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' DROP CONSTRAINT FK_DD_PAI_ID_IAP ';
-
-			EXECUTE IMMEDIATE V_MSQL;
-
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... FK BORRADA en tabla. ');
-
-		END IF;
-		
-		-- Verificar si la columna ya existe. Si ya existe la columna, se elimina.
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = ''DD_PAI_ID'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS > 0 THEN
-			--Si existe se elimina
-
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   DROP COLUMN DD_PAI_ID';
-
-			EXECUTE IMMEDIATE V_MSQL;
-		END IF;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... Columna BORRADA en tabla');
-
 	-- Bucle que CREA las nuevas columnas 
 	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
 	LOOP

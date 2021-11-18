@@ -254,6 +254,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var importe = form.down('field[name=importeOferta]');
 	    								var tipoOferta = form.down('field[name=tipoOferta]');
 	    								var nacionalidadCodigo = form.down('field[name=nacionalidadCodigo]');
+	    								var nacionalidadRprCodigo = form.down('field[name=nacionalidadRprCodigo]');
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
 	    									apellidos.setDisabled(false);
@@ -273,7 +274,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									paisRepresentante.setValue(null);
 	    									provinciaRepresentante.allowBlank = true;
 	    									municipioRepresentante.allowBlank = true;
-	    									nacionalidadCodigo.allowBlank = false;
+	    									
+	    									if(isBk){
+	    										nacionalidadCodigo.allowBlank = false;
+	    										nacionalidadRprCodigo.allowBlank = true;
+	    									}
 	    									
 	    									razonSocial.reset();
 	    								}else{
@@ -299,6 +304,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		    									municipioNacimientoRepresentante.allowBlank = false;
 		    									fechaNacimientaRepresentante.allowBlank = false;
 		    									nacionalidadCodigo.allowBlank = true;
+		    									nacionalidadRprCodigo.allowBlank = false;
 	    									}
 	    									
 	    									apellidos.reset();
@@ -326,6 +332,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								if(!Ext.isEmpty(provinciaRepresentante)) provinciaRepresentante.validate();
 	    								if(!Ext.isEmpty(municipioRepresentante)) municipioRepresentante.validate();
 	    								if(!Ext.isEmpty(nacionalidadCodigo)) nacionalidadCodigo.validate();
+	    								if(!Ext.isEmpty(nacionalidadRprCodigo)) nacionalidadRprCodigo.validate()
 	    								
 	    							}
 	    						},
@@ -864,6 +871,21 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							reference: 'apellidosRte',
 							name: 'apellidosRte',
 							padding: '5px'
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+							name: 'nacionalidadRprCodigo',
+							reference: 'nacionalidadRprCodigo',
+							padding: '5px',
+							allowBlank: !isBk,
+							hidden: !isBk,
+							bind: {
+								store: '{comboPaises}',
+								value: '{oferta.nacionalidadRprCodigo}'
+							},
+							displayField: 'descripcion',
+							valueField: 'codigo'
 						},
 						{
 							xtype: 'comboboxfieldbase',

@@ -217,6 +217,8 @@ public class DtoModificarCompradores{
 	
 	private String nacionalidadCodigo;
 	
+	private String nacionalidadRprCodigo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1042,6 +1044,14 @@ public class DtoModificarCompradores{
 
 	public void setNacionalidadCodigo(String nacionalidadCodigo) {
 		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public String getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}
 	
 }

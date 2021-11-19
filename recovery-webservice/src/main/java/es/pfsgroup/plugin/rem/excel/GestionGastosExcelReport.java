@@ -54,6 +54,11 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_IMP_RECARGO = "Importe de Recargo";
 	private static final String CAB_IMP_INTERES_DEMORA = "Importe Interes Demora";
 	private static final String CAB_IMP_COSTES_TASAS = "Importe Costes/Tasas";
+	private static final String CAB_FECHA_CREAR = "Fecha Crear";
+	private static final String CAB_IMP_ACTIVO = "Importe Activo";
+	private static final String CAB_FECHA_DEVENGO_ESPECIAL = "Fecha Devengo Especial";
+	private static final String CAB_TIPO_IMPOSITIVO_IRPF = "Tipo Impositivo IRPF";
+	private static final String CAB_CUOTA_IRPF = "Cuota IRPF";
 	
 	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
@@ -66,7 +71,9 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add(CAB_NUM_GASTO);
+		listaCabeceras.add(CAB_FECHA_CREAR);
 		listaCabeceras.add(CAB_ELEMENTO);
+		listaCabeceras.add(CAB_IMP_ACTIVO);
 		listaCabeceras.add(CAB_NUM_FACTURA_LUQUIDACION);
 		listaCabeceras.add(CAB_TIPO);
 		listaCabeceras.add(CAB_SUBTIPO);
@@ -85,6 +92,9 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_CARTERA);
 		listaCabeceras.add(CAB_SUBCARTERA);
 		listaCabeceras.add(CAB_MOTIVO_RECHAZO_PROP);
+		listaCabeceras.add(CAB_FECHA_DEVENGO_ESPECIAL);
+		listaCabeceras.add(CAB_TIPO_IMPOSITIVO_IRPF);
+		listaCabeceras.add(CAB_CUOTA_IRPF);		
 		listaCabeceras.add(CAB_PROVISION_FONDOS);
 		listaCabeceras.add(CAB_ID_LINEA);
 		
@@ -128,11 +138,61 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	public List<List<String>> getData() {
 
 		List<List<String>> valores = new ArrayList<List<String>>();
+		double resto = 0d;
+		int cont = 0;
 
 		for (VGastosProveedorExcel gastoProveedor : listaGastosProveedor) {
+			double suma = 0d;
 			List<String> fila = new ArrayList<String>();
 			fila.add(String.valueOf(gastoProveedor.getNumGastoHaya()));
+			fila.add(this.getDateStringValue(gastoProveedor.getFechaCrear()));
 			fila.add(gastoProveedor.getElemento());
+			if(gastoProveedor.getImpPrincipalSujeto() != null) {
+				suma += gastoProveedor.getImpPrincipalSujeto(); 
+			}
+			if(gastoProveedor.getImpPrincipalNoSujeto() != null) {
+				suma += gastoProveedor.getImpPrincipalNoSujeto();
+			}
+			if(gastoProveedor.getImpRecargo() != null) {
+				suma += gastoProveedor.getImpRecargo();
+			}
+			if(gastoProveedor.getImpDemora() != null) {
+				suma += gastoProveedor.getImpDemora();
+			}
+			if(gastoProveedor.getImpTasas() != null) {
+				suma += gastoProveedor.getImpTasas();
+			}
+			if (suma < 0) {
+				if(gastoProveedor.getParticipacionGasto() != null) {
+					
+					double importeProporcional = (gastoProveedor.getParticipacionGasto()*suma/100)*-100;
+					int importeProporcional2 = (int)((gastoProveedor.getParticipacionGasto()*suma/100)*-100);
+					resto += importeProporcional - importeProporcional2;
+					
+					if (resto>=1) {
+						importeProporcional2++;
+						resto--;
+					}else if (resto!=0 && cont==listaGastosProveedor.size()) {
+						importeProporcional2++;
+					}
+					fila.add(String.valueOf(importeProporcional2/-100d));
+				}
+			} else {
+				if(gastoProveedor.getParticipacionGasto() != null) {
+					
+					double importeProporcionalSujeto = (gastoProveedor.getParticipacionGasto()*suma/100)*100;
+					int importeProporcionalSujeto2 = (int)((gastoProveedor.getParticipacionGasto()*suma/100)*100);
+					resto += importeProporcionalSujeto - importeProporcionalSujeto2;
+					
+					if (resto>=1) {
+						importeProporcionalSujeto2++;
+						resto--;
+					}else if (resto!=0 && cont==listaGastosProveedor.size()) {
+						importeProporcionalSujeto2++;
+					}
+					fila.add(String.valueOf(importeProporcionalSujeto2/100d));
+				}
+			}
 			fila.add(gastoProveedor.getNumFactura());
 			fila.add(gastoProveedor.getTipoDescripcion());
 			fila.add(gastoProveedor.getSubtipoDescripcion());
@@ -151,6 +211,9 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getEntidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getSubentidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getMotivoRechazoProp());
+			fila.add(this.getDateStringValue(gastoProveedor.getFechaDevengoEspecial()));
+			fila.add(getImporte(gastoProveedor.getIrpfTipoImpositivo()));
+			fila.add(getImporte(gastoProveedor.getIrpfCuota()));
 			fila.add(gastoProveedor.getProvisionFondos());
 			fila.add(String.valueOf(gastoProveedor.getIdLinea()));
 			

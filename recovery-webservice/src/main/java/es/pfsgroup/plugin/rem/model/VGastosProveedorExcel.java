@@ -219,6 +219,21 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name="DD_EAP_ID")
 	private String idEstAutProp;
 	
+	@Column(name = "FECHA_CREACION")
+	private Date fechaCrear;
+
+	@Column(name = "PARTICIPACION_GASTO")
+	private Double participacionGasto;
+
+	@Column(name = "GIC_FECHA_DEVENGO_ESPECIAL")
+	private Date fechaDevengoEspecial;
+
+	@Column(name = "GDE_IRPF_TIPO_IMPOSITIVO")
+	private Double irpfTipoImpositivo;
+
+	@Column(name = "GDE_IRPF_CUOTA")
+	private Double irpfCuota;
+	
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -770,6 +785,46 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setIdEstAutProp(String idEstAutProp) {
 		this.idEstAutProp = idEstAutProp;
+	}
+
+	public Date getFechaCrear() {
+		return fechaCrear;
+	}
+
+	public void setFechaCrear(Date fechaCrear) {
+		this.fechaCrear = fechaCrear;
+	}
+
+	public Double getParticipacionGasto() {
+		return participacionGasto;
+	}
+
+	public void setParticipacionGasto(Double participacionGasto) {
+		this.participacionGasto = participacionGasto;
+	}
+
+	public Date getFechaDevengoEspecial() {
+		return fechaDevengoEspecial;
+	}
+
+	public void setFechaDevengoEspecial(Date fechaDevengoEspecial) {
+		this.fechaDevengoEspecial = fechaDevengoEspecial;
+	}
+
+	public Double getIrpfTipoImpositivo() {
+		return irpfTipoImpositivo;
+	}
+
+	public void setIrpfTipoImpositivo(Double irpfTipoImpositivo) {
+		this.irpfTipoImpositivo = irpfTipoImpositivo;
+	}
+
+	public Double getIrpfCuota() {
+		return irpfCuota;
+	}
+
+	public void setIrpfCuota(Double irpfCuota) {
+		this.irpfCuota = irpfCuota;
 	}
 
 	

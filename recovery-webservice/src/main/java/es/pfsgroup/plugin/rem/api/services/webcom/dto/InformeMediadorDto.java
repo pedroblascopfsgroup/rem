@@ -35,57 +35,27 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	@WebcomRequired
 	private StringDataType codSubCartera; 
 	@WebcomRequired
-	private BooleanDataType perimetroMacc; 
-	@WebcomRequired
-	private StringDataType referenciaCatastral;
-	@WebcomRequired
-	private StringDataType codEstadoPublicacion;
-	@WebcomRequired
-	private StringDataType codSubfasePublicacion;
-	@WebcomRequired
-	private StringDataType fincaRegistral;
+	private BooleanDataType perimetroMacc;
 	@WebcomRequired
 	private DoubleDataType porcentajePropiedad;
 	@WebcomRequired
 	private StringDataType codRegimenProteccion;
 	@WebcomRequired
-	private LongDataType codigoAgrupacionObraNueva; 
-	@WebcomRequired
-	private LongDataType idLoteRem;
-	@WebcomRequired
-	private BooleanDataType esActivoPrincipal;
-	@WebcomRequired
 	private DoubleDataType lat;
 	@WebcomRequired
 	private DoubleDataType lng;
-	@WebcomRequired
-	private StringDataType nombreGestorComercial;
-	@WebcomRequired
-	private StringDataType emailGestorComercial;
 	@WebcomRequired
 	private StringDataType nombreGestorPublicaciones;
 	@WebcomRequired
 	private StringDataType emailGestorPublicaciones;
 	@WebcomRequired
-	private StringDataType codEstadoFisico;
-	@WebcomRequired
 	private BooleanDataType publicado;//falta
-	@WebcomRequired
-	private StringDataType codDetallePublicacion;
 	@WebcomRequired
 	private DateDataType envioLlavesAApi;
 	@WebcomRequired
 	private DateDataType fechaPosesion;
 	@WebcomRequired
-	private StringDataType codEstadoComercial;
-	@WebcomRequired
 	private StringDataType codEstadoOcupacional;
-	@WebcomRequired
-	private StringDataType codCee;
-	@WebcomRequired
-	private DoubleDataType construidaSuperficie;
-	@WebcomRequired
-	private DoubleDataType registralSuperficie;
 	@WebcomRequired
 	private DateDataType fechaRecepcionLlavesApi;
 	@WebcomRequired
@@ -126,8 +96,6 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private BooleanDataType patio;
 	@WebcomRequired
 	private BooleanDataType ascensor;
-	@WebcomRequired
-	private DoubleDataType utilSuperficie;
 	@WebcomRequired
 	private BooleanDataType rehabilitado;
 	@WebcomRequired
@@ -218,30 +186,6 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setPerimetroMacc(BooleanDataType perimetroMacc) {
 		this.perimetroMacc = perimetroMacc;
 	}
-	public StringDataType getReferenciaCatastral() {
-		return referenciaCatastral;
-	}
-	public void setReferenciaCatastral(StringDataType referenciaCatastral) {
-		this.referenciaCatastral = referenciaCatastral;
-	}
-	public StringDataType getCodEstadoPublicacion() {
-		return codEstadoPublicacion;
-	}
-	public void setCodEstadoPublicacion(StringDataType codEstadoPublicacion) {
-		this.codEstadoPublicacion = codEstadoPublicacion;
-	}
-	public StringDataType getCodSubfasePublicacion() {
-		return codSubfasePublicacion;
-	}
-	public void setCodSubfasePublicacion(StringDataType codSubfasePublicacion) {
-		this.codSubfasePublicacion = codSubfasePublicacion;
-	}
-	public StringDataType getFincaRegistral() {
-		return fincaRegistral;
-	}
-	public void setFincaRegistral(StringDataType fincaRegistral) {
-		this.fincaRegistral = fincaRegistral;
-	}
 	public DoubleDataType getPorcentajePropiedad() {
 		return porcentajePropiedad;
 	}
@@ -253,24 +197,6 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setCodRegimenProteccion(StringDataType codRegimenProteccion) {
 		this.codRegimenProteccion = codRegimenProteccion;
-	}
-	public LongDataType getCodigoAgrupacionObraNueva() {
-		return codigoAgrupacionObraNueva;
-	}
-	public void setCodigoAgrupacionObraNueva(LongDataType codigoAgrupacionObraNueva) {
-		this.codigoAgrupacionObraNueva = codigoAgrupacionObraNueva;
-	}
-	public LongDataType getIdLoteRem() {
-		return idLoteRem;
-	}
-	public void setIdLoteRem(LongDataType idLoteRem) {
-		this.idLoteRem = idLoteRem;
-	}
-	public BooleanDataType getEsActivoPrincipal() {
-		return esActivoPrincipal;
-	}
-	public void setEsActivoPrincipal(BooleanDataType esActivoPrincipal) {
-		this.esActivoPrincipal = esActivoPrincipal;
 	}
 	public DoubleDataType getLat() {
 		return lat;
@@ -284,18 +210,6 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setLng(DoubleDataType lng) {
 		this.lng = lng;
 	}
-	public StringDataType getNombreGestorComercial() {
-		return nombreGestorComercial;
-	}
-	public void setNombreGestorComercial(StringDataType nombreGestorComercial) {
-		this.nombreGestorComercial = nombreGestorComercial;
-	}
-	public StringDataType getEmailGestorComercial() {
-		return emailGestorComercial;
-	}
-	public void setEmailGestorComercial(StringDataType emailGestorComercial) {
-		this.emailGestorComercial = emailGestorComercial;
-	}
 	public StringDataType getNombreGestorPublicaciones() {
 		return nombreGestorPublicaciones;
 	}
@@ -308,23 +222,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setEmailGestorPublicaciones(StringDataType emailGestorPublicaciones) {
 		this.emailGestorPublicaciones = emailGestorPublicaciones;
 	}
-	public StringDataType getCodEstadoFisico() {
-		return codEstadoFisico;
-	}
-	public void setCodEstadoFisico(StringDataType codEstadoFisico) {
-		this.codEstadoFisico = codEstadoFisico;
-	}
 	public BooleanDataType getPublicado() {
 		return publicado;
 	}
 	public void setPublicado(BooleanDataType publicado) {
 		this.publicado = publicado;
-	}
-	public StringDataType getCodDetallePublicacion() {
-		return codDetallePublicacion;
-	}
-	public void setCodDetallePublicacion(StringDataType codDetallePublicacion) {
-		this.codDetallePublicacion = codDetallePublicacion;
 	}
 	public DateDataType getEnvioLlavesAApi() {
 		return envioLlavesAApi;
@@ -338,35 +240,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setFechaPosesion(DateDataType fechaPosesion) {
 		this.fechaPosesion = fechaPosesion;
 	}
-	public StringDataType getCodEstadoComercial() {
-		return codEstadoComercial;
-	}
-	public void setCodEstadoComercial(StringDataType codEstadoComercial) {
-		this.codEstadoComercial = codEstadoComercial;
-	}
 	public StringDataType getCodEstadoOcupacional() {
 		return codEstadoOcupacional;
 	}
 	public void setCodEstadoOcupacional(StringDataType codEstadoOcupacional) {
 		this.codEstadoOcupacional = codEstadoOcupacional;
-	}
-	public StringDataType getCodCee() {
-		return codCee;
-	}
-	public void setCodCee(StringDataType codCee) {
-		this.codCee = codCee;
-	}
-	public DoubleDataType getConstruidaSuperficie() {
-		return construidaSuperficie;
-	}
-	public void setConstruidaSuperficie(DoubleDataType construidaSuperficie) {
-		this.construidaSuperficie = construidaSuperficie;
-	}
-	public DoubleDataType getRegistralSuperficie() {
-		return registralSuperficie;
-	}
-	public void setRegistralSuperficie(DoubleDataType registralSuperficie) {
-		this.registralSuperficie = registralSuperficie;
 	}
 	public DateDataType getFechaRecepcionLlavesApi() {
 		return fechaRecepcionLlavesApi;
@@ -487,12 +365,6 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setAscensor(BooleanDataType ascensor) {
 		this.ascensor = ascensor;
-	}
-	public DoubleDataType getUtilSuperficie() {
-		return utilSuperficie;
-	}
-	public void setUtilSuperficie(DoubleDataType utilSuperficie) {
-		this.utilSuperficie = utilSuperficie;
 	}
 	public BooleanDataType getRehabilitado() {
 		return rehabilitado;

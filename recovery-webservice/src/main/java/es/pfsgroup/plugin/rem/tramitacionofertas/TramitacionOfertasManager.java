@@ -2362,15 +2362,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
 		cex.setInterlocutorOferta(interlocutor);
 
+		DDInterlocutorOferta interlocutorRep = null;
+
 		if(cex.getDocumentoRepresentante() != null){
 			Comprador com = cex.getPrimaryKey().getComprador();
 			if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
 			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
 			}
-			cex.setInterlocutorOferta(interlocutor);
-			cex.setInterlocutorOfertaRepresentante(interlocutor);
+			if (interlocutorRep != null)
+			cex.setInterlocutorOfertaRepresentante(interlocutorRep);
 		}
 
 

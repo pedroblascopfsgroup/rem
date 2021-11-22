@@ -59,6 +59,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_FECHA_DEVENGO_ESPECIAL = "Fecha Devengo Especial";
 	private static final String CAB_TIPO_IMPOSITIVO_IRPF = "Tipo Impositivo IRPF";
 	private static final String CAB_CUOTA_IRPF = "Cuota IRPF";
+	private static final String CAB_ID_ACTIVO_CAIXA = "ID Activo Caixa";
 	
 	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
@@ -73,6 +74,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_NUM_GASTO);
 		listaCabeceras.add(CAB_FECHA_CREAR);
 		listaCabeceras.add(CAB_ELEMENTO);
+		listaCabeceras.add(CAB_ID_ACTIVO_CAIXA);
 		listaCabeceras.add(CAB_IMP_ACTIVO);
 		listaCabeceras.add(CAB_NUM_FACTURA_LUQUIDACION);
 		listaCabeceras.add(CAB_TIPO);
@@ -147,6 +149,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(String.valueOf(gastoProveedor.getNumGastoHaya()));
 			fila.add(this.getDateStringValue(gastoProveedor.getFechaCrear()));
 			fila.add(gastoProveedor.getElemento());
+			fila.add(String.valueOf(gastoProveedor.getIdActivoCaixa()));
 			if(gastoProveedor.getImpPrincipalSujeto() != null) {
 				suma += gastoProveedor.getImpPrincipalSujeto(); 
 			}

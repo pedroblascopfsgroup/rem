@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR= Alejandra García
---## FECHA_CREACION=20211118
+--## FECHA_CREACION=20211122
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16416
+--## INCIDENCIA_LINK=HREOS-16463
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR_E.
 --##
@@ -23,6 +23,7 @@
 --##        1.0 Carlos Santos   - Revertir 1 por 0 en SUJETO_IMPUESTO_INDIRECTO - REMVIP-9125
 --##		1.1 Optimización búsqueda módulo administración. Adaptar export a vista de búsqueda - IRC - HREOS-14269
 --##		1.2 Añadir campos Fecha creación e Importe activo - Alejandra García - HREOS-16416
+--##		1.2 Añadir campo ID Activo Caixa - Alejandra García - HREOS-16463
 --##########################################
 --*/
 
@@ -131,6 +132,7 @@ BEGIN
             WHEN ''GEN'' THEN AGS.AGS_ACTIVO_GENERICO
             ELSE TO_CHAR(GEN.ENT_ID)
         END AS ELEMENTO,
+        ACT.ACT_NUM_ACTIVO_CAIXA AS ID_ACTIVO_CAIXA,
         GEN.GLD_PARTICIPACION_GASTO AS PARTICIPACION_GASTO,
         VI.DD_TPR_ID,
         VI.DD_EAH_ID,
@@ -227,6 +229,7 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GIC_FECHA_DEVENGO_ESPECIAL IS ''Fecha de devengo especial.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_IRPF_TIPO_IMPOSITIVO IS ''Tipo impositivo de IRPF.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_IRPF_CUOTA IS ''Importe de la cuota de IRPF.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.ID_ACTIVO_CAIXA IS ''Código identificador único del activo en CAIXA.''';
 
 
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR_E...Creada OK');

@@ -234,6 +234,9 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name = "GDE_IRPF_CUOTA")
 	private Double irpfCuota;
 	
+	@Column(name = "ID_ACTIVO_CAIXA")
+	private Long idActivoCaixa;
+	
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -825,6 +828,14 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setIrpfCuota(Double irpfCuota) {
 		this.irpfCuota = irpfCuota;
+	}
+
+	public Long getIdActivoCaixa() {
+		return idActivoCaixa;
+	}
+
+	public void setIdActivoCaixa(Long idActivoCaixa) {
+		this.idActivoCaixa = idActivoCaixa;
 	}
 
 	

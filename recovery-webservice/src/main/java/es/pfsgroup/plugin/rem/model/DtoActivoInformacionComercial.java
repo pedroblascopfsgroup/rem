@@ -66,9 +66,6 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private Double valorEstimadoMaxRenta;
 	
 	//Informacion general
-	private Integer codAgrupacionON;
-	private Integer idLote;
-	private String activoPrincipal;
 	private String regimenInmuebleCod;
 	private String regimenInmuebleDesc;
 	private String estadoOcupacionalCod;
@@ -295,24 +292,6 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setValorEstimadoMaxRenta(Double valorEstimadoMaxRenta) {
 		this.valorEstimadoMaxRenta = valorEstimadoMaxRenta;
-	}
-	public Integer getCodAgrupacionON() {
-		return codAgrupacionON;
-	}
-	public void setCodAgrupacionON(Integer codAgrupacionON) {
-		this.codAgrupacionON = codAgrupacionON;
-	}
-	public Integer getIdLote() {
-		return idLote;
-	}
-	public void setIdLote(Integer idLote) {
-		this.idLote = idLote;
-	}
-	public String getActivoPrincipal() {
-		return activoPrincipal;
-	}
-	public void setActivoPrincipal(String activoPrincipal) {
-		this.activoPrincipal = activoPrincipal;
 	}
 	public String getRegimenInmuebleCod() {
 		return regimenInmuebleCod;

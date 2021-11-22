@@ -88,6 +88,30 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			depends: 'tipoActivoCodigo'
     			
     		},
+		{
+    			name: 'isSuelo',
+    			calculate: function(data) { 
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    			
+    		},
+		{
+    			name: 'isComercial',
+    			calculate: function(data) { 
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    			
+    		},
+		{
+    			name: 'isConstruccion',
+    			calculate: function(data) { 
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    			
+    		},
 	 { name: 'subtipoActivoCodigo' },
 	 { name: 'subtipoActivoDescripcion' },
 	 { name: 'tipoViaCodigo' },
@@ -125,9 +149,6 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'valorEstimadoMaxRenta' },
 	
 	//Datos activo
-	 { name: 'codAgrupacionON' },
-	 { name: 'idLote' },
-	 { name: 'activoPrincipal' },
 	 { name: 'regimenInmuebleCod' },
 	 { name: 'regimenInmuebleDesc' },
 	 { name: 'estadoOcupacionalCod' },

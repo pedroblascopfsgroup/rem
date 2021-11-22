@@ -244,9 +244,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setValorEstimadoMaxRenta(activoInfoComercial.getMaxRenta().doubleValue());
 			
 			//Informacion general
-			//informeComercial.setCodAgrupacionON();
-			//informeComercial.setIdLote();
-			//informeComercial.setActivoPrincipal();
 			if (!Checks.esNulo(activoInfoComercial.getRegimenProteccion())) {
 				informeComercial.setRegimenInmuebleCod(activoInfoComercial.getRegimenProteccion().getCodigo());
 				informeComercial.setRegimenInmuebleDesc(activoInfoComercial.getRegimenProteccion().getDescripcion());
@@ -346,7 +343,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setAireAcondDesc(activoInfoComercial.getAireAcondicionado().getDescripcion());
 			}
 
-			//Otras caracteristicas del activo (vivienda)
+			//Otras caracteristicas del activo
 			if (!Checks.esNulo(activoInfoComercial.getEstadoConservacionEdificio())) {
 				informeComercial.setEstadoConservacionEdiCod(activoInfoComercial.getEstadoConservacionEdificio().getCodigo());
 				informeComercial.setEstadoConservacionEdiDesc(activoInfoComercial.getEstadoConservacionEdificio().getDescripcion());
@@ -385,9 +382,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setAdmiteMascotaCod(activoInfoComercial.getAdmiteMascotas().getCodigo());
 				informeComercial.setAdmiteMascotaDesc(activoInfoComercial.getAdmiteMascotas().getDescripcion());
 			}
-	
 
-			//Otras caracteristicas del activo (!vivienda)
 			if (!Checks.esNulo(activoInfoComercial.getLicenciaApertura())) {
 				informeComercial.setLicenciaAperturaCod(activoInfoComercial.getLicenciaApertura().getCodigo());
 				informeComercial.setLicenciaAperturaDesc(activoInfoComercial.getLicenciaApertura().getDescripcion());

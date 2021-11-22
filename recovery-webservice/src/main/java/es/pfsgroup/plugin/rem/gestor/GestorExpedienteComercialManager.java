@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.gestor;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,11 +31,6 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorExpedienteComercialHistorico;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 @Component
 public class GestorExpedienteComercialManager implements GestorExpedienteComercialApi {
@@ -68,7 +65,7 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 		return new String[]{CODIGO_GESTOR_COMERCIAL_RETAIL, CODIGO_GESTOR_COMERCIAL_BACKOFFICE, CODIGO_GESTOR_COMERCIAL_SINGULAR,
 				CODIGO_GESTOR_FORMALIZACION, CODIGO_GESTORIA_FORMALIZACION, CODIGO_SUPERVISOR_COMERCIAL_RETAIL, CODIGO_SUPERVISOR_COMERCIAL_SINGULAR,
 				CODIGO_SUPERVISOR_FORMALIZACION, CODIGO_GESTOR_RESERVA_CAJAMAR, CODIGO_GESTOR_MINUTA_CAJAMAR, CODIGO_SUPERVISOR_RESERVA_CAJAMAR, 
-				CODIGO_SUPERVISOR_MINUTA_CAJAMAR, CODIGO_GESTOR_CONTROLLER, CODIGO_GESTOR_CIERRE_VENTA};
+				CODIGO_SUPERVISOR_MINUTA_CAJAMAR, CODIGO_GESTOR_CONTROLLER, CODIGO_GESTOR_CIERRE_VENTA, CODIGO_GESTOR_COMERCIAL_ALQUILER};
 	}
 	
 	@Override
@@ -117,6 +114,7 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 					}
 					
 				}
+				actualizarGestoresIdPersonaHaya(expediente);
 			}
 		}
 		
@@ -183,5 +181,27 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 	public Usuario getGestorByExpedienteComercialYTipo(ExpedienteComercial expediente, String tipo) {
 		
 		return gestorExpedienteComercialDao.getUsuarioGestorBycodigoTipoYExpedienteComercial(tipo, expediente);
+	}
+
+	public void actualizarGestoresIdPersonaHaya(ExpedienteComercial expedienteComercial){
+
+		final String CODIGO_NOTARIA = "NOTARI";
+		final String CODIGO_GESTORIA_FORMALIZACION = "GIAFORM";
+		MaestroDePersonas maestroDePersonas = null;
+		List <GestorExpedienteComercial> listGex = genericDao.getList(GestorExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"expedienteComercial.id",expedienteComercial.getId()));
+
+		for (GestorExpedienteComercial gec: listGex) {
+			if ((gec.getTipoGestor()!= null && CODIGO_NOTARIA.equals(gec.getTipoGestor().getCodigo())) || (gec.getTipoGestor()!= null && CODIGO_GESTORIA_FORMALIZACION.equals(gec.getTipoGestor().getCodigo())) && gec.getUsuario() != null){
+				List<ActivoProveedorContacto> listActProveedor = genericDao.getList(ActivoProveedorContacto.class,genericDao.createFilter(FilterType.EQUALS,"usuario.id",gec.getUsuario().getId()));
+				for (ActivoProveedorContacto activoProveedorContacto: listActProveedor) {
+					if (activoProveedorContacto != null && activoProveedorContacto.getProveedor() != null && activoProveedorContacto.getProveedor().getIdPersonaHaya() == null){
+						if (maestroDePersonas == null)
+							maestroDePersonas = new MaestroDePersonas();
+						activoProveedorContacto.getProveedor().setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(activoProveedorContacto.getProveedor().getDocIdentificativo(),activoProveedorContacto.getProveedor().getCodigoProveedorRem()));
+						genericDao.save(ActivoProveedor.class,activoProveedorContacto.getProveedor());
+					}
+				}
+			}
+		}
 	}
 }

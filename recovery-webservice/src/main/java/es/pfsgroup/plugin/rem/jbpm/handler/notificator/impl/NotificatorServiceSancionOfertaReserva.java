@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
@@ -17,6 +18,7 @@ public class NotificatorServiceSancionOfertaReserva extends NotificatorServiceSa
 	
 	public static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
+	private static final String COMBO_QUITAR = "comboQuitar";
 	SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
@@ -33,9 +35,15 @@ public class NotificatorServiceSancionOfertaReserva extends NotificatorServiceSa
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Date fechaFirma = null;
+		boolean comboQuitarNo = false;
 		
 		for(TareaExternaValor valor: valores) {
-			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if (COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (DDSiNo.NO.equals(valor.getValor())) {
+					comboQuitarNo = true;
+				}
+			}
+			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && comboQuitarNo) {
 				try {
 					fechaFirma = formato.parse(valor.getValor());
 				} catch (ParseException e) {
@@ -43,8 +51,9 @@ public class NotificatorServiceSancionOfertaReserva extends NotificatorServiceSa
 				}
 			}
 		}
-		
-		this.generaNotificacionReserva(tramite, fechaFirma);
+		if(fechaFirma != null) {
+			this.generaNotificacionReserva(tramite, fechaFirma);
+		}
 		
 	}
 

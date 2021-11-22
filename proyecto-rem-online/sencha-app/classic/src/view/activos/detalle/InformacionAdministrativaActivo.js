@@ -39,7 +39,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        hidden: true,
 				bind: 
 					{
-			        	hidden: '{!infoAdministrativa.vpo}',
+			        	hidden: '{esUsuarioTasadorayVpo}',
 			        	disabled: '{!infoAdministrativa.vpo}'
 			        },
 				defaultType: 'textfieldbase',
@@ -182,7 +182,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        			},
 				        	
 							defaultType: 'textfieldbase',
-							title: HreRem.i18n("title.requisitos.fase.venta"), // Requisitos para la fase de venta
+							title: HreRem.i18n("title.requisitos.fase.comercializacion"), // Requisitos para la fase de venta
 							items :
 								[
 									
@@ -205,13 +205,20 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 		fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),		// Necesitar�a autorizaci�n						 		
 											 		bind: {
 			            									store: '{comboSiNoRem}',
-			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}'
+			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}',
+			            									readOnly: '{isCarteraBankia}'
 			            								  }
 												},
 												{ 
 													xtype: 'currencyfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
 					                				bind: '{infoAdministrativa.maxPrecioVenta}',
+					                				readOnly: true
+								                },
+								                { 
+													xtype: 'currencyfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.modulo.alquiler'), 			// Precio m�ximo modulor alquiler
+					                				bind: '{infoAdministrativa.maxPrecioModuloAlquiler}',
 					                				readOnly: true
 								                },
 								                
@@ -257,7 +264,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 		fieldLabel: HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'), // Renuncia a tanteo y retracto (NUEVO CAMPO)
 											 		bind: {
 			            									store: '{comboSiNoRem}',
-			            									value: '{infoAdministrativa.renunciaTanteoRetrac}'
+			            									value: '{infoAdministrativa.renunciaTanteoRetrac}',
+			            									readOnly: '{isCarteraBankia}'
 			            								  }
 												},
 								                { 
@@ -706,6 +714,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
            {
         	   xtype:'fieldset',
 			   title: HreRem.i18n('title.expropiacion.forzosa'),
+			   bind: {
+					hidden: '{esUsuarioTasadora}'
+			   },
         	   layout: {
 	                type: 'vbox'
 	            },
@@ -787,6 +798,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 //        	   layout: {
 //	                type: 'hbox'
 //	            },
+			   bind: {
+					hidden: '{esUsuarioTasadora}'
+			   	},
 	            items: [
 				        { 
 						    xtype: 'comboboxfieldbasedd',
@@ -837,7 +851,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				width: '100%',
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeDocumentacionAdministrativa}'
+					store: '{storeDocumentacionAdministrativa}',
+					hidden: '{esUsuarioTasadora}'
 				},
 				
 				columns: [

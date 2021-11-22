@@ -182,4 +182,9 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 	}
 	
+	@Override
+	public void flush() {
+		this.getSessionFactory().getCurrentSession().flush();
+	}
+	
 }

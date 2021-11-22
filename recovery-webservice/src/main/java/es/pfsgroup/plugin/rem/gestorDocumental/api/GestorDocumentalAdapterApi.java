@@ -146,4 +146,6 @@ public interface GestorDocumentalAdapterApi {
 
 	void actualizarAdmisionValidado(Trabajo tbj) throws ParseException;
 
+	String getMaestroPersonasByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera,ActivoPropietario actPro);
+
 }

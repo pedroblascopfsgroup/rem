@@ -188,7 +188,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 				bind : {
 					value : '{admisionRevisionTitulo.observaciones}'
 				}
-			}]
+			}
+			]
 		}, {
 			xtype : 'fieldsettable',
 			defaultType : 'textfieldbase',

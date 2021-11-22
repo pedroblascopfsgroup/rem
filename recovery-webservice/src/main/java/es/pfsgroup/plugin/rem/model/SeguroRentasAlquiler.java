@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -79,6 +80,18 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
 
+    @Column(name="SRE_FECHA_SANCION_BC")
+    private Date fechaVencimientoRentaslBc;
+    
+	@Column(name="SRE_MESES_BC")
+    private Integer mesesAval;
+	
+    @Column(name="SRE_IMPORTE_BC")
+    private Double importeRentasBc;
+    
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private ActivoProveedor aseguradoraProveedor;
 
 	public Long getId() {
 		return id;
@@ -159,6 +172,37 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 	public void setResultadoSeguroRentas(DDResultadoCampo resultadoSeguroRentas) {
 		this.resultadoSeguroRentas = resultadoSeguroRentas;
 	}
-	
+
+	public Date getFechaVencimientoRentaslBc() {
+		return fechaVencimientoRentaslBc;
+	}
+
+	public void setFechaVencimientoRentaslBc(Date fechaVencimientoRentaslBc) {
+		this.fechaVencimientoRentaslBc = fechaVencimientoRentaslBc;
+	}
+
+	public Integer getMesesAval() {
+		return mesesAval;
+	}
+
+	public void setMesesAval(Integer mesesAval) {
+		this.mesesAval = mesesAval;
+	}
+
+	public Double getImporteRentasBc() {
+		return importeRentasBc;
+	}
+
+	public void setImporteRentasBc(Double importeRentasBc) {
+		this.importeRentasBc = importeRentasBc;
+	}
+
+	public ActivoProveedor getAseguradoraProveedor() {
+		return aseguradoraProveedor;
+	}
+
+	public void setAseguradoraProveedor(ActivoProveedor aseguradoraProveedor) {
+		this.aseguradoraProveedor = aseguradoraProveedor;
+	}
 	
 }

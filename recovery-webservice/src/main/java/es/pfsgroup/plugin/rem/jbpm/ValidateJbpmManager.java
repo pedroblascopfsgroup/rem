@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.rem.jbpm;
 
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicacionClientesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +12,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
@@ -36,13 +35,34 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 	
 	@Override
 	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
-		
+
+		Boolean resultado = null;
+		String error = null;
+		boolean replicateClientSuccess = true;
+		ReplicacionClientesResponse response = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+
+		if (response != null){
+			error = response.getErrorDesc();
+			replicateClientSuccess = response.getSuccess();
+		}
+		resultado = replicateClientSuccess;
+				
+		if(!resultado){
+			return error != null ? error :CaixaBcRestClient.ERROR_REPLICACION_BC;
+		}
+
 		//HREOS-2161
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) &&
@@ -58,7 +78,8 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		//  - (checkFormalizacion() ? (checkDeDerechoTanteo() == false ? (checkBankia() ? altaComiteProcess() : null) : null) : null)				
 		if (trabajoApi.checkFormalizacion(tareaExterna)) {
 			if (ofertaApi.checkDeDerechoTanteo(tareaExterna) == false) {
-				if (trabajoApi.checkBankia(tareaExterna)) {
+				if (trabajoApi.checkBankia(tareaExterna) && codigo != null &&
+						!"T017".equals(tareaActivoApi.getByIdTareaExterna(tareaExterna.getId()).getTramite().getTipoTramite().getCodigo())) {
 					return ofertaApi.altaComiteProcess(tareaExterna, codigo);
 				}
 			}
@@ -84,9 +105,10 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 				return errores;
 			}
 		}
-		
+
+
 			return null;
-	
+
 	}
 	
 	@Override
@@ -96,6 +118,19 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (trabajoApi.checkBankia(tareaExterna) || trabajoApi.checkLiberbank(tareaExterna)
 				|| trabajoApi.checkGiants(tareaExterna)) {
 			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+		}
+
+		String error = null;
+		boolean replicateClientSuccess = true;
+		ReplicacionClientesResponse response = caixaBcRestClient.callReplicateClient(ofertaApi.tareaExternaToOferta(tareaExterna).getNumOferta(),CaixaBcRestClient.COMPRADORES_DATA);
+
+		if (response != null){
+			error = response.getErrorDesc();
+			replicateClientSuccess = response.getSuccess();
+		}
+
+		if(!replicateClientSuccess){
+			return error != null ? error : CaixaBcRestClient.ERROR_REPLICACION_BC ;
 		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 

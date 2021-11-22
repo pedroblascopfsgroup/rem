@@ -99,6 +99,11 @@ Ext.define('HreRem.model.CompradorExpediente', {
 			},
 			{
 				name:'regimenMatrimonialUrsus'
+			},
+    		{
+    			name:'fechaAcepGdpr',
+    			type : 'date',
+        		dateFormat: 'c'
 			},{
 				name:'estadoContraste'
 			},{
@@ -109,8 +114,13 @@ Ext.define('HreRem.model.CompradorExpediente', {
 				name:'descripcionEstadoECL'
 			},{
 				name:'codigoEstadoEcl'
+			},
+			{
+				name:'estadoComunicacionBCCodigo'
+			},
+			{
+				name:'estadoComunicacionBCDescripcion'
 			}
-			
     ],
     
     proxy: {

@@ -42,6 +42,9 @@ public class DtoGestionGasto extends WebDto {
    	private Date fechaRetenerPago;
    	private String gestorRetenerPago;
    	private String comboMotivoRetenerPago;
+   	private Boolean gestionGastoRepercutido;
+   	private Date fechaGestionGastoRepercusion;
+   	private String motivoRechazoGestionGasto;
 
 	public Integer getNecesariaAutorizacionPropietario() {
 		return necesariaAutorizacionPropietario;
@@ -173,6 +176,24 @@ public class DtoGestionGasto extends WebDto {
 	}
 	public void setComboMotivoRetenerPago(String comboMotivoRetenerPago) {
 		this.comboMotivoRetenerPago = comboMotivoRetenerPago;
+	}
+	public Boolean getGestionGastoRepercutido() {
+		return gestionGastoRepercutido;
+	}
+	public void setGestionGastoRepercutido(Boolean gestionGastoRepercutido) {
+		this.gestionGastoRepercutido = gestionGastoRepercutido;
+	}
+	public Date getFechaGestionGastoRepercusion() {
+		return fechaGestionGastoRepercusion;
+	}
+	public void setFechaGestionGastoRepercusion(Date fechaGestionGastoRepercusion) {
+		this.fechaGestionGastoRepercusion = fechaGestionGastoRepercusion;
+	}
+	public String getMotivoRechazoGestionGasto() {
+		return motivoRechazoGestionGasto;
+	}
+	public void setMotivoRechazoGestionGasto(String motivoRechazoGestionGasto) {
+		this.motivoRechazoGestionGasto = motivoRechazoGestionGasto;
 	}
    	
    	

@@ -110,7 +110,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 									        	queryMode: 'remote',
 									        	multiSelect: true,
 									        	bind: {
-									        		hidden: '{esPropietarioBankia}',
+
 								            		store: '{filtroComboSubtipoTrabajo}',
 								                    disabled: '{!filtroComboTipoTrabajo.value}',
 								                    filters: {
@@ -125,28 +125,7 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 												valueField: 'codigo',
 												style: 'width: 33%'
 				    						},
-				    						{
-									        	xtype: 'combo',
-									        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-									        	reference: 'filtroComboTipoTrabajo2',
-									        	name: 'codigoSubtipo',
-									        	queryMode: 'remote',
-									        	bind: {
-									        		hidden: '{!esPropietarioBankia}',
-								            		store: '{filtroComboSubtipoTrabajo}',
-								                    disabled: '{!filtroComboTipoTrabajo.value}',
-								                    filters: {
-								                        property: 'codigoTipoTrabajo',
-								                        value: '{filtroComboTipoTrabajo.value}'
-								                    }
-								            	},
-			    								listeners: {
-			    									change: 'onChangeCheckboxCodigoSubtipo'
-			    								},
-								            	displayField: 'descripcion',
-												valueField: 'codigo',
-												style: 'width: 33%'
-				    						},
+ 
 				    						{ 
 									        	xtype: 'combo',
 									        	fieldLabel: HreRem.i18n('fieldlabel.cubierto.seguro'),

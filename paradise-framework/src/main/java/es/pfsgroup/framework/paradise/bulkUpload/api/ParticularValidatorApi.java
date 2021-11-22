@@ -1492,9 +1492,22 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoCerberus(String numActivo);
 
+	Boolean esOfertaCaixa(String numOferta);
+
 	Boolean esActivoEnTramite(String numActivo);
 
 	Boolean tieneVigenteFasePublicacionIII(String activo);
 
 	Boolean validacionSubfasePublicacion(String activo, List<String> codigos);
+
+	boolean esClienteEnOfertaCaixa(String numCliente);
+
+	boolean esProveedorOfertaCaixa(String idProveedor);
+	
+	Boolean existeProvision(String idProvision);
+
+	List<String> getGastosByNumProvision(String idEntidad);
+	
+	Boolean existeRecomendacionByCod(String recomendacion);
+
 }

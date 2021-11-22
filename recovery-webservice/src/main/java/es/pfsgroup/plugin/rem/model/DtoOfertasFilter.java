@@ -73,6 +73,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Long numOferPrincipal;
 	private String direccionComercial;
 	private Date fechaAlta;
+	private Boolean checkSubasta;
 	
 	//HREOS-6905
 	private String claseOferta;
@@ -91,6 +92,46 @@ public class DtoOfertasFilter extends WebDto {
 	
 	//REMVIP-8524
 	private Boolean ofrDocRespPrescriptor;
+	
+	private String vinculoCaixaCodigo;
+	
+	private String fechaNacimientoConstitucion;
+	private String paisNacimientoCompradorCodigo;
+    private String localidadNacimientoCompradorCodigo;
+    private String codigoPais;
+    private String provinciaCodigo;
+    private String municipioCodigo;
+    private String direccion;
+    private Boolean prp;
+    private String localidadNacimientoCompradorDescripcion;
+    private String tipologivaVentaCod;
+    private String provinciaNacimiento;
+    private String provinciaNacimientoDescripcion;
+    private String codigoPostalNacimiento;
+    private String emailNacimiento;
+    private String telefonoNacimiento1;
+    private String telefonoNacimiento2;
+    
+    private String codTipoDocumentoRte;
+    private String numDocumentoRte;
+    private String nombreRazonSocialRte;
+    private String apellidosRte;
+    private String paisNacimientoRepresentanteCodigo;
+    private String provinciaNacimientoRepresentanteCodigo;
+    private String localidadNacimientoRepresentanteCodigo;
+    private String fechaNacimientoRepresentante ;
+    private String codigoPaisRte;
+    private String provinciaRteCodigo;
+    private String municipioRteCodigo;
+    private String codigoPostalRte;
+    private String direccionRte;
+    private String emailRte;
+    private String telefono1Rte;
+    private String telefono2Rte;
+    private Boolean representantePrp;
+    private String sociedadEmpleadoCaixa;
+    private String oficinaEmpleadoCaixa;
+    private Boolean antiguoDeudor;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -521,6 +562,234 @@ public class DtoOfertasFilter extends WebDto {
 
 	public void setOfrDocRespPrescriptor(Boolean ofrDocRespPrescriptor) {
 		this.ofrDocRespPrescriptor = ofrDocRespPrescriptor;
+	}
+	public String getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+	public void setFechaNacimientoConstitucion(String fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+	public String getCodigoPais() {
+		return codigoPais;
+	}
+	public void setCodigoPais(String codigoPais) {
+		this.codigoPais = codigoPais;
+	}
+	public String getProvinciaCodigo() {
+		return provinciaCodigo;
+	}
+	public void setProvinciaCodigo(String provinciaCodigo) {
+		this.provinciaCodigo = provinciaCodigo;
+	}
+	public String getMunicipioCodigo() {
+		return municipioCodigo;
+	}
+	public void setMunicipioCodigo(String municipioCodigo) {
+		this.municipioCodigo = municipioCodigo;
+	}
+	public String getDireccion() {
+		return direccion;
+	}
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+	public Boolean getPrp() {
+		return prp;
+	}
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+	public String getTipologivaVentaCod() {
+		return tipologivaVentaCod;
+	}
+	public void setTipologivaVentaCod(String tipologivaVentaCod) {
+		this.tipologivaVentaCod = tipologivaVentaCod;
+	}
+	public String getProvinciaNacimiento() {
+		return provinciaNacimiento;
+	}
+	public void setProvinciaNacimiento(String provinciaNacimiento) {
+		this.provinciaNacimiento = provinciaNacimiento;
+	}
+	public String getProvinciaNacimientoDescripcion() {
+		return provinciaNacimientoDescripcion;
+	}
+	public void setProvinciaNacimientoDescripcion(String provinciaNacimientoDescripcion) {
+		this.provinciaNacimientoDescripcion = provinciaNacimientoDescripcion;
+	}
+	public String getCodigoPostalNacimiento() {
+		return codigoPostalNacimiento;
+	}
+	public void setCodigoPostalNacimiento(String codigoPostalNacimiento) {
+		this.codigoPostalNacimiento = codigoPostalNacimiento;
+	}
+	public String getEmailNacimiento() {
+		return emailNacimiento;
+	}
+	public void setEmailNacimiento(String emailNacimiento) {
+		this.emailNacimiento = emailNacimiento;
+	}
+	public String getTelefonoNacimiento1() {
+		return telefonoNacimiento1;
+	}
+	public void setTelefonoNacimiento1(String telefonoNacimiento1) {
+		this.telefonoNacimiento1 = telefonoNacimiento1;
+	}
+	public String getTelefonoNacimiento2() {
+		return telefonoNacimiento2;
+	}
+	public void setTelefonoNacimiento2(String telefonoNacimiento2) {
+		this.telefonoNacimiento2 = telefonoNacimiento2;
+	}
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
+	public String getCodTipoDocumentoRte() {
+		return codTipoDocumentoRte;
+	}
+	public void setCodTipoDocumentoRte(String codTipoDocumentoRte) {
+		this.codTipoDocumentoRte = codTipoDocumentoRte;
+	}
+	public String getNumDocumentoRte() {
+		return numDocumentoRte;
+	}
+	public void setNumDocumentoRte(String numDocumentoRte) {
+		this.numDocumentoRte = numDocumentoRte;
+	}
+	public String getNombreRazonSocialRte() {
+		return nombreRazonSocialRte;
+	}
+	public void setNombreRazonSocialRte(String nombreRazonSocialRte) {
+		this.nombreRazonSocialRte = nombreRazonSocialRte;
+	}
+	public String getApellidosRte() {
+		return apellidosRte;
+	}
+	public void setApellidosRte(String apellidosRte) {
+		this.apellidosRte = apellidosRte;
+	}
+	public String getPaisNacimientoRepresentanteCodigo() {
+		return paisNacimientoRepresentanteCodigo;
+	}
+	public void setPaisNacimientoRepresentanteCodigo(String paisNacimientoRepresentanteCodigo) {
+		this.paisNacimientoRepresentanteCodigo = paisNacimientoRepresentanteCodigo;
+	}
+	public String getProvinciaNacimientoRepresentanteCodigo() {
+		return provinciaNacimientoRepresentanteCodigo;
+	}
+	public void setProvinciaNacimientoRepresentanteCodigo(String provinciaNacimientoRepresentanteCodigo) {
+		this.provinciaNacimientoRepresentanteCodigo = provinciaNacimientoRepresentanteCodigo;
+	}
+	public String getLocalidadNacimientoRepresentanteCodigo() {
+		return localidadNacimientoRepresentanteCodigo;
+	}
+	public void setLocalidadNacimientoRepresentanteCodigo(String localidadNacimientoRepresentanteCodigo) {
+		this.localidadNacimientoRepresentanteCodigo = localidadNacimientoRepresentanteCodigo;
+	}
+	public String getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+	public void setFechaNacimientoRepresentante(String fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+	public String getCodigoPaisRte() {
+		return codigoPaisRte;
+	}
+	public void setCodigoPaisRte(String codigoPaisRte) {
+		this.codigoPaisRte = codigoPaisRte;
+	}
+	public String getProvinciaRteCodigo() {
+		return provinciaRteCodigo;
+	}
+	public void setProvinciaRteCodigo(String provinciaRteCodigo) {
+		this.provinciaRteCodigo = provinciaRteCodigo;
+	}
+	public String getMunicipioRteCodigo() {
+		return municipioRteCodigo;
+	}
+	public void setMunicipioRteCodigo(String municipioRteCodigo) {
+		this.municipioRteCodigo = municipioRteCodigo;
+	}
+	public String getCodigoPostalRte() {
+		return codigoPostalRte;
+	}
+	public void setCodigoPostalRte(String codigoPostalRte) {
+		this.codigoPostalRte = codigoPostalRte;
+	}
+	public String getDireccionRte() {
+		return direccionRte;
+	}
+	public void setDireccionRte(String direccionRte) {
+		this.direccionRte = direccionRte;
+	}
+	public String getEmailRte() {
+		return emailRte;
+	}
+	public void setEmailRte(String emailRte) {
+		this.emailRte = emailRte;
+	}
+	public String getTelefono1Rte() {
+		return telefono1Rte;
+	}
+	public void setTelefono1Rte(String telefono1Rte) {
+		this.telefono1Rte = telefono1Rte;
+	}
+	public String getTelefono2Rte() {
+		return telefono2Rte;
+	}
+	public void setTelefono2Rte(String telefono2Rte) {
+		this.telefono2Rte = telefono2Rte;
+	}
+	public Boolean getRepresentantePrp() {
+		return representantePrp;
+	}
+	public void setRepresentantePrp(Boolean representantePrp) {
+		this.representantePrp = representantePrp;
+	}
+	public String getSociedadEmpleadoCaixa() {
+		return sociedadEmpleadoCaixa;
+	}
+	public void setSociedadEmpleadoCaixa(String sociedadEmpleadoCaixa) {
+		this.sociedadEmpleadoCaixa = sociedadEmpleadoCaixa;
+	}
+	public String getOficinaEmpleadoCaixa() {
+		return oficinaEmpleadoCaixa;
+	}
+	public void setOficinaEmpleadoCaixa(String oficinaEmpleadoCaixa) {
+		this.oficinaEmpleadoCaixa = oficinaEmpleadoCaixa;
+	}
+	public Boolean getAntiguoDeudor() {
+		return antiguoDeudor;
+	}
+	public void setAntiguoDeudor(Boolean antiguoDeudor) {
+		this.antiguoDeudor = antiguoDeudor;
 	}
 	
 }

@@ -210,6 +210,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
 								        	reference: 'numUrsusRef',
 								        	bind: '{proveedor.codProveedorUvem}',
+								        	maskRe: /^\d*$/, 
 								        	listeners:{
 								        		render: function(){
 								        			var me = this;
@@ -223,7 +224,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								        				me.setReadOnly(true);
 								        			}						        			
 								        		}
-								        	}
+								        	},
+								        	hidden: true
 							            
 								        },
 										{

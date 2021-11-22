@@ -5,10 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -122,6 +119,16 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	
 	@Column(name = "ECO_ECL_FECHA")
 	private String fechaContraste;
+	
+	@Column(name = "FECHA_ACEP_GDPR")
+	private String fechaAcepGdpr;
+	
+	@Column(name = "ESTADO_CODIGO")
+	private String estadoComunicacionBCCodigo;
+	
+	@Column(name = "ESTADO_DESCRIPCION")
+	private String estadoComunicacionBCDescripcion;
+	
 	
     
 	public String getId() {
@@ -372,6 +379,13 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
 
+	public String getFechaAcepGdpr() {
+		return fechaAcepGdpr;
+	}
+
+	public void setFechaAcepGdpr(String fechaAcepGdpr) {
+		this.fechaAcepGdpr = fechaAcepGdpr;
+	}
 
 	public String getCodigoEstadoEcl() {
 		return codigoEstadoEcl;
@@ -396,8 +410,21 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setFechaContraste(String fechaContraste) {
 		this.fechaContraste = fechaContraste;
 	}
-	
-	
-	
-	
+
+	public String getEstadoComunicacionBCCodigo() {
+		return estadoComunicacionBCCodigo;
+	}
+
+	public void setEstadoComunicacionBCCodigo(String estadoComunicacionBCCodigo) {
+		this.estadoComunicacionBCCodigo = estadoComunicacionBCCodigo;
+	}
+
+	public String getEstadoComunicacionBCDescripcion() {
+		return estadoComunicacionBCDescripcion;
+	}
+
+	public void setEstadoComunicacionBCDescripcion(String estadoComunicacionBCDescripcion) {
+		this.estadoComunicacionBCDescripcion = estadoComunicacionBCDescripcion;
+	}
+
 }

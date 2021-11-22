@@ -949,7 +949,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	var record = window.getViewModel().get('ofertaRecord');
     	
 		if (grid.isValidRecord(record)) {				
-			
+
+			grid.mask()
+
     		record.save({
 
                 params: {
@@ -1314,7 +1316,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(!Ext.isEmpty(record)){
 			idOferta = record.data.idOferta;
 			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
-				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'] && record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['CADUCADA'];
 	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
 			}	
 		}

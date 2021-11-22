@@ -8,12 +8,13 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     		var me = this;
     		me.lookupController().cargarTabData(me);
     		me.evaluarEdicion();
-    	}
+    	},
+    	afterrender: 'mostrarIsCarteraCaixa'
     },
     
     refreshAfterSave: true,
     
-    requires: ['HreRem.model.ActivoValoraciones'],
+    requires: ['HreRem.model.ActivoValoraciones', 'HreRem.view.activos.DescuentoColectivosGrid', 'HreRem.view.activos.PreciosVigentesCaixaGrid'],
 
     recordName: "valoraciones",
 
@@ -33,6 +34,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				xtype:'fieldsettable',
 				cls: 'fieldset-precios-vigentes',
 				title: HreRem.i18n('title.precios.vigentes'),
+				reference: 'preciosVigentesRef',
 				items :	[
 					{
 						
@@ -42,7 +44,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							secFunToEdit: 'EDITAR_GRID_PRECIOS_VIGENTES',
 							loadAfterBind	: false,
 							colspan		: 3,
-							minHeight	: 200,
+							minHeight: 220,
 							bind		: {
 											store: '{storePreciosVigentes}'
 							},
@@ -283,14 +285,140 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				]
             },
             {
+            	xtype: 'fieldsettable',
+            	cls: 'fieldset-precios-vigentes',
+            	title: HreRem.i18n('title.precios.vigentes'),
+				reference: 'preciosVigentesRefCaixa',
+				items :	[
+					{
+						xtype: 'preciosvigentescaixagrid',
+						reference : 'preciosVigentesCaixaGridRef',
+						colspan		: 3
+					},
+					{
+						xtype: 'container',
+						style: {
+							backgroundColor: '#E5F6FE'
+						},
+						padding: 10,
+						margin: '5 8 10 8',
+						layout: {
+							type: 'hbox'
+						},
+						items: [
+							{
+								xtype: 'container',
+								layout: 'hbox',
+								flex: 0.8,
+								items: [
+									{
+										xtype: 'checkboxfieldbase',						
+										bind:		'{valoraciones.bloqueoPrecio}',
+										listeners: {
+											change: 'onChangeBloqueo'
+										},
+										width: 40
+									},
+									{
+										xtype: 'label',
+										cls: 'label-read-only-formulario-completo',
+										html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloqueado') + '&nbsp;</span>',
+										hidden: true,
+										bind: {
+											hidden: '{!valoraciones.bloqueoPrecioFechaIni}'
+										}
+										
+									},
+									{
+										xtype: 'label',
+										cls: 'label-read-only-formulario-completo',
+										html: '<span style="font-weight: bold;">' + HreRem.i18n('fieldlabel.bloqueo') + ': </span>' + '<span>' + HreRem.i18n('fieldlabel.txt.precios.bloquear') + '&nbsp;</span>',
+										hidden: true,
+										bind: {
+											hidden: '{valoraciones.bloqueoPrecioFechaIni}'
+										}
+									},
+								
+									{
+										xtype: 'datefieldbase',
+										readOnly: true,
+										reference: 'bloqueoPrecioFechaIni',
+										bind:  '{valoraciones.bloqueoPrecioFechaIni}',
+										width: 65
+									},
+									{
+										xtype: 'label',
+										cls: 'label-read-only-formulario-completo',
+										html: HreRem.i18n('fieldlabel.por.gestor') + '&nbsp;',
+										hidden: true,
+										bind: {
+											hidden: '{!valoraciones.gestorBloqueoPrecio}'
+										}
+									},
+									{
+										xtype: 'textfieldbase',
+										readOnly: true,
+										reference: 'gestorBloqueoPrecio',
+										bind: '{valoraciones.gestorBloqueoPrecio}'
+									}
+								]
+							}, 
+							{
+								xtype: 'container',
+								layout: 'hbox',
+								flex: 0.2,
+								items: [
+									{
+										xtype: 'label',
+										width: 175,
+										cls: 'label-read-only-formulario-completo',
+										html: '<span style="font-weight: bold; color:#d60a3a">' + HreRem.i18n('msg.activo.en.bolsa.preciar') + '</span>',
+										hidden: true, // para evitar que se vea mientras se actualiza el bind
+										bind: {
+											hidden: '{!valoraciones.incluidoBolsaPreciar}'
+										}
+										
+									},
+									{
+										xtype: 'label',
+										width: 175,
+										cls: 'label-read-only-formulario-completo',
+										html: '<span style="font-weight: bold; color:#d60a3a">' + HreRem.i18n('msg.activo.en.bolsa.repreciar') + '</span>',
+										hidden: true, // para evitar que se vea mientras se actualiza el bind
+										bind: {
+											hidden: '{!valoraciones.incluidoBolsaRepreciar}'
+										}
+										
+									}
+								]
+							}
+						]
+					}
+				]
+            },
+            {
+            	xtype:'fieldsettable',
+				cls: 'fieldset-descuentos-vigentes',
+				title: HreRem.i18n('title.descuentos.vigentes'),
+				reference: 'descuentosVigentesRef',
+				items :	[
+					{
+						xtype: 'descuentocolectivosgrid',
+						reference : 'descuentoColectivosGridRef'
+					}
+				]
+            },
+            {
 				xtype:'fieldsettable',
 				title: HreRem.i18n('title.valores.invariables'),
 				items :	[
 				   {
 					   xtype: 'currencyfieldbase',
-					   readOnly: true,
 					   fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion.no.judicial'),
-					   bind:  '{valoraciones.valorAdquisicion}',
+					   bind:  {
+							value: '{valoraciones.valorAdquisicion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					   },
 					   margin: '0 0 0 8'
 				   },
 				   {
@@ -299,9 +427,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				   },
 				   {
 					   xtype: 'currencyfieldbase',
-					   readOnly: true,
+					   readOnly: '{!activo.isCarteraTitulizada}',
 					   fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion.judicial'),
-					   bind: '{valoraciones.importeAdjudicacion}'
+						bind:  {
+							value: '{valoraciones.importeAdjudicacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					   }
 					   
 				   }
 				]
@@ -312,7 +443,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				items :	[
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
@@ -341,6 +472,34 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.asesoramiento.liquidativo'),
 							   bind:  '{valoraciones.valorAsesoramientoLiquidativo}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.precio.venta.negociable'),
+							   bind:  '{valoraciones.precioVentaNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.precio.alquiler.negociable'),
+							   bind:  '{valoraciones.precioAlquilerNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.campanya.precio.venta.negociable'),
+							   bind:  '{valoraciones.campanyaPrecioVentaNegociable}',
+							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
+							 },
+ 							 {
+							   xtype: 'checkboxfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.campanya.precio.alquiler.negociable'),
+							   bind:  '{valoraciones.campanyaPrecioAlquilerNegociable}',
 							   hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!='03')
 							 },
 							 {
@@ -383,7 +542,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 					},
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
@@ -448,7 +607,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 					},
 					{
 						xtype:'fieldset',
-						height: 200,
+						height: 240,
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
@@ -571,7 +730,9 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
    
    	afterLoad: function() {
 		var me = this;
-		me.lookupController().getViewModel().getData().storePreciosVigentes.load();
+		if (me.lookupController().getViewModel().getData().isCarteraBankia == false) {
+			me.lookupController().getViewModel().getData().storePreciosVigentes.load();
+		}
 		me.lookupController().getViewModel().getData().storeHistoricoValoresPrecios.load();
 	},
    

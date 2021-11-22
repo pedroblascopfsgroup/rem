@@ -86,7 +86,11 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String suplidosVinculadosCod;
    	private String facturaPrincipalSuplido;
    	private Boolean visibleSuplidos;
+   	private String numeroContratoAlquiler;
    	private Boolean solicitudPagoUrgente;
+	private Boolean subrogado;
+	private String carteraPropietarioCodigo;
+	private String claveFactura;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -478,10 +482,38 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setVisibleSuplidos(Boolean visibleSuplidos) {
 		this.visibleSuplidos = visibleSuplidos;
 	}
+	
+	public String getNumeroContratoAlquiler() {
+		return numeroContratoAlquiler;
+	}
+	
+	public void setNumeroContratoAlquiler(String numeroContratoAlquiler) {
+		this.numeroContratoAlquiler = numeroContratoAlquiler;
+	}
+
 	public Boolean getSolicitudPagoUrgente() {
 		return solicitudPagoUrgente;
 	}
 	public void setSolicitudPagoUrgente(Boolean solicitudPagoUrgente) {
 		this.solicitudPagoUrgente = solicitudPagoUrgente;
 	}
+	public Boolean getSubrogado() {
+		return subrogado;
+	}
+	public void setSubrogado(Boolean subrogado) {
+		this.subrogado = subrogado;
+	}
+	public String getCarteraPropietarioCodigo() {
+		return carteraPropietarioCodigo;
+	}
+	public void setCarteraPropietarioCodigo(String carteraPropietarioCodigo) {
+		this.carteraPropietarioCodigo = carteraPropietarioCodigo;
+	}
+	public String getClaveFactura() {
+		return claveFactura;
+	}
+	public void setClaveFactura(String claveFactura) {
+		this.claveFactura = claveFactura;
+	}
+	
 }

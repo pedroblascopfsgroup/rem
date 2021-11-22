@@ -29,6 +29,7 @@ public interface TabActivoService extends GenericService{
 	public static final String TAB_PLUSVALIA = "plusvalia";
 	public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
 	public static final String TAB_SANEAMIENTO = "saneamiento";
+	public static final String TAB_INFORME_FISCAL = "informefiscal";
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	

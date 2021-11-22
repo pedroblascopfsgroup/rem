@@ -30,7 +30,8 @@ public interface GenericABMDao {
 		EQUALS,
 		NULL,
 		NOTNULL,
-		SIMILARY
+		SIMILARY,
+		NOT_EQUALS	
 	}
 
 	/**

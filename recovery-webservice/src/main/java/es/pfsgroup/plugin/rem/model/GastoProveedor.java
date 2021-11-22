@@ -54,6 +54,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class GastoProveedor implements Serializable, Auditable {
+
+	public static final String FECHA_EMISION_GASTO_POSTERIOR ="15/11/2021";
 	
     /**
 	 * 
@@ -193,10 +195,24 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_NUMERO_FACTURA_PPAL")
 	private String numeroFacturaPrincipal;
-	
+		
+	@Column(name="GPV_NUM_CONTR_ALQUILER")
+	private String numeroContratoAlquiler;
+
 	@Column(name="GPV_SOLICITUD_PAGO_URGENTE")
 	private Integer solicitudPagoUrgente;
-    
+
+	@OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "GPV_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<GastoTasacionActivo> gastoTasacionActivo;
+
+	@Column(name="ALQ_SUBROGADO")
+	private Boolean subrogado;
+	
+	@Column(name="CLAVE_FACTURA")
+	private String claveFactura;
+	
 	@Version   
 	private Long version;
 
@@ -543,6 +559,14 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
 		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
 	}
+
+	public String getNumeroContratoAlquiler() {
+		return numeroContratoAlquiler;
+	}
+
+	public void setNumeroContratoAlquiler(String numeroContratoAlquiler) {
+		this.numeroContratoAlquiler = numeroContratoAlquiler;
+	}
 	
 	public Integer getSolicitudPagoUrgente() {
 		return solicitudPagoUrgente;
@@ -551,4 +575,29 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setSolicitudPagoUrgente(Integer solicitudPagoUrgente) {
 		this.solicitudPagoUrgente = solicitudPagoUrgente;
 	}
+
+	public List<GastoTasacionActivo> getGastoTasacionActivo() {
+		return gastoTasacionActivo;
+	}
+
+	public void setGastoTasacionActivo(List<GastoTasacionActivo> gastoTasacionActivo) {
+		this.gastoTasacionActivo = gastoTasacionActivo;
+	}
+
+	public Boolean getSubrogado() {
+		return subrogado;
+	}
+
+	public void setSubrogado(Boolean subrogado) {
+		this.subrogado = subrogado;
+	}
+
+	public String getClaveFactura() {
+		return claveFactura;
+	}
+
+	public void setClaveFactura(String claveFactura) {
+		this.claveFactura = claveFactura;
+	}
+	
 }

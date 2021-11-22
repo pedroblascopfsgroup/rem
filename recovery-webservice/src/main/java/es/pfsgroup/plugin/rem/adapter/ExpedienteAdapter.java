@@ -19,6 +19,7 @@ public class ExpedienteAdapter {
 	// ENDPOINT CONTRASTE LISTAS
 	private static final String REM3_URL = "rem3.base.url";
 	private static final String CONTRASTE_LISTAS_SERVICE = "rem3.endpoint.comercial.contraste.listas";
+	private static final String LANZAR_INTERLOCUTORES_OFERTAS = "rem3.endpoint.comercial.lanzar.interlocutores.ofertas";
 	
 	
 	public static final String DEV = "DEV";
@@ -42,6 +43,16 @@ public class ExpedienteAdapter {
 	public String getContrasteListasREM3Endpoint() {
 		String url = appProperties.getProperty(REM3_URL);  
 		String service = appProperties.getProperty(CONTRASTE_LISTAS_SERVICE);
+		if ( url == null ) {
+			return null;
+		} else {
+			return String.format("%s%s",url,service);
+		}
+	}
+
+	public String getlanzarDatosPbcREM3Endpoint() {
+		String url = appProperties.getProperty(REM3_URL);
+		String service = appProperties.getProperty(LANZAR_INTERLOCUTORES_OFERTAS);
 		if ( url == null ) {
 			return null;
 		} else {

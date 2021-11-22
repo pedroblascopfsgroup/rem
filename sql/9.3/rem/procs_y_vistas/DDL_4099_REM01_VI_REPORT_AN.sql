@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210112
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211018
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12688
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-15634
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##		0.2 Cambio en estado de conservación
 --##		0.3 GUILLEM REY - traducir descripciones diccionario
 --##		0.4 Carles Molins - campo idSantander
+--##        0.5 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
 --##########################################
 --*/
 
@@ -73,7 +74,7 @@ BEGIN
         JOIN '||V_ESQUEMA||'.ACT_OFR AOFR ON OFR.OFR_ID = AOFR.OFR_ID
         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AOFR.ACT_ID = ACT.ACT_ID
         JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON ACT.DD_TPA_ID = TPA.DD_TPA_ID
-		JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
+		LEFT JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
         JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION LOC ON ACT.BIE_ID = LOC.BIE_ID
         JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD DDLOC ON LOC.DD_LOC_ID = DDLOC.DD_LOC_ID
         JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV ON LOC.DD_PRV_ID = PRV.DD_PRV_ID

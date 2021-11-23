@@ -246,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '03' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
             if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
             	allowEdit = true;
             }
@@ -489,7 +489,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	saveFn: function (editor, grid, context) {
 		var me = grid;
-		if (me.isValidRecord(context.record)) {	
+		if (me.isValidRecord(context.record)) {
 			me.mask(HreRem.i18n("msg.mask.espere"));
     		context.record.save({
                 params: {
@@ -529,10 +529,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
     
 	isValidRecord: function (record, context) {
-		
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
+        var activo = me.lookupController().getViewModel().get('activo');
 
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
@@ -549,9 +549,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			    codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
 			}
 		}
-		
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
-		
+        if(hayOfertaAceptada
+            && CONST.ESTADOS_OFERTA['CONGELADA'] == codigoEstadoAnterior
+            && CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo){
+                me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+                return false;
+        }
+
 		//Si no está en estado "Pendiente", no se puede tramitar
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
 		    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
@@ -560,15 +565,16 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		if(me.lookupViewModel().get('activo.tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['LIBRE'] && (me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['ALQUILADO'] || me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['VENDIDO'])) {
+			if(!activo.get('isCarteraBankia') && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
+                me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.solo.tramitar.pendiente"));
+                return false;
+			}
 			return true;
 		}
 		else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 			return false;
-		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
-			return false;
-		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
+		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
 		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
@@ -687,7 +693,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var ofertasData = me.getNavigationModel().store.data.items;
 		var ofertaSeleccionadaData = selectionModel.getSelection()[0].data;
 
-		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] && ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
+		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'] || ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['CADUCADA'];
 		
 		if (!sePuedeClonarExpediente) {
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.anulada"));

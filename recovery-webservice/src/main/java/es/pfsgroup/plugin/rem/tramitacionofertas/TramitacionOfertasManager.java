@@ -1292,6 +1292,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (!Checks.esNulo(titularAdicional.getLocalidadNacimientoRep())) {
 						compradorExpedienteAdicionalNuevo.setLocalidadNacimientoRepresentante(titularAdicional.getLocalidadNacimientoRep());
 					}
+					
+					if (!Checks.esNulo(titularAdicional.getEmail())) {
+						compradorExpedienteAdicionalNuevo.setEmailRepresentante(titularAdicional.getEmail());
+					}
+					
+					if (!Checks.esNulo(titularAdicional.getTelefono1())) {
+						compradorExpedienteAdicionalNuevo.setTelefono1Representante(titularAdicional.getTelefono1());
+					}
 
 					if(oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 						this.setInterlocutorOferta(compradorExpedienteAdicionalNuevo, false, oferta);
@@ -2152,12 +2160,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		
-		logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java con los valores: " + (oferta != null) + " && (" + oferta.getOfertaEspecial() + " || " + oferta.getOfertaExpress() + ") && " + ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta) + " && " + boardingComunicacionApi.modoRestClientBoardingActivado());
 		if(oferta != null && ((oferta.getOfertaEspecial() != null && oferta.getOfertaEspecial()) || (oferta.getOfertaExpress() != null && oferta.getOfertaExpress()))
 				&& ofertaManager.esOfertaValidaCFVByCarteraSubcartera(oferta)  && boardingComunicacionApi.modoRestClientBoardingActivado()) {
-			logger.error("Oferta Express numero " + oferta.getNumOferta() + " lanzándose a CFV en TramitacionOfertasManager.java linea 1991");
 			boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_1_MINUTO);
-			logger.error("Oferta Express numero " + oferta.getNumOferta() + " enviada a CFV en TramitacionOfertasManager.java linea 1993");
 		}
 		
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -2349,15 +2354,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
 		cex.setInterlocutorOferta(interlocutor);
 
+		DDInterlocutorOferta interlocutorRep = null;
+
 		if(cex.getDocumentoRepresentante() != null){
 			Comprador com = cex.getPrimaryKey().getComprador();
 			if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
 			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
 			}
-			cex.setInterlocutorOferta(interlocutor);
-			cex.setInterlocutorOfertaRepresentante(interlocutor);
+			if (interlocutorRep != null)
+			cex.setInterlocutorOfertaRepresentante(interlocutorRep);
 		}
 
 

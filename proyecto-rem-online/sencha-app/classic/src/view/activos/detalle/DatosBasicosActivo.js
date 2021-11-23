@@ -142,6 +142,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	}
 				                
 				                },
+								{
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.reo.preinmueble'),
+				                	name: 'combopreinmueble',
+				                	reference: 'combopreinmuebleRef',
+				                	bind: {	
+					                	readOnly : '{!esUnRolPreinmueble}',
+				                		store: '{comboSiNoNSRem}',
+				                		value: '{activo.enTramite}',
+				                		hidden: '{!activo.isCarteraTitulizada}'
+				                	}
+				                
+				                },
 				                {
 				                	xtype: 'displayfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.agrupacion.obra.nueva.bc'),
@@ -312,7 +325,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								        	name: 'estadoActivoCodigo',
 								        	reference: 'estadoActivoCodigoRef',
 								        	bind: {
-								        		disabled: '{!tieneGestionDnd}',
+								        		readOnly: '{tieneGestionDnd}',
 							            		store: '{comboEstadoActivo}',
 							            		value: '{activo.estadoActivoCodigo}',
 												rawValue: '{activo.estadoActivoDescripcion}'
@@ -323,6 +336,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								        	fieldLabel:  HreRem.i18n('fieldlabel.gestion.dnd'),
 								        	name: 'gestionDndCodigo',
 								        	reference: 'gestionDndCodigoRef',
+											readOnly : true,
 								        	bind: {
 							            		store: '{comboGestionDnd}',
 							            		value: '{activo.tieneGestionDndCodigo}',
@@ -1502,7 +1516,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									readOnly : '{esUA}',
 									store: '{comboEntradaActivoBankia}',
-									hidden: '{!activo.isCarteraBankia}',
+									hidden: '{!activo.isCarteraTitulizadayBankia}',
 									value: '{activo.entradaActivoBankiaCodigo}',
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}

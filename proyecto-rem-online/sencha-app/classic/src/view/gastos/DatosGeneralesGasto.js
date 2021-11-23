@@ -116,6 +116,15 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							         	},
 							         	allowBlank: false
 							    	},
+									{
+										xtype: 'textfieldbase',
+										fieldLabel:  HreRem.i18n('fieldlabel.gasto.clave.factura'),
+						               	reference: 'claveFactura',
+						               	name: 'claveFactura',
+						               	bind:	{
+					                		value: '{gasto.claveFactura}'
+					                	}
+									},
 							    	{
 					                	xtype: 'checkboxfieldbase',
 					                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subrogado'),

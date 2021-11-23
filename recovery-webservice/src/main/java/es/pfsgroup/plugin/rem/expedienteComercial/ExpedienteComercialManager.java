@@ -5674,6 +5674,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (vinculoCaixa != null) {
 				compradorExpediente.setVinculoCaixa(vinculoCaixa);
 			}
+			
+			DDPaises nacionalidad = null;
+			if (dto.getNacionalidadCodigo() != null) {
+				nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+				if (nacionalidad != null) {
+					compradorExpediente.setNacionalidadCodigo(nacionalidad);
+				}
+			}
+			
+			if (dto.getNacionalidadRprCodigo() != null ) {
+				nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+				if (nacionalidad != null) {
+					compradorExpediente.setNacionalidadRprCodigo(nacionalidad);
+				}
+			}
+			
 			if (esNuevo) {
 				
 				Oferta oferta = expedienteComercial.getOferta();
@@ -6539,6 +6555,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				if (dto.getOficinaTrabajo() != null) {
 					compradorExpediente.setOficinaTrabajo(dto.getOficinaTrabajo());
+				}
+				
+				DDPaises nacionalidad = null;
+				if (dto.getNacionalidadCodigo() != null) {
+					nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+					if (nacionalidad != null) {
+						compradorExpediente.setNacionalidadCodigo(nacionalidad);
+					}
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null ) {
+					nacionalidad = genericDao.get(DDPaises.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					if (nacionalidad != null) {
+						compradorExpediente.setNacionalidadRprCodigo(nacionalidad);
+					}
 				}
 
 				// Datos representante

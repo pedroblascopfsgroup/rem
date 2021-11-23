@@ -215,6 +215,10 @@ public class DtoModificarCompradores{
 
 	private String oficinaTrabajo;
 	
+	private String nacionalidadCodigo;
+	
+	private String nacionalidadRprCodigo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1032,6 +1036,22 @@ public class DtoModificarCompradores{
 
 	public void setOficinaTrabajo(String oficinaTrabajo) {
 		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public String getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(String nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public String getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}
 	
 }

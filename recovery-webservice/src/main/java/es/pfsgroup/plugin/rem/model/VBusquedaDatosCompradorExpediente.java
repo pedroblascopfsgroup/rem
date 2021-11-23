@@ -315,7 +315,13 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name="CEX_OFICINA_TRABAJO")
     private String oficinaTrabajo;
-
+	
+	@Column(name="CEX_NACIONALIDAD_PAI")
+    private String nacionalidadCodigo;
+	
+	@Column(name="CEX_NACIONALIDAD_PAI_RPR")
+    private String nacionalidadRprCodigo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1112,6 +1118,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setOficinaTrabajo(String oficinaTrabajo) {
 		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public String getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(String nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public String getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}	
 	
 }

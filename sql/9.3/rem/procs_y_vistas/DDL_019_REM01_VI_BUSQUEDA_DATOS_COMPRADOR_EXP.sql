@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20211102
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20211117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=16128
+--## INCIDENCIA_LINK=16425
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -25,7 +25,8 @@
 --##		0.11 Versión - HREOS-14704 	- Lara Pablo - Añadidas columnas DD_VIC_CODIGO
 --##		0.12 Versión - HREOS-14641	- Sergio Gomez - Quitar COM_FECHA_NACIMIENTO
 --##		0.13 Versión - HREOS-15099  - Javier Esbri - Añadir campos de comprador y representate
---##		0.13 Versión - HREOS-16128  - Lara Pablo - Cambiar mapeo de C4C_ID (Cambia de la CEX a la IAP)
+--##		0.14 Versión - HREOS-16128  - Lara Pablo - Cambiar mapeo de C4C_ID (Cambia de la CEX a la IAP)
+--##		0.15 Versión - HREOS-16425  - Javier Esbri - Añadir campos de comprador y representate
 --##########################################
 --*/
 
@@ -167,7 +168,9 @@ BEGIN
 			PRVCOM.DD_PRV_CODIGO AS DD_PRV_CODIGO_NAC_COM,
 			PRVCOM.DD_PRV_DESCRIPCION AS DD_PRV_DESCRIPCION_NAC_COM,
 			CEX.CEX_SOCIEDAD AS CEX_SOCIEDAD,
-			CEX.CEX_OFICINA_TRABAJO AS CEX_OFICINA_TRABAJO
+			CEX.CEX_OFICINA_TRABAJO AS CEX_OFICINA_TRABAJO,
+			CEX.DD_PAI_ID_ISO AS CEX_NACIONALIDAD_PAI,
+			CEX.DD_PAI_ID_ISO_RPR AS CEX_NACIONALIDAD_PAI_RPR
 
 		FROM REM01.COM_COMPRADOR COM
 	      	LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID

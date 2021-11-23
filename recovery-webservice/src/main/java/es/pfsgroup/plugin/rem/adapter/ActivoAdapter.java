@@ -4203,7 +4203,18 @@ public class ActivoAdapter {
 				if (dto.getAntiguoDeudor() != null) {
 					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
 				}
-
+				
+				if (dto.getNacionalidadCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+					iap.setNacionalidadCodigo(nacionalidad);
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					iap.setNacionalidadRprCodigo(nacionalidad);
+				}
 				genericDao.save(InfoAdicionalPersona.class, iap);
 
 			}

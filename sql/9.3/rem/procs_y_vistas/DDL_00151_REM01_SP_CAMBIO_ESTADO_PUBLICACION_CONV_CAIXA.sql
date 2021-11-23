@@ -1007,21 +1007,7 @@ END IF;
 
 		    EXECUTE IMMEDIATE V_MSQL;
         END IF;
-
-        /**************/
-        /*CANAL DE PUBLICACION*/
-        /**************/
-        V_MSQL := 'SELECT EPV.DD_EPV_CODIGO, POR.DD_POR_CODIGO
-                  FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
-                  JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
-                  LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
-                  WHERE APU.ACT_ID = '||nACT_ID||'
-                      AND APU.BORRADO = 0';
-        EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V, cDD_POR_CODIGO;
-
-        IF cCODIGO_ESTADO_V IN ('03', '04') THEN
-            #ESQUEMA#.SP_PORTALES_ACTIVO(nACT_ID, null, pUSUARIOMODIFICAR, OutCANAL);
-        END IF;
+        
         /**************/
         /*HISTORIFICAR*/
         /**************/

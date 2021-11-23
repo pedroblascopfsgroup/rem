@@ -196,6 +196,7 @@ Ext.define('HreRem.model.OfertaComercial', {
 
 		api: {
             read: '',
+            timeout: 120000,
             create: 'agrupacion/createOferta',
             update: '',
             destroy: ''

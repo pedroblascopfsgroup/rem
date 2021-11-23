@@ -264,6 +264,9 @@ Ext.define('HreRem.model.GastoProveedor', {
     	},
     	{
     		name:'carteraPropietarioCodigo'
+    	},
+    	{
+    		name:'claveFactura'
     	}
    		
     ],

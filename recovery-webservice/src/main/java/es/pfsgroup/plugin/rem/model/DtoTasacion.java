@@ -44,7 +44,51 @@ public class DtoTasacion {
     private String externoBbva;
     private Long numGastoHaya;
     private Long idGasto;
-
+    private Double superficieParcela;
+    private Double superficie;
+    private String referenciaTasadora;
+    private String acogidaNormativa;
+    private Double valorHipotesisEdificioTerminadoPromocion;
+    private String advertencias;
+    private String codigoSociedadTasacionValoracion;
+    private String condicionantes;
+    private String metodoValoracionCodigo;
+    private Double valorTerreno;
+    private Double valorTerrenoAjustado;
+    private Double valorHipotesisEdificioTerminado;
+    private Double valorHipotecario;
+    private String visitaAnteriorInmueble;
+    private Double superficieAdoptada;
+    private Double costeEstimadoTerminarObra;
+    private Double costeDestinaUsoPropio;
+    private Date fechaEstimadaTerminarObra;
+    private Long mrdPlazoMaximoFinalizarComercializacion;
+    private Long mrdPlazoMaximoFinalizarConstruccion;
+    private Double mrdTasaAnualizadaHomogenea;
+    private Double mrdTasaActualizacion;
+    private Double mreMargenBeneficioPromotor;
+    private Double superficieTerreno;
+    private Double tasaAnualMedioVariacionPrecioMercado;
+    private Double aprovechamientoParcelaSuelo;
+    private String desarrolloPlanteamientoCodigo;
+    private String faseGestionCodigo;
+    private Long numeroViviendas;
+    private Double porcentajeAmbitoValorado;
+    private String productoDesarrollarCodigo;
+    private String proximidadRespectoNucleoUrbanoCodigo;
+    private String sistemaGestionCodigo;
+    private String tipoSueloCodigo;
+    private Double aprovechamiento;
+    private Date fechaUltimoGradoAvanceEstimado;
+    private Double porcentajeUrbanizacionEjecutado;
+    private Double porcentajeAmbitoValoradoEntero;
+    private String productoDesarrollarPrevistoCodigo;
+    private String proyectoObra;
+    private Double gastosComercialesTasacion;
+    private String porcentajeCosteDefecto;
+    private String fincaRusticaExpectativasUrbanisticas;
+    private String paralizacionUrbanizacion;
+    private String tipoDatoUtilizadoInmuebleComparableCodigo;
 
 	public Long getId() {
 		return id;
@@ -268,4 +312,275 @@ public class DtoTasacion {
 	public void setIdGasto(Long idGasto) {
 		this.idGasto = idGasto;
 	}
+	public Double getSuperficieParcela() {
+		return superficieParcela;
+	}
+	public void setSuperficieParcela(Double superficieParcela) {
+		this.superficieParcela = superficieParcela;
+	}
+	public Double getSuperficie() {
+		return superficie;
+	}
+	public void setSuperficie(Double superficie) {
+		this.superficie = superficie;
+	}
+	public String getReferenciaTasadora() {
+		return referenciaTasadora;
+	}
+	public void setReferenciaTasadora(String referenciaTasadora) {
+		this.referenciaTasadora = referenciaTasadora;
+	}
+	public String getAcogidaNormativa() {
+		return acogidaNormativa;
+	}
+	public void setAcogidaNormativa(String acogidaNormativa) {
+		this.acogidaNormativa = acogidaNormativa;
+	}
+	public Double getValorHipotesisEdificioTerminadoPromocion() {
+		return valorHipotesisEdificioTerminadoPromocion;
+	}
+	public void setValorHipotesisEdificioTerminadoPromocion(Double valorHipotesisEdificioTerminadoPromocion) {
+		this.valorHipotesisEdificioTerminadoPromocion = valorHipotesisEdificioTerminadoPromocion;
+	}
+	public String getAdvertencias() {
+		return advertencias;
+	}
+	public void setAdvertencias(String advertencias) {
+		this.advertencias = advertencias;
+	}
+	public String getCodigoSociedadTasacionValoracion() {
+		return codigoSociedadTasacionValoracion;
+	}
+	public void setCodigoSociedadTasacionValoracion(String codigoSociedadTasacionValoracion) {
+		this.codigoSociedadTasacionValoracion = codigoSociedadTasacionValoracion;
+	}
+	public String getCondicionantes() {
+		return condicionantes;
+	}
+	public void setCondicionantes(String condicionantes) {
+		this.condicionantes = condicionantes;
+	}
+	public String getMetodoValoracionCodigo() {
+		return metodoValoracionCodigo;
+	}
+	public void setMetodoValoracionCodigo(String metodoValoracionCodigo) {
+		this.metodoValoracionCodigo = metodoValoracionCodigo;
+	}
+	public Double getValorTerreno() {
+		return valorTerreno;
+	}
+	public void setValorTerreno(Double valorTerreno) {
+		this.valorTerreno = valorTerreno;
+	}
+	public Double getValorTerrenoAjustado() {
+		return valorTerrenoAjustado;
+	}
+	public void setValorTerrenoAjustado(Double valorTerrenoAjustado) {
+		this.valorTerrenoAjustado = valorTerrenoAjustado;
+	}
+	public Double getValorHipotesisEdificioTerminado() {
+		return valorHipotesisEdificioTerminado;
+	}
+	public void setValorHipotesisEdificioTerminado(Double valorHipotesisEdificioTerminado) {
+		this.valorHipotesisEdificioTerminado = valorHipotesisEdificioTerminado;
+	}
+	public Double getValorHipotecario() {
+		return valorHipotecario;
+	}
+	public void setValorHipotecario(Double valorHipotecario) {
+		this.valorHipotecario = valorHipotecario;
+	}
+	public String getVisitaAnteriorInmueble() {
+		return visitaAnteriorInmueble;
+	}
+	public void setVisitaAnteriorInmueble(String visitaAnteriorInmueble) {
+		this.visitaAnteriorInmueble = visitaAnteriorInmueble;
+	}
+	public Double getSuperficieAdoptada() {
+		return superficieAdoptada;
+	}
+	public void setSuperficieAdoptada(Double superficieAdoptada) {
+		this.superficieAdoptada = superficieAdoptada;
+	}
+	public Double getCosteEstimadoTerminarObra() {
+		return costeEstimadoTerminarObra;
+	}
+	public void setCosteEstimadoTerminarObra(Double costeEstimadoTerminarObra) {
+		this.costeEstimadoTerminarObra = costeEstimadoTerminarObra;
+	}
+	public Double getCosteDestinaUsoPropio() {
+		return costeDestinaUsoPropio;
+	}
+	public void setCosteDestinaUsoPropio(Double costeDestinaUsoPropio) {
+		this.costeDestinaUsoPropio = costeDestinaUsoPropio;
+	}
+	public Date getFechaEstimadaTerminarObra() {
+		return fechaEstimadaTerminarObra;
+	}
+	public void setFechaEstimadaTerminarObra(Date fechaEstimadaTerminarObra) {
+		this.fechaEstimadaTerminarObra = fechaEstimadaTerminarObra;
+	}
+	public Long getMrdPlazoMaximoFinalizarComercializacion() {
+		return mrdPlazoMaximoFinalizarComercializacion;
+	}
+	public void setMrdPlazoMaximoFinalizarComercializacion(Long mrdPlazoMaximoFinalizarComercializacion) {
+		this.mrdPlazoMaximoFinalizarComercializacion = mrdPlazoMaximoFinalizarComercializacion;
+	}
+	public Long getMrdPlazoMaximoFinalizarConstruccion() {
+		return mrdPlazoMaximoFinalizarConstruccion;
+	}
+	public void setMrdPlazoMaximoFinalizarConstruccion(Long mrdPlazoMaximoFinalizarConstruccion) {
+		this.mrdPlazoMaximoFinalizarConstruccion = mrdPlazoMaximoFinalizarConstruccion;
+	}
+	public Double getMrdTasaAnualizadaHomogenea() {
+		return mrdTasaAnualizadaHomogenea;
+	}
+	public void setMrdTasaAnualizadaHomogenea(Double mrdTasaAnualizadaHomogenea) {
+		this.mrdTasaAnualizadaHomogenea = mrdTasaAnualizadaHomogenea;
+	}
+	public Double getMrdTasaActualizacion() {
+		return mrdTasaActualizacion;
+	}
+	public void setMrdTasaActualizacion(Double mrdTasaActualizacion) {
+		this.mrdTasaActualizacion = mrdTasaActualizacion;
+	}
+	public Double getMreMargenBeneficioPromotor() {
+		return mreMargenBeneficioPromotor;
+	}
+	public void setMreMargenBeneficioPromotor(Double mreMargenBeneficioPromotor) {
+		this.mreMargenBeneficioPromotor = mreMargenBeneficioPromotor;
+	}
+	public Double getSuperficieTerreno() {
+		return superficieTerreno;
+	}
+	public void setSuperficieTerreno(Double superficieTerreno) {
+		this.superficieTerreno = superficieTerreno;
+	}
+	public Double getTasaAnualMedioVariacionPrecioMercado() {
+		return tasaAnualMedioVariacionPrecioMercado;
+	}
+	public void setTasaAnualMedioVariacionPrecioMercado(Double tasaAnualMedioVariacionPrecioMercado) {
+		this.tasaAnualMedioVariacionPrecioMercado = tasaAnualMedioVariacionPrecioMercado;
+	}
+	public Double getAprovechamientoParcelaSuelo() {
+		return aprovechamientoParcelaSuelo;
+	}
+	public void setAprovechamientoParcelaSuelo(Double aprovechamientoParcelaSuelo) {
+		this.aprovechamientoParcelaSuelo = aprovechamientoParcelaSuelo;
+	}
+	public String getDesarrolloPlanteamientoCodigo() {
+		return desarrolloPlanteamientoCodigo;
+	}
+	public void setDesarrolloPlanteamientoCodigo(String desarrolloPlanteamientoCodigo) {
+		this.desarrolloPlanteamientoCodigo = desarrolloPlanteamientoCodigo;
+	}
+	public String getFaseGestionCodigo() {
+		return faseGestionCodigo;
+	}
+	public void setFaseGestionCodigo(String faseGestionCodigo) {
+		this.faseGestionCodigo = faseGestionCodigo;
+	}
+	public Long getNumeroViviendas() {
+		return numeroViviendas;
+	}
+	public void setNumeroViviendas(Long numeroViviendas) {
+		this.numeroViviendas = numeroViviendas;
+	}
+	public Double getPorcentajeAmbitoValorado() {
+		return porcentajeAmbitoValorado;
+	}
+	public void setPorcentajeAmbitoValorado(Double porcentajeAmbitoValorado) {
+		this.porcentajeAmbitoValorado = porcentajeAmbitoValorado;
+	}
+	public String getProductoDesarrollarCodigo() {
+		return productoDesarrollarCodigo;
+	}
+	public void setProductoDesarrollarCodigo(String productoDesarrollarCodigo) {
+		this.productoDesarrollarCodigo = productoDesarrollarCodigo;
+	}
+	public String getProximidadRespectoNucleoUrbanoCodigo() {
+		return proximidadRespectoNucleoUrbanoCodigo;
+	}
+	public void setProximidadRespectoNucleoUrbanoCodigo(String proximidadRespectoNucleoUrbanoCodigo) {
+		this.proximidadRespectoNucleoUrbanoCodigo = proximidadRespectoNucleoUrbanoCodigo;
+	}
+	public String getSistemaGestionCodigo() {
+		return sistemaGestionCodigo;
+	}
+	public void setSistemaGestionCodigo(String sistemaGestionCodigo) {
+		this.sistemaGestionCodigo = sistemaGestionCodigo;
+	}
+	public String getTipoSueloCodigo() {
+		return tipoSueloCodigo;
+	}
+	public void setTipoSueloCodigo(String tipoSueloCodigo) {
+		this.tipoSueloCodigo = tipoSueloCodigo;
+	}
+	public Double getAprovechamiento() {
+		return aprovechamiento;
+	}
+	public void setAprovechamiento(Double aprovechamiento) {
+		this.aprovechamiento = aprovechamiento;
+	}
+	public Date getFechaUltimoGradoAvanceEstimado() {
+		return fechaUltimoGradoAvanceEstimado;
+	}
+	public void setFechaUltimoGradoAvanceEstimado(Date fechaUltimoGradoAvanceEstimado) {
+		this.fechaUltimoGradoAvanceEstimado = fechaUltimoGradoAvanceEstimado;
+	}
+	public Double getPorcentajeUrbanizacionEjecutado() {
+		return porcentajeUrbanizacionEjecutado;
+	}
+	public void setPorcentajeUrbanizacionEjecutado(Double porcentajeUrbanizacionEjecutado) {
+		this.porcentajeUrbanizacionEjecutado = porcentajeUrbanizacionEjecutado;
+	}
+	public Double getPorcentajeAmbitoValoradoEntero() {
+		return porcentajeAmbitoValoradoEntero;
+	}
+	public void setPorcentajeAmbitoValoradoEntero(Double porcentajeAmbitoValoradoEntero) {
+		this.porcentajeAmbitoValoradoEntero = porcentajeAmbitoValoradoEntero;
+	}
+	public String getProductoDesarrollarPrevistoCodigo() {
+		return productoDesarrollarPrevistoCodigo;
+	}
+	public void setProductoDesarrollarPrevistoCodigo(String productoDesarrollarPrevistoCodigo) {
+		this.productoDesarrollarPrevistoCodigo = productoDesarrollarPrevistoCodigo;
+	}
+	public String getProyectoObra() {
+		return proyectoObra;
+	}
+	public void setProyectoObra(String proyectoObra) {
+		this.proyectoObra = proyectoObra;
+	}
+	public Double getGastosComercialesTasacion() {
+		return gastosComercialesTasacion;
+	}
+	public void setGastosComercialesTasacion(Double gastosComercialesTasacion) {
+		this.gastosComercialesTasacion = gastosComercialesTasacion;
+	}
+	public String getPorcentajeCosteDefecto() {
+		return porcentajeCosteDefecto;
+	}
+	public void setPorcentajeCosteDefecto(String porcentajeCosteDefecto) {
+		this.porcentajeCosteDefecto = porcentajeCosteDefecto;
+	}
+	public String getFincaRusticaExpectativasUrbanisticas() {
+		return fincaRusticaExpectativasUrbanisticas;
+	}
+	public void setFincaRusticaExpectativasUrbanisticas(String fincaRusticaExpectativasUrbanisticas) {
+		this.fincaRusticaExpectativasUrbanisticas = fincaRusticaExpectativasUrbanisticas;
+	}
+	public String getParalizacionUrbanizacion() {
+		return paralizacionUrbanizacion;
+	}
+	public void setParalizacionUrbanizacion(String paralizacionUrbanizacion) {
+		this.paralizacionUrbanizacion = paralizacionUrbanizacion;
+	}
+	public String getTipoDatoUtilizadoInmuebleComparableCodigo() {
+		return tipoDatoUtilizadoInmuebleComparableCodigo;
+	}
+	public void setTipoDatoUtilizadoInmuebleComparableCodigo(String tipoDatoUtilizadoInmuebleComparableCodigo) {
+		this.tipoDatoUtilizadoInmuebleComparableCodigo = tipoDatoUtilizadoInmuebleComparableCodigo;
+	}
+
 }

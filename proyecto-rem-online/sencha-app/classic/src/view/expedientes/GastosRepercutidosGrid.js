@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 	addButton	: true,
 	requires	: ['HreRem.model.GastosRepercutidosModel'],
 	reference	: 'gastosRepercutidosGrid',
-	editOnSelect: false, 
+	editOnSelect: true, 
 	bind: { 
 		store: '{storeGastosRepercutidos}'
 	},
@@ -122,6 +122,9 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		var meses = context.newValues.meses;
 		var fechaAlta = context.newValues.fechaAlta;
 		var id = null;
+		if(!Ext.isEmpty(context.newValues.id) && me.isNumber(context.newValues.id)){
+			id = context.newValues.id;
+		}
 		
 		Ext.Ajax.request({
 		     url: url,
@@ -139,9 +142,14 @@ Ext.define('HreRem.view.expedientes.GastosRepercutidosGrid', {
 		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	},callback: function(record, operation) {
 		 		me.getStore().load();
+		 		me.disableAddButton(false);
 		    }
 		});
 
-    }
+    },
+    
+   isNumber: function(n) {
+	  return !isNaN(parseFloat(n)) && isFinite(n);
+	}
     
 });

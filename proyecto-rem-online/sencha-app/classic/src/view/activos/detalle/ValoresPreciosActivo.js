@@ -414,9 +414,11 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				items :	[
 				   {
 					   xtype: 'currencyfieldbase',
-					   readOnly: true,
 					   fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion.no.judicial'),
-					   bind:  '{valoraciones.valorAdquisicion}',
+					   bind:  {
+							value: '{valoraciones.valorAdquisicion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					   },
 					   margin: '0 0 0 8'
 				   },
 				   {
@@ -425,9 +427,12 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 				   },
 				   {
 					   xtype: 'currencyfieldbase',
-					   readOnly: true,
+					   readOnly: '{!activo.isCarteraTitulizada}',
 					   fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion.judicial'),
-					   bind: '{valoraciones.importeAdjudicacion}'
+						bind:  {
+							value: '{valoraciones.importeAdjudicacion}',
+							readOnly: '{!activo.isCarteraTitulizada}'
+					   }
 					   
 				   }
 				]

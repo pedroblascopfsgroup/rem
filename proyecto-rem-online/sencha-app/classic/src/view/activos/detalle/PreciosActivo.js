@@ -99,10 +99,13 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 		}else{
 		 ocultarValorespreciosactivo = !$AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');
 		}
+		
+		var ocultarEdicionTasacionesActivo = !(me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo') == CONST.CARTERA['TITULIZADA'] 
+					&& ($AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_PRECIOS'])));
 
      	var items = [];
      	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'valorespreciosactivo', ocultarBotonesEdicion: ocultarValorespreciosactivo})}, ['TAB_VALORACIONES_PRECIOS']);
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tasacionesactivo', ocultarBotonesEdicion: true})}, ['TAB_TASACIONES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tasacionesactivo', ocultarBotonesEdicion: ocultarEdicionTasacionesActivo})}, ['TAB_TASACIONES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'propuestaspreciosactivo', ocultarBotonesEdicion: true})}, ['TAB_PROPUESTAS_PRECIO']);
         me.addPlugin({ptype: 'lazyitems', items: items });
      	me.callParent();

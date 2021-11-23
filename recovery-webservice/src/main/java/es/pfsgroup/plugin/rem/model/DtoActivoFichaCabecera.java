@@ -1762,6 +1762,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		return enTramite;
 	}
 
+	public void setEnTramite(Integer enTramite) {
+		this.enTramite = enTramite;
+	}
 
 	public Boolean getPertenceAgrupacionProyecto() {
 		return pertenceAgrupacionProyecto;
@@ -1785,10 +1788,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTienePromocion(Boolean tienePromocion) {
 		this.tienePromocion = tienePromocion;
-	}
-
-	public void setEnTramite(Integer enTramite) {
-		this.enTramite = enTramite;
 	}
 
 	public Boolean getTienePosibleInformeMediador() {

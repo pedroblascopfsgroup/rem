@@ -367,6 +367,13 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'nacionalidadRprCodigo'
+		},
+		{
+			name:'motivoEdicionCompradores'
+		},
+		{
+			name:'isExpedienteAprobado',
+			type : 'boolean'
 		}
 		
 		

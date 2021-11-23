@@ -997,7 +997,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						}else {
 							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
 						}
-
+						comprador.setIsExpedienteAprobado(funcionesTramitesApi.isTramiteAprobado(expediente));
+						comprador.setMotivoEdicionCompradores(expediente.getMotivoEdicionCompradorCbx());
 					}
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
@@ -1022,6 +1023,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				comprador.setNumeroClienteUrsus(null);
 				comprador.setNumeroClienteUrsusBh(null);
 			}
+			
+			
 			model.put(RESPONSE_DATA_KEY, comprador);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {

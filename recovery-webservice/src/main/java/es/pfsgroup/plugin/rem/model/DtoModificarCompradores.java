@@ -219,6 +219,10 @@ public class DtoModificarCompradores{
 	
 	private String nacionalidadRprCodigo;
 	
+	private String motivoEdicionCompradores;
+	
+	private Boolean isExpedienteAprobado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1052,6 +1056,22 @@ public class DtoModificarCompradores{
 
 	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
 		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
+	}
+
+	public String getMotivoEdicionCompradores() {
+		return motivoEdicionCompradores;
+	}
+
+	public void setMotivoEdicionCompradores(String motivoEdicionCompradores) {
+		this.motivoEdicionCompradores = motivoEdicionCompradores;
+	}
+
+	public Boolean getIsExpedienteAprobado() {
+		return isExpedienteAprobado;
+	}
+
+	public void setIsExpedienteAprobado(Boolean isExpedienteAprobado) {
+		this.isExpedienteAprobado = isExpedienteAprobado;
 	}
 	
 }

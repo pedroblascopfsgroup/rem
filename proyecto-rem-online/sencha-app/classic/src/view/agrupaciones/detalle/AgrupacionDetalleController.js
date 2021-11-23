@@ -954,7 +954,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	var record = window.getViewModel().get('ofertaRecord');
     	
 		if (grid.isValidRecord(record)) {				
-			
+
+			grid.mask()
+
     		record.save({
 
                 params: {

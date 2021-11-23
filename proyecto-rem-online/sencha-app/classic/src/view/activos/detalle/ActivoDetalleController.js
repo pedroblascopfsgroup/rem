@@ -4981,6 +4981,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		if (grid.isValidRecord(record)) {
 
+            grid.mask();
+
 			record.save({
 
 						params : {
@@ -5107,47 +5109,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
     	return propagableData;
     },
-    
-    onClickBotonGuardarMotivoRechazo: function(btn){
-    	var me = this;
-    	
-    	var window = btn.up('window');
-    	
-    	var grid = window.gridOfertas;
-    	var record = window.getViewModel().get('ofertaRecord');
-    	
-		if (grid.isValidRecord(record)) {				
-			
-    		record.save({
-
-                params: {
-                    idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal),
-                    esAnulacion: true
-                },
-                success: function (a, operation, c) {																			
-					grid.saveSuccessFn();
-				},
-                
-				failure: function (a, operation) {
-                	grid.saveFailureFn(operation);
-              	
-                },
-    			callback: function() {
-                	grid.unmask();
-                	grid.getStore().load();
-                }
-            });	                            
-    		grid.disableAddButton(false);
-    		grid.disablePagingToolBar(false);
-    		grid.getSelectionModel().deselectAll();
-// TODO: Encontrar la manera de realizar esto que me ha obligado a
-// duplicar este save del record y en este punto "editor" es indefinido
-// editor.isNew = false;
-		} else {
-		   grid.getStore().load(); 	
-		}
-    	window.close();
-	},
 
 	onClickBotonCancelarDistribucion : function(btn) {
 		var me = this, window = btn.up('window');

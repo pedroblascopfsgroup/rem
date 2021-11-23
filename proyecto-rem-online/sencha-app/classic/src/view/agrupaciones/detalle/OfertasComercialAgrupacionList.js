@@ -421,7 +421,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
-		
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
@@ -438,7 +437,17 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		}
 
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
-		
+
+		if (hayOfertaAceptada && codigoEstadoAnterior == CONST.ESTADOS_OFERTA['CONGELADA']){
+		    if(CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo
+		        && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo) {
+                me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+                return false;
+            }else{
+                return true;
+            }
+        }
+
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
 			    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.tramitar.oferta.no.pendiente"));

@@ -4282,6 +4282,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
 			},
 			autoLoad: true
+		},
+		comboTasadoraCaixa: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tasadoraCaixa'}
+			},
+			autoLoad: true
 		}
 	 }
 });

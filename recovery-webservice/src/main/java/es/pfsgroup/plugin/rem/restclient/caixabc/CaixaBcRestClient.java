@@ -208,9 +208,12 @@ public class CaixaBcRestClient {
                     }
                     if (dto.getRatingScoringServicerC4c() != null){
                         params.put("ratingScoringServicerC4c", dto.getRatingScoringServicerC4c());
-                    }             
+                    }
                     if (dto.getFechaScoringBc() != null){
                         params.put("fechaScoringBc", dto.getFechaScoringBc());
+                    }
+                    if (dto.getFechaEscritura() != null){
+                        params.put("fechaEscritura", dto.getFechaEscritura());
                     }
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(Boolean.class);

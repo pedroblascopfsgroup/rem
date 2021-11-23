@@ -67,7 +67,7 @@ BEGIN
                   , LOC.DD_LOC_CODIGO POBLACION
                   , EQV_PRV.DD_CODIGO_CAIXA REGION
                   , EQV_CIC.DD_CODIGO_CAIXA PAIS
-                  , ACT_LOC.LOC_DIRECCION_DOS CALLE2
+                  , SUBSTR(ACT_LOC.LOC_DIRECCION_DOS, 1, 40) CALLE2
                   , EQV_DIC.DD_CODIGO_CAIXA DISTRITO
                   , EQV_ESE.DD_CODIGO_CAIXA ALA_EDIFICIO
                   , EQV_PLN.DD_CODIGO_CAIXA PLANTA

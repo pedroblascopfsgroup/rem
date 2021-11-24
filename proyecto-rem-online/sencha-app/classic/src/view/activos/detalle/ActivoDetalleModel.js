@@ -1759,12 +1759,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		esCarteraSarebBbvaBankiaCajamarLiberbank : function(get){
-			var me = this;
-
 			var activo = null;
-			if (me.data.activo != null) {
-				activo = me.data.activo.getData();
-			}
+			if(get('activo') != null)
+				activo = get('activo').data;
 			
 			if (activo != null || activo != undefined) {
 				var esCarteraSareb = activo.isCarteraSareb;

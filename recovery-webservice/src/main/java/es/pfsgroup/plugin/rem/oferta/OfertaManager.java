@@ -2272,7 +2272,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) 
 										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
 									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
-										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()))) {
+										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
+								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
 										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							} 							
 						}

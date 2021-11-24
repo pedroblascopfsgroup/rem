@@ -16,6 +16,7 @@ public class ReplicarOfertaDto {
     private String codResultadoScoringBc;
     private String ratingScoringServicerC4c;
     private String fechaScoringBc;
+    private String fechaEscritura;
 
     public Long getNumeroOferta() {
         return numeroOferta;
@@ -129,4 +130,11 @@ public class ReplicarOfertaDto {
 		this.fechaScoringBc = fechaScoringBc;
 	}
 
+    public String getFechaEscritura() {
+        return fechaEscritura;
+    }
+
+    public void setFechaEscritura(String fechaEscritura) {
+        this.fechaEscritura = fechaEscritura;
+    }
 }

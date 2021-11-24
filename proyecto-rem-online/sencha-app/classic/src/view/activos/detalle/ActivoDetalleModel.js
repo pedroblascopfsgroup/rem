@@ -1994,7 +1994,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	var isBankia = get('isCarteraBankia');	    	
 	    	var editarPorcentajeConstruccion = get('editarPorcentajeConstruccion');
 	    	
-	    	if (isBankia || editarPorcentajeConstruccion){
+	    	if (isBankia || !editarPorcentajeConstruccion){
 	    		return true;
 	    	}
 	    	return false;

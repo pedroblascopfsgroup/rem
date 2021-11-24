@@ -230,7 +230,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 							peticionario = usuarioLogado.getUsername();
 						}
-						expediente.setPeticionarioAnulacion(peticionario);
+						if(expediente.getPeticionarioAnulacion() == null) expediente.setPeticionarioAnulacion(peticionario);
 
 						// TODO: Publicaciones - Implementar en el SP de publicación la siguiente condición:
 						// Si la oferta es express, el activo se encuentra en estado publicado oculto y su motivo del estado es "Oferta Express Cajamar".

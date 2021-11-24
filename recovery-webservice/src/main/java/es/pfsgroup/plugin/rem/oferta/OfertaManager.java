@@ -7932,7 +7932,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				return (codSubcartera.equals(DDSubcartera.CODIGO_BAN_ASISTIDA) || codSubcartera.equals(DDSubcartera.CODIGO_BAN_BH) 
 						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_BK) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SOLVIA) 
 						|| codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB) || codSubcartera.equals(DDSubcartera.CODIGO_BANKIA_SAREB_PRE_IBERO)
-						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA));
+						|| codSubcartera.equals(DDSubcartera.CODIGO_BAN_TITULIZADA)) || DDSubcartera.CODIGO_BAN_CAIXABANK.equals(codSubcartera)
+						|| DDSubcartera.CODIGO_BAN_LIVING_CENTER.equals(codSubcartera);
 			 
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_CAJ_INMOBILIARIO));

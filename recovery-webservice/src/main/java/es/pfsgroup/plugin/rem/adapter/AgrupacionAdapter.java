@@ -1078,7 +1078,7 @@ public class AgrupacionAdapter {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
 				if (activoAgrupacionActivo != null) {
 					if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
-						throw new JsonViewerException("El activo se encuentra en la agrupacion");
+						return;
 					}
 				}
 			}

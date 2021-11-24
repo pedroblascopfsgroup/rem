@@ -998,7 +998,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
 						}
 						comprador.setIsExpedienteAprobado(funcionesTramitesApi.isTramiteAprobado(expediente));
-						comprador.setMotivoEdicionCompradores(expediente.getMotivoEdicionCompradorCbx());
+						comprador.setMotivoEdicionCompradores(expediente.getMotivoEdicionCompradores());
 					}
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi

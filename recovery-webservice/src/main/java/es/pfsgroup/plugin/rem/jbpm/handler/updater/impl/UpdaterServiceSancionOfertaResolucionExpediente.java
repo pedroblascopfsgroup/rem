@@ -232,18 +232,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						}
 						expediente.setPeticionarioAnulacion(peticionario);
 
-						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
-								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar && 
-								!CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())) {
-							// Notificar del rechazo de la oferta a Bankia.
-							try {
-								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
-							} catch (Exception e) {
-								logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-								throw new UserException(e.getMessage());
-							}
-						}
-
 						// TODO: Publicaciones - Implementar en el SP de publicación la siguiente condición:
 						// Si la oferta es express, el activo se encuentra en estado publicado oculto y su motivo del estado es "Oferta Express Cajamar".
 						//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
@@ -263,32 +251,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 				
 				WSDevolBankiaDto dto = null;
-				
-				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)){
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
-						try {
-							 dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
-						} catch (Exception e) {
-							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
-							throw new UserException(e.getMessage());
-						}
-					}
-				}
-				else{
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
-						try {
-							dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
-						} catch (Exception e) {
-							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
-							throw new UserException(e.getMessage());
-						}
-					}
-
-				}
 
 				if(tieneReserva && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
 					&& Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())){

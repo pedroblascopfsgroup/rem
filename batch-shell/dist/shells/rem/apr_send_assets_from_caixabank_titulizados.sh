@@ -18,9 +18,9 @@ if [ $? -ne 0 ] ; then
 fi
 
 if [ -f $MAINSH ]; then
-    CLASS="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
+    CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
-    CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f12 -d" ")"
+    CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx3072M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -Dconfig.flag_generar=$1 -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     exit $?
 else

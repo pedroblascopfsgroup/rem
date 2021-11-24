@@ -5,7 +5,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		'HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
 		'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', 'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 		'HreRem.view.common.WizardBase','HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', 'HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCliente', 
-		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', 'HreRem.view.expedientes.editarAuditoriaDesbloqueo'
+		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', 'HreRem.view.expedientes.editarAuditoriaDesbloqueo',
+		'HreRem.view.expedientes.GestionEconomicaExpediente', 'HreRem.model.ExpedienteComercialGestionEconomica'
 	],
     
     control: {
@@ -128,7 +129,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				    		form.afterLoad();
 				    	}						
 				    }, 		    
-				    failure: function(operation) {		    	
+				    failure: function(operation) {
 				    	me.getView().unmask();
 				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 				    }
@@ -178,7 +179,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	cargarTabDataMultiple: function (form,index, models, nameModels) {
-
 		var me = this,
 		id = me.getViewModel().get("expediente.id");
 		
@@ -1457,7 +1457,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}*/
 		
 	},
-	
+	onChangeComboRevisadoControllers : function(combo, value) {
+		var me = this;
+		var fechaRevisionref = me.lookupReference('fechaRevisionref');
+		var fechaRevision = me.getViewModel().get('expedientecomercialgestioneconomica.fechaRevision');
+		
+			if (value == 1) {
+				if(fechaRevision != null) {
+					fechaRevisionref.setValue(Ext.Date.format(fechaRevision, 'd/m/Y'));
+				} else {
+					fechaRevisionref.setValue(Ext.Date.format(new Date(), 'd/m/Y'));
+				}
+			} else {
+				fechaRevisionref.setValue("");
+			}
+		
+	},
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');

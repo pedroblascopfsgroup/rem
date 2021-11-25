@@ -1588,6 +1588,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if(usuarioGestorController != null) {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, 
 						usuarioGestorController.getUsername(), dto);
+			}else {
+				if (!Checks.esNulo(oferta.getTipoOferta()) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()))
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, "grucontroller", dto);
 			}
 		}
 	}

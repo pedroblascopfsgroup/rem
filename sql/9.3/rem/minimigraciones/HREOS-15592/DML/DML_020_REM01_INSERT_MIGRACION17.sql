@@ -44,6 +44,7 @@ DECLARE
 	V_TABLA_6 VARCHAR2 (30 CHAR) := 'ACT_ICM_INF_COMER_HIST_MEDI';
 	V_TABLA_7 VARCHAR2 (30 CHAR) := 'ACT_PTA_PATRIMONIO_ACTIVO';
 	V_TABLA_8 VARCHAR2 (30 CHAR) := 'ACT_COE_CONDICION_ESPECIFICA';
+	V_TABLA_9 VARCHAR2 (30 CHAR) := 'ACT_HFP_HIST_FASES_PUB';
 	V_TABLA_AUX_MIG VARCHAR2 (30 CHAR) := 'AUX_SEGUIR_MIGRACION';
 	V_TABLA_AUX_2 VARCHAR2 (30 CHAR) := 'AUX_AGA_AGR';
 
@@ -62,7 +63,7 @@ BEGIN
         
     ELSE 
 
---INSERTAMOS EN LA AUX_AGA_AGR
+--INSERTAMOS EN AUX_AGA_AGR
 
 V_SQL := 'INSERT INTO     '||V_ESQUEMA||'.AUX_AGA_AGR 
 			(AGR_ID_VIEJO,
@@ -124,7 +125,6 @@ V_SQL := 'INSERT INTO     '||V_ESQUEMA||'.AUX_AGA_AGR
 					)';
       EXECUTE IMMEDIATE V_SQL;
       
-     
  	  -------------------------------------------------
       --insercion en ACT_PTO_PRESUPUESTO--
       -------------------------------------------------
@@ -408,7 +408,7 @@ EXECUTE IMMEDIATE ('alter table '||V_ESQUEMA||'.'||V_TABLA_4||' disable constrai
 		NULL                                                      FECHAMODIFICAR,
 		NULL                                                      USUARIOBORRAR,
 		NULL                                                      FECHABORRAR,
-		0                                                         BORRADO,
+		AGA.BORRADO                                                         BORRADO,
 		AGA.ACT_AGA_PARTICIPACION_UA                               ACT_AGA_PARTICIPACION_UA,
 		AGA.ACT_AGA_ID_PRINEX_HPM                                  ACT_AGA_ID_PRINEX_HPM,
 		AGA.PISO_PILOTO                                             PISO_PILOTO
@@ -482,12 +482,44 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	AGR_VISITABLE
 	)
 
+	  WITH  AUX_AGR_ACT_PRINCIPAL
+           AS( 	
+           SELECT DISTINCT
+                AGR.AGR_ACT_PRINCIPAL
+                ,ACT2.ACT_ID AGR_ACT_PRINCIPAL_NV
+            
+                FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO AUX
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO 
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND agr.BORRADO=0
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
+                JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA2 ON ACT2.ACT_ID = AGA2.ACT_ID
+                JOIN '||V_ESQUEMA||'.AUX_AGA_AGR AUX_AGA_AGR ON AUX_AGA_AGR.AGR_ID_VIEJO = AGR.AGR_ID
+                WHERE AGR.AGR_ACT_PRINCIPAL IS NOT NULL
+                AND ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL
+),
+AUX_AGR_NUM_AGRUP_REM
+           AS( 	
+           SELECT DISTINCT
+                AGR.AGR_ID
+                ,AGR_NUM_AGRUP_REM
+              ,  DENSE_RANK () OVER ( ORDER BY AGR.AGR_ID DESC)DENSE_RANK ,
+              (SELECT MAX(AGR_NUM_AGRUP_REM) FROM ACT_AGR_AGRUPACION) AS MAS
+                        
+                FROM REM01.AUX_ACT_TRASPASO_ACTIVO AUX
+                JOIN REM01.ACT_ACTIVO ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO 
+                JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID
+                JOIN REM01.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND agr.BORRADO=0
+                JOIN REM01.ACT_ACTIVO ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
+                JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA2 ON ACT2.ACT_ID = AGA2.ACT_ID
+                JOIN REM01.AUX_AGA_AGR AUX_AGA_AGR ON AUX_AGA_AGR.AGR_ID_VIEJO = AGR.AGR_ID 
+)
 	SELECT DISTINCT
 	AUX_AGA_AGR.AGR_ID_NUEVO  		                AGR_ID,
 	AGR.DD_TAG_ID                       DD_TAG_ID,
 	AGR.AGR_NOMBRE                      AGR_NOMBRE,
 	AGR.AGR_DESCRIPCION                 AGR_DESCRIPCION,
-	AGR.AGR_NUM_AGRUP_REM               AGR_NUM_AGRUP_REM,
+	(AUX_AGR_NUM.DENSE_RANK+AUX_AGR_NUM.MAS) AGR_NUM_AGRUP_REM,
 	AGR.AGR_NUM_AGRUP_UVEM              AGR_NUM_AGRUP_UVEM,
 	AGR.AGR_FECHA_ALTA                  AGR_FECHA_ALTA,
 	AGR.AGR_ELIMINADO                   AGR_ELIMINADO,
@@ -496,7 +528,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	AGR.AGR_PUBLICADO                   AGR_PUBLICADO,
 	AGR.AGR_SEG_VISITAS                 AGR_SEG_VISITAS,      
 	AGR.AGR_TEXTO_WEB                   AGR_TEXTO_WEB,
-	AGR.AGR_ACT_PRINCIPAL               AGR_ACT_PRINCIPAL,
+	AUX_AGR_ACT.AGR_ACT_PRINCIPAL_NV    AGR_ACT_PRINCIPAL,
 	AGR.AGR_GESTOR_ID                   AGR_GESTOR_ID,
 	AGR.AGR_MEDIADOR_ID                 AGR_MEDIADOR_ID,
 	''0''                                                     VERSION,
@@ -506,7 +538,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	AGR.BORRADO                                                         BORRADO,
 	AGR.AGR_INI_VIGENCIA                AGR_INI_VIGENCIA,
 	AGR.AGR_FIN_VIGENCIA                AGR_FIN_VIGENCIA,
 	AGR.AGR_IS_FORMALIZACION            AGR_IS_FORMALIZACION,
@@ -527,6 +559,8 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
     JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
     JOIN '||V_ESQUEMA||'.'||V_TABLA_4||' AGA2 ON ACT2.ACT_ID = AGA2.ACT_ID
     JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX_2||' AUX_AGA_AGR ON AUX_AGA_AGR.AGR_ID_VIEJO = AGR.AGR_ID
+	LEFT JOIN AUX_AGR_ACT_PRINCIPAL AUX_AGR_ACT ON AUX_AGR_ACT.AGR_ACT_PRINCIPAL = AGR.AGR_ACT_PRINCIPAL
+	JOIN AUX_AGR_NUM_AGRUP_REM AUX_AGR_NUM ON AUX_AGR_NUM.AGR_ID = AGR.AGR_ID
 	')
   ;
     
@@ -576,7 +610,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	ACT_HMED.BORRADO                                                         BORRADO,
 	ACT_HMED.DD_TRL_ID													DD_TRL_ID
 
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
@@ -635,7 +669,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	ACT_PTA.BORRADO                                                         BORRADO,
 	ACT_PTA.DD_ADA_ID_ANTERIOR									DD_ADA_ID_ANTERIOR,
     ACT_PTA.DD_EAL_ID											DD_EAL_ID,
     ACT_PTA.DD_TPI_ID											DD_TPI_ID,
@@ -704,7 +738,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	ACT_COE.BORRADO                                                         BORRADO,
 	ACT_COE.COE_CODIGO													COE_CODIGO
 
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
@@ -715,13 +749,74 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
   ;
     
   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_8||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
+
+V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_8||''',''1''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_8||' ANALIZADA.');
+
+
+
+
+DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_9||'. [ACT_HFP_HIST_FASES_PUB]');
+
+
+	EXECUTE IMMEDIATE ('
+	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_9||'  (
+    HFP_ID,
+    ACT_ID,
+    DD_FSP_ID,
+    DD_SFP_ID,
+    USU_ID,
+    HFP_FECHA_INI,
+    HFP_FECHA_FIN,
+    HFP_COMENTARIO,
+	VERSION,
+	USUARIOCREAR,
+	FECHACREAR,
+	USUARIOMODIFICAR,
+	FECHAMODIFICAR,
+	USUARIOBORRAR,
+	FECHABORRAR,
+	BORRADO
+	)
+	SELECT
+	  '||V_ESQUEMA||'.S_ACT_HFP_HIST_FASES_PUB.NEXTVAL    	HFP_ID,
+	ACT2.ACT_ID												ACT_ID,
+  	HFP.DD_FSP_ID,
+    HFP.DD_SFP_ID,
+    HFP.USU_ID,
+    HFP.HFP_FECHA_INI,
+    HFP.HFP_FECHA_FIN,
+    HFP.HFP_COMENTARIO,
+	''0''                                                     VERSION,
+	'''||V_USUARIO||'''                                   	  USUARIOCREAR,
+	SYSDATE                                                   FECHACREAR,
+	NULL                                                      USUARIOMODIFICAR,
+	NULL                                                      FECHAMODIFICAR,
+	NULL                                                      USUARIOBORRAR,
+	NULL                                                      FECHABORRAR,
+	HFP.BORRADO                                                BORRADO
+
+	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
+	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
+	JOIN '||V_ESQUEMA||'.'||V_TABLA_9||' HFP ON ACT.ACT_ID = HFP.ACT_ID
+	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
+  ')
+  ;
+    
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_9||' cargada. '||SQL%ROWCOUNT||' Filas.');
+
+ V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_9||''',''1''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_9||' ANALIZADA.');
+
+
   
   END IF;
   COMMIT;
   
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_8||''',''1''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_8||' ANALIZADA.');
+      
 
 
 

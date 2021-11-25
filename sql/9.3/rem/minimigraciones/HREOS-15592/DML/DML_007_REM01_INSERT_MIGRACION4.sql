@@ -90,7 +90,7 @@ BEGIN
 	NULL                                                  FECHAMODIFICAR,
 	NULL                                                  USUARIOBORRAR,
 	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO,
+	ADN.BORRADO                                                    BORRADO,
 	ADN.FECHA_POSESION										  FECHA_POSESION
 	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT

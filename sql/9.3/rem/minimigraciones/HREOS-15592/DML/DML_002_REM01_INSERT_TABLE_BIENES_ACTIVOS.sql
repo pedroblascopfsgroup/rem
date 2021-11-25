@@ -187,7 +187,7 @@ BEGIN
 			NULL                                                              FECHAMODIFICAR,
 			NULL                                                              USUARIOBORRAR,
 			NULL                                                              FECHABORRAR,
-			0                                                                 BORRADO,
+			ACT.BORRADO                                                                 BORRADO,
 			ACT.DD_TCR_ID 													  DD_TCR_ID,
 			ACT.DD_TAL_ID													  DD_TAL_ID,
 			ACT.ACT_IBI_EXENTO 												  ACT_IBI_EXENTO,

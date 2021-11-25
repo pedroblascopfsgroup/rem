@@ -150,7 +150,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO, 
+	ADM.BORRADO                                                         BORRADO, 
     ADM.ADM_VIGENCIA     					ADM_VIGENCIA,					  	  
     ADM.ADM_COMUNICAR_ADQUISICION    		ADM_COMUNICAR_ADQUISICION,		    
     ADM.ADM_NECESARIO_INSCR_VPO     		ADM_NECESARIO_INSCR_VPO,			  
@@ -181,7 +181,7 @@ BEGIN
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA||' ADM ON ADM.ACT_ID = ACT.ACT_ID
-	WHERE ACT.ACT_VPO = 1
+	
   ')
   ;
     
@@ -256,7 +256,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	SPS.BORRADO                                                         BORRADO,
 	SPS.SPS_ALARMA												SPS_ALARMA,
 	SPS.SPS_FECHA_INSTALA_ALARMA								SPS_FECHA_INSTALA_ALARMA,
 	SPS.SPS_FECHA_DESINSTALA_ALARMA								SPS_FECHA_DESINSTALA_ALARMA,
@@ -337,7 +337,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	BIE.BORRADO                                                        BORRADO,
 	BIE.BIE_DREG_NUM_FINCA                                    BIE_DREG_NUM_FINCA,
 	BIE.DD_LOC_ID						                      DD_LOC_ID,
 	BIE.DD_PRV_ID                      						  DD_PRV_ID
@@ -421,7 +421,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO
+	REG.BORRADO                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_4||' REG ON ACT.ACT_ID = REG.ACT_ID
@@ -480,7 +480,7 @@ BEGIN
   ''0''                                                                 VERSION,
   '''||V_USUARIO||'''                                                   USUARIOCREAR,
   SYSDATE                                                               FECHACREAR,
-  0                                                                     BORRADO,
+  LOC.BORRADO                                                                     BORRADO,
   LOC.DD_PRV_ID							              					DD_PRV_ID,
   LOC.BIE_LOC_NOMBRE_VIA												BIE_LOC_NOMBRE_VIA,
   LOC.BIE_LOC_NUMERO_DOMICILIO											BIE_LOC_NUMERO_DOMICILIO,
@@ -551,7 +551,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO
+	ACT_LOC.BORRADO                                                         BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_6||' ACT_LOC ON ACT.ACT_ID = ACT_LOC.ACT_ID
@@ -615,7 +615,7 @@ BEGIN
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO,
+	ACT_VAL.BORRADO                                                         BORRADO,
 	ACT_VAL.VAL_FECHA_APROBACION							VAL_FECHA_APROBACION,
 	ACT_VAL.VAL_FECHA_CARGA									VAL_FECHA_CARGA,
 	ACT_VAL.USU_ID											USU_ID,
@@ -684,7 +684,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO
+	ACT_HVAL.BORRADO                                                         BORRADO
 
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
@@ -740,7 +740,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
 	NULL                                                      FECHAMODIFICAR,
 	NULL                                                      USUARIOBORRAR,
 	NULL                                                      FECHABORRAR,
-	0                                                         BORRADO
+	ACT_HRFV.BORRADO                                                         BORRADO
 
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO

@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20211108
+--## FECHA_CREACION=20211111
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15581

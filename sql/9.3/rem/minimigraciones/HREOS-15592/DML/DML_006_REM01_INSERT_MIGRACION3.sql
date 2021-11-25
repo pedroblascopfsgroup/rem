@@ -99,7 +99,7 @@ BEGIN
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		AJD.BORRADO                                                     BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO

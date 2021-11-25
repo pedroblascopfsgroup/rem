@@ -184,7 +184,7 @@ DD_TIC_ID_ANTERIOR
     ''0''                                                               VERSION,
     '''||V_USUARIO||'''                                                 USUARIOCREAR,
     SYSDATE                                                             FECHACREAR,
-    0                                                                   BORRADO,
+    ICO.BORRADO                                                                   BORRADO,
 
     ICO.ICO_AUTORIZACION_WEB,
     ICO.ICO_FECHA_AUTORIZ_HASTA,
@@ -282,7 +282,7 @@ DD_TIC_ID_ANTERIOR
       , ''0''                AS VERSION
       , '''||V_USUARIO||'''  AS USUARIOCREAR
       , SYSDATE              AS FECHACREAR
-      , 0                    AS BORRADO
+      , HIC.BORRADO                    AS BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -348,7 +348,7 @@ DD_TIC_ID_ANTERIOR
     ''0''                                                                              VERSION,
     '''||V_USUARIO||'''                                                                USUARIOCREAR,
     SYSDATE                                                                            FECHACREAR,
-    0                                                                                  BORRADO
+    EDI.BORRADO                                                                                  BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO

@@ -90,7 +90,7 @@ BEGIN
 		''0''                                                 				VERSION,
 		'''||V_USUARIO||'''                                               	USUARIOCREAR,
 		SYSDATE                                               				FECHACREAR,
-		0                                                     				BORRADO
+		ADO.BORRADO                                                     				BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO

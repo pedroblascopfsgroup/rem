@@ -106,7 +106,7 @@ BEGIN
 	NULL                                                  FECHAMODIFICAR,
 	NULL                                                  USUARIOBORRAR,
 	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
+	CRI.BORRADO                                                     BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -180,7 +180,7 @@ BEGIN
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		CRE.BORRADO                                                    BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -253,7 +253,7 @@ BEGIN
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		PRV.BORRADO                                                     BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -312,7 +312,7 @@ SELECT
 	NULL                                                  FECHAMODIFICAR,
 	NULL                                                  USUARIOBORRAR,
 	NULL                                                  FECHABORRAR,
-	0                                                     BORRADO
+	SOL.BORRADO                                                     BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -441,7 +441,7 @@ SELECT
   NULL                                                  FECHAMODIFICAR,
   NULL                                                  USUARIOBORRAR,
   NULL                                                  FECHABORRAR,
-  0                                                     BORRADO
+  INF.BORRADO                                                     BORRADO
       FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -512,7 +512,7 @@ SELECT
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		ZCO.BORRADO                                                     BORRADO
       FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -606,7 +606,7 @@ SELECT
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		INS.BORRADO                                                     BORRADO
       FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -691,7 +691,7 @@ SELECT
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		BNY.BORRADO                                                     BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
@@ -772,7 +772,7 @@ SELECT
 		NULL                                                  FECHAMODIFICAR,
 		NULL                                                  USUARIOBORRAR,
 		NULL                                                  FECHABORRAR,
-		0                                                     BORRADO
+		COC.BORRADO                                                     BORRADO
     FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO

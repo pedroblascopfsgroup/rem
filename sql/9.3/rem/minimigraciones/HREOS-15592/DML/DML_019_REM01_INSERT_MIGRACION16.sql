@@ -109,7 +109,7 @@ BEGIN
           0                                                             AS VERSION, 
           '''||V_USUARIO||'''                                           AS USUARIOCREAR,                            
           SYSDATE                                                       AS FECHACREAR,                             
-          0                                                             AS BORRADO,
+          PAC.BORRADO                                                             AS BORRADO,
           null							        AS PAC_MOT_EXCL_COMERCIALIZAR,
   	 1 					AS PAC_CHECK_PUBLICAR,
 	  PAC.PAC_FECHA_PUBLICAR 					AS PAC_FECHA_PUBLICAR,

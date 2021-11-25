@@ -82,7 +82,7 @@ BEGIN
 		0                                                               	VERSION,
 		'''||V_USUARIO||'''                                             	USUARIOCREAR,
 		SYSDATE                                                         	FECHACREAR,
-		0                                                               	BORRADO
+		CAR.BORRADO                                                               	BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA||' CAR ON ACT.BIE_ID = CAR.BIE_ID
@@ -130,7 +130,7 @@ BEGIN
 		0                                                 	    VERSION,
 		'''||V_USUARIO||'''                                     USUARIOCREAR,
 		SYSDATE                                               	FECHACREAR,
-		0                                                     	BORRADO
+		CAR.BORRADO                                                     	BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_2||' CAR ON ACT.ACT_ID = CAR.ACT_ID

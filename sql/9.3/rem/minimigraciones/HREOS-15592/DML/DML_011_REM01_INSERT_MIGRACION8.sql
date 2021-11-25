@@ -78,7 +78,7 @@ BEGIN
 	''0''                                       VERSION,
 	'''||V_USUARIO||'''                         USUARIOCREAR,
 	SYSDATE                                     FECHACREAR,
-	0                                           BORRADO
+	PAC.BORRADO                                           BORRADO
 	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON AUX.ACT_NUM_ACTIVO_ANT = ACT.ACT_NUM_ACTIVO
 	JOIN '||V_ESQUEMA||'.'||V_TABLA||' PAC ON ACT.ACT_ID = PAC.ACT_ID

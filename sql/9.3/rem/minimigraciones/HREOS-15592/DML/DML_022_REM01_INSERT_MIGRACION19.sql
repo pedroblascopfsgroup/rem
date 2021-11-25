@@ -73,7 +73,7 @@ BEGIN
     ''0''                       									      VERSION,
     '''||V_USUARIO||'''         								          USUARIOCREAR,
     SYSDATE                     								  	      FECHACREAR,
-    0                           								  	 	  BORRADO,
+    AOB.BORRADO                           								  	 	  BORRADO,
     AOB.DD_TOB_ID               								  	 	  DD_TOB_ID
         FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 		JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT

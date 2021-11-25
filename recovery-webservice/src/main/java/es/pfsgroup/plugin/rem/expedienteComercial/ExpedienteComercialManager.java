@@ -14267,10 +14267,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador,Oferta oferta, Boolean documentoRteModificado){
 
 		
-		if(documentoRteModificado || comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
+		if(comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
 			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento(), null));
 		}
-		if (documentoRteModificado || comprador.getIdPersonaHaya() == null){
+		if (comprador.getIdPersonaHaya() == null){
 			String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(comprador.getDocumento());
 			comprador.setIdPersonaHaya(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 		}
@@ -14283,14 +14283,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
 
-		if (compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
+		if (documentoRteModificado || compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
 
-			if (compradorExpediente.getIdPersonaHayaRepresentante() == null){
+			if (documentoRteModificado || compradorExpediente.getIdPersonaHayaRepresentante() == null){
 				String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(compradorExpediente.getDocumentoRepresentante());
 				compradorExpediente.setIdPersonaHayaRepresentante(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 			}
 
-			if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+			if(documentoRteModificado || compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
 				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante(), null));
 			}
 

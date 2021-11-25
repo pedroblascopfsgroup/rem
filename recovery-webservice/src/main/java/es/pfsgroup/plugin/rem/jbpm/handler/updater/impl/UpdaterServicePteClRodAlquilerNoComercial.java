@@ -66,6 +66,7 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		RespuestaComiteBC respuestaComiteBc = new RespuestaComiteBC();
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_PTCLROD);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -75,12 +76,14 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
 					
 					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_APRUEBA));
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 				} else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 					ofertaApi.rechazarOferta(oferta);
 					
 					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_RECHAZA));
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}
 								
 				expedienteComercial.setEstado(estadoExpedienteComercial);
@@ -123,9 +126,6 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			}
 			
 		}
-		
-		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_PTCLROD);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 		

@@ -60,7 +60,6 @@ public class UpdaterServiceResolucionComiteAlquilerNoComercial implements Update
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -68,10 +67,12 @@ public class UpdaterServiceResolucionComiteAlquilerNoComercial implements Update
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_NEGOCIACION));
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 				}else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
 					expedienteComercial.setFechaAnulacion(new Date());
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					ofertaApi.finalizarOferta(oferta);
 				}
 				

@@ -136,6 +136,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}
 				}
 				

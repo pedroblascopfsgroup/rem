@@ -68,7 +68,6 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 
 		for(TareaExternaValor valor :  valores){
 			
@@ -90,7 +89,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 			estadoExp =  DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES;
 			resultadoScoring = DDResultadoCampo.RESULTADO_APROBADO;
-			
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		} else{
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211118
+--## FECHA_CREACION=20211125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16438
+--## INCIDENCIA_LINK=HREOS-16502
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -114,52 +114,52 @@ BEGIN
                      , ROW_NUMBER() OVER (PARTITION BY TAS.ACT_ID ORDER BY TAS.TAS_IMPORTE_TAS_FIN DESC) RN
                      , TCX.DD_TCX_CODIGO_CAIXA TASADORA                    
                      , TO_CHAR(TAS.TAS_FECHA_RECEPCION_TASACION,''YYYYMMDD'') FEC_TASACION                
-                     , TAS.GASTO_COM_TASACION GASTO_COM_TASACION          
-                     , TAS.TAS_IMPORTE_TAS_FIN IMP_TAS_INTEGRO             
+                     , REPLACE(TAS.GASTO_COM_TASACION,'','',''.'') GASTO_COM_TASACION          
+                     , REPLACE(TAS.TAS_IMPORTE_TAS_FIN,'','',''.'') IMP_TAS_INTEGRO             
                      , TAS.REF_TASADORA REF_ID_TASADORA             
                      , EQV10.DD_CODIGO_CAIXA TIPO_VAL_EST_TASACION   
                      , CASE WHEN TAS.PORC_COSTE_DEFECTO = 1 THEN ''S'' ELSE ''N'' END FLAG_PORC_COSTE_DEFECTO     
-                     , TAS.APROV_PARCELA_SUELO APROV_PARCELA               
+                     , REPLACE(TAS.APROV_PARCELA_SUELO,'','',''.'') APROV_PARCELA               
                      , EQV1.DD_CODIGO_CAIXA DESAROLLO_PLANT             
                      , EQV2.DD_CODIGO_CAIXA FASE_GESTION                
                      , CASE WHEN TAS.ACOGIDA_NORMATIVA = 1 THEN ''S'' ELSE ''N'' END ACO_NORMATIVA               
-                     , TAS.NUM_VIVIENDAS NUM_VIVIENDAS               
-                     , TAS.PORC_AMBITO_VAL PORC_AMB_VALORADO           
+                     , REPLACE(TAS.NUM_VIVIENDAS,'','',''.'') NUM_VIVIENDAS               
+                     , REPLACE(TAS.PORC_AMBITO_VAL,'','',''.'') PORC_AMB_VALORADO           
                      , EQV3.DD_CODIGO_CAIXA PRODUCTO_DESAR              
                      , EQV4.DD_CODIGO_CAIXA PROX_NUCLEO_URB             
                      , EQV5.DD_CODIGO_CAIXA SISTEMA_GESTION             
-                     , TAS.SUPERFICIE_ADOPTADA SUPERFICIE_ADOPTADA         
-                     , REG.REG_SUPERFICIE_PARCELA SUPERFICIE_PARCELA          
-                     , BREG.BIE_DREG_SUPERFICIE_CONSTRUIDA SUPERFICIE                  
+                     , REPLACE(TAS.SUPERFICIE_ADOPTADA,'','',''.'') SUPERFICIE_ADOPTADA         
+                     , REPLACE(REG.REG_SUPERFICIE_PARCELA,'','',''.'') SUPERFICIE_PARCELA          
+                     , REPLACE(BREG.BIE_DREG_SUPERFICIE_CONSTRUIDA,'','',''.'') SUPERFICIE                  
                      , EQV9.DD_CODIGO_CAIXA TIPO_SUELO_TAS              
-                     , TAS.VAL_HIPO_EDI_TERM_PROM VAL_HIP_EDI_TERM_PROM       
+                     , REPLACE(TAS.VAL_HIPO_EDI_TERM_PROM,'','',''.'') VAL_HIP_EDI_TERM_PROM       
                      , CASE WHEN TAS.ADVERTENCIAS = 1 THEN ''S'' ELSE ''N'' END ADVERTENCIAS                
-                     , TAS.APROVECHAMIENTO APROVECHAMIENTO             
+                     , REPLACE(TAS.APROVECHAMIENTO,'','',''.'') APROVECHAMIENTO             
                      , TAS.COD_SOCIEDAD_TAS_VAL COD_SOCIEDAD_TAS            
                      , CASE WHEN TAS.CONDICIONANTES = 1 THEN ''S'' ELSE ''N'' END CONDICIONANTES              
-                     , TAS.COSTE_EST_TER_OBRA COST_EST_TER_OBRA           
-                     , TAS.COSTE_DEST_PROPIO COST_DEST_USO_PROPIO        
+                     , REPLACE(TAS.COSTE_EST_TER_OBRA,'','',''.'') COST_EST_TER_OBRA           
+                     , REPLACE(TAS.COSTE_DEST_PROPIO,'','',''.'') COST_DEST_USO_PROPIO        
                      , TO_CHAR(TAS.FEC_ULT_AVANCE_EST,''YYYYMMDD'') FEC_ULT_GRA_AVANCA_EST      
                      , TO_CHAR(TAS.FEC_EST_TER_OBRA,''YYYYMMDD'') FEC_EST_TER_OBRA            
                      , CASE WHEN TAS.FINCA_RUS_EXP_URB = 1 THEN ''S'' ELSE ''N'' END FINCA_RUS_EXP_URB           
                      , EQV6.DD_CODIGO_CAIXA MET_VALORACION              
-                     , TAS.MET_RES_DIN_MAX_COM PLA_MAX_IN_COM              
-                     , TAS.MET_RES_DIN_MAX_CONS PLA_MAX_IN_CON              
-                     , TAS.MET_RES_DIN_TAS_ANU TASA_ANU_HOMOGENEA          
+                     , REPLACE(TAS.MET_RES_DIN_MAX_COM,'','',''.'') PLA_MAX_IN_COM              
+                     , REPLACE(TAS.MET_RES_DIN_MAX_CONS,'','',''.'') PLA_MAX_IN_CON              
+                     , REPLACE(TAS.MET_RES_DIN_TAS_ANU,'','',''.'') TASA_ANU_HOMOGENEA          
                      , TAS.MET_RES_DIN_TIPO_ACT TIPO_ACTUALIZACION          
-                     , TAS.MET_RES_EST_MAR_PROM MARGEN_BEN_PROMOTOR         
+                     , REPLACE(TAS.MET_RES_EST_MAR_PROM,'','',''.'') MARGEN_BEN_PROMOTOR         
                      , CASE WHEN TAS.PARALIZACION_URB = 1 THEN ''S'' ELSE ''N'' END PARALIZACION_URB            
-                     , TAS.PORC_URB_EJECUTADO PORC_URB_EJECUTADO          
-                     , TAS.PORC_AMBITO_VAL_ENT PORC_AMBITO_VAL             
+                     , REPLACE(TAS.PORC_URB_EJECUTADO,'','',''.'') PORC_URB_EJECUTADO          
+                     , REPLACE(TAS.PORC_AMBITO_VAL_ENT,'','',''.'') PORC_AMBITO_VAL             
                      , EQV8.DD_CODIGO_CAIXA PRODUCTO_DESA               
                      , CASE WHEN TAS.PROYECTO_OBRA = 1 THEN ''S'' ELSE ''N'' END PROYECTO_OBRA               
-                     , TAS.SUPERFICIE_TERRENO SUPERFICIE_TERRENO          
-                     , TAS.TAS_ANU_VAR_MERCADO TASA_ANU_MED_VAR_PRECIO     
+                     , REPLACE(TAS.SUPERFICIE_TERRENO,'','',''.'') SUPERFICIE_TERRENO          
+                     , REPLACE(TAS.TAS_ANU_VAR_MERCADO,'','',''.'') TASA_ANU_MED_VAR_PRECIO     
                      , EQV7.DD_CODIGO_CAIXA TIPO_DAT_INM_COMPARABLES    
-                     , TAS.VALOR_TERRENO VAL_TERRENO                 
-                     , TAS.VALOR_TERRENO_AJUS VAL_TERRENO_AJUSTADO        
-                     , TAS.VAL_HIPO_EDI_TERM VAL_HIP_EDI_TERMINADO       
-                     , TAS.VALOR_HIPOTECARIO VAL_HIPOTECARIO             
+                     , REPLACE(TAS.VALOR_TERRENO,'','',''.'') VAL_TERRENO                 
+                     , REPLACE(TAS.VALOR_TERRENO_AJUS,'','',''.'') VAL_TERRENO_AJUSTADO        
+                     , REPLACE(TAS.VAL_HIPO_EDI_TERM,'','',''.'') VAL_HIP_EDI_TERMINADO       
+                     , REPLACE(TAS.VALOR_HIPOTECARIO,'','',''.'') VAL_HIPOTECARIO             
                      , CASE WHEN TAS.VISITA_ANT_INMUEBLE = 1 THEN ''S'' ELSE ''N'' END VISITA_INT_INMUEBLE 
                      FROM '|| V_ESQUEMA ||'.ACT_TAS_TASACION TAS
                      JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON TAS.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0

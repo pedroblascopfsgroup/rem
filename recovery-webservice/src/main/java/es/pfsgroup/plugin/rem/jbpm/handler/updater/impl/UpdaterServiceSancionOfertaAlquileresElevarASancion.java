@@ -33,7 +33,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 
@@ -77,12 +76,11 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		String peticionario = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite);
+				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite, dtoHistoricoBC);
 			}
 			
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -108,7 +106,6 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				
 				expedienteComercial.setFechaAnulacion(new Date());
 				expedienteComercial.setPeticionarioAnulacion(peticionario);
-				
 				ofertaApi.finalizarOferta(oferta);
 			}
 			
@@ -159,7 +156,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	}
 	
 	
-	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite) {
+	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite,DtoRespuestaBCGenerica dtoHistoricoBC) {
 		boolean estadoBcModificado = false;
 		String codigoEstadoExpediente = null;
 		String codigoEstadoBc = null;
@@ -180,7 +177,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 					ofertaApi.congelarOferta(ofertaCongelar);
 				}
 			}
-
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 
 		}else if(DDRespuestaOfertante.CODIGO_RECHAZA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
@@ -188,7 +185,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 			oferta.setEstadoOferta(estadoOferta);
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 
 		}else if(DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(resolucion)){
 			codigoEstadoExpediente = DDEstadosExpedienteComercial.CONTRAOFERTADO;

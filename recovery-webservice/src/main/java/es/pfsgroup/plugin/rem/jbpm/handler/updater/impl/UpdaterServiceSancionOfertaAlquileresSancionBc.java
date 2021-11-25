@@ -15,7 +15,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
@@ -35,9 +34,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	
     @Autowired
     private GenericABMDao genericDao;
-
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -51,7 +47,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     
 	private static final String RESULTADO_PBC = "comboResolucion";
-	private static final String OBSERVACIONES = "observaciones";
 	private static final String OBSERVACIONESBC = "observacionesBc";
 
 	private static final String CODIGO_T015_SANCION_BC = "T015_SancionBC";
@@ -68,8 +63,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		String estadoBc = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
-		
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -92,7 +85,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 				estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
 			}
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
-			
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		} else{
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
@@ -102,7 +95,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 				expedienteComercial.setFechaAnulacion(new Date());
 				ofertaApi.finalizarOferta(oferta);
 			}
-
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 		}
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));

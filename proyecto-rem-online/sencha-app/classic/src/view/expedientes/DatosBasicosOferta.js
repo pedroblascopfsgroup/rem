@@ -709,7 +709,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								}
 					        }
 						},
-						
+						bind : {
+							hidden: '{esAlquilerOAlquilerNoComercial}'
+						},
 						items : [
 						{
 							xtype : "fieldsettable",
@@ -719,9 +721,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        type: 'table',
 						        columns: 2
 						    },
-							bind : {
-								hidden: '{esAlquilerOAlquilerNoComercial}'
-							},
+							
 							items : [
 								{
 									xtype : "textfieldbase",

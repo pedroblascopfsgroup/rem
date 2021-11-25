@@ -55,7 +55,6 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -63,9 +62,11 @@ public class UpdaterServiceRevisionBcYCondicionesAlquilerNoComercial implements 
 				if(DDSiNo.NO.equals(valor.getValor())) {
 					estado = DDEstadosExpedienteComercial.PTE_CL_ROD;
 					estadoBc = DDEstadoExpedienteBc.PTE_CL_ROD;
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}else {
 					estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
 					estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 				}
 			}
 			

@@ -128,6 +128,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(eco, importe, mesesFianza, ofertaAceptada);
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())){
 						dto.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}
 									
 				}else {
@@ -136,6 +137,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						dto.setFechaFinPosicionamiento(new Date());
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
 						estadoBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.POSICIONADO;
 						estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;

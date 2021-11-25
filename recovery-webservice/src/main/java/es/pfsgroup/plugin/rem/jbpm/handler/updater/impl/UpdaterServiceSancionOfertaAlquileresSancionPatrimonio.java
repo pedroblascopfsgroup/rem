@@ -61,7 +61,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
-		dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -76,7 +75,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_ENVIO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
-
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 					estadoBcModificado = true;
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -92,6 +91,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					ofertaApi.finalizarOferta(oferta);
 					
 					estadoBcModificado = true;

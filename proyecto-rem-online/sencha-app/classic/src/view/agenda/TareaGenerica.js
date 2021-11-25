@@ -3789,11 +3789,7 @@
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
 		var comboReqAnalisisTec =me.down('[name=comboReqAnalisisTec]');
 		me.deshabilitarCampo(comboReqAnalisisTec);
-		
-		comboRespuesta.addListener('focus', function(combo) {
-				combo.getStore().removeAt(2);//QUITAR CON DUDAS
-		});
-		
+
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		
 		Ext.Ajax.request({
@@ -3817,6 +3813,10 @@
 				me.campoObligatorio(comboMotivoAnulacion);
 				comboReqAnalisisTec.setValue('');
 				me.deshabilitarCampo(comboReqAnalisisTec);
+				if(CONST.TIPO_RESOLUCION_DUDAS['DUDAS'] == comboRespuesta.getValue()){
+					comboMotivoAnulacion.setValue('');
+					me.deshabilitarCampo(comboMotivoAnulacion);
+				}
 			}else{
 				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);

@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.agenda.TareaGenerica', {
+-Ext.define('HreRem.view.agenda.TareaGenerica', {
     extend: 'HreRem.view.common.TareaBase',
     xtype: 'tareagenerica',
     reference: 'windowTareaGenerica',
@@ -3889,13 +3889,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var textExpedienteAnterior = me.down('[name=expedienteAnterior]');
 		 
 		me.deshabilitarCampo(textExpedienteAnterior);
-		me.deshabilitarCampo(comboIsVulnerable);
-	
+		
 		comboTipoOferta.addListener('change', function(combo) {
 			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
-				me.habilitarCampo(comboIsVulnerable);
+
 				me.campoObligatorio(comboIsVulnerable);
 				textExpedienteAnterior.setValue('');
 				me.deshabilitarCampo(textExpedienteAnterior);
@@ -3905,13 +3904,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(textExpedienteAnterior);
 				textExpedienteAnterior.allowBlank = false;	
-				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(comboIsVulnerable);
+				me.campoNoObligatorio(comboIsVulnerable);
 			}else{
 				textExpedienteAnterior.setValue('');
 				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(comboIsVulnerable);
 				me.deshabilitarCampo(textExpedienteAnterior);
+				me.campoNoObligatorio(comboIsVulnerable);
 			}
         });
 	},

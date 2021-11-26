@@ -32,7 +32,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-  	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
         (CFT_ID
         ,DD_TTF_ID
         ,DD_TTR_ID
@@ -48,29 +48,50 @@ BEGIN
         ,CFT_FECHA_FIN
         ,CFT_PRECIO_UNITARIO_CLIENTE
         ,CFT_TARIFA_PVE)
-        SELECT 
+        SELECT  
             '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
             ,DD_TTF_ID
+            ,DD_TTR_ID
+            ,DD_STR_ID
+            ,DD_CRA_ID
+            ,CFT_PRECIO_UNITARIO
+            ,CFT_UNIDAD_MEDIDA
+            ,USUARIOCREAR
+            ,FECHACREAR
+            ,PVE_ID
+            ,DD_SCR_ID
+            ,CFT_FECHA_INI
+            ,CFT_FECHA_FIN
+            ,CFT_PRECIO_UNITARIO_CLIENTE
+            ,CFT_TARIFA_PVE
+        FROM (SELECT DISTINCT 
+            DD_TTF_ID
             ,DD_TTR_ID
             ,DD_STR_ID
             ,(SELECT CRA2.DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA2 WHERE CRA2.DD_CRA_CODIGO = ''03'') AS DD_CRA_ID
             ,CFT_PRECIO_UNITARIO
             ,CFT_UNIDAD_MEDIDA
-            ,''HREOS-16539''
-            ,SYSDATE
+            ,''HREOS-16539'' AS USUARIOCREAR
+            ,SYSDATE AS FECHACREAR
             ,PVE_ID
-            ,(SELECT SCR.DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR WHERE SCR.DD_SCR_CODIGO = ''08'') AS DD_SCR_ID
+            ,NULL AS DD_SCR_ID
             ,CFT_FECHA_INI
             ,CFT_FECHA_FIN
             ,CFT_PRECIO_UNITARIO_CLIENTE
             ,CFT_TARIFA_PVE
         FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CFT2
         JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = CFT2.DD_CRA_ID
-        WHERE CRA.DD_CRA_CODIGO = ''16''';
+        WHERE 0 = (
+                SELECT COUNT(CFT3.CFT_ID)
+                FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CFT3
+                WHERE CFT3.USUARIOCREAR = ''HREOS-16539''
+                AND CFT3.BORRADO = 0)
+        AND CRA.DD_CRA_CODIGO = ''16''
+        AND CFT2.BORRADO = 0)';
   	
 	EXECUTE IMMEDIATE V_MSQL;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '|| SQL%ROWCOUNT ||' REGISTROS PARA Titulizada EN '||V_TEXT_TABLA);
+    DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '|| SQL%ROWCOUNT ||' REGISTROS EN '||V_TEXT_TABLA);
 
 	COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]');

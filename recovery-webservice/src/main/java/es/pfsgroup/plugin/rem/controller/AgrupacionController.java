@@ -632,6 +632,10 @@ public class AgrupacionController extends ParadiseJsonController {
 							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
 						}
 					}
+					
+					if (!Checks.esNulo(listaFotos.get(i).getTipoFoto())) {
+						fotoDto.setCodigoTipoFoto(listaFotos.get(i).getTipoFoto().getCodigo());
+					}
 
 					listaDtoFotos.add(fotoDto);
 
@@ -660,15 +664,15 @@ public class AgrupacionController extends ParadiseJsonController {
 	 */
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
+		WebFileItem webFileItem = new WebFileItem();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFoto(fileItem);
+			String errores = activoAgrupacionApi.uploadFotos(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -683,15 +687,14 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFotoSubdivision(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotosSubdivision(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFotoSubdivision(fileItem);
+			String errores = activoAgrupacionApi.uploadFotosSubdivision(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -1171,9 +1174,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView upload(HttpServletRequest request) {
 
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			agrupacionAdjuntos.uploadDocumento(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {

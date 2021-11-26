@@ -7247,8 +7247,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	validarEdicionHistoricoTitulo : function(editor, grid, record) {
 		var me = this;
+		codigoNoEditable = grid.record.data.codigoEstadoPresentacion;
 		var isBankia = me.getViewModel().get('activo.isCarteraBankia');
 		if (isBankia) {
+			return false;
+		}
+		if (codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] || codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS']
+				|| codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO']){
 			return false;
 		}
 		return grid.rowIdx == 0;
@@ -7258,6 +7263,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			oldValue, eOps) {
 		var me = this;
 		var items = combo.up().items.items, fechas = [];
+		var codigoAnterior = combo.up().view.grid.store.data.items[0].data.codigoEstadoPresentacion;
 		for (item in items) {
 			fechas[items[item].dataIndex] = items[item];
 		}
@@ -7281,17 +7287,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					noSubsanado = true;
 				}
 			}
+			if (noSubsanado && (newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] 
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])) {
 
-			if (noSubsanado&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
 				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
-				combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['NULO']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['NULO']); 
+				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']); 
+				}
 				return;
 			};
 		}
-		
 		gridCalifcacion.disableAddButton(true);
-		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
+		if ((codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
+		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'])
+		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])){
 			gridCalifcacion.disableAddButton(false);
+		}
 		switch (newValue) {
 
 			case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO'] :
@@ -7320,10 +7336,47 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(false);
 				fechas['fechaInscripcion'].allowBlank = false;
 				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaPresentacionRegistro'].allowBlank = true;
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true)
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
 		}
 
 		me.usuarioLogadoPuedeEditar();
-	},
+	},	
 	checkDateInterval : function(obj) {
 		if (!obj.readOnly && !obj.disabled) {
 			var me = this;

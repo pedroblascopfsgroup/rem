@@ -7078,9 +7078,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 				}
-
 				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+				}
+				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+				}
+				if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+				}
+				if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+				}
+				if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 				}
 			}
 			if (!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
@@ -7221,7 +7232,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 				// Comprobar que la fecha de presentación de una segunda presentación no es
 				// inferiór a la de primera calificación o en su defecto de primera presentación
-				if (!Checks.estaVacio(listasTramitacion) && listasTramitacion.size() > 1) {
+				if (!Checks.estaVacio(listasTramitacion) && listasTramitacion.size() > 1 && !Checks.esNulo(listasTramitacion.get(1).getFechaCalificacion())) {
 					if (!Checks.esNulo(listasTramitacion.get(1).getFechaCalificacion()) && listasTramitacion.get(1)
 							.getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
 						throw new HistoricoTramitacionException(
@@ -7254,18 +7265,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							"La fecha de inscripción no puede ser menor a la fecha de presentación.");
 				}
 			}
-			if (!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
-				beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro",
-						tramitacionDto.getFechaPresentacionRegistro());
-			}
 			if (!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
 				DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
 				beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
 				if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
-					htt.setFechaInscripcion(null);
-					htt.setFechaCalificacion(null);
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
@@ -7276,24 +7281,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoTitulo.setFechaInscripcionReg(htt.getFechaInscripcion());
 					}
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
-					htt.setFechaCalificacion(null);
 				}
 				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
-					htt.setFechaInscripcion(null);
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
+				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+				}
+				if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+				}
+				if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+				}
+				if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
+				}
 			}
-			if (!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
-				beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
-			}
-			if (!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
-				beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
-			}
+						
+			htt.setFechaCalificacion(!Checks.esNulo(tramitacionDto.getFechaCalificacion()) ? tramitacionDto.getFechaCalificacion() : null);
+			htt.setFechaInscripcion(!Checks.esNulo(tramitacionDto.getFechaInscripcion()) ? tramitacionDto.getFechaInscripcion() : null);
+			htt.setFechaPresentacionRegistro(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) ? tramitacionDto.getFechaPresentacionRegistro() : null);
+
 			if (!Checks.esNulo(tramitacionDto.getObservaciones())) {
 				beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
 			}
-
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;
@@ -7461,6 +7475,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						} else if (DDEstadoPresentacion.INSCRITO
 								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
 							codEstadoPres = DDEstadoTitulo.ESTADO_INSCRITO;
+						} else if (DDEstadoPresentacion.NULO
+									.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+								codEstadoPres = DDEstadoTitulo.ESTADO_NULO;
+						} else if (DDEstadoPresentacion.INMATRICULADOS
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+						} else if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+						} else if (DDEstadoPresentacion.DESCONOCIDO
+								.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 						}
 					}
 					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
@@ -7945,7 +7971,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			String estadoPresentacion = listaTramitacionTitulo.get(0) != null
 					? listaTramitacionTitulo.get(0).getCodigoEstadoPresentacion()
 					: "";
-			if (!DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion)) {
+			if (estado.getDescripcion().equals(estadoPresentacion)) {
 				throw new HistoricoTramitacionException(
 						HistoricoTramitacionException.getErrorAlAnyadirRegistroAlTitulo(estado.getDescripcion()));
 

@@ -271,7 +271,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    	if (isBankia)	return true;
 	if (tieneDatosStore) {
 		var codigoUltimoRegistro = me.getUltimoRegistro().data.codigoEstadoPresentacion;
-		if (codigoUltimoRegistro != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
+		if (codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] || codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS']
+				|| codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO']){
+			return false;
+		} else if (codigoUltimoRegistro != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
 			return true;
 		} else if (codigoUltimoRegistro === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
 					&& me.getUltimoRegistro().data.tieneCalificacionNoSubsanada == 1) {

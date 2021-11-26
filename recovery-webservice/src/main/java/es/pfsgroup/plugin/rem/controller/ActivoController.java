@@ -4346,6 +4346,11 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadosPresentacionAdicional() {	
+		return createModelAndViewJson(new ModelMap("data", adapter.getEstadosPresentacionAdicional()));
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoDistritoByCodPostal(ModelMap model, String codPostal) {
 		
 		try {
@@ -4358,7 +4363,6 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
-
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListHistoricoOcupadoTitulo(Long id, ModelMap model){

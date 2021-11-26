@@ -39,8 +39,9 @@ public class DDEstadoTitulo implements Auditable, Dictionary {
 	public static final String ESTADO_INSCRITO = "02";
 	public static final String ESTADO_IMPOSIBLE_INSCRIPCION = "03";
 	public static final String ESTADO_DESCONOCIDO = "04";
+	public static final String ESTADO_INMATRICULADOS = "05";
 	public static final String ESTADO_SUBSANAR = "06";
-	
+	public static final String ESTADO_NULO = "07";
 	
 	@Id
 	@Column(name = "DD_ETI_ID")

@@ -445,5 +445,7 @@ public interface GastoProveedorApi {
     List<VTasacionesGastos> getListTasacionesGasto(Long idGasto);
 
     boolean deleteGastoTasacion(Long id);
+
+	boolean isProveedorIncompleto(GastoProveedor gasto);
 }
 

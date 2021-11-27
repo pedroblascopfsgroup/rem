@@ -59,32 +59,8 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
-import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
-import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
-import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
-import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
-import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
-import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
-import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
-import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
-import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
-import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -1750,6 +1726,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isProveedorIncompleto(GastoProveedor gasto, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.isProveedorIncompleto(gasto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en isProveedorIncompleto", e);
+			model.put("success", false);
+		}
 		return createModelAndViewJson(model);
 	}
 }

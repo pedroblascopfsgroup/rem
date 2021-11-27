@@ -1619,6 +1619,30 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var idGasto = idGasto = me.getViewModel().get("gasto.id");
     	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
     	
+    	var gasto = gasto = me.getViewModel().get("gasto");
+    	var url2 = $AC.getRemoteUrl('gastosproveedor/isProveedorIncompleto');
+    	var isProveedorIncompletoBoolean = false;
+    	
+    	Ext.Ajax.request({
+			url: url2,
+			params: {gasto: gasto},
+			success: function(response, opts) {
+				var data = {};
+				try {
+					data = Ext.decode(response.responseText);
+					}
+				catch (e){ };
+				if(!Ext.isEmpty(data.msg)){
+					me.fireEvent("errorToast Proveedor Incompleto", data.msg);
+				} else {
+					msg = HreRem.i18n('msg.desea.autorizar.gasto');
+					isProveedorIncompletoBoolean = true;
+				}
+				me.getView().unmask();
+			}
+    	});
+    	
+    	if (isProveedorIncompletoBoolean) {
     	Ext.Ajax.request({
 			url: url,
 			params: {idGasto: idGasto},
@@ -1689,7 +1713,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 		});
     	
-    	
+    	} else {
+    		me.fireEvent("errorToast", HreRem.i18n("Proveedor Incompleto"));
+    	}
     	
     },
     

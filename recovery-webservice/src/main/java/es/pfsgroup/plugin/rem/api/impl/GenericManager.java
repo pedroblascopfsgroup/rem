@@ -556,7 +556,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					   DDTipoProveedor.COD_OTRA_ADMINISTRACION_PUBLICA.equals(subTipoProveedor.getCodigo()) ||
 					   DDTipoProveedor.COD_NOTARIO.equals(subTipoProveedor.getCodigo()) ||
 					   DDTipoProveedor.COD_REGISTRO.equals(subTipoProveedor.getCodigo()) ||
-					   DDTipoProveedor.COD_SUMINISTRO.equals(subTipoProveedor.getCodigo())
+					   DDTipoProveedor.COD_SUMINISTRO.equals(subTipoProveedor.getCodigo()) ||
+					   DDTipoProveedor.COD_PROCURADORES.equals(subTipoProveedor.getCodigo())
 					   ) {
 						nuevaListaTipoProveedor.add(subTipoProveedor);
 					}

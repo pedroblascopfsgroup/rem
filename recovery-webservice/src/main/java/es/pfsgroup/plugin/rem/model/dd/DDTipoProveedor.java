@@ -71,7 +71,8 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_NOTARIO = "21";
 	public static final String COD_REGISTRO = "24";
 	public static final String COD_SUMINISTRO = "25";
-	
+	public static final String COD_PROCURADORES = "43";
+
 	public static final List<String> CODIGOS_OFICINAS = new ArrayList<String>(Arrays.asList(COD_OFICINA_BANKIA, COD_OFICINA_CAJAMAR, COD_OFICINA_LIBERBANK));
 
 

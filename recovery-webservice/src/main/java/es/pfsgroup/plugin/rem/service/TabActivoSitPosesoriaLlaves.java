@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -46,8 +48,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -81,6 +90,15 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -298,7 +316,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) { 
+	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+		
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 	
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
 		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
@@ -494,6 +514,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 		}
 		
+		transactionManager.commit(transaction);
+
+		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada())){
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
+		}
+
 		if (activo != null) {
 			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 			if (actCaixa != null) {

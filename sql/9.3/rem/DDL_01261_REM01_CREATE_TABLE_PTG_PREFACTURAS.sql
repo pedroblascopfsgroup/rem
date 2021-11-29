@@ -57,9 +57,9 @@ BEGIN
 		(
 			PTG_ID               		NUMBER(16) NOT NULL,
 			PFA_ID						NUMBER(16) NOT NULL,
-			PRO_ID						NUMBER(16) NULL,
+			PRO_ID						NUMBER(16) NOT NULL,
 			TBJ_ID						NUMBER(16) NOT NULL,
-			GPV_ID                     	NUMBER(16) NOT NULL,
+			GPV_ID                     	NUMBER(16) NULL,
 			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
 			FECHACREAR 					TIMESTAMP (6) 		    	NOT NULL ENABLE, 

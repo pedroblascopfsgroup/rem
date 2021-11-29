@@ -5673,6 +5673,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 			
+			if(dto.getMotivoEdicionCompradores() != null) {
+				expedienteComercial.setMotivoEdicionCompradores(dto.getMotivoEdicionCompradores());
+			}
+			
 			if (esNuevo) {
 				
 				if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
@@ -6375,6 +6379,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, expediente.getOferta());
 			}
 			
+			if(dto.getMotivoEdicionCompradores() != null) {
+				expediente.setMotivoEdicionCompradores(dto.getMotivoEdicionCompradores());
+			}
 			
 			expediente.getCompradores().add(compradorExpediente);
 
@@ -6744,6 +6751,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, expediente.getOferta());
 				}
 				
+				if(dto.getMotivoEdicionCompradores() != null) {
+					expediente.setMotivoEdicionCompradores(dto.getMotivoEdicionCompradores());
+				}
 				
 				genericDao.save(InfoAdicionalPersona.class, iap);
 

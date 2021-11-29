@@ -970,7 +970,46 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						}
 					}
 				]
+			},
+			{
+				xtype: 'fieldsettable',
+				collapsible: false,
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('fieldlabel.motivo.edicion'),
+				reference: 'motivoEdicionFieldset',
+				hidden: false,
+				disabled: false,
+				listeners: {
+					boxready: 'comprobarObligatoriedadCamposNexos'
+				},
+				layout: {
+					type: 'table',
+					columns: 2,
+					tdAttrs: {
+						width: '50%'
+					}
+				},
+				defaults: {
+					addUxReadOnlyEditFieldPlugin: false
+				},
+				items: [{
+					xtype: 'textareafieldbase',
+					fieldLabel: HreRem.i18n('fieldlabel.motivo.edicion'),
+					reference: 'motivoEdicionCompradores',
+					name: 'motivoEdicionCompradores',
+					colspan: 2,
+					padding: '5px',
+					bind: {
+						allowBlank: '{!esMotivoEdicionObligatorio}'
+					}
+				}]
 			}
+			
+			
+			
+			
+			
+				
 		];
 		me.callParent();
 	}

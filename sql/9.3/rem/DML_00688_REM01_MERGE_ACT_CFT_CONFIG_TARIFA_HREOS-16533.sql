@@ -106,7 +106,7 @@ BEGIN
                                     sysdate,
                                     us.BORRADO,
                                     us.PVE_ID,
-                                    (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''),
+                                    (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''),
                                     us.CFT_FECHA_INI,
                                     us.CFT_FECHA_FIN,
                                     us.CFT_PRECIO_UNITARIO_CLIENTE,

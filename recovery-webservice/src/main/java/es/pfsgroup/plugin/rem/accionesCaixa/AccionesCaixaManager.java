@@ -111,11 +111,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 			dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
 			
 			eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
-			try {
-				eco.setFechaAnulacion(sdfEntrada.parse(dto.getFechaReal()));
-			}catch(ParseException e) {
-				e.printStackTrace();
-			}
+			eco.setFechaAnulacion(new Date());
+
             genericDao.save(ExpedienteComercial.class, eco);
 			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
         }else {

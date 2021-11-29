@@ -69,7 +69,8 @@ BEGIN
                     WHERE  NOT EXISTS (
                         SELECT 1 
                         FROM '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA cft2 
-                        WHERE cft2.DD_SCR_ID= (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''))                
+                        WHERE cft2.DD_SCR_ID= (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70'')
+						AND cft2.BORRADO=0)                
                         
                         ) us ON (us.CFT_ID = act.CFT_ID AND us.DD_SCR_CODIGO = ''70'')
                                                 

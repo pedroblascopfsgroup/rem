@@ -339,15 +339,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr) && esBankia) {
 							campoPaisRpr.allowBlank = false;
-							if (campoPaisRpr.value == null) {
-								campoPaisRpr.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(codigoPaisRte)) {
 							codigoPaisRte.allowBlank = false;
-							if (codigoPaisRte.value == null) {
-								codigoPaisRte.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(fechaNacRep) && esBankia) {
 							campoMunicipioRpr.allowBlank = false;

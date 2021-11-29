@@ -2451,7 +2451,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// Por defecto: en Curso
 		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
 		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
-			|| (idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
+			|| (gestorActivo != null && idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
 				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
 						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
 								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {

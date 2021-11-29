@@ -129,7 +129,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "conTituloCodigo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 				BeanUtils.copyProperty(activoDto, "conTituloDescripcion", activo.getSituacionPosesoria().getConTitulo().getDescripcion());
 				
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){

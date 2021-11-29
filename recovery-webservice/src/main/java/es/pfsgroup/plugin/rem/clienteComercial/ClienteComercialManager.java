@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,11 +30,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
@@ -63,6 +60,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
+
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Override
 	public String managerName() {
@@ -464,6 +464,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
 
 		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
+		Boolean documentoModificado = false;
+		Boolean documentoRteModificado = false;
 		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
 		DtoInterlocutorBC newData = new DtoInterlocutorBC();
 
@@ -506,6 +508,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 		if (((JSONObject) jsonFields).containsKey("documento")) {
+			documentoModificado = !clienteDto.getDocumento().equals(cliente.getDocumento());
 			cliente.setDocumento(clienteDto.getDocumento());
 		}
 		if (((JSONObject) jsonFields).containsKey("codTipoDocumentoRepresentante")) {
@@ -521,6 +524,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 		if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
+			documentoRteModificado = !clienteDto.getDocumentoRepresentante().equals(cliente.getDocumentoRepresentante());
 			cliente.setDocumentoRepresentante(clienteDto.getDocumentoRepresentante());
 		}
 		if (((JSONObject) jsonFields).containsKey("telefono1")) {
@@ -751,7 +755,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHayaCaixa());
+		String idPersonaHayaCaixa = documentoModificado && cliente.getIdPersonaHayaCaixa() != null ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumento(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixa();
+		String idPersonaHaya = documentoModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumento()) : cliente.getIdPersonaHaya();
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),idPersonaHayaCaixa,idPersonaHaya);
 		cliente.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -767,7 +774,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		InfoAdicionalPersona iapRep = null;
 
 		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+
+			String idPersonaHayaCaixaRte = documentoRteModificado ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumentoRepresentante(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixaRepresentante();
+			String idPersonaHayaRte = documentoRteModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumentoRepresentante()) : cliente.getIdPersonaHaya();
+
+
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),idPersonaHayaCaixaRte, idPersonaHayaRte);
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 		}
 

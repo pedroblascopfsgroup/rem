@@ -230,7 +230,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 							peticionario = usuarioLogado.getUsername();
 						}
-						expediente.setPeticionarioAnulacion(peticionario);
+						if(expediente.getPeticionarioAnulacion() == null) expediente.setPeticionarioAnulacion(peticionario);
 
 						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
 								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar && 

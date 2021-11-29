@@ -760,9 +760,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true; 
 			}else{
 				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
-					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo)))
-					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}
 			
 		},

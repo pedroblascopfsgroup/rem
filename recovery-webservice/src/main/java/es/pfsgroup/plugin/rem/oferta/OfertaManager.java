@@ -197,6 +197,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
@@ -872,6 +873,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("recomendacionRequerida", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
+		if ((!Checks.esNulo(ofertaDto.getRecomendacionRC()) && !DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionRC()))
+				&& (!Checks.esNulo(ofertaDto.getRecomendacionDC()) && !DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionDC()))
+				&& !Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())) {
+			errorsList.put("codMotivoRechazoRCDC", RestApi.REST_MSG_UNKNOWN_KEY);
+		} else if ((!Checks.esNulo(ofertaDto.getRecomendacionRC()) && DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionRC())
+				|| (!Checks.esNulo(ofertaDto.getRecomendacionDC()) && DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionDC())))
+				&& Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())) {
+			errorsList.put("codMotivoRechazoRCDC", RestApi.REST_MSG_MISSING_REQUIRED);
+		} else if ((Checks.esNulo(ofertaDto.getRecomendacionRC()) || Checks.esNulo(ofertaDto.getRecomendacionDC()))
+				&& !Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())){
+			errorsList.put("recomendacionRC||recomendacionDC", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
 		
 
 		return errorsList;
@@ -1318,6 +1331,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else {
 					dto.setTexto("NO");
 				}
+				saveTextoOfertaWS(dto, oferta);
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())) {
+				DDMotivoRechazoRCDC motivo = genericDao.get(DDMotivoRechazoRCDC.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoRechazoRCDC()));
+				dto.setCampoCodigo("15");
+				dto.setTexto(motivo.getDescripcion());
+				
 				saveTextoOfertaWS(dto, oferta);
 			}
 			
@@ -1987,6 +2009,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				saveTextoOfertaWS(dto, oferta);
 				modificado = true;
+			}
+			
+			if(!Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())) {
+				DDMotivoRechazoRCDC motivo = genericDao.get(DDMotivoRechazoRCDC.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getCodMotivoRechazoRCDC()));
+				dto.setCampoCodigo("15");
+				dto.setTexto(motivo.getDescripcion());
+				
+				saveTextoOfertaWS(dto, oferta);
 			}
 			
 			String codigo = null;
@@ -7457,7 +7488,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA);
 		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA)) {
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA);
-		} else{
+		} else if(dto.getCampoCodigo().equals(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC)) {
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
+		}else{
 			filtroTipoTexto = null;
 		}
 		

@@ -264,7 +264,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	public void irClRod(ExpedienteComercial eco) {
 		
 		DDEstadosExpedienteComercial estado = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.PTE_CL_ROD);
-		DDEstadoExpedienteBc estadoBC = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_AGENDAR));
+		DDEstadoExpedienteBc estadoBC = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_CL_ROD));
 		eco.setEstado(estado);
 		eco.setEstadoBc(estadoBC);
 		

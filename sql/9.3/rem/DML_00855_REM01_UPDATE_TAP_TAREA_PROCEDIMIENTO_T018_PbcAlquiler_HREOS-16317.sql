@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211111
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20211130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16317
+--## INCIDENCIA_LINK=HREOS-16525
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -34,7 +34,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(3500);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('T018_ScoringBc' ,'valores[''''T018_ScoringBc''''][''''comboResultado''''] == ''''RECH'''' ? ''''RECH'''' : avanzaScoringBC(valores[''''T018_ScoringBc''''][''''comboResultado''''])')
+    	T_TIPO_DATA('T018_ScoringBc' ,'valores[''''T018_ScoringBc''''][''''comboResultado'''']')
     );
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN	
@@ -54,7 +54,7 @@ BEGIN
 	        DBMS_OUTPUT.PUT_LINE(' LA FILA  YA EXISTE EN [TAP_TAREA_PROCEDIMIENTO] ACTUALIZARLA');
 	        V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
 		    		SET TAP_SCRIPT_DECISION =  '''||V_TMP_TIPO_DATA(2)||''' 
-					,USUARIOMODIFICAR = ''HREOS-16317''                    
+					,USUARIOMODIFICAR = ''HREOS-16525''                    
 		            ,FECHAMODIFICAR = SYSDATE
 		            WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||''' ';
 			EXECUTE IMMEDIATE V_MSQL;

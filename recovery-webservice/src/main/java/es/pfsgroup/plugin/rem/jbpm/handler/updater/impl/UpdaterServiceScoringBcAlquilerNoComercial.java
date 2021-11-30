@@ -105,7 +105,9 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 		
 		if(!aprueba) {
 			try {
-				expedienteComercial.setFechaAnulacion(ft.parse(fechaResolucion));
+				if(fechaResolucion != null) {
+					expedienteComercial.setFechaAnulacion(ft.parse(fechaResolucion));
+				}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

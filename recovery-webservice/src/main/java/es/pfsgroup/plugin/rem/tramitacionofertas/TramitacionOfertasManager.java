@@ -964,6 +964,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorExpedienteNuevo.setEmailRepresentante(cliente.getEmail());
 				compradorExpedienteNuevo.setTelefono1Representante(cliente.getTelefono1());
 				compradorExpedienteNuevo.setTelefono2Representante(cliente.getTelefono2());
+				compradorExpedienteNuevo.setInfoAdicionalRepresentante(cliente.getInfoAdicionalPersonaRep());
 
 			} else {
 				compradorBusqueda.setNombre(cliente.getNombre());

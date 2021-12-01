@@ -15,8 +15,11 @@ public class VbusquedaPrefacturas implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "PFA_ID")
+	@Column(name = "ID")
 	private Long id;
+	
+	@Column(name = "PFA_ID")
+	private Long pfa_id;
 	
 	@Column(name = "ALB_ID")
 	private Long albaranId;
@@ -66,6 +69,14 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getPfa_id() {
+		return pfa_id;
+	}
+
+	public void setPfa_id(Long pfa_id) {
+		this.pfa_id = pfa_id;
 	}
 
 	public Long getNumPrefactura() {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sanchez
---## FECHA_CREACION=20200920
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10987
+--## INCIDENCIA_LINK=HREOS-16576
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - Pablo Garcia Pallás (HREOS-10987)
 --## 		0.2 Añadir campo anyo_trabajo
+--##		0.3 Añadir nueva tabla de prefacturas - HREOS-16576
 --##########################################
 --*/
 
@@ -55,7 +56,7 @@ BEGIN
 	AS
 		select 
 			tbj.tbj_id,
-			tbj.pfa_id,
+			PTG.PFA_ID,
 		    tbj.tbj_num_trabajo,
 		    NVL(tbj.tbj_importe_total,0.0) as importe_cliente,
 		    NVL(tbj.tbj_importe_presupuesto,0.0) as importe_total,
@@ -74,6 +75,7 @@ BEGIN
 			join ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr on tbj.dd_ttr_id = ttr.dd_ttr_id
 			join ' || V_ESQUEMA || '.dd_est_estado_trabajo est on tbj.dd_est_id = est.dd_est_id
 			join ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str on tbj.dd_str_id = str.dd_str_id
+			JOIN ' || V_ESQUEMA ||'.PTG_PREFACTURAS PTG ON PTG.tbj_id = tbj.tbj_id AND PTG.BORRADO = 0
 		where tbj.borrado = 0
 		';
 

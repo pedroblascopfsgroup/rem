@@ -7302,11 +7302,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return;
 			};
 		}
-		gridCalifcacion.disableAddButton(true);
+		gridCalifcacion.disableAddButton(false);
 		if ((codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
 		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'])
 		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])){
-			gridCalifcacion.disableAddButton(false);
+			gridCalifcacion.disableAddButton(true);
 		}
 		switch (newValue) {
 

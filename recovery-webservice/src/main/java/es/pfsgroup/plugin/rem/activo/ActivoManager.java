@@ -7284,7 +7284,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
-					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
@@ -7302,7 +7301,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						
 			htt.setFechaCalificacion(!Checks.esNulo(tramitacionDto.getFechaCalificacion()) ? tramitacionDto.getFechaCalificacion() : null);
 			htt.setFechaInscripcion(!Checks.esNulo(tramitacionDto.getFechaInscripcion()) ? tramitacionDto.getFechaInscripcion() : null);
-			htt.setFechaPresentacionRegistro(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) ? tramitacionDto.getFechaPresentacionRegistro() : null);
+			if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()))
+				htt.setFechaPresentacionRegistro(tramitacionDto.getFechaPresentacionRegistro());
 
 			if (!Checks.esNulo(tramitacionDto.getObservaciones())) {
 				beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());

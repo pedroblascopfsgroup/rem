@@ -111,7 +111,7 @@ public class UpdaterServiceScoringBcAlquilerNoComercial implements UpdaterServic
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			ofertaApi.rechazarOferta(oferta);
+			ofertaApi.finalizarOferta(oferta);
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);

@@ -216,7 +216,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("tasaciones", listaTasaciones);
         map.put("valoraciones", listaValoraciones);
         if(activo.getInfoComercial() != null && activo.getInfoComercial().getTipoVia() != null){
-        	Filter codigoTipoViaRem = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"codigo", activo.getInfoComercial().getTipoVia());
+        	Filter codigoTipoViaRem = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"codigo", activo.getInfoComercial().getTipoVia().getCodigo());
         	DDTipoViaFenix tipoViaFenix = genericDao.get(DDTipoViaFenix.class, codigoTipoViaRem);
         	if(tipoViaFenix != null) {
         		map.put("tipoVia", tipoViaFenix.getCodigoFenix());

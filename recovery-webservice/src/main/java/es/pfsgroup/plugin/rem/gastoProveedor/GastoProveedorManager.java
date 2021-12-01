@@ -3510,9 +3510,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 						listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
 					}else {
-						throw new Exception("No se obtiene gasto ya que no coincide o el propietario o tipo del gasto o el gasto a refacturar no tiene linea de detalle o no es refacturable");
+						throw new Exception("No se obtiene gasto ya que no coincide o el propietario o tipo del gasto o el gasto a refacturar no tiene linea de detalle");
 					}
 				}
+			}else {
+				throw new Exception("No se obtiene gasto ya que no es refacturable");
 			}
 		}
 		

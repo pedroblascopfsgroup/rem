@@ -117,7 +117,7 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			
 		expedienteComercialApi.update(expedienteComercial, false);	
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(expedienteComercial, sancionCLROD));
+		//ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(expedienteComercial, sancionCLROD));
 
 	}
 

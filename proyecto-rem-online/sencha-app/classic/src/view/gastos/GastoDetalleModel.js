@@ -875,6 +875,27 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                     idGasto : '{gasto.id}'
                 }
             }
-        }
+        },
+        
+        comboSubtiposGastoFiltered: {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubtipoGastoFiltered',
+				extraParams : {
+					codCartera: '{gasto.carteraPropietarioCodigo}',
+					codigoTipoGasto : '{gasto.tipoGastoCodigo}'
+				}
+			},
+			autoLoad: true
+		},
+    	
+    	comboSubtipoGastoFiltered: {
+    		model: 'HreRem.model.ComboBase',
+    		proxy: {
+    			type: 'uxproxy',
+    			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
+    		}
+    	}
 	}
 });

@@ -61,7 +61,6 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
-		String sancionCLROD = null;
 		boolean aprueba = false;
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
@@ -76,13 +75,6 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 				} else {					
 					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}
-								
-				
-				
-			}
-			
-			if(SANCION_CL_ROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				sancionCLROD = valor.getValor();
 			}
 			
 			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -116,8 +108,6 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
 			
 		expedienteComercialApi.update(expedienteComercial, false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(expedienteComercial, sancionCLROD));
 
 	}
 

@@ -61,25 +61,11 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             return false;
         }
 
-        if(calculaT017ResolucionExpdiente(codTarea, codEstado)){
-            return true;
-        } else if (calculaResolucionT018DefinicionOferta(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018AnalisisTecnico(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018AnalisisBc(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018ScoringBc(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018ResolucionComite(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado)) {
-            return true;
-        } else if (calculaT017AgendarFechaArras(codTarea, codEstado)){
-            return true;
-        }
-
-        return false;
+        return calculaT017ResolucionExpdiente(codTarea, codEstado) || calculaResolucionT018DefinicionOferta(codTarea, codEstado)
+                || calculaResolucionT018AnalisisTecnico(codTarea, codEstado) || calculaResolucionT018AnalisisBc(codTarea, codEstado)
+                || calculaResolucionT018ScoringBc(codTarea, codEstado) || calculaResolucionT018ResolucionComite(codTarea, codEstado)
+                || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
+                || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado);
     }
 
     private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -140,6 +126,22 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
     private boolean calculaT017AgendarFechaArras(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_AGENDAR_FECHA_ARRAS.equals(codTarea))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaT017ResolucionCES(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.CODIGO_RESOLUCION_CES_T017.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT018PtClRod(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CLROD.equals(codTarea) && (DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
             return true;
 
         return false;

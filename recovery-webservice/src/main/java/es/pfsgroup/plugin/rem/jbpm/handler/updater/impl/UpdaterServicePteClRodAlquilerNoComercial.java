@@ -61,9 +61,8 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
-		DDResolucionComite resolucionComite = null;
 		String sancionCLROD = null;
-		RespuestaComiteBC respuestaComiteBc = new RespuestaComiteBC();
+		boolean aprueba = false;
 		
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_PTCLROD);
@@ -72,35 +71,18 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
-					
-					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_APRUEBA));
 					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
-				} else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
-					ofertaApi.rechazarOferta(oferta);
-					
-					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_RECHAZA));
+					aprueba = true;
+				} else {					
 					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}
 								
-				expedienteComercial.setEstado(estadoExpedienteComercial);
-				expedienteComercial.setEstadoBc(estadoExpedienteBc);
 				
-				if (resolucionComite != null) {
-					respuestaComiteBc.setValidacionBcRBC(resolucionComite);
-				}
+				
 			}
 			
 			if(SANCION_CL_ROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				sancionCLROD = valor.getValor();
-				respuestaComiteBc.setSancionClRod(sancionCLROD);
-			}
-			
-			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				respuestaComiteBc.setObservacionesBcRBC(valor.getValor());
 			}
 			
 			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -109,30 +91,30 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
-					respuestaComiteBc.setFechaRespuestaBcRBC(ft.parse(valor.getValor()));
+					dtoHistoricoBC.setFechaRespuestaBC(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha Resolucion. ", e);
 				}
 			}
 			
-			if (oferta != null && DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())) {
-				respuestaComiteBc.setComiteRBC(false);
-			} else {
-				respuestaComiteBc.setComiteRBC(true);
-			}
-			
-			if (expedienteComercial != null) {
-				respuestaComiteBc.setExpedienteComercial(expedienteComercial);
-			}
-			
 		}
+		
 		
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 		
 		genericDao.save(HistoricoSancionesBc.class, historico);
 		
-		genericDao.save(RespuestaComiteBC.class, respuestaComiteBc);
-		
+		if (!aprueba) {
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
+			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+			ofertaApi.finalizarOferta(oferta);
+		}else {
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
+			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
+		}
+		expedienteComercial.setEstado(estadoExpedienteComercial);
+		expedienteComercial.setEstadoBc(estadoExpedienteBc);
+			
 		expedienteComercialApi.update(expedienteComercial, false);	
 		
 		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(expedienteComercial, sancionCLROD));

@@ -170,7 +170,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("subtipoActivo", null);
         }
         if(activo.getEstadoActivo() != null) {
-        	map.put("estado", activo.getEstadoActivo());
+        	map.put("estado", activo.getEstadoActivo().getCodigo());
         }else {
             map.put("estado", "1");
         }

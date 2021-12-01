@@ -72,8 +72,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception {
-        adapter.save(createRequestAccionAprobacion(dto));
+    public Boolean accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception {
+        return adapter.save(createRequestAccionAprobacion(dto));
     }
 
     public Map<String, String[]> createRequestAccionAprobacion(DtoAccionAprobacionCaixa dto){

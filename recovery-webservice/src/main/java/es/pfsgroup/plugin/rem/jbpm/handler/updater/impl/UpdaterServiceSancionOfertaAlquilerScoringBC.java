@@ -98,7 +98,9 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 			if(oferta != null) {
 				try {
-					expedienteComercial.setFechaAnulacion(ft.parse(fechaSancion));
+					if(fechaSancion != null && !fechaSancion.isEmpty()) {
+						expedienteComercial.setFechaAnulacion(ft.parse(fechaSancion));
+					}
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

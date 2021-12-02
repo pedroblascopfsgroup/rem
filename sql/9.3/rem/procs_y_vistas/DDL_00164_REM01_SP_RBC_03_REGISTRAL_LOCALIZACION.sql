@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20211020
+--## AUTOR=DAP
+--## FECHA_CREACION=2021202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15855
@@ -23,6 +23,7 @@
 --##	      0.11 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.12 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##	      0.13 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855 - Alejandra García
+--##          0.14 Cosas - HREOS-XXXXX
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -199,9 +200,14 @@ BEGIN
                   ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
                   , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
                   , SUBSTR(ACT_REG.REG_SUPERFICIE_PARCELA * 100, 0, 10) SUP_TASACION_SOLAR
-                  , ACT_REG.REG_SUPERFICIE_PARCELA_UTIL * 100 SUP_TASACION_UTIL
+                  , ACT_REG.REG_SUPERFICIE_UTIL * 100 SUP_TASACION_UTIL
                   , ACT_REG.REG_SUPERFICIE_UTIL * 100 SUP_REGISTRAL_UTIL
-                  , BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA * 100 SUP_TASACION_CONSTRUIDA
+                  , CASE 
+                        WHEN NVL(BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA, 0) <> 0 AND THEN SUBSTR(BIE_REG.BIE_DREG_SUPERFICIE_CONSTRUIDA * 100, 0, 10)
+                        WHEN NVL(ACT_REG.REG_SUPERFICIE_UTIL, 0) <> 0 THEN SUBSTR(ACT_REG.REG_SUPERFICIE_UTIL * 100, 0, 10)
+                        WHEN NVL(ACT_REG.REG_SUPERFICIE_PARCELA, 0) <> 0 THEN SUBSTR(ACT_REG.REG_SUPERFICIE_PARCELA * 100, 0, 10)
+                        ELSE 0
+                        END SUP_TASACION_CONSTRUIDA
                   , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE * 100 SUP_SOBRE_RASANTE
                   , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG

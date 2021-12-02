@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211201
+--## FECHA_CREACION=20211202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16568
@@ -35,11 +35,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-			T_TIPO_DATA('DD_TCO_ID', 'NUMBER(16,0)', 'ID destino comercial'  ,'DD_TCO_TIPO_COMERCIALIZACION'),
-			T_TIPO_DATA('DD_EAL_ID', 'NUMBER(16,0)', 'ID estado alquiler'    ,'DD_EAL_ESTADO_ALQUILER'),
-			T_TIPO_DATA('DD_TTR_ID', 'NUMBER(16,0)', 'ID tipo transmisión'   ,'DD_TTR_TIPO_TRANSMISION'),
-			T_TIPO_DATA('DD_TPO_ID', 'NUMBER(16,0)', 'ID tipo posesión'      ,'DD_TPO_TIPO_POSESION'),
-			T_TIPO_DATA('EJE_ID'   , 'NUMBER(16,0)', 'ID ejercicio del gasto','ACT_EJE_EJERCICIO')
+			T_TIPO_DATA('DD_TCO_ID'         , 'NUMBER(16,0)', 'ID destino comercial'  ,'DD_TCO_TIPO_COMERCIALIZACION'),
+			T_TIPO_DATA('DD_EAL_ID'         , 'NUMBER(16,0)', 'ID estado alquiler'    ,'DD_EAL_ESTADO_ALQUILER'),
+			T_TIPO_DATA('DD_TTR_ID'         , 'NUMBER(16,0)', 'ID tipo transmisión'   ,'DD_TTR_TIPO_TRANSMISION'),
+			T_TIPO_DATA('PRIM_TOMA_POSESION', 'NUMBER(1,0)' , 'Tipo posesión: 1 = 1º, 0 = 2º'         ,'ACT_TBJ_TRABAJO'),
+			T_TIPO_DATA('EJE_ID'            , 'NUMBER(16,0)', 'ID ejercicio del gasto','ACT_EJE_EJERCICIO')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -61,8 +61,8 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
         
         -- Si existe la columna cambiamos/establecemos solo la FK
-          IF V_NUM_TABLAS = 1 THEN
-              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, modificamos la FK');
+          IF V_NUM_TABLAS = 1 AND V_TMP_TIPO_DATA(1) <> 'PRIM_TOMA_POSESION' THEN
+              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'... Ya existe, modificamos la FK');
               V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_ETG_'||V_TMP_TIPO_DATA(1)||'';
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Dropeada');
@@ -73,7 +73,7 @@ BEGIN
               DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
           
           --Si no existe la columna, la creamos y establecemos la FK
-          ELSE
+          ELSIF V_NUM_TABLAS = 0  AND V_TMP_TIPO_DATA(1) <> 'PRIM_TOMA_POSESION' THEN
               V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
               EXECUTE IMMEDIATE V_MSQL;
               DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
@@ -81,22 +81,38 @@ BEGIN
               -- Creamos comentario	
               V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';		
               EXECUTE IMMEDIATE V_MSQL;
-              --DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
+              
               DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 
               -- Creamos FK	
               V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ETG_'||V_TMP_TIPO_DATA(1)||' FOREIGN KEY 
                                     ('||V_TMP_TIPO_DATA(1)||') REFERENCES '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(4)||' ('||V_TMP_TIPO_DATA(1)||') ON DELETE SET NULL)';
               EXECUTE IMMEDIATE V_MSQL;
-              DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');     
+              DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');      
+        
+          -- Si existe la columna PRIM_TOMA_POSESION cambiamos/establecemos solo la FK
+          ELSIF V_NUM_TABLAS = 1 AND V_TMP_TIPO_DATA(1) = 'PRIM_TOMA_POSESION' THEN
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'... Ya existe');
+          
+          --Si no existe la columna PRIM_TOMA_POSESION, la creamos y establecemos la FK
+          ELSE 
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
 
-            EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';   
+              -- Creamos comentario	
+              V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';		
+              EXECUTE IMMEDIATE V_MSQL;
+              
+              DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');        
+
           END IF;
       ELSE
         DBMS_OUTPUT.PUT_LINE('No se puede añadir el campo porque la tabla a la que hace referencia no existe');
       END IF;
 
     END LOOP;
+    COMMIT;
 	
 EXCEPTION
      WHEN OTHERS THEN

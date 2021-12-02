@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
@@ -60,6 +61,8 @@ import javax.annotation.Resource;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
+	
+	private static final String REST_CLIENT_PERMITIR_ENVIO_FENIX = "rest.client.permitir.envio.fenix";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -102,6 +105,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Resource
+    private Properties appProperties;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -516,7 +522,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		transactionManager.commit(transaction);
 
-		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada())){
+		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada()) && Boolean.valueOf(appProperties.getProperty(REST_CLIENT_PERMITIR_ENVIO_FENIX))){
 			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}

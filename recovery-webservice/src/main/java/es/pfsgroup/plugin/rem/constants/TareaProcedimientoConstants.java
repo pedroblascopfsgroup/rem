@@ -26,7 +26,12 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_SANCION = "T015_SancionBC";
     	public static final String CODIGO_ELEVAR = "T015_ElevarASancion";
     	public static final String CODIGO_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
-    	public static final String CODIGO_SCORING_BC = "T015_ScoringBC";
+    	public static final String CODIGO_SCORING_BC = "T015_ScoringBC";	
+    }
+    
+    public class TramiteAlquilerNoCmT018{
+    	public static final String CLROD = "T018_PteClRod";
+
     	
     	
     }

@@ -8351,7 +8351,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 		return false;
 	}
-	
+
+	private boolean activoIndisponible(Activo activo, String estadoOferta) {
+		if (activo != null &&
+				(DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo()) ||
+						DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo()))
+						&& (!DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta))) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String estadoOferta, String codSubestadoExpediente) {
 		
 		HashMap<String, String> error = new HashMap<String, String>();
@@ -8365,6 +8376,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
 		if (numActivo != null) {
  			Activo activo = activoDao.getActivoByNumActivo(numActivo);
+ 			if (activoIndisponible(activo, estadoOferta)) {
+ 				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
+ 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
+ 				error.put("disponible", "false");
+ 				error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
+ 				return error;
+ 			}
  			if (activo.getOfertas() != null && !activo.getOfertas().isEmpty())
 				activoOfertaList = activo.getOfertas();
 		} else if (numAgrupacion != null) {
@@ -8373,6 +8391,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(idAgrupacion);
 				if (agaList != null && !agaList.isEmpty()) {
 					for(ActivoAgrupacionActivo aga : agaList) {
+						if (activoIndisponible(aga.getActivo(), estadoOferta)) {
+			 				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
+			 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
+			 				error.put("disponible", "false");
+			 				error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
+			 				return error;
+			 			}
 						activoOfertaList.addAll(aga.getActivo().getOfertas());
 					}
 				}
@@ -8382,16 +8407,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(activoOfertaList != null && !activoOfertaList.isEmpty()) {
 			
 			for(ActivoOferta actOfr : activoOfertaList) {
-				if (actOfr.getPrimaryKey().getActivo() != null &&
-						(DDSituacionComercial.CODIGO_ALQUILADO.equals(actOfr.getPrimaryKey().getActivo().getSituacionComercial().getCodigo()) ||
-								DDSituacionComercial.CODIGO_VENDIDO.equals(actOfr.getPrimaryKey().getActivo().getSituacionComercial().getCodigo()))
-								&& (!DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta))) {
-					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
-							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
-					error.put("disponible", "false");
-					error.put("codMotivoIndisponibilidad", motivoIndisponibilidad.getCodigo());
-					return error;
-				}
 
 				if ((idOferta == null || idOferta != null && !actOfr.getPrimaryKey().getOferta().getId().equals(idOferta)) 
 						&& actOfr.getPrimaryKey().getOferta().getExpedienteComercial() != null && actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado() != null 

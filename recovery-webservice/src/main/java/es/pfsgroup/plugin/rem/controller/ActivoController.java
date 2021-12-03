@@ -22,8 +22,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,6 +70,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
@@ -128,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
@@ -163,7 +163,6 @@ import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -248,6 +247,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+	
+	@Autowired
+	private CatastroApi catastroApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -4412,5 +4414,20 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCatastro(Long idActivo, String refCatastral, ModelMap model){
+		try{
+			
+			model.put("datosRem", catastroApi.getDatosCatastroRem(idActivo));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+		return createModelAndViewJson(model);
 	}
 }

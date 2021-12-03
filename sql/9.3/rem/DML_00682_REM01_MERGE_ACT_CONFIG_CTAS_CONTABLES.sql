@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20210930
+--## FECHA_CREACION=20211203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15353
@@ -55,16 +55,16 @@ BEGIN
                     act2.CCC_PRINCIPAL,
                     act2.DD_TRT_ID,
                     act2.CCC_VENDIDO,
-                    scr.DD_SCR_CODIGO,
-                    act2.VERSION,
-                    act2.BORRADO
+                    scr.DD_SCR_CODIGO                  
                     FROM '||V_ESQUEMA||'.ACT_CONFIG_CTAS_CONTABLES act2                
                     JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_ID = act2.DD_SCR_ID AND scr.DD_SCR_CODIGO = ''138''
                     WHERE  NOT EXISTS (
                         SELECT 1 
                         FROM '||V_ESQUEMA||'.ACT_CONFIG_CTAS_CONTABLES act3 
-                        WHERE act3.DD_SCR_ID= (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''))                
-                        
+                        WHERE act3.DD_SCR_ID= (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''))                
+                        AND act2.BORRADO = 0
+                         AND act2.PRO_ID=(SELECT PRO.PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO_DOCIDENTIF=''A88203542'')
+
                         ) us ON (us.CCC_CTAS_ID = act.CCC_CTAS_ID AND us.DD_SCR_CODIGO = ''70'')
                                                 
                     WHEN NOT MATCHED THEN
@@ -99,8 +99,8 @@ BEGIN
                                     us.DD_STG_ID,
                                     us.DD_TIM_ID,
                                     us.DD_CRA_ID,
-                                    (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''),
-                                    us.PRO_ID,
+                                    (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''70''),
+                                    (SELECT PRO.PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO_DOCIDENTIF=''B16896616''),
                                     us.EJE_ID,
                                     us.CCC_ARRENDAMIENTO,
                                     us.CCC_REFACTURABLE,
@@ -112,8 +112,8 @@ BEGIN
                                     us.CCC_PRINCIPAL,
                                     us.DD_TRT_ID,
                                     us.CCC_VENDIDO,
-                                    us.BORRADO,
-                                    us.VERSION,                                  
+                                    0,
+                                    0,                                  
                                     '''||V_USUARIO||''',
                                     sysdate)';
     EXECUTE IMMEDIATE V_MSQL;

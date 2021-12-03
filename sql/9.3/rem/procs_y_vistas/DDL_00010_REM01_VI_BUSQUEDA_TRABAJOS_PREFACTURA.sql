@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211201
+--## FECHA_CREACION=20211202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16576
+--## INCIDENCIA_LINK=HREOS-16593
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - Pablo Garcia Pallás (HREOS-10987)
 --## 		0.2 Añadir campo anyo_trabajo
 --##		0.3 Añadir nueva tabla de prefacturas - HREOS-16576
+--##		0.4 Añadir columna propietario y ordenador por dicha y número de trabajo - HREOS-16593
 --##########################################
 --*/
 
@@ -69,14 +70,17 @@ BEGIN
 		    str.dd_str_descripcion,
 			str.dd_str_codigo,
 			TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') ANYO_TRABAJO,
-			1 CHECK_TBJ
+			1 CHECK_TBJ,
+			PRO.PRO_NOMBRE
 
 		from ' || V_ESQUEMA || '.act_tbj_trabajo tbj
 			join ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr on tbj.dd_ttr_id = ttr.dd_ttr_id
 			join ' || V_ESQUEMA || '.dd_est_estado_trabajo est on tbj.dd_est_id = est.dd_est_id
 			join ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str on tbj.dd_str_id = str.dd_str_id
 			JOIN ' || V_ESQUEMA ||'.PTG_PREFACTURAS PTG ON PTG.tbj_id = tbj.tbj_id AND PTG.BORRADO = 0
+			JOIN ' || V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PTG.PRO_ID = PRO.PRO_ID AND PRO.BORRADO = 0
 		where tbj.borrado = 0
+		ORDER BY 16, 3
 		';
 
 

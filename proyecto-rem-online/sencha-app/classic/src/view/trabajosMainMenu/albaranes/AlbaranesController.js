@@ -194,8 +194,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var v;
 		if(descripcion == "detalleAlbaranGrid"){
 			var valor = 0;
-			if(record.data.importeTotalDetalle != null && record.data.importeTotalDetalle != 0){
-				valor = record.data.importeTotalDetalle;
+			if(record.data.importaTotalPrefacturas != null && record.data.importaTotalPrefacturas != 0){
+				valor = record.data.importaTotalPrefacturas;
 			}
 			var totalPre = this.lookupReference('totalPrefactura');
 			v = parseFloat(valor).toFixed(2);

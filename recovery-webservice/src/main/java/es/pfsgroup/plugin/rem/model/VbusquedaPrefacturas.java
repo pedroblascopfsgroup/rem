@@ -62,6 +62,9 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "DD_IRE_CODIGO")
 	private String codAreaPeticionaria;
+	
+	@Column(name = "TOTPVP")
+	private String importaTotalPrefacturas;
 
 	public Long getId() {
 		return id;
@@ -188,6 +191,14 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setCodAreaPeticionaria(String codAreaPeticionaria) {
 		this.codAreaPeticionaria = codAreaPeticionaria;
+	}
+
+	public String getImportaTotalPrefacturas() {
+		return importaTotalPrefacturas;
+	}
+
+	public void setImportaTotalPrefacturas(String importaTotalPrefacturas) {
+		this.importaTotalPrefacturas = importaTotalPrefacturas;
 	}
 	
 }

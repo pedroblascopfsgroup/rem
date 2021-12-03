@@ -30,6 +30,7 @@ public class DtoDetalleAlbaran extends WebDto implements Comparable<DtoDetalleAl
 	private String estadoTrabajo;
 	private String areaPeticionaria;
 	private String codAreaPeticionaria;
+	private Double importaTotalPrefacturas;
 	
 	
 	public String getAreaPeticionaria() {
@@ -140,6 +141,11 @@ public class DtoDetalleAlbaran extends WebDto implements Comparable<DtoDetalleAl
 	public void setCodAreaPeticionaria(String codAreaPeticionaria) {
 		this.codAreaPeticionaria = codAreaPeticionaria;
 	}
-	
+	public Double getImportaTotalPrefacturas() {
+		return importaTotalPrefacturas;
+	}
+	public void setImportaTotalPrefacturas(Double importaTotalPrefacturas) {
+		this.importaTotalPrefacturas = importaTotalPrefacturas;
+	}
 	
 }

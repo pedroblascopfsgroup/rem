@@ -65,6 +65,9 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "TOTPVP")
 	private String importaTotalPrefacturas;
+	
+	@Column(name = "CANTPROP")
+	private Boolean cantidadPropietarios;
 
 	public Long getId() {
 		return id;
@@ -199,6 +202,14 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setImportaTotalPrefacturas(String importaTotalPrefacturas) {
 		this.importaTotalPrefacturas = importaTotalPrefacturas;
+	}
+
+	public Boolean getCantidadPropietarios() {
+		return cantidadPropietarios;
+	}
+
+	public void setCantidadPropietarios(Boolean cantidadPropietarios) {
+		this.cantidadPropietarios = cantidadPropietarios;
 	}
 	
 }

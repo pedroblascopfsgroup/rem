@@ -96,6 +96,14 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.importe.total.trabajos.prefactura'),
 		            hidden: true
+		        },
+		        {
+		            dataIndex: 'cantidadPropietarios',
+		            reference: 'cantidadPropietarios',
+		            renderer: Utils.rendererCurrency,
+		            flex: 1,
+		            text: HreRem.i18n('fieldlabel.albaran.cantidad.propietarios.prefactura'),
+		            hidden: true
 		        }
 		    ];
 		me.dockedItems = [

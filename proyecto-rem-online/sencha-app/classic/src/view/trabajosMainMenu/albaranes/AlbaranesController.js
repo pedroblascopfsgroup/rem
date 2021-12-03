@@ -150,7 +150,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var numPrefactura = this.lookupReference('numPrefacturaSearch').value;
 		var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
 		var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
+		var cantidadPropietarios = grid.selection.data.cantidadPropietarios;
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
 		
+		if (cantidadPropietarios == true) {
+			textoContadorPropietarios.setHidden(false);
+		} else {
+			textoContadorPropietarios.setHidden(true);
+		}
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
                 numPrefactura: record.data.numPrefactura,
@@ -172,7 +179,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		} else {
 			me.deselectPrefactura(grid);
 		}
-		
 	},
 	
 	deselectPrefactura: function(grid){

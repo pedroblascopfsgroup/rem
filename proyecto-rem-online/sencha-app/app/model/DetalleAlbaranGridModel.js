@@ -37,6 +37,10 @@ Ext.define('HreRem.model.DetalleAlbaranGridModel', {
     		},
     		{
     			name:'importaTotalPrefacturas'
+    		},
+    		{
+    			name:'cantidadPropietarios',
+    			type:'boolean'
     		}
     		
     ]

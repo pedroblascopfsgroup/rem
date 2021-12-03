@@ -29,8 +29,8 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDTipoBien;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
@@ -2222,5 +2222,12 @@ public class Activo implements Serializable, Auditable {
 	public void setTieneGestionDnd(DDSinSiNo tieneGestionDnd) {
 		this.tieneGestionDnd = tieneGestionDnd;
 	}
-	
+	public DDTipoVia getTipoVia() {
+		DDTipoVia tipoVia = null;
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getTipoVia() != null) {
+  			tipoVia =  bien.getLocalizaciones().get(0).getTipoVia();
+  		} 
+  		
+  		return tipoVia;
+  	}
 }

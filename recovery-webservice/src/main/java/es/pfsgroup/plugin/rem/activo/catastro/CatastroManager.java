@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.activo.catastro;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +46,17 @@ public class CatastroManager implements CatastroApi {
 		}
 		return dto;
 	}
+	
+	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo) {
+		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
 		
+		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
+		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
+		
+		listDto.add(dto);
+		listDto.add(dto2);
+		
+		return listDto;
+	}
 	
 }

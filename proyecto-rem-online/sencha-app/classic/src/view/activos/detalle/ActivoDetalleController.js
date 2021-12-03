@@ -8834,6 +8834,66 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(disabled) {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
-    }
+    },
+    onClickGuardarReferencia: function(btn){
+    	var me = this;
+    	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
+    	var datosCatastro = gridDatosCatastro.getStore().getData();
+    	var hayAlgunoMarcado = false;
+    	
+    	for(i = 0; i < datosCatastro.length;i++){ 
+    		if(datosCatastro.items[i].data.check === true){
+    			hayAlgunoMarcado = true;
+    			break;
+    		}
+		}
+    	
+    	if(!hayAlgunoMarcado){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
+    		return;
+    	}
+    	
+    	// Ajax de guardado.
+
+	}, 
+	buscarReferenciaCatastral: function(textfield){
+		var me = this;
+		if(!textfield.isValid()) return;
+		var guardarReferencia = me.lookupReference('guardarRefCatastralRef');
+		var gridDatosRem = me.lookupReference('informacionCatastroGridRefRem');
+		var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
+		gridDatosRem.mask(HreRem.i18n("msg.mask.loading"));
+		gridDatosCatastro.mask(HreRem.i18n("msg.mask.loading"));
+		url = $AC.getRemoteUrl('activo/getCatastro');
+		Ext.Ajax.request({
+			url : url,
+			method : 'GET',
+			params : {
+				idActivo: 100,
+				//idActivo : me.getView().idActivo,
+				refCatastral: textfield.getValue()
+			},
+			success : function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				var datosRem = data.datosRem;
+				var datosCat = data.datosCatastro;
+				
+				var myStoreRem = new Ext.data.Store({data: datosRem});
+				var myStoreCat = new Ext.data.Store({data: datosCat});
+				
+				gridDatosRem.setStore(myStoreRem);
+				gridDatosCatastro.setStore(myStoreCat);
+				guardarReferencia.setDisabled(false);
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback : function(record, operation) {
+				gridDatosRem.unmask();
+				gridDatosCatastro.unmask();
+			}
+		});
+		
+	}
 });
 

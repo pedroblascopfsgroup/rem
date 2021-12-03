@@ -5587,6 +5587,7 @@ public class ActivoAdapter {
 		
 		return filters;
 	}
+	
 }
 
 

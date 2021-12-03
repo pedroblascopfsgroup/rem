@@ -122,6 +122,8 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
+import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
@@ -273,7 +275,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
-
+		
 		return createModelAndViewJson(model);
 	}
 
@@ -1619,7 +1621,6 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosActivoById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getAvisosActivoById(id));
-
 		return createModelAndViewJson(model);
 	}
 
@@ -4416,6 +4417,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCatastro(Long idActivo, String refCatastral, ModelMap model){
 		try{
@@ -4428,6 +4430,20 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 
 		}
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView validarCatastros(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro, ModelMap model) {
+		try {
+			List<DtoDatosCatastroGrid> listDto = catastroApi.validarCatastro(dtoCatastroRem, dtoCatastro);
+			model.put(RESPONSE_SUCCESS_KEY, listDto);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

@@ -56,14 +56,6 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String ubicacionActivoCodigo;
 	private String ubicacionActivoDescripcion;
 	private String distrito;
-    
-    //Valores económicos
-    private Double valorEstimadoVenta;
-	private Double valorEstimadoRenta;
-	private Double valorEstimadoMinVenta;
-	private Double valorEstimadoMinRenta;
-	private Double valorEstimadoMaxVenta;
-	private Double valorEstimadoMaxRenta;
 	
 	//Informacion general
 	private String regimenInmuebleCod;
@@ -83,6 +75,7 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private Integer salones;
 	private Integer estancias;
 	private Integer plantas;
+	private Integer planta;
 	private String ascensorCod;
 	private String ascensorDesc;
 	private Integer plazasGaraje;
@@ -257,42 +250,6 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	public void setTelefonoMediadorEspejo(String telefonoMediadorEspejo) {
 		this.telefonoMediadorEspejo = telefonoMediadorEspejo;
 	}
-	public Double getValorEstimadoVenta() {
-		return valorEstimadoVenta;
-	}
-	public void setValorEstimadoVenta(Double valorEstimadoVenta) {
-		this.valorEstimadoVenta = valorEstimadoVenta;
-	}
-	public Double getValorEstimadoRenta() {
-		return valorEstimadoRenta;
-	}
-	public void setValorEstimadoRenta(Double valorEstimadoRenta) {
-		this.valorEstimadoRenta = valorEstimadoRenta;
-	}
-	public Double getValorEstimadoMinVenta() {
-		return valorEstimadoMinVenta;
-	}
-	public void setValorEstimadoMinVenta(Double valorEstimadoMinVenta) {
-		this.valorEstimadoMinVenta = valorEstimadoMinVenta;
-	}
-	public Double getValorEstimadoMinRenta() {
-		return valorEstimadoMinRenta;
-	}
-	public void setValorEstimadoMinRenta(Double valorEstimadoMinRenta) {
-		this.valorEstimadoMinRenta = valorEstimadoMinRenta;
-	}
-	public Double getValorEstimadoMaxVenta() {
-		return valorEstimadoMaxVenta;
-	}
-	public void setValorEstimadoMaxVenta(Double valorEstimadoMaxVenta) {
-		this.valorEstimadoMaxVenta = valorEstimadoMaxVenta;
-	}
-	public Double getValorEstimadoMaxRenta() {
-		return valorEstimadoMaxRenta;
-	}
-	public void setValorEstimadoMaxRenta(Double valorEstimadoMaxRenta) {
-		this.valorEstimadoMaxRenta = valorEstimadoMaxRenta;
-	}
 	public String getRegimenInmuebleCod() {
 		return regimenInmuebleCod;
 	}
@@ -400,6 +357,12 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setPlantas(Integer plantas) {
 		this.plantas = plantas;
+	}
+	public Integer getPlanta() {
+		return planta;
+	}
+	public void setPlanta(Integer planta) {
+		this.planta = planta;
 	}
 	public String getAscensorCod() {
 		return ascensorCod;

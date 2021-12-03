@@ -31,6 +31,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_PLUSVALIA = "plusvalia";
     public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
     public static final String TAB_SANEAMIENTO = "saneamiento";
+    public static final String TAB_VALORACIONES_PRECIOS = "valoracionesprecios";
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();

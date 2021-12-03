@@ -1625,7 +1625,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							estado.getEstadoInformeComercial().getDescripcion());
 				}
 				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "motivo", estado.getMotivo());
-				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());					
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "responsableCambio", estado.getResponsableCambio());
 
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);

@@ -34,6 +34,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
@@ -471,7 +472,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name="ICO_NUM_PLANTAS")
 	private Long numPlantas;
 	
-	
+	@ManyToOne
+	@JoinColumn(name = "DD_AAC_ID")
+	private DDActivoAccesibilidad accesibilidad;
 
 	public Long getId() {
 		return id;
@@ -1335,6 +1338,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setNumPlantas(Long numPlantas) {
 		this.numPlantas = numPlantas;
+	}
+	
+	public DDActivoAccesibilidad getAccesibilidad() {
+		return accesibilidad;
+	}
+
+	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
+		this.accesibilidad = accesibilidad;
 	}
 	
 }

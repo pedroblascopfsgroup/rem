@@ -480,7 +480,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveValoresPreciosActivo(DtoActivoValoraciones valoracionesDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveValoresPreciosActivo(DtoActivoValoraciones valoracionesDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(valoracionesDto, id, TabActivoService.TAB_VALORACIONES_PRECIOS);
 			model.put(RESPONSE_SUCCESS_KEY, success);

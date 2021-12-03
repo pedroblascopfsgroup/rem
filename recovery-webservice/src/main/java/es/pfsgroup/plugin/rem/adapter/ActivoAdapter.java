@@ -2840,6 +2840,7 @@ public class ActivoAdapter {
 		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, codigoEstado);
 		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
+		estadoInformeComercialHistorico.setResponsableCambio("API");
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
@@ -5198,6 +5199,9 @@ public class ActivoAdapter {
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 		activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+		activoEstadosInformeComercialHistorico.setResponsableCambio(personaLogada);
 		String username = genericAdapter.getUsuarioLogado().getUsername();
 		Date fecha = new Date();
 

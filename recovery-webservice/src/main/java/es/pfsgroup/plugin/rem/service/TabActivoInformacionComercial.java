@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -39,22 +40,35 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
+import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOcupacional;
+import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingCocina;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
 
 @Component
 public class TabActivoInformacionComercial implements TabActivoService {
@@ -229,20 +243,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			//informeComercial.setUbicacionActivoDescripcion();
 			//informeComercial.setDistrito();
 			
-			//Valores económicos
-			if (!Checks.esNulo(activoInfoComercial.getValorEstimadoVenta())) 
-				informeComercial.setValorEstimadoVenta(activoInfoComercial.getValorEstimadoVenta().doubleValue());
-			if (!Checks.esNulo(activoInfoComercial.getValorEstimadoRenta())) 
-				informeComercial.setValorEstimadoRenta(activoInfoComercial.getValorEstimadoRenta().doubleValue());
-			if (!Checks.esNulo(activoInfoComercial.getMinVenta())) 
-				informeComercial.setValorEstimadoMinVenta(activoInfoComercial.getMinVenta().doubleValue());
-			if (!Checks.esNulo(activoInfoComercial.getMinRenta())) 
-				informeComercial.setValorEstimadoMinRenta(activoInfoComercial.getMinRenta().doubleValue());
-			if (!Checks.esNulo(activoInfoComercial.getMaxVenta())) 
-				informeComercial.setValorEstimadoMaxVenta(activoInfoComercial.getMaxVenta().doubleValue());
-			if (!Checks.esNulo(activoInfoComercial.getMaxRenta())) 
-				informeComercial.setValorEstimadoMaxRenta(activoInfoComercial.getMaxRenta().doubleValue());
-			
 			//Informacion general
 			if (!Checks.esNulo(activoInfoComercial.getRegimenProteccion())) {
 				informeComercial.setRegimenInmuebleCod(activoInfoComercial.getRegimenProteccion().getCodigo());
@@ -358,9 +358,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setEstadoPuertasIntCod(activoInfoComercial.getEstadoPuertasInteriores().getCodigo());
 				informeComercial.setEstadoPuertasIntDesc(activoInfoComercial.getEstadoPuertasInteriores().getDescripcion());
 			}
-			if (!Checks.esNulo(activoInfoComercial.getEstadoVentanas())) {
-				informeComercial.setEstadoPersianasCod(activoInfoComercial.getEstadoVentanas().getCodigo());
-				informeComercial.setEstadoPersianasDesc(activoInfoComercial.getEstadoVentanas().getDescripcion());
+			if (!Checks.esNulo(activoInfoComercial.getEstadoPersianas())) {
+				informeComercial.setEstadoPersianasCod(activoInfoComercial.getEstadoPersianas().getCodigo());
+				informeComercial.setEstadoPersianasDesc(activoInfoComercial.getEstadoPersianas().getDescripcion());
 			}
 			if (!Checks.esNulo(activoInfoComercial.getEstadoVentanas())) {
 				informeComercial.setEstadoVentanasCod(activoInfoComercial.getEstadoVentanas().getCodigo());
@@ -395,8 +395,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setAptoUsoCod(activoInfoComercial.getAptoUsoBruto().getCodigo());
 				informeComercial.setAptoUsoDesc(activoInfoComercial.getAptoUsoBruto().getDescripcion());
 			}
-			//informeComercial.setAccesibilidadCod(activoInfoComercial);
-			//informeComercial.setAccesibilidadDesc(activoInfoComercial);
+			if(!Checks.esNulo(activoInfoComercial.getAccesibilidad())) {
+				informeComercial.setAccesibilidadCod(activoInfoComercial.getAccesibilidad().getCodigo());
+				informeComercial.setAccesibilidadDesc(activoInfoComercial.getAccesibilidad().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getEdificabilidad())) 
 				informeComercial.setEdificabilidadTecho(activoInfoComercial.getEdificabilidad().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getSuperficieParcela())) 
@@ -514,6 +516,17 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			actInfoComercial = activo.getInfoComercial();
 		}
 		if (!Checks.esNulo(actInfoComercial)) {
+
+			
+			if (!Checks.esNulo(activoInformeDto.getDescripcionComercial())) {
+				actInfoComercial.setDescripcionComercial(activoInformeDto.getDescripcionComercial());
+			}
+			if (!Checks.esNulo(activoInformeDto.getFechaVisita())) {
+				actInfoComercial.setFechaUltimaVisita(activoInformeDto.getFechaVisita());
+			}
+			if (!Checks.esNulo(activoInformeDto.getEnvioLlavesApi())) {
+				actInfoComercial.setEnvioLlavesApi(activoInformeDto.getEnvioLlavesApi());
+			}
 										
 			//Direccion
 			if (!Checks.esNulo(activoInformeDto.getProvinciaCodigo())) {
@@ -558,6 +571,23 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			if (!Checks.esNulo(activoInformeDto.getCodPostal())) 
 				actInfoComercial.setCodigoPostal(activoInformeDto.getCodPostal());
 
+			if (!Checks.esNulo(activoInformeDto.getNombreVia())) {
+				actInfoComercial.setNombreVia(activoInformeDto.getNombreVia());
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getPiso())) {
+				actInfoComercial.setPlanta(activoInformeDto.getPiso());
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getLatitud())) {
+				BigDecimal bigDecimalLatitud = BigDecimal.valueOf(Double.valueOf(activoInformeDto.getLatitud()));
+				actInfoComercial.setLatitud(bigDecimalLatitud);
+			}
+			if (!Checks.esNulo(activoInformeDto.getLongitud())) {
+				BigDecimal bigDecimalLongitud = BigDecimal.valueOf(Double.valueOf(activoInformeDto.getLongitud()));
+				actInfoComercial.setLongitud(bigDecimalLongitud);
+			}
+			
 			/*if (!Checks.esNulo(activoInformeDto.getInferiorMunicipioCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getInferiorMunicipioCodigo());
 				DDUnidadPoblacional unidadPoblacional = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
@@ -581,20 +611,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 						}
 					}
 			}*/
-			
-			//Valores económicos
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoVenta())) 
-				actInfoComercial.setValorEstimadoVenta(activoInformeDto.getValorEstimadoVenta().floatValue());
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoRenta())) 
-				actInfoComercial.setValorEstimadoRenta(activoInformeDto.getValorEstimadoRenta().floatValue());
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoMinVenta())) 
-				actInfoComercial.setMinVenta(activoInformeDto.getValorEstimadoMinVenta().floatValue());
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoMinRenta())) 
-				actInfoComercial.setMinRenta(activoInformeDto.getValorEstimadoMinRenta().floatValue());
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoMaxVenta())) 
-				actInfoComercial.setMaxVenta(activoInformeDto.getValorEstimadoMaxVenta().floatValue());
-			if (!Checks.esNulo(activoInformeDto.getValorEstimadoMaxRenta())) 
-				actInfoComercial.setMaxRenta(activoInformeDto.getValorEstimadoMaxRenta().floatValue());
 			
 			//Informacion general
 			if (!Checks.esNulo(activoInformeDto.getRegimenInmuebleCod())) {
@@ -633,15 +649,224 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getRehabilitadoCod());
 				actInfoComercial.setRehabilitado(genericDao.get(DDSinSiNo.class, filtro));
 			}
-			if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacion())) 
+			if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacion())) {
 				actInfoComercial.setAnyoRehabilitacion(activoInformeDto.getAnyoRehabilitacion());
+			}
+			if (!Checks.esNulo(activoInformeDto.getVisitableCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getVisitableCod());
+				actInfoComercial.setVisitable(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getOcupadoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getOcupadoCod());
+				actInfoComercial.setOcupado(genericDao.get(DDSinSiNo.class, filtro));
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getSalones())) {
+				actInfoComercial.setNumSalones(activoInformeDto.getSalones().longValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstancias())) {
+				actInfoComercial.setNumEstancias(activoInformeDto.getEstancias().longValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getPlantas())) {
+				actInfoComercial.setNumPlantas(activoInformeDto.getPlantas().longValue());
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getSuperficieTerraza())) {
+				actInfoComercial.setSuperficieTerraza(activoInformeDto.getSuperficieTerraza().floatValue());
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getSuperficiePatio())) {
+				actInfoComercial.setSuperficiePatio(activoInformeDto.getSuperficiePatio().floatValue());
+			}
+
+			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionCod());
+				actInfoComercial.setEstadoConservacion(genericDao.get(DDEstadoConservacion.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAnejoGarajeCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAnejoGarajeCod());
+				actInfoComercial.setAnejoGaraje(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAnejoTrasteroCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAnejoTrasteroCod());
+				actInfoComercial.setAnejoTrastero(genericDao.get(DDSinSiNo.class, filtro));
+			}
 			
+			//Caracteristicas ppales del activo
+			if (!Checks.esNulo(activoInformeDto.getOrientacion())) {
+				actInfoComercial.setOrientacion(activoInformeDto.getOrientacion());
+			}
+			if (!Checks.esNulo(activoInformeDto.getExtIntCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getExtIntCod());
+				actInfoComercial.setExteriorInterior(genericDao.get(DDExteriorInterior.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getCocRatingCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCocRatingCod());
+				actInfoComercial.setRatingCocina(genericDao.get(DDRatingCocina.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getCocAmuebladaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCocAmuebladaCod());
+				actInfoComercial.setCocinaAmueblada(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getArmEmpotradosCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getArmEmpotradosCod());
+				actInfoComercial.setArmariosEmpotrados(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getCalefaccion())) {
+				actInfoComercial.setCalefaccion(activoInformeDto.getCalefaccion());
+			}
+			if (!Checks.esNulo(activoInformeDto.getTipoCalefaccionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoCalefaccionCod());
+				actInfoComercial.setTipoCalefaccion(genericDao.get(DDTipoCalefaccion.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAireAcondCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAireAcondCod());
+				actInfoComercial.setAireAcondicionado(genericDao.get(DDTipoClimatizacion.class, filtro));
+			}
+				
 			//Otras caracteristicas del activo (!vivienda)
 			if (!Checks.esNulo(activoInformeDto.getLicenciaAperturaCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getLicenciaAperturaCod());
 				actInfoComercial.setLicenciaApertura(genericDao.get(DDSinSiNo.class, filtro));
 			}
 				
+			if(!Checks.esNulo(activoInformeDto.getAccesibilidadCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAccesibilidadCod());
+				actInfoComercial.setAccesibilidad(genericDao.get(DDActivoAccesibilidad.class, filtro));
+			}
+			
+			//Otras caracteristicas del activo
+			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdiCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdiCod());
+				actInfoComercial.setEstadoConservacionEdificio(genericDao.get(DDEstadoConservacionEdificio.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getPlantasEdificio())) {
+				actInfoComercial.setNumPlantasEdificio(activoInformeDto.getPlantasEdificio().longValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getPuertaAccesoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getPuertaAccesoCod());
+				actInfoComercial.setTipoPuerta(genericDao.get(DDTipoPuerta.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoPuertasIntCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoPuertasIntCod());
+				actInfoComercial.setEstadoPuertasInteriores(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoPersianasCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoPersianasCod());
+				actInfoComercial.setEstadoPersianas(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoVentanasCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoVentanasCod());
+				actInfoComercial.setEstadoVentanas(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoPinturaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoPinturaCod());
+				actInfoComercial.setEstadoPintura(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoSoladosCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoSoladosCod());
+				actInfoComercial.setEstadoSolados(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEstadoBanyosCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoBanyosCod());
+				actInfoComercial.setEstadoBanyos(genericDao.get(DDEstadoMobiliario.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAdmiteMascotaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAdmiteMascotaCod());
+				actInfoComercial.setAdmiteMascotas(genericDao.get(DDAdmision.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getSalidaHumoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getSalidaHumoCod());
+				actInfoComercial.setSalidaHumos(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAptoUsoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAptoUsoCod());
+				actInfoComercial.setAptoUsoBruto(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getEdificabilidadTecho())) {
+				actInfoComercial.setEdificabilidad(activoInformeDto.getEdificabilidadTecho().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getSuperficieSuelo())) {
+				actInfoComercial.setSuperficieParcela(activoInformeDto.getSuperficieSuelo().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getPorcUrbEjecutada())) {
+				actInfoComercial.setUrbanizacionEjecutado(activoInformeDto.getPorcUrbEjecutada().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getClasificacionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getClasificacionCod());
+				actInfoComercial.setClasificacion(genericDao.get(DDClasificacion.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getUsoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getUsoCod());
+				actInfoComercial.setUsoActivo(genericDao.get(DDUsoActivo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getMetrosFachada())) {
+				actInfoComercial.setMetrosFachada(activoInformeDto.getMetrosFachada().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getAlmacenCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAlmacenCod());
+				actInfoComercial.setAlmacen(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getMetrosAlmacen())) {
+				actInfoComercial.setSuperficieAlmacen(activoInformeDto.getMetrosAlmacen().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getSupVentaExpoCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getSupVentaExpoCod());
+				actInfoComercial.setVentaExposicion(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getMetrosSupVentaExpo())) {
+				actInfoComercial.setSuperficieVentaExposicion(activoInformeDto.getMetrosSupVentaExpo().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getEntreplantaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEntreplantaCod());
+				actInfoComercial.setEntreplanta(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAlturaLibre())) {
+				actInfoComercial.setAlturaLibre(activoInformeDto.getAlturaLibre().floatValue());
+			}
+			if (!Checks.esNulo(activoInformeDto.getPorcEdiEjecutada())) {
+				actInfoComercial.setEdificacionEjecutada(activoInformeDto.getPorcEdiEjecutada().floatValue());
+			}
+			
+			//Equipamientos
+			if (!Checks.esNulo(activoInformeDto.getZonaVerdeCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getZonaVerdeCod());
+				actInfoComercial.setZonasVerdes(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getJardinCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getJardinCod());
+				actInfoComercial.setJardin(genericDao.get(DDDisponibilidad.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getZonaDeportivaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getZonaDeportivaCod());
+				actInfoComercial.setInstalacionesDeportivas(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getGimnasioCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getGimnasioCod());
+				actInfoComercial.setGimnasio(genericDao.get(DDDisponibilidad.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getPiscinaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getPiscinaCod());
+				actInfoComercial.setPiscina(genericDao.get(DDDisponibilidad.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getConserjeCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getConserjeCod());
+				actInfoComercial.setConserje(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			if (!Checks.esNulo(activoInformeDto.getAccesoMovReducidaCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getAccesoMovReducidaCod());
+				actInfoComercial.setAccesoMinusvalidos(genericDao.get(DDSinSiNo.class, filtro));
+			}
+			
+			//Comunicaciones y servicios
+			if(!Checks.esNulo(activoInformeDto.getUbicacionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getUbicacionCod());
+				actInfoComercial.setUbicacionActivo(genericDao.get(DDUbicacionActivo.class, filtro));
+			}
+			if(!Checks.esNulo(activoInformeDto.getValUbicacionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getValUbicacionCod());
+				actInfoComercial.setValoracionUbicacion(genericDao.get(DDValoracionUbicacion.class, filtro));
+			}
 			/*if(!Checks.esNulo(actInfoComercial.getPosibleInforme())) {
 				if (actInfoComercial.getPosibleInforme() == 0) {
 					Filter filterEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);

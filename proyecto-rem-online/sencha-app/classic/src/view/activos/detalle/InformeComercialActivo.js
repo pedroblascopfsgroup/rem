@@ -26,7 +26,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     initComponent: function () {
         var me = this;
         
-		var editaPosibleInforme = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBL'])));
+		var editaPosibleInforme = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBL'])));
 		
 		var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
 		
@@ -74,36 +74,30 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								// Fila 1
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.codigo'),
-									bind: '{infoComercial.codigoMediador}',
-									readOnly: true
+									bind: '{infoComercial.codigoMediador}'
 								},
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-									bind: '{infoComercial.nombreMediador}',
-									readOnly: true
+									bind: '{infoComercial.nombreMediador}'
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-									bind: '{infoComercial.telefonoMediador}',
-									readOnly: true
+									bind: '{infoComercial.telefonoMediador}'
 								},
 							// Fila 2
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email'),
-									bind: '{infoComercial.emailMediador}',
-									readOnly: true
+									bind: '{infoComercial.emailMediador}'
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: 'Fecha envío llaves API',
-									bind: '{infoComercial.envioLlavesApi}',
-									readOnly: true
+									bind: '{infoComercial.envioLlavesApi}'
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
-									bind: '{infoComercial.recepcionLlavesApi}',
-									readOnly: true
+									bind: '{infoComercial.recepcionLlavesApi}'
 								},
 								{
 									xtype: 'datefieldbase',
@@ -115,14 +109,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								{
 									xtype: 'checkboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-									bind: '{infoComercial.autorizacionWeb}',
-									readOnly: true
+									bind: '{infoComercial.autorizacionWeb}'
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
 									bind: '{infoComercial.fechaAutorizacionHasta}',
-									readOnly: true,
 									colspan: 2
 								}
 								]
@@ -156,38 +148,32 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								// Fila 1
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.codigo'),
-									bind: '{infoComercial.codigoMediadorEspejo}',
-									readOnly: true
+									bind: '{infoComercial.codigoMediadorEspejo}'
 								},
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-									bind: '{infoComercial.nombreMediadorEspejo}',
-									readOnly: true
+									bind: '{infoComercial.nombreMediadorEspejo}'
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-									bind: '{infoComercial.telefonoMediadorEspejo}',
-									readOnly: true
+									bind: '{infoComercial.telefonoMediadorEspejo}'
 								},
 							// Fila 2
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email'),
-									bind: '{infoComercial.emailMediadorEspejo}',
-									readOnly: true
+									bind: '{infoComercial.emailMediadorEspejo}'
 								},
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
 									colspan: 2,
-									bind: '{infoComercial.fechaRecepcionLlavesEspejo}',
-									readOnly: true
+									bind: '{infoComercial.fechaRecepcionLlavesEspejo}'
 								},
 							// Fila 3
 								{
 									xtype: 'checkboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-									bind: '{infoComercial.autorizacionWebEspejo}',
-									readOnly: true
+									bind: '{infoComercial.autorizacionWebEspejo}'
 								}
 								]
 						},
@@ -200,7 +186,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								[	
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
-										readOnly: true,
 										bind: {
 							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
 							        		value: '{infoComercial.codigoProveedor}'
@@ -209,7 +194,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									},
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-										readOnly: true,
 										bind: {
 							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
 							        		value: '{infoComercial.nombreProveedor}'
@@ -391,13 +375,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 										reference: 'latitudAdmisionInforme',
-										readOnly	: true,
 										bind:		'{activoInforme.latitud}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.longitud'),
 										reference: 'longitudAdmisionInforme',
-										readOnly	: true,
 										bind:		'{activoInforme.longitud}'
 					                },
 					            // Fila 5
@@ -612,13 +594,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                { 
 										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 										reference: 'latitudmediador',
-										readOnly	: true,
 										bind:		'{infoComercial.latitud}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.longitud'),
 										reference: 'longitudmediador',
-										readOnly	: true,
 										bind:		'{infoComercial.longitud}'
 					                },
 					            // Fila 6
@@ -638,68 +618,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	handler: 'onClickVerificarDireccion'
 					                }
 							]
-						},
-
-					// Valores Económicos
-						{
-							xtype:'fieldsettable',
-							title:HreRem.i18n('title.valores.economicos'),
-							defaultType: 'textfieldbase',
-							colspan: 3,
-							items :
-								[
-								 	// Venta
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.min.venta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoMinVenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.max.venta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoMaxVenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.venta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoVenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									},
-					                // Alquiler
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.min.renta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoMinRenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.max.renta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoMaxRenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.renta'),
-										width:		280,
-										bind:		'{infoComercial.valorEstimadoVenta}',
-										renderer: function(value) {
-			   				        		return Ext.util.Format.currency(value);
-			   				        	}
-									}
-							]
 						}
+
 				]
 			},
 // Información General
@@ -921,18 +841,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.salones'),
-										bind:		'{infoComercial.salones}',
-										readOnly	: true
+										bind:		'{infoComercial.salones}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estancias'),
-										bind:		'{infoComercial.estancias}',
-										readOnly	: true
+										bind:		'{infoComercial.estancias}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.plantas'),
-										bind:		'{infoComercial.plantas}',
-										readOnly	: true
+										bind:		'{infoComercial.plantas}'
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -964,8 +881,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.terraza'),
 										bind:		'{infoComercial.superficieTerraza}',
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -981,8 +897,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.patio'),
 										bind:		'{infoComercial.superficiePatio}',
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									/*{ 
 										fieldLabel: 'Superficie útil'
@@ -1013,8 +928,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.conservacion'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.conservacion')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1025,8 +939,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.anejo.garaje'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.anejo.garaje')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1037,21 +950,19 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.anejo.trastero'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.anejo.trastero')
 					                }						
 								]
 						},
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							title: HreRem.i18n('title.info.comercial.caracteristicas.ppales.activo'),
+							title: HreRem.i18n('title.info.comercial.calidades.ppales.activo'),
 							colspan: 3,
 							items :[
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.orientacion'),
-										bind:		'{infoComercial.orientacion}',
-										readOnly	: true
+										bind:		'{infoComercial.orientacion}'
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1063,8 +974,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.ext.int'),
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1075,8 +985,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.cocina'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.cocina')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1087,8 +996,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.cocina.amueblada'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.cocina.amueblada')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1099,13 +1007,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.armarios.empotrados'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.armarios.empotrados')
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.calefaccion'),
-										bind:		'{infoComercial.calefaccion}',
-										readOnly	: true
+										bind:		'{infoComercial.calefaccion}'
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1116,8 +1022,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.tipo.calefaccion'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.tipo.calefaccion')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1128,8 +1033,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.aire.acondicionado'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.aire.acondicionado')
 					                }					
 								]
 						}
@@ -1161,13 +1065,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.cons.edificio'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.cons.edificio')
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.num.plantas.edificio'),
-										bind:		'{infoComercial.plantasEdificio}',
-										readOnly	: true
+										bind:		'{infoComercial.plantasEdificio}'
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1178,8 +1080,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.puerta.acceso'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.puerta.acceso')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1190,8 +1091,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.puertas'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.puertas')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1202,8 +1102,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.persianas'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.persianas')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1214,8 +1113,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.ventanas'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.ventanas')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1226,8 +1124,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.pintura'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.pintura')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1238,8 +1135,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.solados'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.solados')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1250,8 +1146,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.banyos'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.banyos')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1262,8 +1157,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.admite.mascota'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.admite.mascota')
 					                }					
 								]
 						},
@@ -1273,7 +1167,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							collapsible: false,
 							border: false,
 							bind: {
-				        		hidden: '{!infoComercial.isComercial}'
+				        		hidden: '{!infoComercial.isComercialOrGaraje}'
 							},
 							colspan: 3,
 							items :[
@@ -1297,8 +1191,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.salida.humos'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.salida.humos')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1309,26 +1202,23 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.apto.uso'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.apto.uso')
 					                },
 									{ 
-										//xtype: 'comboboxfieldbasedd',
+										xtype: 'comboboxfieldbasedd',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.accesibilidad'),
-										bind: /*{
-						            		store: '{falta combo}',
-						            		value: */'{infoComercial.accesibilidadCod}',
-						            		/*rawValue: '{infoComercial.accesibilidadDesc}'
+										bind: {
+						            		store: '{comboActivoAccesibilidad}',
+						            		value: '{infoComercial.accesibilidadCod}',
+						            		rawValue: '{infoComercial.accesibilidadDesc}'
 						            	},
 						            	displayField: 'descripcion',
-			    						valueField: 'codigo',*/
-										readOnly	: true
+			    						valueField: 'codigo'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.fachada.principal'),
 										bind:		'{infoComercial.metrosFachada}',
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1339,14 +1229,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.almacen'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.almacen')
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.almacen'),
 										bind:		'{infoComercial.metrosAlmacen}',
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1357,14 +1245,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.venta.expo'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.venta.expo')
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.venta'),
 										bind:		'{infoComercial.metrosSupVentaExpo}',
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1375,18 +1261,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.entreplanta'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.entreplanta')
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.alt.libre'),
-										bind:		'{infoComercial.alturaLibre}',
-										readOnly	: true
+										bind:		'{infoComercial.alturaLibre}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.edi.ejecutada'),
-										bind:		'{infoComercial.porcEdiEjecutada}',
-										readOnly	: true
+										bind:		'{infoComercial.porcEdiEjecutada}'
 					                }					
 								]
 						},
@@ -1402,18 +1285,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							items :[
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.edificabilidad.techo'),
-										bind:		'{infoComercial.edificabilidadTecho}',
-										readOnly	: true
+										bind:		'{infoComercial.edificabilidadTecho}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.suelo'),
-										bind:		'{infoComercial.superficieSuelo}',
-										readOnly	: true
+										bind:		'{infoComercial.superficieSuelo}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.porc.urb.ejecutada'),
-										bind:		'{infoComercial.porcUrbEjecutada}',
-										readOnly	: true
+										bind:		'{infoComercial.porcUrbEjecutada}'
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1424,8 +1304,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.clasificacion'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.clasificacion')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1436,8 +1315,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.uso'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.uso')
 					                }				
 								]
 						},
@@ -1453,8 +1331,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							items :[
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.edi.ejecutada'),
-										bind:		'{infoComercial.porcEdiEjecutada}',
-										readOnly	: true
+										bind:		'{infoComercial.porcEdiEjecutada}'
 					                }					
 								]
 						},
@@ -1473,8 +1350,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.verdes'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.verdes')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1486,8 +1362,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.jardin'),
-										colspan: 2,
-										readOnly	: true
+										colspan: 2
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1498,8 +1373,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.deportivas'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.deportivas')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1510,8 +1384,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.gimnasio'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.gimnasio')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1522,8 +1395,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.piscina'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.piscina')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1534,8 +1406,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.conserje'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.conserje')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1546,8 +1417,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.acc.mov.reducida'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.acc.mov.reducida')
 					                }					
 								]
 						},
@@ -1566,8 +1436,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.ubicacion'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.ubicacion')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',
@@ -1578,8 +1447,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.val.ubicacion'),
-										readOnly	: true
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.val.ubicacion')
 					                }				
 								]
 						},
@@ -1593,8 +1461,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								 		xtype: 		'textareafieldbase',
 										bind:		'{infoComercial.descripcionComercial}',
 								 		maxWidth:	1600,
-								 		height: 	120,
-										readOnly	: true
+								 		height: 	120
 								   }				
 								]
 						}
@@ -1617,46 +1484,30 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 										xtype: 'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.fecha.informe'),
-										bind:		'{infoComercial.fechaRecepcionInforme}',
-										readOnly	: true
+										bind:		'{infoComercial.fechaRecepcionInforme}'
 					                },
 									{ 
 										xtype: 'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.fecha.modificacion.informe'),
-										bind:		'{infoComercial.fechaModificadoInforme}',
-										readOnly	: true
+										bind:		'{infoComercial.fechaModificadoInforme}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.modificacion.informe'),
-										bind:		'{infoComercial.modificadoInforme}',
-										readOnly	: true
+										bind:		'{infoComercial.modificadoInforme}'
 					                },
 									{ 
 										xtype: 'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.fecha.informe.completo'),
-										bind:		'{infoComercial.fechaCompletadoInforme}',
-										readOnly	: true
+										bind:		'{infoComercial.fechaCompletadoInforme}'
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.informe.completo'),
-										bind:		'{infoComercial.completadoInforme}',
-										readOnly	: true
+										bind:		'{infoComercial.completadoInforme}'
 					                }					
 								]
 						}
 				]
-            },
-            
-            //Testigos Opcionales
-			{
-				xtype:'fieldsettable',
-				title: HreRem.i18n('title.info.comercial.testigos.mercado'),
-				defaultType: 'textfieldbase',
-				items :
-					[
-						{xtype: "testigosopcionalesgrid", reference: "testigosopcionalesgrid"}
-					]
-			}
+            }
 		];
 
    	 	me.callParent();

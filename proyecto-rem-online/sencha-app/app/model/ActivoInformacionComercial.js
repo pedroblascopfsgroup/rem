@@ -79,40 +79,52 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'codigoProveedor' },
 	 { name: 'nombreProveedor' },
 	 { name: 'tipoActivoCodigo' },
+	 { name: 'subtipoActivoCodigo' },
 	 { name: 'tipoActivoDescripcion' },
 		{
-    			name: 'isVivienda',
-    			calculate: function(data) { 
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
-    			},
-    			depends: 'tipoActivoCodigo'
-    			
-    		},
+			name: 'isVivienda',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
 		{
-    			name: 'isSuelo',
-    			calculate: function(data) { 
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
-    			},
-    			depends: 'tipoActivoCodigo'
-    			
-    		},
+			name: 'isSuelo',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
 		{
-    			name: 'isComercial',
-    			calculate: function(data) { 
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
-    			},
-    			depends: 'tipoActivoCodigo'
-    			
-    		},
+			name: 'isComercial',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
 		{
-    			name: 'isConstruccion',
-    			calculate: function(data) { 
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
-    			},
-    			depends: 'tipoActivoCodigo'
-    			
-    		},
-	 { name: 'subtipoActivoCodigo' },
+			name: 'isConstruccion',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialOrGaraje',
+			calculate: function(data) { 
+				if(data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] || data.subtipoActivoCodigo == CONST.SUBTIPOS_ACTIVO['GARAJE']){
+					return true;
+				}else{
+					return false;
+				}
+			},
+			depends: ['subtipoActivoCodigo', 'tipoActivoCodigo']
+			
+		},
 	 { name: 'subtipoActivoDescripcion' },
 	 { name: 'tipoViaCodigo' },
 	 { name: 'tipoViaDescripcion' },
@@ -140,14 +152,6 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'descripcionComercial' },
 	 { name: 'fechaEmisionInforme' },
     
-    //Valores económicos
-     { name: 'valorEstimadoVenta' },
-	 { name: 'valorEstimadoRenta' },
-	 { name: 'valorEstimadoMinVenta' },
-	 { name: 'valorEstimadoMinRenta' },
-	 { name: 'valorEstimadoMaxVenta' },
-	 { name: 'valorEstimadoMaxRenta' },
-	
 	//Datos activo
 	 { name: 'regimenInmuebleCod' },
 	 { name: 'regimenInmuebleDesc' },
@@ -166,6 +170,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'salones' },
 	 { name: 'estancias' },
 	 { name: 'plantas' },
+	 { name: 'planta' },
 	 { name: 'ascensorCod' },
 	 { name: 'ascensorDesc' },
 	 { name: 'plazasGaraje' },
@@ -249,6 +254,8 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'entrePlantaDesc' },
 	 { name: 'alturaLibre' },
 	 { name: 'porcEdiEjecutada' },
+	 { name: 'accesibilidadCod' },
+	 { name: 'accesibilidadDesc' },
 	
 	//Equipamientos
 	 { name: 'zonaVerdeCod' },

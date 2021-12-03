@@ -1818,6 +1818,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
 		DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class,filtroDDInfComercial);
 		activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
+		activoEstadoInfComercialHistorico.setResponsableCambio("API");
 		activoEstadoInfComercialHistorico.setFecha(new Date());
 		if (autorizacionWebProveedor) {
 			// se inserta una fila en el histórico de estados

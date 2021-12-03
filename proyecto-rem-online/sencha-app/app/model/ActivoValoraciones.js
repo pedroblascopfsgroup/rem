@@ -168,7 +168,25 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		{
     			name: 'campanyaPrecioAlquilerNegociable',
     			type: 'boolean'
-    		}
+    		},
+    	    { 
+    			name: 'valorEstimadoVenta' 
+    	    },
+    		{ 
+    	    	name: 'valorEstimadoRenta' 
+    	    },
+    		{ 
+    	    	name: 'valorEstimadoMinVenta' 
+    	    },
+    		{ 
+    	    	name: 'valorEstimadoMinRenta' 
+    	    },
+    		{ 
+    	    	name: 'valorEstimadoMaxVenta' 
+    	    },
+    		{ 
+    	    	name: 'valorEstimadoMaxRenta' 
+    	    }
     ],
     
 	proxy: {

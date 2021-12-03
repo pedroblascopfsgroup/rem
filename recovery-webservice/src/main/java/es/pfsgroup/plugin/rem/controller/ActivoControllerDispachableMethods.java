@@ -431,6 +431,25 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		/*
+		 * TAB VALORACIONES PRECIOS
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_VALORACIONES_PRECIOS, new DispachableMethod<DtoActivoValoraciones>() {
+
+			@Override
+			public Class<DtoActivoValoraciones> getArgumentType() {
+				return DtoActivoValoraciones.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoValoraciones dto, HttpServletRequest request) {
+				if (dto != null ){
+					this.controller.saveValoresPreciosActivo(dto, id, new ModelMap(), request);
+				}
+				
+			}
+		});
 	}
 
 	private ActivoController controller;

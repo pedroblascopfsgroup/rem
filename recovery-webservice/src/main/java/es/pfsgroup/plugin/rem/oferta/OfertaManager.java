@@ -2640,7 +2640,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				for (Oferta ofr : listaOfertas) {
 					if (!ofr.getId().equals(expediente.getOferta().getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())) {
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(ofr.getEstadoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(ofr.getEstadoOferta().getCodigo())) {
 
 						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
@@ -2672,22 +2674,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public Boolean congelarOferta(Oferta oferta) {
 		try {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
-			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setEstadoOferta(estado);
-			updateStateDispComercialActivosByOferta(oferta);
-			genericDao.save(Oferta.class, oferta);
-
-			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-			if (!Checks.esNulo(expediente)) {
-				Trabajo trabajo = expediente.getTrabajo();
-				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				if(tareasTramite != null && !tareasTramite.isEmpty()) {
-					for (TareaActivo tarea : tareasTramite) {
-						tarea.getAuditoria().setBorrado(true);
+			if(!DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
+					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+				oferta.setEstadoOferta(estado);
+				updateStateDispComercialActivosByOferta(oferta);
+				genericDao.save(Oferta.class, oferta);
+	
+				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+				if (!Checks.esNulo(expediente)) {
+					Trabajo trabajo = expediente.getTrabajo();
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+					ActivoTramite tramite = tramites.get(0);
+	
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					if(tareasTramite != null && !tareasTramite.isEmpty()) {
+						for (TareaActivo tarea : tareasTramite) {
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
 				}
 			}

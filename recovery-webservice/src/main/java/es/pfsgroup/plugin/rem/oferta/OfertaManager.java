@@ -18,6 +18,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8225,5 +8228,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoPbc.setCodAccion("997");
 		pbcFlush(dtoPbc);
 	}
-		
+
+	@Override
+	public boolean bloqueoResolucionExpedienteCFV(Long idTarea) {
+		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
+		String codTarea = tar.getTareaExterna().getTareaProcedimiento().getCodigo();
+
+		if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea)){
+
+			Filter f = genericDao.createFilter(FilterType.EQUALS, "id", tar.getId());
+			TareaActivo tac = genericDao.get(TareaActivo.class, f);
+
+			if(tac != null){
+
+				ExpedienteComercial eco = expedienteComercialApi.getExpedienteByIdTramite(tac.getTramite().getId());
+
+				if(eco != null && eco.getOferta() != null && eco.getReserva() != null
+						&& DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())
+						&& DDEstadosReserva.CODIGO_FIRMADA.equals(eco.getReserva().getEstadoReserva().getCodigo())){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 }

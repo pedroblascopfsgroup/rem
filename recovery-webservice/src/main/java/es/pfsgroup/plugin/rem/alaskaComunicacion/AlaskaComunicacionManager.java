@@ -170,7 +170,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         	map.put("subtipoActivo", null);
         }
         if(activo.getEstadoActivo() != null) {
-        	map.put("estado", activo.getEstadoActivo());
+        	map.put("estado", activo.getEstadoActivo().getCodigo());
         }else {
             map.put("estado", "1");
         }
@@ -216,7 +216,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("tasaciones", listaTasaciones);
         map.put("valoraciones", listaValoraciones);
         if(activo.getInfoComercial() != null && activo.getInfoComercial().getTipoVia() != null){
-        	Filter codigoTipoViaRem = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"codigo", activo.getInfoComercial().getTipoVia());
+        	Filter codigoTipoViaRem = genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"codigo", activo.getInfoComercial().getTipoVia().getCodigo());
         	DDTipoViaFenix tipoViaFenix = genericDao.get(DDTipoViaFenix.class, codigoTipoViaRem);
         	if(tipoViaFenix != null) {
         		map.put("tipoVia", tipoViaFenix.getCodigoFenix());

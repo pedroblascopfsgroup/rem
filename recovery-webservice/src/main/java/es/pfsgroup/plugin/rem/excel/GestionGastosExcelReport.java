@@ -146,6 +146,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		for (VGastosProveedorExcel gastoProveedor : listaGastosProveedor) {
 			double suma = 0d;
 			List<String> fila = new ArrayList<String>();
+			cont++;
 			fila.add(String.valueOf(gastoProveedor.getNumGastoHaya()));
 			fila.add(this.getDateStringValue(gastoProveedor.getFechaCrear()));
 			fila.add(gastoProveedor.getElemento());

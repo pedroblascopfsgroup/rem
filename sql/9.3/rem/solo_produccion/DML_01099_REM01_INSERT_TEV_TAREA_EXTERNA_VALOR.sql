@@ -1,0 +1,106 @@
+--/*
+--##########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20211130
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10823
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+
+    PL_OUTPUT VARCHAR2(32000 CHAR);
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-10823'; -- USUARIOCREAR/USUARIOMODIFICAR.    
+    TEX_ID NUMBER(16);
+    
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION TRAMITES Y TAREAS');
+
+	--COMPROBAMOS SI EXISTE TRAMITE
+
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_TRA_TRAMITE WHERE TRA_ID = 722098';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+	
+	IF V_NUM_FILAS > 0 THEN 
+
+		V_SQL := 'SELECT TEX.TEX_ID FROM '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA
+					JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID 
+					JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAC.TAR_ID
+					JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
+					WHERE TRA.TRA_ID = 722098 AND TAP.TAP_CODIGO = ''T016_ComunicarGENCAT''';
+		EXECUTE IMMEDIATE V_SQL INTO TEX_ID;
+
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR WHERE TEX_ID = '||TEX_ID;
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+
+		IF V_NUM_FILAS = 0 THEN 
+
+			--INSERT EN LA TEV
+
+			V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR 
+						(TEV_ID,TEX_ID,TEV_NOMBRE,TEV_VALOR,USUARIOCREAR,FECHACREAR,DTYPE)
+						VALUES 
+						(S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL,'||TEX_ID||',''titulo'',null,'''||V_USR||''',SYSDATE,''TareaExternaValor'')';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'Insert into '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR 
+						(TEV_ID,TEX_ID,TEV_NOMBRE,TEV_VALOR,USUARIOCREAR,FECHACREAR,DTYPE)
+						VALUES 
+						(S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL,'||TEX_ID||',''fechaComunicacion'',''2021-09-09'','''||V_USR||''',SYSDATE,''TareaExternaValor'')';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'Insert into '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR 
+						(TEV_ID,TEX_ID,TEV_NOMBRE,TEV_VALOR,USUARIOCREAR,FECHACREAR,DTYPE)
+						VALUES 
+						(S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL,'||TEX_ID||',''fechaTarea'',null,'''||V_USR||''',SYSDATE,''TareaExternaValor'')';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'Insert into '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR 
+						(TEV_ID,TEX_ID,TEV_NOMBRE,TEV_VALOR,USUARIOCREAR,FECHACREAR,DTYPE)
+						VALUES 
+						(S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL,'||TEX_ID||',''observaciones'',null,'''||V_USR||''',SYSDATE,''TareaExternaValor'')';
+			EXECUTE IMMEDIATE V_SQL;
+		
+			DBMS_OUTPUT.PUT_LINE('[INSERT] Insertado REGISTROS en TEV');
+
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] YA EXISTE VALOR EN LA TEV');
+
+		END IF;
+        
+   	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] TRAMITE NO EXISTE');
+		
+	END IF;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+
+	COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

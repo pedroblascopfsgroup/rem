@@ -18,6 +18,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1050,9 +1053,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(cliente)) {
 
 					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty())
-					cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumento()));
+					cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumento(), null));
 					if (cliente.getIdPersonaHayaCaixaRepresentante() == null || cliente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-					cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumentoRepresentante()));
+					cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumentoRepresentante(), null));
 					if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 						cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
@@ -1844,9 +1847,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
-			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
-			}
+
+			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta());
+
 			this.updateStateDispComercialActivosByOferta(oferta);
 			
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
@@ -2272,7 +2275,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) 
 										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
 									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
-										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()))) {
+										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
+								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
 										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							} 							
 						}
@@ -8036,11 +8040,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		if (tit.getIdPersonaHayaCaixa() == null || tit.getIdPersonaHayaCaixa().trim().isEmpty())
-		tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumento()));
+		tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumento(), null));
 
 		if (tit.getIdPersonaHaya() == null)
 			tit.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumento()));
 
+		//hola
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersona(),tit.getIdPersonaHayaCaixa(),tit.getIdPersonaHaya());
 
 		tit.setInfoAdicionalPersona(iap);
@@ -8071,7 +8076,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(tit.getDocumentoRepresentante() != null) {
 
 			if (tit.getIdPersonaHayaCaixaRepresentante() == null || tit.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-				tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante()));
+				tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante(), null));
 
 			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
 
@@ -8190,5 +8195,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoPbc.setCodAccion("997");
 		pbcFlush(dtoPbc);
 	}
-		
+
+	@Override
+	public boolean bloqueoResolucionExpedienteCFV(Long idTarea) {
+		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
+		String codTarea = tar.getTareaExterna().getTareaProcedimiento().getCodigo();
+
+		if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea)){
+
+			Filter f = genericDao.createFilter(FilterType.EQUALS, "id", tar.getId());
+			TareaActivo tac = genericDao.get(TareaActivo.class, f);
+
+			if(tac != null){
+
+				ExpedienteComercial eco = expedienteComercialApi.getExpedienteByIdTramite(tac.getTramite().getId());
+
+				if(eco != null && eco.getOferta() != null && eco.getReserva() != null
+						&& DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera())
+						&& DDEstadosReserva.CODIGO_FIRMADA.equals(eco.getReserva().getEstadoReserva().getCodigo())){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 }

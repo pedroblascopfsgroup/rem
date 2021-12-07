@@ -11444,15 +11444,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		WSDevolBankiaDto dto = null;
 
 		try {
-			dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(),
+			/*dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(),
 					uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 					UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA,
-					UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+					UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);*/
+			
+			if (!Checks.esNulo(dto)){
+				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
-			beanUtilNotNull.copyProperties(expedienteComercial, dto);
-
-			if (!Checks.esNulo(dto) && dto.getCorrecw() == 1) {
-				expedienteComercial.setDevolAutoNumber(true);
+			 	if (dto.getCorrecw() == 1) 
+			 		expedienteComercial.setDevolAutoNumber(true);
 			} else {
 				expedienteComercial.setDevolAutoNumber(false);
 			}

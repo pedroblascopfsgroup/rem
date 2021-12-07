@@ -1167,9 +1167,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		provinciaRegistro = me.down("[reference=provinciaRegistro]"),
    		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaCodigo'),
    		idufir = me.down("[reference=idufir]"),
-   		superficieUtil = me.down("[reference=superficieUtil]"),   		
-   		superficieConstruida = me.down("[reference=superficieConstruida]"),
-   		superficieElementosComunes = me.down("[reference=superficieElementosComunes]"),
    		fechaTitulo = me.down("[reference=fechaTitulo]"),
    		fechaFirmezaTitulo = me.down("[reference=fechaFirmezaTitulo]"),
    		fieldsetNoJudicial = me.down("[reference=noJudicial]"),
@@ -1185,29 +1182,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
-   		}
-
-
-   		/*if(motivoCalNegativa.getValue().length == 0) {
-   			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
-   			errores.push(error);
-   			motivoCalNegativa.markInvalid(error);
-   		}*/
-
-
-   		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
-   			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
-   			errores.push(error);
-   			superficieUtil.markInvalid(error);
-   		}else if(superficieParcelaUtil.getValue() > superficieConstruida.getValue()){
-   			error = HreRem.i18n("txt.validacion.suputil.parcela.mayor.supconstruida");
-   			errores.push(error);
-   			superficieParcelaUtil.markInvalid(error);
-
-   		} else if (superficieConstruida.getValue() > superficieElementosComunes.getValue() || superficieUtil.getValue() > superficieElementosComunes.getValue()) {
-   			error = HreRem.i18n("txt.validacion.superficies.mayor.suplementoscomunes");
-   			errores.push(error);
-   			superficieElementosComunes.markInvalid(error);
    		}
 
    		if(fieldsetNoJudicial.isVisible()){

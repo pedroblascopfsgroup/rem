@@ -4,15 +4,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -88,7 +92,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class AltaActivoFinanciero implements AltaActivoService {
@@ -111,13 +120,21 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-	
-	
+
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+    private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String[] getKeys() {
@@ -216,6 +233,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		return activo;
 	}
 
+	@Transactional(readOnly = false)
 	private void dtoToEntitiesOtras(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {
 
 		// NMBien.
@@ -562,6 +580,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
+
 	}
 	
 	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){

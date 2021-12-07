@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.*;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
@@ -114,6 +116,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDDesarrolloPlanteamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
@@ -123,22 +126,31 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
+import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
@@ -151,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
@@ -163,11 +176,22 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
+import es.pfsgroup.plugin.rem.service.TabActivoCargas;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
+import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
+import es.pfsgroup.plugin.rem.service.TabActivoService;
+import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Service
 public class ActivoAdapter {
@@ -304,6 +328,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private PerfilApi perfilApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
@@ -1532,7 +1559,10 @@ public class ActivoAdapter {
 				
 				if (tasacionSeleccionada.getTipoDatoUtilizadoInmuebleComparable() != null)
 					BeanUtils.copyProperty(dtoTasacion, "tipoDatoUtilizadoInmuebleComparableCodigo", tasacionSeleccionada.getTipoDatoUtilizadoInmuebleComparable().getCodigo());
-					
+
+				if (tasacionSeleccionada.getTasadoraCaixa() != null)
+					BeanUtils.copyProperty(dtoTasacion, "tasadoraCaixaCodigo", tasacionSeleccionada.getTasadoraCaixa().getCodigo());
+
 				if (tasacionSeleccionada.getCodigoFirma() != null) {
 					ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionSeleccionada.getCodigoFirma().toString());
 					if (tasadora != null) {
@@ -5016,7 +5046,8 @@ public class ActivoAdapter {
 	public boolean saveTasacion(DtoTasacion dtoTasacion) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
 		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
-		
+		Activo activo = activoTasacion.getActivo();
+
 		try {
 			beanUtilNotNull.copyProperties(activoTasacion, dtoTasacion);
 		} catch (IllegalAccessException e) {
@@ -5122,6 +5153,11 @@ public class ActivoAdapter {
 		if (dtoTasacion.getTipoDatoUtilizadoInmuebleComparableCodigo() != null) {
 			DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable = genericDao.get(DDTipoDatoUtilizadoInmuebleComparable.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTipoDatoUtilizadoInmuebleComparableCodigo()));
 			activoTasacion.setTipoDatoUtilizadoInmuebleComparable(tipoDatoUtilizadoInmuebleComparable);
+		}
+
+		if (dtoTasacion.getTasadoraCaixaCodigo() != null) {
+			DDTasadoraCaixa tasadora = genericDao.get(DDTasadoraCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTasadoraCaixaCodigo()));
+			activoTasacion.setTasadoraCaixa(tasadora);
 		}
 
 		genericDao.save(ActivoTasacion.class, activoTasacion);

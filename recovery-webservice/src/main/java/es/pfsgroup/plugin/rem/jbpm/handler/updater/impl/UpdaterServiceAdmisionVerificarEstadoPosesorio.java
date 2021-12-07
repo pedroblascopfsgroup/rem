@@ -5,12 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import es.pfsgroup.plugin.rem.model.Activo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -24,7 +27,14 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 
 @Component
@@ -36,6 +46,14 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	private static final String FECHA = "fecha";
 	private static final String COMBO_OCUPADO = "comboOcupado";
@@ -46,8 +64,9 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 		// TODO Código que guarda las tareas.
-		
+
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
+
 		Filter tituloActivo;
 		DDTipoTituloActivoTPA tipoTitulo;
 		Activo activo = tramite.getActivo();
@@ -89,10 +108,12 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 		}
 		
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);
+
 		if(activo!=null && sitpos!=null && usu!=null) {			
 			HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
 			genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
 		}
+
 	}
 
 	public String[] getCodigoTarea() {

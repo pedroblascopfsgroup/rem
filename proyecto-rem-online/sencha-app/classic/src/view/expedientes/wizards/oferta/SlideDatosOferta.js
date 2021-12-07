@@ -40,7 +40,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
 		}
 		me.isBankia = isBk;
-		
+
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',
@@ -253,6 +253,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var municipioRepresentante = form.down('field[name=municipioRteCodigo]');
 	    								var importe = form.down('field[name=importeOferta]');
 	    								var tipoOferta = form.down('field[name=tipoOferta]');
+	    								var fieldSetTableRepresentante = form.down('[reference=datosRepresentante]');
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
 	    									apellidos.setDisabled(false);
@@ -272,7 +273,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									paisRepresentante.setValue(null);
 	    									provinciaRepresentante.allowBlank = true;
 	    									municipioRepresentante.allowBlank = true;
-	    									
+	    									fieldSetTableRepresentante.setHidden(true);
 	    									razonSocial.reset();
 	    								}else{
 	    									apellidos.setDisabled(true);
@@ -289,7 +290,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									paisRepresentante.setValue("28");
 	    									provinciaRepresentante.allowBlank = false;
 	    									municipioRepresentante.allowBlank = false;
-	    									
+                                            fieldSetTableRepresentante.setHidden(false);
 	    									if(isBk){
 	    										paisNacimientoRepresentante.allowBlank = false;
 		    									paisNacimientoRepresentante.setValue("28");
@@ -813,7 +814,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 					defaultType: 'textfieldbase',
 					title: HreRem.i18n('title.datos.representante'),
 					reference: 'datosRepresentante',
-					hidden: false,
+					bind:{
+                        hidden: 'esPersonaJuridica'
+					},
 					disabled: false,
 					layout: {
 						type: 'table',

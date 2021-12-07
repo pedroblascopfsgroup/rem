@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211110
+--## FECHA_CREACION=20211116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16321
@@ -19,6 +19,7 @@
 --##	      0.7 Mejora de validaciones para latitud y longitud - HREOS-15423
 --##	      0.8 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855
 --##	      0.9 Se modifica la población para cruzar por el código, que es el código INE - HREOS-16321
+--##	      0.10 Correcciones - HREOS-16321
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -60,7 +61,9 @@ BEGIN
                   , APR.LIBRO BIE_DREG_LIBRO
                   , APR.TOMO BIE_DREG_TOMO
                   , APR.FOLIO BIE_DREG_FOLIO
-                  , APR.INSCRIPCION BIE_DREG_NUM_REGISTRO
+                  , APR.NUMERO_REGISTRO_PROPIEDAD BIE_DREG_NUM_REGISTRO
+                  , APR.INSCRIPCION BIE_DREG_INSCRIPCION
+                  , APR.NOMBRE_REGISTRO_PROPIEDAD BIE_DREG_MUNICIPIO_LIBRO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -75,6 +78,8 @@ BEGIN
                   , BDR.BIE_DREG_TOMO = AUX.BIE_DREG_TOMO
                   , BDR.BIE_DREG_FOLIO = AUX.BIE_DREG_FOLIO
                   , BDR.BIE_DREG_NUM_REGISTRO = AUX.BIE_DREG_NUM_REGISTRO
+                  , BDR.BIE_DREG_INSCRIPCION = AUX.BIE_DREG_INSCRIPCION
+                  , BDR.BIE_DREG_MUNICIPIO_LIBRO = AUX.BIE_DREG_MUNICIPIO_LIBRO
                   , BDR.USUARIOMODIFICAR = ''STOCK_BC''
                   , BDR.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -86,6 +91,8 @@ BEGIN
                   , BIE_DREG_TOMO
                   , BIE_DREG_FOLIO
                   , BIE_DREG_NUM_REGISTRO
+                  , BIE_DREG_INSCRIPCION
+                  , BIE_DREG_MUNICIPIO_LIBRO
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -96,6 +103,8 @@ BEGIN
                   , AUX.BIE_DREG_TOMO
                   , AUX.BIE_DREG_FOLIO
                   , AUX.BIE_DREG_NUM_REGISTRO
+                  , AUX.BIE_DREG_INSCRIPCION
+                  , AUX.BIE_DREG_MUNICIPIO_LIBRO
                   , ''STOCK_BC''
                   , SYSDATE)';
    

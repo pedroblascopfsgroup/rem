@@ -3,9 +3,12 @@ package es.pfsgroup.plugin.rem.activo.alta;
 import java.util.Calendar;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -13,6 +16,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -90,8 +94,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
+import javax.annotation.Resource;
 
 @Component
 public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
@@ -118,8 +126,15 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 	
-	
+	@Autowired
+    private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -185,7 +200,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	}
 
 	//crea un activo a partir del DtoAltaActivoThirdParty que recibe
+	@Transactional(readOnly = false)
 	private Activo dtoToEntityActivo(DtoAltaActivoThirdParty dtoAATP) throws Exception{
+
 		DDSubtipoTituloActivo subTipoTitulo = (DDSubtipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAATP.getSubtipoTituloCodigo());
 		DDTipoTituloActivo tipoTitulo = subTipoTitulo.getTipoTituloActivo();
 		DDSubcartera subcartera = (DDSubcartera) diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAATP.getCodSubCartera());
@@ -212,11 +229,13 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		activo.setTieneObraNuevaAEfectosComercializacion(siNoObraNueva);
 		
 		activo = genericDao.save(Activo.class, activo);
+
 		return activo;
 	}
 	
-	
-private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
+	@Transactional(readOnly = false)
+	private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
+
 		NMBBien bien = new NMBBien();
 		genericDao.save(NMBBien.class, bien);
 		
@@ -674,6 +693,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
+
 	}
 
 

@@ -9,8 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 

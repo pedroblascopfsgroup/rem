@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210721
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20211202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-14686
+--## INCIDENCIA_LINK=REMVIP-10864
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -16,6 +16,7 @@
 --##		0.4 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.5 REMVIP-4622 - Ocultación alquilado
 --##		0.6 HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
+--##    0.10 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
 --########################################## 
 --*/
 
@@ -157,6 +158,29 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
 									 AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
                                      AND EXISTS '||vQUERY||
                          ' UNION
+                            SELECT DISTINCT ACT.ACT_ID
+                               , 1 OCULTO /*Aprobado*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+									                  JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+                                    JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
+                                    JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID=ECO.TBJ_ID AND TBJ.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID=TBJ.DD_TTR_ID AND TTR.BORRADO=0
+                                    JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID=ECO.TBJ_ID AND TRA.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID=TRA.TRA_ID
+                                    JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID=TAC.TAR_ID
+                                    JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID=TAR.TAR_ID
+                                    JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID=TEX.TAP_ID AND TAP.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR TEV ON TEV.TEX_ID=TEX.TEX_ID AND TEV.BORRADO = 0
+                                    WHERE ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND CRA.DD_CRA_CODIGO=''03'' AND TTR.DD_TTR_CODIGO=''06'' AND TAP.TAP_CODIGO IN (''T017_ResolucionCES'',''T015_ElevarASancion'')
+                                    AND (TAR.TAR_TAREA_FINALIZADA=1 OR (TAR.BORRADO = 1 AND TAC.BORRADO = 1))
+                                    AND (TEV.TEV_NOMBRE = ''comboResolucion'' AND TEV.TEV_VALOR=''01'' OR (TEV.TEV_NOMBRE=''resolucionOferta'' AND TEV.TEV_VALOR=''01''))
+                                    AND EXISTS '||vQUERY||'
+                         UNION
                           SELECT ACT.ACT_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO

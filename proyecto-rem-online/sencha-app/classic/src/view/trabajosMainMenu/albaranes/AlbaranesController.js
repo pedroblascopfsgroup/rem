@@ -86,6 +86,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
 		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
 		var codAreaPeticionaria = this.lookupReference('areaPeticionariaSearch').value;
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
+		textoContadorPropietarios.setHidden(true);
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var exportarTrabajosPrefacturas = $AU.userHasFunction('EXPORTAR_BUSQUEDA_TRABAJOS_PREFACTURA');

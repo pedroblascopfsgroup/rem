@@ -594,6 +594,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 				'codCartera' : me.getViewModel().get("oferta.entidadPropietariaCodigo")
 			});
 			*/
-		}
+		},
+
+        esPersonaJuridica: function(){
+            var me = this;
+            return me.getViewModel().get('oferta.tipoPersona') == CONST.TIPO_PERSONA["JURIDICA"];
+        }
 
 });

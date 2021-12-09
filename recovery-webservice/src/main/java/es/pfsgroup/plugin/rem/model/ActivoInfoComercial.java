@@ -179,9 +179,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
 	
-	/*@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
-	private Localidad localidadRegistro;*/
+	private Localidad localidadRegistro;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
@@ -1346,6 +1346,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
 		this.accesibilidad = accesibilidad;
+	}
+	
+	public Localidad getLocalidadRegistro() {
+		return localidadRegistro;
+	}
+
+	public void setLocalidadRegistro(Localidad localidadRegistro) {
+		this.localidadRegistro = localidadRegistro;
 	}
 	
 }

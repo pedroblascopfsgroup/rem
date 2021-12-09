@@ -8,7 +8,7 @@ import java.text.ParseException;
 
 public interface AccionesCaixaApi {
 
-    void accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception;
+    Boolean accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception;
 
     void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception;
 

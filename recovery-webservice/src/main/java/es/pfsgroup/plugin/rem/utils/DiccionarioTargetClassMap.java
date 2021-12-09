@@ -385,6 +385,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("ratingCocina", DDRatingCocina.class);
 		mapa.put("tipoClimatizacion", DDTipoClimatizacion.class);
 		mapa.put("activoAccesibilidad", DDActivoAccesibilidad.class);
+		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

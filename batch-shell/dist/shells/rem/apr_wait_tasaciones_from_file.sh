@@ -48,6 +48,7 @@ then
 else
    for fichero in $arrayfichero
    do
+            ./ftp/ftp_mv_backup_bc.sh $fichero$fecha$extensionTxt
             ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
             mv $ficheroTxt $DIR_DESTINO$fichero$extensionTxt
 

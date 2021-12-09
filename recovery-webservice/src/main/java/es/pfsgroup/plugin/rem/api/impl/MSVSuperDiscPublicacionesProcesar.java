@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -31,6 +35,12 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
+
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 /***
  * 
@@ -76,7 +86,15 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Override
 	public String getValidOperation() {
 		return VALID_OPERATION;
@@ -215,6 +233,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			}
 		
 		}
+
 		return new ResultadoProcesarFila();
 	}
 

@@ -11,13 +11,18 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -37,6 +42,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
@@ -100,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -176,6 +183,15 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -950,7 +966,6 @@ public class AgendaAdapter {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return true;
 	}
 

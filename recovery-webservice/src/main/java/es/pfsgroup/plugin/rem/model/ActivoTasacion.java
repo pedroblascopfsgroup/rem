@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
 import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 
@@ -49,6 +50,14 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 1L;
 
+
+	public DDTasadoraCaixa getTasadoraCaixa() {
+		return tasadoraCaixa;
+	}
+
+	public void setTasadoraCaixa(DDTasadoraCaixa tasadoraCaixa) {
+		this.tasadoraCaixa = tasadoraCaixa;
+	}
 
 	@Id
     @Column(name = "TAS_ID")
@@ -297,6 +306,10 @@ public class ActivoTasacion implements Serializable, Auditable {
 	
 	@Column(name = "VISITA_ANT_INMUEBLE")
 	private Boolean visitaAnteriorInmueble;
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_TCX_ID")
+    private DDTasadoraCaixa tasadoraCaixa;
 	
 	
 	public Long getId() {

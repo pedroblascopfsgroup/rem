@@ -112,7 +112,7 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 								logger.error("Error descongelando ofertas.", e);
 							}
 							
-							if(!ofertaApi.checkReserva(ofertaAceptada) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+							/*if(!ofertaApi.checkReserva(ofertaAceptada) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 								// Notificar del rechazo de la oferta a Bankia.
 								try {
 									uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION);
@@ -120,8 +120,8 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 									logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
 									throw new UserException(e.getMessage());
 								}
-							}
-
+							}*/
+							
 							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
 							resultadoTanteo = genericDao.get(DDResultadoTanteo.class, filtroTanteo);
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);

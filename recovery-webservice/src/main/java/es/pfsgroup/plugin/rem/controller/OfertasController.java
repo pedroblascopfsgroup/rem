@@ -828,8 +828,14 @@ public class OfertasController {
 					else {
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);
-						
-						resultado = agendaAdapter.validationAndSave(datosTarea);
+
+						if(!ofertaApi.bloqueoResolucionExpedienteCFV(tareaId)){
+							resultado = agendaAdapter.validationAndSave(datosTarea);
+						}else{
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "No se puede anular la tarea " + codTarea + " mientras la reserva esté en estado 'Firmada'.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
 						
 						if (resultado) {
 							error = null;

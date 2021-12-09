@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211027
+--## FECHA_CREACION=20211122
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16052
+--## INCIDENCIA_LINK=HREOS-16468
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DDL
 --## INSTRUCCIONES: Crear tabla auxiliar para AUX_COMUNIDADES
 --## VERSIONES:
---##        0.1 Versión inicial 
+--##        0.1 Versión inicial - [HREOS-16052] - Alejandra García
+--##        0.2 Añadir campo NIF_GESTORIA al final - [HREOS-16468] - Alejandra García 
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -42,10 +43,12 @@ DECLARE
     -- Si existe la tabla.
     IF V_NUM_TABLAS = 1 THEN 
 
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe.');  
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Se borrará.');
+      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS'; 
 		
-    ELSE
+    END IF;
 	
+    DBMS_OUTPUT.PUT_LINE('********PROCEDEMOS A CREAR LA TABLA '||V_TABLA||' ********');
 		--Creamos la tabla
 		V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'(
                     OPCION               VARCHAR2(1 CHAR)
@@ -69,6 +72,7 @@ DECLARE
                   , PROV_SUPLIDO         VARCHAR2(13 CHAR)
                   , CLASE_DE_ACTIVO      VARCHAR2(12 CHAR)
                   , UNIDAD_REGISTRAL     VARCHAR2(10 CHAR)
+                  , NIF_GESTORIA         VARCHAR2(20 CHAR)
                   , FECHA_PROCESADO      DATE
                   , ID_ROW               ROWID	
 					)'; 
@@ -82,7 +86,7 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentario creado.');		
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... OK');
     
-    END IF;
+
 
 COMMIT;
 

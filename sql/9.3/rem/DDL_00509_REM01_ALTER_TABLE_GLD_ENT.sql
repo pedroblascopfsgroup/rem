@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211202
+--## FECHA_CREACION=20211209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16568
@@ -35,12 +35,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-			T_TIPO_DATA('DD_TCO_ID', 'NUMBER(16,0)'     , 'ID destino comercial','DD_TCO_TIPO_COMERCIALIZACION'),
-			T_TIPO_DATA('DD_EAL_ID', 'NUMBER(16,0)'     , 'ID estado alquiler'  ,'DD_EAL_ESTADO_ALQUILER'),
-			T_TIPO_DATA('DD_TTR_ID', 'NUMBER(16,0)'     , 'ID tipo transmisión' ,'DD_TTR_TIPO_TRANSMISION'),
-			T_TIPO_DATA('GRUPO'    , 'VARCHAR2(2 CHAR)' , 'Grupo'               ,'DD_ETG_EQV_TIPO_GASTO'),
-			T_TIPO_DATA('TIPO'     , 'VARCHAR2(2 CHAR)' , 'Tipo'                ,'DD_ETG_EQV_TIPO_GASTO'),
-			T_TIPO_DATA('SUBTIPO'  , 'VARCHAR2(2 CHAR)' , 'Subtipo'             ,'DD_ETG_EQV_TIPO_GASTO')
+			T_TIPO_DATA('DD_TCO_ID'         , 'NUMBER(16,0)'     , 'ID destino comercial'           ,'DD_TCO_TIPO_COMERCIALIZACION'),
+			T_TIPO_DATA('DD_EAL_ID'         , 'NUMBER(16,0)'     , 'ID estado alquiler'             ,'DD_EAL_ESTADO_ALQUILER'),
+			T_TIPO_DATA('DD_TTR_ID'         , 'NUMBER(16,0)'     , 'ID tipo transmisión'            ,'DD_TTR_TIPO_TRANSMISION'),
+			T_TIPO_DATA('PRIM_TOMA_POSESION', 'NUMBER(1,0)'      , 'Indicador de primera posesión'  ,'ACT_TBJ_TRABAJO'),
+			T_TIPO_DATA('GRUPO'             , 'VARCHAR2(2 CHAR)' , 'Grupo'                          ,'DD_ETG_EQV_TIPO_GASTO'),
+			T_TIPO_DATA('TIPO'              , 'VARCHAR2(2 CHAR)' , 'Tipo'                           ,'DD_ETG_EQV_TIPO_GASTO'),
+			T_TIPO_DATA('SUBTIPO'           , 'VARCHAR2(2 CHAR)' , 'Subtipo'                        ,'DD_ETG_EQV_TIPO_GASTO')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -61,8 +62,8 @@ BEGIN
             V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
             
-            -- Si existe la columna cambiamos/establecemos solo la FK
-              IF V_NUM_TABLAS = 1 AND V_TMP_TIPO_DATA(1) <> 'GRUPO' AND V_TMP_TIPO_DATA(1) <> 'TIPO' AND V_TMP_TIPO_DATA(1) <> 'SUBTIPO' THEN
+            -- Si existe la columna cambiamos/establecemos solo la FK, si es distinta de GRUPO, TIPO, SUBTIPO o PRIM_TOMA_POSESION
+              IF V_NUM_TABLAS = 1 AND (V_TMP_TIPO_DATA(1) = 'DD_TCO_ID' OR V_TMP_TIPO_DATA(1)= 'DD_EAL_ID' OR V_TMP_TIPO_DATA(1) = 'DD_TTR_ID') THEN
                   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'... Ya existe, modificamos la FK');
                   V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_GEN_'||V_TMP_TIPO_DATA(1)||'';
                   EXECUTE IMMEDIATE V_MSQL;
@@ -73,8 +74,8 @@ BEGIN
                   EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
               
-              --Si no existe la columna, la creamos y establecemos la FK
-              ELSIF V_NUM_TABLAS = 0  AND V_TMP_TIPO_DATA(1) <> 'GRUPO' AND V_TMP_TIPO_DATA(1) <> 'TIPO' AND V_TMP_TIPO_DATA(1) <> 'SUBTIPO' THEN
+              --Si no existe la columna, la creamos y establecemos la FK, si es distinta de GRUPO, TIPO, SUBTIPO o PRIM_TOMA_POSESION
+              ELSIF V_NUM_TABLAS = 0  AND (V_TMP_TIPO_DATA(1) = 'DD_TCO_ID' OR V_TMP_TIPO_DATA(1)= 'DD_EAL_ID' OR V_TMP_TIPO_DATA(1) = 'DD_TTR_ID') THEN
                   V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' )';
                   EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
@@ -91,11 +92,11 @@ BEGIN
                   EXECUTE IMMEDIATE V_MSQL;
                   DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');      
             
-              -- Si existe la columna GRUPO, TIPO o SUBTIPO 
-              ELSIF V_NUM_TABLAS = 1 AND V_TMP_TIPO_DATA(1) = 'GRUPO' AND V_TMP_TIPO_DATA(1) = 'TIPO' AND V_TMP_TIPO_DATA(1) = 'SUBTIPO' THEN
+              -- Si existe la columna GRUPO, TIPO, SUBTIPO o PRIM_TOMA_POSESION
+              ELSIF V_NUM_TABLAS = 1 AND (V_TMP_TIPO_DATA(1) = 'GRUPO' OR V_TMP_TIPO_DATA(1) = 'TIPO' OR V_TMP_TIPO_DATA(1) = 'SUBTIPO' OR V_TMP_TIPO_DATA(1) = 'PRIM_TOMA_POSESION') THEN
                 DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'... Ya existe');
               
-              --Si no existe la columna GRUPO, TIPO o SUBTIPO , la creamos
+              --Si no existe la columna GRUPO, TIPO, SUBTIPO o PRIM_TOMA_POSESION , la creamos
               ELSE 
                   V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
                   EXECUTE IMMEDIATE V_MSQL;

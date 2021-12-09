@@ -1,0 +1,187 @@
+--/*
+--##########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20211123
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-10534
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script modifica situacion posesoria activos
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USU VARCHAR2(30 CHAR) := 'REMVIP-10534'; -- Vble. auxiliar para almacenar el nombre de usuario que modifica los registros.
+	V_COUNT NUMBER(16);
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+			T_TIPO_DATA('7254153','01','T'),
+			T_TIPO_DATA('5952291','02','T'),
+			T_TIPO_DATA('6892232','01','T'),
+			T_TIPO_DATA('6892542','01','T'),
+			T_TIPO_DATA('6892544','01','T'),
+			T_TIPO_DATA('6892559','01','T'),
+			T_TIPO_DATA('6893087','01','T'),
+			T_TIPO_DATA('6893088','01','T'),
+			T_TIPO_DATA('6893089','01','T'),
+			T_TIPO_DATA('6893092','01','T'),
+			T_TIPO_DATA('6893093','01','T'),
+			T_TIPO_DATA('6893095','01','T'),
+			T_TIPO_DATA('6893096','01','T'),
+			T_TIPO_DATA('6893097','01','T'),
+			T_TIPO_DATA('6893098','01','T'),
+			T_TIPO_DATA('6893099','01','T'),
+			T_TIPO_DATA('6893100','01','T'),
+			T_TIPO_DATA('6893101','01','T'),
+			T_TIPO_DATA('6893102','01','T'),
+			T_TIPO_DATA('6893103','01','T'),
+			T_TIPO_DATA('6893104','01','T'),
+			T_TIPO_DATA('6893107','01','T'),
+			T_TIPO_DATA('6893109','01','T'),
+			T_TIPO_DATA('6893110','01','T'),
+			T_TIPO_DATA('6893111','01','T'),
+			T_TIPO_DATA('6893112','01','T'),
+			T_TIPO_DATA('6893118','01','T'),
+			T_TIPO_DATA('6893119','01','T'),
+			T_TIPO_DATA('6893120','01','T'),
+			T_TIPO_DATA('6893121','01','T'),
+			T_TIPO_DATA('6893122','01','T'),
+			T_TIPO_DATA('6893124','01','T'),
+			T_TIPO_DATA('6893125','01','T'),
+			T_TIPO_DATA('6893130','01','T'),
+			T_TIPO_DATA('6893131','01','T'),
+			T_TIPO_DATA('6893140','01','T'),
+			T_TIPO_DATA('6893141','01','T'),
+			T_TIPO_DATA('6893142','01','T'),
+			T_TIPO_DATA('6893144','01','T'),
+			T_TIPO_DATA('6893145','01','T'),
+			T_TIPO_DATA('6893146','01','T'),
+			T_TIPO_DATA('6893148','01','T'),
+			T_TIPO_DATA('6893149','01','T'),
+			T_TIPO_DATA('6893150','01','T'),
+			T_TIPO_DATA('6894421','01','T'),
+			T_TIPO_DATA('6894422','01','T'),
+			T_TIPO_DATA('6894423','01','T'),
+			T_TIPO_DATA('6894424','01','T'),
+			T_TIPO_DATA('6894427','01','T'),
+			T_TIPO_DATA('6894428','01','T'),
+			T_TIPO_DATA('6895078','01','T'),
+			T_TIPO_DATA('6895097','01','T'),
+			T_TIPO_DATA('6895103','01','T'),
+			T_TIPO_DATA('6895132','01','T'),
+			T_TIPO_DATA('6895181','01','T'),
+			T_TIPO_DATA('6896775','01','T'),
+			T_TIPO_DATA('6896786','01','T'),
+			T_TIPO_DATA('6896816','01','T'),
+			T_TIPO_DATA('6896825','01','T'),
+			T_TIPO_DATA('6896826','01','T'),
+			T_TIPO_DATA('6896832','01','T'),
+			T_TIPO_DATA('6896841','01','T'),
+			T_TIPO_DATA('6952586','01','T'),
+			T_TIPO_DATA('6952588','01','T'),
+			T_TIPO_DATA('6952589','01','T'),
+			T_TIPO_DATA('6952590','01','T'),
+			T_TIPO_DATA('6952591','01','T'),
+			T_TIPO_DATA('6952592','01','T'),
+			T_TIPO_DATA('6952593','01','T'),
+			T_TIPO_DATA('6952594','01','T'),
+			T_TIPO_DATA('7027299','01','T'),
+			T_TIPO_DATA('7027420','01','T'),
+			T_TIPO_DATA('7042142','1','O'),
+			T_TIPO_DATA('7262061','1','O'),
+			T_TIPO_DATA('7262061','02','T'),
+			T_TIPO_DATA('7262077','1','O'),
+			T_TIPO_DATA('7262077','02','T'),
+			T_TIPO_DATA('7265373','1','O'),
+			T_TIPO_DATA('7265373','01', 'T')
+); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+    
+BEGIN		
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+	LOOP
+	V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE 
+					ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT = 1 THEN
+
+			IF V_TMP_TIPO_DATA(3) = 'T' THEN
+
+				V_MSQL:= 'UPDATE  '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA 
+							SET DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT 
+									WHERE DD_TPA_CODIGO = '||V_TMP_TIPO_DATA(2)||' AND BORRADO = 0),
+							USUARIOMODIFICAR = '''||V_USU||''', FECHAMODIFICAR = SYSDATE
+							WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE 
+									ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0)
+							AND BORRADO = 0';
+				EXECUTE IMMEDIATE V_MSQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO]: SITUACION POSESORIA (TITULO) MODIFICADA EN ACTIVO '||V_TMP_TIPO_DATA(1)||'');
+
+			ELSIF V_TMP_TIPO_DATA(3) = 'O' THEN
+
+				V_MSQL:= 'UPDATE  '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA 
+							SET SPS_OCUPADO = '||V_TMP_TIPO_DATA(2)||',
+							USUARIOMODIFICAR = '''||V_USU||''', FECHAMODIFICAR = SYSDATE
+							WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE 
+									ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0)
+							AND BORRADO = 0';
+				EXECUTE IMMEDIATE V_MSQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO]: SITUACION POSESORIA (OCUPADO) MODIFICADA EN ACTIVO '||V_TMP_TIPO_DATA(1)||'');
+
+			END IF;
+
+		ELSE
+
+			DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE ACTIVO: '||V_TMP_TIPO_DATA(1)||'');
+
+		END IF;
+
+	END LOOP;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+		WHEN OTHERS THEN
+			err_num := SQLCODE;
+			err_msg := SQLERRM;
+
+			DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+			DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+			DBMS_OUTPUT.put_line(err_msg);
+
+			ROLLBACK;
+			RAISE;          
+
+END;
+
+/
+
+EXIT

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211108
+--## FECHA_CREACION=20211125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16362
+--## INCIDENCIA_LINK=HREOS-16502
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -53,7 +53,7 @@ BEGIN
                   SELECT       
                      ACT.ACT_NUM_ACTIVO_CAIXA as NUM_IDENTIFICATIVO 
                      , TO_CHAR(VENTA.FEC_VENTA,''YYYYMMDD'') FEC_VENTA
-                     , VENTA.IMP_VENTA IMP_VENTA
+                     , REPLACE(VENTA.IMP_VENTA,'','',''.'') IMP_VENTA
                      , VENTA.NIF_COMPRADOR NIF_COMPRADOR
                      , NULL INGRESOS_COMPRADOR
                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
@@ -62,7 +62,7 @@ BEGIN
                      JOIN '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID AND SCM.BORRADO = 0 AND SCM.DD_SCM_CODIGO = ''05''
                      JOIN (SELECT
                         ACO.ACT_ID
-                        , ECO.ECO_FECHA_FIRMA_CONT FEC_VENTA
+                        , ECO.ECO_FECHA_VENTA FEC_VENTA
                         , COALESCE(OFR.OFR_IMPORTE_CONTRAOFERTA, OFR.OFR_IMPORTE, 0)*OFR_ACT_PORCEN_PARTICIPACION/100 IMP_VENTA
                         , COM.COM_DOCUMENTO NIF_COMPRADOR
                         FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR

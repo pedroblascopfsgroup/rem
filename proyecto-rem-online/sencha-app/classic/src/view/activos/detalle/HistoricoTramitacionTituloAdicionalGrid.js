@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloAdicionalGrid'
 	editOnSelect: true,
 	disabledDeleteBtn: false,
 	sortableColumns: false,
-	requires	: ['HreRem.model.HistoricoTramitacionTituloAdicionalModel'],// 'HreRem.model.DDEstadoPresentacion'],//
+	requires	: ['HreRem.model.HistoricoTramitacionTituloAdicionalModel','HreRem.model.DDEstadoPresentacion'],// 'HreRem.model.DDEstadoPresentacion'],//
     bind: {
         store: '{storeHistoricoTramitacionTituloAdicional}' //
     },
@@ -186,7 +186,14 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloAdicionalGrid'
                       }
                       me.unmask();
                       me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-						me.saveSuccessFn();											
+					  me.saveSuccessFn();	
+						var grid = me.lookupController().lookupReference('calificacionnegativagridad');
+						if(a.data.estadoPresentacion === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+							grid.setDisabledAddBtn(true)
+						}else{
+							grid.setDisabledAddBtn(true);
+						}
+						
                   },
                   
 				failure: function (a, operation) {

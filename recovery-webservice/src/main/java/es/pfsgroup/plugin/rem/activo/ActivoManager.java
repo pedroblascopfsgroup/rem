@@ -7112,42 +7112,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
 				}
 
-			beanUtilNotNull.copyProperty(htt, "titulo", titulo);
-			if (!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
-				beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro",
-						tramitacionDto.getFechaPresentacionRegistro());
-			}
-			if (!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
-				DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
-				this.doCheckEstadoTramitacionTitulo(titulo, estadoPresentacion);
-				beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
-				if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
+				if (!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro",
+							tramitacionDto.getFechaPresentacionRegistro());
 				}
-
-				if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
-						&& !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
-					
-					htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
-					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+				
+				if (!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					this.doCheckEstadoTramitacionTitulo(titulo, estadoPresentacion);
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					}
+	
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
+							&& !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						
+						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+					}
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}
+					if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
+					}
+					if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
+					}
+					if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
+					}
+					if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
+					}
 				}
-				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
-				}
-				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
-				}
-				if (DDEstadoPresentacion.INMATRICULADOS.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_INMATRICULADOS;
-				}
-				if (DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION;
-				}
-				if (DDEstadoPresentacion.DESCONOCIDO.equals(estadoPresentacion.getCodigo())) {
-					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
-				}
-			}
 
 
 			} catch (IllegalAccessException e) {
@@ -7341,7 +7342,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
-					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if (DDEstadoPresentacion.NULO.equals(estadoPresentacion.getCodigo())) {
 					estadoTitulo = DDEstadoTitulo.ESTADO_NULO;
@@ -7359,7 +7359,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						
 			htt.setFechaCalificacion(!Checks.esNulo(tramitacionDto.getFechaCalificacion()) ? tramitacionDto.getFechaCalificacion() : null);
 			htt.setFechaInscripcion(!Checks.esNulo(tramitacionDto.getFechaInscripcion()) ? tramitacionDto.getFechaInscripcion() : null);
-			htt.setFechaPresentacionRegistro(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) ? tramitacionDto.getFechaPresentacionRegistro() : null);
+			if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()))
+				htt.setFechaPresentacionRegistro(tramitacionDto.getFechaPresentacionRegistro());
 
 			if (!Checks.esNulo(tramitacionDto.getObservaciones())) {
 				beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -82,6 +84,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
+
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoDatosRegistrales implements TabActivoService {
@@ -116,6 +125,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
@@ -1204,7 +1222,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 	}
 	
+	@Transactional(readOnly = false)
 	public void comprobacionSuperficiePA(DtoActivoDatosRegistrales activoDto, Long id) {
+
 		Activo activoActual = activoApi.get(id);
 		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(id);
 		boolean isUA = activoDao.isUnidadAlquilable(id);
@@ -1319,5 +1339,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA_UTIL));
 			}
 		}
+
 	}
 }

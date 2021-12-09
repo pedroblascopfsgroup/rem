@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -20,6 +22,15 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistr
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
+
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador implements MSVLiberator {
@@ -46,6 +57,15 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String getValidOperation() {
@@ -53,6 +73,7 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		
 		Activo activo = null;
@@ -108,7 +129,7 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 			genericDao.update(NMBInformacionRegistralBien.class, infoRegBien);
 			genericDao.update(ActivoInfoRegistral.class, infoRegistral);
 			genericDao.update(Activo.class, activo);
-			
+
 			return new ResultadoProcesarFila();
 			
 		} else{

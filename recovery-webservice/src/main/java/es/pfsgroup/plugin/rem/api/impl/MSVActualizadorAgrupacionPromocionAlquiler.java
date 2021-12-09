@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -69,8 +73,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component @Transactional(readOnly = false)
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -109,10 +118,18 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
+	
 	private UtilDiccionarioApi diccionarioApi;
 	
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	
 	List<Activo> listaActivos = null;
@@ -920,6 +937,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
 		listaActivos.add(unidadAlquilable);
+
 		return new ResultadoProcesarFila();
 	}
 	

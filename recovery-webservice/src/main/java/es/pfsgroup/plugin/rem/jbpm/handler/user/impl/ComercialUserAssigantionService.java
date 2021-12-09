@@ -244,7 +244,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}
 		}
 		
-		if (isActivoBankia) {
+		if (isActivoBankia && CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(codigoTarea)) {
 			Filter user = null;
 			expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
 			if ( expediente != null && !expedienteComercialNoAprobado(expediente.getEstado().getCodigo())) {

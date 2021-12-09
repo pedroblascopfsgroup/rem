@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
@@ -216,6 +217,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -223,6 +225,7 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
+import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -387,6 +390,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private RecoveryComunicacionManager recoveryComunicacionManager;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 
 	@Override
 	public String managerName() {
@@ -574,6 +580,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
 		String codigoTipoPrecio = dto.getCodigoTipoPrecio();
+
 		try {
 			// Actualizacion Valoracion existente
 			if (!Checks.esNulo(activoValoracion)) {
@@ -1681,6 +1688,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean createHistoricoMediador(DtoHistoricoMediador dto) throws JsonViewerException {
+
 		ActivoInformeComercialHistoricoMediador historicoMediador = new ActivoInformeComercialHistoricoMediador();
 		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
@@ -4297,7 +4305,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Transactional(readOnly = false)
 	public Boolean saveActivoCarga(DtoActivoCargas cargaDto) {
+
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		ActivoCargas cargaSeleccionada = null;
 		NMBBienCargas cargaBien = null;
 		Activo activo = null;
@@ -4320,6 +4330,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			cargaSeleccionada.setOrigenDato((DDOrigenDato) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDOrigenDato.class, DDOrigenDato.CODIGO_REM));
 		}
+
+		activo = cargaSeleccionada.getActivo();
 
 		try {
 			beanUtilNotNull.copyProperties(cargaSeleccionada, cargaDto);
@@ -7037,6 +7049,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		Activo activo = activoAdapter.getActivoById(idActivo);
+		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
 		Order order = new Order(OrderType.DESC, "id");
@@ -7044,6 +7057,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		List<HistoricoTramitacionTitulo> listasTramitacion = null;
 		
 		String estadoTitulo = null;
+		
 		try {
 			if (Checks.esNulo(titulo)) throw new HistoricoTramitacionException(
 					"Debe informarse algún dato de 'Tramitación título' para poder crear un registro.");
@@ -7062,8 +7076,42 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new HistoricoTramitacionException(
 							"La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
 				}
-
 			}
+			try {
+				if(!Checks.estaVacio(listasTramitacion)) {
+					if(!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+					}else if(!Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+					}
+
+				}
+				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
+				}
+				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					this.doCheckEstadoTramitacionTitulo(titulo, estadoPresentacion);
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					}
+
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+					}
+
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
+				}
+
 			beanUtilNotNull.copyProperty(htt, "titulo", titulo);
 			if (!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 				beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro",
@@ -7080,6 +7128,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo())
 						&& !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+					
 					htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 				}
@@ -7099,6 +7148,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					estadoTitulo = DDEstadoTitulo.ESTADO_DESCONOCIDO;
 				}
 			}
+
+
+			} catch (IllegalAccessException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+			}
+
 			if (!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
 				beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
 			}
@@ -7212,18 +7268,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto)
-			throws Exception, HistoricoTramitacionException {
+	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception, HistoricoTramitacionException{
 
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
-		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,
-				genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		
+		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
 		ActivoTitulo activoTitulo = htt.getTitulo();
-
 		Activo activo = activoTitulo.getActivo();
-
 		Order order = new Order(OrderType.DESC, "id");
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", tramitacionDto.getIdActivo());
 		

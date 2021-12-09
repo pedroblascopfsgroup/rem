@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +18,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -49,6 +51,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoImpuestoCompra;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
+
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoSaneamiento implements TabActivoService{
@@ -81,6 +89,15 @@ public class TabActivoSaneamiento implements TabActivoService{
 	
 	@Autowired
 	private GestorActivoHistoricoDao gestorActivoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Resource
 	private MessageService messageServices;
@@ -586,6 +603,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+
 			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

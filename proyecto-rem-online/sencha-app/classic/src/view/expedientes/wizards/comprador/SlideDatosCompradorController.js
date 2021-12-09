@@ -121,22 +121,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef'),
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
-		if (((tieneReserva && (estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['APROBADO']))
-                       || (!tieneReserva && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']))
-				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
-
-			campoTipoPersona.disable();
-			campoTipoDocumentoRte.disable();
-			campoNumeroDocumentoRte.disable();
-			campoSeleccionClienteUrsus.disable();
-			campoEstadoCivil.disable();
-			campoRegEconomico.disable();
-			campoTipoDocumentoConyuge.disable();
-			campoNumeroDocumentoConyugue.disable();
-			campoNumeroUrsus.setReadOnly(true);
-			campoNumeroUrsusBh.setReadOnly(true);			
-			numeroDocumentoConyuge.disable();
-		}
+		
 		if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 			campoTipoDocumentoConyuge.clearValue;
 			campoNumeroDocumentoConyugue.clearValue;
@@ -354,15 +339,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr) && esBankia) {
 							campoPaisRpr.allowBlank = false;
-							if (campoPaisRpr.value == null) {
-								campoPaisRpr.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(codigoPaisRte)) {
 							codigoPaisRte.allowBlank = false;
-							if (codigoPaisRte.value == null) {
-								codigoPaisRte.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(fechaNacRep) && esBankia) {
 							campoMunicipioRpr.allowBlank = false;

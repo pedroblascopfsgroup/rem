@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211021
+--## FECHA_CREACION=20211201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -20,6 +20,7 @@
 --##	      0.8 Se añaden fechas de inicio y fin de vigencia - HREOS-15254 - Daniel Algaba
 --##        0.9 Se modifica la creación de obra nueva porque no hacía nada - DAP
 --##	      0.10 Optimización - HREOS-15634 - Daniel Algaba
+--##	      0.10 Se corrige la creación de las ON - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -751,7 +752,13 @@ BEGIN
                   WHERE AGR.BORRADO = 0
                   AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''01'')
                   AND AGR.AGR_FECHA_BAJA IS NULL
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO)';
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO)
+                  AND NOT EXISTS (SELECT 1
+                  FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
+                  WHERE AGR.BORRADO = 0
+                  AND AGR.AGR_FECHA_BAJA IS NULL
+                  AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = ''01'')
+                  AND AGR.AGR_NUM_AGRUP_BC = APR.PROMO_COMERCIAL)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
@@ -962,7 +969,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = AUX.ACTIVO
                   AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_NUM_AGRUP_BC = AUX.COD_AGRUPACION AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM REM01.DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = AUX.TIPO) 
-                  AND AGR.BORRADO = 0
+                  AND AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
                   LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID AND BIE_LOC.BORRADO = 0
                   WHERE AUX.RN = 1';
    

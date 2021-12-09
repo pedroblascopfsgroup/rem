@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -120,6 +124,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	private static final Integer CODIGO_SI = 1;
 	
 	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";
+	public static final String USERNAME_GRUPO_BC_FOR = "grupobc03";
+	public static final String USERNAME_GRUPO_BOARDING = "gruboarding";
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -239,6 +245,20 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}
 		}
 		
+		if (isActivoBankia && CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(codigoTarea)) {
+			Filter user = null;
+			expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
+			if ( expediente != null && !expedienteComercialNoAprobado(expediente.getEstado().getCodigo())) {
+				if (tieneReserva && DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+					user = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BC_FOR);
+				} else {
+					user = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BOARDING);
+				}
+			}
+			
+			if (!Checks.esNulo(user)) return genericDao.get(Usuario.class, user);
+		}
+		
 		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
 			return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoGestor);
 		}
@@ -356,9 +376,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	}
 
 	private boolean isTareaGetUsuarioCaixa(String codigoTarea) {
-		return CODIGO_T017_DEFINICION_OFERTA.equals(codigoTarea) || CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+		return CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
 				|| CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
-				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea);
+				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) 
+				|| CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)
+				|| CODIGO_T017_AGENDAR_FIRMA.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea);
 	}
 
 	public boolean expedienteTieneReserva(ExpedienteComercial expediente,TareaActivo tareaActivo) {
@@ -1449,5 +1471,16 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
 		
 		return DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codCarteraActivo);
+	}
+ 	
+	private boolean expedienteComercialNoAprobado(String codigoEstadoExpedienteComercial) {
+		List<String> estadosRestringidos =
+				new ArrayList<String>(Arrays.asList(DDEstadosExpedienteComercial.EN_TRAMITACION
+													,DDEstadosExpedienteComercial.PTE_SANCION
+													,DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES
+													,DDEstadosExpedienteComercial.CONTRAOFERTADO));
+				
+				
+		return Boolean.TRUE.equals(estadosRestringidos.contains(codigoEstadoExpedienteComercial));
 	}
 }

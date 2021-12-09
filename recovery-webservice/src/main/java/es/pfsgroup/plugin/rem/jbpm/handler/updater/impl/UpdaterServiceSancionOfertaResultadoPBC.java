@@ -170,7 +170,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									logger.error("Error descongelando ofertas.", e);
 								}
 
-								if (DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())
+								/*if (DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())
 										&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){									
 									if(!uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
 									// Notificar del rechazo de la oferta a
@@ -184,7 +184,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 										}
 									}
 									
-								}
+								}*/
 								
 							}
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -44,7 +46,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -70,6 +77,14 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Resource
 	private MessageService messageServices;
@@ -87,6 +102,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
+
+		Activo activo = null;
 		
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -116,7 +133,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						}
 
 						for (ActivoOferta activoOferta : ofertaAceptada.getActivosOferta()) {
-							Activo activo = activoOferta.getPrimaryKey().getActivo();
+							activo = activoOferta.getPrimaryKey().getActivo();
 
 							PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 							perimetro.setAplicaComercializar(0);
@@ -174,7 +191,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 				// La fecha de firma la guardamos como la fecha de toma de posesión
 				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					for (ActivoOferta activoOferta : ofertaAceptada.getActivosOferta()) {
-						Activo activo = activoOferta.getPrimaryKey().getActivo();
+						activo = activoOferta.getPrimaryKey().getActivo();
 
 						PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 						perimetro.setAplicaComercializar(0);
@@ -285,6 +302,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 		}
 
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion, true);
+
 	}
 
 	public String[] getCodigoTarea() {

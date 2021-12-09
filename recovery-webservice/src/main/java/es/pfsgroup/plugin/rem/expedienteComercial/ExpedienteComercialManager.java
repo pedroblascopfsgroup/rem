@@ -5173,7 +5173,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			oldDataComprador.compradorToDto(comprador);
 
 			boolean reiniciarPBC = false;
-			
+			boolean documentoModificado = false;
+			boolean documentoRteModificado = false;
+
 			if(dto.getNumeroClienteUrsus() != null)
 				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			
@@ -5254,6 +5256,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setCodigoPostal(dto.getCodigoPostal());
 
 			if (!Checks.esNulo(dto.getNumDocumento())) {
+				documentoModificado = !dto.getNumDocumento().equals(comprador.getDocumento());
 				comprador.setDocumento(dto.getNumDocumento());
 				reiniciarPBC = true;
 			}
@@ -5341,6 +5344,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
 			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
+
+			Oferta oferta = expedienteComercial.getOferta();
+
 			boolean esNuevo = false;
 			boolean haCambiadoPorcionCompra = false;
 			if (Checks.esNulo(compradorExpediente)) {
@@ -5481,6 +5487,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			compradorExpediente.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
+			documentoRteModificado = dto.getNumDocumentoRte() != null ? !dto.getNumDocumentoRte().equals(compradorExpediente.getDocumentoRepresentante()) : false;
 			compradorExpediente.setDocumentoRepresentante(dto.getNumDocumentoRte());
 			compradorExpediente.setDireccionRepresentante(dto.getDireccionRte());
 			compradorExpediente.setTelefono1Representante(dto.getTelefono1Rte());
@@ -5634,19 +5641,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
 			}
 
-			assignIAPCompradorRepresentante(compradorExpediente,expedienteComercial.getId(),comprador,expedienteComercial.getOferta());
+			assignIAPCompradorRepresentante(compradorExpediente,expedienteComercial.getId(),comprador,expedienteComercial.getOferta(), documentoRteModificado);
 
-			if(comprador.getInfoAdicionalPersona() != null) {
-				comprador.getInfoAdicionalPersona().setVinculoCaixa(vinculoCaixa);
-				comprador.getInfoAdicionalPersona().setSociedad(dto.getSociedad());
-				comprador.getInfoAdicionalPersona().setOficinaTrabajo(dto.getOficinaTrabajo());
+			InfoAdicionalPersona iapComprador = comprador.getInfoAdicionalPersona();
+
+			if(iapComprador != null) {
+				if(documentoModificado){
+					String nuevoIdPersonaHayaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, oferta.getActivoPrincipal(), dto.getNumDocumento(), null);
+					String nuevoIdPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(dto.getNumDocumento());
+
+					iapComprador = interlocutorCaixaService.getIapCaixaOrDefault(iapComprador, nuevoIdPersonaHayaCaixa, nuevoIdPersonaHaya);
+					comprador.setInfoAdicionalPersona(iapComprador);
+				}
+				iapComprador.setVinculoCaixa(vinculoCaixa);
+				iapComprador.setSociedad(dto.getSociedad());
+				iapComprador.setOficinaTrabajo(dto.getOficinaTrabajo());
 			}
 			if (vinculoCaixa != null) {
 				compradorExpediente.setVinculoCaixa(vinculoCaixa);
 			}
 			if (esNuevo) {
 				
-				Oferta oferta = expedienteComercial.getOferta();
 				if(oferta != null && oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())) {
 					boolean isPrincipal = compradorExpediente.getTitularContratacion() == 1 ? true : false;
 					tramitacionOfertasManager.setInterlocutorOferta(compradorExpediente, isPrincipal, oferta);
@@ -6332,7 +6347,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setPaisNacimientoRepresentante(pais);
 			}
 
-			assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),compradorBusqueda,expediente.getOferta());
+			assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),compradorBusqueda,expediente.getOferta(), false);
 
 			genericDao.save(Comprador.class,compradorBusqueda);
 
@@ -6683,7 +6698,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setPaisNacimientoRepresentante(pais);
 				}
 
-				assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),comprador,expediente.getOferta());
+				assignIAPCompradorRepresentante(compradorExpediente,expediente.getId(),comprador,expediente.getOferta(), false);
 
 
 				InfoAdicionalPersona iap = comprador.getInfoAdicionalPersona();
@@ -11401,15 +11416,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		WSDevolBankiaDto dto = null;
 
 		try {
-			dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(),
+			/*dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(),
 					uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 					UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA,
-					UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+					UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);*/
+			
+			if (!Checks.esNulo(dto)){
+				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 
-			beanUtilNotNull.copyProperties(expedienteComercial, dto);
-
-			if (!Checks.esNulo(dto) && dto.getCorrecw() == 1) {
-				expedienteComercial.setDevolAutoNumber(true);
+			 	if (dto.getCorrecw() == 1) 
+			 		expedienteComercial.setDevolAutoNumber(true);
 			} else {
 				expedienteComercial.setDevolAutoNumber(false);
 			}
@@ -14261,11 +14277,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 
 	@Transactional
-	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador,Oferta oferta){
+	private void assignIAPCompradorRepresentante(CompradorExpediente compradorExpediente, Long expedienteID, Comprador comprador,Oferta oferta, Boolean documentoRteModificado){
 
 		
 		if(comprador.getIdPersonaHayaCaixa() == null || comprador.getIdPersonaHayaCaixa().trim().isEmpty()) {
-			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento()));
+			comprador.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,comprador.getDocumento(), null));
 		}
 		if (comprador.getIdPersonaHaya() == null){
 			String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(comprador.getDocumento());
@@ -14280,15 +14296,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.save(InfoAdicionalPersona.class, iap);
 		}
 
-		if (compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
+		if (documentoRteModificado || compradorExpediente.getDocumentoRepresentante() != null && !compradorExpediente.getDocumentoRepresentante().isEmpty()){
 
-			if (compradorExpediente.getIdPersonaHayaRepresentante() == null){
+			if (documentoRteModificado || compradorExpediente.getIdPersonaHayaRepresentante() == null){
 				String idPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(compradorExpediente.getDocumentoRepresentante());
 				compradorExpediente.setIdPersonaHayaRepresentante(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 			}
 
-			if(compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
-				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante()));
+			if(documentoRteModificado || compradorExpediente.getIdPersonaHayaCaixaRepresentante() == null || compradorExpediente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()) {
+				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante(), null));
 			}
 
 			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);

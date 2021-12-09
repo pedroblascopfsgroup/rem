@@ -140,12 +140,14 @@ public class InterlocutorCaixaService {
     }
 
     @Transactional
-    public String getIdPersonaHayaCaixa(Oferta oferta, Activo activo,String documento){
+    public String getIdPersonaHayaCaixa(Oferta oferta, Activo activo,String documento, DDCartera cartera){
 
-        if (activo == null){
-            activo = oferta != null ? oferta.getActivoPrincipal() : null;
+        if(cartera == null){
+            if (activo == null){
+                activo = oferta != null ? oferta.getActivoPrincipal() : null;
+            }
+            cartera = activo != null ? activo.getCartera() : null;
         }
-        DDCartera cartera = activo != null ? activo.getCartera() : null;
 
         if (DDCartera.CODIGO_CAIXA.equals(cartera != null ? cartera.getCodigo() : null)){
             DDSubcartera subCartera = activo != null ? activo.getSubcartera() : null;

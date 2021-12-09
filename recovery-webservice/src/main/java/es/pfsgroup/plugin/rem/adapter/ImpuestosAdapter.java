@@ -134,7 +134,7 @@ public class ImpuestosAdapter {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
 		List<ActivoCatastro>  lista;
-
+		Date date1 = null;
 		try {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
@@ -144,14 +144,20 @@ public class ImpuestosAdapter {
 			
 			
 			if (!Checks.estaVacio(lista)) {
-			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaSolicitud901);  
+
+				if (!Checks.esNulo(fechaSolicitud901)) {
+					date1 = new SimpleDateFormat("dd/MM/yyyy").parse(fechaSolicitud901);  	
+				}
+			    
 			    Double valConstruccion = !Checks.esNulo(valorContruccion)
 							? Double.parseDouble(valorContruccion) : null;
 				Double valSuelo = !Checks.esNulo(valorSuelo)
 							? Double.parseDouble(valorSuelo) : null;
 							
 			    for (ActivoCatastro actCat : lista) {
-					actCat.setFechaSolicitud901(date1);	
+			    	if (!Checks.esNulo(date1)) {
+			    		actCat.setFechaSolicitud901(date1);		
+			    	}					
 					actCat.setValorCatastralConst(valConstruccion);
 					actCat.setValorCatastralSuelo(valSuelo);
 					actCat.setObservaciones(observaciones);

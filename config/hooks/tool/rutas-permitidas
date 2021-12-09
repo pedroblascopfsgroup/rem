@@ -208,6 +208,7 @@ func-rem-cierreOficinas|R-Ambersweet
 rem_mirror|func-rem-contrasteDeListas
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
+rem_mirror|func-rem-fenix
 func-rem-modeloHydra|func-rem-comercialHydra
 func-rem-confirmacionTitulares|func-rem-comercialHydra
 func-rem-contrasteDeListas|func-rem-comercialHydra
@@ -241,3 +242,4 @@ R-Hydra-ProcesoOfertas|R-Hydra-ProcesoOfertas-f2
 rem_mirror|R-Hydra-ProcesoOfertas-f2
 rem_mirror|func-rem-onboardingTitulizada
 func-rem-onboardingTitulizada|R-Hydra-ProcesoOfertas-f2
+rem_mirror|func-rem-tasadorasTitulizada

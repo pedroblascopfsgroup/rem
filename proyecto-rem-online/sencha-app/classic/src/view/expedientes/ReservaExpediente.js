@@ -142,11 +142,12 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
 		                	minValue: $AC.getCurrentDate(),
 							maxValue: null,
-		                	bind: 		'{reserva.fechaVencimiento}',		                	
-							colspan: 2,
-							readOnly: true
+		                	bind: 		{
+		                	    value: '{reserva.fechaVencimiento}',
+		                	    readOnly: '{esCarteraBankia}'
+		                	},
+							colspan: 2
 		                },
-
 		                {
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),

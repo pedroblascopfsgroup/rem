@@ -89,6 +89,7 @@ public class DtoTasacion {
     private String fincaRusticaExpectativasUrbanisticas;
     private String paralizacionUrbanizacion;
     private String tipoDatoUtilizadoInmuebleComparableCodigo;
+    private String tasadoraCaixaCodigo;
 
 	public Long getId() {
 		return id;
@@ -581,6 +582,12 @@ public class DtoTasacion {
 	}
 	public void setTipoDatoUtilizadoInmuebleComparableCodigo(String tipoDatoUtilizadoInmuebleComparableCodigo) {
 		this.tipoDatoUtilizadoInmuebleComparableCodigo = tipoDatoUtilizadoInmuebleComparableCodigo;
+	}
+	public String getTasadoraCaixaCodigo() {
+		return tasadoraCaixaCodigo;
+	}
+	public void setTasadoraCaixaCodigo(String tasadoraCaixaCodigo) {
+		this.tasadoraCaixaCodigo = tasadoraCaixaCodigo;
 	}
 
 }

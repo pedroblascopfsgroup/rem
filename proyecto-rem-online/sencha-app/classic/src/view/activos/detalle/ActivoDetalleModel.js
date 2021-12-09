@@ -760,9 +760,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true; 
 			}else{
 				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
-					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo)))
-					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}
 			
 		},
@@ -1759,12 +1759,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		esCarteraSarebBbvaBankiaCajamarLiberbank : function(get){
-			var me = this;
-
 			var activo = null;
-			if (me.data.activo != null) {
-				activo = me.data.activo.getData();
-			}
+			if(get('activo') != null)
+				activo = get('activo').data;
 			
 			if (activo != null || activo != undefined) {
 				var esCarteraSareb = activo.isCarteraSareb;
@@ -4289,6 +4286,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
+			},
+			autoLoad: true
+		},
+		comboTasadoraCaixa: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
 		}

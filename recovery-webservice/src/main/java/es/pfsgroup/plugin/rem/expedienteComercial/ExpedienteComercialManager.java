@@ -12773,29 +12773,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
             VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular);
             
-            if(comprador.getPorcentajeCompra() != null && comprador.getCodTipoDocumento() != null && comprador.getNombreRazonSocial() != null
-            && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
-            && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
-            	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
-            		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
-            			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
-            				return true;
-            			}else {
-            				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
-            					return true;
-            				}
-            			}
-            		}
-            	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
-            		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
-            			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
-            			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
-            			return true;
-            		}
-            	}
+            if (!trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
+            	return checkCamposCompradoresMinimos(comprador); 
+            } else {
+            	if (checkCamposCompradoresMinimos(comprador))
+            		return checkCamposCompradoresBankia(comprador);
             }
 		}
 		
+		return false;
+	}
+	
+	private boolean checkCamposCompradoresMinimos(VBusquedaDatosCompradorExpediente comprador) {
+		if(comprador.getPorcentajeCompra() != null && comprador.getCodTipoDocumento() != null && comprador.getNombreRazonSocial() != null
+            && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
+            && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
+        	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
+        		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
+        			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
+        				return true;
+        			}else {
+        				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
+        					return true;
+        				}
+        			}
+        		}
+        	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+        		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
+        			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
+        			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
+        			return true;
+        		}
+        	}
+        }
+		return false;
+	}
+	
+	private boolean checkCamposCompradoresBankia(VBusquedaDatosCompradorExpediente comprador) {
+		if (comprador.getAntiguoDeudor() != null && comprador.getFechaNacimientoConstitucion() != null 
+				&& ((comprador.getProvinciaNacimientoCompradorCodigo() != null && comprador.getLocalidadNacimientoCompradorCodigo() != null) 
+						|| !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getPaisNacimientoCompradorCodigo()))) {
+	    	if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+	    		if((comprador.getProvinciaNacimientoRepresentanteCodigo() != null 
+	    				&& comprador.getLocalidadNacimientoRepresentanteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getPaisNacimientoRepresentanteCodigo())) {
+	    			return true;
+	    		}
+	    	}
+	    	
+	    	return true;
+		}
+    	
 		return false;
 	}
 	

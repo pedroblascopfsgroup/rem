@@ -57,10 +57,8 @@ BEGIN
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
 	ADN_ID,
 	ACT_ID,
-	
 	ADN_FECHA_TITULO,
 	ADN_VALOR_ADQUISICION,
-	
 	ADN_TRAMITADOR_TITULO,
 	ADN_NUM_REFERENCIA,
 	VERSION,
@@ -74,24 +72,21 @@ BEGIN
 	FECHA_POSESION
 	)
 	SELECT
-	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL       ADN_ID,
-	ACT2.ACT_ID,
-	
-	null                                  ADN_FECHA_TITULO,
-	
-	
-	null                             ADN_TRAMITADOR_TITULO,
-	ADN.ADN_VALOR_ADQUISICION				ADN_VALOR_ADQUISICION,
-	null                               ADN_NUM_REFERENCIA,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                   USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	ADN.BORRADO                                                    BORRADO,
-	ADN.FECHA_POSESION										  FECHA_POSESION
+	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
+	ACT2.ACT_ID											ACT_ID,
+	TO_DATE(''16/12/2021'', ''DD/MM/YYYY'')             ADN_FECHA_TITULO,
+	''Antonio Perez Coca''                             	ADN_TRAMITADOR_TITULO,
+	NULL												ADN_VALOR_ADQUISICION,
+	''1850/21''                               			ADN_NUM_REFERENCIA,
+	''0''                                               VERSION,
+	'''||V_USUARIO||'''                                 USUARIOCREAR,
+	SYSDATE                                             FECHACREAR,
+	NULL                                                USUARIOMODIFICAR,
+	NULL                                                FECHAMODIFICAR,
+	NULL                                                USUARIOBORRAR,
+	NULL                                                FECHABORRAR,
+	ADN.BORRADO                                         BORRADO,
+	ADN.FECHA_POSESION									FECHA_POSESION
 	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO

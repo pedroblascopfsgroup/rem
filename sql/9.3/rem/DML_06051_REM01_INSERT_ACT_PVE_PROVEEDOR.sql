@@ -58,6 +58,7 @@ BEGIN
               , PVE_HOMOLOGADO
               , PVE_TOP
               , PVE_RETENER
+              , PVE_COD_REM
               , PVE_COD_API_PROVEEDOR
               , PVE_AUTORIZACION_WEB)
           SELECT
@@ -83,6 +84,7 @@ BEGIN
               , 1 PVE_HOMOLOGADO
               , 0 PVE_TOP
               , 0 PVE_RETENER
+              , '||V_ESQUEMA||'.S_PVE_COD_REM.NEXTVAL PVE_COD_REM
               , LPAD(COD_CAIXABANK, 4, ''0'') PVE_COD_API_PROVEEDOR
               , 0 PVE_AUTORIZACION_WEB
               FROM (SELECT MIN_A - 1 + LEVEL COD_CAIXABANK

@@ -71,6 +71,36 @@ Ext.define('HreRem.model.GastoActivo', {
             {
             	name: 'importeProporcinalSujeto',
             	type: 'number'
+            },
+            {
+            	name:'estadoAlquilerCodigo'
+            },
+            {
+            	name:'estadoAlquiler'
+            },
+            {
+            	name:'tipoComercializacionCodigo'
+            },
+            {
+            	name:'tipoComercializacion'
+            },
+            {
+            	name:'tipoTransmisionCodigo'
+            },
+            {
+            	name:'tipoTransmision'
+            },
+            {
+            	name:'grupo'
+            },
+            {
+            	name:'tipo'
+            },
+            {
+            	name:'subtipo'
+            },
+            {
+            	name:'primeraPosesion'
             }
             
     ],

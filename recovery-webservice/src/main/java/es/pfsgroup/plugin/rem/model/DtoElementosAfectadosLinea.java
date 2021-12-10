@@ -44,6 +44,26 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private Double importeTotalSujetoLinea;
 	 
+	 private String estadoAlquilerCodigo;
+	 
+	 private String estadoAlquiler;
+	 
+	 private String tipoComercializacionCodigo;
+	 
+	 private String tipoComercializacion;
+	 
+	 private String tipoTransmisionCodigo;
+	 
+	 private String tipoTransmision;
+	 
+	 private String grupo;
+	 
+	 private String tipo;
+	 
+	 private String subtipo;
+	 
+	 private String primeraPosesion;
+	 
 
 	public Long getId() {
 		return id;
@@ -165,7 +185,84 @@ public class DtoElementosAfectadosLinea extends WebDto {
 		this.importeTotalSujetoLinea = importeTotalSujetoLinea;
 	}
 
-	
-	
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
 
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+
+	public String getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+
+	public void setEstadoAlquiler(String estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
+	public String getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(String tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(String tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getSubtipo() {
+		return subtipo;
+	}
+
+	public void setSubtipo(String subtipo) {
+		this.subtipo = subtipo;
+	}
+
+	public String getPrimeraPosesion() {
+		return primeraPosesion;
+	}
+
+	public void setPrimeraPosesion(String primeraPosesion) {
+		this.primeraPosesion = primeraPosesion;
+	}
+	
 }

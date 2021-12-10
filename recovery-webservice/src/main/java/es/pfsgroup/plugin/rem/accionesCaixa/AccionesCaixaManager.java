@@ -115,6 +115,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
             genericDao.save(ExpedienteComercial.class, eco);
 			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
+			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
         }else {
             eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
             genericDao.save(ExpedienteComercial.class, eco);

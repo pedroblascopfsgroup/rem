@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan José Sanjuan
---## FECHA_CREACION=20211203
+--## FECHA_CREACION=20211204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16512
@@ -42,7 +42,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('08'	,'Vigilancia y seguridad'		,'Vigilancia y seguridad')
+    	T_TIPO_DATA('09'	,'Vigilancia y seguridad'		,'Vigilancia y seguridad')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -72,7 +72,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ',  '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-                      ', 0, ''HREOS-8227'',SYSDATE,0 '||
+                      ', 0, ''HREOS-16512'',SYSDATE,0 '||
 					  ' FROM DUAL';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;

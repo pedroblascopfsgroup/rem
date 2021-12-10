@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan José Sanjuan
---## FECHA_CREACION=20211203
+--## FECHA_CREACION=20211205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16512
@@ -42,14 +42,14 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('147'	,'Alarmas Instalación'			,'Alarmas Instalación' 	,'08'),
-    	T_TIPO_DATA('148'	,'Alarmas Mantenimiento'		,'Alarmas Mantenimiento'	,'08'),
+    	T_TIPO_DATA('147'	,'Alarmas Instalación'			,'Alarmas Instalación' 	,'09'),
+    	T_TIPO_DATA('148'	,'Alarmas Mantenimiento'		,'Alarmas Mantenimiento'	,'09'),
     	T_TIPO_DATA('149'	,'Vigilancia'				,'Vigilancia'			,'08'),
-    	T_TIPO_DATA('150'	,'Colocación puerta antiocupa'			,'Colocación puerta antiocupa'		,'08'),
-    	T_TIPO_DATA('151'	,'Acudas'				,'Acudas'			,'08'),
-    	T_TIPO_DATA('152'	,'CRA'					,'CRA'				,'08'),
-    	T_TIPO_DATA('153'	,'Alquiler PAO'		,'Alquiler PAO'	,'08'),
-    	T_TIPO_DATA('154'	,'Alquiler alarmas'				,'Alquiler alarmas'			,'08')
+    	T_TIPO_DATA('150'	,'Colocación puerta antiocupa'			,'Colocación puerta antiocupa'		,'09'),
+    	T_TIPO_DATA('151'	,'Acudas'				,'Acudas'			,'09'),
+    	T_TIPO_DATA('152'	,'CRA'					,'CRA'				,'09'),
+    	T_TIPO_DATA('153'	,'Alquiler PAO'		,'Alquiler PAO'	,'09'),
+    	T_TIPO_DATA('154'	,'Alquiler alarmas'				,'Alquiler alarmas'			,'09')
     	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -81,7 +81,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                       'DD_'||V_TEXT_CHARS||'_ID, DD_TTR_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ', (SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||V_TMP_TIPO_DATA(4)||'''),'||
 					  ''''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-                      ', 0, ''HREOS-8227'',SYSDATE,0 '||
+                      ', 0, ''HREOS-16512'',SYSDATE,0 '||
 					  ' FROM DUAL';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;

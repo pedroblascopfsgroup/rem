@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan José Sanjuan
---## FECHA_CREACION=20211203
+--## FECHA_CREACION=20211204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16512
@@ -38,14 +38,14 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
       -- 					TIPO TRABAJO(DD_TGA_CODIGO),   		SUBTIPO(DD_STG_CODIGO),  			DESCRIPCION,  			                    DESCRIPCION LARGA
-		T_TIPO_DATA(			'16',								'116',							'Alarmas Instalación',			            'Alarmas Instalación'),
-		T_TIPO_DATA(			'16',								'117',							'Alarmas Mantenimiento',			        'Alarmas Mantenimiento'),
-		T_TIPO_DATA(			'16',								'118',							'Vigilancia',	                            'Vigilancia'),
-		T_TIPO_DATA(			'16',								'119',							'Colocación puerta antiocupa',              'Colocación puerta antiocupa'),
-		T_TIPO_DATA(			'16',								'120',							'Acudas',			                        'Acudas'),
-		T_TIPO_DATA(			'16',								'121',							'CRA',			                            'CRA'),
-		T_TIPO_DATA(			'16',								'122',							'Alquiler PAO',			                    'Alquiler PAO'),
-        T_TIPO_DATA(			'16',								'123',							'Alquiler alarmas',		                    'Alquiler alarmas')
+		T_TIPO_DATA(			'16',								'118',							'Alarmas Instalación',			            'Alarmas Instalación'),
+		T_TIPO_DATA(			'16',								'119',							'Alarmas Mantenimiento',			        'Alarmas Mantenimiento'),
+		T_TIPO_DATA(			'16',								'120',							'Vigilancia',	                            'Vigilancia'),
+		T_TIPO_DATA(			'16',								'121',							'Colocación puerta antiocupa',              'Colocación puerta antiocupa'),
+		T_TIPO_DATA(			'16',								'122',							'Acudas',			                        'Acudas'),
+		T_TIPO_DATA(			'16',								'123',							'CRA',			                            'CRA'),
+		T_TIPO_DATA(			'16',								'124',							'Alquiler PAO',			                    'Alquiler PAO'),
+        T_TIPO_DATA(			'16',								'125',							'Alquiler alarmas',		                    'Alquiler alarmas')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -77,7 +77,7 @@ BEGIN
             V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO '||
                         'SET DD_STG_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
                         ', DD_STG_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-                        ', USUARIOMODIFICAR = ''HREOS-10656'' , FECHAMODIFICAR = SYSDATE '||
+                        ', USUARIOMODIFICAR = ''HREOS-16512'' , FECHAMODIFICAR = SYSDATE '||
                         'WHERE DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
@@ -95,7 +95,7 @@ BEGIN
                         '''||TRIM(V_TMP_TIPO_DATA(2))||''',
                         '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                         '''||TRIM(V_TMP_TIPO_DATA(4))||''',
-                        0, ''HREOS-10656'',SYSDATE,0 )';
+                        0, ''HREOS-16512'',SYSDATE,0 )';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
             

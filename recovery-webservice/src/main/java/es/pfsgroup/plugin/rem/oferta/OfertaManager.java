@@ -8410,7 +8410,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 				
-		if(activoOfertaList != null && !activoOfertaList.isEmpty()) {
+		if(activoOfertaList != null && !activoOfertaList.isEmpty() 
+				&& !DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta)) {
 			
 			for(ActivoOferta actOfr : activoOfertaList) {
 
@@ -8433,8 +8434,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (actOfr.getPrimaryKey().getActivo() != null && actOfr.getPrimaryKey().getActivo().getSituacionPosesoria() != null 
 						&& actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getOcupado() == 1 
 						&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getConTitulo().getCodigo()) 
-								|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getConTitulo().getCodigo()))
-						&& !DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta)) {
+								|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(actOfr.getPrimaryKey().getActivo().getSituacionPosesoria().getConTitulo().getCodigo()))) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class, 
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OKUPADO));
 					error.put("disponible", "false");

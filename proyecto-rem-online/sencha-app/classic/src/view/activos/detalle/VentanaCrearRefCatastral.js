@@ -18,11 +18,12 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
     
     initComponent: function() {
     	var me = this; 
-	   
+    	var referenciaModificar = "";
     	if(Ext.isEmpty(me.refCatastral)){
     		me.setTitle(HreRem.i18n("Crear referencia catastral"));
     	}else{
     		me.setTitle(HreRem.i18n("Modificar referencia catastral"));
+    		referenciaModificar = me.refCatastral;
     	}
     	me.buttons = [ 
     		{ 
@@ -71,6 +72,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
 		  								width: 500,	
 		  								minLength: 20,
 		  								maxLength: 20,
+		  								value: referenciaModificar,
 		  								minLengthText: 'Debe tener 20 digitos',
 		  								triggers: {									
 	  										buscarEmisor: {

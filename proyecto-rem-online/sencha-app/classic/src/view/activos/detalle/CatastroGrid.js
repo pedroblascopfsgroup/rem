@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
-	extend		: 'HreRem.view.common.GridBaseEditableRow',
+	extend		: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
     xtype		: 'catastroGrid',
     reference	: 'catastroGridRef',
     topBar		: true,
@@ -26,10 +26,6 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     	me.topBar = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
     	me.editOnSelect = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
     	
-    	me.addListener('rowdblclick', function(){
-     		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
-	     });
-  
     	me.columns= [
 		    {   
 				text: HreRem.i18n('fieldlabel.referencia.catastral'),
@@ -151,15 +147,9 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     
     onAddClick: function(btn){
 		var me = this;
- 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
-
-   },
-    
-    editFuncion: function(editor, context){
-    	var me = this;
- 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
-   },
-    
+ 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, parent: me}).show();
+   },  
+   
    onDeleteClick : function() {
 		var me = this;
 		var grid = me;

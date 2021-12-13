@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211110
+--## FECHA_CREACION=20211125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16362
+--## INCIDENCIA_LINK=HREOS-16502
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -91,8 +91,8 @@ BEGIN
                      , EQV1.DD_CODIGO_CAIXA SOCIEDAD_PATRIMONIAL
                      , EQV2.DD_CODIGO_CAIXA FONDO
                      , ETP.DD_ETP_CODIGO ESTADO_POSESORIO
-                     , ACT_TIT.FEC_EST_POSESORIO_ACTUAL FEC_ESTADO_POSESORIO   
-                     , ACT.ACT_PORCENTAJE_CONSTRUCCION PORC_OBRA_EJECUTADA
+                     , TO_CHAR(ACT_TIT.FEC_EST_POSESORIO_ACTUAL,''YYYYMMDD'') FEC_ESTADO_POSESORIO   
+                     , REPLACE(ACT.ACT_PORCENTAJE_CONSTRUCCION,'','',''.'') PORC_OBRA_EJECUTADA
                      , NULL FEC_ULT_REHAB
                      , CASE WHEN EQV3.DD_CODIGO_CAIXA != ''0001'' THEN ''0''
                             ELSE EQV5.DD_CODIGO_CAIXA END SUBTIPO_VIVIENDA

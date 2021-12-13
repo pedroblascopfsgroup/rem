@@ -296,7 +296,8 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						width:		250,
 						bind:  {
 							value: '{tasacion.codigoFirma}',
-							readOnly: '{!activo.isCarteraTitulizada}'
+							readOnly: '{!activo.isCarteraTitulizada}',
+							hidden: '{activo.isCarteraTitulizada}'
 					    }
 					},
 					{ 
@@ -305,7 +306,8 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						width:		250,
 						bind:  {
 							value: '{tasacion.nomTasador}',
-							readOnly: '{!activo.isCarteraTitulizada}'
+							readOnly: '{!activo.isCarteraTitulizada}',
+							hidden: '{activo.isCarteraTitulizada}'
 					    }
 					},
 					{
@@ -508,9 +510,13 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 				colspan: 3,
 				items :	[		     				        				    
 					{ 
-						xtype: 'textfieldbase',
+						xtype:'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.datos.basicos.tasacion.empresa.tasadora'),
-						bind:		'{tasacion.nomTasador}'
+						reference: 'tasadoraCaixa',
+				        bind: {
+			            	store: '{comboTasadoraCaixa}',
+			            	value: '{tasacion.tasadoraCaixaCodigo}'
+			           	}
 					},
 					{ 
 						xtype: 'datefieldbase',

@@ -230,19 +230,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 							peticionario = usuarioLogado.getUsername();
 						}
-						expediente.setPeticionarioAnulacion(peticionario);
-
-						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
-								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar && 
-								!CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())) {
-							// Notificar del rechazo de la oferta a Bankia.
-							try {
-								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
-							} catch (Exception e) {
-								logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-								throw new UserException(e.getMessage());
-							}
-						}
+						if(expediente.getPeticionarioAnulacion() == null) expediente.setPeticionarioAnulacion(peticionario);
 
 						// TODO: Publicaciones - Implementar en el SP de publicación la siguiente condición:
 						// Si la oferta es express, el activo se encuentra en estado publicado oculto y su motivo del estado es "Oferta Express Cajamar".
@@ -263,32 +251,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 				
 				WSDevolBankiaDto dto = null;
-				
-				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)){
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
-						try {
-							 dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
-						} catch (Exception e) {
-							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
-							throw new UserException(e.getMessage());
-						}
-					}
-				}
-				else{
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())
-							&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){
-						try {
-							dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
-						} catch (Exception e) {
-							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
-							throw new UserException(e.getMessage());
-						}
-					}
-
-				}
 
 				if(tieneReserva && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
 					&& Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())){
@@ -335,55 +297,57 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(act.getId());
 						if (!Checks.esNulo(comunicacionGencat)) {
 							DDEstadoComunicacionGencat estadoComunicacion = comunicacionGencat.getEstadoComunicacion();
-							if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo()) || (!Checks.esNulo(comunicacionGencat.getSancion()) && DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) ) {
-								
-								Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
-								Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
-								Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
-								List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
-								
-								if (!Checks.estaVacio(tramitesActivo)) {
-									Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-									VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
-									ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
-									activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
+							if (!Checks.esNulo(estadoComunicacion)) {
+								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo()) || (!Checks.esNulo(comunicacionGencat.getSancion()) && DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) ) {
 									
-									//Finaliza el trámite
-									activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
-								}
-								/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
-								 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
-								// finalizamos la tarea
-								if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
-									DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
-									if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									}else {
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									}
-									comunicacionGencat.setEstadoComunicacion(estado);
-									comunicacionGencat.setFechaAnulacion(new Date());
-									if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
-										comunicacionGencat.setComunicadoAnulacionAGencat(true);
-									}
+									Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+									Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+									Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
+									List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
 									
-									genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-								}
-								
-							} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
-								GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
-								gestorEntidadDto.setIdEntidad(act.getId());
-								gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
-								List<GestorEntidadHistorico> listaGestores = gestorActivoApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
-								for (GestorEntidadHistorico gestor : listaGestores) {
-									if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
-											|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
-											|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
-											&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
+									if (!Checks.estaVacio(tramitesActivo)) {
+										Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+										VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
+										ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
+										activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
 										
-											enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
+										//Finaliza el trámite
+										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
+									}
+									/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
+									 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+									// finalizamos la tarea
+									if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
+										DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
+										if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}else {
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}
+										comunicacionGencat.setEstadoComunicacion(estado);
+										comunicacionGencat.setFechaAnulacion(new Date());
+										if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
+											comunicacionGencat.setComunicadoAnulacionAGencat(true);
+										}
+										
+										genericDao.save(ComunicacionGencat.class, comunicacionGencat);
+									}
+									
+								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
+									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+									gestorEntidadDto.setIdEntidad(act.getId());
+									gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+									List<GestorEntidadHistorico> listaGestores = gestorActivoApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+									for (GestorEntidadHistorico gestor : listaGestores) {
+										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
+												&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
+											
+												enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
+										}
 									}
 								}
 							}

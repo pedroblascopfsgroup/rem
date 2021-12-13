@@ -210,6 +210,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="ALQ_SUBROGADO")
 	private Boolean subrogado;
 	
+	@Column(name="CLAVE_FACTURA")
+	private String claveFactura;
+	
 	@Version   
 	private Long version;
 
@@ -587,6 +590,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setSubrogado(Boolean subrogado) {
 		this.subrogado = subrogado;
+	}
+
+	public String getClaveFactura() {
+		return claveFactura;
+	}
+
+	public void setClaveFactura(String claveFactura) {
+		this.claveFactura = claveFactura;
 	}
 	
 }

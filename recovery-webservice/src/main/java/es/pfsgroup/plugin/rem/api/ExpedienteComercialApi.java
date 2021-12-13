@@ -1476,4 +1476,12 @@ public interface ExpedienteComercialApi {
 	boolean saveTestigos(DtoTestigos dto, Long id);
 
 	boolean deleteTestigos(DtoTestigos dto);
+
+	/**
+	 * Método que comprueba si el activo de Caixabank tiene los estados correctos para poder avanzar la tarea.
+	 *
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkEstadoBC(TareaExterna tareaExterna);
 }

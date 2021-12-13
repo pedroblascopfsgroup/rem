@@ -56,7 +56,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean aprueba = false;
 		String estadoExp = null;
@@ -100,16 +99,11 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
-		estadoBcModificado = true;
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
 		genericDao.save(HistoricoSancionesBc.class, historico);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
 	}
 
 	public String[] getCodigoTarea() {

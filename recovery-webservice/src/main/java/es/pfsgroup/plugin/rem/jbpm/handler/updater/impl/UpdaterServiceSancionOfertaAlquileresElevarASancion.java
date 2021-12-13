@@ -157,7 +157,6 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	
 	
 	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite,DtoRespuestaBCGenerica dtoHistoricoBC) {
-		boolean estadoBcModificado = false;
 		String codigoEstadoExpediente = null;
 		String codigoEstadoBc = null;
 	
@@ -198,11 +197,6 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		
 		if(oferta.getActivoPrincipal() !=null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && codigoEstadoBc != null) {
 			eco.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, codigoEstadoBc));
-			estadoBcModificado = true;
-		}
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 		}
 	}
 

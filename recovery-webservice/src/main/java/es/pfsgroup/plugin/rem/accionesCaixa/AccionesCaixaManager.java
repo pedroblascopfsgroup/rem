@@ -99,7 +99,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
+    public boolean accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
         ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
         DDTipoOferta tipoOferta = ofr.getTipoOferta();
@@ -115,13 +115,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
             genericDao.save(ExpedienteComercial.class, eco);
 			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
-			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+			return true;
         }else {
             eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
             genericDao.save(ExpedienteComercial.class, eco);
 
             agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+            //TODO quitar llamada al replicar y ajustar para que el la llamada del controller tenga en cuenta las tareas del T017
             ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+            return false;
        }
     }
 
@@ -639,10 +641,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
+    public boolean accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
     	this.createRequestAccionAprobacion(dto);
     	TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
     	expedienteComercialApi.setValoresTEB(dto, tarea, dto.getCodTarea());
+    	return true;
     }
 
     @Override

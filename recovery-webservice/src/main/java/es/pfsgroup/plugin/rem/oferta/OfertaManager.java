@@ -697,7 +697,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
 				 oferta = getOfertaByIdOfertaHayaHomeForValidateOferta(ofertaDto.getIdOfertaHayaHome());
 				if(oferta == null) {
-					oferta = getOfertaByNumOfertaRemForValidateOferta(ofertaDto.getIdOfertaHayaHome());
+					oferta = getOfertaByNumOfertaRemForValidateOferta(ofertaDto.getIdOfertaRem());
 					if(oferta == null) {
 						errorsList.put("idOfertaHayaHome", RestApi.REST_MSG_UNKNOWN_KEY);
 					} 

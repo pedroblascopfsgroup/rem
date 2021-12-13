@@ -170,6 +170,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String claseContratoCodigo;
 	
 	private String tipologiaVentaCod;
+
+	private String numeroVaiHavaiSareb;
 	
 	private String riesgoOperacionBcCodigo;
 	
@@ -857,4 +859,11 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.riesgoOperacionBcDescripcion = riesgoOperacionBcDescripcion;
 	}
 	
+	public String getNumeroVaiHavaiSareb() {
+		return numeroVaiHavaiSareb;
+	}
+
+	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
+		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
+	}
 }

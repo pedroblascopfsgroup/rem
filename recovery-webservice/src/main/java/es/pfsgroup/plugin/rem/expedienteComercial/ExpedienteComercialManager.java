@@ -1511,6 +1511,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 
+		if (expedienteComercial != null && (dto.getNumeroVaiHavaiSareb() != null && !dto.getNumeroVaiHavaiSareb().trim().isEmpty())){
+			expedienteComercial.setNumeroVaiHavaiSareb(dto.getNumeroVaiHavaiSareb());
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		}
+
 		return true;
 	}
 
@@ -2212,6 +2217,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (expediente != null) {
 			dto.setIdEco(expediente.getId());
+			dto.setNumeroVaiHavaiSareb(expediente.getNumeroVaiHavaiSareb());
 		}
 		
 		if (oferta.getActivoPrincipal().getEquipoGestion() != null) {

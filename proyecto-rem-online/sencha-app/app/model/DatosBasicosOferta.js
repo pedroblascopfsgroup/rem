@@ -306,7 +306,11 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'riesgoOperacionBcDescripcion'
-    		}
+			},
+			{
+
+                name: 'numeroVaiHavaiSareb'
+            }
     		
     ],
 

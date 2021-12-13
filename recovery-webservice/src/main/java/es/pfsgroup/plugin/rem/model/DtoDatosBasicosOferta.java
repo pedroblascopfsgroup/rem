@@ -170,6 +170,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String claseContratoCodigo;
 	
 	private String tipologiaVentaCod;
+
+	private String numeroVaiHavaiSareb;
 	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -835,5 +837,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setTipologiaVentaCod(String tipologiaVentaCod) {
 		this.tipologiaVentaCod = tipologiaVentaCod;
+	}
+
+	public String getNumeroVaiHavaiSareb() {
+		return numeroVaiHavaiSareb;
+	}
+
+	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
+		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
 	}
 }

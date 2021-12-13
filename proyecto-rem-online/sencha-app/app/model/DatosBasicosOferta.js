@@ -300,6 +300,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
             {
             	name: 'tipologiaVentaCod'
+            },
+            {
+                name: 'numeroVaiHavaiSareb'
             }
     		
     ],

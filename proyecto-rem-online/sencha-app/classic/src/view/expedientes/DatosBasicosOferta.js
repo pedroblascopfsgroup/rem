@@ -147,10 +147,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						{
 						xtype : 'datefieldbase',
 						formatter : 'date("d/m/Y")',
-						colspan: 3,
+						colspan: '{getcolSpanforSarebOrDefault}',
 						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
 						readOnly : true,
 						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+						},
+						{
+                            xtype : 'textfieldbase',
+                            fieldLabel : HreRem.i18n('filedlabel.numero.vai.havai'),
+                            bind : {
+                                value : '{datosbasicosoferta.numeroVaiHavaiSareb}',
+                                hidden : '{!esCarteraSareb}'
+                            }
 						},
 						{
 							xtype: 'comboboxfieldbase',

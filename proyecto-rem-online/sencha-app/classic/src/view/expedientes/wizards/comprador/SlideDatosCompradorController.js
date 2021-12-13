@@ -50,7 +50,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				return record.data.codigoC4C != null;
 			});
 		}
-		
+		me.checkExpedienteBloqueado();
 	},
 
 	onClickCancelar: function() {
@@ -88,13 +88,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 	permitirEdicionDatos: function() {
 		var me = this;
+	    var bloqueado = me.getView().up('wizardBase').expediente.get('bloqueado');
 
-		if ($AU.userIsRol('HAYASUPER')) {
+		if (!bloqueado && $AU.userIsRol('HAYASUPER')) {
 			return true;
 		}
 
 		if ($AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'])) {
-			if (!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe()) {
+			if (bloqueado || (!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe())) {
 				return false;
 			}
 			return true;
@@ -380,6 +381,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);
 			me.bloquearCampos();
+			me.checkExpedienteBloqueado();
 		}catch(err) {
 			Ext.global.console.log(err);
 		}
@@ -1027,6 +1029,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.datos.rem'));
 		else 
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
+
+        me.checkExpedienteBloqueado();
 	},
 	
 	getAdvertenciaProblemasUrsus : function(problemasUrsusComprador) {
@@ -1085,5 +1089,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}else{
 			return true;
 		}
+	},
+
+	checkExpedienteBloqueado: function(){
+	    var me = this;
+	    var bloqueado = me.getView().up('wizardBase').expediente.get('bloqueado');
+
+        if(bloqueado == true){
+            var myItems = me.view.items.items;
+            myItems.forEach( function(valor, indice, items) {
+                switch(valor.xtype){
+                    case 'checkboxfieldbase':
+                    case 'textfieldbase':
+                        valor.setReadOnly(true);
+                        valor.allowBlank = true;
+                        valor.validate();
+                        break;
+                    case 'fieldsettable':
+                        me.bloquearCamposExpedienteBloqueado(valor.items.items);
+                        break;
+                }
+            });
+        }
+	},
+
+	bloquearCamposExpedienteBloqueado: function(fieldSetTableItems){
+	    var me = this;
+	    fieldSetTableItems.forEach( function(valor, indice, items){
+	        if(valor.xtype == 'fieldsettable' || valor.xtype == 'container'){
+                me.bloquearCamposExpedienteBloqueado(valor.items.items);
+	        }
+	        else if(valor.xtype != 'label' && valor.xtype != 'button'){
+                valor.setReadOnly(true);
+                valor.allowBlank = true;
+                valor.validate();
+	        }
+	    });
 	}
 });

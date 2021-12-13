@@ -310,7 +310,8 @@ public class OfertasController {
 	 * "idProveedorRemFdv": "1000" , "importe": "1000.2",
 	 * "titularesAdicionales": [{"nombre": "Nombre1", "codTipoDocumento": "15",
 	 * "documento":"48594626F"}, {"nombre": "Nombre2", "codTipoDocumento": "15",
-	 * "documento":"48594628F"}]}]}
+	 * "documento":"48594628F"}],
+	 * "fechaCreacionOpSf": "2016-01-01T10:10:10"}]}
 	 * 
 	 * @param model
 	 * @param request

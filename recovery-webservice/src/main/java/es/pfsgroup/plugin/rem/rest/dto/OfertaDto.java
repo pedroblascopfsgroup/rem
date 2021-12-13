@@ -92,6 +92,7 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
+	private Date fechaCreacionOpSf;
 	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionRC no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -416,6 +417,13 @@ public class OfertaDto implements Serializable {
 	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
 		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
 	}
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+	
 	public Boolean getDocResponsabilidadPrescriptor() {
 		return docResponsabilidadPrescriptor;
 	}

@@ -129,6 +129,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	private Boolean tareaAutorizacionPropiedadFinalizada;
 	
+	private Date fechaCreacionOpSf;
+
 	private String tipoResponsableCodigo;
 	
 	private Boolean isEmpleadoCaixa;
@@ -624,6 +626,15 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public String getTipoResponsableCodigo() {
 		return tipoResponsableCodigo;
 	}
+
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+
 
 	public void setTipoResponsableCodigo(String tipoResponsableCodigo) {
 		this.tipoResponsableCodigo = tipoResponsableCodigo;

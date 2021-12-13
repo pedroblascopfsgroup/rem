@@ -2117,6 +2117,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}				
 		
+		
 		boolean isCerberusAppleOrArrowOrRemaining = 
 				oferta != null && oferta.getActivoPrincipal() != null 						
 				&& oferta.getActivoPrincipal().getCartera() != null 
@@ -2276,6 +2277,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 			}
+		}
+		if(oferta.getFechaCreacionOpSf() != null) {
+			dto.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 		}
 		
 		if (oferta != null) {
@@ -8520,7 +8524,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		List<GastosExpediente> listaGastos = new ArrayList<GastosExpediente>();
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			GastosExpediente gastoExpediente = new GastosExpediente();
@@ -12480,7 +12484,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		 
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi

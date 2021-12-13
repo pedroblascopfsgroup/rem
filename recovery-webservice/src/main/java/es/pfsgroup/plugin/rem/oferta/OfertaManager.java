@@ -40,6 +40,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -1385,6 +1386,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionRC())) {
+				oferta.setOfrRecomendacionRc(ofertaDto.getRecomendacionRC());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionRC())) {
+				oferta.setOfrFechaRecomendacionRc(ofertaDto.getFechaRecomendacionRC());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getRecomendacionDC())) {
+				oferta.setOfrRecomendacionDc(ofertaDto.getRecomendacionDC());
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaRecomendacionDC())) {
+				oferta.setOfrFechaRecomendacionDc(ofertaDto.getFechaRecomendacionDC());
+			}
+								
+			if (!Checks.esNulo(ofertaDto.getFechaCreacionOpSf() )) {
+				oferta.setFechaCreacionOpSf(ofertaDto.getFechaCreacionOpSf());				
+			}
+			
 
 			boolean esOfertaCaixa = particularValidatorApi.esOfertaCaixa(oferta.getNumOferta().toString());
 
@@ -2085,6 +2111,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo()) && ofertaCaixa != null){
 				llamadaPbc(oferta);
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getFechaCreacionOpSf())
+					&& !ofertaDto.getFechaCreacionOpSf().equals(oferta.getFechaCreacionOpSf())) {
+				oferta.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 			}
 
 		}
@@ -3824,7 +3855,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				listaHonorarios = expedienteComercialApi.getHonorariosActivoByOfertaAceptada(oferta, activo);
 
 			} else {
-				listaHonorarios = calculaHonorario(oferta, activo);
+				listaHonorarios = calculaHonorario(oferta, activo,true);
 
 			}
 		}
@@ -3833,7 +3864,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException {
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta, Activo activo,boolean reenvioPorMas180Dias) throws IllegalAccessException, InvocationTargetException {
 
 		List<DtoGastoExpediente> listDto = new ArrayList<DtoGastoExpediente>();
 		ActivoProveedor proveedor = null;
@@ -4087,7 +4118,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				listDto.add(dto);
 			}
 		}
+		
 		return listDto;
+	
 	}
 
 	@Override
@@ -7527,6 +7560,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	}
 	
+	public void comprobarFechasParaLanzarComisionamiento(Oferta oferta,Date fechaEntrada) {
+		//List<DtoGastoExpediente> listaHonorarios = new ArrayList<DtoGastoExpediente>();
+		 Activo activo = oferta.getActivoPrincipal();
+			 try {
+				 if(activo!=null && oferta.getFechaCreacionOpSf()!=null) {		
+				     long diferenciaDeDias = fechaEntrada.getTime() - oferta.getFechaCreacionOpSf().getTime();	
+				     long diastotales = diferenciaDeDias / (24*60*60*1000);
+				     List<ActivoOferta> listActivosOferta = oferta.getActivosOferta();
+				     for (ActivoOferta activoOferta : listActivosOferta) {
+				    	 if(diastotales > 180 || diastotales <-180) {
+							    this.calculaHonorario(oferta, activoDao.getActivoById(activoOferta.getActivoId()), true);
+						     }
+					 		}
+					}
+			 }catch (Exception e) {
+				 e.printStackTrace();
+			 }
+	}
+
 	private void setValoracionesToDto(DtoExcelFichaComercial dtoFichaComercial, List<Long> listIdActivos, ActivoAgrupacion agrupacion, Oferta oferta) {
 		
 		Calendar calendar = Calendar.getInstance();
@@ -8222,3 +8274,4 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 }
+	

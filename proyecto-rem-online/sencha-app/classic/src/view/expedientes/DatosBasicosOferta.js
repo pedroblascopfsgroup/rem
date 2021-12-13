@@ -37,6 +37,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		{
 			xtype : 'fieldsettable',
 			defaultType : 'displayfieldbase',
+			collapsible: false,
+			border: false,
+			colspan: 3,
 			layout: {
 		        type: 'table',
 		        columns: 3,
@@ -52,30 +55,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 			},
 			
 			title : HreRem.i18n('title.detalle.oferta'),
-			items : [
-					
-					{
-					xtype : 'fieldsettable',
-					defaultType : 'displayfieldbase',
-					collapsible: false,
-					border: false,
-					colspan: 3,
-					layout: {
-				        type: 'table',
-				        columns: 3,
-				        tdAttrs: {
-				        	width: '33%',
-				        	style: 'vertical-align: top'
-				        },
-				        tableAttrs: {
-				            style: {
-				                width: '100%'
-								}
-				        }
-					},
-
-					items : [
-						{
+			items : [	{
 							fieldLabel : HreRem.i18n('fieldlabel.num.oferta'),
 							bind : '{datosbasicosoferta.numOferta}'
 	
@@ -143,16 +123,23 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								readOnly : 'true',
 								hidden : '{esTipoAlquiler}'
 							}
-						},
-						{
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						colspan: 3,
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
-						readOnly : true,
-						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
-						},
-						{
+						},{
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.incorporacion.rem'),
+							colspan: 3,
+							bind : {
+								value: '{datosbasicosoferta.fechaCreacionOpSf}'
+							},
+							readOnly: true
+						}, {
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							colspan: 3,
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
+							readOnly : true,
+							bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+						},{
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
 							reference: 'comboClasificacionRef',
@@ -218,10 +205,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							displayField: 'descripcion',
 							valueField: 'codigo'
 						},
-					{
-						bind : {hidden : '{!esTipoAlquiler}'}
-					}
-						]},
+						{
+							bind : {hidden : '{!esTipoAlquiler}'}
+						}
+					]},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
@@ -875,7 +862,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							margin : '10 10 10 10'
 						}]
 
-					}]
+					
 		},
 		{
 			xtype : 'fieldset',
@@ -939,7 +926,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					}]
 		}
 
-		];
+		]
 
 		me.addPlugin({
 					ptype : 'lazyitems',

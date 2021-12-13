@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -483,7 +484,7 @@ public interface OfertaApi {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo) throws IllegalAccessException, InvocationTargetException;
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo,boolean reenvioPorMas180Dias) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que ratifica el comité de Bankia
@@ -791,7 +792,8 @@ public interface OfertaApi {
 	public Integer tieneTarea(ActivoTramite tramite, String codTarea);
 
 	public Integer isEpaAlquilado(Long idAgrupacion);
-
+	
+	public void comprobarFechasParaLanzarComisionamiento(Oferta oferta, Date fechaEntrada);
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException;
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);

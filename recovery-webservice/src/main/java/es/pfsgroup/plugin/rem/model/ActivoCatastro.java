@@ -107,6 +107,8 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_ALTERACION")
 	private Date fechaAlteracion;
 	
+	@Column(name = "CAT_CORRECTO")
+	private Boolean catastroCorrecto;
 	
 	@Version   
 	private Long version;
@@ -293,11 +295,13 @@ public class ActivoCatastro implements Serializable, Auditable {
 	public void setFechaAlteracion(Date fechaAlteracion) {
 		this.fechaAlteracion = fechaAlteracion;
 	}
-	
-	
-	
-	
 
+	public Boolean getCatastroCorrecto() {
+		return catastroCorrecto;
+	}
 
-
+	public void setCatastroCorrecto(Boolean catastroCorrecto) {
+		this.catastroCorrecto = catastroCorrecto;
+	}
+	
 }

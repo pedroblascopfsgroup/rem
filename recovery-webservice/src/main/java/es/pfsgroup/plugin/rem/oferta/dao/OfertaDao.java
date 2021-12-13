@@ -114,4 +114,8 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	Boolean replicateOfertaFlushWithDto(ReplicarOfertaDto dto);
 
 	Boolean pbcFlush(LlamadaPbcDto dto);
+
+	Oferta getOfertaByIdOfertaHayaHome(Long idOfertaHayaHome);
+
+	Oferta getOfertaByNumOfertaRem(Long numOfertaRem);
 }

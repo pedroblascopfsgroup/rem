@@ -616,6 +616,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return ofertaDao.getOfertaByIdOfertaHayaHomeOrNumOfertaRem(idOfertaHayaHome, numOfertaRem);
 		}
 	}
+	
+	
+	public Oferta getOfertaByIdOfertaHayaHomeForValidateOferta(Long idOfertaHayaHome) throws Exception {
+		
+		if (idOfertaHayaHome == null) {
+			return null;
+		} else {
+			return ofertaDao.getOfertaByIdOfertaHayaHome(idOfertaHayaHome);
+		}
+	}
+	
+	
+	public Oferta getOfertaByNumOfertaRemForValidateOferta(Long numOfertaRem) throws Exception {
+		
+		if (numOfertaRem == null) {
+			return null;
+		} else {
+			return ofertaDao.getOfertaByNumOfertaRem(numOfertaRem);
+		}
+	}
 
 	public DtoPage getListOfertasGestoria(DtoOfertasFilter dto) {
 		return ofertaDao.getListOfertasGestoria(dto);
@@ -675,9 +695,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 				
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
-				oferta = getOfertaByIdOfertaHayaHomeNumOfertaRem(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem());
+				 oferta = getOfertaByIdOfertaHayaHomeForValidateOferta(ofertaDto.getIdOfertaHayaHome());
 				if(oferta == null) {
-					errorsList.put("idOfertaHayaHome", RestApi.REST_MSG_UNKNOWN_KEY);
+					oferta = getOfertaByNumOfertaRemForValidateOferta(ofertaDto.getIdOfertaHayaHome());
+					if(oferta == null) {
+						errorsList.put("idOfertaHayaHome", RestApi.REST_MSG_UNKNOWN_KEY);
+					} 
 				} else {
 					errorsList.putAll(validateMotivoIndisponibilidad(oferta.getId(), ofertaDto.getIdActivoHaya(), ofertaDto.getCodigoAgrupacionComercialRem(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente()));
 					errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(), 
@@ -1949,6 +1972,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				clienteComercialDao.save(cliente);
 				modificado = true;
+			}
+			
+			if (!Checks.esNulo(ofertaDto.getIdOfertaHayaHome())) {
+				oferta.setIdOfertaHayaHome(ofertaDto.getIdOfertaHayaHome());
 			}
 			
 			if(!Checks.esNulo(ofertaDto.getTitularesConfirmados())) {

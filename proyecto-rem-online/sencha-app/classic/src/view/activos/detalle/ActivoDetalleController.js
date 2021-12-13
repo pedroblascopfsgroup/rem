@@ -8869,8 +8869,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			url : url,
 			method : 'GET',
 			params : {
-				idActivo: 100,
-				//idActivo : me.getView().idActivo,
+				//idActivo: 100,
+				idActivo : me.getView().idActivo,
 				refCatastral: textfield.getValue()
 			},
 			success : function(response, opts) {
@@ -8894,6 +8894,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		});
 		
+	},
+	abrirVentanaEditarCatastro: function(grid, record){
+		var me = this;
+		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, controller: me.lookupController()}).show();
 	}
 });
 

@@ -19,9 +19,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
-        var items= [{
-        		xtype:'catastroGrid'
-        	}, 	
+        var items= [ 	
 			{
 			xtype:'fieldsettable',
 	        title: HreRem.i18n('title.identificacion'),

@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     topBar		: true,
     addButton	: true,
     requires	: ['HreRem.model.Catastro'],
-    editOnSelect: true,
+    editOnSelect: false,
     
     controller: 'activodetalle',
     viewModel: {
@@ -15,6 +15,9 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     bind : {
     	store : '{storeCatastro}'
     },	
+    listeners:{
+		rowdblclick: 'abrirVentanaEditarCatastro'
+	},
     initComponent: function () {
     	
     	var me = this;
@@ -22,6 +25,10 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     	
     	me.topBar = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
     	me.editOnSelect = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
+    	
+    	me.addListener('rowdblclick', function(){
+     		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
+	     });
   
     	me.columns= [
 		    {   
@@ -143,14 +150,14 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     },
     
     onAddClick: function(btn){
-		var me = this;	
-		var idActivo = me.lookupController().getViewModel().data.idActivo;
- 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: idActivo, controller: me.lookupController()}).show();
+		var me = this;
+ 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
 
    },
     
     editFuncion: function(editor, context){
- 		
+    	var me = this;
+ 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.idActivo, controller: me.lookupController()}).show();
    },
     
    onDeleteClick : function() {

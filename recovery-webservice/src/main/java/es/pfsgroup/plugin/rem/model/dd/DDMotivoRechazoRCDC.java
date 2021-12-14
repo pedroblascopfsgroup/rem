@@ -19,48 +19,37 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de texto de una oferta
+ * Modelo que gestiona el diccionario de rechazo rcdc
  * 
- * @author Jose Villel
+ * @author IVAN REPISO
  *
  */
 @Entity
-@Table(name = "DD_TTX_TIPOS_TEXTO_OFERTA", schema = "${entity.schema}")
+@Table(name = "DD_MRR_MOTIVO_RECHAZO_RCDC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTiposTextoOferta implements Auditable, Dictionary {
-	
-	public final static String TIPOS_TEXTO_OFERTA_INTERES = "01";
-	public final static String TIPOS_TEXTO_OFERTA_GESTOR = "02";
-	public final static String TIPOS_TEXTO_OFERTA_RATIFICACION = "03";
-	public final static String TIPOS_TEXTO_OFERTA_COMITE = "04";	
-	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_RC = "05";	
-	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_DC = "06";	
-	public final static String TIPOS_TEXTO_OFERTA_DESCUENTO = "07";	
-	public final static String TIPOS_TEXTO_OFERTA_JUSTIFICACION = "08";	
-	public final static String TIPOS_TEXTO_OFERTA_OBSERVACIONES = "09";	
-	public final static String TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL =  "10";
-	public final static String TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC =  "11";
-	public final static String TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR =  "12";
-	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_INTERNA_REQUERIDA =  "13";
-	public final static String TIPOS_TEXTO_OFERTA_RECOMENDACION_CUMPLIMENTADA =  "14";
-	public final static String TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC =  "15";
-	
+public class DDMotivoRechazoRCDC implements Auditable, Dictionary {
+    
+    public static final String CODIGO_PRECIO = "01";
+    public static final String CODIGO_OFR_GESTION = "02";
+    public static final String CODIGO_SIT_ACTIVO = "03";
+    public static final String CODIGO_OTROS = "04";
+    
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TTX_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTiposTextoOfertaGenerator")
-	@SequenceGenerator(name = "DDTiposTextoOfertaGenerator", sequenceName = "S_DD_TTX_TIPOS_TEXTO_OFERTA")
+	@Column(name = "DD_MRR_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoRechazoRCDCGenerator")
+	@SequenceGenerator(name = "DDMotivoRechazoRCDCGenerator", sequenceName = "S_DD_MRR_MOTIVO_RECHAZO_RCDC")
 	private Long id;
 	    
-	@Column(name = "DD_TTX_CODIGO")   
+	@Column(name = "DD_MRR_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TTX_DESCRIPCION")   
+	@Column(name = "DD_MRR_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TTX_DESCRIPCION_LARGA")   
+	@Column(name = "DD_MRR_DESCRIPCION_LARGA")   
 	private String descripcionLarga;	    
 
 	@Version   

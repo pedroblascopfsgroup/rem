@@ -1482,4 +1482,11 @@ public interface ExpedienteComercialApi {
 	HistoricoSancionesBc dtoRespuestaToHistoricoSancionesBc(DtoRespuestaBCGenerica dto, ExpedienteComercial eco);
 	
 	String getMotivoRechazoAccionRechazo(DDTipoOferta tipoOferta, String codigoTarea, String motivo);
+	/**
+	 * Método que comprueba si el activo de Caixabank tiene los estados correctos para poder avanzar la tarea.
+	 *
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkEstadoBC(TareaExterna tareaExterna);
 }

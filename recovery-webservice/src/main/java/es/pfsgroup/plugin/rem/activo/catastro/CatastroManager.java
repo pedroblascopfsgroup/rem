@@ -7,13 +7,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.controller.ActivoController;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import es.pfsgroup.plugin.rem.model.Catastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 
@@ -45,6 +51,8 @@ public class CatastroManager implements CatastroApi {
 	private static final String NOMBRE_CALLE= "Nombre calle";
 	
 	
+    @Autowired
+	private GenericABMDao genericDao;
     
 	public DtoDatosCatastro getDatosCatastroRem(Long idActivo) {
 		DtoDatosCatastro dto = new DtoDatosCatastro();
@@ -72,6 +80,21 @@ public class CatastroManager implements CatastroApi {
 		}
 		return dto;
 	}
+	
+	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo) {
+		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
+		
+		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
+		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
+		dto.setRefCatastral("Prueba");
+		dto2.setRefCatastral("Prueba2");
+		
+		listDto.add(dto);
+		listDto.add(dto2);
+		
+		return listDto;
+	}
+
 
 
 	@Override
@@ -337,5 +360,31 @@ public class CatastroManager implements CatastroApi {
 	  Double longitud = (double) (nombreCalleDatoRem.length() > nombreCalleCatastro.length() ? nombreCalleDatoRem.length() : nombreCalleCatastro.length());
 	  return 1 - (distancia / longitud);
    }
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void eliminarCatastro(Long id) {
+		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		Auditoria.delete(activoCatastro);
+		
+		genericDao.save(ActivoCatastro.class, activoCatastro);
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void saveCatastro(Long idActivo, List<String> arrayReferencias) {
+		Activo activo = activoDao.get(idActivo);
+		for (String refCatastral : arrayReferencias) {
+			Catastro catastro = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS,  "refCatastral", refCatastral));
+			if(catastro != null) {
+				ActivoCatastro activoCatastro = new ActivoCatastro();
+				if(activo != null) {
+					activoCatastro.setAuditoria(new Auditoria());
+					activoCatastro.setActivo(activo);
+					genericDao.save(ActivoCatastro.class, activoCatastro);
+				}
+			}
+		}
+	}
 	
 }

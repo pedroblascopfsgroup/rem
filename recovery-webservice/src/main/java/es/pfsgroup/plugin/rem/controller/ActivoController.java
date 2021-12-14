@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -4423,6 +4424,7 @@ public class ActivoController extends ParadiseJsonController {
 		try{
 			
 			model.put("datosRem", catastroApi.getDatosCatastroRem(idActivo));
+			model.put("datosCatastro", catastroApi.getDatosCatastroWs(idActivo)); //TODO se tendrá que pasar la referencia catastral
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -4443,7 +4445,34 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView eliminarCatastro(Long id, ModelMap model){
+		try{
+			catastroApi.eliminarCatastro(id);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView saveCatastro(Long idActivo, String[] arrayReferencias, ModelMap model){
+		try{
+			catastroApi.saveCatastro(idActivo, Arrays.asList(arrayReferencias));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
 		return createModelAndViewJson(model);
 	}
 }

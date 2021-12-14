@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid'],
 
     data: {
     	activo: null,

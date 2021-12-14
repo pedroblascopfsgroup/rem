@@ -50,8 +50,7 @@ BEGIN
 						INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID AND TAP.TAP_CODIGO IN (
 						''T017_AgendarFechaFirmaArras'',''T017_ConfirmarFechaFirmaArras'',
 						''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'',
-						''T017_PBCReserva'',''T017_PBCVenta'') AND TAP.BORRADO = 0
-						INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = TAC.SUP_ID AND USU.BORRADO = 0
+						''T017_PBCReserva'',''T017_PBCVenta'', ''T017_BloqueoScreening'') AND TAP.BORRADO = 0
 						INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
 						AND TAC.BORRADO = 0 AND ACT.DD_CRA_ID = 21 AND TRA.USUARIOCREAR = ''MIG_CAIXA'') AUX 
 				ON (AUX.TRA_ID = TRA.TRA_ID)
@@ -73,8 +72,7 @@ BEGIN
 						INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID AND TAP.TAP_CODIGO IN (
 						''T017_AgendarFechaFirmaArras'',''T017_ConfirmarFechaFirmaArras'',
 						''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'',
-						''T017_PBCReserva'',''T017_PBCVenta'') AND TAP.BORRADO = 0
-						INNER JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = TAC.SUP_ID AND USU.BORRADO = 0
+						''T017_PBCReserva'',''T017_PBCVenta'', ''T017_BloqueoScreening'') AND TAP.BORRADO = 0
 						INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
 						AND TAC.BORRADO = 0 AND ACT.DD_CRA_ID = 21 AND TRA.USUARIOCREAR = ''MIG_CAIXA'') AUX 
 				ON (AUX.TEX_ID = TEX.TEX_ID)
@@ -129,7 +127,7 @@ BEGIN
 		AND TAP_CODIGO IN (
 		'T017_AgendarFechaFirmaArras','T017_ConfirmarFechaFirmaArras',
 		'T017_InstruccionesReserva','T017_ObtencionContratoReserva',
-		'T017_PBCReserva','T017_PBCVenta')
+		'T017_PBCReserva','T017_PBCVenta', 'T017_BloqueoScreening')
 		ORDER BY TRA_ID ASC, TAP_CODIGO ASC) AUX) LOOP
 
 	IF CURSOR.TAR_TAREA_FINALIZADA = 0 THEN

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
@@ -16,6 +17,8 @@ public interface CatastroApi {
 	public List<DtoDatosCatastroGrid> validarCatastro(DtoDatosCatastro dtoCatastroRem,DtoDatosCatastro dtoCatastro);
 
 	void saveCatastro(Long idActivo, List<String> arrayReferencias);
+
+	void validaAsincrono(ArrayList<String> refCatastralList, Long idActivo);
 	
 }
 

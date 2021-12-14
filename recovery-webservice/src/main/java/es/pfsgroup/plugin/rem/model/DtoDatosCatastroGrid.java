@@ -16,7 +16,7 @@ public class DtoDatosCatastroGrid extends WebDto {
 	private String nombre;
 	private String datoRem;
 	private String datoCatastro;
-	private String coincidencia;
+	private Boolean coincidencia;
 	private String probabilidad;
 	
 	public String getNombre() {
@@ -37,10 +37,10 @@ public class DtoDatosCatastroGrid extends WebDto {
 	public void setDatoCatastro(String datoCatastro) {
 		this.datoCatastro = datoCatastro;
 	}
-	public String getCoincidencia() {
+	public Boolean getCoincidencia() {
 		return coincidencia;
 	}
-	public void setCoincidencia(String coincidencia) {
+	public void setCoincidencia(Boolean coincidencia) {
 		this.coincidencia = coincidencia;
 	}
 	public String getProbabilidad() {

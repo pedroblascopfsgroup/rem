@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -599,6 +598,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setSubrogado(gasto.getSubrogado());
 			
 			dto.setClaveFactura(gasto.getClaveFactura());
+			
+			if (!Checks.esNulo(gasto.getTitularCartaPago())) {
+				dto.setNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setBuscadorNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setNombreTitularCartaPago(gasto.getTitularCartaPago().getNombre());
+			}
 		}
 
 		return dto;
@@ -959,6 +964,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.getCodigoProveedorRem(), dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
 
 			actualizaSuplidosAsync.start();
+		}
+		
+		if (!Checks.esNulo(dto.getBuscadorNifTitularCartaPago())) {
+			Filter filtroNifTitularCartaPago = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifTitularCartaPago());
+			ActivoPropietario propietarioTitularCartaPago = genericDao.get(ActivoPropietario.class, filtroNifTitularCartaPago);
+			gastoProveedor.setTitularCartaPago(propietarioTitularCartaPago);
 		}
 
 		return true;

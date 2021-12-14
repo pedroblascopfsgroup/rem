@@ -15,7 +15,7 @@ public interface CatastroApi {
 	
 	public List<DtoDatosCatastroGrid> validarCatastro(DtoDatosCatastro dtoCatastroRem,DtoDatosCatastro dtoCatastro);
 
-	void saveCatastro(Long idActivo, String refCatastral);
+	void saveCatastro(Long idActivo, List<String> arrayReferencias);
 	
 }
 

@@ -8802,27 +8802,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var datosCatastro = gridDatosCatastro.getStore().getData();
     	var hayAlgunoMarcado = false;
     	var window =  btn.up('window');
+    	var arrayReferencias = [];
     	for(i = 0; i < datosCatastro.length;i++){ 
     		if(datosCatastro.items[i].data.check === true){
     			hayAlgunoMarcado = true;
-    			break;
+    			arrayReferencias.push(datosCatastro.items[i].data.refCatastral);
     		}
 		}
-    	
     	if(!hayAlgunoMarcado){
     		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
     		return;
     	}
     	
     	window.mask(HreRem.i18n("msg.mask.loading"));
-    	var referencia = btn.up('window').down('[reference=buscarCatastroRef]').value;
-    	url = $AC.getRemoteUrl('activo/getCatastro');
+    	url = $AC.getRemoteUrl('activo/saveCatastro');
 		Ext.Ajax.request({
 			url : url,
 			method : 'GET',
 			params : {
 				idActivo : me.getView().idActivo,
-				refCatastral: referencia
+				arrayReferencias: arrayReferencias
 			},
 			success : function(response, opts) {
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ko"));

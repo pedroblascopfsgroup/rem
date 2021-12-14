@@ -86,6 +86,8 @@ public class CatastroManager implements CatastroApi {
 		
 		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
 		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
+		dto.setRefCatastral("Prueba");
+		dto2.setRefCatastral("Prueba2");
 		
 		listDto.add(dto);
 		listDto.add(dto2);
@@ -370,15 +372,17 @@ public class CatastroManager implements CatastroApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void saveCatastro(Long idActivo, String refCatastral) {
-		Catastro catastro = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS,  "refCatastral", refCatastral));
-		if(catastro != null) {
-			ActivoCatastro activoCatastro = new ActivoCatastro();
-			Activo activo = activoDao.get(idActivo);
-			if(activo != null) {
-				activoCatastro.setAuditoria(new Auditoria());
-				activoCatastro.setActivo(activo);
-				genericDao.save(ActivoCatastro.class, activoCatastro);
+	public void saveCatastro(Long idActivo, List<String> arrayReferencias) {
+		Activo activo = activoDao.get(idActivo);
+		for (String refCatastral : arrayReferencias) {
+			Catastro catastro = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS,  "refCatastral", refCatastral));
+			if(catastro != null) {
+				ActivoCatastro activoCatastro = new ActivoCatastro();
+				if(activo != null) {
+					activoCatastro.setAuditoria(new Auditoria());
+					activoCatastro.setActivo(activo);
+					genericDao.save(ActivoCatastro.class, activoCatastro);
+				}
 			}
 		}
 	}

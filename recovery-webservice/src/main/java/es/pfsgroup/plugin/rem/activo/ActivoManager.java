@@ -3804,33 +3804,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public ActivoTasacion getTasacionMasReciente(Activo activo) {
-		ActivoTasacion tasacionMasReciente = null;
+		ActivoTasacion tasacionMasReciente =  new ActivoTasacion();
 		List<ActivoTasacion> tasacionesActivo = activo.getTasacion();
-
-		if (!Checks.estaVacio(tasacionesActivo)) {
-			tasacionMasReciente = tasacionesActivo.get(0);
-			if (tasacionMasReciente != null) {
-				Date fechaValorTasacionMasReciente = new Date();
-
-				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
-						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
-					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
-				}
-
-				for (ActivoTasacion tas : tasacionesActivo) {
-					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
-						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
-								&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
-								&& tas.getValoracionBien().getFechaValorTasacion()
-										.after(fechaValorTasacionMasReciente)) {
-							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
-							tasacionMasReciente = tas;
+		if(!Checks.estaVacio(activo.getTasacion())) {
+			if (!Checks.estaVacio(tasacionesActivo)) {
+				tasacionMasReciente = tasacionesActivo.get(0);
+				if (tasacionMasReciente != null) {
+					Date fechaValorTasacionMasReciente = new Date();
+	
+					if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
+							&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
+						fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+					}
+	
+					for (ActivoTasacion tas : tasacionesActivo) {
+						if (tas.getValoracionBien().getFechaValorTasacion() != null) {
+							if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
+									&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
+									&& tas.getValoracionBien().getFechaValorTasacion()
+											.after(fechaValorTasacionMasReciente)) {
+								fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+								tasacionMasReciente = tas;
+							}
 						}
 					}
 				}
 			}
 		}
-
 		return tasacionMasReciente;
 	}
 

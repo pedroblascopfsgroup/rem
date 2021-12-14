@@ -2011,7 +2011,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			
 			return $AU.userIsRol(CONST.PERFILES["TASADORA"]);
-		}
+		},
+		
+		isSubcarteraCerberusOrJaguar: function(get) {
+			var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	var isJaguar = get('activo.isSubcarteraJaguar');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb
+	    		|| isJaguar){
+	    	return true;
+	    	}
+	    	return false;
+	    }
 	 },
     
 	 stores: {

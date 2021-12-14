@@ -1080,7 +1080,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		bind: {
 						 			value: '{datosRegistrales.fechaPosesion}',
 						 			readOnly: '{isGestorActivosAndSuper}',
-						 			hidden: '{!isSubcarteraCerberus}'
+						 			hidden: '{!isSubcarteraCerberusOrJaguar}'
 						 		}
 
 							},

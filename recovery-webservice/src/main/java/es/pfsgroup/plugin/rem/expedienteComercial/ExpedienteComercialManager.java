@@ -15156,4 +15156,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
        return motivo;
     }
 
+	@Override
+	public boolean checkEstadoBC(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = tareaExternaToExpedienteComercial(tareaExterna);
+		String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		List<String> estadosBcNoPermitidos = new ArrayList<String>();
+		String codEstadoBC = eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : "";
+
+		if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_PBC_VENTA.equals(codTarea)){
+			estadosBcNoPermitidos = new ArrayList<String>(java.util.Arrays.asList(DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_PDTE_BC,
+					DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_PTE_DOC,
+					DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC));
+		}else if (TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_PBC_RESERVA.equals(codTarea)){
+			estadosBcNoPermitidos = new ArrayList<String>(java.util.Arrays.asList(DDEstadoExpedienteBc.CODIGO_ARRAS_DOCUMENTACION_APORTADA_A_BC,
+					DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC,
+					DDEstadoExpedienteBc.CODIGO_ARRAS_PTE_DOCUMENTACION));
+		}
+
+		return !estadosBcNoPermitidos.contains(codEstadoBC);
+	}
 }

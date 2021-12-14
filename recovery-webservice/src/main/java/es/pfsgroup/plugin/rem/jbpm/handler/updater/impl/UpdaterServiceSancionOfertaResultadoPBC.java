@@ -220,6 +220,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
+								expediente.setEstadoPbc(1);
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 							}else {
 								String codSubCartera = null;

@@ -818,6 +818,10 @@
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
             	return tramiteAlquilerNoComercialManager.isExpedienteDelMismoActivo(tareaExterna, expedienteAnterior);
             } 
+            def checkEstadoBC = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkEstadoBC(tareaExterna);
+            }
            
   			 ]]></value>
   		</list>

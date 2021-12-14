@@ -13,7 +13,10 @@ public class DtoDatosCatastro  {
 	private String nombreVia;
 	private String numeroVia;
 	private String direccion;
-	
+	private Double geodistancia;
+	private String municipio;
+	private String provincia;
+	private String nombreCalle;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -80,5 +83,29 @@ public class DtoDatosCatastro  {
 	}
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+	public Double getGeodistancia() {
+		return geodistancia;
+	}
+	public void setGeodistancia(Double geodistancia) {
+		this.geodistancia = geodistancia;
+	}
+	public String getMunicipio() {
+		return municipio;
+	}
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+	public String getProvincia() {
+		return provincia;
+	}
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+	public String getNombreCalle() {
+		return nombreCalle;
+	}
+	public void setNombreCalle(String nombreCalle) {
+		this.nombreCalle = nombreCalle;
 	}  
 }

@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -28,6 +29,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -132,8 +134,10 @@ import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
+import org.springframework.ui.ModelMap;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
@@ -236,6 +240,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	@Autowired
 	private GenerarPdfAprobacionOfertasApi pdfAprobacionOfertasApi;
@@ -598,6 +608,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return expedienteComercial;
 	}
 
+	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
 			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
 
@@ -953,6 +964,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorExpedienteNuevo.setEmailRepresentante(cliente.getEmail());
 				compradorExpedienteNuevo.setTelefono1Representante(cliente.getTelefono1());
 				compradorExpedienteNuevo.setTelefono2Representante(cliente.getTelefono2());
+				compradorExpedienteNuevo.setInfoAdicionalRepresentante(cliente.getInfoAdicionalPersonaRep());
 
 			} else {
 				compradorBusqueda.setNombre(cliente.getNombre());
@@ -1588,6 +1600,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if(usuarioGestorController != null) {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, 
 						usuarioGestorController.getUsername(), dto);
+			}else {
+				if (!Checks.esNulo(oferta.getTipoOferta()) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()))
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, "grucontroller", dto);
 			}
 		}
 	}
@@ -2354,15 +2369,17 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDInterlocutorOferta interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoInterlocutorC4C));
 		cex.setInterlocutorOferta(interlocutor);
 
+		DDInterlocutorOferta interlocutorRep = null;
+
 		if(cex.getDocumentoRepresentante() != null){
 			Comprador com = cex.getPrimaryKey().getComprador();
 			if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", DDInterlocutorOferta.CODIGO_C4C_APODERADO_EMPRESA));
 			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
-				interlocutor = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
 			}
-			cex.setInterlocutorOferta(interlocutor);
-			cex.setInterlocutorOfertaRepresentante(interlocutor);
+			if (interlocutorRep != null)
+			cex.setInterlocutorOfertaRepresentante(interlocutorRep);
 		}
 
 

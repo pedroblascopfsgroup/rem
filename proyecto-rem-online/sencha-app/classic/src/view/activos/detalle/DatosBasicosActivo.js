@@ -325,7 +325,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								        	name: 'estadoActivoCodigo',
 								        	reference: 'estadoActivoCodigoRef',
 								        	bind: {
-								        		disabled: '{!tieneGestionDnd}',
+								        		readOnly: '{tieneGestionDnd}',
 							            		store: '{comboEstadoActivo}',
 							            		value: '{activo.estadoActivoCodigo}',
 												rawValue: '{activo.estadoActivoDescripcion}'
@@ -336,6 +336,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								        	fieldLabel:  HreRem.i18n('fieldlabel.gestion.dnd'),
 								        	name: 'gestionDndCodigo',
 								        	reference: 'gestionDndCodigoRef',
+											readOnly : true,
 								        	bind: {
 							            		store: '{comboGestionDnd}',
 							            		value: '{activo.tieneGestionDndCodigo}',

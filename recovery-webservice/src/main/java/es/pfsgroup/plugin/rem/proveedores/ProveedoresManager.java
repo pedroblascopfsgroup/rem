@@ -260,7 +260,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				if(!Checks.esNulo(proveedor.getCodProveedorUvem())) {
 					beanUtilNotNull.copyProperty(dto, "codProveedorUvem", proveedor.getCodProveedorUvem());
-				}				
+				}			
 				if(proveedor.getCodigoApiProveedor()!=null) {
 					beanUtilNotNull.copyProperty(dto, "codigoApiProveedor", proveedor.getCodigoApiProveedor());
 				}
@@ -504,7 +504,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			if(!Checks.esNulo(dto.getCodProveedorUvem())) {
 				beanUtilNotNull.copyProperty(proveedor, "codProveedorUvem", dto.getCodProveedorUvem());
-			}
+			} else {
+				proveedor.setCodProveedorUvem(null);
+			}	
 			
 			if(dto.getCodigoApiProveedor()!=null) {
 				beanUtilNotNull.copyProperty(proveedor, "codigoApiProveedor", dto.getCodigoApiProveedor());

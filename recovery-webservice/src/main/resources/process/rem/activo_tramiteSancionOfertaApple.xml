@@ -555,9 +555,13 @@
 		<transition to="T017_PosicionamientoYFirmaDecision" name="avanzaBPM"></transition>
 	</state>
 	<decision name ="T017_PosicionamientoYFirmaDecision" expression="#{T017_PosicionamientoYFirmaDecision}">
-        <transition to="T017_DocsPosVenta" name="Firmado"></transition> <!--Nodo de union-->
+		<transition to="forkFirmado" name="Firmado"></transition> 
 		<transition to="T017_ResolucionExpediente" name="NoFirmado"></transition>
 	</decision> <!--Decisión Posicionamiento y firma, a resolución expediente o a docs postventa -->
+    <fork name="forkFirmado">  
+        <transition to="T017_DocsPosVenta" name="documentos"></transition>
+        <transition to="T017_CierreEconomico" name="cierre"></transition>
+    </fork>
     <state name="T017_DocsPosVenta">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -577,8 +581,8 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_CierreEconomico" name="avanzaBPM"></transition>
-	</state> <!-- Transmision directa a Cierre Economico -->
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
 	<state name="T017_CierreEconomico">
 		<event type="node-enter">
 			<action name="miTarea"

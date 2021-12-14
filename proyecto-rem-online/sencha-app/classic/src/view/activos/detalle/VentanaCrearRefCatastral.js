@@ -67,6 +67,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
 		  								fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
 		  								name: ' buscarCatastro',
 		  								margin: '10 10 10 10',
+		  								reference: 'buscarCatastroRef',
 		  								colspan: 3,
 		  								allowBlank: false,
 		  								width: 500,	

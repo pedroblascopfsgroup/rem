@@ -10,8 +10,12 @@ public interface CatastroApi {
 	DtoDatosCatastro getDatosCatastroRem(Long idActivo);
 	
 	List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo);
+
+	void eliminarCatastro(Long id);
 	
 	public List<DtoDatosCatastroGrid> validarCatastro(DtoDatosCatastro dtoCatastroRem,DtoDatosCatastro dtoCatastro);
+
+	void saveCatastro(Long idActivo, String refCatastral);
 	
 }
 

@@ -8801,7 +8801,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
     	var datosCatastro = gridDatosCatastro.getStore().getData();
     	var hayAlgunoMarcado = false;
-    	
+    	var window =  btn.up('window');
     	for(i = 0; i < datosCatastro.length;i++){ 
     		if(datosCatastro.items[i].data.check === true){
     			hayAlgunoMarcado = true;
@@ -8814,7 +8814,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		return;
     	}
     	
-    	// Ajax de guardado.
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+    	var referencia = btn.up('window').down('[reference=buscarCatastroRef]').value;
+    	url = $AC.getRemoteUrl('activo/getCatastro');
+		Ext.Ajax.request({
+			url : url,
+			method : 'GET',
+			params : {
+				idActivo : me.getView().idActivo,
+				refCatastral: referencia
+			},
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ko"));
+				window.unmask();
+				window.close(); 
+				var grid = me.getView();
+				grid.getStore().load();
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				window.unmask();
+			}
+		});
 
 	}, 
 	buscarReferenciaCatastral: function(textfield){

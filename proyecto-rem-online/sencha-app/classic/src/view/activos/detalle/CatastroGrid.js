@@ -153,15 +153,32 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
    onDeleteClick : function() {
 		var me = this;
 		var grid = me;
-		
-		var id = me.getSelection()[0].getData().id;
-		var activoId = me.getSelection()[0].getData().activoId;
+		var idCatastro = me.getSelection()[0].getData().idCatastro;
 		Ext.Msg.show({
 			title : HreRem.i18n('title.mensaje.confirmacion'),
 			msg : HreRem.i18n('msg.desea.eliminar'),
 			buttons : Ext.MessageBox.YESNO,
 			fn : function(buttonId) {
 				if (buttonId == 'yes') {
+					grid.mask(HreRem.i18n("msg.mask.loading"));
+					url = $AC.getRemoteUrl('activo/eliminarCatastro');
+					Ext.Ajax.request({
+						url : url,
+						method : 'GET',
+						params : {
+							id :idCatastro
+						},
+						success : function(response, opts) {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						},
+						failure : function(record, operation) {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						},
+						callback : function(record, operation) {
+							grid.unmask();
+							grid.getStore().load();
+						}
+					});
 					
 				}
 			}

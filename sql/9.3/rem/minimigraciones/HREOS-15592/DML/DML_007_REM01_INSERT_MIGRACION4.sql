@@ -85,12 +85,10 @@ BEGIN
 	NULL                                                FECHAMODIFICAR,
 	NULL                                                USUARIOBORRAR,
 	NULL                                                FECHABORRAR,
-	ADN.BORRADO                                         BORRADO,
-	ADN.FECHA_POSESION									FECHA_POSESION
-	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
-	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
+	0                                         BORRADO,
+	NULL									FECHA_POSESION
+	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
-	JOIN '||V_ESQUEMA||'.'||V_TABLA||' ADN ON ADN.ACT_ID = ACT.ACT_ID
 	')
 	;
   

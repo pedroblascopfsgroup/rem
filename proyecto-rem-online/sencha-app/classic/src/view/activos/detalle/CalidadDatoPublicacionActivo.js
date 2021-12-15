@@ -1281,7 +1281,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				[
 					{
 						xtype : 'fieldsettable',
-						title : HreRem.i18n('publicacion.referencia.catastral.referencia.catastral'),
+						title : HreRem.i18n('publicacion.referencia.catastral.referencias.catastrales.activo'),
 						items : 
 							[
 								{
@@ -1292,7 +1292,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							]
 					}, {
 	                	xtype: 'combobox',
-	                	fieldLabel: HreRem.i18n('publicacion.referencia.catastral.referencias.catastrales.activo'),
+	                	fieldLabel: HreRem.i18n('publicacion.referencia.catastral.referencia.catastral'),
 	                	name: 'referenciaCatastralActivo',
 	                	reference: 'referenciaCatastralActivoRef',
 	                	width: '400px',

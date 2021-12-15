@@ -56,7 +56,7 @@ public class CatastroManager implements CatastroApi {
 	private static final String ANYO_CONSTRUCCION= "Año construcción";
 	private static final String TIPO_VIA= "Tipo vía";
 	private static final String CODIGO_POSTAL= "Código postal";
-	private static final String MUNICIPIO= "Superficie construida";
+	private static final String MUNICIPIO= "Municipio";
 	private static final String PROVINCIA= "Provincia";
 	private static final String NOMBRE_CALLE= "Nombre calle";
 	private static final String LATITUD= "Latitud";
@@ -75,10 +75,11 @@ public class CatastroManager implements CatastroApi {
 			dto.setSuperficieConstruida((double)activo.getTotalSuperficieConstruida());			
 			//dto.setSuperficieReperComun(superficieReperComun); ¿De donde sale esto?
 			dto.setCodigoPostal(activo.getCodPostal());
-			
 			dto.setNombreVia(activo.getNombreVia());
 			dto.setNumeroVia(activo.getNumeroDomicilio());
-			
+			dto.setTipoVia(activo.getTipoVia().getDescripcion());
+			dto.setProvincia(activo.getProvinciaDescripcion());
+			dto.setMunicipio(activo.getMunicipioDescripcion());
 			
 			if(infoR != null && infoR.getSuperficieParcela() != null) {
 				dto.setSuperficieParcela((double) infoR.getSuperficieParcela());
@@ -233,7 +234,7 @@ public class CatastroManager implements CatastroApi {
 			listDto.add(dtoMu);
 			
 			DtoDatosCatastroGrid dtoPR = new DtoDatosCatastroGrid();
-			if((dtoCatastroRem.getProvincia() != null && dtoCatastroRem.getProvincia().isEmpty()) 
+			if((dtoCatastroRem.getProvincia() != null && !dtoCatastroRem.getProvincia().isEmpty()) 
 					&& (dtoCatastro.getProvincia() != null && !dtoCatastro.getProvincia().isEmpty())){
 				dtoPR.setNombre(PROVINCIA);
 				dtoPR.setDatoRem(dtoCatastroRem.getProvincia());
@@ -248,7 +249,6 @@ public class CatastroManager implements CatastroApi {
 			listDto.add(dtoPR);
 			
 			DtoDatosCatastroGrid dtoNC = new DtoDatosCatastroGrid();
-			//Nombre calle
 			if(!Checks.esNulo(dtoCatastroRem.getNombreVia()) && !Checks.esNulo(dtoCatastro.getNombreVia())) {
 				Double probabilidad = calculoSimilaridad(dtoCatastroRem.getNombreVia(),dtoCatastro.getNombreVia());
 				dtoNC.setNombre(NOMBRE_CALLE);
@@ -290,7 +290,7 @@ public class CatastroManager implements CatastroApi {
 			listDto.add(dtoGeo);
 			
 		} catch (Exception e) {
-			logger.error("error en CatastroManager método validarCatastro - ", e);
+			logger.error("error en CatastroManager metodo validarCatastro - ", e);
 		}
 		return listDto;
 	}
@@ -435,7 +435,7 @@ public class CatastroManager implements CatastroApi {
 				listDto = validarCatastro(dtoRem,dtoCatastro);
 			}	
 		} catch (Exception e) {
-			logger.error("error en CatastroManager método getGridReferenciaCatastralByRefCatastral - ", e);
+			logger.error("error en CatastroManager metodo getGridReferenciaCatastralByRefCatastral - ", e);
 		}
 		return listDto;
 	}

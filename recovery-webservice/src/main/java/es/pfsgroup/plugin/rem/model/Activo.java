@@ -1091,6 +1091,14 @@ public class Activo implements Serializable, Auditable {
   		}
   	}
   	
+  	public String getMunicipioDescripcion() {
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getLocalidad() != null) {
+  			return bien.getLocalizaciones().get(0).getLocalidad().getDescripcion();
+  		} else {
+  			return null;
+  		}
+  	}
+  	
   	public void setMunicipio(String codigoMunicipio) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getLocalidad().setCodigo(codigoMunicipio);
@@ -1114,6 +1122,15 @@ public class Activo implements Serializable, Auditable {
   	public String getProvincia() {
   		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getProvincia() != null) {
   			return bien.getLocalizaciones().get(0).getProvincia().getCodigo();
+  		} else {
+  			return null;
+  		}
+  		
+  	}
+  	
+  	public String getProvinciaDescripcion() {
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getProvincia() != null) {
+  			return bien.getLocalizaciones().get(0).getProvincia().getDescripcion();
   		} else {
   			return null;
   		}

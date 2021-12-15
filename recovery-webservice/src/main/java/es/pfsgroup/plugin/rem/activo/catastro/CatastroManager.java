@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -21,19 +22,22 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.Catastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 import es.pfsgroup.plugin.rem.thread.ValidarCatastroAsincrono;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 
 @Service("catastroManager")
 public class CatastroManager implements CatastroApi {
 	
     @Autowired
 	private ActivoDao activoDao;
+    
+    @Autowired
+	private GenericABMDao genericDao;
+    
+    @Autowired
+	private GenericAdapter genericAdapter;
     
     protected static final Log logger = LogFactory.getLog(ActivoController.class);
     
@@ -42,9 +46,6 @@ public class CatastroManager implements CatastroApi {
 	private static final String PROB_MEDIA = "Media";
 	private static final String PROB_ALTA = "Alta";
 	private static final String PROB_MUY_ALTA = "Muy alta";
-	
-	private static final String COINCIDENCIA_OK = "OK";
-	private static final String COINCIDENCIA_KO = "KO";
 	
 	private static final String SUPERFICIE_CONSTRUIDA= "Superficie construida";
 	private static final String SUPERFICIE_PARCELA= "Superficie Parcela";
@@ -55,12 +56,6 @@ public class CatastroManager implements CatastroApi {
 	private static final String MUNICIPIO= "Superficie construida";
 	private static final String PROVINCIA= "Provincia";
 	private static final String NOMBRE_CALLE= "Nombre calle";
-	
-	
-    @Autowired
-	private GenericABMDao genericDao;
-    @Autowired
-	private GenericAdapter genericAdapter;
     
 	public DtoDatosCatastro getDatosCatastroRem(Long idActivo) {
 		DtoDatosCatastro dto = new DtoDatosCatastro();
@@ -118,12 +113,10 @@ public class CatastroManager implements CatastroApi {
 				dtoSP.setDatoRem(dtoCatastroRem.getSuperficieParcela().toString());
 				dtoSP.setDatoCatastro(dtoCatastro.getSuperficieParcela().toString());
 				dtoSP.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieParcela(),dtoCatastro.getSuperficieParcela())));
-				dtoSP.setProbabilidad("");
 			}else {
 				dtoSP.setNombre(SUPERFICIE_PARCELA);
 				dtoSP.setDatoRem(dtoCatastroRem.getSuperficieParcela() == null ? "" : dtoCatastroRem.getSuperficieParcela().toString());
 				dtoSP.setDatoCatastro(dtoCatastro.getSuperficieParcela() == null ? "" : dtoCatastro.getSuperficieParcela().toString());
-				dtoSP.setProbabilidad("");
 			}
 			listDto.add(dtoSP);
 			
@@ -133,12 +126,10 @@ public class CatastroManager implements CatastroApi {
 				dtoSC.setDatoRem(dtoCatastroRem.getSuperficieConstruida().toString());
 				dtoSC.setDatoCatastro(dtoCatastro.getSuperficieConstruida().toString());
 				dtoSC.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieConstruida(),dtoCatastro.getSuperficieConstruida())));
-				dtoSC.setProbabilidad("");
 			}else {
 				dtoSC.setNombre(SUPERFICIE_CONSTRUIDA);
 				dtoSC.setDatoRem(dtoCatastroRem.getSuperficieConstruida() == null ? "" : dtoCatastroRem.getSuperficieConstruida().toString());
 				dtoSC.setDatoCatastro(dtoCatastro.getSuperficieConstruida() == null ? "" : dtoCatastro.getSuperficieConstruida().toString());
-				dtoSC.setProbabilidad("");
 			}
 			listDto.add(dtoSC);
 			
@@ -148,12 +139,10 @@ public class CatastroManager implements CatastroApi {
 				dtoGeo.setDatoRem(dtoCatastroRem.getGeodistancia().toString());
 				dtoGeo.setDatoCatastro(dtoCatastro.getGeodistancia().toString());
 				dtoGeo.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getGeodistancia(),dtoCatastro.getGeodistancia())));
-				dtoGeo.setProbabilidad("");
 			}else {
 				dtoGeo.setNombre(GEODISTANCIA);
 				dtoGeo.setDatoRem(dtoCatastroRem.getGeodistancia() == null ? "" : dtoCatastroRem.getGeodistancia().toString());
 				dtoGeo.setDatoCatastro(dtoCatastro.getGeodistancia() == null ? "" : dtoCatastro.getGeodistancia().toString());
-				dtoGeo.setProbabilidad("");
 			}
 			listDto.add(dtoGeo);
 			
@@ -163,12 +152,10 @@ public class CatastroManager implements CatastroApi {
 				dtoAC.setDatoRem(dtoCatastroRem.getAnyoConstruccion().toString());
 				dtoAC.setDatoCatastro(dtoCatastro.getAnyoConstruccion().toString());
 				dtoAC.setCoincidencia(calculoIgual(dtoCatastroRem.getAnyoConstruccion().toString(),dtoCatastro.getAnyoConstruccion().toString()));
-				dtoAC.setProbabilidad("");
 			}else {
 				dtoAC.setNombre(ANYO_CONSTRUCCION);
 				dtoAC.setDatoRem(dtoCatastroRem.getAnyoConstruccion() == null ? "" : dtoCatastroRem.getAnyoConstruccion().toString());
 				dtoAC.setDatoCatastro(dtoCatastro.getAnyoConstruccion() == null ? "" : dtoCatastro.getAnyoConstruccion().toString());
-				dtoAC.setProbabilidad("");
 			}
 			
 			listDto.add(dtoAC); 
@@ -180,30 +167,26 @@ public class CatastroManager implements CatastroApi {
 				dtoTP.setDatoRem(dtoCatastroRem.getTipoVia());
 				dtoTP.setDatoCatastro(dtoCatastro.getTipoVia());
 				dtoTP.setCoincidencia(calculoIgual(dtoCatastroRem.getTipoVia(),dtoCatastro.getTipoVia()));
-				dtoTP.setProbabilidad("");
 			}else {
 				dtoTP.setNombre(TIPO_VIA);
 				dtoTP.setDatoRem(dtoCatastroRem.getTipoVia() == null ? "" : dtoCatastroRem.getTipoVia());
 				dtoTP.setDatoCatastro(dtoCatastro.getTipoVia() == null ? "" : dtoCatastro.getTipoVia());
-				dtoTP.setProbabilidad("");
 			}
 	
 			listDto.add(dtoTP);
 			
 			DtoDatosCatastroGrid dtoCP = new DtoDatosCatastroGrid();
-			if((dtoCatastroRem.getCodigoPostal() != null && dtoCatastroRem.getCodigoPostal().isEmpty())  
+			if((dtoCatastroRem.getCodigoPostal() != null && !dtoCatastroRem.getCodigoPostal().isEmpty())  
 					&& (dtoCatastro.getCodigoPostal() != null && !dtoCatastro.getCodigoPostal().isEmpty())) {
 				dtoCP.setNombre(CODIGO_POSTAL);
 				dtoCP.setDatoRem(dtoCatastroRem.getCodigoPostal());
 				dtoCP.setDatoCatastro(dtoCatastro.getCodigoPostal());
 				dtoCP.setCoincidencia(calculoIgual(dtoCatastroRem.getCodigoPostal(),dtoCatastro.getCodigoPostal()));
-				dtoCP.setProbabilidad("");
 					
 			}else {
 				dtoCP.setNombre(CODIGO_POSTAL);
 				dtoCP.setDatoRem(dtoCatastroRem.getCodigoPostal() == null ? "" : dtoCatastroRem.getCodigoPostal());
 				dtoCP.setDatoCatastro(dtoCatastro.getCodigoPostal() == null ? "" : dtoCatastro.getCodigoPostal());
-				dtoCP.setProbabilidad("");
 			}
 			
 			listDto.add(dtoCP);
@@ -215,12 +198,10 @@ public class CatastroManager implements CatastroApi {
 				dtoMu.setDatoRem(dtoCatastroRem.getMunicipio());
 				dtoMu.setDatoCatastro(dtoCatastro.getMunicipio());
 				dtoMu.setCoincidencia(calculoIgual(dtoCatastroRem.getMunicipio(),dtoCatastro.getMunicipio()));
-				dtoMu.setProbabilidad("");
 			}else {
 				dtoMu.setNombre(MUNICIPIO);
 				dtoMu.setDatoRem(dtoCatastroRem.getMunicipio() == null ? "" : dtoCatastroRem.getMunicipio());
 				dtoMu.setDatoCatastro(dtoCatastro.getMunicipio() == null ? "" : dtoCatastro.getMunicipio());
-				dtoMu.setProbabilidad("");
 			}
 			
 			listDto.add(dtoMu);
@@ -232,12 +213,10 @@ public class CatastroManager implements CatastroApi {
 				dtoPR.setDatoRem(dtoCatastroRem.getProvincia());
 				dtoPR.setDatoCatastro(dtoCatastro.getProvincia());
 				dtoPR.setCoincidencia(calculoIgual(dtoCatastroRem.getProvincia(),dtoCatastro.getProvincia()));
-				dtoPR.setProbabilidad("");
 			}else {
 				dtoPR.setNombre(PROVINCIA);
 				dtoPR.setDatoRem(dtoCatastroRem.getProvincia());
 				dtoPR.setDatoCatastro(dtoCatastro.getProvincia());
-				dtoPR.setProbabilidad("");
 			}
 			
 			listDto.add(dtoPR);
@@ -256,7 +235,6 @@ public class CatastroManager implements CatastroApi {
 				dtoNC.setNombre(NOMBRE_CALLE);
 				dtoNC.setDatoRem(dtoCatastroRem.getNombreCalle() == null ? "" : dtoCatastroRem.getNombreCalle());
 				dtoNC.setDatoCatastro(dtoCatastro.getNombreCalle() == null ? "" : dtoCatastro.getNombreCalle());
-				dtoNC.setProbabilidad("");
 			}
 			
 			listDto.add(dtoNC);
@@ -299,9 +277,9 @@ public class CatastroManager implements CatastroApi {
 		return valorDatoRem.equals(valorCatastro);
 	}
 	
-	private boolean calculoCoincidencia(Double valor) {
+	private Boolean calculoCoincidencia(Double valor) {
 		
-		boolean resultado = false;
+		Boolean resultado = false;
 		try {
 			if(valor >= 0.8 && valor <= 1.2) {
 				resultado= true;
@@ -353,6 +331,88 @@ public class CatastroManager implements CatastroApi {
 	  Double longitud = (double) (nombreCalleDatoRem.length() > nombreCalleCatastro.length() ? nombreCalleDatoRem.length() : nombreCalleCatastro.length());
 	  return 1 - (distancia / longitud);
    }
+
+
+	@Override
+	public List<DtoActivoCatastro> getComboReferenciaCatastralByidActivo(Long idActivo) {
+		List<DtoActivoCatastro> listDto = new ArrayList<DtoActivoCatastro>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS,"activo.id",idActivo);
+		List<ActivoCatastro> listActCatastro = genericDao.getList(ActivoCatastro.class, filtro);
+		
+		for (ActivoCatastro activoCatastro : listActCatastro) {
+			DtoActivoCatastro dto = new DtoActivoCatastro();
+			dto.setDescripcion(activoCatastro.getRefCatastral());
+			dto.setCodigo(activoCatastro.getRefCatastral());
+			dto.setId(activoCatastro.getId().toString());
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+
+
+	@Override
+	public List<DtoActivoCatastro> getGridReferenciaCatastralByidActivo(Long idActivo) {
+		List<DtoActivoCatastro> listDto = new ArrayList<DtoActivoCatastro>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS,"activo.id",idActivo);
+		List<ActivoCatastro> listActCatastro = genericDao.getList(ActivoCatastro.class, filtro);
+		
+		for (ActivoCatastro activoCatastro : listActCatastro) {
+			DtoActivoCatastro dto = new DtoActivoCatastro();
+			dto.setRefCatastral(activoCatastro.getRefCatastral());
+			dto.setCorrecto(activoCatastro.getCatastroCorrecto() != null ? activoCatastro.getCatastroCorrecto().toString() : null);
+			
+			listDto.add(dto);
+		}
+		
+		return listDto;
+	}
+
+
+	@Override
+	public List<DtoDatosCatastroGrid> getGridReferenciaCatastralByRefCatastral(String refCatastral, Long idActivo) {
+		
+		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
+		try {
+			if(refCatastral != null) {
+				DtoDatosCatastro dtoRem = getDatosCatastroRem(idActivo); 
+				
+				DtoDatosCatastro dtoCatastro = getDatosCatastro(refCatastral);
+				
+				listDto = validarCatastro(dtoRem,dtoCatastro);
+			}	
+		} catch (Exception e) {
+			logger.error("error en CatastroManager método getGridReferenciaCatastralByRefCatastral - ", e);
+		}
+		return listDto;
+	}
+
+	public DtoDatosCatastro getDatosCatastro(String refCatastral) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",refCatastral);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
+		Catastro catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+		DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
+
+		if(catastro != null) {
+			dtoCatastro.setRefCatastral(catastro.getRefCatastral());
+			dtoCatastro.setSuperficieParcela(catastro.getSuperficieParcela());
+			dtoCatastro.setSuperficieConstruida(catastro.getSuperficieConstruida());
+			dtoCatastro.setSuperficieReperComun(catastro.getSuperficieZonasComunes());
+			dtoCatastro.setAnyoConstruccion(catastro.getAnyoConstrucción());
+			dtoCatastro.setCodigoPostal(catastro.getCodPostal());
+			dtoCatastro.setTipoVia(catastro.getTipoVia() != null ? catastro.getTipoVia().getDescripcion() : "");
+			dtoCatastro.setNombreVia(catastro.getDescripcionVia());
+			dtoCatastro.setNumeroVia(catastro.getNumeroVia());
+			dtoCatastro.setDireccion(catastro.getDescripcionVia());
+			dtoCatastro.setGeodistancia(catastro.getGeodistancia() != null ? Double.parseDouble(catastro.getGeodistancia().toString()) : null);
+			dtoCatastro.setMunicipio(catastro.getLocalidad() != null ? catastro.getLocalidad().getDescripcion() : "");
+			dtoCatastro.setProvincia(catastro.getProvincia() != null ? catastro.getProvincia().getDescripcion() : "");
+			dtoCatastro.setNombreCalle(catastro.getDescripcionVia());
+		}
+		return dtoCatastro;
+	}
 	
 	@Override
 	@Transactional(readOnly = false)

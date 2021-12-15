@@ -50,6 +50,4 @@ public class DtoDatosCatastroGrid extends WebDto {
 		this.probabilidad = probabilidad;
 	}
 	
-
-	
 }

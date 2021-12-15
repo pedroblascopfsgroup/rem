@@ -1271,6 +1271,61 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					}
 				}]
 			}]
+		},
+		{
+			xtype:'toolfieldset',
+			title : HreRem.i18n('publicacion.referencia.catastral.datos.catastrales'),
+			collapsible : false,
+			reference: 'toolFieldDatosCatastrales',
+			items:
+				[
+					{
+						xtype : 'fieldsettable',
+						title : HreRem.i18n('publicacion.referencia.catastral.referencia.catastral'),
+						items : 
+							[
+								{
+									xtype:'referenciacatastralgrid',
+									reference: 'referenciacatastralgridref',
+									idActivo:this.lookupController().getViewModel().get('activo').get('id')
+								}
+							]
+					}, {
+	                	xtype: 'combobox',
+	                	fieldLabel: HreRem.i18n('publicacion.referencia.catastral.referencias.catastrales.activo'),
+	                	name: 'referenciaCatastralActivo',
+	                	reference: 'referenciaCatastralActivoRef',
+	                	width: '400px',
+	                	bind: {	
+	                		store: '{comboReferenciaCatastral}',
+							value: '{calidaddatopublicacionactivo.codigo}'
+	                	},
+						displayField: 'descripcion',
+    					valueField: 'codigo',
+	                	listeners: {
+	                		change: function(combo){
+	                			var me = this;
+								var refCatastral = combo.getValue();
+								var grid = me.lookupController().lookupReference('comparativareferenciacatastralgridref');
+								var idActivo = me.lookupController().getViewModel().getData().activo.id;
+								grid.getStore().getProxy().setExtraParams({'refCatastral':refCatastral, 'idActivo':idActivo});    
+								grid.getStore().load();
+	                		}
+	                	}
+	                },
+					{
+						xtype : 'fieldsettable',
+						title : HreRem.i18n('publicacion.referencia.catastral.datos.comparativa.catastro'),
+						items : 
+							[
+								{
+									xtype:'comparativareferenciacatastralgrid',
+									reference: 'comparativareferenciacatastralgridref',
+									idActivo:this.lookupController().getViewModel().get('activo').get('id')
+								}
+							]
+					}
+				]
 		} 
 		];
 		me.callParent();

@@ -4435,18 +4435,19 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView validarCatastros(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro, ModelMap model) {
-		try {
-			List<DtoDatosCatastroGrid> listDto = catastroApi.validarCatastro(dtoCatastroRem, dtoCatastro);
-			model.put(RESPONSE_SUCCESS_KEY, listDto);
-
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-		}
-		return createModelAndViewJson(model);
-	}
+//	@RequestMapping(method = RequestMethod.POST)
+//	public ModelAndView validarCatastros(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro, ModelMap model) {
+//		try {
+//			List<DtoDatosCatastroGrid> listDto = catastroApi.validarCatastro(dtoCatastroRem, dtoCatastro);
+//			model.put(RESPONSE_SUCCESS_KEY, listDto);
+//
+//		} catch (Exception e) {
+//			logger.error("error en activoController", e);
+//			model.put(RESPONSE_SUCCESS_KEY, false);
+//		}
+//
+//		return createModelAndViewJson(model);
+//	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView eliminarCatastro(Long id, ModelMap model){

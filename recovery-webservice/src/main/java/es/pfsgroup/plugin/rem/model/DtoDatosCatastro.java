@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.math.BigDecimal;
+
 public class DtoDatosCatastro  {
 
 	private Long idActivo;
@@ -16,7 +18,11 @@ public class DtoDatosCatastro  {
 	private Double geodistancia;
 	private String municipio;
 	private String provincia;
-	private String nombreCalle;
+	private String municipioCod;
+	private String provinciaCod;
+	private String tipoViaCod;
+	private BigDecimal latitud;
+	private BigDecimal longitud;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -102,10 +108,35 @@ public class DtoDatosCatastro  {
 	public void setProvincia(String provincia) {
 		this.provincia = provincia;
 	}
-	public String getNombreCalle() {
-		return nombreCalle;
+	public String getMunicipioCod() {
+		return municipioCod;
 	}
-	public void setNombreCalle(String nombreCalle) {
-		this.nombreCalle = nombreCalle;
+	public void setMunicipioCod(String municipioCod) {
+		this.municipioCod = municipioCod;
+	}
+	public String getProvinciaCod() {
+		return provinciaCod;
+	}
+	public void setProvinciaCod(String provinciaCod) {
+		this.provinciaCod = provinciaCod;
+	}
+	public BigDecimal getLatitud() {
+		return latitud;
+	}
+	public void setLatitud(BigDecimal latitud) {
+		this.latitud = latitud;
+	}
+	public BigDecimal getLongitud() {
+		return longitud;
+	}
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
+	}
+	public String getTipoViaCod() {
+		return tipoViaCod;
+	}
+	public void setTipoViaCod(String tipoViaCod) {
+		this.tipoViaCod = tipoViaCod;
 	}  
+	
 }

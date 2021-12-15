@@ -460,6 +460,8 @@ public class CatastroManager implements CatastroApi {
 			dtoCatastro.setGeodistancia(catastro.getGeodistancia() != null ? Double.parseDouble(catastro.getGeodistancia().toString()) : null);
 			dtoCatastro.setMunicipio(catastro.getLocalidad() != null ? catastro.getLocalidad().getDescripcion() : null);
 			dtoCatastro.setProvincia(catastro.getProvincia() != null ? catastro.getProvincia().getDescripcion() : null);
+			dtoCatastro.setMunicipioCod(catastro.getLocalidad() != null ? catastro.getLocalidad().getCodigo() : null);
+			dtoCatastro.setProvinciaCod(catastro.getProvincia() != null ? catastro.getProvincia().getCodigo() : null);
 			dtoCatastro.setNombreVia(catastro.getDescripcionVia());
 			dtoCatastro.setLatitud(catastro.getLatitud());
 			dtoCatastro.setLongitud(catastro.getLongitud());

@@ -2394,27 +2394,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			
+			DDEstadosExpedienteComercial estadoExpCom = null;
+			DDSubestadosExpedienteComercial subestadoExpCom = null;
+			
+			if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && ofertaDto.getCodEstadoExpediente() != null && ofertaDto.getcodSubestadoExpediente() != null) {
+				estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(ofertaDto.getCodEstadoExpediente());
+				subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getcodSubestadoExpediente()));
+			}
+			
 			if (expedienteComercial != null) {			
 				if (((JSONObject) jsonFields).containsKey("importeContraoferta")) {
 					expedienteComercialApi.updateParticipacionActivosOferta(oferta);
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expedienteComercial);
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
-				
-				DDEstadosExpedienteComercial estadoExpCom = null;
-				DDSubestadosExpedienteComercial subestadoExpCom = null;
-				
-				if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && ofertaDto.getCodEstadoExpediente() != null && ofertaDto.getcodSubestadoExpediente() != null) {
-					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(ofertaDto.getCodEstadoExpediente());
-					subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getcodSubestadoExpediente()));
-				}
-				
+								
 				if (estadoExpCom != null)
 					expedienteComercial.setEstado(estadoExpCom);
 				
 				if (subestadoExpCom != null)
 					expedienteComercial.setSubestadoExpediente(subestadoExpCom);
 				
+			}
+			
+			if(estadoExpCom != null) {
 				cambiarEstadoOfertaHayaHomeRechazada(oferta, estadoExpCom, ofertaDto.getFechaAccion());
 			}
 			

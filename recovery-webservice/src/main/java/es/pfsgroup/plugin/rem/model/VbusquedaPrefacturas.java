@@ -49,7 +49,7 @@ public class VbusquedaPrefacturas implements Serializable{
 	private Long numeroTrabajos;
 	
 	@Column(name = "NUM_GASTOS")
-	private Long numGasto;
+	private String numGasto;
 	
 	@Column(name= "ESTADO_GASTO")
 	private String estadoGasto;
@@ -64,7 +64,7 @@ public class VbusquedaPrefacturas implements Serializable{
 	private String codAreaPeticionaria;
 	
 	@Column(name = "TOTPVP")
-	private String importaTotalPrefacturas;
+	private Double importaTotalPrefacturas;
 	
 	@Column(name = "CANTPROP")
 	private Boolean cantidadPropietarios;
@@ -156,11 +156,11 @@ public class VbusquedaPrefacturas implements Serializable{
 	public void setEstadoGasto(String estadoGasto) {
 		this.estadoGasto = estadoGasto;
 	}
-	public Long getNumGasto() {
+	public String getNumGasto() {
 		return numGasto;
 	}
 
-	public void setNumGasto(Long numGasto) {
+	public void setNumGasto(String numGasto) {
 		this.numGasto = numGasto;
 	}
 
@@ -196,11 +196,11 @@ public class VbusquedaPrefacturas implements Serializable{
 		this.codAreaPeticionaria = codAreaPeticionaria;
 	}
 
-	public String getImportaTotalPrefacturas() {
+	public Double getImportaTotalPrefacturas() {
 		return importaTotalPrefacturas;
 	}
 
-	public void setImportaTotalPrefacturas(String importaTotalPrefacturas) {
+	public void setImportaTotalPrefacturas(Double importaTotalPrefacturas) {
 		this.importaTotalPrefacturas = importaTotalPrefacturas;
 	}
 

@@ -29,15 +29,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 		        	colspan: 3,
 		        	items: [
 		        		{
-		                	xtype: 'label',
-		                	cls:'x-form-item',
-		                	html:  HreRem.i18n('msg.albaran.cantidad.propietarios.prefactura'),
-		                	style: 'color: red; font-size: small; margin: 10 10 10',
-				        	reference: 'textContadorPropietarios',
-				        	colspan: 3,
-				        	hidden: true
-		                },
-		        		{
 							xtype: 'detalleAlbaranGrid',
 							reference: 'detalleAlbaranGrid'
 						},
@@ -55,6 +46,15 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 		        	title: HreRem.i18n('title.albaran.detallePrefactura'),
 		        	bodyPadding: 20,
 		        	items: [
+		        		{
+		                	xtype: 'label',
+		                	cls:'x-form-item',
+		                	html:  HreRem.i18n('msg.albaran.cantidad.propietarios.prefactura'),
+		                	style: 'color: red; font-size: small; margin: 10 10 10',
+				        	reference: 'textContadorPropietarios',
+				        	colspan: 3,
+				        	hidden: true
+		                },
 		        		{
 							xtype: 'detallePrefacturaGrid',
 							reference: 'detallePrefacturaGrid'

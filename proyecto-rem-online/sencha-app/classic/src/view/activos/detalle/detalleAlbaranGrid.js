@@ -100,7 +100,6 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		        {
 		            dataIndex: 'cantidadPropietarios',
 		            reference: 'cantidadPropietarios',
-		            renderer: Utils.rendererCurrency,
 		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.cantidad.propietarios.prefactura'),
 		            hidden: true

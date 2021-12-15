@@ -4515,21 +4515,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		boolean isCerberus = false;
 		String carteraActivo =  "";
 		String subcarteraActivo = "";
-		// ActivoIntegrado activoIntegrado = new ActivoIntegrado();
-		ActivoProveedor activoProveedor = new ActivoProveedor();
+		
+		Filter proveedorID0 = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad());
+		Activo ActivoCarteraSubcartera = genericDao.get(Activo.class, proveedorID0);
 
 		Filter proveedorID = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", gasto.getProveedor().getId());
 		List<ActivoProveedorDireccion> activoProveedorDireccion = genericDao.getList(ActivoProveedorDireccion.class, proveedorID);
-		List<ActivoIntegrado> activoIntegrado = genericDao.getList(ActivoIntegrado.class, proveedorID);
-
-		Filter proveedorID2 = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getProveedor().getId());
-		activoProveedor = genericDao.get(ActivoProveedor.class, proveedorID2);
 
 		String carteraGasto = gasto.getCartera().getCodigo();
 		
-		if (!Checks.estaVacio(activoIntegrado)) {
-			 carteraActivo = activoIntegrado.get(0).getActivo().getCartera().getCodigo();
-			 subcarteraActivo = activoIntegrado.get(0).getActivo().getSubcartera().getCodigo();
+		if (!Checks.esNulo(ActivoCarteraSubcartera)) {
+			 carteraActivo = ActivoCarteraSubcartera.getCartera().getCodigo();
+			 subcarteraActivo = ActivoCarteraSubcartera.getSubcartera().getCodigo();
 			if(carteraActivo.equals(DDCartera.CODIGO_CARTERA_CERBERUS)  && carteraGasto.equals(carteraActivo)) {
 					isCerberus = true;
 				}
@@ -4537,8 +4534,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					isCerberus = true;
 		}
 		
-	
-
 		if (carteraGasto.equals(DDCartera.CODIGO_CARTERA_SAREB) || carteraGasto.equals(DDCartera.CODIGO_CARTERA_GIANTS)
 				|| carteraGasto.equals(DDCartera.CODIGO_CARTERA_ZEUS) || carteraGasto.equals(DDCartera.CODIGO_CARTERA_GALEON)
 				|| (isCerberus

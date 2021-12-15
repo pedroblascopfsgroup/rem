@@ -4989,7 +4989,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					
 					if(clienteCom.getProvinciaNacimiento() != null) {
-						clienteComercialDto.setProvinciaNacimientoCodigo(clienteCom.getProvincia().getCodigo());
+						clienteComercialDto.setProvinciaNacimientoCodigo(clienteCom.getProvinciaNacimiento().getCodigo());
 					}
 					
 					if(clienteCom.getLocalidadNacimiento() != null) {

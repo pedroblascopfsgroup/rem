@@ -388,6 +388,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
 			
 			return false;
+		},
+		
+		esPropietarioCaixa : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} 
+			var codCarteraPropietario = gasto.get('carteraPropietarioCodigo');
+			var nifPropietario = gasto.get('nifPropietario');
+
+			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] 
+				&& (nifPropietario == 'A08663619' || nifPropietario == 'A58032244' || nifPropietario == 'B46644290')){
+				return true;
+			}
+			
+			return false;
 		}
 	},
 
@@ -875,6 +892,27 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                     idGasto : '{gasto.id}'
                 }
             }
-        }
+        },
+        
+        comboSubtiposGastoFiltered: {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubtipoGastoFiltered',
+				extraParams : {
+					codCartera: '{gasto.carteraPropietarioCodigo}',
+					codigoTipoGasto : '{gasto.tipoGastoCodigo}'
+				}
+			},
+			autoLoad: true
+		},
+    	
+    	comboSubtipoGastoFiltered: {
+    		model: 'HreRem.model.ComboBase',
+    		proxy: {
+    			type: 'uxproxy',
+    			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
+    		}
+    	}
 	}
 });

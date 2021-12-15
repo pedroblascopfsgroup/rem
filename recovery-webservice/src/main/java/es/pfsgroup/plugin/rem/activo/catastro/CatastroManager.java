@@ -18,7 +18,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
-import es.pfsgroup.plugin.rem.controller.ActivoController;
+import es.pfsgroup.plugin.rem.controller.CatastroController;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -42,7 +42,7 @@ public class CatastroManager implements CatastroApi {
     @Autowired
 	private GenericAdapter genericAdapter;
     
-    protected static final Log logger = LogFactory.getLog(ActivoController.class);
+    protected static final Log logger = LogFactory.getLog(CatastroController.class);
     
 	private static final String PROB_MUY_BAJA = "Muy baja";
 	private static final String PROB_BAJA = "Baja";
@@ -535,4 +535,19 @@ public class CatastroManager implements CatastroApi {
 		return genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "refCatastral", refCatastral));
 	}
 	
+	@Override
+	@Transactional(readOnly = false)
+	public void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia) {
+		ArrayList<String> listReferencias = new ArrayList<String>();
+		ActivoCatastro acn = getActivoCatastroByActivoAndReferencia(idActivo,nuevaReferencia);
+		ActivoCatastro ac = getActivoCatastroByActivoAndReferencia(idActivo, referenciaAnterior);
+		if(ac != null && acn == null) {
+			ac.setRefCatastral(nuevaReferencia);
+			genericDao.save(ActivoCatastro.class, ac);
+			listReferencias.add(nuevaReferencia);
+		}
+		
+		Thread hilo = new Thread(new ValidarCatastroAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listReferencias, idActivo));
+		hilo.start();
+	}
 }

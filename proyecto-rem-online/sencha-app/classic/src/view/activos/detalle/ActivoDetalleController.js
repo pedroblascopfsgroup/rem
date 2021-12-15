@@ -8802,29 +8802,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var datosCatastro = gridDatosCatastro.getStore().getData();
     	var hayAlgunoMarcado = false;
     	var window =  btn.up('window');
-    	var arrayReferencias = [];
+    	var arrayReferencias = [];   
+    	var params =  {};
     	for(i = 0; i < datosCatastro.length;i++){ 
     		if(datosCatastro.items[i].data.check === true){
     			hayAlgunoMarcado = true;
     			arrayReferencias.push(datosCatastro.items[i].data.refCatastral);
     		}
 		}
-    	if(!hayAlgunoMarcado){
-    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
-    		return;
+    	
+    	if(window.modificar){
+    		if(arrayReferencias.length != 1){
+    			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.modificar.referencia"));
+    			return;
+    		}
+    		params = {
+				idActivo : me.getView().idActivo,
+				referenciaAnterior: window.down('[reference=buscarCatastroRef]').getValue(),
+				nuevaReferencia: arrayReferencias[0]
+			};
+			url = $AC.getRemoteUrl('catastro/updateCatastro');
+    	}else{ 
+    		if(!hayAlgunoMarcado){
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
+	    		return;
+    		}
+    		url = $AC.getRemoteUrl('catastro/saveCatastro');
+    		params = {
+				idActivo : me.getView().idActivo,
+				arrayReferencias: arrayReferencias
+			};
     	}
     	
     	window.mask(HreRem.i18n("msg.mask.loading"));
-    	url = $AC.getRemoteUrl('activo/saveCatastro');
 		Ext.Ajax.request({
 			url : url,
 			method : 'GET',
-			params : {
-				idActivo : me.getView().idActivo,
-				arrayReferencias: arrayReferencias
-			},
+			params : params, 
 			success : function(response, opts) {
-				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ko"));
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				window.unmask();
 				window.close(); 
 				var grid = me.getView();
@@ -8835,8 +8851,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				window.unmask();
 			}
 		});
-
 	}, 
+	
 	buscarReferenciaCatastral: function(textfield){
 		var me = this;
 		if(!textfield.isValid()) return;
@@ -8845,7 +8861,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
 		gridDatosRem.mask(HreRem.i18n("msg.mask.loading"));
 		gridDatosCatastro.mask(HreRem.i18n("msg.mask.loading"));
-		url = $AC.getRemoteUrl('activo/getCatastro');
+		url = $AC.getRemoteUrl('catastro/getCatastro');
 		Ext.Ajax.request({
 			url : url,
 			method : 'GET',

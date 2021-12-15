@@ -16,15 +16,22 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
     
     controller: null,
     
+    modificar: null,
+    
     initComponent: function() {
     	var me = this; 
     	var referenciaModificar = "";
+    	var modificar= false;
     	if(Ext.isEmpty(me.refCatastral)){
     		me.setTitle(HreRem.i18n("Crear referencia catastral"));
     	}else{
     		me.setTitle(HreRem.i18n("Modificar referencia catastral"));
     		referenciaModificar = me.refCatastral;
+    		modificar = true;  
     	}
+    	
+    	me.modificar = modificar;
+    	
     	me.buttons = [ 
     		{ 
     			itemId: 'btnCancelar', 
@@ -45,7 +52,6 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
     	me.items = [
     				{
 	    				xtype: 'formBase',
-	    				//url: $AC.getRemoteUrl("gastosproveedor/saveGastoLineaDetalle"),
 	    				reference: 'createReferenciaCatastralRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',

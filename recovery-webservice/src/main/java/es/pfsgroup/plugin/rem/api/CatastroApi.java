@@ -26,6 +26,8 @@ public interface CatastroApi {
 	public List<DtoActivoCatastro> getGridReferenciaCatastralByidActivo(Long idActivo);
 
 	public List<DtoDatosCatastroGrid> getGridReferenciaCatastralByRefCatastral(String refCatastral, Long idActivo);
+
+	void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia);
 	
 }
 

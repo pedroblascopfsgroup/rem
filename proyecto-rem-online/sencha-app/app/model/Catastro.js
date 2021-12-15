@@ -86,9 +86,9 @@ Ext.define('HreRem.model.Catastro', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            create: 'activo/createCatastro',
-            update: 'activo/saveCatastro',
-            destroy: 'activo/deleteCatastro'
+            create: 'catastro/createCatastro',
+            update: 'catastro/saveCatastro',
+            destroy: 'catastro/deleteCatastro'
         }
     }
 });

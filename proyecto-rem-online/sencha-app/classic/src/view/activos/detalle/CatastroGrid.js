@@ -161,7 +161,7 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
 			fn : function(buttonId) {
 				if (buttonId == 'yes') {
 					grid.mask(HreRem.i18n("msg.mask.loading"));
-					url = $AC.getRemoteUrl('activo/eliminarCatastro');
+					url = $AC.getRemoteUrl('catastro/eliminarCatastro');
 					Ext.Ajax.request({
 						url : url,
 						method : 'GET',

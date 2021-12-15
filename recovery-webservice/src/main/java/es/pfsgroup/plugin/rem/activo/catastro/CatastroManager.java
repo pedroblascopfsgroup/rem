@@ -454,6 +454,7 @@ public class CatastroManager implements CatastroApi {
 			dtoCatastro.setAnyoConstruccion(catastro.getAnyoConstrucción());
 			dtoCatastro.setCodigoPostal(catastro.getCodPostal());
 			dtoCatastro.setTipoVia(catastro.getTipoVia() != null ? catastro.getTipoVia().getDescripcion() : null);
+			dtoCatastro.setTipoViaCod(catastro.getTipoVia() != null ? catastro.getTipoVia().getCodigo() : null);
 			dtoCatastro.setNombreVia(catastro.getDescripcionVia());
 			dtoCatastro.setNumeroVia(catastro.getNumeroVia());
 			dtoCatastro.setDireccion(catastro.getDescripcionVia());

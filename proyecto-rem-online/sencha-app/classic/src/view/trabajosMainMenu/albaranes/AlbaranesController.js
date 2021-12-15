@@ -187,6 +187,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var me = this;
 		var gridDetalle = this.lookupReference('detalleAlbaranGrid');
 		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
 
 		this.lookupReference('botonValidarPrefactura').setDisabled(true);
 		this.lookupReference('botonValidarTrabajo').setDisabled(true);
@@ -196,6 +197,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		listaTrabajos.data = [];
 		me.calcularTotal(this.lookupReference('albaranGrid'),"albaranGrid",this.lookupReference('albaranGrid').selection);
 		listaTrabajos.getColumns()[8].setDisabled(false);
+		textoContadorPropietarios.setHidden(true);
 	},
 	
 	calcularTotal: function(grid,descripcion,record){

@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
@@ -102,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
@@ -257,6 +259,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 	
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public DtoActivoFichaCabecera getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
@@ -790,9 +793,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		//Aceptado/tramitada a comprobar si una oferta tiene tareas activas, si tiene alguna tarea activa,
 		//la oferta estara viva, si por el contrario, tiene todas las tareas finalizadas la oferta no estara viva
 		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivo(activo.getId(),ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
+		Oferta oferta = null;
 		if (!Checks.estaVacio(listaTareas)) {
 			for (TareaActivo tarea : listaTareas) {
-				if (!Checks.esNulo(tarea.getTareaFinalizada()) && !tarea.getTareaFinalizada()) {
+				Trabajo trabajo = tarea.getTramite().getTrabajo();
+				if(trabajo != null) {
+					oferta = ofertaApi.trabajoToOferta(trabajo);
+				}
+				if (!Checks.esNulo(tarea.getTareaFinalizada()) && (!tarea.getTareaFinalizada() || (oferta != null && !oferta.getEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)))) {
 					tieneOfertaAlquilerViva = true;
 					break;
 				}

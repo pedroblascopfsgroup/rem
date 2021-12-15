@@ -101,6 +101,12 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name:'primeraPosesion'
+            },
+            {
+            	name:'subpartidaEdifCodigo'
+            },
+            {
+            	name:'subpartidaEdif'
             }
             
     ],

@@ -323,6 +323,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
                 	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
+					dataIndex : 'subpartidaEdif',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
 				}
 		];
 		 me.dockedItems = [

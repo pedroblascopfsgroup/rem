@@ -64,6 +64,9 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private String primeraPosesion;
 	 
+	 private String subpartidaEdifCodigo;
+	 
+	 private String subpartidaEdif;
 
 	public Long getId() {
 		return id;
@@ -263,6 +266,22 @@ public class DtoElementosAfectadosLinea extends WebDto {
 
 	public void setPrimeraPosesion(String primeraPosesion) {
 		this.primeraPosesion = primeraPosesion;
+	}
+
+	public String getSubpartidaEdifCodigo() {
+		return subpartidaEdifCodigo;
+	}
+
+	public void setSubpartidaEdifCodigo(String subpartidaEdifCodigo) {
+		this.subpartidaEdifCodigo = subpartidaEdifCodigo;
+	}
+
+	public String getSubpartidaEdif() {
+		return subpartidaEdif;
+	}
+
+	public void setSubpartidaEdif(String subpartidaEdif) {
+		this.subpartidaEdif = subpartidaEdif;
 	}
 	
 }

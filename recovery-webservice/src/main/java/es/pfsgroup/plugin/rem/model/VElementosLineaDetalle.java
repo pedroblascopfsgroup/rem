@@ -103,6 +103,12 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "PRIM_TOMA_POSESION")
 	private String primeraPosesion;
+	
+	@Column(name = "SUBPARTEDIF_COD")
+	private String subpartidaEdifCodigo;
+	
+	@Column(name = "SUBPARTEDIF_DESC")
+	private String subpartidaEdif;
 
 	public Long getId() {
 		return id;
@@ -318,6 +324,22 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setPrimeraPosesion(String primeraPosesion) {
 		this.primeraPosesion = primeraPosesion;
+	}
+
+	public String getSubpartidaEdifCodigo() {
+		return subpartidaEdifCodigo;
+	}
+
+	public void setSubpartidaEdifCodigo(String subpartidaEdifCodigo) {
+		this.subpartidaEdifCodigo = subpartidaEdifCodigo;
+	}
+
+	public String getSubpartidaEdif() {
+		return subpartidaEdif;
+	}
+
+	public void setSubpartidaEdif(String subpartidaEdif) {
+		this.subpartidaEdif = subpartidaEdif;
 	}
 
 }

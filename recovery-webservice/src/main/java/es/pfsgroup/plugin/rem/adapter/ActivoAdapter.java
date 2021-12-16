@@ -1307,20 +1307,24 @@ public class ActivoAdapter {
 		if (activo.getInfoAdministrativa() != null && activo.getCatastro() != null) {
 			for (int i = 0; i < activo.getCatastro().size(); i++) {
 				DtoActivoCatastro catastroDto = new DtoActivoCatastro();
-
+				
 				try {
-					BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i));
+					if(activo.getCatastro().get(i).getCatastro() != null) {
+						BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i).getCatastro());
+					}else {
+						BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i));
+					}
 					BeanUtils.copyProperty(catastroDto, "idCatastro", activo.getCatastro().get(i).getId());
 					BeanUtils.copyProperty(catastroDto, "idActivo", activo.getId());
 					BeanUtils.copyProperty(catastroDto, "resultadoSiNO", activo.getCatastro().get(i).getResultado());
-
+					BeanUtils.copyProperty(catastroDto, "correcto", activo.getCatastro().get(i).getCatastroCorrecto());
+					
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
 
 				} catch (InvocationTargetException e) {
 					logger.error("Error en ActivoAdapter", e);
 				}
-
 				listaDtoCatastro.add(catastroDto);
 			}
 		}

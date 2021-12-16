@@ -80,6 +80,9 @@ Ext.define('HreRem.model.Catastro', {
     			name:'fechaAlteracion',
     			type:'date',
     			dateFormat: 'c'
+    		},
+    		{
+    			name: 'correcto'
     		}
     ],
     

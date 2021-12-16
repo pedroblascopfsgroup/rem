@@ -20,7 +20,18 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
 	},
     initComponent: function () {
     	
+    	
     	var me = this;
+    	
+    	var coloredRender = function (value, metaData, record, rowIndex, colIndex, view) {
+			metaData.style = "white-space: normal;";
+    		if(value){	    		
+    			return value;
+    		} else {
+	    		return '-';
+	    	}
+    	};
+    	
     	me.setTitle(HreRem.i18n('title.catastro'));
     	
     	me.topBar = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
@@ -32,6 +43,27 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
 	        	dataIndex: 'refCatastral',
 	        	flex: 2
 	        },
+            {
+            	xtype: 'actioncolumn',
+            	text	 : HreRem.i18n('fieldlabel.referencia.catastral.correcto'),
+                flex	 : 0.5,
+                dataIndex: 'correcto',
+                renderer: coloredRender,
+                items: [{
+			            getClass: function(v, metadata, record ) {
+
+			            	var catCorrecto = record.get('correcto');
+							if(catCorrecto === "true")  {
+	     						return 'app-tbfiedset-ico icono-tickok no-pointer';
+     						}else if(catCorrecto === "false"){
+	     						return 'app-tbfiedset-ico icono-tickko no-pointer';
+     						}else {
+	     						return 'app-tbfiedset-ico icono-tickinterrogante no-pointer';
+	     					}			            	
+			            }
+			        }]
+                		
+            },
 	        {
 				text: HreRem.i18n('fieldlabel.poligono'),
 	        	dataIndex: 'poligono'

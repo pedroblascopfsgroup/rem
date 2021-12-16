@@ -800,9 +800,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if(trabajo != null) {
 					oferta = ofertaApi.trabajoToOferta(trabajo);
 				}
-				if (!Checks.esNulo(tarea.getTareaFinalizada()) && (!tarea.getTareaFinalizada() || (oferta != null && !oferta.getEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)))) {
-					tieneOfertaAlquilerViva = true;
-					break;
+				if (!Checks.esNulo(tarea.getTareaFinalizada()) && !tarea.getTareaFinalizada()) {
+					if(oferta != null && DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+						
+						tieneOfertaAlquilerViva = false;
+						
+					}else {
+						
+						tieneOfertaAlquilerViva = true;
+						break;
+						
+					}
 				}
 			}
 		}

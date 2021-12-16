@@ -97,7 +97,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_OBSERVACIONES")
 	private String observaciones;
 	
-
 	@Column(name = "CAT_RESULTADO")
 	private String resultadoSiNO;
 	
@@ -110,15 +109,15 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_CORRECTO")
 	private Boolean catastroCorrecto;
 	
+	@ManyToOne
+    @JoinColumn(name = "CAT_CATASTRO")
+    private Catastro catastro;   
+	
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
-
-	
-	
-	
 	
 	public Long getId() {
 		return id;
@@ -302,6 +301,14 @@ public class ActivoCatastro implements Serializable, Auditable {
 
 	public void setCatastroCorrecto(Boolean catastroCorrecto) {
 		this.catastroCorrecto = catastroCorrecto;
+	}
+
+	public Catastro getCatastro() {
+		return catastro;
+	}
+
+	public void setCatastro(Catastro catastro) {
+		this.catastro = catastro;
 	}
 	
 }

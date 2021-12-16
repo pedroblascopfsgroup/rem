@@ -107,6 +107,9 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name:'subpartidaEdif'
+            },
+            {
+            	name:'elementoPep'
             }
             
     ],

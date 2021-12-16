@@ -1586,11 +1586,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
 								: oferta.getImporteOferta());
 
-					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) 
+							|| DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())) {
 						dto.setImporte(oferta.getImporteOferta());
 
 						if (!Checks.esNulo(expediente.getTipoAlquiler())) {
-							dto.setTipoAlquiler(expediente.getTipoAlquiler().getCodigo());
+							dto.setTpoAlquiler(expediente.getTipoAlquiler().getCodigo());
 						}
 
 						if (!Checks.esNulo(oferta.getTipoInquilino())) {
@@ -6059,8 +6060,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
-				if (!Checks.esNulo(dto.getTipoAlquiler())) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquiler());
+				if (!Checks.esNulo(dto.getTpoAlquiler())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTpoAlquiler());
 					DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
 
 					expedienteComercial.setTipoAlquiler(tipoAlquiler);

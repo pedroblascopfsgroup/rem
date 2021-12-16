@@ -400,7 +400,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			var nifPropietario = gasto.get('nifPropietario');
 
 			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] 
-				&& (nifPropietario == 'A08663619' || nifPropietario == 'A58032244' || nifPropietario == 'B46644290')){
+				&& (nifPropietario == 'A08663619' || nifPropietario == 'A58032244' || nifPropietario == 'B46644290' || nifPropietario == 'A14010342')){
 				return true;
 			}
 			

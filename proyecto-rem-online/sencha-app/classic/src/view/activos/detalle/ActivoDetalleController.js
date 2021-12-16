@@ -8810,7 +8810,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     			arrayReferencias.push(datosCatastro.items[i].data.refCatastral);
     		}
 		}
-    	
+
     	if(window.modificar){
     		if(arrayReferencias.length != 1){
     			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.modificar.referencia"));
@@ -8818,7 +8818,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		}
     		params = {
 				idActivo : me.getView().idActivo,
-				referenciaAnterior: window.down('[reference=buscarCatastroRef]').getValue(),
+				referenciaAnterior: window.refCatastral,
 				nuevaReferencia: arrayReferencias[0]
 			};
 			url = $AC.getRemoteUrl('catastro/updateCatastro');

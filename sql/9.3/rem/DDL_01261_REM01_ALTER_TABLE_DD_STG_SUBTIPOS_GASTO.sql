@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20211130
+--## FECHA_CREACION=20211216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-16567
@@ -32,9 +32,8 @@ DECLARE
     
  	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-    -- PARTIDA_PRESUPUESTARIA   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	    T_TIPO_DATA('DD_STG_GPV_PRO_BC', 'NUMBER(1,0)','DEFAULT 0', 'Check que indica si es una gasto de propietario de Caixa ', 'NO', '', '')
+	    T_TIPO_DATA('DD_STG_GPV_PRO_BC', 'NUMBER(1,0)','DEFAULT 0', 'Check que indica si es un gasto de propietario Caixa ')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
  	
@@ -48,6 +47,9 @@ BEGIN
   EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
   
   IF V_NUM_TABLAS > 0 THEN  
+
+  DBMS_OUTPUT.PUT_LINE('  [INFO]'''||V_TABLA||'''... Existe');
+
 	  FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
 		LOOP
 			V_TMP_TIPO_DATA := V_TIPO_DATA(I);
@@ -61,12 +63,8 @@ BEGIN
 	            
 	            -- Añadimos el campo
 	            EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' '||V_TMP_TIPO_DATA(3)||'';   
-	            -- Añadimos LA CLAVE AJENA si tiene
-	            IF V_TMP_TIPO_DATA(4) != 'NO' THEN
-	                EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_TMP_TIPO_DATA(5)||' FOREIGN KEY ('||V_TMP_TIPO_DATA(1)||')
-		  								REFERENCES '||V_ESQUEMA||'.'||V_TMP_TIPO_DATA(6)||' ('||V_TMP_TIPO_DATA(7)||') ON DELETE SET NULL ENABLE';
-	  			END IF; 
-	  						-- Añadimos el comentario al campo
+
+	  			-- Añadimos el comentario al campo
 	            EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(4)||'''';	
                 DBMS_OUTPUT.PUT_LINE('  [INFO] Comentario del campo '||V_TMP_TIPO_DATA(1)||'');				
 	        ELSE

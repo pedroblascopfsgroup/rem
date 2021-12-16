@@ -1308,8 +1308,10 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								var refCatastral = combo.getValue();
 								var grid = me.lookupController().lookupReference('comparativareferenciacatastralgridref');
 								var idActivo = me.lookupController().getViewModel().getData().activo.id;
+								grid.setDisabled(false);
 								grid.getStore().getProxy().setExtraParams({'refCatastral':refCatastral, 'idActivo':idActivo});    
 								grid.getStore().load();
+								
 	                		}
 	                	}
 	                },
@@ -1321,7 +1323,8 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								{
 									xtype:'comparativareferenciacatastralgrid',
 									reference: 'comparativareferenciacatastralgridref',
-									idActivo:this.lookupController().getViewModel().get('activo').get('id')
+									idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+									disabled: true
 								}
 							]
 					}

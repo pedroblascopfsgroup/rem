@@ -117,8 +117,8 @@ public class CatastroManager implements CatastroApi {
 		
 		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
 		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
-		dto.setRefCatastral("Prueba");
-		dto2.setRefCatastral("Prueba2");
+		dto.setRefCatastral("PRUEBA1VJ9395S0058HL");
+		dto2.setRefCatastral("PRUEBA2VJ9395S0058HL");
 		
 		listDto.add(dto);
 		listDto.add(dto2);
@@ -126,173 +126,200 @@ public class CatastroManager implements CatastroApi {
 		return listDto;
 	}
 
-
+	@Override
+	public List<DtoDatosCatastroGrid> validarCatastro (DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro){
+		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
+		List<DtoDatosCatastroGrid> listDtoGenerales = this. validarCatastroDatosBásicos(dtoCatastroRem, dtoCatastro);
+		List<DtoDatosCatastroGrid> listDtoDireccion = this. validarCatastroDireccion(dtoCatastroRem, dtoCatastro);
+		
+		listDto.addAll(listDtoDireccion);
+		listDto.addAll(listDtoGenerales);
+		
+		return listDto;
+	}
 
 	@Override
-	public List<DtoDatosCatastroGrid> validarCatastro(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro) {
+	public List<DtoDatosCatastroGrid> validarCatastroDatosBásicos(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro) {
 		
 		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
 		try {
 			
-			DtoDatosCatastroGrid dtoSP = new DtoDatosCatastroGrid();
+			DtoDatosCatastroGrid dto = new DtoDatosCatastroGrid();
 			
 			if(dtoCatastroRem.getSuperficieParcela() != null && dtoCatastro.getSuperficieParcela() != null) {
-				dtoSP.setNombre(SUPERFICIE_PARCELA);
-				dtoSP.setDatoRem(dtoCatastroRem.getSuperficieParcela().toString());
-				dtoSP.setDatoCatastro(dtoCatastro.getSuperficieParcela().toString());
-				dtoSP.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieParcela(),dtoCatastro.getSuperficieParcela())));
+				dto.setNombre(SUPERFICIE_PARCELA);
+				dto.setDatoRem(dtoCatastroRem.getSuperficieParcela().toString());
+				dto.setDatoCatastro(dtoCatastro.getSuperficieParcela().toString());
+				dto.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieParcela(),dtoCatastro.getSuperficieParcela())));
 			}else {
-				dtoSP.setNombre(SUPERFICIE_PARCELA);
-				dtoSP.setDatoRem(dtoCatastroRem.getSuperficieParcela() == null ? "" : dtoCatastroRem.getSuperficieParcela().toString());
-				dtoSP.setDatoCatastro(dtoCatastro.getSuperficieParcela() == null ? "" : dtoCatastro.getSuperficieParcela().toString());
+				dto.setNombre(SUPERFICIE_PARCELA);
+				dto.setDatoRem(dtoCatastroRem.getSuperficieParcela() == null ? "" : dtoCatastroRem.getSuperficieParcela().toString());
+				dto.setDatoCatastro(dtoCatastro.getSuperficieParcela() == null ? "" : dtoCatastro.getSuperficieParcela().toString());
 			}
-			listDto.add(dtoSP);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoSC = new DtoDatosCatastroGrid();
+			 dto = new DtoDatosCatastroGrid();
 			if(dtoCatastroRem.getSuperficieConstruida() != null && dtoCatastro.getSuperficieConstruida() != null) {
-				dtoSC.setNombre(SUPERFICIE_CONSTRUIDA);
-				dtoSC.setDatoRem(dtoCatastroRem.getSuperficieConstruida().toString());
-				dtoSC.setDatoCatastro(dtoCatastro.getSuperficieConstruida().toString());
-				dtoSC.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieConstruida(),dtoCatastro.getSuperficieConstruida())));
+				dto.setNombre(SUPERFICIE_CONSTRUIDA);
+				dto.setDatoRem(dtoCatastroRem.getSuperficieConstruida().toString());
+				dto.setDatoCatastro(dtoCatastro.getSuperficieConstruida().toString());
+				dto.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getSuperficieConstruida(),dtoCatastro.getSuperficieConstruida())));
 			}else {
-				dtoSC.setNombre(SUPERFICIE_CONSTRUIDA);
-				dtoSC.setDatoRem(dtoCatastroRem.getSuperficieConstruida() == null ? "" : dtoCatastroRem.getSuperficieConstruida().toString());
-				dtoSC.setDatoCatastro(dtoCatastro.getSuperficieConstruida() == null ? "" : dtoCatastro.getSuperficieConstruida().toString());
+				dto.setNombre(SUPERFICIE_CONSTRUIDA);
+				dto.setDatoRem(dtoCatastroRem.getSuperficieConstruida() == null ? "" : dtoCatastroRem.getSuperficieConstruida().toString());
+				dto.setDatoCatastro(dtoCatastro.getSuperficieConstruida() == null ? "" : dtoCatastro.getSuperficieConstruida().toString());
 			}
-			listDto.add(dtoSC);
 			
-			DtoDatosCatastroGrid dtoGeo = new DtoDatosCatastroGrid();
+			listDto.add(dto);
+			
+			dto = new DtoDatosCatastroGrid();
 			if(dtoCatastroRem.getGeodistancia() != null && dtoCatastro.getGeodistancia() != null) {
-				dtoGeo.setNombre(GEODISTANCIA);
-				dtoGeo.setDatoRem(dtoCatastroRem.getGeodistancia().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getGeodistancia().toString());
-				dtoGeo.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getGeodistancia(),dtoCatastro.getGeodistancia())));
+				dto.setNombre(GEODISTANCIA);
+				dto.setDatoRem(dtoCatastroRem.getGeodistancia().toString());
+				dto.setDatoCatastro(dtoCatastro.getGeodistancia().toString());
+				dto.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getGeodistancia(),dtoCatastro.getGeodistancia())));
 			}else {
-				dtoGeo.setNombre(GEODISTANCIA);
-				dtoGeo.setDatoRem(dtoCatastroRem.getGeodistancia() == null ? "" : dtoCatastroRem.getGeodistancia().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getGeodistancia() == null ? "" : dtoCatastro.getGeodistancia().toString());
+				dto.setNombre(GEODISTANCIA);
+				dto.setDatoRem(dtoCatastroRem.getGeodistancia() == null ? "" : dtoCatastroRem.getGeodistancia().toString());
+				dto.setDatoCatastro(dtoCatastro.getGeodistancia() == null ? "" : dtoCatastro.getGeodistancia().toString());
 			}
-			listDto.add(dtoGeo);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoAC = new DtoDatosCatastroGrid();
+			dto = new DtoDatosCatastroGrid();
 			if(dtoCatastroRem.getAnyoConstruccion() != null && dtoCatastro.getAnyoConstruccion() != null) {
-				dtoAC.setNombre(ANYO_CONSTRUCCION);
-				dtoAC.setDatoRem(dtoCatastroRem.getAnyoConstruccion().toString());
-				dtoAC.setDatoCatastro(dtoCatastro.getAnyoConstruccion().toString());
-				dtoAC.setCoincidencia(calculoIgual(dtoCatastroRem.getAnyoConstruccion().toString(),dtoCatastro.getAnyoConstruccion().toString()));
+				dto.setNombre(ANYO_CONSTRUCCION);
+				dto.setDatoRem(dtoCatastroRem.getAnyoConstruccion().toString());
+				dto.setDatoCatastro(dtoCatastro.getAnyoConstruccion().toString());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getAnyoConstruccion().toString(),dtoCatastro.getAnyoConstruccion().toString()));
 			}else {
-				dtoAC.setNombre(ANYO_CONSTRUCCION);
-				dtoAC.setDatoRem(dtoCatastroRem.getAnyoConstruccion() == null ? "" : dtoCatastroRem.getAnyoConstruccion().toString());
-				dtoAC.setDatoCatastro(dtoCatastro.getAnyoConstruccion() == null ? "" : dtoCatastro.getAnyoConstruccion().toString());
+				dto.setNombre(ANYO_CONSTRUCCION);
+				dto.setDatoRem(dtoCatastroRem.getAnyoConstruccion() == null ? "" : dtoCatastroRem.getAnyoConstruccion().toString());
+				dto.setDatoCatastro(dtoCatastro.getAnyoConstruccion() == null ? "" : dtoCatastro.getAnyoConstruccion().toString());
 			}
 			
-			listDto.add(dtoAC); 
+			listDto.add(dto); 
 			
-			DtoDatosCatastroGrid dtoTP = new DtoDatosCatastroGrid();
-			if(!Checks.esNulo(dtoCatastroRem.getTipoVia()) && !Checks.esNulo(dtoCatastroRem.getTipoViaCod()) && !Checks.esNulo(dtoCatastro.getTipoVia()) && !Checks.esNulo(dtoCatastro.getTipoViaCod())){
-				dtoTP.setNombre(TIPO_VIA);
-				dtoTP.setDatoRem(dtoCatastroRem.getTipoVia());
-				dtoTP.setDatoCatastro(dtoCatastro.getTipoVia());
-				dtoTP.setCoincidencia(calculoIgual(dtoCatastroRem.getTipoViaCod(),dtoCatastro.getTipoViaCod()));
+			dto = new DtoDatosCatastroGrid();
+			
+			dto.setNombre(LATITUD);
+			if(dtoCatastroRem.getLatitud() != null && dtoCatastro.getLatitud() != null) {
+				dto.setDatoRem(dtoCatastroRem.getLatitud().toString());
+				dto.setDatoCatastro(dtoCatastro.getLatitud().toString());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getLatitud().toString(),dtoCatastro.getLatitud().toString()));
 			}else {
-				dtoTP.setNombre(TIPO_VIA);
-				dtoTP.setDatoRem(dtoCatastroRem.getTipoVia());
-				dtoTP.setDatoCatastro(dtoCatastro.getTipoVia());
+				dto.setDatoRem(dtoCatastroRem.getLatitud() == null ? "" : dtoCatastroRem.getLatitud().toString());
+				dto.setDatoCatastro(dtoCatastro.getLatitud() == null ? "" : dtoCatastro.getLatitud().toString());
+			}
+			listDto.add(dto);
+			
+			dto = new DtoDatosCatastroGrid();
+			dto.setNombre(LONGITUD);
+			if(dtoCatastroRem.getLongitud() != null && dtoCatastro.getLongitud() != null) {
+				dto.setDatoRem(dtoCatastroRem.getLongitud().toString());
+				dto.setDatoCatastro(dtoCatastro.getLongitud().toString());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getLongitud().toString(),dtoCatastro.getLongitud().toString()));
+			}else {
+				dto.setDatoRem(dtoCatastroRem.getLongitud() == null ? "" : dtoCatastroRem.getLongitud().toString());
+				dto.setDatoCatastro(dtoCatastro.getLongitud() == null ? "" : dtoCatastro.getLongitud().toString());
+			}
+			listDto.add(dto);
+			
+
+		} catch (Exception e) {
+			logger.error("error en CatastroManager metodo validarCatastro - ", e);
+		}
+		return listDto;
+	}
+	
+	@Override
+	public List<DtoDatosCatastroGrid> validarCatastroDireccion(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro) {
+		
+		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
+		try {
+			
+			DtoDatosCatastroGrid dto = new DtoDatosCatastroGrid();
+			
+			dto = new DtoDatosCatastroGrid();
+			if(!Checks.esNulo(dtoCatastroRem.getTipoVia()) && !Checks.esNulo(dtoCatastroRem.getTipoViaCod()) && !Checks.esNulo(dtoCatastro.getTipoVia()) && !Checks.esNulo(dtoCatastro.getTipoViaCod())){
+				dto.setNombre(TIPO_VIA);
+				dto.setDatoRem(dtoCatastroRem.getTipoVia());
+				dto.setDatoCatastro(dtoCatastro.getTipoVia());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getTipoViaCod(),dtoCatastro.getTipoViaCod()));
+			}else {
+				dto.setNombre(TIPO_VIA);
+				dto.setDatoRem(dtoCatastroRem.getTipoVia());
+				dto.setDatoCatastro(dtoCatastro.getTipoVia());
 			}
 	
-			listDto.add(dtoTP);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoCP = new DtoDatosCatastroGrid();
+			dto = new DtoDatosCatastroGrid();
 			if((dtoCatastroRem.getCodigoPostal() != null && !dtoCatastroRem.getCodigoPostal().isEmpty())  
 					&& (dtoCatastro.getCodigoPostal() != null && !dtoCatastro.getCodigoPostal().isEmpty())) {
-				dtoCP.setNombre(CODIGO_POSTAL);
-				dtoCP.setDatoRem(dtoCatastroRem.getCodigoPostal());
-				dtoCP.setDatoCatastro(dtoCatastro.getCodigoPostal());
-				dtoCP.setCoincidencia(calculoIgual(dtoCatastroRem.getCodigoPostal(),dtoCatastro.getCodigoPostal()));
+				dto.setNombre(CODIGO_POSTAL);
+				dto.setDatoRem(dtoCatastroRem.getCodigoPostal());
+				dto.setDatoCatastro(dtoCatastro.getCodigoPostal());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getCodigoPostal(),dtoCatastro.getCodigoPostal()));
 					
 			}else {
-				dtoCP.setNombre(CODIGO_POSTAL);
-				dtoCP.setDatoRem(dtoCatastroRem.getCodigoPostal());
-				dtoCP.setDatoCatastro(dtoCatastro.getCodigoPostal());
+				dto.setNombre(CODIGO_POSTAL);
+				dto.setDatoRem(dtoCatastroRem.getCodigoPostal());
+				dto.setDatoCatastro(dtoCatastro.getCodigoPostal());
 			}
 			
-			listDto.add(dtoCP);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoMu = new DtoDatosCatastroGrid();
+			dto = new DtoDatosCatastroGrid();
 			if((dtoCatastroRem.getMunicipio() != null && !dtoCatastroRem.getMunicipio().isEmpty()) 
 					&& (dtoCatastro.getMunicipio() != null && !dtoCatastro.getMunicipio().isEmpty())) {
-				dtoMu.setNombre(MUNICIPIO);
-				dtoMu.setDatoRem(dtoCatastroRem.getMunicipio());
-				dtoMu.setDatoCatastro(dtoCatastro.getMunicipio());
-				dtoMu.setCoincidencia(calculoIgual(dtoCatastroRem.getMunicipioCod(),dtoCatastro.getMunicipioCod()));
+				dto.setNombre(MUNICIPIO);
+				dto.setDatoRem(dtoCatastroRem.getMunicipio());
+				dto.setDatoCatastro(dtoCatastro.getMunicipio());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getMunicipioCod(),dtoCatastro.getMunicipioCod()));
 			}else {
-				dtoMu.setNombre(MUNICIPIO);
-				dtoMu.setDatoRem(dtoCatastroRem.getMunicipio());
-				dtoMu.setDatoCatastro(dtoCatastro.getMunicipio());
+				dto.setNombre(MUNICIPIO);
+				dto.setDatoRem(dtoCatastroRem.getMunicipio());
+				dto.setDatoCatastro(dtoCatastro.getMunicipio());
 			}
 			
-			listDto.add(dtoMu);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoPR = new DtoDatosCatastroGrid();
+			dto = new DtoDatosCatastroGrid();
 			if((dtoCatastroRem.getProvincia() != null && !dtoCatastroRem.getProvincia().isEmpty()) 
 					&& (dtoCatastro.getProvincia() != null && !dtoCatastro.getProvincia().isEmpty())){
-				dtoPR.setNombre(PROVINCIA);
-				dtoPR.setDatoRem(dtoCatastroRem.getProvincia());
-				dtoPR.setDatoCatastro(dtoCatastro.getProvincia());
-				dtoPR.setCoincidencia(calculoIgual(dtoCatastroRem.getProvinciaCod(),dtoCatastro.getProvinciaCod()));
+				dto.setNombre(PROVINCIA);
+				dto.setDatoRem(dtoCatastroRem.getProvincia());
+				dto.setDatoCatastro(dtoCatastro.getProvincia());
+				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getProvinciaCod(),dtoCatastro.getProvinciaCod()));
 			}else {
-				dtoPR.setNombre(PROVINCIA);
-				dtoPR.setDatoRem(dtoCatastroRem.getProvincia());
-				dtoPR.setDatoCatastro(dtoCatastro.getProvincia());
+				dto.setNombre(PROVINCIA);
+				dto.setDatoRem(dtoCatastroRem.getProvincia());
+				dto.setDatoCatastro(dtoCatastro.getProvincia());
 			}
 			
-			listDto.add(dtoPR);
+			listDto.add(dto);
 			
-			DtoDatosCatastroGrid dtoNC = new DtoDatosCatastroGrid();
+			dto = new DtoDatosCatastroGrid();
 			if(!Checks.esNulo(dtoCatastroRem.getNombreVia()) && !Checks.esNulo(dtoCatastro.getNombreVia())) {
 				Double probabilidad = calculoSimilaridad(dtoCatastroRem.getNombreVia(),dtoCatastro.getNombreVia());
-				dtoNC.setNombre(NOMBRE_CALLE);
-				dtoNC.setDatoRem(dtoCatastroRem.getNombreVia());
-				dtoNC.setDatoCatastro(dtoCatastro.getNombreVia());
-				dtoNC.setCoincidencia(calculoCoincidencia(probabilidad));
-				dtoNC.setProbabilidad(calculoProbabilidad(probabilidad));
+				dto.setNombre(NOMBRE_CALLE);
+				dto.setDatoRem(dtoCatastroRem.getNombreVia());
+				dto.setDatoCatastro(dtoCatastro.getNombreVia());
+				dto.setCoincidencia(calculoCoincidencia(probabilidad));
+				dto.setProbabilidad(calculoProbabilidad(probabilidad));
 			}else {
-				dtoNC.setNombre(NOMBRE_CALLE);
-				dtoNC.setDatoRem(dtoCatastroRem.getNombreVia());
-				dtoNC.setDatoCatastro(dtoCatastro.getNombreVia());
+				dto.setNombre(NOMBRE_CALLE);
+				dto.setDatoRem(dtoCatastroRem.getNombreVia());
+				dto.setDatoCatastro(dtoCatastro.getNombreVia());
 			}
 			
-			listDto.add(dtoNC);
-			
-			dtoGeo = new DtoDatosCatastroGrid();
-			
-			dtoGeo.setNombre(LATITUD);
-			if(dtoCatastroRem.getLatitud() != null && dtoCatastro.getLatitud() != null) {
-				dtoGeo.setDatoRem(dtoCatastroRem.getLatitud().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getLatitud().toString());
-				dtoGeo.setCoincidencia(calculoIgual(dtoCatastroRem.getLatitud().toString(),dtoCatastro.getLatitud().toString()));
-			}else {
-				dtoGeo.setDatoRem(dtoCatastroRem.getLatitud() == null ? "" : dtoCatastroRem.getLatitud().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getLatitud() == null ? "" : dtoCatastro.getLatitud().toString());
-			}
-			listDto.add(dtoGeo);
-			
-			dtoGeo = new DtoDatosCatastroGrid();
-			dtoGeo.setNombre(LONGITUD);
-			if(dtoCatastroRem.getLongitud() != null && dtoCatastro.getLongitud() != null) {
-				dtoGeo.setDatoRem(dtoCatastroRem.getLongitud().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getLongitud().toString());
-				dtoGeo.setCoincidencia(calculoIgual(dtoCatastroRem.getLongitud().toString(),dtoCatastro.getLongitud().toString()));
-			}else {
-				dtoGeo.setDatoRem(dtoCatastroRem.getLongitud() == null ? "" : dtoCatastroRem.getLongitud().toString());
-				dtoGeo.setDatoCatastro(dtoCatastro.getLongitud() == null ? "" : dtoCatastro.getLongitud().toString());
-			}
-			listDto.add(dtoGeo);
+			listDto.add(dto);
 			
 		} catch (Exception e) {
 			logger.error("error en CatastroManager metodo validarCatastro - ", e);
 		}
 		return listDto;
+	
 	}
 	
 	private String calculoProbabilidad(Double resultado) {

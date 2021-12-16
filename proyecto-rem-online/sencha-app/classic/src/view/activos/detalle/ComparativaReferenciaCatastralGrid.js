@@ -86,21 +86,7 @@ Ext.define('HreRem.view.activos.detalle.ComparativaReferenciaCatastralGrid', {
             }            
 		 
 		];	
-		
-		
-		me.dockedItems = [
-	        {
-	            xtype: 'pagingtoolbar',
-	            dock: 'bottom',
-	            itemId: 'activosPaginationToolbar',
-	            inputItemWidth: 60,
-	            displayInfo: true,
-	            bind: {
-	                store: '{storeComparativaRefCatastral}'
-	            }
-	        }
-	    ];
-		
+				
 		me.callParent();
 
 	}

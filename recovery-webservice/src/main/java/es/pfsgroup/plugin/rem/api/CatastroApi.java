@@ -28,6 +28,10 @@ public interface CatastroApi {
 	public List<DtoDatosCatastroGrid> getGridReferenciaCatastralByRefCatastral(String refCatastral, Long idActivo);
 
 	void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia);
+
+	List<DtoDatosCatastroGrid> validarCatastroDatosBásicos(DtoDatosCatastro dtoCatastroRem,DtoDatosCatastro dtoCatastro);
+
+	List<DtoDatosCatastroGrid> validarCatastroDireccion(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro);
 	
 }
 

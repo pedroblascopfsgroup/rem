@@ -67,7 +67,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
                 		this.up('form').getForm().findField('nombre').setValue();
                 		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
                 		this.up('form').getForm().findField('fechaDocumento').setValue();
-						this.up('form').getForm().findField('orden').setValue();
+                		this.up('form').getForm().findField('numeroActivoFoto').setValue();
+						if(this.up('form').getForm().findField('orden') != null)
+							this.up('form').getForm().findField('orden').setValue();
 					}
                 },
                 itemclick: function(dataview,record) {
@@ -118,7 +120,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 							bind: {value: '{id}',hidden:true},
 							fieldLabel:  "id"
 						},
-						{ 
+						{
+							name: 'numeroActivoFoto',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.numero.activo'),
 		                	reference: 'numeroActivoFoto',
 		                	bind: {

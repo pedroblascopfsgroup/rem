@@ -23,6 +23,11 @@ public class DtoDatosCatastro  {
 	private String tipoViaCod;
 	private BigDecimal latitud;
 	private BigDecimal longitud;
+	private String puerta;
+	private String planta;
+	private String domicilio;
+	private Boolean catastroCorrecto;
+	
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -137,6 +142,30 @@ public class DtoDatosCatastro  {
 	}
 	public void setTipoViaCod(String tipoViaCod) {
 		this.tipoViaCod = tipoViaCod;
+	}
+	public String getPuerta() {
+		return puerta;
+	}
+	public void setPuerta(String puerta) {
+		this.puerta = puerta;
+	}
+	public String getPlanta() {
+		return planta;
+	}
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+	public String getDomicilio() {
+		return domicilio;
+	}
+	public void setDomicilio(String domicilio) {
+		this.domicilio = domicilio;
+	}
+	public Boolean getCatastroCorrecto() {
+		return catastroCorrecto;
+	}
+	public void setCatastroCorrecto(Boolean catastroCorrecto) {
+		this.catastroCorrecto = catastroCorrecto;
 	}  
 	
 }

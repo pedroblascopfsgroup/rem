@@ -16,7 +16,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.controller.CatastroController;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -28,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.Catastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
-import es.pfsgroup.plugin.rem.thread.ValidarCatastroAsincrono;
 
 @Service("catastroManager")
 public class CatastroManager implements CatastroApi {
@@ -39,8 +37,6 @@ public class CatastroManager implements CatastroApi {
     @Autowired
 	private GenericABMDao genericDao;
     
-    @Autowired
-	private GenericAdapter genericAdapter;
     
     protected static final Log logger = LogFactory.getLog(CatastroController.class);
     
@@ -80,6 +76,9 @@ public class CatastroManager implements CatastroApi {
 			dto.setTipoVia(activo.getTipoVia().getDescripcion());
 			dto.setProvincia(activo.getProvinciaDescripcion());
 			dto.setMunicipio(activo.getMunicipioDescripcion());
+			dto.setPuerta(activo.getPuerta());
+			dto.setPlanta(activo.getPiso());
+			dto.setDomicilio(activo.getNumeroDomicilio());
 			
 			if(infoR != null && infoR.getSuperficieParcela() != null) {
 				dto.setSuperficieParcela((double) infoR.getSuperficieParcela());
@@ -117,11 +116,19 @@ public class CatastroManager implements CatastroApi {
 		
 		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
 		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
+		DtoDatosCatastro dto3 = this.getDatosCatastroRem(idActivo);
 		dto.setRefCatastral("PRUEBA1VJ9395S0058HL");
 		dto2.setRefCatastral("PRUEBA2VJ9395S0058HL");
+		dto3.setRefCatastral("PRUEBA3VJ9395S0058HL");
+		
+		dto.setCatastroCorrecto(true);
+		dto2.setCatastroCorrecto(false);
+
+
 		
 		listDto.add(dto);
 		listDto.add(dto2);
+		listDto.add(dto3);
 		
 		return listDto;
 	}
@@ -509,22 +516,25 @@ public class CatastroManager implements CatastroApi {
 	@Override
 	@Transactional(readOnly = false)
 	public void saveCatastro(Long idActivo, List<String> arrayReferencias) {
-		ArrayList<String> listReferencias = new ArrayList<String>();
 		Activo activo = activoDao.get(idActivo);
-		for (String refCatastral : arrayReferencias) {
-			Catastro catastro = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS,  "refCatastral", refCatastral));
-			ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,refCatastral);
-			if(catastro != null && activo != null && activoCatastro == null) {				
-				activoCatastro = new ActivoCatastro();
-				activoCatastro.setAuditoria(Auditoria.getNewInstance());
-				activoCatastro.setActivo(activo);
-				activoCatastro.setRefCatastral(refCatastral);
-				genericDao.save(ActivoCatastro.class, activoCatastro);
-				listReferencias.add(refCatastral);	
+		
+		
+		if(activo != null) {	
+			
+			
+			for (String refCatastral : arrayReferencias) {
+				Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, refCatastral);
+				ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,refCatastral);
+				if(catastro != null && activoCatastro == null) {				
+					activoCatastro = new ActivoCatastro();
+					activoCatastro.setAuditoria(Auditoria.getNewInstance());
+					activoCatastro.setActivo(activo);
+					activoCatastro.setCatastro(catastro);
+					//ac.setCatastroCorrecto(formatoCatastro);
+					genericDao.save(ActivoCatastro.class, activoCatastro);
+				}
 			}
 		}
-		Thread hilo = new Thread(new ValidarCatastroAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listReferencias, idActivo));
-		hilo.start();
 	}
 	
 	@Override
@@ -537,11 +547,8 @@ public class CatastroManager implements CatastroApi {
 			if(activoCatastro != null) {
 				DtoDatosCatastro datosCatastro = getDatosCatastro(refCatastral);
 				List<DtoDatosCatastroGrid> datosCatastroList = validarCatastro(datosRem, datosCatastro);
-				
 				boolean coincidencia = checkCoindicenciaCatastro(datosCatastroList);
-				
 				activoCatastro.setCatastroCorrecto(coincidencia);
-				
 				genericDao.save(ActivoCatastro.class, activoCatastro);
 			}
 		}
@@ -564,17 +571,27 @@ public class CatastroManager implements CatastroApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia) {
-		ArrayList<String> listReferencias = new ArrayList<String>();
+	public void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia, Boolean formatoCatastro) {
 		ActivoCatastro acn = getActivoCatastroByActivoAndReferencia(idActivo,nuevaReferencia);
 		ActivoCatastro ac = getActivoCatastroByActivoAndReferencia(idActivo, referenciaAnterior);
-		if(ac != null && acn == null) {
-			ac.setRefCatastral(nuevaReferencia);
+		Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, nuevaReferencia);
+		if(ac != null && catastro != null && acn == null) {
+			ac.setCatastro(catastro);
+			ac.setCatastroCorrecto(formatoCatastro);
 			genericDao.save(ActivoCatastro.class, ac);
-			listReferencias.add(nuevaReferencia);
 		}
+	}
+	
+	private Catastro getCatastroByActivoAndRef(Long idActivo, String refCatastral) {
+		Catastro catastro = null;
 		
-		Thread hilo = new Thread(new ValidarCatastroAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listReferencias, idActivo));
-		hilo.start();
+		Activo activo = activoDao.getActivoById(idActivo);
+		if(activo != null) {
+			Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS,  "provincia.codigo", activo.getProvincia());
+			Filter filtroMunicipio =genericDao.createFilter(FilterType.EQUALS,  "localidad.codigo", activo.getMunicipio());
+			Filter filtroRefCatastral  =genericDao.createFilter(FilterType.EQUALS,  "refCatastral", refCatastral);
+			catastro = genericDao.get(Catastro.class, filtroRefCatastral,filtroProvincia, filtroMunicipio);	
+		}
+		return catastro;
 	}
 }

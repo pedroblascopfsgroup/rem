@@ -98,7 +98,7 @@ public class CatastroController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia, ModelMap model){
 		try{
-			catastroApi.updateCatastro( idActivo,  referenciaAnterior,  nuevaReferencia);
+			catastroApi.updateCatastro( idActivo,  referenciaAnterior,  nuevaReferencia, true);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

@@ -77,7 +77,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
 		  								colspan: 3,
 		  								allowBlank: false,
 		  								width: 500,	
-		  								minLength: 20,
+		  								minLength: 14,
 		  								maxLength: 20,
 		  								value: referenciaModificar,
 		  								minLengthText: 'Debe tener 20 digitos',

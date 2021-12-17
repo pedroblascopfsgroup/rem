@@ -102,16 +102,16 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType anyoRehabilitacion;
 	@WebcomRequired
 	private StringDataType licenciaApertura;
-	@WebcomRequired
-	private DateDataType fechaRecepcionInforme;//falta
+	//@WebcomRequired
+	//private DateDataType fechaRecepcionInforme;//falta
 	@WebcomRequired
 	private DateDataType ultimaModificacionInforme;
 	@WebcomRequired
 	private StringDataType ultimaModificacionInformePor;
-	@WebcomRequired
-	private DateDataType primerEnvioInformeCompletado;//falta
-	@WebcomRequired
-	private StringDataType primerEnvioInformeCompletadoPor;//falta
+	//@WebcomRequired
+	//private DateDataType primerEnvioInformeCompletado;//falta
+	//@WebcomRequired
+	//private StringDataType primerEnvioInformeCompletadoPor;//falta
 	
 	
 	public LongDataType getIdUsuarioRemAccion() {
@@ -384,12 +384,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setLicenciaApertura(StringDataType licenciaApertura) {
 		this.licenciaApertura = licenciaApertura;
 	}
-	public DateDataType getFechaRecepcionInforme() {
+	/*public DateDataType getFechaRecepcionInforme() {
 		return fechaRecepcionInforme;
 	}
 	public void setFechaRecepcionInforme(DateDataType fechaRecepcionInforme) {
 		this.fechaRecepcionInforme = fechaRecepcionInforme;
-	}
+	}*/
 	public DateDataType getUltimaModificacionInforme() {
 		return ultimaModificacionInforme;
 	}
@@ -402,7 +402,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setUltimaModificacionInformePor(StringDataType ultimaModificacionInformePor) {
 		this.ultimaModificacionInformePor = ultimaModificacionInformePor;
 	}
-	public DateDataType getPrimerEnvioInformeCompletado() {
+	/*public DateDataType getPrimerEnvioInformeCompletado() {
 		return primerEnvioInformeCompletado;
 	}
 	public void setPrimerEnvioInformeCompletado(DateDataType primerEnvioInformeCompletado) {
@@ -413,5 +413,5 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setPrimerEnvioInformeCompletadoPor(StringDataType primerEnvioInformeCompletadoPor) {
 		this.primerEnvioInformeCompletadoPor = primerEnvioInformeCompletadoPor;
-	}	
+	}*/	
 }

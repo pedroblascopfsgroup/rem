@@ -60,7 +60,18 @@ DECLARE
       T_TIPO_DATA('137','Comisión gestión ventas','13'),
       T_TIPO_DATA('138','Comisión gestión ventas','12'),
       T_TIPO_DATA('139','Campañas','17'),
-      T_TIPO_DATA('140','Cuota devengo anterior título','05')
+      T_TIPO_DATA('140','Cuota devengo anterior título','05'),
+      T_TIPO_DATA('141','IBI devengo anterior título','01'),
+      T_TIPO_DATA('142','Adecuaciones para el cumplimiento de habitabilidad según normativa','15'),
+      T_TIPO_DATA('143','Acometidas','15'),
+      T_TIPO_DATA('144','Rehabilitaciones','15'),
+      T_TIPO_DATA('145','Comisión Gestión stock Prorrata 0%','13'),
+      T_TIPO_DATA('146','Comisión Gestión stock Prorrata 100%','13'),
+      T_TIPO_DATA('147','Comisión Gestión Gestorías Prorrata 0%','13'),
+      T_TIPO_DATA('148','Comisión Gestión Gestorías Prorrata 100%','13'),
+      T_TIPO_DATA('149','Comisión Gestión Gestorías Cuota Fijo','13'),
+      T_TIPO_DATA('150','Tarifa plana Prorrata 0%','13'),
+      T_TIPO_DATA('151','Tarifa plana Prorrata 100%','13')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 	

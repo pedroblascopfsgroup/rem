@@ -1,7 +1,12 @@
 package es.pfsgroup.plugin.rem.activo.catastro;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +23,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.controller.CatastroController;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -28,6 +34,12 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoCatastroCorrecto;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
+import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Service("catastroManager")
 public class CatastroManager implements CatastroApi {
@@ -58,6 +70,23 @@ public class CatastroManager implements CatastroApi {
 	private static final String NOMBRE_CALLE= "Nombre calle";
 	private static final String LATITUD= "Latitud";
 	private static final String LONGITUD= "Longitud";
+	
+	private static final String REM3_URL = "rem3.base.url";
+	private static final String URL_CONSULTA_CATASTRO = "rem3.consulta.catastro";
+	private static final int TIMEOUT_1_MINUTO =60;
+    private static final String GET_METHOD = "GET";
+    
+    @Resource
+    private Properties appProperties;
+    
+    @Autowired
+    private HttpClientFacade httpClientFacade;
+
+    @Autowired
+    private RestLlamadaDao llamadaDao;
+
+    @Autowired
+    private LogTrustWebService trustMe;
     
 	public DtoDatosCatastro getDatosCatastroRem(Long idActivo) {
 		DtoDatosCatastro dto = new DtoDatosCatastro();
@@ -112,7 +141,7 @@ public class CatastroManager implements CatastroApi {
 		return dto;
 	}
 	
-	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo) {
+	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo, String refCatastral) {
 		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
 		
 		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
@@ -127,9 +156,15 @@ public class CatastroManager implements CatastroApi {
 
 
 		
+		dto.setRefCatastral("Prueba");
+		dto2.setRefCatastral("Prueba2");		
 		listDto.add(dto);
 		listDto.add(dto2);
 		listDto.add(dto3);
+		
+		
+		List<DtoDatosCatastro> lista = consultaCatastroRem3(idActivo, refCatastral);
+		
 		
 		return listDto;
 	}
@@ -610,4 +645,102 @@ public class CatastroManager implements CatastroApi {
 		
 		return dto;
 	}
+	
+	private List<DtoDatosCatastro> consultaCatastroRem3(Long idActivo, String refCatastral){
+		Activo activo = activoDao.getActivoById(idActivo);
+		List<DtoDatosCatastro> lista = new ArrayList<DtoDatosCatastro>();
+		
+		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getBien()) && !Checks.esNulo(activo.getBien().getLocalizaciones().get(0))
+				&& !Checks.esNulo(activo.getBien().getLocalizaciones().get(0).getLocalidad()) && !Checks.esNulo(activo.getBien().getLocalizaciones().get(0).getProvincia())) {
+			
+			Map<String, String> headers = new HashMap<String, String>();
+	        headers.put("Content-Type", "application/json");
+				
+			String urlBase = !Checks.esNulo(appProperties.getProperty(REM3_URL))
+			        ? appProperties.getProperty(REM3_URL) : "";
+			String urlEndpoint = !Checks.esNulo(appProperties.getProperty(URL_CONSULTA_CATASTRO))
+			        ? appProperties.getProperty(URL_CONSULTA_CATASTRO) : "";
+			
+			StringBuilder urlConsultaCatastro = new StringBuilder();
+			urlConsultaCatastro.append(urlBase);
+			urlConsultaCatastro.append(urlEndpoint);
+			urlConsultaCatastro.append("/"+refCatastral);
+			urlConsultaCatastro.append("/"+activo.getBien().getLocalizaciones().get(0).getProvincia().getCodigo());
+			urlConsultaCatastro.append("/"+activo.getBien().getLocalizaciones().get(0).getLocalidad().getCodigo());
+			
+			JSONObject respuesta = null;
+			String ex = null;		
+	    	String mensaje = null;
+	    	boolean resultadoOK = false;
+
+			logger.error("[CONSULTA CATASTRO] URL: "+urlConsultaCatastro);
+	        
+	        try{			
+				respuesta = procesarPeticion(this.httpClientFacade, urlConsultaCatastro.toString(), GET_METHOD, headers, "{}", TIMEOUT_1_MINUTO, "UTF-8");	
+				
+				JSONObject menuItems = (JSONObject) respuesta.get("data");
+				
+				JSONObject success = (JSONObject)menuItems.get("success");	
+				
+				if (success.toString() == "true") {
+					JSONArray catastro = (JSONArray)menuItems.get("catastro");		
+
+					for (Object item : catastro) {
+						//rellenar lista List<DtoDatosCatastro> 
+					}
+					
+					resultadoOK = true;
+				}
+
+				
+				logger.debug("[PETICION] RESPUESTA: "+ respuesta);
+			}catch (HttpClientException e1) {
+				e1.printStackTrace();
+				ex = e1.getMessage();
+			}catch (Exception e) {
+				logger.error("Error al procesar petición para consultar catastro", e);
+				logger.error(e.getMessage());
+			}
+			
+			if (resultadoOK == true) {
+				logger.debug("[CONSULTA CATASTRO] MENSAJE: "+ mensaje);
+				logger.debug("[CONSULTA CATASTRO] RESULTADO: "+ resultadoOK);
+			} else {
+				logger.error("[CONSULTA CATASTRO] URL: "+urlConsultaCatastro);
+				logger.error("[CONSULTA CATASTRO] MENSAJE: "+ mensaje);
+				logger.error("[CONSULTA CATASTRO] RESULTADO: "+ resultadoOK);
+			}
+			
+					
+			registrarLlamada(urlConsultaCatastro.toString(),null, respuesta != null ? respuesta.toString() : null, ex);
+			
+			
+		}
+		
+		return lista;
+		
+	}
+	
+	private JSONObject procesarPeticion(HttpClientFacade httpClientFacade, String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString, int responseTimeOut, String charSet) throws HttpClientException {
+        return httpClientFacade.processRequest(serviceUrl, sendMethod, headers, jsonString, responseTimeOut, charSet);
+    }
+	
+	private void registrarLlamada(String endPoint, String request, String result,String exception) {
+        RestLlamada registro = new RestLlamada();
+        registro.setMetodo("WEBSERVICE");
+        registro.setEndpoint(endPoint);
+        registro.setRequest(request);
+        logger.debug(request);
+        logger.debug("-------------------");
+        logger.debug(result);
+        registro.setException(exception);    
+        try {
+            registro.setResponse(result);
+            llamadaDao.guardaRegistro(registro);
+            trustMe.registrarLlamadaServicioWeb(registro);
+        } catch (Exception e) {
+            logger.error("Error al trazar la llamada al WS", e);
+        }
+    }
+	
 }

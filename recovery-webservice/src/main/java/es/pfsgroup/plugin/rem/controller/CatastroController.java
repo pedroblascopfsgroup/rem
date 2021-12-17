@@ -57,7 +57,7 @@ public class CatastroController extends ParadiseJsonController {
 		try{
 			
 			model.put("datosRem", catastroApi.getDatosCatastroRem(idActivo));
-			model.put("datosCatastro", catastroApi.getDatosCatastroWs(idActivo)); //TODO se tendrá que pasar la referencia catastral
+			model.put("datosCatastro", catastroApi.getDatosCatastroWs(idActivo, refCatastral));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

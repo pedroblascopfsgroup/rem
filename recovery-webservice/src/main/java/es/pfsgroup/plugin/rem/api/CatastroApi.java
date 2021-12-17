@@ -11,7 +11,7 @@ public interface CatastroApi {
 
 	DtoDatosCatastro getDatosCatastroRem(Long idActivo);
 	
-	List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo);
+	List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo, String refCatastral);
 
 	void eliminarCatastro(Long id);
 	

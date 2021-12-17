@@ -64,7 +64,7 @@ BEGIN
 				DBMS_OUTPUT.PUT_LINE('[INFO] Modificando los datos en la tabla '||V_ESQUEMA||'.'||V_TABLA_MGD||'.');
 				
 				V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_MGD||' '||
-				' SET CLIENTE_GD = '''||(V_TMP_FUNCION(5)) ||''', USUARIOMODIFICAR='''||V_USUARIO||''' , FECHAMODIFICAR= SYSDATE '||
+				' SET CLIENTE_GD = '''||(V_TMP_FUNCION(5)) ||''', CLIENTE_WS = UPPER('''||(V_TMP_FUNCION(5)) ||'''), USUARIOMODIFICAR='''||V_USUARIO||''' , FECHAMODIFICAR= SYSDATE '||
 				' WHERE CLIENTE_WS = '''||(V_TMP_FUNCION(4)) ||''' ';
 				
 				EXECUTE IMMEDIATE V_MSQL;
@@ -77,7 +77,7 @@ BEGIN
 					' SELECT '||V_ESQUEMA||'.S_'||V_TABLA_MGD||'.NEXTVAL,' ||
 					'(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.'||V_TABLA_CRA||' WHERE DD_CRA_CODIGO = '''||V_TMP_FUNCION(1)||'''), '||
 					'(SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TABLA_SCR||' WHERE DD_SCR_CODIGO = '''||V_TMP_FUNCION(2)||'''), '''||
-					(V_TMP_FUNCION(5)) ||''','''||V_USUARIO||''', SYSDATE, 0, '''||(V_TMP_FUNCION(4)) ||''' FROM DUAL';
+					(V_TMP_FUNCION(5)) ||''','''||V_USUARIO||''', SYSDATE, 0, UPPER('''||(V_TMP_FUNCION(5)) ||''') FROM DUAL';
 				EXECUTE IMMEDIATE V_MSQL;
 				
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA_MGD||' insertados correctamente. '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||''' - '''||V_TMP_FUNCION(3)||''' - '''||V_TMP_FUNCION(4)||''' ');

@@ -54,7 +54,7 @@ BEGIN
                 
             DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.'||V_TEXT_TABLA||' se actualizan');
 
-                V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET CLIENTE_GD = '''||V_TMP_FUNCION(2)||''', CLIENTE_WS = UPPER('''||V_TMP_FUNCION(2)||'''),
+                V_MSQL:= 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET CLIENTE_GD = '''||V_TMP_FUNCION(2)||''',
 					USUARIOMODIFICAR = '''||V_USUARIO||''',FECHAMODIFICAR = SYSDATE
 					WHERE CLIENTE_GD = '''||V_TMP_FUNCION(1)||'''
                     AND BORRADO = 0 ';

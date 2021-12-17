@@ -915,7 +915,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						listeners: {
 							beforeedit: function(editor, context) {
 					            var estado = context.record.get("campoCodigo");
-					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09';
+					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
 							}

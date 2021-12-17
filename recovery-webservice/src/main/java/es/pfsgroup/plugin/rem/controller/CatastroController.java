@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.Arrays;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 
@@ -82,7 +83,7 @@ public class CatastroController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView saveCatastro(Long idActivo, String[] arrayReferencias, ModelMap model){
+	public ModelAndView saveCatastro(Long idActivo, String[] arrayReferencias , ModelMap model){
 		try{
 			catastroApi.saveCatastro(idActivo, Arrays.asList(arrayReferencias));
 			model.put(RESPONSE_SUCCESS_KEY, true);
@@ -98,7 +99,7 @@ public class CatastroController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia, ModelMap model){
 		try{
-			catastroApi.updateCatastro( idActivo,  referenciaAnterior,  nuevaReferencia, true);
+			catastroApi.updateCatastro( idActivo,  referenciaAnterior,  nuevaReferencia);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

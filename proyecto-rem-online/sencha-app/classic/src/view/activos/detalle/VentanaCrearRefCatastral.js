@@ -23,9 +23,9 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
     	var referenciaModificar = "";
     	var modificar= false;
     	if(Ext.isEmpty(me.refCatastral)){
-    		me.setTitle(HreRem.i18n("Crear referencia catastral"));
+    		me.setTitle(HreRem.i18n("fieldlabel.referencia.catastral.crear"));
     	}else{
-    		me.setTitle(HreRem.i18n("Modificar referencia catastral"));
+    		me.setTitle(HreRem.i18n("fieldlabel.referencia.catastral.modificar"));
     		referenciaModificar = me.refCatastral;
     		modificar = true;  
     	}

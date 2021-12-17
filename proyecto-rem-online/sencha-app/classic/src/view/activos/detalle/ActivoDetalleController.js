@@ -8799,23 +8799,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onClickGuardarReferencia: function(btn){
     	var me = this;
     	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
-    	var datosCatastro = gridDatosCatastro.getStore().getData();
+    	var datosCatastro = gridDatosCatastro.getStore().getData().items;
     	var hayAlgunoMarcado = false;
     	var window =  btn.up('window');
     	var arrayReferencias = [];   
     	var params =  {};
     	for(i = 0; i < datosCatastro.length;i++){ 
-    		if(datosCatastro.items[i].data.check === true){
+    		if(datosCatastro[i].data.check === true){
     			hayAlgunoMarcado = true;
-    			arrayReferencias.push(datosCatastro.items[i].data.refCatastral);
+    			var datCat = datosCatastro[i].data;
+    			var catCorrecto = datCat.catastroCorrecto;
+    			if(Ext.isEmpty(catCorrecto)){
+    				catCorrecto = "";
+    			}
+    			arrayReferencias.push(datCat.refCatastral + "-" + catCorrecto);
+    			
     		}
 		}
-
     	if(window.modificar){
     		if(arrayReferencias.length != 1){
     			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.modificar.referencia"));
     			return;
-    		}
+    		} 
     		params = {
 				idActivo : me.getView().idActivo,
 				referenciaAnterior: window.refCatastral,

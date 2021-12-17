@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.Catastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoCatastroCorrecto;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 
@@ -518,19 +519,22 @@ public class CatastroManager implements CatastroApi {
 	public void saveCatastro(Long idActivo, List<String> arrayReferencias) {
 		Activo activo = activoDao.get(idActivo);
 		
-		
 		if(activo != null) {	
-			
-			
 			for (String refCatastral : arrayReferencias) {
-				Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, refCatastral);
-				ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,refCatastral);
-				if(catastro != null && activoCatastro == null) {				
+				DtoCatastroCorrecto dto = this.devolverReferenciaAndCorrecto(refCatastral);
+				Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, dto.getRefCatastral());
+				ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,dto.getRefCatastral());
+				if(catastro == null) {
+					catastro = new Catastro();
+					catastro.setAuditoria(Auditoria.getNewInstance());
+					catastro.setRefCatastral(dto.getRefCatastral());
+				}
+				if(activoCatastro == null) {				
 					activoCatastro = new ActivoCatastro();
 					activoCatastro.setAuditoria(Auditoria.getNewInstance());
 					activoCatastro.setActivo(activo);
 					activoCatastro.setCatastro(catastro);
-					//ac.setCatastroCorrecto(formatoCatastro);
+					activoCatastro.setCatastroCorrecto(dto.getCorrecto());
 					genericDao.save(ActivoCatastro.class, activoCatastro);
 				}
 			}
@@ -566,18 +570,19 @@ public class CatastroManager implements CatastroApi {
 	}
 	
 	private ActivoCatastro getActivoCatastroByActivoAndReferencia(Long idActivo, String refCatastral) {
-		return genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "refCatastral", refCatastral));
+		return genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "catastro.refCatastral", refCatastral));
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia, Boolean formatoCatastro) {
-		ActivoCatastro acn = getActivoCatastroByActivoAndReferencia(idActivo,nuevaReferencia);
+	public void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia) {
+		DtoCatastroCorrecto dto = this.devolverReferenciaAndCorrecto(nuevaReferencia);
+		ActivoCatastro acn = getActivoCatastroByActivoAndReferencia(idActivo, dto.getRefCatastral());
 		ActivoCatastro ac = getActivoCatastroByActivoAndReferencia(idActivo, referenciaAnterior);
-		Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, nuevaReferencia);
+		Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, dto.getRefCatastral());
 		if(ac != null && catastro != null && acn == null) {
 			ac.setCatastro(catastro);
-			ac.setCatastroCorrecto(formatoCatastro);
+			ac.setCatastroCorrecto(dto.getCorrecto());
 			genericDao.save(ActivoCatastro.class, ac);
 		}
 	}
@@ -593,5 +598,16 @@ public class CatastroManager implements CatastroApi {
 			catastro = genericDao.get(Catastro.class, filtroRefCatastral,filtroProvincia, filtroMunicipio);	
 		}
 		return catastro;
+	}
+	
+	private DtoCatastroCorrecto devolverReferenciaAndCorrecto(String refCatastral) {
+		DtoCatastroCorrecto dto = new DtoCatastroCorrecto();
+		String[] parts = refCatastral.split("-");
+		dto.setRefCatastral(parts[0]); 
+		if(parts.length > 1) {
+			dto.setCorrecto(Boolean.parseBoolean(parts[1]));
+		}
+		
+		return dto;
 	}
 }

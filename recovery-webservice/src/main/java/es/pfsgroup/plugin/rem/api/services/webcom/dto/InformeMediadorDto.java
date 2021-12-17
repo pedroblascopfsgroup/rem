@@ -26,8 +26,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType idProveedorRem; 
 	@WebcomRequired
 	private StringDataType codTipoVenta; 
-	@WebcomRequired
-	private StringDataType codEstadoInforme; //falta en vista
+	//@WebcomRequired
+	//private StringDataType codEstadoInforme; //falta en vista
 	@WebcomRequired
 	private StringDataType motivoRechazo;
 	@WebcomRequired
@@ -48,12 +48,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private StringDataType nombreGestorPublicaciones;
 	@WebcomRequired
 	private StringDataType emailGestorPublicaciones;
-	@WebcomRequired
-	private BooleanDataType publicado;//falta
+	//@WebcomRequired
+	//private BooleanDataType publicado; //falta en vista
 	@WebcomRequired
 	private DateDataType envioLlavesAApi;
-	@WebcomRequired
-	private DateDataType fechaPosesion;
+	//@WebcomRequired
+	//private DateDataType fechaPosesion; //falta en vista
 	@WebcomRequired
 	private StringDataType codEstadoOcupacional;
 	@WebcomRequired
@@ -103,15 +103,15 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	@WebcomRequired
 	private StringDataType licenciaApertura;
 	//@WebcomRequired
-	//private DateDataType fechaRecepcionInforme;//falta
+	//private DateDataType fechaRecepcionInforme; //falta en vista
 	@WebcomRequired
 	private DateDataType ultimaModificacionInforme;
 	@WebcomRequired
 	private StringDataType ultimaModificacionInformePor;
 	//@WebcomRequired
-	//private DateDataType primerEnvioInformeCompletado;//falta
+	//private DateDataType primerEnvioInformeCompletado; //falta en vista
 	//@WebcomRequired
-	//private StringDataType primerEnvioInformeCompletadoPor;//falta
+	//private StringDataType primerEnvioInformeCompletadoPor; //falta en vista
 	
 	
 	public LongDataType getIdUsuarioRemAccion() {
@@ -156,12 +156,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setCodTipoVenta(StringDataType codTipoVenta) {
 		this.codTipoVenta = codTipoVenta;
 	}
-	public StringDataType getCodEstadoInforme() {
+	/*public StringDataType getCodEstadoInforme() {
 		return codEstadoInforme;
 	}
 	public void setCodEstadoInforme(StringDataType codEstadoInforme) {
 		this.codEstadoInforme = codEstadoInforme;
-	}
+	}*/
 	public StringDataType getMotivoRechazo() {
 		return motivoRechazo;
 	}
@@ -222,24 +222,24 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setEmailGestorPublicaciones(StringDataType emailGestorPublicaciones) {
 		this.emailGestorPublicaciones = emailGestorPublicaciones;
 	}
-	public BooleanDataType getPublicado() {
+	/*public BooleanDataType getPublicado() {
 		return publicado;
 	}
 	public void setPublicado(BooleanDataType publicado) {
 		this.publicado = publicado;
-	}
+	}*/
 	public DateDataType getEnvioLlavesAApi() {
 		return envioLlavesAApi;
 	}
 	public void setEnvioLlavesAApi(DateDataType envioLlavesAApi) {
 		this.envioLlavesAApi = envioLlavesAApi;
 	}
-	public DateDataType getFechaPosesion() {
+	/*public DateDataType getFechaPosesion() {
 		return fechaPosesion;
 	}
 	public void setFechaPosesion(DateDataType fechaPosesion) {
 		this.fechaPosesion = fechaPosesion;
-	}
+	}*/
 	public StringDataType getCodEstadoOcupacional() {
 		return codEstadoOcupacional;
 	}

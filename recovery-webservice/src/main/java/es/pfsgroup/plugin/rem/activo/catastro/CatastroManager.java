@@ -700,9 +700,9 @@ public class CatastroManager implements CatastroApi {
 						DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
 						
 						dtoCatastro.setRefCatastral((String) cat.get("referenciaCatastral"));
-						String superficie = checkObjectToString(cat.get("superficieConstruida").toString(), "double");
+						String superficie = checkObjectByType(cat.get("superficieConstruida").toString(), "double");
 						dtoCatastro.setSuperficieConstruida(superficie != null ? Double.parseDouble(superficie) : null);
-						String anyoConstruccion = checkObjectToString(cat.get("anyoConstruccion").toString(), "int");
+						String anyoConstruccion = checkObjectByType(cat.get("anyoConstruccion").toString(), "int");
 						dtoCatastro.setAnyoConstruccion(anyoConstruccion != null ? Integer.parseInt(anyoConstruccion) : null);
 						dtoCatastro.setCodigoPostal((String) cat.get("codPostal"));
 						dtoCatastro.setTipoViaCod((String) cat.get("codTipoVia"));
@@ -712,11 +712,11 @@ public class CatastroManager implements CatastroApi {
 							if (!Checks.esNulo(via)) dtoCatastro.setTipoVia(via.getDescripcion());
 						}
 						dtoCatastro.setNumeroVia((String) cat.get("numVia"));
-						//(Double) cat.get("piso"); usar checkObjectToString
+						//(Double) cat.get("piso"); usar checkObjectByType
 						dtoCatastro.setPlanta((String) cat.get("planta"));
 						dtoCatastro.setPuerta((String) cat.get("puerta"));
 						//(String) cat.get("escalera");
-						//(Double) cat.get("uso"); usar checkObjectToString
+						//(Double) cat.get("uso"); usar checkObjectByType
 						dtoCatastro.setProvinciaCod((String) cat.get("codProvincia"));
 						if (!Checks.esNulo(cat.get("codProvincia"))) {
 							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codProvincia"));
@@ -729,9 +729,9 @@ public class CatastroManager implements CatastroApi {
 							Localidad municipio = genericDao.get(Localidad.class, munFilter);
 							if (!Checks.esNulo(municipio)) dtoCatastro.setMunicipio(municipio.getDescripcion());
 						}
-						String lat = checkObjectToString(cat.get("lat").toString(), "bg");
+						String lat = checkObjectByType(cat.get("lat").toString(), "bigdecimal");
 						dtoCatastro.setLatitud(lat != null ? new BigDecimal(lat) : null);
-						String lon = checkObjectToString(cat.get("lon").toString(), "bg");
+						String lon = checkObjectByType(cat.get("lon").toString(), "bigdecimal");
 						dtoCatastro.setLongitud(lon != null ? new BigDecimal(lon) : null);
 						dtoCatastro.setCatastroCorrecto((Boolean) cat.get("correcto"));
 						
@@ -787,13 +787,13 @@ public class CatastroManager implements CatastroApi {
         }
     }
 	
-	private String checkObjectToString(String object, String type) {
+	private String checkObjectByType(String object, String type) {
 		try {
 			if (type == "double") {
 				Double.parseDouble(object);
 			} else if (type == "int") {
 				Integer.parseInt(object);
-			} else if (type == "bg") {
+			} else if (type == "bigdecimal") {
 				new BigDecimal(object);
 			}
 			

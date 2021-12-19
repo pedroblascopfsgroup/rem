@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.catastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -141,6 +145,7 @@ public class CatastroManager implements CatastroApi {
 		return dto;
 	}
 	
+	@Transactional(readOnly = false)
 	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo, String refCatastral) {
 		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
 		
@@ -164,7 +169,10 @@ public class CatastroManager implements CatastroApi {
 		
 		
 		List<DtoDatosCatastro> lista = consultaCatastroRem3(idActivo, refCatastral);
-		
+		if (!lista.isEmpty()) {
+			existeCatastro(lista);
+			listDto.addAll(lista);
+		}
 		
 		return listDto;
 	}
@@ -676,24 +684,62 @@ public class CatastroManager implements CatastroApi {
 			logger.error("[CONSULTA CATASTRO] URL: "+urlConsultaCatastro);
 	        
 	        try{			
-				respuesta = procesarPeticion(this.httpClientFacade, urlConsultaCatastro.toString(), GET_METHOD, headers, "{}", TIMEOUT_1_MINUTO, "UTF-8");	
+				respuesta = procesarPeticion(this.httpClientFacade, urlConsultaCatastro.toString(), GET_METHOD, headers, "{}", TIMEOUT_1_MINUTO, "UTF-8");					
+				logger.debug("[PETICION] RESPUESTA: "+ respuesta);
 				
 				JSONObject menuItems = (JSONObject) respuesta.get("data");
 				
-				JSONObject success = (JSONObject)menuItems.get("success");	
+				Boolean success = (Boolean) menuItems.get("success");	
 				
-				if (success.toString() == "true") {
+				if (success) {
 					JSONArray catastro = (JSONArray)menuItems.get("catastro");		
 
 					for (Object item : catastro) {
-						//rellenar lista List<DtoDatosCatastro> 
+						JSONObject cat = (JSONObject) item;
+						
+						DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
+						
+						dtoCatastro.setRefCatastral((String) cat.get("referenciaCatastral"));
+						String superficie = checkObjectToString(cat.get("superficieConstruida").toString(), "double");
+						dtoCatastro.setSuperficieConstruida(superficie != null ? Double.parseDouble(superficie) : null);
+						String anyoConstruccion = checkObjectToString(cat.get("anyoConstruccion").toString(), "int");
+						dtoCatastro.setAnyoConstruccion(anyoConstruccion != null ? Integer.parseInt(anyoConstruccion) : null);
+						dtoCatastro.setCodigoPostal((String) cat.get("codPostal"));
+						dtoCatastro.setTipoViaCod((String) cat.get("codTipoVia"));
+						if (!Checks.esNulo(cat.get("codTipoVia"))) {
+							Filter tpvFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codTipoVia"));
+							DDTipoVia via = genericDao.get(DDTipoVia.class, tpvFilter);
+							if (!Checks.esNulo(via)) dtoCatastro.setTipoVia(via.getDescripcion());
+						}
+						dtoCatastro.setNumeroVia((String) cat.get("numVia"));
+						//(Double) cat.get("piso"); usar checkObjectToString
+						dtoCatastro.setPlanta((String) cat.get("planta"));
+						dtoCatastro.setPuerta((String) cat.get("puerta"));
+						//(String) cat.get("escalera");
+						//(Double) cat.get("uso"); usar checkObjectToString
+						dtoCatastro.setProvinciaCod((String) cat.get("codProvincia"));
+						if (!Checks.esNulo(cat.get("codProvincia"))) {
+							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codProvincia"));
+							DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+							if (!Checks.esNulo(provincia)) dtoCatastro.setProvincia(provincia.getDescripcion());
+						}
+						dtoCatastro.setMunicipioCod((String) cat.get("codMunicipio"));
+						if (!Checks.esNulo(cat.get("codMunicipio"))) {
+							Filter munFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codMunicipio"));
+							Localidad municipio = genericDao.get(Localidad.class, munFilter);
+							if (!Checks.esNulo(municipio)) dtoCatastro.setMunicipio(municipio.getDescripcion());
+						}
+						String lat = checkObjectToString(cat.get("lat").toString(), "bg");
+						dtoCatastro.setLatitud(lat != null ? new BigDecimal(lat) : null);
+						String lon = checkObjectToString(cat.get("lon").toString(), "bg");
+						dtoCatastro.setLongitud(lon != null ? new BigDecimal(lon) : null);
+						dtoCatastro.setCatastroCorrecto((Boolean) cat.get("correcto"));
+						
+						lista.add(dtoCatastro);
 					}
 					
 					resultadoOK = true;
 				}
-
-				
-				logger.debug("[PETICION] RESPUESTA: "+ respuesta);
 			}catch (HttpClientException e1) {
 				e1.printStackTrace();
 				ex = e1.getMessage();
@@ -710,10 +756,8 @@ public class CatastroManager implements CatastroApi {
 				logger.error("[CONSULTA CATASTRO] MENSAJE: "+ mensaje);
 				logger.error("[CONSULTA CATASTRO] RESULTADO: "+ resultadoOK);
 			}
-			
 					
 			registrarLlamada(urlConsultaCatastro.toString(),null, respuesta != null ? respuesta.toString() : null, ex);
-			
 			
 		}
 		
@@ -742,5 +786,60 @@ public class CatastroManager implements CatastroApi {
             logger.error("Error al trazar la llamada al WS", e);
         }
     }
+	
+	private String checkObjectToString(String object, String type) {
+		try {
+			if (type == "double") {
+				Double.parseDouble(object);
+			} else if (type == "int") {
+				Integer.parseInt(object);
+			} else if (type == "bg") {
+				new BigDecimal(object);
+			}
+			
+		} catch (Exception e) {
+			return null;
+		}
+		return object;
+	}
+
+	private void existeCatastro(List<DtoDatosCatastro> listadoCatastro) {
+
+		for(DtoDatosCatastro datosCatastro : listadoCatastro) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",datosCatastro.getRefCatastral());
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
+			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+			if (Checks.esNulo(catastro)) {
+				catastro = new Catastro();
+				catastro.setRefCatastral(datosCatastro.getRefCatastral());
+				catastro.setSuperficieConstruida(datosCatastro.getSuperficieConstruida());
+				catastro.setAnyoConstrucción(datosCatastro.getAnyoConstruccion());
+				catastro.setCodPostal(datosCatastro.getCodigoPostal());
+				if (!Checks.esNulo(datosCatastro.getTipoViaCod())) {
+					Filter tpvFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",datosCatastro.getTipoViaCod());
+					DDTipoVia via = genericDao.get(DDTipoVia.class, tpvFilter);
+					if (!Checks.esNulo(via))catastro.setTipoVia(via);
+				}
+				catastro.setNumeroVia(datosCatastro.getNumeroVia());
+				catastro.setPlanta(datosCatastro.getPlanta());
+				catastro.setPuerta(datosCatastro.getPuerta());
+				if (!Checks.esNulo(datosCatastro.getProvinciaCod())) {
+					Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",datosCatastro.getProvinciaCod());
+					DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
+					if (!Checks.esNulo(provincia)) catastro.setProvincia(provincia);
+				}
+				if (!Checks.esNulo(datosCatastro.getMunicipioCod())) {
+					Filter munFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",datosCatastro.getMunicipioCod());
+					Localidad municipio = genericDao.get(Localidad.class, munFilter);
+					if (!Checks.esNulo(municipio)) catastro.setLocalidad(municipio);
+				}
+				catastro.setLatitud(datosCatastro.getLatitud());
+				catastro.setLongitud(datosCatastro.getLongitud());
+				
+				genericDao.save(Catastro.class, catastro);
+			}
+		}
+		
+	}
 	
 }

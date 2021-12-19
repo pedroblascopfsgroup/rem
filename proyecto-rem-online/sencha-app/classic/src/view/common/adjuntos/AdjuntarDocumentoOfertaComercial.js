@@ -179,9 +179,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 									slideAdjuntarDocumento.lookupReference('btnBorrarDocumentoAdjunto').show();
 									slideAdjuntarDocumento.lookupController().activarFinalizar(slideAdjuntarDocumento, slideAdjuntarDocumento.lookupController().hayCambios());									
 									slideAdjuntarDocumento.lookupReference('btnGenerarDocumento').disable();
-									slideAdjuntarDocumento.getForm().findField('comunicacionTerceros').disable();
-									slideAdjuntarDocumento.getForm().findField('cesionDatos').disable();
-									slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').disable();
 									btnFinalizar =  slideAdjuntarDocumento.down('button[reference=btnFinalizar]');
 									btnFinalizar.enable();
 									if(!esInternacional || slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').getValue()=="true"){

@@ -1591,11 +1591,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
 								: oferta.getImporteOferta());
 
-					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) 
+							|| DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())) {
 						dto.setImporte(oferta.getImporteOferta());
 
 						if (!Checks.esNulo(expediente.getTipoAlquiler())) {
-							dto.setTipoAlquiler(expediente.getTipoAlquiler().getCodigo());
+							dto.setTpoAlquiler(expediente.getTipoAlquiler().getCodigo());
 						}
 
 						if (!Checks.esNulo(oferta.getTipoInquilino())) {
@@ -2122,19 +2123,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}				
 		
-		boolean isCerberusAppleOrArrowOrRemaining = 
+		boolean isCerberusAppleOrArrowOrRemainingOrJaguar = 
 				oferta != null && oferta.getActivoPrincipal() != null 						
 				&& oferta.getActivoPrincipal().getCartera() != null 
 				&& oferta.getActivoPrincipal().getSubcartera() != null
 				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
 						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
-						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())); 
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())); 
 		
 		
-		dto.setIsCarteraCerberusApple(isCerberusAppleOrArrowOrRemaining);
+		dto.setIsCarteraCerberusApple(isCerberusAppleOrArrowOrRemainingOrJaguar);
 		
-		if(isCerberusAppleOrArrowOrRemaining) {
+		if(isCerberusAppleOrArrowOrRemainingOrJaguar) {
 			
 			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES() == null ? null : oferta.getFechaRespuestaCES());
 			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES() == null ? null : oferta.getImporteContraofertaCES());
@@ -6064,8 +6066,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
-				if (!Checks.esNulo(dto.getTipoAlquiler())) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquiler());
+				if (!Checks.esNulo(dto.getTpoAlquiler())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTpoAlquiler());
 					DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
 
 					expedienteComercial.setTipoAlquiler(tipoAlquiler);
@@ -10601,7 +10603,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -10667,7 +10669,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -13172,6 +13174,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			fechaArrasExpediente = fechaArrasExpedienteList.get(0);
 		}
 		return fechaArrasExpediente;
+	}
+	
+	@Override
+	public boolean esJaguar(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esJaguar = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esJaguar = false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+				esJaguar = true;
+			}
+		}
+		return esJaguar;
 	}
 	
 	@Override

@@ -1648,7 +1648,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						defaultType: 'textfieldbase',
 						bind:{
 							title: '{mostrarTitlePerimetroDatosBasicos}',
-							hidden: '{!activo.isAppleOrDivarian}'
+							hidden: '{!activo.isAppleOrDivarianOrJaguar}'
 						},						
 						border: true,
 						colapsible: false,

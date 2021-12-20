@@ -79,6 +79,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_BFA_BFA = "07";
 	public static final String CODIGO_MAPFRE = "66";
 	public static final String CODIGO_THIRD_PARTIES_1_TO_1 = "68";
+	public static final String CODIGO_JAGUAR = "70";
 	public static final String CODIGO_TITULIZADA_EDT = "162";
 	public static final String CODIGO_TITULIZADA_TDA = "163";
 	

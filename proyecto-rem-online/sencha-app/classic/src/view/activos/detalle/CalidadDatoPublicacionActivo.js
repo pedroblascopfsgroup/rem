@@ -396,8 +396,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									xtype:'comparativareferenciacatastralgrid',
 									reference: 'comparativareferenciacatastralgridref',
 									idActivo:this.lookupController().getViewModel().get('activo').get('id'),
-									refCatastral:this.lookupController().getViewModel().get('activo').get('refCatastral'),
-									disabled: true
+									refCatastral:this.lookupController().getViewModel().get('activo').get('refCatastral')
 								}
 							]
 					}

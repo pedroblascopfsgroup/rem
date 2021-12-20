@@ -240,18 +240,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var idActivo = me.getViewModel().get("activo.id");
 		var faseDatosRegistrales = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistrales"]');
 		var faseDatosRegistro = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistro"]');
-		var faseCalidadDatDireccion = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasecalidaddatodireccion"]');
-		var faseTresCalidadDato = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasetrescalidaddato"]');
 		
 		var cod01 = faseDatosRegistrales.codigoGrid;
 		var cod02 = faseDatosRegistro.codigoGrid;
-		var cod03 = faseTresCalidadDato.codigoGrid;
-		var cod04 = faseCalidadDatDireccion.codigoGrid;
 		
 		var storefaseDatosRegistrales;
 		var storefaseDatosRegistro;
-		var storefaseTresCalidadDato;
-		var storefaseCalidadDatDireccion;
 		
 		//DATOS REGISTRALES
 		storefaseDatosRegistrales = Ext.create('Ext.data.Store',{
@@ -293,44 +287,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		);
 		faseDatosRegistro.setStore(storefaseDatosRegistro);
 		faseDatosRegistro.getStore().load();
-		//DATOS FASE 3
-		storefaseTresCalidadDato = Ext.create('Ext.data.Store',{
-			model: 'HreRem.model.CalidadDatoFasesGridModel', 
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
-				extraParams: {id: idActivo} 
-			},
-			autoLoad: false,
-			session: false		
-			}			
-		).load();
-		storefaseTresCalidadDato.filterBy( 
-			function (record, id) {
-				return record.get('codigoGrid') == cod03;
-			}
-		);
-		faseTresCalidadDato.setStore(storefaseTresCalidadDato);
-		faseTresCalidadDato.getStore().load();
-		//DATOS FASE 3 DIRECCION
-		storefaseCalidadDatDireccion = Ext.create('Ext.data.Store',{
-			model: 'HreRem.model.CalidadDatoFasesGridModel', 
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
-				extraParams: {id: idActivo} 
-			},
-			autoLoad: false,
-			session: false		
-			}			
-		).load();
-		storefaseCalidadDatDireccion.filterBy( 
-			function (record, id) {
-				return record.get('codigoGrid') == cod04;
-			}
-		);
-		faseCalidadDatDireccion.setStore(storefaseCalidadDatDireccion);
-		faseCalidadDatDireccion.getStore().load();		
+	
 	},
 	
 	

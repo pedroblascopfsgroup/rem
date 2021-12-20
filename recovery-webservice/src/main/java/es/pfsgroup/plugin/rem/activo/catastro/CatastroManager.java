@@ -158,11 +158,7 @@ public class CatastroManager implements CatastroApi {
 		
 		dto.setCatastroCorrecto(true);
 		dto2.setCatastroCorrecto(false);
-
-
-		
-		dto.setRefCatastral("Prueba");
-		dto2.setRefCatastral("Prueba2");		
+	
 		listDto.add(dto);
 		listDto.add(dto2);
 		listDto.add(dto3);
@@ -472,6 +468,10 @@ public class CatastroManager implements CatastroApi {
 			DtoActivoCatastro dto = new DtoActivoCatastro();
 			dto.setDescripcion(activoCatastro.getRefCatastral());
 			dto.setCodigo(activoCatastro.getRefCatastral());
+			if(activoCatastro.getCatastro() != null) {
+				dto.setDescripcion(activoCatastro.getCatastro().getRefCatastral());
+				dto.setCodigo(activoCatastro.getRefCatastral());
+			}
 			dto.setId(activoCatastro.getId().toString());
 			listDto.add(dto);
 		}
@@ -490,6 +490,9 @@ public class CatastroManager implements CatastroApi {
 		for (ActivoCatastro activoCatastro : listActCatastro) {
 			DtoActivoCatastro dto = new DtoActivoCatastro();
 			dto.setRefCatastral(activoCatastro.getRefCatastral());
+			if(activoCatastro.getCatastro() != null) {
+				dto.setRefCatastral(activoCatastro.getCatastro().getRefCatastral());
+			}
 			dto.setCorrecto(activoCatastro.getCatastroCorrecto() != null ? activoCatastro.getCatastroCorrecto().toString() : null);
 			
 			listDto.add(dto);
@@ -518,20 +521,31 @@ public class CatastroManager implements CatastroApi {
 	}
 
 	public DtoDatosCatastro getDatosCatastro(String refCatastral, Long idActivo) {
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id",idActivo);
-		List<ActivoCatastro> actCatastro = genericDao.getList(ActivoCatastro.class, filtroActivo,filtroBorrado);
+		List<ActivoCatastro> actCatastro = genericDao.getList(ActivoCatastro.class, filtroActivo);
+		String referencia;
 		Catastro catastro = null;
-		if((actCatastro != null || actCatastro.isEmpty()) && (refCatastral == null || refCatastral.isEmpty())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",actCatastro.get(0).getRefCatastral());
-			catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+		DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
+		if(!Checks.esNulo(refCatastral)) {
+			referencia = refCatastral;
+		}else if(!Checks.estaVacio(actCatastro)) {
+			if(actCatastro.get(0).getCatastro() != null) {
+				referencia = actCatastro.get(0).getCatastro().getRefCatastral();
+			}else {
+				referencia = actCatastro.get(0).getRefCatastral();
+			}
 		}else {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",refCatastral);
-			catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+			return dtoCatastro;
+		}
+		if((actCatastro.size() > 1 && refCatastral == null) || referencia == null) {
+			return dtoCatastro;
 		}
 		
-		DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",referencia);
 
+		
+		catastro = genericDao.get(Catastro.class, filtro);
+		
 		if(catastro != null) {
 			dtoCatastro.setRefCatastral(catastro.getRefCatastral());
 			dtoCatastro.setSuperficieParcela(catastro.getSuperficieParcela());
@@ -875,4 +889,5 @@ public class CatastroManager implements CatastroApi {
 		return distanceInMeters;
 
 		}
+	
 }

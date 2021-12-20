@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211209
+--## FECHA_CREACION=20211217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16630
+--## INCIDENCIA_LINK=HREOS-16682
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_SAP.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16630] - Alejandra García
+--##        0.2 Añadir error nuevo - [HREOS-16682] - Alejandra García
 --##########################################
 --*/
 
@@ -46,7 +47,8 @@ DECLARE
                     --DD_TEXT_MENSAJE_SAP                                   --DD_EGA_ID  --DD_EAH_ID  --DD_EAP_ID --DD_RETORNO_SAPBC
 	T_TIPO_DATA('El gasto tiene más de 997 líneas'                                  , '02','02','01','001'),
 	T_TIPO_DATA('El activo no tiene participación en la línea de detalle'           , '02','02','01','002'),
-	T_TIPO_DATA('No se ha podido determinar Grupo-Tipo-Subtipo para este registro'  , '02','02','01','003')
+	T_TIPO_DATA('No se ha podido determinar Grupo-Tipo-Subtipo para este registro'  , '02','02','01','003'),
+	T_TIPO_DATA('Gastos con activos no migrados'                                    , '02','02','01','004')
 
 
     ); 

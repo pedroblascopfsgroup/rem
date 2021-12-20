@@ -86,6 +86,9 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
     @JoinColumn(name = "DD_SED_ID")
 	private DDSubpartidasEdificacion subpartidasEdificacion;
 	
+	@Column(name = "ELEMENTO_PEP")
+	private String elementoPep;
+	
 	@Version   
 	private Long version;
 
@@ -218,6 +221,14 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 
 	public void setSubpartidasEdificacion(DDSubpartidasEdificacion subpartidasEdificacion) {
 		this.subpartidasEdificacion = subpartidasEdificacion;
+	}
+
+	public String getElementoPep() {
+		return elementoPep;
+	}
+
+	public void setElementoPep(String elementoPep) {
+		this.elementoPep = elementoPep;
 	}
 	
 }

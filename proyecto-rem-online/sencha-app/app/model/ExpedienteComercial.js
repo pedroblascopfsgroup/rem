@@ -191,7 +191,7 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 				name:'estadoPbcR'
 			},
     		{
-    			name:'tipoAlquiler'
+    			name:'tpoAlquiler'
     		},
     		{
     			name:'tipoInquilino'

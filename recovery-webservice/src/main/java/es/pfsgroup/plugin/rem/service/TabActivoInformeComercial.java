@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -67,7 +69,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -98,6 +105,15 @@ public class TabActivoInformeComercial implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Resource
 	private Properties appProperties;
@@ -378,6 +394,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 	 */
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+
 		DtoActivoInformeComercial activoInformeDto = (DtoActivoInformeComercial) webDto;
 		ActivoInfoComercial actInfoComercial = null;
 		ActivoVivienda vivienda = null;
@@ -758,8 +775,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				genericDao.update(ActivoPlazaAparcamiento.class, plazaAparcamiento);
 			genericDao.save(ActivoInfoComercial.class, actInfoComercial);
 			activoApi.saveOrUpdate(activo);
-		}		
-
+		}
 			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

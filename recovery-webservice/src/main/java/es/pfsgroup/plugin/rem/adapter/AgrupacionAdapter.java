@@ -266,6 +266,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
 
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
+
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1078,7 +1081,7 @@ public class AgrupacionAdapter {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
 				if (activoAgrupacionActivo != null) {
 					if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
-						throw new JsonViewerException("El activo se encuentra en la agrupacion");
+						return;
 					}
 				}
 			}
@@ -2649,7 +2652,7 @@ public class AgrupacionAdapter {
 			}
 
 			if (clienteComercial.getIdPersonaHayaCaixa() == null || clienteComercial.getIdPersonaHayaCaixa().trim().isEmpty() )
-			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento(), null));
 
 			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty())
 				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
@@ -2827,7 +2830,7 @@ public class AgrupacionAdapter {
 				 */
 
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
 				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
@@ -3059,14 +3062,30 @@ public class AgrupacionAdapter {
 								
 				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
-			
-			OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
-			
-			if (ofrCaixa != null) {
-				if (dto.getCheckSubasta() != null) {
-					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+
+			if (particularValidatorApi.esOfertaCaixa(ofertaNueva != null ? ofertaNueva.getNumOferta().toString() : null)){
+				OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
+
+				if (ofrCaixa == null){
+					ofrCaixa = new OfertaCaixa();
+					ofrCaixa.setOferta(oferta);
+					ofrCaixa.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+					oferta.setOfertaCaixa(ofrCaixa);
+					genericDao.save(Oferta.class,ofertaNueva);
 				}
+
+				if (dto.getCheckSubasta() != null){
+					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+				}
+
+				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
+					ofertaApi.llamadaPbc(oferta);
+				}
+
 			}
+
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

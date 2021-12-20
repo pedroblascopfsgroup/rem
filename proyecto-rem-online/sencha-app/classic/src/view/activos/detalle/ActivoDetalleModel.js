@@ -4315,7 +4315,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
                 remoteUrl: 'catastro/getListRefCatastralActivo',
                 extraParams: {idActivo: '{activo.id}'}
             },
-			autoLoad: true
+			autoLoad: true,
+			listeners:{
+				load: 'cargarReferenciaCatastral'
+			}
+			
         }
 			
 	 }

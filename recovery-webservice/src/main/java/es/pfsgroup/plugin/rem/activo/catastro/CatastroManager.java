@@ -224,19 +224,6 @@ public class CatastroManager implements CatastroApi {
 			listDto.add(dto);
 			
 			dto = new DtoDatosCatastroGrid();
-			if(dtoCatastroRem.getGeodistancia() != null && dtoCatastro.getGeodistancia() != null) {
-				dto.setNombre(GEODISTANCIA);
-				dto.setDatoRem(dtoCatastroRem.getGeodistancia().toString());
-				dto.setDatoCatastro(dtoCatastro.getGeodistancia().toString());
-				dto.setCoincidencia(calculoCoincidencia(calculoValor(dtoCatastroRem.getGeodistancia(),dtoCatastro.getGeodistancia())));
-			}else {
-				dto.setNombre(GEODISTANCIA);
-				dto.setDatoRem(dtoCatastroRem.getGeodistancia() == null ? "" : dtoCatastroRem.getGeodistancia().toString());
-				dto.setDatoCatastro(dtoCatastro.getGeodistancia() == null ? "" : dtoCatastro.getGeodistancia().toString());
-			}
-			listDto.add(dto);
-			
-			dto = new DtoDatosCatastroGrid();
 			if(dtoCatastroRem.getAnyoConstruccion() != null && dtoCatastro.getAnyoConstruccion() != null) {
 				dto.setNombre(ANYO_CONSTRUCCION);
 				dto.setDatoRem(dtoCatastroRem.getAnyoConstruccion().toString());
@@ -252,11 +239,24 @@ public class CatastroManager implements CatastroApi {
 			
 			dto = new DtoDatosCatastroGrid();
 			
+			dto.setNombre(GEODISTANCIA);
+			dto.setDatoRem("-");
+			dto.setDatoCatastro("-");
+			dto.setCoincidencia(calculoCoincidencia(calculoGeodistancia(
+					Double.parseDouble(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().toString() : "0"),
+					Double.parseDouble(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().toString() : "0"),
+					Double.parseDouble(dtoCatastro.getLatitud() != null ? dtoCatastro.getLatitud().toString() : "0"),
+					Double.parseDouble(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().toString() : "0")
+			)));
+			
+			listDto.add(dto);
+			
+			dto = new DtoDatosCatastroGrid();
+			
 			dto.setNombre(LATITUD);
 			if(dtoCatastroRem.getLatitud() != null && dtoCatastro.getLatitud() != null) {
 				dto.setDatoRem(dtoCatastroRem.getLatitud().toString());
 				dto.setDatoCatastro(dtoCatastro.getLatitud().toString());
-				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getLatitud().toString(),dtoCatastro.getLatitud().toString()));
 			}else {
 				dto.setDatoRem(dtoCatastroRem.getLatitud() == null ? "" : dtoCatastroRem.getLatitud().toString());
 				dto.setDatoCatastro(dtoCatastro.getLatitud() == null ? "" : dtoCatastro.getLatitud().toString());
@@ -268,7 +268,6 @@ public class CatastroManager implements CatastroApi {
 			if(dtoCatastroRem.getLongitud() != null && dtoCatastro.getLongitud() != null) {
 				dto.setDatoRem(dtoCatastroRem.getLongitud().toString());
 				dto.setDatoCatastro(dtoCatastro.getLongitud().toString());
-				dto.setCoincidencia(calculoIgual(dtoCatastroRem.getLongitud().toString(),dtoCatastro.getLongitud().toString()));
 			}else {
 				dto.setDatoRem(dtoCatastroRem.getLongitud() == null ? "" : dtoCatastroRem.getLongitud().toString());
 				dto.setDatoCatastro(dtoCatastro.getLongitud() == null ? "" : dtoCatastro.getLongitud().toString());
@@ -505,23 +504,32 @@ public class CatastroManager implements CatastroApi {
 		
 		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
 		try {
-			if(refCatastral != null) {
-				DtoDatosCatastro dtoRem = getDatosCatastroRem(idActivo); 
+			
+			DtoDatosCatastro dtoRem = getDatosCatastroRem(idActivo); 
+			
+			DtoDatosCatastro dtoCatastro = getDatosCatastro(refCatastral,idActivo);
+			
+			listDto = validarCatastro(dtoRem,dtoCatastro);
 				
-				DtoDatosCatastro dtoCatastro = getDatosCatastro(refCatastral);
-				
-				listDto = validarCatastro(dtoRem,dtoCatastro);
-			}	
 		} catch (Exception e) {
 			logger.error("error en CatastroManager metodo getGridReferenciaCatastralByRefCatastral - ", e);
 		}
 		return listDto;
 	}
 
-	public DtoDatosCatastro getDatosCatastro(String refCatastral) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",refCatastral);
+	public DtoDatosCatastro getDatosCatastro(String refCatastral, Long idActivo) {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
-		Catastro catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id",idActivo);
+		List<ActivoCatastro> actCatastro = genericDao.getList(ActivoCatastro.class, filtroActivo,filtroBorrado);
+		Catastro catastro = null;
+		if((actCatastro != null || actCatastro.isEmpty()) && (refCatastral == null || refCatastral.isEmpty())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",actCatastro.get(0).getRefCatastral());
+			catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",refCatastral);
+			catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+		}
+		
 		DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
 
 		if(catastro != null) {
@@ -592,7 +600,7 @@ public class CatastroManager implements CatastroApi {
 		for (String refCatastral : refCatastralList) {
 			ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,refCatastral);
 			if(activoCatastro != null) {
-				DtoDatosCatastro datosCatastro = getDatosCatastro(refCatastral);
+				DtoDatosCatastro datosCatastro = getDatosCatastro(refCatastral,idActivo);
 				List<DtoDatosCatastroGrid> datosCatastroList = validarCatastro(datosRem, datosCatastro);
 				boolean coincidencia = checkCoindicenciaCatastro(datosCatastroList);
 				activoCatastro.setCatastroCorrecto(coincidencia);
@@ -842,4 +850,29 @@ public class CatastroManager implements CatastroApi {
 		
 	}
 	
+	
+	private Double calculoGeodistancia(double lon1, double lat1,
+			double lon2, double lat2) {
+
+		double earthRadius = 6371; // km
+
+		lat1 = Math.toRadians(lat1);
+		lon1 = Math.toRadians(lon1);
+		lat2 = Math.toRadians(lat2);
+		lon2 = Math.toRadians(lon2);
+
+		double dlon = (lon2 - lon1);
+		double dlat = (lat2 - lat1);
+
+		double sinlat = Math.sin(dlat / 2);
+		double sinlon = Math.sin(dlon / 2);
+
+		double a = (sinlat * sinlat) + Math.cos(lat1)*Math.cos(lat2)*(sinlon*sinlon);
+		double c = 2 * Math.asin (Math.min(1.0, Math.sqrt(a)));
+
+		double distanceInMeters = earthRadius * c * 1000;
+
+		return distanceInMeters;
+
+		}
 }

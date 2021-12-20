@@ -65,8 +65,13 @@ Ext.define('HreRem.view.activos.detalle.ComparativaReferenciaCatastralGrid', {
                 renderer: coloredRender,
                 items: [{
 			            getClass: function(v, metadata, record ) {
-
+			            	
 			            	var catCorrecto = record.get('coincidencia');
+			            	var nombre = record.get('nombre');
+			            	
+			            	if(nombre === "Latitud" || nombre === "Longitud"){
+			            		return "-";
+			            	}
 							if(catCorrecto === "true")  {
 	     						return 'app-tbfiedset-ico icono-tickok no-pointer';
      						}else if(catCorrecto === "false"){

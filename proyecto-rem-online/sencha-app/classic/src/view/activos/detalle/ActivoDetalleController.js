@@ -8899,6 +8899,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	abrirVentanaEditarCatastro: function(grid, record){
 		var me = this;
 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, refCatastral: record.getData().refCatastral, parent: grid}).show();
+	},
+	
+	cargarReferenciaCatastral: function(store){
+		var me = this;
+		if(store.data.length == 1){
+			this.getViewModel().data.activo.refCatastral = store.getData().getAt(0).data.descripcion;
+		}
 	}
 });
 

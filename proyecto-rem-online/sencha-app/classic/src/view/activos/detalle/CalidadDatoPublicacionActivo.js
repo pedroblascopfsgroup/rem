@@ -1303,14 +1303,26 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						displayField: 'descripcion',
     					valueField: 'codigo',
 	                	listeners: {
-	                		change: function(combo){
+	                		select: function(combo){
 	                			var me = this;
 								var refCatastral = combo.getValue();
 								var grid = me.lookupController().lookupReference('comparativareferenciacatastralgridref');
 								var idActivo = me.lookupController().getViewModel().getData().activo.id;
 								grid.setDisabled(false);
 								grid.getStore().getProxy().setExtraParams({'refCatastral':refCatastral, 'idActivo':idActivo});    
-								grid.getStore().load();
+								grid.store.load();
+								
+	                		},
+	                		render: function(combo){
+	                			var me = this;
+								var refCatastral = combo.getValue();
+								var grid = me.lookupController().lookupReference('comparativareferenciacatastralgridref');
+								var idActivo = me.lookupController().getViewModel().getData().activo.id;
+								var refCatastral = me.lookupController().getViewModel().getData().activo.refCatastral;
+								if(!Ext.isEmpty(refCatastral)){
+									combo.setValue(refCatastral);
+									grid.setDisabled(false);
+								}
 								
 	                		}
 	                	}
@@ -1324,6 +1336,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									xtype:'comparativareferenciacatastralgrid',
 									reference: 'comparativareferenciacatastralgridref',
 									idActivo:this.lookupController().getViewModel().get('activo').get('id'),
+									refCatastral:this.lookupController().getViewModel().get('activo').get('refCatastral'),
 									disabled: true
 								}
 							]

@@ -67,6 +67,8 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 private String subpartidaEdifCodigo;
 	 
 	 private String subpartidaEdif;
+	 
+	 private String elementoPep;
 
 	public Long getId() {
 		return id;
@@ -282,6 +284,14 @@ public class DtoElementosAfectadosLinea extends WebDto {
 
 	public void setSubpartidaEdif(String subpartidaEdif) {
 		this.subpartidaEdif = subpartidaEdif;
+	}
+
+	public String getElementoPep() {
+		return elementoPep;
+	}
+
+	public void setElementoPep(String elementoPep) {
+		this.elementoPep = elementoPep;
 	}
 	
 }

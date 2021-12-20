@@ -109,6 +109,9 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "SUBPARTEDIF_DESC")
 	private String subpartidaEdif;
+	
+	@Column(name = "ELEMENTO_PEP")
+	private String elementoPep;
 
 	public Long getId() {
 		return id;
@@ -340,6 +343,14 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setSubpartidaEdif(String subpartidaEdif) {
 		this.subpartidaEdif = subpartidaEdif;
+	}
+
+	public String getElementoPep() {
+		return elementoPep;
+	}
+
+	public void setElementoPep(String elementoPep) {
+		this.elementoPep = elementoPep;
 	}
 
 }

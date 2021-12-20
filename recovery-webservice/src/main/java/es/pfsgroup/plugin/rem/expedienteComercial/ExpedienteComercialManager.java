@@ -1586,11 +1586,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setImporte(!Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
 								: oferta.getImporteOferta());
 
-					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) 
+							|| DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())) {
 						dto.setImporte(oferta.getImporteOferta());
 
 						if (!Checks.esNulo(expediente.getTipoAlquiler())) {
-							dto.setTipoAlquiler(expediente.getTipoAlquiler().getCodigo());
+							dto.setTpoAlquiler(expediente.getTipoAlquiler().getCodigo());
 						}
 
 						if (!Checks.esNulo(oferta.getTipoInquilino())) {
@@ -2117,20 +2118,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}				
 		
-		
-		boolean isCerberusAppleOrArrowOrRemaining = 
+		boolean isCerberusAppleOrArrowOrRemainingOrJaguar = 
 				oferta != null && oferta.getActivoPrincipal() != null 						
 				&& oferta.getActivoPrincipal().getCartera() != null 
 				&& oferta.getActivoPrincipal().getSubcartera() != null
 				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
 						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
-						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())); 
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())); 
 		
 		
-		dto.setIsCarteraCerberusApple(isCerberusAppleOrArrowOrRemaining);
+		dto.setIsCarteraCerberusApple(isCerberusAppleOrArrowOrRemainingOrJaguar);
 		
-		if(isCerberusAppleOrArrowOrRemaining) {
+		if(isCerberusAppleOrArrowOrRemainingOrJaguar) {
 			
 			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES() == null ? null : oferta.getFechaRespuestaCES());
 			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES() == null ? null : oferta.getImporteContraofertaCES());
@@ -6062,8 +6063,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
-				if (!Checks.esNulo(dto.getTipoAlquiler())) {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoAlquiler());
+				if (!Checks.esNulo(dto.getTpoAlquiler())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTpoAlquiler());
 					DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, filtro);
 
 					expedienteComercial.setTipoAlquiler(tipoAlquiler);
@@ -10599,7 +10600,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -10665,7 +10666,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna) || esBankia(tareaExterna) || esJaguar(tareaExterna)) {
 			return true;
 		}
 
@@ -12777,29 +12778,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
             VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular);
             
-            if(comprador.getPorcentajeCompra() != null && comprador.getCodTipoDocumento() != null && comprador.getNombreRazonSocial() != null
-            && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
-            && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
-            	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
-            		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
-            			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
-            				return true;
-            			}else {
-            				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
-            					return true;
-            				}
-            			}
-            		}
-            	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
-            		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
-            			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
-            			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
-            			return true;
-            		}
-            	}
+            if (!trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
+            	return checkCamposCompradoresMinimos(comprador); 
+            } else {
+            	if (checkCamposCompradoresMinimos(comprador))
+            		return checkCamposCompradoresBankia(comprador);
             }
 		}
 		
+		return false;
+	}
+	
+	private boolean checkCamposCompradoresMinimos(VBusquedaDatosCompradorExpediente comprador) {
+		if(comprador.getPorcentajeCompra() != null && comprador.getCodTipoDocumento() != null && comprador.getNombreRazonSocial() != null
+            && comprador.getNumDocumento() != null && comprador.getDireccion() != null && comprador.getCodigoPais() != null
+            && ((comprador.getProvinciaCodigo() != null && comprador.getMunicipioCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) ) {
+        	if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
+        		if(comprador.getApellidos() != null && comprador.getCodEstadoCivil() != null) {
+        			if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) || !DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())){
+        				return true;
+        			}else {
+        				if(comprador.getCodTipoDocumentoConyuge() != null && comprador.getDocumentoConyuge() != null) {
+        					return true;
+        				}
+        			}
+        		}
+        	}else if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+        		if(comprador.getNombreRazonSocialRte() != null && comprador.getApellidosRte() != null && comprador.getCodTipoDocumentoRte() != null 
+        			&& comprador.getNumDocumentoRte() != null && comprador.getCodigoPaisRte() != null 
+        			&& ((comprador.getProvinciaRteCodigo() != null && comprador.getMunicipioRteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))) {
+        			return true;
+        		}
+        	}
+        }
+		return false;
+	}
+	
+	private boolean checkCamposCompradoresBankia(VBusquedaDatosCompradorExpediente comprador) {
+		if (comprador.getAntiguoDeudor() != null && comprador.getFechaNacimientoConstitucion() != null 
+				&& ((comprador.getProvinciaNacimientoCompradorCodigo() != null && comprador.getLocalidadNacimientoCompradorCodigo() != null) 
+						|| !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getPaisNacimientoCompradorCodigo()))) {
+	    	if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+	    		if((comprador.getProvinciaNacimientoRepresentanteCodigo() != null 
+	    				&& comprador.getLocalidadNacimientoRepresentanteCodigo() != null) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getPaisNacimientoRepresentanteCodigo())) {
+	    			return true;
+	    		}
+	    	}
+	    	
+	    	return true;
+		}
+    	
 		return false;
 	}
 	
@@ -13143,6 +13171,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			fechaArrasExpediente = fechaArrasExpedienteList.get(0);
 		}
 		return fechaArrasExpediente;
+	}
+	
+	@Override
+	public boolean esJaguar(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esJaguar = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esJaguar = false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+				esJaguar = true;
+			}
+		}
+		return esJaguar;
 	}
 	
 	@Override
@@ -15053,4 +15096,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 
+	@Override
+	public boolean checkEstadoBC(TareaExterna tareaExterna) {
+		ExpedienteComercial eco = tareaExternaToExpedienteComercial(tareaExterna);
+		String codTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		List<String> estadosBcNoPermitidos = new ArrayList<String>();
+		String codEstadoBC = eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : "";
+
+		if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_PBC_VENTA.equals(codTarea)){
+			estadosBcNoPermitidos = new ArrayList<String>(java.util.Arrays.asList(DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_PDTE_BC,
+					DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_PTE_DOC,
+					DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC));
+		}else if (TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_PBC_RESERVA.equals(codTarea)){
+			estadosBcNoPermitidos = new ArrayList<String>(java.util.Arrays.asList(DDEstadoExpedienteBc.CODIGO_ARRAS_DOCUMENTACION_APORTADA_A_BC,
+					DDEstadoExpedienteBc.CODIGO_ARRAS_PENDIENTES_DE_APROBACION_BC,
+					DDEstadoExpedienteBc.CODIGO_ARRAS_PTE_DOCUMENTACION));
+		}
+
+		return !estadosBcNoPermitidos.contains(codEstadoBC);
+	}
 }

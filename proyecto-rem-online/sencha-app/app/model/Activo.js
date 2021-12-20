@@ -1351,6 +1351,13 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'tieneGestionDndDescripcion'
 			},
+			{
+    			name: 'isSubcarteraJaguar',
+    			calculate: function(data) {
+    				return data.subcarteraCodigo == CONST.SUBCARTERA['JAGUAR'];
+    			},
+    			depends: 'subcarteraCodigo'
+			},
     		{
     			name: 'isCarteraTitulizada',
     			calculate: function(data) { 
@@ -1365,7 +1372,14 @@ Ext.define('HreRem.model.Activo', {
 							|| data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA']);
     			},
     			depends: ['entidadPropietariaCodigo']
-    		}
+    		},
+    		{
+    			name: 'isAppleOrDivarianOrJaguar',
+    			calculate: function(data){
+    				return (data.isSubcarteraDivarian || data.isSubcarteraApple || data.isSubcarteraJaguar);
+    			},
+    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar']
+    		}  		
     ],
     
 	proxy: {

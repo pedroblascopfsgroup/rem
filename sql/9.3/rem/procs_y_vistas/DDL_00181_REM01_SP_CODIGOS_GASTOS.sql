@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211213
+--## FECHA_CREACION=20211214
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16596
@@ -45,7 +45,7 @@ BEGIN
               USING (
                 SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
-                      , ACT.ACT_NUM_ACTIVO_CAIXA AS ID_ACTIVO_ESPECIAL
+                      , AUX.ID_ACTIVO_ESPECIAL AS ID_ACTIVO_ESPECIAL
                       , AUX.LINEA_GASTO AS LINEA_GASTO
                       , ETG.ELEMENTO_PEP AS ELEMENTO_PEP
                       ,  CASE
@@ -64,7 +64,7 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND GLD.GLD_LINEA_SIN_ACTIVOS = 0  AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0  AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
@@ -89,11 +89,12 @@ BEGIN
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
+                    AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                 SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
-                      , ACT.ACT_NUM_ACTIVO_CAIXA AS ID_ACTIVO_ESPECIAL
+                      , AUX.ID_ACTIVO_ESPECIAL AS ID_ACTIVO_ESPECIAL
                       , AUX.LINEA_GASTO AS LINEA_GASTO
                       , ETG.ELEMENTO_PEP AS ELEMENTO_PEP
                       ,  CASE
@@ -112,7 +113,7 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND GLD.GLD_LINEA_SIN_ACTIVOS = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
@@ -148,7 +149,7 @@ BEGIN
               USING (
                 SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
-                      , ACT.ACT_NUM_ACTIVO_CAIXA AS ID_ACTIVO_ESPECIAL
+                      , AUX.ID_ACTIVO_ESPECIAL AS ID_ACTIVO_ESPECIAL
                       , AUX.LINEA_GASTO AS LINEA_GASTO
                       , ETG.ELEMENTO_PEP AS ELEMENTO_PEP
                       , CASE
@@ -167,7 +168,7 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND GLD.GLD_LINEA_SIN_ACTIVOS = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
@@ -192,11 +193,12 @@ BEGIN
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
+                    AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                  SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
-                      , ACT.ACT_NUM_ACTIVO_CAIXA AS ID_ACTIVO_ESPECIAL
+                      , AUX.ID_ACTIVO_ESPECIAL AS ID_ACTIVO_ESPECIAL
                       , AUX.LINEA_GASTO AS LINEA_GASTO
                       , ETG.ELEMENTO_PEP AS ELEMENTO_PEP
                       , CASE
@@ -215,7 +217,7 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND GLD.GLD_LINEA_SIN_ACTIVOS = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID

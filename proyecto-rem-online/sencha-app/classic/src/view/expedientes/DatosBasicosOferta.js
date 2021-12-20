@@ -141,7 +141,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind : {
 								value : '{datosbasicosoferta.ventaCartera}',
 								readOnly : 'true',
-								hidden : '{esTipoAlquiler}'
+								hidden : '{esAlquilerOAlquilerNoComercial}'
 							}
 						},
 						{
@@ -434,7 +434,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        }
 						},
 						bind : {
-							hidden : '{esTipoAlquiler}' 
+							hidden : '{esAlquilerOAlquilerNoComercial}' 
 						},
 						items : [
 							{
@@ -465,6 +465,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store : '{comboRiesgoOperacion}',
 								    value : '{datosbasicosoferta.riesgoOperacionCodigo}',
 								    rawValue : '{datosbasicosoferta.riesgoOperacionDescripcion}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							},
+							{
+								xtype : 'comboboxfieldbasedd',
+								fieldLabel : HreRem.i18n('fieldlabel.riesgo.operacion.bc'),
+								bind : {
+									store : '{comboRiesgoOperacion}',
+								    value : '{datosbasicosoferta.riesgoOperacionBcCodigo}',
+								    rawValue : '{datosbasicosoferta.riesgoOperacionBcDescripcion}',
+								    hidden: '{!esBankia}',
 									readOnly : '{readOnlyDatosCfv}'
 								}
 							}
@@ -716,8 +727,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        type: 'table',
 						        columns: 2
 						    },
-							bind : {
-								hidden: '{esBankiaAlquiler}'
+						    bind : {
+								hidden: '{esAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{

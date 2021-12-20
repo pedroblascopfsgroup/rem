@@ -757,6 +757,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
           return tipoOferta == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA'] || carteraCodigo == CONST.CARTERA['BANKIA'];
         },
+        esAlquilerOAlquilerNoComercial: function(get){
+	    	 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+	    	 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+	 
+			 return (isAlquiler || isAlquilerNoComercial);
+		 },
         getcolSpanforSarebOrDefault: function(get){
            var me= this;
            var carteraCodigo = get('expediente.entidadPropietariaCodigo');

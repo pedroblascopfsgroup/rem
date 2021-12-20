@@ -65,7 +65,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaResolucionT018AnalisisTecnico(codTarea, codEstado) || calculaResolucionT018AnalisisBc(codTarea, codEstado)
                 || calculaResolucionT018ScoringBc(codTarea, codEstado) || calculaResolucionT018ResolucionComite(codTarea, codEstado)
                 || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
-                || calculaT017ResolucionCES(codTarea, codEstado);
+                || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
+                || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
+                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado);
     }
 
     private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -134,6 +136,47 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     private boolean calculaT017ResolucionCES(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.CODIGO_RESOLUCION_CES_T017.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT018PtClRod(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CLROD.equals(codTarea) && (DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015ElevarASancion(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015SancionBc(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015SancionPatrimonio(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION_PATRIMONIO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_ENVIO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015ScoringBc(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SCORING_BC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
             return true;
 
         return false;

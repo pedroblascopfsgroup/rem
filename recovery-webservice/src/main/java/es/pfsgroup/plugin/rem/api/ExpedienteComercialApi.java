@@ -1401,6 +1401,8 @@ public interface ExpedienteComercialApi {
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
+	boolean esJaguar(TareaExterna tareaExterna);
+	
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
 
 	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta);
@@ -1476,4 +1478,12 @@ public interface ExpedienteComercialApi {
 	boolean saveTestigos(DtoTestigos dto, Long id);
 
 	boolean deleteTestigos(DtoTestigos dto);
+
+	/**
+	 * Método que comprueba si el activo de Caixabank tiene los estados correctos para poder avanzar la tarea.
+	 *
+	 * @param tareaExterna
+	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkEstadoBC(TareaExterna tareaExterna);
 }

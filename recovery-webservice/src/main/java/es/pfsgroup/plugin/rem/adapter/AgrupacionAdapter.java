@@ -266,6 +266,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
 
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
+
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -3059,14 +3062,30 @@ public class AgrupacionAdapter {
 								
 				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
-			
-			OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
-			
-			if (ofrCaixa != null) {
-				if (dto.getCheckSubasta() != null) {
-					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+
+			if (particularValidatorApi.esOfertaCaixa(ofertaNueva != null ? ofertaNueva.getNumOferta().toString() : null)){
+				OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
+
+				if (ofrCaixa == null){
+					ofrCaixa = new OfertaCaixa();
+					ofrCaixa.setOferta(oferta);
+					ofrCaixa.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+					oferta.setOfertaCaixa(ofrCaixa);
+					genericDao.save(Oferta.class,ofertaNueva);
 				}
+
+				if (dto.getCheckSubasta() != null){
+					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+				}
+
+				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
+					ofertaApi.llamadaPbc(oferta);
+				}
+
 			}
+
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

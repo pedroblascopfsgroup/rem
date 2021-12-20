@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.def.ActionHandler;
@@ -50,6 +51,7 @@ import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.RemUtils;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -65,15 +67,19 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -168,6 +174,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 	
 	@Autowired
 	private RemUtils remUtils;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -758,7 +767,16 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 							tareaActivo.setUsuario(gestor);
 						}
 				} else {
-					tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
+					PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
+					
+					if (perimetro != null && perimetro.getAplicaFormalizar() != null && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+						tareaActivo.setUsuario(usuarioManager.getByUsername("gruboarding"));
+					} else {
+						gestor = userAssigantionService.getUser(tareaExterna);
+						if (!Checks.esNulo(gestor)) {
+							tareaActivo.setUsuario(gestor);
+						}
+					}
 				}
 
                 if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera != null ? cartera.getCodigo() : null) && expedienteComercial.getFechaDevolucionEntregas() != null){

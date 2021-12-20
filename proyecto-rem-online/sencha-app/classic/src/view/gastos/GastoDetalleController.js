@@ -1610,41 +1610,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 	
 	},
-	
 	onClickAutorizar: function(btn) {
     	var me = this;
     	
-    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
-    	
-    	var idGasto = idGasto = me.getViewModel().get("gasto.id");
-    	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
-    	
-    	var gasto = gasto = me.getViewModel().get("gasto");
+     	var isProveedorIncompletoBoolean = true;
+    	var me = this;
     	var url2 = $AC.getRemoteUrl('gastosproveedor/isProveedorIncompleto');
-    	var isProveedorIncompletoBoolean = false;
-    	
+    	var idGasto = idGasto = me.getViewModel().get("gasto.id");
     	Ext.Ajax.request({
 			url: url2,
-			params: {gasto: gasto},
-			success: function(response, opts) {
-				var data = {};
-				try {
-					data = Ext.decode(response.responseText);
-					}
-				catch (e){ };
-				if(!Ext.isEmpty(data.msg)){
-					me.fireEvent("errorToast Proveedor Incompleto", data.msg);
-				} else {
-					msg = HreRem.i18n('msg.desea.autorizar.gasto');
-					isProveedorIncompletoBoolean = true;
-				}
-				me.getView().unmask();
-			}
-    	});
-    	
-    	if (isProveedorIncompletoBoolean) {
-    	Ext.Ajax.request({
-			url: url,
 			params: {idGasto: idGasto},
 			success: function(response, opts) {
 				var data = {};
@@ -1652,70 +1626,86 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					data = Ext.decode(response.responseText);
 					}
 				catch (e){ };
-				if(!Ext.isEmpty(data.msg)){
-					me.fireEvent("errorToast", data.msg);
-				} else {
-					msg = HreRem.i18n('msg.desea.autorizar.gasto');
-				}
-				me.getView().unmask();	
-				Ext.Msg.show({
-				   	title: HreRem.i18n('title.mensaje.confirmacion'),
-				   	msg: msg,
-				   	buttons: Ext.MessageBox.YESNO,
-				   	fn: function(buttonId) {
-				   		if (buttonId == 'yes') {
-					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
-	
-					me.getView().mask(HreRem.i18n("msg.mask.loading"));
-	
-					Ext.Ajax.request({
-				    			
-					     url: url,
-					     params: {idGasto: idGasto},
+				
+				if(data.success === "false"){
+			    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			        	var idGasto = idGasto = me.getViewModel().get("gasto.id");
+			        	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
+				    	Ext.Ajax.request({
+							url: url,
+							params: {idGasto: idGasto},
+							success: function(response, opts) {
+								var data = {};
+								try {
+									data = Ext.decode(response.responseText);
+									}
+								catch (e){ };
+								if(!Ext.isEmpty(data.msg)){
+									me.fireEvent("errorToast", data.msg);
+								} else {
+									msg = HreRem.i18n('msg.desea.autorizar.gasto');
+								}
+								me.getView().unmask();	
+								Ext.Msg.show({
+								   	title: HreRem.i18n('title.mensaje.confirmacion'),
+								   	msg: msg,
+								   	buttons: Ext.MessageBox.YESNO,
+								   	fn: function(buttonId) {
+								   		if (buttonId == 'yes') {
+									url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
 					
-					     success: function(response, opts) {
-					        me.getView().unmask();
-					     	var data = {};
-				            try {
-				               	data = Ext.decode(response.responseText);
-				            }
-				            catch (e){ };
-				            
-				            if(data.success === "false") {
-					            if (!Ext.isEmpty(data.msg)) {
-					               	me.fireEvent("errorToast", data.msg);
-					            } else {
-					             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					            }
-				            } else {
-						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						         me.refrescarGasto(true);						         
-				            }
-					     },
-					     failure: function(response) {
-					     	me.getView().unmask();
-				     		var data = {};
-			                try {
-			                	data = Ext.decode(response.responseText);
-			                }
-			                catch (e){ };
-			                if (!Ext.isEmpty(data.msg)) {
-			                	me.fireEvent("errorToast", data.msg);
-			                } else {
-			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                }
-					     }
-				    		    
-				    });
-		        }
-				   	}});
-						
+									me.getView().mask(HreRem.i18n("msg.mask.loading"));
+					
+									Ext.Ajax.request({
+								    			
+									     url: url,
+									     params: {idGasto: idGasto},
+									
+									     success: function(response, opts) {
+									        me.getView().unmask();
+									     	var data = {};
+								            try {
+								               	data = Ext.decode(response.responseText);
+								            }
+								            catch (e){ };
+								            
+								            if(data.success === "false") {
+									            if (!Ext.isEmpty(data.msg)) {
+									               	me.fireEvent("errorToast", data.msg);
+									            } else {
+									             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+									            }
+								            } else {
+										         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+										         me.refrescarGasto(true);						         
+								            }
+									     },
+									     failure: function(response) {
+									     	me.getView().unmask();
+								     		var data = {};
+							                try {
+							                	data = Ext.decode(response.responseText);
+							                }
+							                catch (e){ };
+							                if (!Ext.isEmpty(data.msg)) {
+							                	me.fireEvent("errorToast", data.msg);
+							                } else {
+							                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							                }
+									     }
+								    		    
+								    });
+						        }
+								   	}});
+										
+							}
+						});
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.proveedor.incompleto"));
+		    		me.getView().unmask();
+				}
 			}
-		});
-    	
-    	} else {
-    		me.fireEvent("errorToast", HreRem.i18n("Proveedor Incompleto"));
-    	}
+    	});
     	
     },
     

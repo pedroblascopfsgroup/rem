@@ -25,7 +25,7 @@ public class GastoAvisoProveedorIncompleto implements GastoAvisadorApi {
 		DtoAviso dtoAviso = new DtoAviso();
 		boolean isProveedorIncompleto = false;
 		
-		isProveedorIncompleto = gastoProveedorApi.isProveedorIncompleto(gasto);
+		isProveedorIncompleto = gastoProveedorApi.isProveedorIncompleto(gasto.getId());
 
 		if(isProveedorIncompleto) {
 			dtoAviso.setDescripcion("Proveedor Incompleto");

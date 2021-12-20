@@ -446,6 +446,6 @@ public interface GastoProveedorApi {
 
     boolean deleteGastoTasacion(Long id);
 
-	boolean isProveedorIncompleto(GastoProveedor gasto);
+	boolean isProveedorIncompleto(Long idGasto);
 }
 

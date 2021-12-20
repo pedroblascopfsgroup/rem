@@ -1731,10 +1731,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView isProveedorIncompleto(GastoProveedor gasto, ModelMap model) {
+	public ModelAndView isProveedorIncompleto(Long idGasto, ModelMap model) {
 		try {
 
-			boolean success = gastoProveedorApi.isProveedorIncompleto(gasto);
+			boolean success = gastoProveedorApi.isProveedorIncompleto(idGasto);
 			model.put("success", success);
 
 		} catch (Exception e) {

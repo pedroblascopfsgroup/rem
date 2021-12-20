@@ -4510,11 +4510,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional
-	public boolean isProveedorIncompleto(GastoProveedor gasto) {
+	public boolean isProveedorIncompleto(Long idGasto) {
 		boolean isProveedorIncompleto = false;
 		boolean isCerberus = false;
 		String carteraActivo =  "";
 		String subcarteraActivo = "";
+		
+		Filter gastoId = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, gastoId);
 		
 		Filter proveedorID0 = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad());
 		Activo ActivoCarteraSubcartera = genericDao.get(Activo.class, proveedorID0);

@@ -1401,6 +1401,8 @@ public interface ExpedienteComercialApi {
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
+	boolean esJaguar(TareaExterna tareaExterna);
+	
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
 
 	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta);

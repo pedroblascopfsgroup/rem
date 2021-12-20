@@ -8,7 +8,7 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     exit 1
 fi
 
-extensionTxt=".txt"
+extensionTxt=".TXT"
 
 OIFS=$IFS
 IFS=','
@@ -29,13 +29,13 @@ do
     ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
 
     echo "$ficheroTxt"
-    if [[ "$#" -eq 1 ]]; then
+    if [[ "$#" -eq 2 ]]; then
         ./ftp/ftp_get_from_bc.sh $fichero$fecha$extensionTxt
     fi
         while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroTxt ]]; do
             sleep 10
             hora_actual=`date +%Y%m%d%H%M%S`
-        if [[ "$#" -eq 1 ]]; then
+        if [[ "$#" -eq 2 ]]; then
             ./ftp/ftp_get_from_bc.sh $fichero$fecha$extensionTxt
         fi
         done

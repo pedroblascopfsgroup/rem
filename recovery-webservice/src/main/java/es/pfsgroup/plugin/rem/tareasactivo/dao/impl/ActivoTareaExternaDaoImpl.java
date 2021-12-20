@@ -230,7 +230,8 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     			+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.TBJ_ID = TRA.TBJ_ID "
     			+ "JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID "
     			+ "WHERE ECO.OFR_ID = (SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA= :idOferta) "
-    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER (:codigoTareaProcedimiento)");
+    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER (:codigoTareaProcedimiento) "
+				+ "ORDER BY TEX.FECHACREAR DESC");
     	
     	List<Long> tareasExternasId = new ArrayList<Long>();
     	

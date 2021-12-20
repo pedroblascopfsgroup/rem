@@ -351,7 +351,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	me.lookupReference('toolFieldFase0').setCollapsed(record.data.desplegable0Collapsed);
-				    	me.lookupReference('toolFieldFase1').setCollapsed(record.data.desplegable1Collapsed);
 				    	me.lookupReference('toolFieldFase2').setCollapsed(record.data.desplegable2Collapsed);
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();

@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211214
+--## FECHA_CREACION=20211215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16596
@@ -81,7 +81,7 @@ BEGIN
                                                               ELSE ETG.PRO_ID
                                                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND NVL(ETG.DD_TCO_ID, GEN.DD_TCO_ID) = GEN.DD_TCO_ID
+                    AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
                     AND NVL(ETG.DD_EAL_ID ,NVL(GEN.DD_EAL_ID, 0)) = NVL(GEN.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE
@@ -185,7 +185,7 @@ BEGIN
                                                               ELSE ETG.PRO_ID
                                                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND NVL(ETG.DD_TCO_ID, GEN.DD_TCO_ID) = GEN.DD_TCO_ID
+                    AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
                     AND NVL(ETG.DD_EAL_ID ,NVL(GEN.DD_EAL_ID, 0)) = NVL(GEN.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE
@@ -303,7 +303,7 @@ BEGIN
                                                               ELSE ETG.PRO_ID
                                                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND NVL(ETG.DD_TCO_ID, ACT.DD_TCO_ID) = ACT.DD_TCO_ID
+                    AND NVL(ETG.DD_CBC_ID, ACT.DD_CBC_ID) = ACT.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(ACT.DD_TTR_ID, 0)) = NVL(ACT.DD_TTR_ID, 0)
                     AND NVL(ETG.DD_EAL_ID ,NVL(PTA.DD_EAL_ID, 0)) = NVL(PTA.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE
@@ -379,7 +379,7 @@ BEGIN
                                                               ELSE ETG.PRO_ID
                                                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND NVL(ETG.DD_TCO_ID, ACT.DD_TCO_ID) = ACT.DD_TCO_ID
+                    AND NVL(ETG.DD_CBC_ID, ACT.DD_CBC_ID) = ACT.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(ACT.DD_TTR_ID, 0)) = NVL(ACT.DD_TTR_ID, 0)
                     AND NVL(ETG.DD_EAL_ID ,NVL(PTA.DD_EAL_ID, 0)) = NVL(PTA.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE

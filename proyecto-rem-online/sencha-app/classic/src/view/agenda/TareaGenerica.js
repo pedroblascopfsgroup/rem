@@ -4016,6 +4016,20 @@
 		}
 	},
 	
+	T015_DatosPBC: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T015_CalculoRiesgo: function(){
+    	var me = this; 
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	me.campoObligatorio(comboRiesgo);
+    	comboRiesgo.allowBlank = false;
+    },
+	
 	T018_AgendarYFirmarValidacion: function(){
 		var me = this;
 		var comboIrClRod = me.down('[name=comboIrClRod]');

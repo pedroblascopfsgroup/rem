@@ -1,0 +1,194 @@
+--/*
+--#########################################
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20211203
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## ARTEFACTO=batch
+--## INCIDENCIA_LINK=HREOS-16499
+--## PRODUCTO=NO
+--## 
+--## Finalidad:
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01';
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
+V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16499';
+V_SQL VARCHAR2(30000 CHAR) := '';
+V_NUM NUMBER(25);
+
+--Tablas AUX
+V_TABLA_AUX VARCHAR2(30 CHAR) := 'AUX_ACT_TRASPASO_ACTIVO';
+V_TABLA_AUX1 VARCHAR2(30 CHAR) := 'AUX_OFR_ID';
+V_TABLA_AUX2 VARCHAR2(30 CHAR) := 'AUX_ECO_ID';
+V_TABLA_AUX3 VARCHAR2(30 CHAR) := 'AUX_COM_ID';
+V_TABLA_AUX4 VARCHAR2(30 CHAR) := 'AUX_GEH_ID';
+V_TABLA_AUX5 VARCHAR2(30 CHAR) := 'AUX_GEE_ID';
+
+--Tablas OFERTAS
+
+V_TABLA_SCO VARCHAR2 (30 CHAR) := 'SCO_SCORING';
+V_TABLA_SRE VARCHAR2 (30 CHAR) := 'SRE_SEGURO_RENTAS';
+V_SENTENCIA VARCHAR2(2600 CHAR);
+
+
+BEGIN
+
+
+	
+	--INSERT EN SCO_SCORING
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.SCO_SCORING  (
+				SCO_ID,
+				SCO_MOTIVO_RECHAZO,
+				SCO_ID_SOLICITUD,
+				SCO_EN_REVISION,
+				SCO_COMENTARIOS,
+				VERSION,
+				USUARIOCREAR,
+				FECHACREAR,
+				USUARIOMODIFICAR,
+				FECHAMODIFICAR,
+				USUARIOBORRAR,
+				FECHABORRAR,
+				BORRADO,
+				DD_REC_ID,
+				ECO_ID,
+				DD_RSE_ID,
+				DD_RAT_ID,
+				DD_GAO_ID,
+				SCO_IMPORTE_GARANTIAS_AD,
+				DD_RSB_ID,
+				SCO_FECHA_SANCION_BC,
+				SCO_NUM_EXPEDIENTE
+					)
+
+					SELECT 
+					
+					'||V_ESQUEMA||'.S_SCO_SCORING.NEXTVAL  SCO_ID,
+				SCO.SCO_MOTIVO_RECHAZO,
+				SCO.SCO_ID_SOLICITUD,
+				SCO.SCO_EN_REVISION,
+				SCO.SCO_COMENTARIOS,
+					''0''                                                    VERSION,
+					''HREOS-16499''                                   	  USUARIOCREAR,
+					SYSDATE                                                   FECHACREAR,
+					NULL                                                      USUARIOMODIFICAR,
+					NULL                                                      FECHAMODIFICAR,
+					NULL                                                      USUARIOBORRAR,
+					NULL                                                      FECHABORRAR,
+					SCO.BORRADO,
+					SCO.DD_REC_ID,
+				AUX_ECO_ID.ECO_ID_NUEVO,
+				SCO.DD_RSE_ID,
+				SCO.DD_RAT_ID,
+				SCO.DD_GAO_ID,
+				SCO.SCO_IMPORTE_GARANTIAS_AD,
+				SCO.DD_RSB_ID,
+				SCO.SCO_FECHA_SANCION_BC,
+				SCO.SCO_NUM_EXPEDIENTE
+					
+					FROM '||V_ESQUEMA||'.AUX_OFR_ID AUX_OFR_ID 
+					JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON AUX_OFR_ID.OFR_ID_VIEJO = OFR.OFR_ID 
+					JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO_EXP ON ECO_EXP.OFR_ID = OFR.OFR_ID
+					JOIN '||V_ESQUEMA||'.SCO_SCORING SCO ON SCO.ECO_ID = ECO_EXP.ECO_ID
+					JOIN '||V_ESQUEMA||'.AUX_ECO_ID AUX_ECO_ID ON AUX_ECO_ID.ECO_ID_VIEJO = SCO.ECO_ID';
+
+      EXECUTE IMMEDIATE V_SQL;
+
+
+	--INSERT EN SRE_SEGURO_RENTAS
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.SRE_SEGURO_RENTAS  (
+				SRE_ID,
+				SRE_MOTIVO_RECHAZO,
+				SRE_ASEGURADORAS,
+				SRE_EN_REVISION,
+				SRE_EMAIL_POLIZA_ASEGURADORA,
+				VERSION,
+				USUARIOCREAR,
+				FECHACREAR,
+				USUARIOMODIFICAR,
+				FECHAMODIFICAR,
+				USUARIOBORRAR,
+				FECHABORRAR,
+				BORRADO,
+				ECO_ID,
+				COMENTARIOS,
+				DD_REC_ID,
+				SRE_FECHA_SANCION_BC,
+				SRE_MESES_BC,
+				SRE_IMPORTE_BC,
+				PVE_ID)
+
+					SELECT 				
+					'||V_ESQUEMA||'.S_SRE_SEGURO_RENTAS.NEXTVAL  SRE_ID,
+					SRE.SRE_MOTIVO_RECHAZO,
+					SRE.SRE_ASEGURADORAS,
+					SRE.SRE_EN_REVISION,
+					SRE.SRE_EMAIL_POLIZA_ASEGURADORA,
+					''0''                                                    VERSION,
+					''HREOS-16499''                                   	  USUARIOCREAR,
+					SYSDATE                                                   FECHACREAR,
+					NULL                                                      USUARIOMODIFICAR,
+					NULL                                                      FECHAMODIFICAR,
+					NULL                                                      USUARIOBORRAR,
+					NULL                                                      FECHABORRAR,
+					SRE.BORRADO,
+					AUX_ECO_ID.ECO_ID_NUEVO,
+					SRE.COMENTARIOS,
+					SRE.DD_REC_ID,
+					SRE.SRE_FECHA_SANCION_BC,
+					SRE.SRE_MESES_BC,
+					SRE.SRE_IMPORTE_BC,
+					SRE.PVE_ID
+					
+					FROM '||V_ESQUEMA||'.AUX_OFR_ID AUX_OFR_ID 
+					JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON AUX_OFR_ID.OFR_ID_VIEJO = OFR.OFR_ID 
+					JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO_EXP ON ECO_EXP.OFR_ID = OFR.OFR_ID
+					JOIN '||V_ESQUEMA||'.SRE_SEGURO_RENTAS SRE ON SRE.ECO_ID = ECO_EXP.ECO_ID
+					JOIN '||V_ESQUEMA||'.AUX_ECO_ID AUX_ECO_ID ON AUX_ECO_ID.ECO_ID_VIEJO = SRE.ECO_ID';
+
+      EXECUTE IMMEDIATE V_SQL;
+  
+  COMMIT;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_SCO||''',''2''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA_SRE||''',''2''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+
+
+
+
+
+  
+  
+  
+EXCEPTION
+
+WHEN OTHERS THEN
+     DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+     DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+     DBMS_OUTPUT.put_line(SQLERRM);
+     ROLLBACK;
+     RAISE;
+END;
+/
+
+EXIT;

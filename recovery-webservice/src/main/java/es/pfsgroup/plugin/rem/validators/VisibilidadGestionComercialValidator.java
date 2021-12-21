@@ -171,16 +171,18 @@ public class VisibilidadGestionComercialValidator {
 				
 				HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activoActual.getId());
 				
-				if(fasePublicacionActivoVigente != null && (DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()) 
-				|| DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente.getSubFasePublicacion()) 
-				|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
-					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
-				}else if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDSubfasePublicacion.isHistoricoFasesGestionApi(fasePublicacionActivoVigente.getSubFasePublicacion())) {
-					erroresActivo.add(VALID_SUBFASE_PUBLICACION);
-				}
+				if(fasePublicacionActivoVigente != null) {
+					if(DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()) 
+					|| DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente.getSubFasePublicacion()) 
+					|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion())) {
+						erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+					}else if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDSubfasePublicacion.isHistoricoFasesGestionApi(fasePublicacionActivoVigente.getSubFasePublicacion())) {
+						erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+					}
 				
-				if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDFasePublicacion.isFaseTres(fasePublicacionActivoVigente.getFasePublicacion())) {
-					erroresActivo.add(VALID_FASE_PUBLICACION);
+					if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDFasePublicacion.isFaseTres(fasePublicacionActivoVigente.getFasePublicacion())) {
+						erroresActivo.add(VALID_FASE_PUBLICACION);
+					}
 				}
 				
 				String[] estadosExpedienteNoValidos = {DDEstadosExpedienteComercial.FIRMADO, DDEstadosExpedienteComercial.RESERVADO, DDEstadosExpedienteComercial.VENDIDO};

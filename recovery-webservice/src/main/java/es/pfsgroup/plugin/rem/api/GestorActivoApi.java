@@ -176,7 +176,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @param codigoTarea
 	 * @return
 	 */
-	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna);
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, Boolean isActivoJaguar, TareaExterna tareaExterna);
 	
 	public Usuario supervisorTareaApple(String codigoTarea);
 

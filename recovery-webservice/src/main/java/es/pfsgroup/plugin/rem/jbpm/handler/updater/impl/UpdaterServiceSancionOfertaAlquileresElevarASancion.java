@@ -76,11 +76,12 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		String peticionario = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		boolean aprobado = true;
 		
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite, dtoHistoricoBC);
+				aprobado = this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite);
 			}
 			
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -141,6 +142,12 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 
 		expedienteComercialApi.update(expedienteComercial,false);
 		
+		if(aprobado) {
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+
+		}else {
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
+		}
 
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
@@ -156,13 +163,14 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	}
 	
 	
-	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite,DtoRespuestaBCGenerica dtoHistoricoBC) {
+	private boolean ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite) {
 		String codigoEstadoExpediente = null;
 		String codigoEstadoBc = null;
-	
+		boolean aprobado = true;
 		
 		if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SCORING;
+			aprobado = true;
 		
 			DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 			eco.setEstado(estadoExpComercial);
@@ -176,19 +184,18 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 					ofertaApi.congelarOferta(ofertaCongelar);
 				}
 			}
-			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 
 		}else if(DDRespuestaOfertante.CODIGO_RECHAZA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
-
+			aprobado = false;
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 			oferta.setEstadoOferta(estadoOferta);
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 
 		}else if(DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(resolucion)){
 			codigoEstadoExpediente = DDEstadosExpedienteComercial.CONTRAOFERTADO;
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO;
+			aprobado = false;
 		}
 		
 		if(codigoEstadoExpediente != null) {
@@ -198,6 +205,8 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		if(oferta.getActivoPrincipal() !=null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && codigoEstadoBc != null) {
 			eco.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, codigoEstadoBc));
 		}
+
+		return aprobado;
 	}
 
 }

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.catastro;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
@@ -149,26 +151,38 @@ public class CatastroManager implements CatastroApi {
 	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo, String refCatastral) {
 		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
 		
-		DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
-		DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
-		DtoDatosCatastro dto3 = this.getDatosCatastroRem(idActivo);
-		dto.setRefCatastral("PRUEBA1VJ9395S0058HL");
-		dto2.setRefCatastral("PRUEBA2VJ9395S0058HL");
-		dto3.setRefCatastral("PRUEBA3VJ9395S0058HL");
 		
-		dto.setCatastroCorrecto(true);
-		dto2.setCatastroCorrecto(false);
-	
-		listDto.add(dto);
-		listDto.add(dto2);
-		listDto.add(dto3);
+		boolean referenciaValida = this.isReferenciaValida(refCatastral);
 		
+		if(referenciaValida) {
+			DtoDatosCatastro dto = this.getDatosCatastroRem(idActivo);
+			DtoDatosCatastro dto2 = this.getDatosCatastroRem(idActivo);
+			DtoDatosCatastro dto3 = this.getDatosCatastroRem(idActivo);
+			dto.setRefCatastral("PRUEBA1VJ9395S0058HL");
+			dto2.setRefCatastral("PRUEBA2VJ9395S0058HL");
+			dto3.setRefCatastral("PRUEBA3VJ9395S0058HL");
+			
+			dto.setCatastroCorrecto(true);
+			dto2.setCatastroCorrecto(false);
 		
-		List<DtoDatosCatastro> lista = consultaCatastroRem3(idActivo, refCatastral);
-		if (!lista.isEmpty()) {
-			existeCatastro(lista);
-			listDto.addAll(lista);
+			listDto.add(dto);
+			listDto.add(dto2);
+			listDto.add(dto3);
+			
+			List<DtoDatosCatastro> lista = consultaCatastroRem3(idActivo, refCatastral);
+			if (!lista.isEmpty()) {
+				existeCatastro(lista);
+				listDto.addAll(lista);
+			}
+		}else {
+			DtoDatosCatastro dto = new DtoDatosCatastro();
+			dto.setCatastroCorrecto(false);
+			dto.setRefCatastral(refCatastral);
+			listDto.add(dto);
 		}
+		
+		
+		
 		
 		return listDto;
 	}
@@ -890,4 +904,61 @@ public class CatastroManager implements CatastroApi {
 
 		}
 	
+	private boolean isReferenciaValida(String refCatastral) {
+		
+		String letraDc= "MQWERTYUIOPASDFGHJKLBZX";
+		String dcCalculado = "";
+		int[] pesoPosicion = new int[]{13,15,12,5,4,17,9,21,3,7,1};
+		
+		if(Checks.esNulo(refCatastral) || refCatastral.length() != 20) {
+			return false;
+		}
+		
+		refCatastral = refCatastral.toUpperCase();
+		
+		
+		String cadenaPrimerDC=(refCatastral.substring(0,7) + refCatastral.substring(14,18)); 
+	    String cadenaSegundoDC=(refCatastral.substring(7,14) + refCatastral.substring(14,18));
+	    List<String> cadenas = new ArrayList<String>();
+	    cadenas.add(cadenaPrimerDC);
+	    cadenas.add(cadenaSegundoDC); cadenaSegundoDC.split("");
+	    int posicion = 0;
+	    Integer valorCaracter  = null;
+	    for (String cadena : cadenas) {
+	    	int sumaDigitos=0;
+	    	
+	    	String[] caracteres = cadena.split("");
+
+	    	
+	    	LinkedList<String> caracteresList = new LinkedList<String>();
+	    	caracteresList.addAll(Arrays.asList(caracteres));
+	    	caracteresList.removeFirst();
+
+	    	posicion = 0;
+	    	for (String caracter : caracteresList) {
+	    		valorCaracter = null;
+	    		if(caracter.matches("[0-9]")) {
+	    			valorCaracter = Integer.parseInt(caracter);
+	    		}else if(caracter.matches("[A-N]")){
+	                valorCaracter=Character.codePointAt(caracter, 0)-64;
+	            }else if(caracter.matches("[Ñ]")){
+	                valorCaracter=15;
+	            }else if(caracter.matches("[N-Z]")){
+	                valorCaracter=Character.codePointAt(caracter, 0)-63;
+	            }
+	    		
+	            if(valorCaracter != null && posicion < 11) {
+	            	sumaDigitos=(sumaDigitos+(valorCaracter*pesoPosicion[posicion]))%23;
+	            }
+	            posicion++;
+			}
+	    	 dcCalculado+=letraDc.charAt(sumaDigitos);
+		}
+	    
+	    if(!dcCalculado.equalsIgnoreCase(refCatastral.substring(18,20))){
+	        return false;
+	    }
+	    return true;
+
+	}
 }

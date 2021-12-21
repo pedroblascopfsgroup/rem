@@ -77,12 +77,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		}
 
 		if (aprueba) {
-			
-			if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-				estadoExp = DDEstadosExpedienteComercial.PTE_PBC;
-			}else {
-				estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			}
+			estadoExp = DDEstadosExpedienteComercial.PTE_PBC;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		} else{

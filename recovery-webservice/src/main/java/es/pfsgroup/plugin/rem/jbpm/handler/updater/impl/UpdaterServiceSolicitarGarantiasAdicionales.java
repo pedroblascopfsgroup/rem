@@ -72,12 +72,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				String estadoCodigo = null;
 				String estadoBcCodigo = null;
 				if(!haPasadoScoringBC && acepta) {
-					if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-						estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
-					}else {
-						estadoCodigo = DDEstadosExpedienteComercial.PTE_ENVIO;
-					}
-					
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
 				}else if(haPasadoScoringBC && acepta){
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_SANCION_COMITE;

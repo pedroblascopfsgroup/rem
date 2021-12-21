@@ -4079,6 +4079,20 @@
 		
 		me.down('[name=ncontratoPrinex]').validate();
     },
+    
+	T018_DatosPBC: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T018_CalculoRiesgo: function(){
+    	var me = this; 
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	me.campoObligatorio(comboRiesgo);
+    	comboRiesgo.allowBlank = false;
+    },
 	
     habilitarCampo: function(campo) {
         var me = this;

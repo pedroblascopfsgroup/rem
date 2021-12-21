@@ -1240,7 +1240,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 	} else if (label == "null"){
 		    	 		rec.setVisible(false);
 		    	 	} else if(label == "venta"){
-		    	 		rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
+		    	 		if(rec.lookupController().getView().getViewModel().get('expediente.esBankia')){
+		    	 			rec.setFieldLabel(HreRem.i18n('title.grid.fecha.arras'));
+		    	 		}else{
+		    	 			rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
+		    	 		}
 		    	 	}
             },
             

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211215
+--## FECHA_CREACION=20211221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16682
@@ -36,8 +36,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--DD_STG_CODIGO  --DESCRIPCION  --DD_TGA_CODIGO
-      T_TIPO_DATA('116','Monitorio','05'),
-      T_TIPO_DATA('117','Derribos','15'),
+      T_TIPO_DATA('152','Monitorio','05'),
+      T_TIPO_DATA('153','Derribos','15'),
       T_TIPO_DATA('118','Requerimientos Derribos','15'),
       T_TIPO_DATA('119','Requerimientos Limpiezas','15'),
       T_TIPO_DATA('120','Requerimientos Otros','15'),

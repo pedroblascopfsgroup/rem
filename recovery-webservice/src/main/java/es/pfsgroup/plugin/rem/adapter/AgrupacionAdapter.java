@@ -4957,7 +4957,7 @@ public class AgrupacionAdapter {
 
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
+		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
 			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
@@ -4973,7 +4973,12 @@ public class AgrupacionAdapter {
 					&& activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 			}
+
+			if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipoAgrupacion) && (activoAgrupacionActivoDao.algunActivoAlquilado(activosID) || activoAgrupacionActivoDao.algunActivoVendido(activosID))) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			}
 		}
+		
 
 		// Comprobar si la grupación tiene ofertas aceptadas para establecer la
 		// nueva oferta en estado congelada.

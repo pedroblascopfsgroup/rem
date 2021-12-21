@@ -193,6 +193,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
 						Double nuevoImporte = Double.valueOf(doubleValue);

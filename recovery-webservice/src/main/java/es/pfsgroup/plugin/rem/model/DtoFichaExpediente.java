@@ -88,7 +88,7 @@ public class DtoFichaExpediente extends WebDto {
 
 	private Date fechaDevolucionEntregas;
 	
-	private String tipoAlquiler;
+	private String tpoAlquiler;
 	
 	private String tipoInquilino;
 
@@ -641,12 +641,12 @@ public class DtoFichaExpediente extends WebDto {
 		this.codigoComiteSancionador = codigoComiteSancionador;
 	}
 
-	public String getTipoAlquiler() {
-		return tipoAlquiler;
+	public String getTpoAlquiler() {
+		return tpoAlquiler;
 	}
 
-	public void setTipoAlquiler(String tipoAlquiler) {
-		this.tipoAlquiler = tipoAlquiler;
+	public void setTpoAlquiler(String tipoAlquiler) {
+		this.tpoAlquiler = tipoAlquiler;
 	}
 
 	public String getTipoInquilino() {

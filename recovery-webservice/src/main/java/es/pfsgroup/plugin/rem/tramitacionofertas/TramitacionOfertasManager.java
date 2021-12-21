@@ -1803,6 +1803,28 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							} 
 						}				
 							
+					}else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
+						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+						Double umbralAskingPrice=200000.0;
+						String codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+						String codComiteJaguar = DDComiteSancion.CODIGO_JAGUAR;
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteJaguar);
+							} 
+						}else {
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteJaguar);
+							} 
+						}				
+							
 					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
 							

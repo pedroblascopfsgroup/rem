@@ -471,6 +471,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaFirmaReserva", fechaDesde, fechaHasta);
 				} else if (TIPO_FECHA_OFR_PENDIENTE.equals(dto.getTipoFecha())) {
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaOfertaPendiente", fechaDesde, fechaHasta);
+				} else if (TIPO_FECHA_ENTRADA_CRMSF.equals(dto.getTipoFecha())) {
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vgrid.fechaOfertaEntradaCRM", fechaDesde, fechaHasta);
 				}
 			} catch (ParseException e) {
 				logger.error(e.getMessage());

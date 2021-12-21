@@ -340,7 +340,7 @@ public class AgrupacionAdapter {
 
 		try {
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
-			
+		
 			if (agrupacionVistaCalculado != null) {
 				if (agrupacionVistaCalculado.getNumActivosPublicados() != null) {
 					BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVistaCalculado.getNumActivosPublicados());
@@ -905,6 +905,13 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+			}
+			
+			
+			if(agrupacion.getActivoPrincipal() != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+			}else if(activoCero != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
 
 		} catch (IllegalAccessException e) {

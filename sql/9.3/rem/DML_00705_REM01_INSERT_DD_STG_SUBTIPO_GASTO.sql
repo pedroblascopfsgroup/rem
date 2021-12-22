@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211215
+--## FECHA_CREACION=20211221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16682
@@ -36,8 +36,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--DD_STG_CODIGO  --DESCRIPCION  --DD_TGA_CODIGO
-      T_TIPO_DATA('116','Monitorio','05'),
-      T_TIPO_DATA('117','Derribos','15'),
+      T_TIPO_DATA('152','Monitorio','05'),
+      T_TIPO_DATA('153','Derribos','15'),
       T_TIPO_DATA('118','Requerimientos Derribos','15'),
       T_TIPO_DATA('119','Requerimientos Limpiezas','15'),
       T_TIPO_DATA('120','Requerimientos Otros','15'),
@@ -71,7 +71,11 @@ DECLARE
       T_TIPO_DATA('148','Comisión Gestión Gestorías Prorrata 100%','13'),
       T_TIPO_DATA('149','Comisión Gestión Gestorías Cuota Fijo','13'),
       T_TIPO_DATA('150','Tarifa plana Prorrata 0%','13'),
-      T_TIPO_DATA('151','Tarifa plana Prorrata 100%','13')
+      T_TIPO_DATA('151','Tarifa plana Prorrata 100%','13'),
+      T_TIPO_DATA('158','Humedades','15'),
+      T_TIPO_DATA('159','Acompañamiento','15'),
+      T_TIPO_DATA('160','Acompañamiento','11'),
+      T_TIPO_DATA('157','Duplicado Certif. eficiencia energética (CEE)','14')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 	
@@ -110,7 +114,7 @@ BEGIN
 							,SYSDATE)';
 			EXECUTE IMMEDIATE V_MSQL;
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS  '|| SQL%ROWCOUNT ||' REGISTROS EN DD_STG_SUBTIPOS_GASTO');
+			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS EL REGISTRO '||TRIM(V_TMP_TIPO_DATA(1))||' EN DD_STG_SUBTIPOS_GASTO');
 
 		ELSE
 

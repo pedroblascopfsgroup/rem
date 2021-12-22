@@ -21,9 +21,9 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
@@ -59,8 +59,8 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
     private String referenciaCatastral;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TCO_ID")
-	private DDTipoComercializacion tipoComercializacion;
+    @JoinColumn(name = "DD_CBC_ID")
+	private DDCarteraBc carteraBc;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EAL_ID")
@@ -159,14 +159,6 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
 
-	public DDTipoComercializacion getTipoComercializacion() {
-		return tipoComercializacion;
-	}
-
-	public void setTipoComercializacion(DDTipoComercializacion tipoComercializacion) {
-		this.tipoComercializacion = tipoComercializacion;
-	}
-
 	public DDTipoEstadoAlquiler getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
 	}
@@ -229,6 +221,14 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 
 	public void setElementoPep(String elementoPep) {
 		this.elementoPep = elementoPep;
+	}
+
+	public DDCarteraBc getCarteraBc() {
+		return carteraBc;
+	}
+
+	public void setCarteraBc(DDCarteraBc carteraBc) {
+		this.carteraBc = carteraBc;
 	}
 	
 }

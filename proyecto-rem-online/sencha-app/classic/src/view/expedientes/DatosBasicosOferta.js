@@ -215,7 +215,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						title : 'Bulk Advisory Note',
 						collapsible: false,
 						bind: {
-							hidden: '{!esCarteraAppleOrRemaining}'
+							hidden: '{!esCarteraAppleOrRemainingOrJaguar}'
 						},
 						colspan: 3,
 						layout: {
@@ -239,7 +239,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store: '{comboSiNoExclusionBulk}',
 									value : '{datosbasicosoferta.exclusionBulk}',
 									readOnly : '{!requisitosEdicionExclusionBulk}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},
 								{
@@ -248,7 +248,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									value : '{datosbasicosoferta.idAdvisoryNote}',
 									readOnly : '{!requisitosEdicionIdAdvisoryNote}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},	{
 								xtype : 'comboboxfieldbase',
@@ -902,7 +902,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						listeners: {
 							beforeedit: function(editor, context) {
 					            var estado = context.record.get("campoCodigo");
-					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09';
+					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
 							}

@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
@@ -143,6 +144,10 @@ public class OfertaDto implements Serializable {
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codMotivoJustificacionOferta;
 	private List<TestigosOfertaDto> testigos;
+	@Diccionary(clase = DDMotivoRechazoRCDC.class, message = "El codigo codMotivoRechazoRCDC no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String codMotivoRechazoRCDC;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -552,5 +557,11 @@ public class OfertaDto implements Serializable {
 	}
 	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
 		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
+	}
+	public String getCodMotivoRechazoRCDC() {
+		return codMotivoRechazoRCDC;
+	}
+	public void setCodMotivoRechazoRCDC(String codMotivoRechazoRCDC) {
+		this.codMotivoRechazoRCDC = codMotivoRechazoRCDC;
 	}
 }

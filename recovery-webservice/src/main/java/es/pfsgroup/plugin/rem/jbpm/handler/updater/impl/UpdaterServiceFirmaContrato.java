@@ -128,7 +128,8 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						campos.put(TIPO_OPERACION, true);										
 						if(expediente != null) {
 							expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
-							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(), null, false);
+							GenericABMDao.Filter filtroAnulados = genericDao.createFilter(FilterType.NULL, "fechaFinPosicionamiento");
+							pos = expedienteComercialApi.getUltimoPosicionamiento(expediente.getId(), filtroAnulados, false);
 							if(pos != null) {
 								if (DDMotivosEstadoBC.isAprobado(pos.getValidacionBCPos())) {
 									pos.setValidacionBCPos(genericDao.get(DDMotivosEstadoBC.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDMotivosEstadoBC.CODIGO_ANULADA)));

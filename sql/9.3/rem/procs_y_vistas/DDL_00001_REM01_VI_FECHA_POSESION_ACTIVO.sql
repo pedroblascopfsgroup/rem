@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20211126
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20211217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10845
+--## INCIDENCIA_LINK=HREOS-16597
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para obtener la fecha de posesión de los activos
@@ -15,6 +15,7 @@
 --##        0.2 [REMVIP-9343] Actualización de condiciones
 --##        0.3 [REMVIP-9856] Juan Bautista Alfonso - Actualizacion condiciones para sareb
 --##	    0.4 [REMVIP-10845] Juan Bautista Alfonso - Nueva logica de calculo fecha toma posesion para caixabank
+--##	    0.5 [HREOS-16597] Santi Monzó - Añadir la subcartera Jaguar
 --#########################################
 --*/
 
@@ -73,7 +74,7 @@ BEGIN
                             ELSE BIE_ADJ.BIE_ADJ_F_REA_POSESION
                                 END
                 WHEN ''02'' THEN
-                    CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
+                    CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'') OR CRA.DD_CRA_CODIGO = ''02''
                             THEN ADN.FECHA_POSESION
                             ELSE ADN.ADN_FECHA_TITULO
                                 END
@@ -87,7 +88,7 @@ BEGIN
                                 END
                         WHEN ''02'' THEN 
                             CASE 
-                                WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
+                                WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'') OR CRA.DD_CRA_CODIGO = ''02''
                                     THEN ACT_MATRIZ.FECHA_POSESION
                                 ELSE ACT_MATRIZ.ADN_FECHA_TITULO
                                 END 

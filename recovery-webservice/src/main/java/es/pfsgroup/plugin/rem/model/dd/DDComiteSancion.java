@@ -72,6 +72,9 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_HAYA_BBVA = "47";
 	public static final String CODIGO_BBVA = "48";
 	
+	public static final String CODIGO_JAGUAR = "51";
+	public static final String CODIGO_HAYA_JAGUAR = "52";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

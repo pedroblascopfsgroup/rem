@@ -1430,7 +1430,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}else if(activo.getSubcartera()!=null && (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo()) ||
 									DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()) 
-								 || DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()))) {
+								 || DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()))
+									|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
 				if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion()!=null) {
 					combo.add(tipoTituloNo);
 				}else {

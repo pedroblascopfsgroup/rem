@@ -63,6 +63,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    			var destinoComercial= datos.destinoComercial;
 		    			var carteraInternacional = datos.carteraInternacional;
 		    			var slideDatos;
+		    			var success = datos.success;
+
+		    			if (success === "true") {
+
 		    			if(!Ext.isEmpty(wizard.oferta)){
 		    				
 		    				slideDatos = wizard.down('slidedatosoferta');
@@ -269,6 +273,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	 				    }
 		    			me.getView().unmask();
 						wizard.nextSlide();
+
+						}else{
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
 					},
 					failure: function(record, operation) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

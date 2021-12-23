@@ -3804,33 +3804,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public ActivoTasacion getTasacionMasReciente(Activo activo) {
-		ActivoTasacion tasacionMasReciente = null;
+		ActivoTasacion tasacionMasReciente =  new ActivoTasacion();
 		List<ActivoTasacion> tasacionesActivo = activo.getTasacion();
-
-		if (!Checks.estaVacio(tasacionesActivo)) {
-			tasacionMasReciente = tasacionesActivo.get(0);
-			if (tasacionMasReciente != null) {
-				Date fechaValorTasacionMasReciente = new Date();
-
-				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
-						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
-					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
-				}
-
-				for (ActivoTasacion tas : tasacionesActivo) {
-					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
-						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
-								&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
-								&& tas.getValoracionBien().getFechaValorTasacion()
-										.after(fechaValorTasacionMasReciente)) {
-							fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
-							tasacionMasReciente = tas;
+		if(!Checks.estaVacio(activo.getTasacion())) {
+			if (!Checks.estaVacio(tasacionesActivo)) {
+				tasacionMasReciente = tasacionesActivo.get(0);
+				if (tasacionMasReciente != null) {
+					Date fechaValorTasacionMasReciente = new Date();
+	
+					if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
+							&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
+						fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
+					}
+	
+					for (ActivoTasacion tas : tasacionesActivo) {
+						if (tas.getValoracionBien().getFechaValorTasacion() != null) {
+							if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
+									&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())
+									&& tas.getValoracionBien().getFechaValorTasacion()
+											.after(fechaValorTasacionMasReciente)) {
+								fechaValorTasacionMasReciente = tas.getValoracionBien().getFechaValorTasacion();
+								tasacionMasReciente = tas;
+							}
 						}
 					}
 				}
 			}
 		}
-
 		return tasacionMasReciente;
 	}
 
@@ -5023,7 +5023,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-							||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())))
+							||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+							||DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))
 							||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 						if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
 							activo.getSituacionPosesoria().setFechaTomaPosesion(activo.getAdjNoJudicial().getFechaPosesion());
@@ -9586,6 +9587,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ofertaCaixa.setCanalDistribucionBc(activoCaixa.getCanalDistribucionAlquiler());
 			}
 		}
+	}
+	
+	@Override
+	public boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta) {
+		
+		if (DDCartera.isCarteraBk(activo.getCartera()) && ofertaApi.isActivoConOfertaYExpedienteBlocked(activo) 
+				&& DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo())
+						&& DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(codTipoOferta)) {
+			return true;
+		}
+		return false;
 	}
 }
 

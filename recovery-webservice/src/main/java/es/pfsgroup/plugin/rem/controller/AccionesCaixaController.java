@@ -118,7 +118,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionRechazo(DtoAccionRechazoCaixa dto){
         ModelMap model = new ModelMap();
         try {
-            accionesCaixaApi.accionRechazo(dto);
+            boolean success = accionesCaixaApi.accionRechazo(dto);
+            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -499,7 +500,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionContraoferta(DtoAccionAprobacionCaixa dto){
         ModelMap model = new ModelMap();
         try {
-            accionesCaixaApi.accionContraoferta(dto);
+            boolean success = accionesCaixaApi.accionContraoferta(dto);
+            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

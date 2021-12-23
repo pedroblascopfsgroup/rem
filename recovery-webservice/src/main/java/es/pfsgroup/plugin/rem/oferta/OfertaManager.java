@@ -646,10 +646,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 					&& !(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_RECHAZADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
 							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_CADUCADA.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
-							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta()))
+							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+							|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())
+			)
 					&& Checks.esNulo(ofertaDto.getCodTarea())) {
 
-				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("transicion de estado no permitida", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
 
@@ -2293,7 +2295,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 						}else if(oferta.getEstadoOferta() != null) {
 							//Cuando codigo es Pendiente Consentimiento
-							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) 
+							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)
 							&& (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
 								if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
 										DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())){
@@ -2309,7 +2311,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
 								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
 										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-							} 							
+							}else {
+								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+							}
 						}
 				}else {
 					if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
@@ -4451,13 +4455,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
-		if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-			&& !DDSubcartera.CODIGO_BAN_BH
-			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
-		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
+		if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) 
+				&& !DDSubcartera.CODIGO_BAN_BH.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
+			||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
 
 			if (((!Checks.esNulo(expediente.getReserva()))
 				&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
@@ -4989,7 +4993,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					
 					if(clienteCom.getProvinciaNacimiento() != null) {
-						clienteComercialDto.setProvinciaNacimientoCodigo(clienteCom.getProvincia().getCodigo());
+						clienteComercialDto.setProvinciaNacimientoCodigo(clienteCom.getProvinciaNacimiento().getCodigo());
 					}
 					
 					if(clienteCom.getLocalidadNacimiento() != null) {
@@ -7983,7 +7987,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			 else if (codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS))
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
 							|| codSubcartera.equals(DDSubcartera.CODIGO_CERB_DIVARIAN) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || codSubcartera.equals(DDSubcartera.CODIGO_CERB_INMOVILIARIO)
-							|| codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB));
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAGUAR));
 				 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_HYT))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_HYT_INMOBILIARIO));

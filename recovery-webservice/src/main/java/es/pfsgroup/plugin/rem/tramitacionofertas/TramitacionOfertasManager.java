@@ -1115,6 +1115,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (iap.getOficinaTrabajo() != null) {
 						compradorExpedienteNuevo.setOficinaTrabajo(iap.getOficinaTrabajo());
 					}
+					
+					if (iap.getNacionalidadCodigo() != null) {
+						compradorExpedienteNuevo.setNacionalidadCodigo(iap.getNacionalidadCodigo());
+					}
+					
+					if (iap.getNacionalidadRprCodigo() != null) {
+						compradorExpedienteNuevo.setNacionalidadRprCodigo(iap.getNacionalidadRprCodigo());
+					}
 				}
 			}
 
@@ -1771,6 +1779,28 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
 							} else {
 								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes);
+							} 
+						}				
+							
+					}else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
+						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+						Double umbralAskingPrice=200000.0;
+						String codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+						String codComiteJaguar = DDComiteSancion.CODIGO_JAGUAR;
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteJaguar);
+							} 
+						}else {
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteJaguar);
 							} 
 						}				
 							

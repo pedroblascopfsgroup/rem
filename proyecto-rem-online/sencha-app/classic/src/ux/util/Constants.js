@@ -283,6 +283,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		GAT:'156',
 		EDT:'157',
 		USGAI:'158',
+		JAGUAR:'70',
 		TITEDT:'162',
 		TITTDA:'163'
     },
@@ -355,7 +356,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
     TIPOS_OFERTA: {
     	VENTA : '01',
-    	ALQUILER: '02'
+    	ALQUILER: '02',
+    	ALQUILER_NO_COMERCIAL: '03'
     },
 
     TIPOS_PROVEEDOR_EXPEDIENTE: {

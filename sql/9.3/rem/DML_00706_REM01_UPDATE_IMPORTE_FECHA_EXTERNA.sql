@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20211220
+--## FECHA_CREACION=20211223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16597
@@ -28,10 +28,16 @@ DECLARE
     
     V_COUNT NUMBER(16):=0; --Vble. para contar registros correctos
     V_COUNT_TOTAL NUMBER(16):=0; --Vble para contar registros totales
-    
-    
+    V_TABLA_AUX VARCHAR2(30 CHAR) := 'AUX_ACT_TRASPASO_ACTIVO';
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 
 BEGIN
+
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME ='''||V_TABLA_AUX||''' AND OWNER ='''||V_ESQUEMA||''' ';
+   
+   EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS > 0 THEN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio de la anulación de venta');
 
@@ -47,6 +53,9 @@ BEGIN
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] Los activos se han actualizado correctamente');
 
+    ELSE
+		DBMS_OUTPUT.PUT_LINE('[FIN] La tabla '||V_TABLA_AUX||' no existe.');
+	END IF;
 
 EXCEPTION
      WHEN OTHERS THEN

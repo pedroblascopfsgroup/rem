@@ -124,12 +124,16 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         
         ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
         ExpedienteComercial expediente = expedienteComercialManager.getExpedientePorActivo(activo);
-        ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
+        List<ActivoCatastro> activoCatastroList = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "activo.id", activo.getId()));
         ActivoBbvaActivos activoBbvaActivos = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
-
+        ActivoCatastro activoCatastro = null;
         ArrayList<Map<String, Object>> listaTasaciones = new ArrayList<Map<String, Object>>();
         ArrayList<Map<String, Object>> listaValoraciones = new ArrayList<Map<String, Object>>();
         ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
+        
+        if(activoCatastroList != null && !activoCatastroList.isEmpty()) {
+        	activoCatastro = activoCatastroList.get(0);
+        }
 
         Map<String, Object> map = new HashMap<String, Object>();
         
@@ -174,7 +178,13 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }else {
             map.put("estado", "1");
         }
-        map.put("referenciaCatastral", activoCatastro.getRefCatastral());
+        if(activoCatastro != null) {
+	        if(activoCatastro.getCatastro() != null) {
+	        	map.put("referenciaCatastral", activoCatastro.getCatastro().getRefCatastral());
+	        }else {
+	        	map.put("referenciaCatastral", activoCatastro.getRefCatastral());
+	    	}
+        }
         if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
         	map.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());
         }else{

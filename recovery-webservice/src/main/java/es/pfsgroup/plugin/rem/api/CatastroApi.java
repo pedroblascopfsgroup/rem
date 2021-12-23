@@ -32,6 +32,8 @@ public interface CatastroApi {
 	List<DtoDatosCatastroGrid> validarCatastroDireccion(DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro);
 
 	void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia);
+
+	boolean isReferenciaValida(String refCatastral);
 	
 }
 

@@ -1159,8 +1159,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	private Boolean comprobarCatastro(List<ActivoCatastro> listadoCatastro) {
 		for (ActivoCatastro catastro : listadoCatastro) {
-			if (Checks.esNulo(catastro.getRefCatastral()))
+			if(Checks.esNulo(catastro.getCatastro())&& Checks.esNulo(catastro.getRefCatastral())){
 				return false;
+			}
 		}
 
 		return true;

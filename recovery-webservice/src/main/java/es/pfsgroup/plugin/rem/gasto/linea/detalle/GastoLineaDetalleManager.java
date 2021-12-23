@@ -1204,6 +1204,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 						gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
 						gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
+						List<ActivoCatastro> activosCatastro = activoAgrupacionActivo.getActivo().getCatastro();
+						if (!Checks.estaVacio(activosCatastro)) {						
+							ActivoCatastro activoCatastro = activosCatastro.get(0);
+							if(activoCatastro.getCatastro() != null) {
+								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+							}else {
+								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
+							}
+						}
 						sumaTotal = sumaTotal.add(participacion);
 						newEntidadGastoLineaDetalle.add(gastoLineaDetalleEntidad);
 						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
@@ -1247,6 +1256,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				 			
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
+					List<ActivoCatastro> activosCatastro = activo.getCatastro();
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = activosCatastro.get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
+					}
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
 					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
 					Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", gastoLineaDetalle.getSubtipoGasto().getCodigo());
@@ -1269,6 +1287,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						}
 					}
 					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
+					
 				}else {
 					gastoLineaDetalleEntidad.setEntidad(Long.parseLong(dto.getIdElemento()));
 				}

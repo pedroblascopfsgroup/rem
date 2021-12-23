@@ -904,7 +904,8 @@ public class CatastroManager implements CatastroApi {
 
 		}
 	
-	private boolean isReferenciaValida(String refCatastral) {
+	@Override
+	public boolean isReferenciaValida(String refCatastral) {
 		
 		String letraDc= "MQWERTYUIOPASDFGHJKLBZX";
 		String dcCalculado = "";

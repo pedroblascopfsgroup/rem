@@ -1617,10 +1617,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoProveedorActivo.setEntidad(activo.getId());
 					gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
 					
-					if (!Checks.estaVacio(activosCatastro)) {
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = act.getCatastro().get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
 					}
 					
+				
 					if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){
 						for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
 							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList()) && !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())){
@@ -1671,8 +1677,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 									genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 									gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
 									
-									if (!Checks.estaVacio(activosCatastro)) {
-										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+								
+									if (!Checks.estaVacio(activosCatastro)) {						
+										ActivoCatastro activoCatastro = activosCatastro.get(0);
+										if(activoCatastro.getCatastro() != null) {
+											gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+										}else {
+											gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+										}
 									}
 									
 									if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){

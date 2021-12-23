@@ -43,10 +43,10 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="200"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="200"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="200"/>
-    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="-1"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="200"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">

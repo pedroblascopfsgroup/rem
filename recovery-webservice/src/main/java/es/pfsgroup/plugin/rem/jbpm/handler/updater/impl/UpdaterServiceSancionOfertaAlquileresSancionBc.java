@@ -17,7 +17,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
@@ -40,9 +39,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	@Autowired
 	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     

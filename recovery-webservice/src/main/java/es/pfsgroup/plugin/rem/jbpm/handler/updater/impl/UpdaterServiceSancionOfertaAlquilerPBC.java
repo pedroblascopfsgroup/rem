@@ -14,20 +14,14 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
@@ -69,7 +63,7 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 		
 		if (aprueba) {
 			estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
 		} else{
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
@@ -78,7 +72,6 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);
 			}
-
 		}
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));

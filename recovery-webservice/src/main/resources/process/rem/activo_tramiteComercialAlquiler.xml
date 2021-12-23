@@ -311,7 +311,7 @@
 	
 	<decision name ="T015_SolicitarGarantiasAdicionalesDecision" expression="#{T015_SolicitarGarantiasAdicionalesDecision}">
 		<transition to="Fin" name="Anulada"></transition>
-		<transition to="T015_PBC" name="OKSinDudasIrPBC"></transition>
+		<transition to="T015_DatosPBC" name="OKSinDudasIrPBC"></transition>
 		<transition to="T015_EnvioContrato" name="OKSinDudasIrEnvioContrato"></transition>
         <transition to="T015_SancionBC" name="KOSinDudas"></transition>
         <transition to="T015_SancionBC" name="OKConDudas"></transition>
@@ -374,9 +374,10 @@
     <decision name ="T015_SancionBCDecision" expression="#{T015_SancionBCDecision}">
 		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_EnvioContrato" name="OKirEnvioContrato"></transition>
-		<transition to="T015_PBC" name="OKirPBC"></transition>
+		<transition to="T015_DatosPBC" name="OKirPBC"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
+    
     <state name="T015_PBC">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -401,8 +402,61 @@
     </state>
     
     <decision name ="T015_PBCDecision" expression="#{T015_PBCDecision}">
-		<transition to="Fin" name="Anulada"></transition>
+		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_EnvioContrato" name="OK"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </decision>
+    
+    <state name="T015_DatosPBC">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_CalculoRiesgo" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <state name="T015_CalculoRiesgo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_CalculoRiesgoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <decision name ="T015_CalculoRiesgoDecision" expression="#{T015_CalculoRiesgoDecision}">
+		<transition to="Fin" name="Anulada"></transition>
+		<transition to="T015_EnvioContrato" name="NoAplica"></transition>
+		<transition to="T015_PBC" name="RiesgoAltoMedioBajo"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
 

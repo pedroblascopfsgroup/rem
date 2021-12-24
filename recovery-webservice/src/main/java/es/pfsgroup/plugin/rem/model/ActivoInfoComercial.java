@@ -133,15 +133,15 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_FECHA_RECEP_LLAVES")
 	private Date fechaRecepcionLlaves;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPA_ID")
 	private DDTipoActivo tipoActivo;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_SAC_ID")
 	private DDSubtipoActivo subtipoActivo;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TVI_ID")
 	private DDTipoVia tipoVia;
 
@@ -175,7 +175,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_CODIGO_POSTAL")
 	private String codigoPostal;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
 	
@@ -183,13 +183,13 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
 	private Localidad localidadRegistro;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
 	private DDProvincia provincia;
 
-	/*@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_UPO_ID")
-	private DDUnidadPoblacional unidadPoblacional;*/
+	private DDUnidadPoblacional unidadPoblacional;
 
 	@Version
 	private Long version;
@@ -706,6 +706,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setProvincia(DDProvincia provincia) {
 		this.provincia = provincia;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
 	}
 
 	public Integer getPosibleInforme() {

@@ -77,6 +77,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	@WebcomRequired
 	private StringDataType puerta;
 	@WebcomRequired
+	private StringDataType codPedania;
+	@WebcomRequired
 	private StringDataType codMunicipio;
 	@WebcomRequired
 	private StringDataType codProvincia;
@@ -305,6 +307,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	}
 	public void setPuerta(StringDataType puerta) {
 		this.puerta = puerta;
+	}
+	public StringDataType getCodPedania() {
+		return codPedania;
+	}
+	public void setCodPedania(StringDataType codPedania) {
+		this.codPedania = codPedania;
 	}
 	public StringDataType getCodMunicipio() {
 		return codMunicipio;

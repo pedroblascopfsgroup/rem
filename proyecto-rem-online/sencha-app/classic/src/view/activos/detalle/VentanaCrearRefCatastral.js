@@ -94,6 +94,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearRefCatastral', {
 		    							xtype:'informacionCatastroGrid',
 		    							colspan: 3,
 		    							reference: 'informacionCatastroGridRefRem'
+		    							
 					    			},
 					    			{
 		    							xtype:'informacionCatastroGrid'	,

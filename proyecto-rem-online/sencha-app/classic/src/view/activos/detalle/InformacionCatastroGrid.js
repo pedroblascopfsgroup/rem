@@ -10,12 +10,13 @@ Ext.define('HreRem.view.activos.detalle.InformacionCatastroGrid', {
     viewModel: {
        type: 'activodetalle'
     },
-	
+    minHeight: 82,
+    overflowY: 'scroll',
+    
     initComponent: function () {
     	
     	var me = this;
     	var isDatosRem = false;
-    	
     	
     	var coloredRender = function (value, metaData, record, rowIndex, colIndex, view) {
 			metaData.style = "white-space: normal;";
@@ -29,8 +30,11 @@ Ext.define('HreRem.view.activos.detalle.InformacionCatastroGrid', {
     	if(me.reference == "informacionCatastroGridRefRem"){
     		isDatosRem = true;
     		me.setTitle(HreRem.i18n('title.datos.rem'));
+    		
     	}else{
     		me.setTitle(HreRem.i18n('title.catastro'));
+    		me.minHeight=300;
+    		me.maxHeight=300;
     	}
     	
     	me.columns= [
@@ -84,7 +88,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionCatastroGrid', {
 	        },
 	        {   text: HreRem.i18n('fieldlabel.puerta'),
 	        	dataIndex: 'puerta',
-	        	flex: 1
+	        	flex: 0.5
 	        },
 	        {   text: HreRem.i18n('header.num.planta'),
 	        	dataIndex: 'planta',
@@ -124,18 +128,17 @@ Ext.define('HreRem.view.activos.detalle.InformacionCatastroGrid', {
 	       
 	    ]; 	
       
-    	if(!isDatosRem){
-	    	me.dockedItems = [
-		        {
-		            xtype: 'pagingtoolbar',
-		            dock: 'bottom',
-		            itemId: 'reclamacionesactivolistPaginationToolbar',
-		            inputItemWidth: 100,
-		            displayInfo: true,
-		            store: me.store
-		        }
-	        ];  
-    	}
+//    	if(!isDatosRem){
+//	    	me.dockedItems = [
+//		        {
+//		            xtype: 'pagingtoolbar',
+//		            dock: 'bottom',
+//		            inputItemWidth: 100,
+//		            displayInfo: true,
+//		            store: me.store
+//		        }
+//	        ];  
+//    	}
     	
         me.callParent();
 

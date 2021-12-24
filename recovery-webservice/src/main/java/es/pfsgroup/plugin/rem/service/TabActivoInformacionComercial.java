@@ -28,6 +28,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -566,6 +567,11 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			if (!Checks.esNulo(activoInformeDto.getMunicipioCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getMunicipioCodigo());
 				actInfoComercial.setLocalidad(genericDao.get(Localidad.class, filtro));
+			}
+			
+			if (!Checks.esNulo(activoInformeDto.getInferiorMunicipioCodigo())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getInferiorMunicipioCodigo());
+				actInfoComercial.setUnidadPoblacional(genericDao.get(DDUnidadPoblacional.class, filtro));
 			}
 
 			if (!Checks.esNulo(activoInformeDto.getTipoActivoCodigo())) {

@@ -81,7 +81,7 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 					if(COMBO_REQ_ANALISIS_TECNICO.equals(tareaExternaValor.getNombre()) && !Checks.esNulo(tareaExternaValor.getValor())) {
 						if(DDSiNo.SI.equals(tareaExternaValor.getValor())) {
 							estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-							estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+							estadoBc = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
 						}else{
 							estado = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
 							estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;

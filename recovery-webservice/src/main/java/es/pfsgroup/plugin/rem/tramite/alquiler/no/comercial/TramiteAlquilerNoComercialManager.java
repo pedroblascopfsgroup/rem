@@ -35,21 +35,20 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	private static final String COMBO_REQUIERE_ANALISIS_TECNICO = "comboReqAnalisisTec";
-	
+		
 	private static final String CODIGO_SI = "01";
 	
 	private static final String CODIGO_PTE_ANALISIS_TECNICO = "ANTEC";
 	
 	
-	
-	private enum T018_PbcAlquilerDecisiones{
-		subrogacionAcepta, renovacionNovacionOrigenSubrogacion, renovacionNovacionOrigenNoSubrogacion;
-	}
+
 	
 	private enum T018_ScoringBcDecisiones{
 		ANTEC, NEG;
+	}
+	
+	private enum T018_ScoringDecision{
+		requiereAnalisisTecnico, noRequiereAnalisisTecnico;
 	}
 		
 	@Override
@@ -181,28 +180,13 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 	
 	@Override
-	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {
+	public String avanzaScoring(TareaExterna tareaExterna, String comboReqAnalisisTec) {
 		String avanzaBPM= null;
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if(eco != null && eco.getTrabajo() != null) {
-			ActivoTramite actTramite = genericDao.get(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id",eco.getTrabajo().getId()));
-			if(actTramite != null) {
-				TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(actTramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER);
-				if(tareaExternaAnterior != null) {
-					List <TareaExternaValor> listTex = tareaExternaAnterior.getValores();
-					if(!listTex.isEmpty()) {
-						for(TareaExternaValor valor :  listTex){
-							if(COMBO_REQUIERE_ANALISIS_TECNICO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-								if(CODIGO_SI.equals(valor.getValor())) {
-									avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenSubrogacion.name();
-								}else{
-									avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenNoSubrogacion.name();
-								}
-							}
-						}
-					}
-				}
-			}
+
+		if(CODIGO_SI.equals(comboReqAnalisisTec)) {
+			avanzaBPM = T018_ScoringDecision.requiereAnalisisTecnico.name();
+		}else{
+			avanzaBPM = T018_ScoringDecision.noRequiereAnalisisTecnico.name();
 		}
 		
 		return avanzaBPM;

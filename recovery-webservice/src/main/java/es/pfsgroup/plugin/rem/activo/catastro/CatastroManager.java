@@ -603,16 +603,16 @@ public class CatastroManager implements CatastroApi {
 				DtoCatastroCorrecto dto = this.devolverReferenciaAndCorrecto(refCatastral);
 				Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, dto.getRefCatastral());
 				ActivoCatastro activoCatastro = getActivoCatastroByActivoAndReferencia(idActivo,dto.getRefCatastral());
-				if(catastro == null) {
-					catastro = new Catastro();
-					catastro.setAuditoria(Auditoria.getNewInstance());
-					catastro.setRefCatastral(dto.getRefCatastral());
-				}
+			
 				if(activoCatastro == null) {				
 					activoCatastro = new ActivoCatastro();
 					activoCatastro.setAuditoria(Auditoria.getNewInstance());
 					activoCatastro.setActivo(activo);
-					activoCatastro.setCatastro(catastro);
+					if(catastro != null) {
+						activoCatastro.setCatastro(catastro);
+					}else {
+						activoCatastro.setRefCatastral(dto.getRefCatastral());
+					}
 					activoCatastro.setCatastroCorrecto(dto.getCorrecto());
 					genericDao.save(ActivoCatastro.class, activoCatastro);
 				}
@@ -659,8 +659,13 @@ public class CatastroManager implements CatastroApi {
 		ActivoCatastro acn = getActivoCatastroByActivoAndReferencia(idActivo, dto.getRefCatastral());
 		ActivoCatastro ac = getActivoCatastroByActivoAndReferencia(idActivo, referenciaAnterior);
 		Catastro catastro  = this.getCatastroByActivoAndRef(idActivo, dto.getRefCatastral());
-		if(ac != null && catastro != null && acn == null) {
-			ac.setCatastro(catastro);
+		if(ac != null && acn == null) {
+			if(catastro != null) {
+				ac.setCatastro(catastro);
+			}else {
+				ac.setRefCatastral(dto.getRefCatastral());
+				ac.setCatastro(null);
+			}
 			ac.setCatastroCorrecto(dto.getCorrecto());
 			genericDao.save(ActivoCatastro.class, ac);
 		}

@@ -48,7 +48,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 	
 	private enum T018_ScoringDecision{
-		requiereAnalisisRecnico, noRequiereAnalisisRecnico;
+		requiereAnalisisTecnico, noRequiereAnalisisTecnico;
 	}
 		
 	@Override
@@ -184,9 +184,9 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		String avanzaBPM= null;
 
 		if(CODIGO_SI.equals(comboReqAnalisisTec)) {
-			avanzaBPM = T018_ScoringDecision.requiereAnalisisRecnico.name();
+			avanzaBPM = T018_ScoringDecision.requiereAnalisisTecnico.name();
 		}else{
-			avanzaBPM = T018_ScoringDecision.noRequiereAnalisisRecnico.name();
+			avanzaBPM = T018_ScoringDecision.noRequiereAnalisisTecnico.name();
 		}
 		
 		return avanzaBPM;

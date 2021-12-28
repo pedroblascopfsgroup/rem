@@ -1,0 +1,105 @@
+--/*
+--##########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20211221
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16745
+--## PRODUCTO=NO
+--## 
+--## Finalidad: INSERTAMOS SUBTIPO GASTO
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+ 	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+ 	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16745'; -- USUARIO CREAR/MODIFICAR
+	V_COUNT NUMBER(16); -- Vble. para comprobar
+	V_TGA_ID NUMBER(16); 
+	err_num NUMBER; -- Numero de errores
+	err_msg VARCHAR2(2048); -- Mensaje de error
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		--DD_STG_CODIGO  --DESCRIPCION  --DD_TGA_CODIGO
+      T_TIPO_DATA('154','Cuota Fija','01'),
+      T_TIPO_DATA('155','Cuota Variable','01'),
+      T_TIPO_DATA('156','Cuota Variable Alquiler','01')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+	
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+    LOOP
+    V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+		IF V_COUNT = 0 THEN
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTAMOS NUEVO SUBTIPO GASTO');
+
+			V_MSQL := 'SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
+			EXECUTE IMMEDIATE V_MSQL INTO V_TGA_ID;
+
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO (
+							 DD_STG_ID
+							,DD_TGA_ID
+							,DD_STG_CODIGO
+							,DD_STG_DESCRIPCION
+							,DD_STG_DESCRIPCION_LARGA
+							,USUARIOCREAR
+							,FECHACREAR
+						) VALUES ( 
+							'||V_ESQUEMA||'.S_DD_STG_SUBTIPOS_GASTO.NEXTVAL
+							, '||V_TGA_ID||'
+							, '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+							, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+							, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+							, '''||V_USUARIO||'''
+							,SYSDATE)';
+			EXECUTE IMMEDIATE V_MSQL;
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS  '|| SQL%ROWCOUNT ||' REGISTROS EN DD_STG_SUBTIPOS_GASTO');
+
+		ELSE
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] YA EXISTE SUBTIPO GASTO CON CODIGO '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+
+		END IF;
+
+	END LOOP;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+	
+	EXCEPTION
+	
+	    WHEN OTHERS THEN
+		DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+		DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+		DBMS_OUTPUT.PUT_LINE(SQLERRM);
+		DBMS_OUTPUT.PUT_LINE(V_MSQL);
+		ROLLBACK;
+		RAISE;
+END;
+/
+EXIT;

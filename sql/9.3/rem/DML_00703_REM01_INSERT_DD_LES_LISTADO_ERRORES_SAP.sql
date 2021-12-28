@@ -1,17 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211216
+--## FECHA_CREACION=20211217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16116
+--## INCIDENCIA_LINK=HREOS-16682
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_SAP.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial - [HREOS-14300] - PIER GOTTA
---##        0.2 Modificar campo DD_LES_CODIGO para rellenarlo con SYS_GUID() - [HREOS-16116] - Alejandra García
+--##        0.1 Versión inicial - [HREOS-16630] - Alejandra García
+--##        0.2 Añadir error nuevo - [HREOS-16682] - Alejandra García
 --##########################################
 --*/
 
@@ -38,20 +38,17 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_LES_LISTADO_ERRORES_SAP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16116';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16630';
 
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('700','Gasto OK, pendiente de aprobación.','09','03','05'),
-	T_TIPO_DATA('999','Gasto KO, pero se subsana en SAPBC (periodo contable cerrado, etc) y no requiere gestión por parte de Haya.', '08','01','04'),
-	T_TIPO_DATA('000','Gasto contabilizado.','04','03','07'),
-	T_TIPO_DATA('701','Gasto rechazado, requiere gestión por parte de Haya (vendrá acompañado de algún texto que clarifique el problema).','08','01','04'),
-	T_TIPO_DATA('600','Gasto Ok, pero error en otro gasto de provisión.','03','03','01'),
-	T_TIPO_DATA('800','Gasto pagado','05','03','07'),
-	T_TIPO_DATA('801','Gasto retrocedido y vuelto a pagar.','05','03','07'),
-	T_TIPO_DATA('802','Anulación pago.','04','03','07')
+                    --DD_TEXT_MENSAJE_SAP                                   --DD_EGA_ID  --DD_EAH_ID  --DD_EAP_ID --DD_RETORNO_SAPBC
+	T_TIPO_DATA('El gasto tiene más de 997 líneas'                                  , '02','02','01','001'),
+	T_TIPO_DATA('El activo no tiene participación en la línea de detalle'           , '02','02','01','002'),
+	T_TIPO_DATA('No se ha podido determinar Grupo-Tipo-Subtipo para este registro'  , '02','02','01','003'),
+	T_TIPO_DATA('Gastos con activos no migrados'                                    , '02','02','01','004')
 
 
     ); 
@@ -68,19 +65,19 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(5))||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS > 0 THEN				
           -- Si existe se modifica.
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET DD_TEXT_MENSAJE_SAP = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
-					', DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''') '||
-					', DD_EAH_ID = (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
-					', DD_EAP_ID = (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') '||
+                    'SET DD_TEXT_MENSAJE_SAP = '''||TRIM(V_TMP_TIPO_DATA(1))||''''||
+					', DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''') '||
+					', DD_EAH_ID = (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''') '||
+					', DD_EAP_ID = (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
 					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_RETORNO_SAPBC = '''||TRIM(V_TMP_TIPO_DATA(5))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
@@ -89,8 +86,26 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
   
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-                      DD_LES_ID, DD_LES_CODIGO, DD_RETORNO_SAPBC, DD_TEXT_MENSAJE_SAP, DD_EGA_ID, DD_EAH_ID, DD_EAP_ID ,USUARIOCREAR, FECHACREAR) VALUES
-                      (S_'||V_TEXT_TABLA||'.NEXTVAL,  SYS_GUID(),'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''', (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''),(SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''),(SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||'''),'''||V_USUARIO||''',SYSDATE)';
+                        DD_LES_ID
+                      , DD_LES_CODIGO
+                      , DD_RETORNO_SAPBC
+                      , DD_TEXT_MENSAJE_SAP
+                      , DD_EGA_ID
+                      , DD_EAH_ID
+                      , DD_EAP_ID 
+                      , USUARIOCREAR
+                      , FECHACREAR
+                      ) VALUES
+                      (  
+                        S_'||V_TEXT_TABLA||'.NEXTVAL
+                      ,  SYS_GUID()
+                      , '''||TRIM(V_TMP_TIPO_DATA(5))||'''
+                      , '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+                      , (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''')
+                      , (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')
+                      , (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''')
+                      , '''||V_USUARIO||'''
+                      , SYSDATE)';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

@@ -325,6 +325,44 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											value: '{gasto.nombrePropietario}'													
 										},
 										readOnly: true
+									},								    
+									{
+										xtype: 'textfieldbase',
+										fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.titular.carta.pago'),
+										name: 'buscadorNifTitularCartaPagoField',
+										bind: {
+											value: '{gasto.buscadorNifTitularCartaPago}'
+										},
+										allowBlank: false,
+										triggers: {
+
+												buscarEmisor: {
+										            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+										             handler: 'buscarTitularCartaPago'
+										        }
+										},
+										cls: 'searchfield-input sf-con-borde',
+										emptyText:  HreRem.i18n('txt.buscar.nif.titular.carta.pago'),
+										enableKeyEvents: true,
+								        listeners: {
+								        	specialKey: function(field, e) {
+								        		if (e.getKey() === e.ENTER) {
+								        			field.lookupController().buscarTitularCartaPago(field);											        			
+								        		}
+								        	},
+								        	blur: function(field, e) {
+												field.lookupController().buscarTitularCartaPago(field);
+											}
+								        }
+				                	},
+				                	{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.titular.carta.pago'),
+										name: 'nombreTitularCartaPago',
+										bind:{
+											value: '{gasto.nombreTitularCartaPago}'													
+										},
+										readOnly: true
 									}
 								]
 							},	

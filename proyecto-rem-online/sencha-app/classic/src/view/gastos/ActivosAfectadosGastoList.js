@@ -267,6 +267,78 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			            	return "<span "+style+ ">"+msg+"</span>"
 		            	}
 		            }
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.estado.alquiler'),
+					dataIndex : 'estadoAlquiler',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.tipo.comercializacion'),
+					dataIndex : 'tipoComercializacion',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.tipo.transmision'),
+					dataIndex : 'tipoTransmision',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.grupo'),
+					dataIndex : 'grupo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.tipo'),
+					dataIndex : 'tipo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subitpo'),
+					dataIndex : 'subtipo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.primera.posesion'),
+					dataIndex : 'primeraPosesion',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
+					dataIndex : 'subpartidaEdif',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.elemento.pep'),
+					dataIndex : 'elementoPep',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
 				}
 		];
 		 me.dockedItems = [

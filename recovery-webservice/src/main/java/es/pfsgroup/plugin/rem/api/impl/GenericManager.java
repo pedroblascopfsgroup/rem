@@ -2094,5 +2094,28 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		 
 	}
+	
+	@Override
+	public List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto) {
+		
+		List<DDSubtipoGasto> listaSubtipos = new ArrayList<DDSubtipoGasto>();
+
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", codigoTipoGasto);
+		Filter filterNoEsEnCaixa = genericDao.createFilter(FilterType.EQUALS, "gastoEnCaixa", false);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if (!Checks.esNulo(codigoTipoGasto) && !Checks.esNulo(codCartera)) {
+			if (filterTipo != null && filterNoEsEnCaixa != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+			} else {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado, filterNoEsEnCaixa);
+			}
+		} else if (!Checks.esNulo(codigoTipoGasto) && Checks.esNulo(codCartera)) {
+			listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+		}
+	
+		return listaSubtipos;
+	}
 
 }

@@ -1092,6 +1092,21 @@ public class OfertasController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOfertaCaixaPbcByOfertaId(Long ofertaID, ModelMap model) {
+
+		try {
+			model.put("data", ofertaApi.getOfertaCaixaPbc(ofertaID));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	
 }

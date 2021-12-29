@@ -833,4 +833,6 @@ public interface OfertaApi {
 	public void llamadaPbc(Oferta oferta);
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
+
+	DtoOfertaCaixaPbc getOfertaCaixaPbc(Long id);
 }

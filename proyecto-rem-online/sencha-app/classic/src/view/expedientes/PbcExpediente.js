@@ -8,6 +8,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
     saveMultiple: true,
     reference: 'pbcexpedienteref',
     scrollable	: 'y',
+    record: "ofertacaixapbc",
+	recordClass: "HreRem.model.OfertaCaixaPbc",
+	requires: ['HreRem.model.OfertaCaixaPbc'],
     //records: [''],	
     //recordsClass: [''],    
     //requires: [''],
@@ -51,38 +54,38 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Nivel de riesgo'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.riesgoOperacion}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Operación sospechosa'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.ofertaSospechosa}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Detección inicio BC/BT'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.deteccionIndicio}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('El cliente intenta ocultar la identidad del titular'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.ocultaIdentidadTitular}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('El cliente muestra actitud incoherente'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.actitudIncoherente}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('LA sociedad mantiene titulos al portador'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.titulosPortador}'
 					},
 					{
 			        	xtype: 		'textareafieldbase',
@@ -91,7 +94,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 				 		//height: 	200,
 				 		//maxWidth:   550,
 				 		//rowspan:	5,
-		            	//bind:		'{}',
+		            	bind:'{ofertacaixapbc.motivoCompra}',
 						readOnly: true,
 				 		labelAlign: 'top'
 					},
@@ -102,7 +105,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 				 		//height: 	200,
 				 		//maxWidth:   550,
 				 		//rowspan:	5,
-		            	//bind:		'{}',
+		            	bind:'{ofertacaixapbc.finalidadOperacion}',
 						readOnly: true,
 				 		labelAlign: 'top'
 					}
@@ -117,8 +120,8 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Origen fondos Fondos propios'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.fondosPropios}'
 					},
 					{
 	                	xtype:'datefieldbase',
@@ -127,21 +130,21 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaProcedenciaFondosPropiosRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		value:'{ofertacaixapbc.procedenciaFondosPropios}',
+	                		readOnly: true
 	                	}
 	                },
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Otra procedencia fondos propios'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.otraProcedenciaFondosPropios}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Medios de pago Operación de Venta'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.medioPago}'
 					},
 					{
 	                	xtype:'datefieldbase',
@@ -150,21 +153,21 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaPagoIntermediarioRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		value: '{ofertacaixapbc.pagoIntermediario}',
+	                		readOnly: true
 	                	}
 	                },
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('País transferencia'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.pagoIntermediario}'
 					},
 					{
 						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('Origen fondos Financiación bancaria'),
-						colspan: 1
-						//bind:		'{}'
+						colspan: 1,
+						bind:'{ofertacaixapbc.fondosBanco}'
 					}
 				]	
         	},

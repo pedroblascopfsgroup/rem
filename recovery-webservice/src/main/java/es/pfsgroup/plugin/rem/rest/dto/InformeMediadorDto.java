@@ -72,7 +72,7 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoInformeMediador.class,foreingField="codigo", 
 				message = "El codEstadoInforme no existe", groups = { Insert.class, Update.class })
-	private String codEstadoInforme;
+	private String estadoInforme;
 	
 	@NotNull(groups = { Insert.class, Update.class })
 	private Float lat;
@@ -449,12 +449,12 @@ public class InformeMediadorDto implements Serializable {
 		this.codTipoVenta = codTipoVenta;
 	}
 
-	public String getCodEstadoInforme() {
-		return codEstadoInforme;
+	public String getEstadoInforme() {
+		return estadoInforme;
 	}
 
-	public void setCodEstadoInforme(String codEstadoInforme) {
-		this.codEstadoInforme = codEstadoInforme;
+	public void setEstadoInforme(String estadoInforme) {
+		this.estadoInforme = estadoInforme;
 	}
 
 	public Float getLat() {

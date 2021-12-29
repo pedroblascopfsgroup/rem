@@ -27,7 +27,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	@WebcomRequired
 	private StringDataType codTipoVenta; 
 	@WebcomRequired
-	private StringDataType codEstadoInforme; //falta en vista
+	private StringDataType estadoInforme; 
 	@WebcomRequired
 	private StringDataType motivoRechazo;
 	@WebcomRequired
@@ -158,11 +158,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setCodTipoVenta(StringDataType codTipoVenta) {
 		this.codTipoVenta = codTipoVenta;
 	}
-	public StringDataType getCodEstadoInforme() {
-		return codEstadoInforme;
+	public StringDataType getEstadoInforme() {
+		return estadoInforme;
 	}
-	public void setCodEstadoInforme(StringDataType codEstadoInforme) {
-		this.codEstadoInforme = codEstadoInforme;
+	public void setEstadoInforme(StringDataType estadoInforme) {
+		this.estadoInforme = estadoInforme;
 	}
 	public StringDataType getMotivoRechazo() {
 		return motivoRechazo;

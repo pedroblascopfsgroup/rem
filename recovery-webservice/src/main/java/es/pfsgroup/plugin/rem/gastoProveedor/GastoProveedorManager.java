@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -27,8 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -67,6 +64,62 @@ import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.GastoLineaDetalleManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCatastro;
+import es.pfsgroup.plugin.rem.model.ActivoGenerico;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
+import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
+import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
+import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
+import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
+import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.ErrorDiariosLbk;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
+import es.pfsgroup.plugin.rem.model.GastoPrinex;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.GastoSuplido;
+import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
+import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
+import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ProvisionGastos;
+import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
+import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
+import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
+import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
@@ -4518,41 +4571,46 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		Filter gastoId = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class, gastoId);
+		Activo activoCarteraSubcartera = null;
 		
-		Filter proveedorID0 = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad());
-		Activo ActivoCarteraSubcartera = genericDao.get(Activo.class, proveedorID0);
+		if(!gasto.getGastoLineaDetalleList().isEmpty() 
+				&& !gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().isEmpty()
+				&& gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad() != null) {
+			Filter proveedorID0 = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad());
+			activoCarteraSubcartera = genericDao.get(Activo.class, proveedorID0);	
+		}
 
 		Filter proveedorID = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", gasto.getProveedor().getId());
 		List<ActivoProveedorDireccion> activoProveedorDireccion = genericDao.getList(ActivoProveedorDireccion.class, proveedorID);
 
 		String carteraGasto = gasto.getCartera().getCodigo();
 		
-		if (!Checks.esNulo(ActivoCarteraSubcartera)) {
-			 carteraActivo = ActivoCarteraSubcartera.getCartera().getCodigo();
-			 subcarteraActivo = ActivoCarteraSubcartera.getSubcartera().getCodigo();
-			if(carteraActivo.equals(DDCartera.CODIGO_CARTERA_CERBERUS)  && carteraGasto.equals(carteraActivo)) {
-					isCerberus = true;
-				}
-		} else if(carteraGasto.equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
-					isCerberus = true;
+		if (!Checks.esNulo(activoCarteraSubcartera)) {
+			 carteraActivo = activoCarteraSubcartera.getCartera() != null ? activoCarteraSubcartera.getCartera().getCodigo() : null;
+			 subcarteraActivo = activoCarteraSubcartera.getSubcartera() != null ? activoCarteraSubcartera.getSubcartera().getCodigo() : null;
+			if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraActivo)  && carteraGasto != null && carteraGasto.equals(carteraActivo)) {
+				isCerberus = true;
+			}
+		} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraGasto)) {
+			isCerberus = true;
 		}
 		
-		if (carteraGasto.equals(DDCartera.CODIGO_CARTERA_SAREB) || carteraGasto.equals(DDCartera.CODIGO_CARTERA_GIANTS)
-				|| carteraGasto.equals(DDCartera.CODIGO_CARTERA_ZEUS) || carteraGasto.equals(DDCartera.CODIGO_CARTERA_GALEON)
+		if (DDCartera.CODIGO_CARTERA_SAREB.equals(carteraGasto) || DDCartera.CODIGO_CARTERA_GIANTS.equals(carteraGasto)
+				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(carteraGasto) || DDCartera.CODIGO_CARTERA_GALEON.equals(carteraGasto)
 				|| (isCerberus
-						&& (subcarteraActivo.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_AGORA_INMOBILIARIO)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_AGORA_FINANCIERO)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_JAIPUR_FINANCIERO)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_CERB_DIVARIAN)
-								|| subcarteraActivo.equals(DDSubcartera.CODIGO_JAGUAR)))
+						&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_CERB_DIVARIAN.equals(subcarteraActivo)
+								|| DDSubcartera.CODIGO_JAGUAR.equals(subcarteraActivo)))
 			) {
 				if (!Checks.esNulo(gasto.getProveedor())) {
-					if (gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.INCOMPLETO)
-							|| gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.PENDIENTE)) {
+					if (DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())
+							|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())) {
 						if (Checks.esNulo(gasto.getProveedor().getNombreComercial())
 								|| Checks.esNulo(gasto.getProveedor().getNumCuenta())
 								|| Checks.esNulo(gasto.getProveedor().getDocIdentificativo())

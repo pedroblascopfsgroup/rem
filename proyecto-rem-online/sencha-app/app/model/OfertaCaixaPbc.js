@@ -62,12 +62,12 @@ Ext.define('HreRem.model.OfertaCaixaPbc', {
     
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'ofertas.json',
-		remoteUrl: 'ofertas/getOfertaCaixaPbcByOfertaId',
+		localUrl: 'expedienteComercial.json',
+		remoteUrl: 'expedientecomercial/getTabExpediente',
 		api: {
-            read: 'ofertas/getOfertaCaixaPbcByOfertaId'
+           read: 'expedientecomercial/getTabExpediente',
         },
-        extraParams: {tab: 'oferta'}
+        extraParams: {tab: 'pbcexpediente'}
     }
     
     

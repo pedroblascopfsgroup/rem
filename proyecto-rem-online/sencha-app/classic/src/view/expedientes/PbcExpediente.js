@@ -8,12 +8,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
     saveMultiple: true,
     reference: 'pbcexpedienteref',
     scrollable	: 'y',
-    record: "ofertacaixapbc",
+    recordName: "ofertacaixapbc",
 	recordClass: "HreRem.model.OfertaCaixaPbc",
 	requires: ['HreRem.model.OfertaCaixaPbc'],
-    //records: [''],	
-    //recordsClass: [''],    
-    //requires: [''],
     listeners: {
     	boxready: 'cargarTabData'
     },

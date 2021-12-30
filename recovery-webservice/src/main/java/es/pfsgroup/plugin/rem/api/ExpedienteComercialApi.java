@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaCaixaPbc;
 import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
@@ -1486,4 +1487,6 @@ public interface ExpedienteComercialApi {
 	 * @return true si pertenece a la cartera, false si no.
 	 */
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
+
+	DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente);
 }

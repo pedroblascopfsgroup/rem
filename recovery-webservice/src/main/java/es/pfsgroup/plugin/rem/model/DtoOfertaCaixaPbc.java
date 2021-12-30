@@ -1,8 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
-public class DtoOfertaCaixaPbc {
+import es.capgemini.devon.dto.WebDto;
+
+public class DtoOfertaCaixaPbc extends WebDto {
 	
-	private Oferta oferta;
 	private String riesgoOperacion;
 	private Boolean ofertaSospechosa;
 	private Boolean deteccionIndicio;
@@ -19,12 +20,7 @@ public class DtoOfertaCaixaPbc {
 	private String paisTransferencia;
 	private Double fondosBanco;
 	
-	public Oferta getOferta() {
-		return oferta;
-	}
-	public void setOferta(Oferta oferta) {
-		this.oferta = oferta;
-	}
+
 	public String getRiesgoOperacion() {
 		return riesgoOperacion;
 	}

@@ -240,6 +240,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_GARANTIAS = "garantias";
+	private static final String PESTANA_PBC = "pbcexpediente";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
 	private static final String PESTANA_SEGURO_RENTAS = "segurorentasexpediente";
 	private static final String PESTANA_PLUSVALIA = "plusvalia";
@@ -522,6 +523,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoDocumentos(expediente);
 		} else if (PESTANA_GARANTIAS.equals(tab)) {
 			dto = expedienteToDtoGarantias(expediente);
+		} else if (PESTANA_GARANTIAS.equals(tab)) {
+			dto = getOfertaCaixaPbc(expediente);
 		}
 
 		return dto;
@@ -15111,5 +15114,86 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return !estadosBcNoPermitidos.contains(codEstadoBC);
+	}
+	
+	
+	@Override
+	public DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente) {
+		Oferta oferta = null;
+		DtoOfertaCaixaPbc dtoOfertaCaixaPbc = new DtoOfertaCaixaPbc();
+		try { 
+			oferta = expediente.getOferta();
+			if(!Checks.esNulo(oferta)) {
+				Filter ofrCaixaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", oferta.getNumOferta());
+				OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofrCaixaFilter);
+				if(!Checks.esNulo(ofrCaixa)) {
+					
+					if(ofrCaixa.getRiesgoOperacion().getCodigo() != null) {
+						dtoOfertaCaixaPbc.setRiesgoOperacion(ofrCaixa.getRiesgoOperacion().getCodigo());
+					}
+					
+					if(oferta.getOfertaSospechosa() != null) {
+						dtoOfertaCaixaPbc.setOfertaSospechosa(oferta.getOfertaSospechosa());
+					}
+					
+					if(ofrCaixa.getDeteccionIndicio() != null) {
+						dtoOfertaCaixaPbc.setDeteccionIndicio(ofrCaixa.getDeteccionIndicio());
+					}
+					
+					if(ofrCaixa.getOcultaIdentidadTitular() != null) {
+						dtoOfertaCaixaPbc.setOcultaIdentidadTitular(ofrCaixa.getOcultaIdentidadTitular());
+					}
+					
+					if(ofrCaixa.getActitudIncoherente() != null) {
+						dtoOfertaCaixaPbc.setActitudIncoherente(ofrCaixa.getActitudIncoherente());
+					}
+					
+					if(ofrCaixa.getTitulosPortador() != null) {
+						dtoOfertaCaixaPbc.setTitulosPortador(ofrCaixa.getTitulosPortador());
+					}
+					
+					if(ofrCaixa.getMotivoCompra() != null) {
+						dtoOfertaCaixaPbc.setMotivoCompra(ofrCaixa.getMotivoCompra());
+					}
+					
+					if(ofrCaixa.getFinalidadOperacion().getCodigoPbc() != null) {
+						dtoOfertaCaixaPbc.setFinalidadOperacion(ofrCaixa.getFinalidadOperacion().getCodigoPbc()); //codigo PBD o BC
+					}
+					
+					if(ofrCaixa.getFondosPropios() != null) {
+						dtoOfertaCaixaPbc.setFondosPropios(ofrCaixa.getFondosPropios());
+					}
+					
+					if(ofrCaixa.getProcedenciaFondosPropios().getCodigoPbc() != null) {
+						dtoOfertaCaixaPbc.setProcedenciaFondosPropios(ofrCaixa.getProcedenciaFondosPropios().getCodigoPbc()); //codigo PBD o BC
+					}
+					
+					if(ofrCaixa.getOtraProcedenciaFondosPropios() != null) {
+						dtoOfertaCaixaPbc.setOtraProcedenciaFondosPropios(ofrCaixa.getOtraProcedenciaFondosPropios());
+					}
+					
+					if(ofrCaixa.getMedioPago().getCodigoPbc() != null) {
+						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getCodigoPbc()); //codigo PBD o BC
+					}
+					
+					if(ofrCaixa.getPagoIntermediario() != null) {
+						dtoOfertaCaixaPbc.setPagoIntermediario(ofrCaixa.getPagoIntermediario());
+					}
+					
+					if(ofrCaixa.getPaisTransferencia().getCodigo() != null) {
+						dtoOfertaCaixaPbc.setPaisTransferencia(ofrCaixa.getPaisTransferencia().getCodigo());
+					}
+					
+					if(ofrCaixa.getFondosBanco() != null) {
+						dtoOfertaCaixaPbc.setFondosBanco(ofrCaixa.getFondosBanco());
+					}
+				}
+			}
+			
+		} catch (Exception ex) {
+			logger.error("error en OfertasManager getOfertaCaixaPbc", ex);
+		}
+
+		return dtoOfertaCaixaPbc;
 	}
 }

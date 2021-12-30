@@ -101,7 +101,7 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 	private String informe;
 
 	@Column(name = "HTP_FECHA_SOLICITUD_CALCULO_RIESGO")
-	private Date fechaSolicitudEstadoRiesgo;
+	private Date fechaSolicitudCalculoRiesgo;
 
 	@Column(name = "HTP_FECHA_COMUNICACION_RIESGO")
    	private Date fechaComunicacionRiesgo;

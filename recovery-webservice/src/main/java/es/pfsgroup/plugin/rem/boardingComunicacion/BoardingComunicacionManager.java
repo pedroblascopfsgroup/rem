@@ -110,7 +110,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         //tiempo que se tarda en conseguir el token (APROX)
         tokenRequestTimeElapsed = Math.round(TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeStart));
         
-        String token = jwtToken != null ? jwtToken.get("token").toString() : "";
+        String token = jwtToken != null ? jwtToken.get("token") != null ? jwtToken.get("token").toString() : "" : "";
         if (token != null && !token.isEmpty()) {
         	logger.debug("[OBTENCION TOKEN] TOKEN CFV OK");
         } else {

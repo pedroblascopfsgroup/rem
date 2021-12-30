@@ -538,6 +538,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
+		var codigoTipoOfertaAnterior;
         var activo = me.lookupController().getViewModel().get('activo');
 
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
@@ -553,6 +554,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}else{
 			    codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
+			    codigoTipoOfertaAnterior = me.getStore().getData().items[i].data.codigoTipoOferta;
 			}
 		}
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
@@ -578,6 +580,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			return true;
 		}
 		else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			if (codigoTipoOfertaAnterior != null && CONST.TIPOS_OFERTA['ALQUILER_NO_COMERCIAL'] == codigoTipoOfertaAnterior
+					&& me.lookupViewModel().get('activo.isCarteraBankia')
+					&& me.lookupViewModel().get('activo.tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO']
+					&& me.lookupViewModel().get('activo.situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO']) {
+				return true;
+			} else {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
+				return false;
+			}
+		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
+			return false;
+		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 			return false;
 		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo)){

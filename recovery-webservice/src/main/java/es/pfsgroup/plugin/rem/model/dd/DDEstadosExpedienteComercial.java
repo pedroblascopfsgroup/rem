@@ -209,5 +209,21 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 		}
 		return is;
 	}
+	
+	public static boolean isVendido(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && VENDIDO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isAlquilado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && ALQUILADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

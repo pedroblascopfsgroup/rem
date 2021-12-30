@@ -336,6 +336,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @OneToOne
     @JoinColumn(name = "ECO_ID_ANTERIOR")
     private ExpedienteComercial expedienteAnterior;
+
+	@Column(name="NUMERO_VAI_HAVAI_SAREB")
+	private String numeroVaiHavaiSareb;
+    
+    @Column(name = "ECO_EDICION_COMPRADORES_CBX")
+    private String motivoEdicionCompradores;
     
     @Version   
 	private Long version;
@@ -1051,5 +1057,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		}
 		
 		return importe;
+	}
+
+	public String getMotivoEdicionCompradores() {
+		return motivoEdicionCompradores;
+	}
+
+	public void setMotivoEdicionCompradores(String motivoEdicionCompradores) {
+		this.motivoEdicionCompradores = motivoEdicionCompradores;
+	}
+	
+	
+	public String getNumeroVaiHavaiSareb() {
+		return numeroVaiHavaiSareb;
+	}
+
+	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
+		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
 	}
 }

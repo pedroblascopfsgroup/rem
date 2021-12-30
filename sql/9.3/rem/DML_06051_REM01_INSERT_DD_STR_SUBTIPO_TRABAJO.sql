@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan José Sanjuan
---## FECHA_CREACION=20211205
+--## FECHA_CREACION=20211206
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16512
@@ -33,10 +33,10 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
-	V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
+	  V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
-	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_STR_SUBTIPO_TRABAJO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_STR_SUBTIPO_TRABAJO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'STR'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -44,7 +44,7 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('147'	,'Alarmas Instalación'			,'Alarmas Instalación' 	,'09'),
     	T_TIPO_DATA('148'	,'Alarmas Mantenimiento'		,'Alarmas Mantenimiento'	,'09'),
-    	T_TIPO_DATA('149'	,'Vigilancia'				,'Vigilancia'			,'08'),
+    	T_TIPO_DATA('149'	,'Vigilancia'				,'Vigilancia'			,'09'),
     	T_TIPO_DATA('150'	,'Colocación puerta antiocupa'			,'Colocación puerta antiocupa'		,'09'),
     	T_TIPO_DATA('151'	,'Acudas'				,'Acudas'			,'09'),
     	T_TIPO_DATA('152'	,'CRA'					,'CRA'				,'09'),

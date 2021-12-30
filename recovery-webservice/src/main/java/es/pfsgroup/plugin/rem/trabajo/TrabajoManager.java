@@ -629,9 +629,44 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					gestorDocumentalAdapterApi.actualizarAdmisionValidado(trabajo);
 					
 					if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {					
-						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
-								DDSubtipoTrabajo.CODIGO_ALARMAS_INSTALACION.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
-								DDSubtipoTrabajo.CODIGO_VIGILANCIA.equals(trabajo.getSubtipoTrabajo().getCodigo())
+						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {	
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setConVigilancia(1);
+										situacionPosesoria.setFechaInstalacionVigilancia(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
+							
+						}else if(DDSubtipoTrabajo.CODIGO_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {	
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setConAlarma(1);
+										situacionPosesoria.setFechaInstalacionAlarma(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
+						}else if (DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS.equals(trabajo.getSubtipoTrabajo().getCodigo())){
+							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+								if(activoTrabajo.getActivo() != null) {
+									situacionPosesoria = activoTrabajo.getActivo().getSituacionPosesoria();
+									if(situacionPosesoria != null) {
+										situacionPosesoria.setAccesoAntiocupa(1);
+										situacionPosesoria.setFechaAccesoAntiocupa(new Date());
+										genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+									}
+								}
+							}
+						}
+						
+					} else if(DDTipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getTipoTrabajo().getCodigo())) {					
+						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA.equals(trabajo.getSubtipoTrabajo().getCodigo())
 								) {	
 							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
 								if(activoTrabajo.getActivo() != null) {
@@ -644,7 +679,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 								}
 							}
 							
-						}else if(DDSubtipoTrabajo.CODIGO_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
+						}else if(DDSubtipoTrabajo.CODIGO_ALARMAS_INSTALACION.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
 								DDSubtipoTrabajo.CODIGO_ALQUILER_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo())
 								) {	
 							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
@@ -657,9 +692,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 									}
 								}
 							}
-						}else if (DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
-								DDSubtipoTrabajo.CODIGO_COLOCACION_PUERTA_ANTIOCUPA.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
-								DDSubtipoTrabajo.CODIGO_ALQUILER_PAO.equals(trabajo.getSubtipoTrabajo().getCodigo())
+						}else if (DDSubtipoTrabajo.CODIGO_COLOCACION_PUERTA_ANTIOCUPA.equals(trabajo.getSubtipoTrabajo().getCodigo()) ||
+								 DDSubtipoTrabajo.CODIGO_ALQUILER_PAO.equals(trabajo.getSubtipoTrabajo().getCodigo())
 									) {
 							for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
 								if(activoTrabajo.getActivo() != null) {

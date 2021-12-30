@@ -330,10 +330,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'textfieldbase',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.titular.carta.pago'),
 										name: 'buscadorNifTitularCartaPagoField',
+										hidden: true,
 										bind: {
 											value: '{gasto.buscadorNifTitularCartaPago}'
 										},
-										allowBlank: false,
+										allowBlank: true,
 										triggers: {
 
 												buscarEmisor: {
@@ -359,6 +360,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.titular.carta.pago'),
 										name: 'nombreTitularCartaPago',
+										hidden: true,
 										bind:{
 											value: '{gasto.nombreTitularCartaPago}'													
 										},

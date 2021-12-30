@@ -76,7 +76,7 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
     @Id
     @Column(name = "HTP_ID", updatable = false, nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HistoricosTareasPbcGenerator")
-    @SequenceGenerator(name = "OfertaCaixaGenerator", sequenceName = "S_HistoricosTareasPbc", allocationSize = 1)
+    @SequenceGenerator(name = "HistoricosTareasPbcGenerator", sequenceName = "S_HTP_HISTORICO_TAREAS_PBC", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -87,12 +87,11 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
     @JoinColumn(name = "DD_TPB_ID")
 	private DDEstadoTareaPbc estadoTareaPbc;
 
-
     @Column(name = "HTP_ACTIVA")
-    private Integer activa;
+    private Boolean activa;
 
 	@Column(name="HTP_APROBACION")
-	private Integer aprobacion;
+	private Boolean aprobacion;
 
 	@Column(name="HTP_FECHA_SANCION")
 	private Date fechaSancion;
@@ -139,19 +138,19 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 		this.estadoTareaPbc = estadoTareaPbc;
 	}
 
-	public Integer getActiva() {
+	public Boolean getActiva() {
 		return activa;
 	}
 
-	public void setActiva(Integer activa) {
+	public void setActiva(Boolean activa) {
 		this.activa = activa;
 	}
 
-	public Integer getAprobacion() {
+	public Boolean getAprobacion() {
 		return aprobacion;
 	}
 
-	public void setAprobacion(Integer aprobacion) {
+	public void setAprobacion(Boolean aprobacion) {
 		this.aprobacion = aprobacion;
 	}
 
@@ -171,12 +170,12 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 		this.informe = informe;
 	}
 
-	public Date getFechaSolicitudEstadoRiesgo() {
-		return fechaSolicitudEstadoRiesgo;
+	public Date getFechaSolicitudCalculoRiesgo() {
+		return fechaSolicitudCalculoRiesgo;
 	}
 
-	public void setFechaSolicitudEstadoRiesgo(Date fechaSolicitudEstadoRiesgo) {
-		this.fechaSolicitudEstadoRiesgo = fechaSolicitudEstadoRiesgo;
+	public void setFechaSolicitudCalculoRiesgo(Date fechaSolicitudCalculoRiesgo) {
+		this.fechaSolicitudCalculoRiesgo = fechaSolicitudCalculoRiesgo;
 	}
 
 	public Date getFechaComunicacionRiesgo() {
@@ -214,5 +213,4 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
 }

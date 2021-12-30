@@ -7,8 +7,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTareaPbc;
 public class DtoHistoricosTareasPbc {
 
 	private Long estadoTareaPbc;
-	private Integer activa;
-	private Integer aprobacion;
+	private Boolean activa;
+	private Boolean aprobacion;
 	private Date fechaSancion;
 	private String informe;
 	private Date fechaSolicitudEstadoRiesgo;
@@ -21,16 +21,16 @@ public class DtoHistoricosTareasPbc {
 	public void setEstadoTareaPbc(Long estadoTareaPbc) {
 		this.estadoTareaPbc = estadoTareaPbc;
 	}
-	public Integer getActiva() {
+	public Boolean getActiva() {
 		return activa;
 	}
-	public void setActiva(Integer activa) {
+	public void setActiva(Boolean activa) {
 		this.activa = activa;
 	}
-	public Integer getAprobacion() {
+	public Boolean getAprobacion() {
 		return aprobacion;
 	}
-	public void setAprobacion(Integer aprobacion) {
+	public void setAprobacion(Boolean aprobacion) {
 		this.aprobacion = aprobacion;
 	}
 	public Date getFechaSancion() {

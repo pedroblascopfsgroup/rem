@@ -28,7 +28,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_TPB_TIPO_TAREA_PBC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoTareaPbc implements Auditable, Dictionary {
+public class DDTipoTareaPbc implements Auditable, Dictionary {
 	
 	/**
 	 * 
@@ -41,18 +41,18 @@ public class DDEstadoTareaPbc implements Auditable, Dictionary {
 	
 
 	@Id
-	@Column(name = "DD_EGA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoTareaPbcGenerator")
-	@SequenceGenerator(name = "DDEstadoTareaPbcGenerator", sequenceName = "S_DD_TPB_TIPO_TAREA_PBC")
+	@Column(name = "DD_TPB_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoTareaPbcGenerator")
+	@SequenceGenerator(name = "DDTipoTareaPbcGenerator", sequenceName = "S_DD_TPB_TIPO_TAREA_PBC")
 	private Long id;
 	 
-	@Column(name = "DD_EGA_CODIGO")   
+	@Column(name = "DD_TPB_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EGA_DESCRIPCION")   
+	@Column(name = "DD_TPB_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EGA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TPB_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
 	

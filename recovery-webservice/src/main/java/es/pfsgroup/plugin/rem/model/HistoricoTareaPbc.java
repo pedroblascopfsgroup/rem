@@ -38,7 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTareaPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -66,7 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class HistoricosTareasPbc implements Serializable, Auditable {
+public class HistoricoTareaPbc implements Serializable, Auditable {
 
     /**
 	 *
@@ -75,8 +75,8 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 
     @Id
     @Column(name = "HTP_ID", updatable = false, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HistoricosTareasPbcGenerator")
-    @SequenceGenerator(name = "HistoricosTareasPbcGenerator", sequenceName = "S_HTP_HISTORICO_TAREAS_PBC", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HistoricoTareaPbcGenerator")
+    @SequenceGenerator(name = "HistoricoTareaPbcGenerator", sequenceName = "S_HTP_HISTORICO_TAREAS_PBC", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -85,7 +85,7 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPB_ID")
-	private DDEstadoTareaPbc estadoTareaPbc;
+	private DDTipoTareaPbc estadoTareaPbc;
 
     @Column(name = "HTP_ACTIVA")
     private Boolean activa;
@@ -130,11 +130,11 @@ public class HistoricosTareasPbc implements Serializable, Auditable {
 		this.oferta = oferta;
 	}
 
-	public DDEstadoTareaPbc getEstadoTareaPbc() {
+	public DDTipoTareaPbc getEstadoTareaPbc() {
 		return estadoTareaPbc;
 	}
 
-	public void setEstadoTareaPbc(DDEstadoTareaPbc estadoTareaPbc) {
+	public void setEstadoTareaPbc(DDTipoTareaPbc estadoTareaPbc) {
 		this.estadoTareaPbc = estadoTareaPbc;
 	}
 

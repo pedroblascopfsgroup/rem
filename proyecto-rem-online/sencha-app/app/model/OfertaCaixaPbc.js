@@ -65,7 +65,7 @@ Ext.define('HreRem.model.OfertaCaixaPbc', {
 		localUrl: 'expedienteComercial.json',
 		remoteUrl: 'expedientecomercial/getTabExpediente',
 		api: {
-           read: 'expedientecomercial/getTabExpediente',
+           read: 'expedientecomercial/getTabExpediente'
         },
         extraParams: {tab: 'pbcexpediente'}
     }

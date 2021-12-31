@@ -2,11 +2,11 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTareaPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 public class DtoHistoricosTareasPbc {
 
-	private Long estadoTareaPbc;
+	private String tipoTareaPbc;
 	private Boolean activa;
 	private Boolean aprobacion;
 	private Date fechaSancion;
@@ -15,11 +15,12 @@ public class DtoHistoricosTareasPbc {
 	private Date fechaComunicacionRiesgo;
 	private Date fechaEnvioDocumentacionBc;
 	
-	public Long getEstadoTareaPbc() {
-		return estadoTareaPbc;
+	
+	public String getTipoTareaPbc() {
+		return tipoTareaPbc;
 	}
-	public void setEstadoTareaPbc(Long estadoTareaPbc) {
-		this.estadoTareaPbc = estadoTareaPbc;
+	public void setTipoTareaPbc(String tipoTareaPbc) {
+		this.tipoTareaPbc = tipoTareaPbc;
 	}
 	public Boolean getActiva() {
 		return activa;

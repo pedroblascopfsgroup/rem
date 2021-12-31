@@ -15124,70 +15124,44 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try { 
 			oferta = expediente.getOferta();
 			if(!Checks.esNulo(oferta)) {
-				Filter ofrCaixaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", oferta.getNumOferta());
+				Filter ofrCaixaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 				OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofrCaixaFilter);
 				if(!Checks.esNulo(ofrCaixa)) {
 					
 					if(ofrCaixa.getRiesgoOperacion() != null) {
 						dtoOfertaCaixaPbc.setRiesgoOperacion(ofrCaixa.getRiesgoOperacion().getDescripcion());
 					}
-					
-					if(oferta.getOfertaSospechosa() != null) {
-						dtoOfertaCaixaPbc.setOfertaSospechosa(oferta.getOfertaSospechosa());
-					}
-					
-					if(ofrCaixa.getDeteccionIndicio() != null) {
-						dtoOfertaCaixaPbc.setDeteccionIndicio(ofrCaixa.getDeteccionIndicio());
-					}
-					
 					if(ofrCaixa.getOcultaIdentidadTitular() != null) {
 						dtoOfertaCaixaPbc.setOcultaIdentidadTitular(ofrCaixa.getOcultaIdentidadTitular());
 					}
-					
-					if(ofrCaixa.getActitudIncoherente() != null) {
-						dtoOfertaCaixaPbc.setActitudIncoherente(ofrCaixa.getActitudIncoherente());
-					}
-					
-					if(ofrCaixa.getTitulosPortador() != null) {
-						dtoOfertaCaixaPbc.setTitulosPortador(ofrCaixa.getTitulosPortador());
-					}
-					
-					if(ofrCaixa.getMotivoCompra() != null) {
-						dtoOfertaCaixaPbc.setMotivoCompra(ofrCaixa.getMotivoCompra());
-					}
-					
 					if(ofrCaixa.getFinalidadOperacion() != null) {
-						dtoOfertaCaixaPbc.setFinalidadOperacion(ofrCaixa.getFinalidadOperacion().getDescripcion()); //codigo PBD o BC
+						dtoOfertaCaixaPbc.setFinalidadOperacion(ofrCaixa.getFinalidadOperacion().getDescripcion());
 					}
-					
-					if(ofrCaixa.getFondosPropios() != null) {
-						dtoOfertaCaixaPbc.setFondosPropios(ofrCaixa.getFondosPropios());
-					}
-					
 					if(ofrCaixa.getProcedenciaFondosPropios() != null) {
-						dtoOfertaCaixaPbc.setProcedenciaFondosPropios(ofrCaixa.getProcedenciaFondosPropios().getDescripcion()); //codigo PBD o BC
+						dtoOfertaCaixaPbc.setProcedenciaFondosPropios(ofrCaixa.getProcedenciaFondosPropios().getDescripcion());
 					}
-					
-					if(ofrCaixa.getOtraProcedenciaFondosPropios() != null) {
-						dtoOfertaCaixaPbc.setOtraProcedenciaFondosPropios(ofrCaixa.getOtraProcedenciaFondosPropios());
-					}
-					
 					if(ofrCaixa.getMedioPago() != null) {
-						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getDescripcion()); //codigo PBD o BC
+						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getDescripcion()); 
 					}
-					
-					if(ofrCaixa.getPagoIntermediario() != null) {
-						dtoOfertaCaixaPbc.setPagoIntermediario(ofrCaixa.getPagoIntermediario());
-					}
-					
 					if(ofrCaixa.getPaisTransferencia() != null) {
 						dtoOfertaCaixaPbc.setPaisTransferencia(ofrCaixa.getPaisTransferencia().getDescripcion());
 					}
 					
-					if(ofrCaixa.getFondosBanco() != null) {
-						dtoOfertaCaixaPbc.setFondosBanco(ofrCaixa.getFondosBanco());
-					}
+					dtoOfertaCaixaPbc.setOfertaSospechosa(oferta.getOfertaSospechosa());
+					dtoOfertaCaixaPbc.setDeteccionIndicio(ofrCaixa.getDeteccionIndicio());
+					dtoOfertaCaixaPbc.setActitudIncoherente(ofrCaixa.getActitudIncoherente());
+					dtoOfertaCaixaPbc.setTitulosPortador(ofrCaixa.getTitulosPortador());
+					dtoOfertaCaixaPbc.setMotivoCompra(ofrCaixa.getMotivoCompra());
+					dtoOfertaCaixaPbc.setFondosPropios(ofrCaixa.getFondosPropios());
+					dtoOfertaCaixaPbc.setOtraProcedenciaFondosPropios(ofrCaixa.getOtraProcedenciaFondosPropios());
+					dtoOfertaCaixaPbc.setPagoIntermediario(ofrCaixa.getPagoIntermediario());
+					dtoOfertaCaixaPbc.setFondosBanco(ofrCaixa.getFondosBanco());
+					
 				}
+				
+				dtoOfertaCaixaPbc.setDtoPBCArras(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCARRAS));
+				dtoOfertaCaixaPbc.setDtoPBCVenta(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC));
+				dtoOfertaCaixaPbc.setDtoPBCCN(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCCN));
 			}
 			
 		} catch (Exception ex) {
@@ -15195,5 +15169,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return dtoOfertaCaixaPbc;
+	}
+	
+	private DtoHistoricosTareasPbc historicoPbcToDto (Long idOferta, String tipoPbc) {
+		DtoHistoricosTareasPbc dto = new DtoHistoricosTareasPbc();
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		Filter filterTipoPbC =  genericDao.createFilter(FilterType.EQUALS, "estadoTareaPbc.codigo", tipoPbc);
+		Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbC, filterActivo);
+		
+		if(historico !=  null) {
+			dto.setAprobacion(historico.getAprobacion());
+			dto.setFechaComunicacionRiesgo(historico.getFechaComunicacionRiesgo());
+			dto.setFechaEnvioDocumentacionBc(historico.getFechaEnvioDocumentacionBc());
+			dto.setFechaSancion(historico.getFechaSancion());
+			dto.setFechaSolicitudEstadoRiesgo(historico.getFechaSolicitudCalculoRiesgo());
+			dto.setInforme(historico.getInforme());
+		}
+		
+		return dto;
 	}
 }

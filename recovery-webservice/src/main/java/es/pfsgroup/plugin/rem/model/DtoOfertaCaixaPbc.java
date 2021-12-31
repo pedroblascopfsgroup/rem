@@ -19,7 +19,9 @@ public class DtoOfertaCaixaPbc extends WebDto {
 	private Boolean pagoIntermediario;
 	private String paisTransferencia;
 	private Double fondosBanco;
-	
+	private DtoHistoricosTareasPbc dtoPBCArras;
+	private DtoHistoricosTareasPbc dtoPBCVenta;
+	private DtoHistoricosTareasPbc dtoPBCCN;
 
 	public String getRiesgoOperacion() {
 		return riesgoOperacion;
@@ -111,5 +113,24 @@ public class DtoOfertaCaixaPbc extends WebDto {
 	public void setFondosBanco(Double fondosBanco) {
 		this.fondosBanco = fondosBanco;
 	}
+	public DtoHistoricosTareasPbc getDtoPBCArras() {
+		return dtoPBCArras;
+	}
+	public void setDtoPBCArras(DtoHistoricosTareasPbc dtoPBCArras) {
+		this.dtoPBCArras = dtoPBCArras;
+	}
+	public DtoHistoricosTareasPbc getDtoPBCVenta() {
+		return dtoPBCVenta;
+	}
+	public void setDtoPBCVenta(DtoHistoricosTareasPbc dtoPBCVenta) {
+		this.dtoPBCVenta = dtoPBCVenta;
+	}
+	public DtoHistoricosTareasPbc getDtoPBCCN() {
+		return dtoPBCCN;
+	}
+	public void setDtoPBCCN(DtoHistoricosTareasPbc dtoPBCCN) {
+		this.dtoPBCCN = dtoPBCCN;
+	}
+	
 
 }

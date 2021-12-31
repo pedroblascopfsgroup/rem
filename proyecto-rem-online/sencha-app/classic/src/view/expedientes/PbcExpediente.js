@@ -3,7 +3,6 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
     xtype: 'pbcexpediente',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
     refreshAfterSave: true,
     saveMultiple: false,
     reference: 'pbcexpedienteref',
@@ -19,27 +18,6 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
     	var me = this;
 		me.setTitle(HreRem.i18n('header.title.pbc'));
 		
-		var coloredRender = function (value, meta, record) {
-    		var borrado = record.get('borrado');
-    		if(value){
-	    		if (borrado) {
-	    			/*if(meta.column.dataIndex==''){
-	    				return '<span style="color: #DF0101;">'+Ext.util.Format.number(value, '0.00%')+'</span>';
-	    			}*/
-	    			return '<span style="color: #DF0101;">'+value+'</span>';
-	    		} else {
-	    			/*if(meta.column.dataIndex==''){
-	    				return Ext.util.Format.number(value, '0.00%');
-	    			}*/
-	    			return value;
-	    		}
-    		} else {
-    			if(borrado){
-    				return '<span style="color: #DF0101;">-</span>';
-    			}
-	    		return '-';
-	    	}
-    	};
 
         var items = [
         	{    
@@ -100,25 +78,19 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 				           }
 					},
 					{
-			        	xtype: 		'textareafieldbase',
+			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.motivo.compra'),
 						colspan: 3,
-				 		//height: 	200,
-				 		//maxWidth:   550,
-				 		//rowspan:	5,
 		            	bind:'{ofertacaixapbc.motivoCompra}',
-						readOnly: true,
+						
 				 		labelAlign: 'top'
 					},
 					{
-			        	xtype: 		'textareafieldbase',
+			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.finalidad.operacion'),
 						colspan: 3,
-				 		//height: 	200,
-				 		//maxWidth:   550,
-				 		//rowspan:	5,
 		            	bind:'{ofertacaixapbc.finalidadOperacion}',
-						readOnly: true,
+						
 				 		labelAlign: 'top'
 					}
 				]	
@@ -195,8 +167,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaSolicitudCalculoRiesgoRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                },
 	                {
@@ -206,8 +177,8 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaComunicacionRiesgoRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
+	                		
 	                	}
 	                },
 	                {
@@ -217,8 +188,8 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaEnvioDocumentacionBCRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
+	                		
 	                	}
 	                },
 	                {
@@ -228,8 +199,8 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaSancionBCRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
+	                		
 	                	}
 	                }
 				]	
@@ -248,8 +219,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaSolicitudCalculoRiesgoRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                },
 	                {
@@ -259,8 +229,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaComunicacionRiesgoRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                },
 	                {
@@ -270,8 +239,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 						reference: 'fechaEnvioDocumentacionBCRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                },
 	                {
@@ -281,8 +249,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaSancionBCRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                }
 				]	
@@ -310,8 +277,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaSancionCNRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                }
 				]	
@@ -339,19 +305,14 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaSancionArrasRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
+	                		
 	                	}
 	                },
 	                {
-			        	xtype: 		'textareafieldbase',
+			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-				 		//height: 	200,
-				 		//maxWidth:   550,
-				 		//rowspan:	5,
-		            	//bind:		'{}',
-						readOnly: true,
 				 		labelAlign: 'top'
 					}
 				]	
@@ -379,115 +340,27 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 2,
 						reference: 'fechaSancionArrasRef',
 	                	bind:		{
-	                		//value: '{}',
-	                		//readOnly: true
+	                		//value: '{}'
 	                	}
 	                },
 	                {
-			        	xtype: 		'textareafieldbase',
+			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-				 		//height: 	200,
-				 		//maxWidth:   550,
-				 		//rowspan:	5,
-		            	//bind:		'{}',
-						readOnly: true,
 				 		labelAlign: 'top'
 					}
 				]	
            },
            {
-				xtype: 'fieldsettable',
-	           	title: HreRem.i18n('Intervinientes'),
-	           	items : [
-	               	{
-						    xtype : 'gridBase',
-						    topBar : false,
-						    reference: 'listadoIntervinientesRef',
-							cls	: 'panel-base shadow-panel',
-							activateButton: true,
-							bind: {
-								//store: '{}'
-							},
-						    features: [{
-					            id: 'summary',
-					            ftype: 'summary',
-					            hideGroupedHeader: true,
-					            enableGroupingMenu: false,
-					            dock: 'bottom'
-						    }],
-							columns: [
-								{
-							        xtype: 'actioncolumn',
-							        reference: 'intervinientePrincipalRef',
-							        width: 30,
-							        text: HreRem.i18n('header.principal'),
-									hideable: false,
-									items: [
-								        	{
-									            getClass: function(v, meta, rec) {
-									                /*if (rec.get('') != 1) {
-									                	this.items[0].handler = 'onMarcarPrincipalClick';
-									                    return 'fa fa-check';
-									                } else {
-							            				this.items[0].handler = 'onMarcarPrincipalClick';
-									                    return 'fa fa-check green-color';
-									                }*/
-									            }
-								        	}
-									 ]
-								}, 
-							   {    text: HreRem.i18n('header.id.cliente'),
-						        	//dataIndex: '',
-						        	flex: 1,
-						        	hidden: true,
-						        	hideable: false
-						       },
-							   {
-									text: HreRem.i18n('header.nombre.razon.social'),
-									//dataIndex: '',
-									flex: 1,
-									renderer: coloredRender
-							   },
-							   {
-									text: HreRem.i18n('fieldlabel.apellidos.cliente'),
-									//dataIndex: '',
-									flex: 1,
-									renderer: coloredRender
-							   },
-							   {
-							   		text: HreRem.i18n('header.tipo.documento'),
-						            //dataIndex: '',
-						            flex: 1,
-						            renderer: coloredRender
-							   },
-							   {
-							   		text: HreRem.i18n('header.numero.documento'),
-						            //dataIndex: '',
-						            flex: 1,
-						            renderer: coloredRender
-							   },						   
-							   {
-							   		text: HreRem.i18n('header.rol.oferta'),
-						            //dataIndex: '',
-						            flex: 1,
-						            renderer: coloredRender
-							   },
-							   
-							],
-						    dockedItems : [
-						        {
-						            xtype: 'pagingtoolbar',
-						            dock: 'bottom',
-						            displayInfo: true,
-						            bind: {
-						                //store: '{}'
-						            }
-						        }
-						    ]
-						}
-	               	]
-			}
+	           xtype: 'fieldsettable',
+				defaultType: 'displayfield',
+				colspan: 3,
+				items: [
+					{
+						xtype: 'intervinientesGrid' 
+			        }
+				]
+	    	}
         ];
         
 	    me.addPlugin({ptype: 'lazyitems', items: items });

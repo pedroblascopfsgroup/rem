@@ -18,6 +18,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var me = this;
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
+        
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 			{
@@ -989,9 +990,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'datefieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-						colspan: 2,
+						colspan: 1,
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
+					},
+					{
+						xtype: 'comboboxfieldbasedd',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.baja.contable.bbva'),
+						colspan: 1,
+						readOnly: !($AU.userIsRol(CONST.PERFILES['KAM_BBVA']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])),
+						bind: {
+							store: '{comboBajasContablesBBVA}',
+							value: '{activo.bajaContableBBVACodigo}',
+							rawValue: '{activo.bajaContableBBVADescripcion}',
+							hidden: '{!activo.isCarteraBbva}'
+						}
 					},
 					{
 						xtype: 'textfieldbase',

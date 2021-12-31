@@ -189,6 +189,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
 	private Integer enTramite;
+	private String bajaContableBBVACodigo;
+	private String bajaContableBBVADescripcion;
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
@@ -2998,6 +3000,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
 		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
+	}
+
+	public String getBajaContableBBVACodigo() {
+		return bajaContableBBVACodigo;
+	}
+
+	public void setBajaContableBBVACodigo(String bajaContableBBVACodigo) {
+		this.bajaContableBBVACodigo = bajaContableBBVACodigo;
+	}
+
+	public String getBajaContableBBVADescripcion() {
+		return bajaContableBBVADescripcion;
+	}
+
+	public void setBajaContableBBVADescripcion(String bajaContableBBVADescripcion) {
+		this.bajaContableBBVADescripcion = bajaContableBBVADescripcion;
 	}
 	
 }

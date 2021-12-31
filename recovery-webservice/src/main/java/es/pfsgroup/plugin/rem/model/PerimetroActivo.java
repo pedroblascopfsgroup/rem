@@ -20,9 +20,11 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDBajaContableBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 
 /**
@@ -139,6 +141,10 @@ public class PerimetroActivo implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAC_MOTIVO_GESTION_COMERCIAL")
 	private DDMotivoGestionComercial motivoGestionComercial;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_BCO_ID")
+    private DDBajaContableBBVA bajaContable;
 	
     @Version   
 	private Long version;
@@ -412,6 +418,13 @@ public class PerimetroActivo implements Serializable, Auditable {
 	public void setMotivoGestionComercial(DDMotivoGestionComercial motivoGestionComercial) {
 		this.motivoGestionComercial = motivoGestionComercial;
 	}
-	
+
+	public DDBajaContableBBVA getBajaContable() {
+		return bajaContable;
+	}
+
+	public void setBajaContable(DDBajaContableBBVA bajaContable) {
+		this.bajaContable = bajaContable;
+	}	
 
 }

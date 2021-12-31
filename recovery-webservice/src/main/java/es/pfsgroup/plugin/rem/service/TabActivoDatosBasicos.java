@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDBajaContableBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
@@ -1322,6 +1323,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getTieneGestionDnd() != null) {
 			activoDto.setTieneGestionDndCodigo(activo.getTieneGestionDnd().getCodigo());
 			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
+		}		
+
+		DDBajaContableBBVA bajaContableBBVA = (DDBajaContableBBVA) diccionarioApi.dameValorDiccionarioByCod(DDBajaContableBBVA.class,  perimetroActivo.getBajaContable().getCodigo());
+		if (bajaContableBBVA != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
+			activoDto.setBajaContableBBVACodigo(bajaContableBBVA.getCodigo());
+			activoDto.setBajaContableBBVADescripcion(bajaContableBBVA.getDescripcion());
 		}
 		
 		return activoDto;
@@ -2324,7 +2331,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoPrinexActivos.setActivo(activo);
 				genericDao.save(ActivoPrinexActivos.class, activoPrinexActivos);
 			}
-
+			
+			DDBajaContableBBVA bajaContableBBVA = (DDBajaContableBBVA) diccionarioApi.dameValorDiccionarioByCod(DDBajaContableBBVA.class,  dto.getBajaContableBBVACodigo());
+			if (bajaContableBBVA != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
+				perimetroActivo.setBajaContable(bajaContableBBVA);
+				
+				if (DDBajaContableBBVA.CODIGO_REVISADA.equals(dto.getBajaContableBBVACodigo()) && perimetroActivo != null && perimetroActivo.getIncluidoEnPerimetro() == 1) {
+					perimetroActivo.setIncluidoEnPerimetro(0);
+				}
+			}
+			genericDao.update(PerimetroActivo.class,perimetroActivo);
+			
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

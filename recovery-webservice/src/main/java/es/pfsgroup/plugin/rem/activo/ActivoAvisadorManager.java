@@ -28,6 +28,8 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDBajaContableBBVA;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -387,34 +389,23 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
-		return listaAvisos;
-	}
-	
-	public boolean updateActivoAlquilado(Long id, Activo activo, List<ActivoOferta> listaActivoOfertas) {
-		
-		if (listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
-
-			for (ActivoOferta activoOferta : listaActivoOfertas) {
-
-				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-
-				if (oferta != null && oferta.getEstadoOferta() != null
-						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
-						&& (DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())
-						|| DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()))) {
-
-					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-					
-					if (expediente != null && expediente.getEstado() != null
-							&& DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
-						
-						return true;
-					}
+		// Aviso 22: Activo de BBVA automatización de bajas contables
+		if(!Checks.esNulo(activo) && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){			
+			PerimetroActivo perimetro= activoApi.getPerimetroByIdActivo(activo.getId());
+			
+			if(!Checks.esNulo(perimetro)){
+				
+				if(!Checks.esNulo(perimetro.getBajaContable()) && (perimetro.getBajaContable().getCodigo().equals(DDBajaContableBBVA.CODIGO_REVISADA) 
+				   || perimetro.getBajaContable().getCodigo().equals(DDBajaContableBBVA.CODIGO_NO_REVISADA))){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Baja contable BBVA");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
 				}
 			}
 		}
 		
-		return false;
+		return listaAvisos;
 	}
+	
 }

@@ -41,7 +41,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;
 	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''esOmega() || esTitulizada() ? fechaReservaPBCReserva() ? null : ''''Es necesario cumplimentar el campo fecha de reserva'''' : ''''No es cartera de Omega o Titulizada.'''''' 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''esOmega() ? fechaReservaPBCReserva() ? null : ''''Es necesario cumplimentar el campo fecha de reserva'''' : ''''No es cartera de Omega.'''''' 
 	WHERE TAP_CODIGO = ''T013_PBCReserva''';
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL;

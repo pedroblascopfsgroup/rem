@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20211228
+--## FECHA_CREACION=20211231
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL IS
     type pesoPosicion IS VARRAY(11) OF INTEGER;
     myArray pesoPosicion;
     var_cat_id number;
+    var_cat_id2 number;
     var VARCHAR2(1000);
     var2 VARCHAR2(1000);
     valorCaracter number := NULL;
@@ -38,9 +39,10 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL IS
     var_LONGREF number;
     CURSOR c_product
   IS
-     SELECT AUX.CAT_ID,AUX.CAT_CATASTRO,AUX.CAD1,AUX.CAD2,AUX.CAD3,AUX.LONGREF
+     SELECT AUX.CAT_ID,AUX.CAT_ID2,AUX.CAT_CATASTRO,AUX.CAD1,AUX.CAD2,AUX.CAD3,AUX.LONGREF
         FROM(
             SELECT ACT_CAT.CAT_ID,
+            CAT.CAT_ID AS CAT_ID2,
             ACT_CAT.CAT_REF_CATASTRAL,
             ACT_CAT.CAT_CATASTRO,
             
@@ -92,6 +94,7 @@ LOOP
 sumaDigitos := 0;
 var2 := r_product.CAD3;
 var_cat_id := r_product.CAT_ID;
+var_cat_id2 := r_product.CAT_ID2;
 var_LONGREF := r_product.LONGREF;
 dcCalculado := '';
     IF (var_LONGREF != 20) THEN
@@ -165,7 +168,7 @@ dcCalculado := '';
                 
              V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
                 SET CAT_CORRECTO = 1,
-                CAT_CATASTRO = var_cat_id
+                CAT_CATASTRO = var_cat_id2
                 WHERE CAT_ID = var_cat_id 
                 AND CAT_CATASTRO IS NULL
                 AND var_cat_id IN (SELECT CAT.CAT_ID FROM '||V_ESQUEMA||'.CAT_CATASTRO CAT WHERE CAT.CAT_ID = '||var_cat_id||')';

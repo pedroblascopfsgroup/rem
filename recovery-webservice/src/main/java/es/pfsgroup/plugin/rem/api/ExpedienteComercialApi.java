@@ -1489,4 +1489,6 @@ public interface ExpedienteComercialApi {
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
 
 	DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente);
+
+	DtoPage getIntervinientesByOferta(Long numOferta, WebDto dto);
 }

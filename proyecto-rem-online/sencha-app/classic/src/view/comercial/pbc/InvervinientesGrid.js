@@ -4,6 +4,9 @@ Ext.define('HreRem.view.comercial.pbc.InvervinientesGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+    bind		: {
+        store: '{storeGridIntervinientes}'
+    },
 	
     initComponent: function () {
 
@@ -20,42 +23,32 @@ Ext.define('HreRem.view.comercial.pbc.InvervinientesGrid', {
 	       },
 		   {
 				text: HreRem.i18n('header.nombre.razon.social'),
-				//dataIndex: '',
+				dataIndex: 'nombre',
 				flex: 1
 		   },
 		   {
 				text: HreRem.i18n('fieldlabel.apellidos.cliente'),
-				//dataIndex: '',
+				dataIndex: 'apellidos',
 				flex: 1
 		   },
 		   {
 		   		text: HreRem.i18n('header.tipo.documento'),
-	            //dataIndex: '',
+	            dataIndex: 'tipoDocumento',
 	            flex: 1
 		   },
 		   {
 		   		text: HreRem.i18n('header.numero.documento'),
-	            //dataIndex: '',
+	            dataIndex: 'numDocumento',
 	            flex: 1
 		   },						   
 		   {
 		   		text: HreRem.i18n('header.rol.oferta'),
-	            //dataIndex: '',
+	            dataIndex: 'rol',
 	            flex: 1
 		   }
 		   
 		];
-//     	 me.dockedItems : [
-//	        {
-//	            xtype: 'pagingtoolbar',
-//	            dock: 'bottom',
-//	            displayInfo: true,
-//	            bind: {
-//	                //store: '{}'
-//	            }
-//	        }
-//		]
 
-		    me.callParent();
+		me.callParent();
     }
 });

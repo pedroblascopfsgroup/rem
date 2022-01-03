@@ -1854,6 +1854,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					diccionario: 'DDSegurosVigentes'
 				}
 			}
-    	}
+    	},
+		
+		storeGridIntervinientes: {
+	    	model: 'HreRem.model.IntervinientesPBC',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getIntervinientesPBC',
+		        extraParams: {numOferta: '{datosbasicosoferta.numOferta}'}
+	    	}
+		}
     }
 });

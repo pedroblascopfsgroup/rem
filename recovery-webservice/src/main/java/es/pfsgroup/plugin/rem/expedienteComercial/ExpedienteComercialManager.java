@@ -15215,4 +15215,33 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		genericDao.save(HistoricoTareaPbc.class, htp);
 	}
+	
+	@Override
+	public DtoPage getIntervinientesByOferta(Long numOferta, WebDto dto) {
+
+		List<DtoInterviniente> intervinientes = new ArrayList<DtoInterviniente>();
+
+		for (VGridIntervinientes interviniente : expedienteComercialDao.getIntervinientesByOferta(numOferta)) {
+			DtoInterviniente dtoInterviniente = intervinienteToDto(interviniente);
+			intervinientes.add(dtoInterviniente);
+		}
+
+		return new DtoPage(intervinientes, intervinientes.size());
+	}
+	
+	private DtoInterviniente intervinienteToDto(VGridIntervinientes interviniente) {
+		DtoInterviniente intervinienteDto = new DtoInterviniente();
+
+		intervinienteDto.setNombre(!Checks.esNulo(interviniente.getNombre()) 
+				? interviniente.getNombre() : null);
+		intervinienteDto.setApellidos(!Checks.esNulo(interviniente.getApellidos()) 
+				? interviniente.getApellidos() : null);
+		intervinienteDto.setTipoDocumento(!Checks.esNulo(interviniente.getTipoDocumento()) 
+				? interviniente.getTipoDocumento() : null);
+		intervinienteDto.setNumDocumento(!Checks.esNulo(interviniente.getNumDocumento()) 
+				? interviniente.getNumDocumento() : null);
+		intervinienteDto.setRol(!Checks.esNulo(interviniente.getRol()) ? interviniente.getRol() : null);
+
+		return intervinienteDto;
+	}
 }

@@ -997,7 +997,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'comboboxfieldbasedd',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.baja.contable.bbva'),
-						colspan: 1,
+						colspan: 2,
 						readOnly: !($AU.userIsRol(CONST.PERFILES['KAM_BBVA']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])),
 						bind: {
 							store: '{comboBajasContablesBBVA}',
@@ -1025,7 +1025,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
-						colspan: 2,
+						colspan: 3,
 						bind: {
 							value: '{activo.trabajosVivos}',
 							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
@@ -1040,7 +1040,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						title: HreRem.i18n('title.perimetros.condiciones'),
 						border: true,
 						colapsible: false,
-						colspan: 3,
+						colspan: 4,
 						items :
 							[
 							//Fila cabecera

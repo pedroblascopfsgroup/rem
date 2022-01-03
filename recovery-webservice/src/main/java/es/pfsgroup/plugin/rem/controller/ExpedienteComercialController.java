@@ -1869,9 +1869,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			if(!Checks.estaVacio(listaAN)) {
 				File file = null;
 				if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) || subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)) {
-					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request,DDSubcartera.CODIGO_APPLE_INMOBILIARIO);
-				}else if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_JAGUAR)) {
-					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request,DDSubcartera.CODIGO_JAGUAR);
+					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
 				}else if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) {
 					file = excelReportGeneratorApi.getAdvisoryNoteReportArrow(listaAN, request);
 				}

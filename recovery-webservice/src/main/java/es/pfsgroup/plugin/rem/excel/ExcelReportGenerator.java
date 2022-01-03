@@ -68,7 +68,6 @@ import es.pfsgroup.plugin.rem.model.DtoListFichaAutorizacion;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorRequest;
 import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
@@ -3042,22 +3041,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 	
 	@Override
-	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request, String subcartera) throws IOException {
+	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException {
 		
 		ServletContext sc = request.getSession().getServletContext();		
 		FileOutputStream fileOutStream = null;
 		
 		try {
-			File poiFile  = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/AdvisoryNoteReport.xlsx"));
-			if(!Checks.esNulo(subcartera)) {
-				if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera)) {
-					poiFile  = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/AdvisoryNoteReport.xlsx"));
-				}else if (DDSubcartera.CODIGO_JAGUAR.equals(subcartera)) {
-					poiFile  = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteJaguar/AdvisoryNoteReport.xlsx"));
-				}
-			}
 
-
+			File poiFile = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/AdvisoryNoteReport.xlsx"));
 			
 			File fileOut = new File(poiFile.getAbsolutePath().replace("Report",""));
 			FileInputStream fis = new FileInputStream(poiFile);

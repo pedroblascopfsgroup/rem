@@ -13,6 +13,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -20,8 +21,10 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements UpdaterService {
@@ -80,7 +83,26 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		expedienteComercialApi.update(expedienteComercial,false);	
 		
 		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaResolucion));
-
+		
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico != null) {
+			historico.setActiva(false);
+			
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+		
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+		
+		HistoricoTareaPbc htp = new HistoricoTareaPbc();
+		htp.setOferta(expedienteComercial.getOferta());
+		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		
+		genericDao.save(HistoricoTareaPbc.class, htp);
 	}
 
 	public String[] getCodigoTarea() {

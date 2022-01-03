@@ -240,6 +240,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_GARANTIAS = "garantias";
+	private static final String PESTANA_PBC = "pbcexpediente";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
 	private static final String PESTANA_SEGURO_RENTAS = "segurorentasexpediente";
 	private static final String PESTANA_PLUSVALIA = "plusvalia";
@@ -522,6 +523,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoDocumentos(expediente);
 		} else if (PESTANA_GARANTIAS.equals(tab)) {
 			dto = expedienteToDtoGarantias(expediente);
+		} else if (PESTANA_PBC.equals(tab)) {
+			dto = getOfertaCaixaPbc(expediente);
 		}
 
 		return dto;
@@ -13187,11 +13190,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto) {
+	public void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto, Oferta oferta) {
 		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
+		
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	
@@ -13987,10 +13992,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto) {
+	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto, Oferta oferta) {
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente,null);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
+		
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	private List<FechaArrasExpediente> listFechaArrasFiltradaSinAnulados(List<FechaArrasExpediente> listaFechaArrasExp){
@@ -14128,7 +14135,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		genericDao.save(ExpedienteComercial.class, expediente);
 		
-		
+		createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBCARRAS);
 	}
 
 	private boolean tieneInterlocutoresNoEnviados(ExpedienteComercial eco){
@@ -15111,5 +15118,101 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return !estadosBcNoPermitidos.contains(codEstadoBC);
+	}
+	
+	
+	@Override
+	public DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente) {
+		Oferta oferta = null;
+		DtoOfertaCaixaPbc dtoOfertaCaixaPbc = new DtoOfertaCaixaPbc();
+		try { 
+			oferta = expediente.getOferta();
+			if(!Checks.esNulo(oferta)) {
+				Filter ofrCaixaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofrCaixaFilter);
+				if(!Checks.esNulo(ofrCaixa)) {
+					
+					if(ofrCaixa.getRiesgoOperacion() != null) {
+						dtoOfertaCaixaPbc.setRiesgoOperacion(ofrCaixa.getRiesgoOperacion().getDescripcion());
+					}
+					if(ofrCaixa.getOcultaIdentidadTitular() != null) {
+						dtoOfertaCaixaPbc.setOcultaIdentidadTitular(ofrCaixa.getOcultaIdentidadTitular());
+					}
+					if(ofrCaixa.getFinalidadOperacion() != null) {
+						dtoOfertaCaixaPbc.setFinalidadOperacion(ofrCaixa.getFinalidadOperacion().getDescripcion());
+					}
+					if(ofrCaixa.getProcedenciaFondosPropios() != null) {
+						dtoOfertaCaixaPbc.setProcedenciaFondosPropios(ofrCaixa.getProcedenciaFondosPropios().getDescripcion());
+					}
+					if(ofrCaixa.getMedioPago() != null) {
+						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getDescripcion()); 
+					}
+					if(ofrCaixa.getPaisTransferencia() != null) {
+						dtoOfertaCaixaPbc.setPaisTransferencia(ofrCaixa.getPaisTransferencia().getDescripcion());
+					}
+					
+					dtoOfertaCaixaPbc.setOfertaSospechosa(oferta.getOfertaSospechosa());
+					dtoOfertaCaixaPbc.setDeteccionIndicio(ofrCaixa.getDeteccionIndicio());
+					dtoOfertaCaixaPbc.setActitudIncoherente(ofrCaixa.getActitudIncoherente());
+					dtoOfertaCaixaPbc.setTitulosPortador(ofrCaixa.getTitulosPortador());
+					dtoOfertaCaixaPbc.setMotivoCompra(ofrCaixa.getMotivoCompra());
+					dtoOfertaCaixaPbc.setFondosPropios(ofrCaixa.getFondosPropios());
+					dtoOfertaCaixaPbc.setOtraProcedenciaFondosPropios(ofrCaixa.getOtraProcedenciaFondosPropios());
+					dtoOfertaCaixaPbc.setPagoIntermediario(ofrCaixa.getPagoIntermediario());
+					dtoOfertaCaixaPbc.setFondosBanco(ofrCaixa.getFondosBanco());
+					
+				}
+				
+				dtoOfertaCaixaPbc.setDtoPBCArras(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCARRAS));
+				dtoOfertaCaixaPbc.setDtoPBCVenta(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC));
+				dtoOfertaCaixaPbc.setDtoPBCCN(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCCN));
+			}
+			
+		} catch (Exception ex) {
+			logger.error("error en OfertasManager getOfertaCaixaPbc", ex);
+		}
+
+		return dtoOfertaCaixaPbc;
+	}
+	
+	private DtoHistoricosTareasPbc historicoPbcToDto (Long idOferta, String tipoPbc) {
+		DtoHistoricosTareasPbc dto = new DtoHistoricosTareasPbc();
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		Filter filterTipoPbC =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", tipoPbc);
+		Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbC, filterActivo);
+		
+		if(historico !=  null) {
+			dto.setAprobacion(historico.getAprobacion());
+			dto.setFechaComunicacionRiesgo(historico.getFechaComunicacionRiesgo());
+			dto.setFechaEnvioDocumentacionBc(historico.getFechaEnvioDocumentacionBc());
+			dto.setFechaSancion(historico.getFechaSancion());
+			dto.setFechaSolicitudEstadoRiesgo(historico.getFechaSolicitudCalculoRiesgo());
+			dto.setInforme(historico.getInforme());
+		}
+		
+		return dto;
+	}
+	
+	private void createHistoricoTareaPbc(Oferta oferta, String codTipoTarea) {			
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codTipoTarea);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico != null) {
+			historico.setActiva(false);
+			
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+		
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoTarea);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+		
+		HistoricoTareaPbc htp = new HistoricoTareaPbc();
+		htp.setOferta(oferta);
+		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		
+		genericDao.save(HistoricoTareaPbc.class, htp);
 	}
 }

@@ -105,6 +105,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
+				
+
+				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null 
+						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
 						
 				for (TareaExternaValor valor : valores) {
 	
@@ -134,8 +138,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
-							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
-									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 								
@@ -258,6 +261,18 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				if (DDCartera.isCarteraBk(activo.getCartera())){
+					Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							reserva ? DDTipoTareaPbc.CODIGO_PBCARRAS : DDTipoTareaPbc.CODIGO_PBC);
+					DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+					
+					HistoricoTareaPbc htp = new HistoricoTareaPbc();
+					htp.setOferta(ofertaAceptada);
+					htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+					
+					genericDao.save(HistoricoTareaPbc.class, htp);
+				}
 			}
 		}
 

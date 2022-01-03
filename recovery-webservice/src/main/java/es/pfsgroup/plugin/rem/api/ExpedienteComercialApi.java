@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOfertaCaixaPbc;
 import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
@@ -1363,7 +1364,7 @@ public interface ExpedienteComercialApi {
 
 	DtoGridFechaArras getUltimaPropuestaEnviada(Long idExpediente);
 
-	void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto);
+	void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto, Oferta oferta);
 
 	List<DtoGridFechaArras> getFechaArras(Long idExpediente) throws IllegalAccessException, InvocationTargetException;
 
@@ -1389,7 +1390,7 @@ public interface ExpedienteComercialApi {
 
 	DtoScreening dataToDtoScreeningDesBloqueo(Long numOferta, String motivo, String observaciones);
 
-	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto);
+	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto, Oferta oferta);
 	
 	ExpedienteComercial getExpedienteByIdTramite(Long idTramite);
 
@@ -1486,4 +1487,6 @@ public interface ExpedienteComercialApi {
 	 * @return true si pertenece a la cartera, false si no.
 	 */
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
+
+	DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente);
 }

@@ -2,35 +2,36 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTareaPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 public class DtoHistoricosTareasPbc {
 
-	private Long estadoTareaPbc;
-	private Integer activa;
-	private Integer aprobacion;
+	private String tipoTareaPbc;
+	private Boolean activa;
+	private Boolean aprobacion;
 	private Date fechaSancion;
 	private String informe;
 	private Date fechaSolicitudEstadoRiesgo;
 	private Date fechaComunicacionRiesgo;
 	private Date fechaEnvioDocumentacionBc;
 	
-	public Long getEstadoTareaPbc() {
-		return estadoTareaPbc;
+	
+	public String getTipoTareaPbc() {
+		return tipoTareaPbc;
 	}
-	public void setEstadoTareaPbc(Long estadoTareaPbc) {
-		this.estadoTareaPbc = estadoTareaPbc;
+	public void setTipoTareaPbc(String tipoTareaPbc) {
+		this.tipoTareaPbc = tipoTareaPbc;
 	}
-	public Integer getActiva() {
+	public Boolean getActiva() {
 		return activa;
 	}
-	public void setActiva(Integer activa) {
+	public void setActiva(Boolean activa) {
 		this.activa = activa;
 	}
-	public Integer getAprobacion() {
+	public Boolean getAprobacion() {
 		return aprobacion;
 	}
-	public void setAprobacion(Integer aprobacion) {
+	public void setAprobacion(Boolean aprobacion) {
 		this.aprobacion = aprobacion;
 	}
 	public Date getFechaSancion() {

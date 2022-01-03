@@ -405,6 +405,23 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			}
 			
 			return false;
+		},
+		
+		esPropietarioLivingCenter : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} 
+			var nifPropietario = gasto.get('nifPropietario');
+			var tipoGastoCodigo = gasto.get('tipoGastoCodigo');
+			var anyoEmision = gasto.get('fechaEmision').getFullYear();
+
+			if((nifPropietario == 'A58032244') && (tipoGastoCodigo == '01' || tipoGastoCodigo == '02') && (anyoEmision >= '2022')){
+				return true;
+			}
+			
+			return false;
 		}
 	},
 

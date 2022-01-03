@@ -85,10 +85,10 @@ public class HistoricoTareaPbc implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPB_ID")
-	private DDTipoTareaPbc estadoTareaPbc;
+	private DDTipoTareaPbc tipoTareaPbc;
 
     @Column(name = "HTP_ACTIVA")
-    private Boolean activa;
+    private Boolean activa = true;
 
 	@Column(name="HTP_APROBACION")
 	private Boolean aprobacion;
@@ -130,12 +130,12 @@ public class HistoricoTareaPbc implements Serializable, Auditable {
 		this.oferta = oferta;
 	}
 
-	public DDTipoTareaPbc getEstadoTareaPbc() {
-		return estadoTareaPbc;
+	public DDTipoTareaPbc getTipoTareaPbc() {
+		return tipoTareaPbc;
 	}
 
-	public void setEstadoTareaPbc(DDTipoTareaPbc estadoTareaPbc) {
-		this.estadoTareaPbc = estadoTareaPbc;
+	public void setTipoTareaPbc(DDTipoTareaPbc tipoTareaPbc) {
+		this.tipoTareaPbc = tipoTareaPbc;
 	}
 
 	public Boolean getActiva() {
@@ -208,9 +208,5 @@ public class HistoricoTareaPbc implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 }

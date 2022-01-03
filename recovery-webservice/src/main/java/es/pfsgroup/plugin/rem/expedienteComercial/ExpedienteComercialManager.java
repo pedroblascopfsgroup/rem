@@ -13190,11 +13190,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto) {
+	public void createOrUpdateUltimaPropuestaEnviada(Long idExpediente, DtoGridFechaArras dto, Oferta oferta) {
 		Filter filtroFechaRespuesta = genericDao.createFilter(FilterType.NULL, "fechaRespuestaBC");
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
+		
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	
@@ -13990,10 +13992,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto) {
+	public void createOrUpdateUltimaPropuesta(Long idExpediente, DtoGridFechaArras dto, Oferta oferta) {
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente,null);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
+		
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	private List<FechaArrasExpediente> listFechaArrasFiltradaSinAnulados(List<FechaArrasExpediente> listaFechaArrasExp){
@@ -14131,7 +14135,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		genericDao.save(ExpedienteComercial.class, expediente);
 		
-		
+		createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBCARRAS);
 	}
 
 	private boolean tieneInterlocutoresNoEnviados(ExpedienteComercial eco){
@@ -15174,7 +15178,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoHistoricosTareasPbc historicoPbcToDto (Long idOferta, String tipoPbc) {
 		DtoHistoricosTareasPbc dto = new DtoHistoricosTareasPbc();
 		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
-		Filter filterTipoPbC =  genericDao.createFilter(FilterType.EQUALS, "estadoTareaPbc.codigo", tipoPbc);
+		Filter filterTipoPbC =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", tipoPbc);
 		Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
 		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbC, filterActivo);
 		
@@ -15188,5 +15192,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return dto;
+	}
+	
+	private void createHistoricoTareaPbc(Oferta oferta, String codTipoTarea) {			
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codTipoTarea);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico != null) {
+			historico.setActiva(false);
+			
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+		
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoTarea);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+		
+		HistoricoTareaPbc htp = new HistoricoTareaPbc();
+		htp.setOferta(oferta);
+		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		
+		genericDao.save(HistoricoTareaPbc.class, htp);
 	}
 }

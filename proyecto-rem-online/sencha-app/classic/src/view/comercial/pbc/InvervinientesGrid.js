@@ -9,7 +9,7 @@ Ext.define('HreRem.view.comercial.pbc.InvervinientesGrid', {
 
      	var me = this;
      	
-     	me.title= HreRem.i18n('Intervinientes');
+     	me.title= HreRem.i18n('header.intervinientes');
      	me.columns= [
 
 		   {    text: HreRem.i18n('header.id.cliente'),

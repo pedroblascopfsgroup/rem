@@ -99,11 +99,11 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
                 xtype: 'fieldsettable',
 				defaultType: 'displayfield',
 				colspan: 3,
-				title: HreRem.i18n('Datos de pago'),
+				title: HreRem.i18n('title.datos.pago'),
 				items: [
 					{
 						xtype: 'displayfieldbase',
-						fieldLabel: HreRem.i18n('Origen fondos propios'),
+						fieldLabel: HreRem.i18n('title.origen.fondos.propios'),
 						colspan: 1,
 						bind:'{ofertacaixapbc.fondosPropios}'
 					},

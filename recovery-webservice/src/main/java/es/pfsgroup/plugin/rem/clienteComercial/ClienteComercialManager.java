@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -34,7 +33,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
@@ -461,7 +459,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
+	public boolean updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
 
 		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
 		Boolean documentoModificado = false;
@@ -879,9 +877,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if (isRelevanteBC){
 			newData.clienteToDto(cliente);
-			interlocutorCaixaService.callReplicateClientAsync(oldData,newData,cliente);
+			return interlocutorCaixaService.hasChangestoBC(oldData,newData,cliente.getIdPersonaHayaCaixa());
 		}
-
+		return false;
 	}
 
 	@Override
@@ -953,6 +951,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception  {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaClienteDto.size(); i++) {
+			boolean replicarCliente = false;
 			HashMap<String, String> errorsList = null;
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
@@ -966,7 +965,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			} else {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
 				if (errorsList.size() == 0) {
-					this.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
+					replicarCliente = this.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
 				}
 
 			}
@@ -975,6 +974,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
+				if (replicarCliente){
+					map.put("replicateToBC",Boolean.TRUE);
+					map.put("idClienteForBC",cliente.getId());
+				}
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
@@ -987,6 +990,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		}
 		return listaRespuesta;
+	}
+
+	@Override
+	public void replicarClienteToBC(Long id, String idSource) {
+		interlocutorCaixaService.callReplicateClientAsync(id,idSource);
 	}
 
 	@Override

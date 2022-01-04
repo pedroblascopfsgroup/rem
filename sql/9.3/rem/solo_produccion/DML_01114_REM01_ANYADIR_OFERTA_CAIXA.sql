@@ -1,0 +1,65 @@
+--/*
+--#########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20211224
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.11
+--## INCIDENCIA_LINK=REMVIP-10916
+--## PRODUCTO=NO
+--## 
+--## Finalidad:
+--## 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--## 		0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	TABLE_COUNT NUMBER(10,0) := 0;
+	TABLE_COUNT_2 NUMBER(10,0) := 0;
+	MAX_NUM_OFR NUMBER(10,0) := 0;
+	V_NUM_TABLAS NUMBER(10,0) := 0;
+	V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+	V_ESQUEMA_M VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+	V_USUARIO VARCHAR2(50 CHAR) := 'MIG_CAIXA';
+	V_TABLA VARCHAR2(40 CHAR) := 'AUX_REMVIP_10916';
+	V_SENTENCIA VARCHAR2(32000 CHAR);
+	V_NUM_TABLAS_2 NUMBER(16);
+	V_MSQL VARCHAR2(32000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+
+BEGIN
+
+	--Inicio del proceso de volcado sobre OFR_OFERTAS
+
+	V_SENTENCIA := 'INSERT INTO OFR_OFERTAS_CAIXA (OFR_CAIXA_ID,
+			OFR_ID,
+			VERSION,
+			USUARIOCREAR,
+			FECHACREAR,
+			BORRADO)
+			SELECT '||V_ESQUEMA||'.S_OFR_OFERTAS_CAIXA.NEXTVAL, OFR.OFR_ID, 1, ''REMVIP-10916'', SYSDATE, 0 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR 
+			JOIN '||V_ESQUEMA||'.AUX_REMVIP_10916 MIG ON MIG.NUM_OFERTA = OFR.OFR_NUM_OFERTA';
+
+	EXECUTE IMMEDIATE V_SENTENCIA;
+
+        
+        COMMIT;
+
+
+EXCEPTION
+	WHEN OTHERS THEN
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+		DBMS_OUTPUT.put_line(V_SENTENCIA);
+		ROLLBACK;
+		RAISE;
+END;
+/
+EXIT;

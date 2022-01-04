@@ -8,76 +8,77 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-
-
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private static final String COMBO_REQUIERE_ANALISIS_TECNICO = "comboReqAnalisisTec";
+	
+	private static final String CODIGO_SI = "01";
+	
+	private static final String CODIGO_PTE_ANALISIS_TECNICO = "ANTEC";
+	
+	
+	
 	private enum T018_PbcAlquilerDecisiones{
 		subrogacionAcepta, renovacionNovacionOrigenSubrogacion, renovacionNovacionOrigenNoSubrogacion;
 	}
 	
 	private enum T018_ScoringBcDecisiones{
-		origenSubrogacion, origenNoSubrogacion;
+		ANTEC, NEG;
+	}
+		
+	@Override
+	public Boolean existeTareaT018Scoring(TareaExterna tareaExterna) {
+		Boolean existe= false;
+		
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		
+		if(eco != null) {
+			ActivoTramite actTramite = genericDao.get(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id",eco.getTrabajo().getId()));
+			TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(actTramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING);
+			if(tareaExternaAnterior != null) {
+				existe = true;
+			}	
+		}
+		
+		return existe;
 	}
 	
+	@Override
+	public String avanzaScoringBC(TareaExterna tareaExterna, String codigo) {
+		String avanzaBPM= null;
+		
+		if(CODIGO_PTE_ANALISIS_TECNICO.equals(codigo)) {
+			avanzaBPM = T018_ScoringBcDecisiones.ANTEC.name();
+		}else {
+			avanzaBPM = T018_ScoringBcDecisiones.NEG.name();
+		}
 
-		
-	@Override
-	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {
-		String avanzaBPM= null;
-		
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if(eco != null) {
-			Oferta ofr = eco.getOferta();
-			if(DDTipoOfertaAlquiler.isSubrogacion(ofr.getTipoOfertaAlquiler())) {
-				avanzaBPM = T018_PbcAlquilerDecisiones.subrogacionAcepta.name();
-			}else {
-				ExpedienteComercial ecoAnt = eco.getExpedienteAnterior();
-				if(ecoAnt != null && ecoAnt.getOferta() != null) {
-					if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-						avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenSubrogacion.name();
-					}else {
-						avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenNoSubrogacion.name();
-					}
-				}
-			}
-		}
-		
-		return avanzaBPM;
-	}
-	
-	@Override
-	public String avanzaScoringBC(TareaExterna tareaExterna) {
-		String avanzaBPM= null;
-		
-		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
-		if(eco != null) {
-			ExpedienteComercial ecoAnt = eco.getExpedienteAnterior();
-			if(ecoAnt != null && ecoAnt.getOferta() != null) {
-				if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-					avanzaBPM = T018_ScoringBcDecisiones.origenSubrogacion.name();
-				}else {
-					avanzaBPM = T018_ScoringBcDecisiones.origenNoSubrogacion.name();
-				}
-			}
-		}
-		
 		return avanzaBPM;
 	}
 	
@@ -122,13 +123,24 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	}
 	
 	@Override
-	public boolean isExpedienteTipoAlquilerNoComercial(TareaExterna tareaExterna, String expedienteAnterior) {
-		boolean is = false;
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-		if(expediente != null && expediente.getOferta() != null && DDTipoOferta.isTipoAlquilerNoComercial(expediente.getOferta().getTipoOferta())) {
-			is = true;
+	public boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior) {
+		boolean isMismoActivo = false;
+		if(expedienteAnterior.isEmpty()) {
+			isMismoActivo = true;
+		}else{
+			ExpedienteComercial expedienteInsertado = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
+			ExpedienteComercial expediente = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+			
+			if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null 
+			&& expedienteInsertado != null && expedienteInsertado.getOferta() != null && expedienteInsertado.getOferta().getActivoPrincipal() != null) {
+				Long idActivoOriginal = expediente.getOferta().getActivoPrincipal().getId();
+				Long idActivoInsertado = expedienteInsertado.getOferta().getActivoPrincipal().getId();
+				if(idActivoInsertado == idActivoOriginal && expediente.getId() != expedienteInsertado.getId()) {
+					isMismoActivo = true;
+				}
+			}
 		}
-		return is;
+		return isMismoActivo;
 	}
 	
 	@Override
@@ -138,7 +150,8 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 			isFirmado = true;
 		}else{
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(expedienteAnterior));
-			if(expediente != null && expediente.getEstado() != null && DDEstadosExpedienteComercial.isFirmado(expediente.getEstado())) {
+			if(expediente != null && expediente.getEstado() != null && (DDEstadosExpedienteComercial.isFirmado(expediente.getEstado()) 
+				|| DDEstadosExpedienteComercial.isVendido(expediente.getEstado()) || DDEstadosExpedienteComercial.isAlquilado(expediente.getEstado()))) {
 				isFirmado = true;
 			}
 		}
@@ -166,4 +179,33 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		
 		return camposRellenos;
 	}
+	
+	@Override
+	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {
+		String avanzaBPM= null;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if(eco != null && eco.getTrabajo() != null) {
+			ActivoTramite actTramite = genericDao.get(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id",eco.getTrabajo().getId()));
+			if(actTramite != null) {
+				TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(actTramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER);
+				if(tareaExternaAnterior != null) {
+					List <TareaExternaValor> listTex = tareaExternaAnterior.getValores();
+					if(!listTex.isEmpty()) {
+						for(TareaExternaValor valor :  listTex){
+							if(COMBO_REQUIERE_ANALISIS_TECNICO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+								if(CODIGO_SI.equals(valor.getValor())) {
+									avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenSubrogacion.name();
+								}else{
+									avanzaBPM = T018_PbcAlquilerDecisiones.renovacionNovacionOrigenNoSubrogacion.name();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return avanzaBPM;
+	}
+	
 }

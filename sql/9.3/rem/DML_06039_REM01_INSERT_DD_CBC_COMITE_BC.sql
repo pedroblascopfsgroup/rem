@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211022
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20211111
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15894
+--## INCIDENCIA_LINK=HREOS-16376
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_CRA_CARTERA los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que añade en DD_CBC_COMITE_BC los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -28,13 +28,15 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CRA_CARTERA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'CRA'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CBC_COMITE_BC'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'CBC'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_USUARIO VARCHAR2(2400 CHAR) := 'HREOS-16376'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('18','Titulizada')
+      T_TIPO_DATA('01','PT/CLROD'),
+      T_TIPO_DATA('02','Comité comercial')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -74,7 +76,7 @@ BEGIN
             , '''||V_TMP_TIPO_DATA(1)||'''
             , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
             , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
-            , ''HREOS-15894''
+            , '''||V_USUARIO||'''
             , SYSDATE
             FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;

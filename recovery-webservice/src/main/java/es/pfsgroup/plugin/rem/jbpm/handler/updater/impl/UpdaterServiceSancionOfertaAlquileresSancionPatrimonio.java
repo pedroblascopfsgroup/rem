@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,29 +16,25 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
-
-    @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -45,12 +42,11 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	@Autowired
 	private OfertaApi ofertaApi;
 	
-	@Autowired
-	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionPatrimonio.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	
+	private static final String OBSERVACIONESBC = "observacionesBc";
 
 	private static final String CODIGO_T015_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
 
@@ -58,10 +54,11 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 	
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
-
-		boolean estadoBcModificado = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -76,8 +73,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_ENVIO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
-
-					estadoBcModificado = true;
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 					
@@ -86,25 +82,29 @@ public class UpdaterServiceSancionOfertaAlquileresSancionPatrimonio implements U
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expedienteComercial.setEstado(estado);
+					expedienteComercial.setFechaAnulacion(new Date());
 					
 					//Cambiar estado ANULADO del expedienteBc por el que toca en el ítem
 					Filter filtroBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroBc);
 					expedienteComercial.setEstadoBc(estadoBc);
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					ofertaApi.finalizarOferta(oferta);
-					
-					estadoBcModificado = true;
 					
 					genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				}
+			}
+			
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
 			}
 		}
 		
 		expedienteComercialApi.update(expedienteComercial,false);
 		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
 	}
 
 	public String[] getCodigoTarea() {

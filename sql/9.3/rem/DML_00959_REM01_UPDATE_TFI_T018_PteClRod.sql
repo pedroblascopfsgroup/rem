@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20211020
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15863
+--## INCIDENCIA_LINK=HREOS-16318
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		T_TIPO_DATA('T018_PteClRod','textarea','4','observaciones','null','null','Observaciones'),
-		T_TIPO_DATA('T018_PteClRod','textarea','3','sancionCLROD','false','null','Sanción CL/ROD')
+		T_TIPO_DATA('T018_PteClRod','textarea','3','sancionCLROD','null','null','Sanción CL/ROD')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

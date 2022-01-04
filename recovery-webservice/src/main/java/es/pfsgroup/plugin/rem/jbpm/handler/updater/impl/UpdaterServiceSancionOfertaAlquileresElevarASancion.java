@@ -22,15 +22,18 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDResolucionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 
 @Component
@@ -60,6 +63,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	private static final String REF_CIRCUITO_CLIENTE = "refCircuitoCliente";
 	private static final String FECHA_ELEVACION = "fechaElevacion";
 	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	
 	private static final String CODIGO_T015_ELEVAR_A_SANCION = "T015_ElevarASancion";
 
@@ -70,11 +74,14 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		String peticionario = null;
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		boolean aprobado = true;
 		
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite);
+				aprobado = this.ponerEstadosExpediente(expedienteComercial, valor.getValor(), oferta, tramite);
 			}
 			
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -87,6 +94,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 			
 			if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				
 				DDMotivoAnulacionOferta motivoAnulacion = genericDao.get(DDMotivoAnulacionOferta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", valor.getValor()));
 				expedienteComercial.setMotivoAnulacionAlquiler(motivoAnulacion);
 				
@@ -99,6 +107,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				
 				expedienteComercial.setFechaAnulacion(new Date());
 				expedienteComercial.setPeticionarioAnulacion(peticionario);
+				ofertaApi.finalizarOferta(oferta);
 			}
 			
 			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) { 
@@ -122,12 +131,27 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				oferta.setImporteContraOferta(Double.parseDouble(valor.getValor().replace(",",".")));
 			}
+			
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());
+			}
 		}
 		
 		expedienteComercial.setOferta(oferta);
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), expedienteComercial.getEstado());
 
 		expedienteComercialApi.update(expedienteComercial,false);
+		
+		if(aprobado) {
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+
+		}else {
+			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
+		}
+
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+				
+		genericDao.save(HistoricoSancionesBc.class, historico);
 	}
 
 	public String[] getCodigoTarea() {
@@ -139,14 +163,14 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 	}
 	
 	
-	private void ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite) {
-		boolean estadoBcModificado = false;
+	private boolean ponerEstadosExpediente(ExpedienteComercial eco, String resolucion, Oferta oferta, ActivoTramite tramite) {
 		String codigoEstadoExpediente = null;
 		String codigoEstadoBc = null;
-	
+		boolean aprobado = true;
 		
 		if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.PTE_SCORING;
+			aprobado = true;
 		
 			DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
 			eco.setEstado(estadoExpComercial);
@@ -161,18 +185,17 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				}
 			}
 
-
 		}else if(DDRespuestaOfertante.CODIGO_RECHAZA.equals(resolucion)) {
 			codigoEstadoExpediente =  DDEstadosExpedienteComercial.ANULADO;
-
+			aprobado = false;
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 			oferta.setEstadoOferta(estadoOferta);
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 
-
 		}else if(DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(resolucion)){
 			codigoEstadoExpediente = DDEstadosExpedienteComercial.CONTRAOFERTADO;
 			codigoEstadoBc = DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO;
+			aprobado = false;
 		}
 		
 		if(codigoEstadoExpediente != null) {
@@ -181,12 +204,9 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		
 		if(oferta.getActivoPrincipal() !=null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && codigoEstadoBc != null) {
 			eco.setEstadoBc((DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class, codigoEstadoBc));
-			estadoBcModificado = true;
 		}
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
-		}
+
+		return aprobado;
 	}
 
 }

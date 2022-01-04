@@ -130,6 +130,16 @@ public class InterlocutorCaixaService {
 
     }
 
+    public void callReplicateClientAsync(final Long id, final String tipoId){
+            hibernateUtils.flushSession();
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    caixaBcRestClient.callReplicateClientUpdate(id,tipoId);
+                }
+            });
+            thread.start();
+    }
+
     public String getIdPersonaHayaCaixaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){
 
         if (cartera != null && documento != null && DDCartera.CODIGO_CAIXA.equals(cartera.getCodigo())){

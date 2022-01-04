@@ -2493,7 +2493,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// Por defecto: en Curso
 		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
 		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
-			|| (idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
+			|| (gestorActivo != null && idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
 				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
 						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
 								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
@@ -3093,6 +3093,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			boolean esApple = false;
 			boolean esDivarian = false;
 			boolean esBBVA = false;
+			boolean esJaguar = false;
 			boolean isBankia = false;
 			
 			if(expedienteComercial == null) {
@@ -3115,11 +3116,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 						esBBVA = true;
 					}
+					esJaguar = DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+								DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()) ? true : false;
+					
 					if(DDCartera.isCarteraBk(activo.getCartera())) {
 						isBankia = true;
 					}
 					
-					if (!esApple && !esDivarian && !esBBVA && !isBankia) {
+					if (!esApple && !esDivarian && !esBBVA && !isBankia && !esJaguar) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);

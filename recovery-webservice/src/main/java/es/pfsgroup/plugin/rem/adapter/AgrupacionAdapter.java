@@ -340,7 +340,7 @@ public class AgrupacionAdapter {
 
 		try {
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
-			
+		
 			if (agrupacionVistaCalculado != null) {
 				if (agrupacionVistaCalculado.getNumActivosPublicados() != null) {
 					BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVistaCalculado.getNumActivosPublicados());
@@ -905,6 +905,13 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+			}
+			
+			
+			if(agrupacion.getActivoPrincipal() != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+			}else if(activoCero != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
 
 		} catch (IllegalAccessException e) {
@@ -2526,6 +2533,7 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
 		Activo activo = null;
 		Oferta ofertaNueva = null;
+		Boolean permiteOfertaNoComercialActivoAlquilado = false;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
@@ -2575,6 +2583,25 @@ public class AgrupacionAdapter {
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			String codigoEstado = this.getEstadoNuevaOferta(agrupacion);
+			
+			if(!Checks.esNulo(agrupacion.getActivoPrincipal())){
+				permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(agrupacion.getActivoPrincipal(), dto.getTipoOferta());
+			}else {
+				if(!Checks.esNulo(agrupacion.getActivos())){
+					for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()){
+						
+						if (!Checks.esNulo(activoAgrupacion.getActivo())){
+							permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(activoAgrupacion.getActivo(), dto.getTipoOferta());
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			if (permiteOfertaNoComercialActivoAlquilado) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;
+			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
@@ -2673,6 +2700,19 @@ public class AgrupacionAdapter {
 				if (dto.getAntiguoDeudor() != null) {
 					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
 				}
+				
+				if (dto.getNacionalidadCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+					iap.setNacionalidadCodigo(nacionalidad);
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					iap.setNacionalidadRprCodigo(nacionalidad);
+				}
+				
 				genericDao.save(InfoAdicionalPersona.class, iap);
 			}
 			
@@ -4931,7 +4971,7 @@ public class AgrupacionAdapter {
 
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
+		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
 			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
@@ -4947,7 +4987,12 @@ public class AgrupacionAdapter {
 					&& activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 			}
+
+			if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipoAgrupacion) && (activoAgrupacionActivoDao.algunActivoAlquilado(activosID) || activoAgrupacionActivoDao.algunActivoVendido(activosID))) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			}
 		}
+		
 
 		// Comprobar si la grupación tiene ofertas aceptadas para establecer la
 		// nueva oferta en estado congelada.

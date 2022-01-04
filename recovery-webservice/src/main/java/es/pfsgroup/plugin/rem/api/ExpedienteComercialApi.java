@@ -1491,4 +1491,6 @@ public interface ExpedienteComercialApi {
 	 * @return true si pertenece a la cartera, false si no.
 	 */
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
+		
+	boolean esTitulizada(TareaExterna tareaExterna);
 }

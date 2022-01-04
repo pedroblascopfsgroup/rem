@@ -15247,4 +15247,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return !estadosBcNoPermitidos.contains(codEstadoBC);
 	}
+	@Override
+	public boolean esTitulizada(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esTitulizada = false;
+		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())
+					&& !Checks.esNulo(activo.getSubcartera())) {
+				esTitulizada = (DDCartera.CODIGO_CARTERA_TITULIZADA.equals(activo.getCartera().getCodigo()));
+			}
+		}
+		return esTitulizada;
+	}
 }

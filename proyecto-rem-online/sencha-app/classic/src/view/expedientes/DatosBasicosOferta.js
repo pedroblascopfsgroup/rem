@@ -121,7 +121,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind : {
 								value : '{datosbasicosoferta.ventaCartera}',
 								readOnly : 'true',
-								hidden : '{esTipoAlquiler}'
+								hidden : '{esAlquilerOAlquilerNoComercial}'
 							}
 						},{
 							xtype : 'datefieldbase',
@@ -132,14 +132,24 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								value: '{datosbasicosoferta.fechaCreacionOpSf}'
 							},
 							readOnly: true
-						}, {
+						},
+						{
 							xtype : 'datefieldbase',
 							formatter : 'date("d/m/Y")',
-							colspan: 3,
+							colspan: '{getcolSpanforSarebOrDefault}',
 							fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
 							readOnly : true,
 							bind : '{datosbasicosoferta.fechaOfertaPendiente}'
-						},{
+						},
+						{
+                            xtype : 'textfieldbase',
+                            fieldLabel : HreRem.i18n('filedlabel.numero.vai.havai'),
+                            bind : {
+                                value : '{datosbasicosoferta.numeroVaiHavaiSareb}',
+                                hidden : '{!esCarteraSareb}'
+                            }
+						},
+						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.detalle.oferta.alquiler.clasificacion'),
 							reference: 'comboClasificacionRef',
@@ -413,7 +423,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        }
 						},
 						bind : {
-							hidden : '{esTipoAlquiler}' 
+							hidden : '{esAlquilerOAlquilerNoComercial}' 
 						},
 						items : [
 							{
@@ -444,6 +454,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store : '{comboRiesgoOperacion}',
 								    value : '{datosbasicosoferta.riesgoOperacionCodigo}',
 								    rawValue : '{datosbasicosoferta.riesgoOperacionDescripcion}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							},
+							{
+								xtype : 'comboboxfieldbasedd',
+								fieldLabel : HreRem.i18n('fieldlabel.riesgo.operacion.bc'),
+								bind : {
+									store : '{comboRiesgoOperacion}',
+								    value : '{datosbasicosoferta.riesgoOperacionBcCodigo}',
+								    rawValue : '{datosbasicosoferta.riesgoOperacionBcDescripcion}',
+								    hidden: '{!esBankia}',
 									readOnly : '{readOnlyDatosCfv}'
 								}
 							}
@@ -695,8 +716,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        type: 'table',
 						        columns: 2
 						    },
-							bind : {
-								hidden: '{esBankiaAlquiler}'
+						    bind : {
+								hidden: '{esAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{

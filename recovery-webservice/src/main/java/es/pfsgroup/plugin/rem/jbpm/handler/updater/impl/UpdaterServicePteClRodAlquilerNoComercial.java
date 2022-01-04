@@ -19,9 +19,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.RespuestaComiteBC;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -45,7 +49,7 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 	private static final String SANCION_CL_ROD = "sancionCLROD";
 	private static final String FECHA_RESOLUCION = "fechaResolucion";
 	private static final String OBSERVACIONES = "observaciones";
-
+	private static final String OBSERVACIONESBC = "observacionesBC";
 	private static final String CODIGO_T018_PTE_CL_ROD = "T018_PteClRod";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -57,68 +61,53 @@ public class UpdaterServicePteClRodAlquilerNoComercial implements UpdaterService
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
-		DDResolucionComite resolucionComite = null;
-		String sancionCLROD = null;
-		RespuestaComiteBC respuestaComiteBc = new RespuestaComiteBC();
-				
+		boolean aprueba = false;
+		
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_PTCLROD);
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
-					
-					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_APRUEBA));
-				} else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
-					ofertaApi.rechazarOferta(oferta);
-					
-					resolucionComite = genericDao.get(DDResolucionComite.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionComite.CODIGO_RECHAZA));
-				}
-								
-				expedienteComercial.setEstado(estadoExpedienteComercial);
-				expedienteComercial.setEstadoBc(estadoExpedienteBc);
-				
-				if (resolucionComite != null) {
-					respuestaComiteBc.setValidacionBcRBC(resolucionComite);
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+					aprueba = true;
+				} else {					
+					dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 				}
 			}
 			
-			if(SANCION_CL_ROD.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				sancionCLROD = valor.getValor();
-				respuestaComiteBc.setSancionClRod(sancionCLROD);
-			}
-			
-			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				respuestaComiteBc.setObservacionesBcRBC(valor.getValor());
+			if(OBSERVACIONESBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				dtoHistoricoBC.setObservacionesBC(valor.getValor());	
 			}
 			
 			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
-					respuestaComiteBc.setFechaRespuestaBcRBC(ft.parse(valor.getValor()));
+					dtoHistoricoBC.setFechaRespuestaBC(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha Resolucion. ", e);
 				}
 			}
 			
-			if (oferta != null && DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())) {
-				respuestaComiteBc.setComiteRBC(false);
-			} else {
-				respuestaComiteBc.setComiteRBC(true);
-			}
-			
-			if (expedienteComercial != null) {
-				respuestaComiteBc.setExpedienteComercial(expedienteComercial);
-			}
-			
 		}
 		
-		genericDao.save(RespuestaComiteBC.class, respuestaComiteBc);
 		
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		
+		genericDao.save(HistoricoSancionesBc.class, historico);
+		
+		if (!aprueba) {
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
+			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+			ofertaApi.finalizarOferta(oferta);
+		}else {
+			estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
+			estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE));
+		}
+		expedienteComercial.setEstado(estadoExpedienteComercial);
+		expedienteComercial.setEstadoBc(estadoExpedienteBc);
+			
 		expedienteComercialApi.update(expedienteComercial, false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndSancionCLROD(expedienteComercial, sancionCLROD));
 
 	}
 

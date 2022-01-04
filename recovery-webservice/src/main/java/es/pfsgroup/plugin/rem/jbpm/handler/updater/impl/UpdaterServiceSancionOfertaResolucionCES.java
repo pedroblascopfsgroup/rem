@@ -5,15 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -25,7 +22,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -33,10 +29,14 @@ import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -45,7 +45,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
@@ -67,19 +66,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private OfertaDao ofertaDao;
-	
-	@Autowired
 	private  GestorExpedienteComercialApi gestorExpedienteComercialApi;
 	
 	@Autowired
-	private UsuarioApi usuarioApi;
-	
-	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-	
-	@Autowired
-	private BoardingComunicacionApi boardingComunicacionApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionCES.class);
 	 
@@ -89,7 +79,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
 	private static final Integer RESERVA_SI = 1;
-
+	private static final String OBSERVACIONES = "observaciones";
 	
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -105,7 +95,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
-						
+				DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+				
 				for (TareaExternaValor valor : valores) {
 	
 					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -150,6 +142,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA));
 								expediente.setEstadoBc(estadoBc);
 							}
+							dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								// Deniega el expediente
@@ -174,6 +167,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								
 								motivoRechazo.setTipoRechazo(tipoRechazo);
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
+								dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 								genericDao.save(Oferta.class, ofertaAceptada);
 								
 								if(DDCartera.isCarteraBk(activo.getCartera())) {
@@ -199,6 +193,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
 						Double nuevoImporte = Double.valueOf(doubleValue);
@@ -252,12 +247,21 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
 					}
+					
+					if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						dtoHistoricoBC.setObservacionesBC(valor.getValor());
+					}
 				}
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+
+				
+				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);
+				
+				genericDao.save(HistoricoSancionesBc.class, historico);
 			}
 		}
 

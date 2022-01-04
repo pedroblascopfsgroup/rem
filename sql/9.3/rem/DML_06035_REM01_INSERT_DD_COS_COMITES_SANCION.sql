@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Julián Dolz
---## FECHA_CREACION=20211109
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20211223
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16090
+--## INCIDENCIA_LINK=REMVIP-10976
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Julian Dolz
+--##	     0.2 Modificados codigos para que no coincidan con Jaguar
 --##########################################
 --*/
 
@@ -34,8 +35,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('51','Titulizada','18'),
-      T_TIPO_DATA('52','Haya','18')
+      T_TIPO_DATA('53','Titulizada','18'),
+      T_TIPO_DATA('54','Haya','18')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -77,7 +78,7 @@ BEGIN
             , '''||V_TMP_TIPO_DATA(1)||'''
             , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
             , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
-            , ''HREOS-16090''
+            , ''REMVIP-10976''
             , SYSDATE
             FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;

@@ -655,7 +655,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
-				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("ofertaLote nulo o false", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdVisitaRem())) {

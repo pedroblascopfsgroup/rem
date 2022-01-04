@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20211102
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=2021217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=16128
+--## INCIDENCIA_LINK=16464
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -25,7 +25,9 @@
 --##		0.11 Versión - HREOS-14704 	- Lara Pablo - Añadidas columnas DD_VIC_CODIGO
 --##		0.12 Versión - HREOS-14641	- Sergio Gomez - Quitar COM_FECHA_NACIMIENTO
 --##		0.13 Versión - HREOS-15099  - Javier Esbri - Añadir campos de comprador y representate
---##		0.13 Versión - HREOS-16128  - Lara Pablo - Cambiar mapeo de C4C_ID (Cambia de la CEX a la IAP)
+--##		0.14 Versión - HREOS-16128  - Lara Pablo - Cambiar mapeo de C4C_ID (Cambia de la CEX a la IAP)
+--##		0.15 Versión - HREOS-16425  - Javier Esbri - Añadir campos de comprador y representate
+--##		0.16 Versión - HREOS-16464  - Ivan Rubio - Añadir campo motivo edición del comprador.
 --##########################################
 --*/
 
@@ -167,10 +169,14 @@ BEGIN
 			PRVCOM.DD_PRV_CODIGO AS DD_PRV_CODIGO_NAC_COM,
 			PRVCOM.DD_PRV_DESCRIPCION AS DD_PRV_DESCRIPCION_NAC_COM,
 			CEX.CEX_SOCIEDAD AS CEX_SOCIEDAD,
-			CEX.CEX_OFICINA_TRABAJO AS CEX_OFICINA_TRABAJO
+			CEX.CEX_OFICINA_TRABAJO AS CEX_OFICINA_TRABAJO,
+			CEX.DD_PAI_ID_ISO AS CEX_NACIONALIDAD_PAI,
+			CEX.DD_PAI_ID_ISO_RPR AS CEX_NACIONALIDAD_PAI_RPR,
+			ECO.ECO_EDICION_COMPRADORES_CBX AS ECO_EDICION_COMPRADORES_CBX
 
 		FROM REM01.COM_COMPRADOR COM
 	      	LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID
+	        LEFT JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = CEX.ECO_ID
 	        LEFT JOIN '|| V_ESQUEMA ||'.DD_TPE_TIPO_PERSONA TPE ON COM.DD_TPE_ID = TPE.DD_TPE_ID
 	        LEFT JOIN '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON COM.DD_TDI_ID = TDI.DD_TDI_ID
 	        LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_ESTADOS_CIVILES ECV ON CEX.DD_ECV_ID = ECV.DD_ECV_ID

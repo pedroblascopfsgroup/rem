@@ -356,7 +356,8 @@ Ext.define('HreRem.ux.util.Constants', {
 
     TIPOS_OFERTA: {
     	VENTA : '01',
-    	ALQUILER: '02'
+    	ALQUILER: '02',
+    	ALQUILER_NO_COMERCIAL: '03'
     },
 
     TIPOS_PROVEEDOR_EXPEDIENTE: {

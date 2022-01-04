@@ -15,6 +15,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			}
 			
 			return false;
+		},
+		
+		esMotivoEdicionObligatorio : function(get) {
+			var me = this;
+			var bk = get('comprador.esCarteraBankia');
+			var isExpedienteAprobado = get('comprador.isExpedienteAprobado');
+			
+			if (isExpedienteAprobado && bk) {
+				return true;
+			}
+			
+			return false;
 		}
 	},
 	stores: {		

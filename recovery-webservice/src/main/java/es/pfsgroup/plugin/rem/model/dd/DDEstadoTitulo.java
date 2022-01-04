@@ -114,4 +114,12 @@ public class DDEstadoTitulo implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public static boolean isInscrito (DDEstadoTitulo estado) {
+		boolean is = false;
+		if(estado != null && ESTADO_INSCRITO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		
+		return is;
+	}
 }

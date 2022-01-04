@@ -26,6 +26,7 @@ public class NoComercialAlquilerUserAssignationService implements UserAssigantio
 	private static final 	String	CODIGO_T018_SCORINGBC= "T018_ScoringBc";
 	private static final 	String	CODIGO_T018_SOLICITARGARANTIASADICIONALES = "T018_SolicitarGarantiasAdicionales";
 	private static final 	String	CODIGO_T018_TRASLADAROFERTACLIENTE = "T018_TrasladarOfertaCliente";
+	private static final 	String	CODIGO_TO18_CIERRE = "T018_CierreContrato";
 
 
 	@Autowired
@@ -39,7 +40,7 @@ public class NoComercialAlquilerUserAssignationService implements UserAssigantio
 	@Override
 	public String[] getCodigoTarea() {
 		return new String[]{CODIGO_T018_AGENDARYFIRMAR, CODIGO_T018_DEFINICIONOFERTA, CODIGO_T018_PBCALQUILER, CODIGO_T018_PBCALQUILER,
-			CODIGO_T018_SCORING, CODIGO_T018_SOLICITARGARANTIASADICIONALES, CODIGO_T018_TRASLADAROFERTACLIENTE, CODIGO_T018_PTECLROD,CODIGO_T018_ANALISISTECNICO};
+			CODIGO_T018_SCORING, CODIGO_T018_SOLICITARGARANTIASADICIONALES, CODIGO_T018_TRASLADAROFERTACLIENTE, CODIGO_T018_PTECLROD,CODIGO_T018_ANALISISTECNICO,CODIGO_TO18_CIERRE};
 	}
 
 	@Override

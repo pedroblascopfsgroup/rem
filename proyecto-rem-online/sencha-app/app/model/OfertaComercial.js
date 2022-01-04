@@ -185,6 +185,12 @@ Ext.define('HreRem.model.OfertaComercial', {
     		{
     			name:'antiguoDeudor',
     			type:'boolean'
+    		},
+    		{
+    			name:'nacionalidadCodigo'
+    		},
+    		{
+    			name:'nacionalidadRprCodigo'
     		}
             
     ],

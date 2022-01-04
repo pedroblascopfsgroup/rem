@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.agenda.TareaGenerica', {
+-Ext.define('HreRem.view.agenda.TareaGenerica', {
     extend: 'HreRem.view.common.TareaBase',
     xtype: 'tareagenerica',
     reference: 'windowTareaGenerica',
@@ -2369,6 +2369,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     					me.habilitarCampo(importeContraoferta);
 						me.campoObligatorio(importeContraoferta);
 						me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
+						importeContraoferta.allowBlank = false;
     				}else{
     					me.deshabilitarCampo(importeContraoferta);
 						me.campoNoObligatorio(importeContraoferta);
@@ -3772,54 +3773,23 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T018_AnalisisBcValidacion: function(){
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
-		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
-		var comboIsVulnerable = me.down('[name=isVulnerable]');
-		var comboIsVulnerableAnalisisT = me.down('[name=isVulnerableAnalisisT]');
 		var textAreaObservacionesBc = me.down('[name=observacionesBC]');
-		var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+		
+		me.campoObligatorio(comboRespuesta);
 		
 		if(!$AU.userHasFunction('AV_ALQNC_ANALISIS_BC')){
 			me.bloquearObligatorio(comboRespuesta);
-			me.bloquearObligatorio(textAreaObservacionesBc);
-		}
-		
-		me.bloquearObligatorio(comboTipoOferta);
-		me.bloquearCampo(comboIsVulnerable);
-		me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-
-		var url =  $AC.getRemoteUrl('expedientecomercial/getInfoCaminosAlquilerNoComercial');
-		Ext.Ajax.request({
-			url: url,
-			params: {idExpediente : idExpediente},
-		    success: function(response, opts) {
-		    	var data = Ext.decode(response.responseText);
-		    	var dto = data.data;
-		    	if(!Ext.isEmpty(dto)){			    		
-		    		comboTipoOferta.setValue(dto.codigoTipoAlquiler);
-		    		comboIsVulnerable.setValue(dto.isVulnerable);
-		    	}
-		    }
-		});
-		
-		comboRespuesta.addListener('change', function(combo) {
-			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
-				if(CONST.TIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL'] === comboTipoOferta.getValue() && CONST.COMBO_SIN_SINO['SI'] === comboIsVulnerable.getValue()){
-					me.habilitarCampo(comboIsVulnerableAnalisisT);
-					me.campoObligatorio(comboIsVulnerableAnalisisT);
-				}
-			}else{
-				me.deshabilitarCampo(comboIsVulnerableAnalisisT);
-				me.borrarCampo(comboIsVulnerableAnalisisT)
-			}
-
-        });				
+			me.bloquearCampo(textAreaObservacionesBc);
+		}				
 	},
 	
 	T018_ScoringValidacion: function(){
 		var me = this;
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var comboMotivoAnulacion = me.down('[name=motivoAnulacion]');
-	
+		var comboReqAnalisisTec =me.down('[name=comboReqAnalisisTec]');
+		me.deshabilitarCampo(comboReqAnalisisTec);
+
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		
 		Ext.Ajax.request({
@@ -3841,12 +3811,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			if(CONST.TIPO_RESOLUCION_DUDAS['APRUEBA'] !== comboRespuesta.getValue()){
 				me.habilitarCampo(comboMotivoAnulacion);
 				me.campoObligatorio(comboMotivoAnulacion);
-
+				comboReqAnalisisTec.setValue('');
+				me.deshabilitarCampo(comboReqAnalisisTec);
+				if(CONST.TIPO_RESOLUCION_DUDAS['DUDAS'] == comboRespuesta.getValue()){
+					comboMotivoAnulacion.setValue('');
+					me.deshabilitarCampo(comboMotivoAnulacion);
+				}
 			}else{
 				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion);
+				me.habilitarCampo(comboReqAnalisisTec);
+				me.campoObligatorio(comboReqAnalisisTec);
 			}
         });
+        
 	},
 	
 	T018_ScoringBcValidacion: function(){
@@ -3858,14 +3836,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(!$AU.userHasFunction('AV_ALQNC_SCORING_BC')){
 			me.bloquearObligatorio(comboRespuesta);
 			me.bloquearObligatorio(fecha);
+			me.ocultarCampo(comboRespuesta);
+		}else{
+			me.desocultarCampo(comboRespuesta);
 		}
+		
+		comboRespuesta.addListener('focus', function(combo) {
+			combo.getStore().remove(combo.getStore().findRecord('codigo','CLROD'));
+			combo.getStore().remove(combo.getStore().findRecord('codigo','SCOR'));
+		});
 	
 		me.deshabilitarCampo(comboMotivoAnulacion);
 		comboRespuesta.addListener('change', function(combo) {
-			if(CONST.COMBO_SIN_SINO['NO'] === comboRespuesta.getValue()){
+			if('RECH' === comboRespuesta.getValue()){
 				me.habilitarCampo(comboMotivoAnulacion);
 				me.campoObligatorio(comboMotivoAnulacion);
-
 			}else{
 				comboMotivoAnulacion.setValue('');
 				me.deshabilitarCampo(comboMotivoAnulacion); 
@@ -3904,13 +3889,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var textExpedienteAnterior = me.down('[name=expedienteAnterior]');
 		 
 		me.deshabilitarCampo(textExpedienteAnterior);
-		me.deshabilitarCampo(comboIsVulnerable);
-	
+		
 		comboTipoOferta.addListener('change', function(combo) {
 			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_EJECUCION'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
-				me.habilitarCampo(comboIsVulnerable);
+
 				me.campoObligatorio(comboIsVulnerable);
 				textExpedienteAnterior.setValue('');
 				me.deshabilitarCampo(textExpedienteAnterior);
@@ -3920,13 +3904,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
 				me.habilitarCampo(textExpedienteAnterior);
 				textExpedienteAnterior.allowBlank = false;	
-				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(comboIsVulnerable);
+				me.campoNoObligatorio(comboIsVulnerable);
 			}else{
 				textExpedienteAnterior.setValue('');
 				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(comboIsVulnerable);
 				me.deshabilitarCampo(textExpedienteAnterior);
+				me.campoNoObligatorio(comboIsVulnerable);
 			}
         });
 	},
@@ -4055,6 +4038,33 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			}
         });
 	},
+	
+   T018_CierreContratoValidacion: function(){
+    	var me = this;
+    	me.down('[name=docOK]').noObligatorio=false;
+    	me.down('[name=ncontratoPrinex]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=docOK]'));
+    	me.campoObligatorio(me.down('[name=ncontratoPrinex]'));
+    	me.down('[name=ncontratoPrinex]').minLength=9;
+    	me.down('[name=ncontratoPrinex]').maxLength=9;
+    	
+    	me.setFechaActual(me.down('[name=fechaValidacion]'));
+
+    	me.down('[name=ncontratoPrinex]').addListener('change', function(field, newValue, oldValue, eOpts){
+ 
+     		if(newValue.length >= 4 && newValue.length < 8
+				&& !newValue.includes("-")){
+     			field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8)); 
+         		
+     		}
+			
+			field.validate();
+     	});
+		me.down('[name=ncontratoPrinex]').validator = new Function("value",
+			"return value.match(/^[0-9]{4}-[0-9]{4}$/) ? true : 'Formato nº contrato: XXXX-XXXX donde X debe ser numérico'");
+		
+		me.down('[name=ncontratoPrinex]').validate();
+    },
 	
     habilitarCampo: function(campo) {
         var me = this;

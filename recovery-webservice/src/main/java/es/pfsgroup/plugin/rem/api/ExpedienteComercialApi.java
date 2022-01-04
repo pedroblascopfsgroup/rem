@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -89,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
@@ -1414,8 +1416,6 @@ public interface ExpedienteComercialApi {
 	void addActualizacionRenta(Long idExpediente, DtoActualizacionRenta dto)throws IllegalAccessException, InvocationTargetException;
 
 	void updateActualizacionRenta(Long id, DtoActualizacionRenta dto) throws IllegalAccessException, InvocationTargetException;
-
-	List<DtoRespuestaBCGenerica> getSancionesBk(Long idExpediente);
 	
 	boolean saveFormalizacionResolucion(DtoFormalizacionResolucion dto);
 
@@ -1479,6 +1479,11 @@ public interface ExpedienteComercialApi {
 
 	boolean deleteTestigos(DtoTestigos dto);
 
+	List<DtoRespuestaBCGenerica> getListHistoricoSancionesBC(Long idExpediente);
+
+	HistoricoSancionesBc dtoRespuestaToHistoricoSancionesBc(DtoRespuestaBCGenerica dto, ExpedienteComercial eco);
+	
+	String getMotivoRechazoAccionRechazo(DDTipoOferta tipoOferta, String codigoTarea, String motivo);
 	/**
 	 * Método que comprueba si el activo de Caixabank tiene los estados correctos para poder avanzar la tarea.
 	 *
@@ -1486,4 +1491,6 @@ public interface ExpedienteComercialApi {
 	 * @return true si pertenece a la cartera, false si no.
 	 */
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
+		
+	boolean esTitulizada(TareaExterna tareaExterna);
 }

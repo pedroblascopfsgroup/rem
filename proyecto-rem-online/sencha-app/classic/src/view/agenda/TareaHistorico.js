@@ -558,6 +558,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 						if(CONST.CARTERA['BANKIA'] == codigoCartera){
 							me.ocultarCampo(me.down('[name=comite]'));
+							me.ocultarCampo(me.down('[name=refCircuitoCliente]'));
 				    	}
 					},
 				    T017_InstruccionesReservaValidacion: function() {		

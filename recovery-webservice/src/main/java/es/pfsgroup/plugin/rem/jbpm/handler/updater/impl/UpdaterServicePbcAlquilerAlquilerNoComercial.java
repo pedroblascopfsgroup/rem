@@ -13,16 +13,16 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
 
 @Component
 public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterService {
@@ -36,10 +36,14 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServicePbcAlquilerAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
+	
+	private static final String COMBO_REQ_ANALISIS_TECNICO = "comboReqAnalisisTec";
 
 	private static final String CODIGO_T018_PBC_ALQUILER = "T018_PbcAlquiler";
 	
@@ -53,8 +57,6 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoExpedienteBc estadoExpedienteBc = null;
 		
-		CondicionanteExpediente coe = expedienteComercial.getCondicionante();
-
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -64,24 +66,32 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 			}
 		}
 		
+		TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER);
 		
-		if(aprueba) {
-			ExpedienteComercial ecoAnt = expedienteComercial.getExpedienteAnterior();
-			if(DDTipoOfertaAlquiler.isRenovacion(oferta.getTipoOfertaAlquiler()) && ecoAnt != null && ecoAnt.getOferta() != null) {
-				if(DDTipoOfertaAlquiler.isSubrogacion(ecoAnt.getOferta().getTipoOfertaAlquiler())) {
-					estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-					estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
-				}else {
-					estado = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
-					estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
-				}
-			}else {
-				estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-				estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
-			}
+		if(tareaExternaAnterior != null 
+				&& !ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING.equals(tareaExternaAnterior.getTareaProcedimiento().getCodigo()) 
+				&& aprueba) {
+			estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+			estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 		}else {
-			estado = DDEstadosExpedienteComercial.ANULADO;
-			estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+			List <TareaExternaValor> listTex = tareaExternaAnterior.getValores();
+			for (TareaExternaValor tareaExternaValor : listTex) {
+				
+				if(aprueba) {
+					if(COMBO_REQ_ANALISIS_TECNICO.equals(tareaExternaValor.getNombre()) && !Checks.esNulo(tareaExternaValor.getValor())) {
+						if(DDSiNo.SI.equals(tareaExternaValor.getValor())) {
+							estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+							estadoBc = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+						}else{
+							estado = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
+							estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
+						}
+					}
+				}else {
+					estado = DDEstadosExpedienteComercial.ANULADO;
+					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+				}
+			}	
 		}
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estado));

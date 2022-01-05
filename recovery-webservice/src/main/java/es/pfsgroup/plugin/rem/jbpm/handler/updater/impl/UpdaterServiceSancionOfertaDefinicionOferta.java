@@ -132,7 +132,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
 			boolean tieneAtribuciones = ofertaApi.checkAtribuciones(tramite.getTrabajo());
 			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si). Si es oferta express entra
-			if ((tieneAtribuciones && (!T017.equals(tipoTramite)) || DDCartera.isCarteraBk(activo.getCartera())) || (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress())) {
+			if ((tieneAtribuciones && (!T017.equals(tipoTramite) || DDCartera.isCarteraBk(activo.getCartera()))) || (ofertaAceptada.getOfertaExpress() != null && ofertaAceptada.getOfertaExpress())) {
 				List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());

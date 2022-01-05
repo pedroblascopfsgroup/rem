@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +25,13 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
@@ -81,6 +84,10 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 			if (ofertaAceptada != null && eco != null) {
 				DtoGridFechaArras dto = new DtoGridFechaArras();
 				
+				DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
+				dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+				
 				for(TareaExternaValor valor :  valores){
 					if (CamposConfirmarFechaFirmaArras.COMBO_QUITAR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDSiNo.SI.equals(valor.getValor())) {
@@ -100,6 +107,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 					}
 					else if(CamposConfirmarFechaFirmaArras.OBSERVACIONES_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dto.setComentariosBC(valor.getValor());
+						dtoHistoricoBC.setObservacionesBC(valor.getValor());
 					}
 					else if(CamposConfirmarFechaFirmaArras.OBSERVACIONES_REM.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dto.setObservaciones(valor.getValor());
@@ -128,6 +136,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}
 				}
 				
@@ -138,6 +147,10 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 				
 				genericDao.save(ExpedienteComercial.class, eco);
+				
+				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, eco);
+				
+				genericDao.save(HistoricoSancionesBc.class, historico);
 				
 				ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 				

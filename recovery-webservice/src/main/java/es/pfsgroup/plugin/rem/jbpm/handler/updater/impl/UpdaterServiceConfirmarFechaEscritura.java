@@ -16,21 +16,20 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
@@ -85,8 +84,13 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		
 		DtoPosicionamiento dto = new DtoPosicionamiento();
+		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		try {
 			if (ofertaAceptada != null && eco != null) {
+				
+				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+				dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+				
 				for(TareaExternaValor valor :  valores){
 					if(CamposConfirmarFechaFirmaEscritura.COMBO_VALIDACION_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(valor.getValor())) {
@@ -112,6 +116,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						dto.setFechaValidacionBCPos(ft.parse(valor.getValor()));
 					} else if(CamposConfirmarFechaFirmaEscritura.OBSERVACIONES_BC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dto.setObservacionesBcPos(valor.getValor());
+						dtoHistoricoBC.setObservacionesBC(valor.getValor());
 					}
 					else if(CamposConfirmarFechaFirmaEscritura.OBSERVACIONES_REM.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dto.setObservacionesRem(valor.getValor());
@@ -123,6 +128,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(eco, importe, mesesFianza, ofertaAceptada);
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())){
 						dto.setMotivoAplazamiento(MOTIVO_APLAZAMIENTO);
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}
 									
 				}else {
@@ -131,6 +137,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						dto.setFechaFinPosicionamiento(new Date());
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
 						estadoBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.POSICIONADO;
 						estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
@@ -143,6 +150,10 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 			
 			genericDao.save(ExpedienteComercial.class, eco);
+			
+			HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, eco);
+				
+			genericDao.save(HistoricoSancionesBc.class, historico);
 			
 	        ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 	        

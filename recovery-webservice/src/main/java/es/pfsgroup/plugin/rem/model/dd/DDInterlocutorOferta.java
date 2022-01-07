@@ -49,6 +49,7 @@ public class DDInterlocutorOferta implements Auditable, Dictionary {
 	public static final String CODIGO_TUTOR = "06";
 	public static final String CODIGO_COMPRADOR_SECUNDARIO = "02";
 	public static final String CODIGO_SUBARRENDATARIO = "11";
+	public static final String CODIGO_APODERADO_EMPRESA = "03";
 
 	public static final String CODIGO_C4C_ACCIONISTA = "Z55";
 	public static final String CODIGO_C4C_APODERADO_PROPIETARIO = "Z10";

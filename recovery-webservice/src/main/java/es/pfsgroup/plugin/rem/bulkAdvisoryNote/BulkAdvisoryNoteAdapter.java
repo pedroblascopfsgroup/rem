@@ -194,7 +194,8 @@ public class BulkAdvisoryNoteAdapter {
 				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) 
 				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
-						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo()))
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo()))
 				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
 
 			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());

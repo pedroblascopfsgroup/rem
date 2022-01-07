@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20211224
+--## FECHA_CREACION=20220107
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -72,6 +72,7 @@ BEGIN
         ,CAT_LATITUD	                VARCHAR2(50 CHAR)
         ,CAT_LONGITUD	                VARCHAR2(50 CHAR)
         ,CAT_GEODISTANCIA	            VARCHAR2(50 CHAR)
+        ,ACT_ID	                      NUMBER(16,0)
 	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] LA TABLA '''||V_TABLA||''' HA SIDO CREADA CON EXITO.');

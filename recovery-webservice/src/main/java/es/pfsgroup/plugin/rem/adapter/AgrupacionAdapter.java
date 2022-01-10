@@ -2533,6 +2533,7 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
 		Activo activo = null;
 		Oferta ofertaNueva = null;
+		Boolean permiteOfertaNoComercialActivoAlquilado = false;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
@@ -2583,7 +2584,20 @@ public class AgrupacionAdapter {
 
 			String codigoEstado = this.getEstadoNuevaOferta(agrupacion);
 			
-			Boolean permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(agrupacion.getActivoPrincipal(), dto.getTipoOferta());
+			if(!Checks.esNulo(agrupacion.getActivoPrincipal())){
+				permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(agrupacion.getActivoPrincipal(), dto.getTipoOferta());
+			}else {
+				if(!Checks.esNulo(agrupacion.getActivos())){
+					for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()){
+						
+						if (!Checks.esNulo(activoAgrupacion.getActivo())){
+							permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(activoAgrupacion.getActivo(), dto.getTipoOferta());
+							break;
+						}
+					}
+				}
+			}
+			
 			
 			if (permiteOfertaNoComercialActivoAlquilado) {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;

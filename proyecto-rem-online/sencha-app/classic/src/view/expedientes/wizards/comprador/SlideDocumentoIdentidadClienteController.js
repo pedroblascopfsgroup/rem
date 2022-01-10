@@ -63,6 +63,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    			var destinoComercial= datos.destinoComercial;
 		    			var carteraInternacional = datos.carteraInternacional;
 		    			var slideDatos;
+		    			var success = datos.success;
+
+		    			if (success === "true") {
+
 		    			if(!Ext.isEmpty(wizard.oferta)){
 		    				
 		    				slideDatos = wizard.down('slidedatosoferta');
@@ -254,32 +258,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
 		        				   }else{
 		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue("");		
-		        				   }
-		        				   
-		        				   	if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
-		            					slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
-		            			   	}else{
-		            			   		slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue("28");
-		            			   	}
-		            			
-			            			if(!Ext.isEmpty(comprador.codigoPaisRte)){
-			            				slideDatos.getForm().findField('codigoPaisRte').setValue(comprador.codigoPaisRte);
-			            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
-		            				slideDatos.getForm().findField('codigoPaisRte').setValue("28");
-		            			}
-			            			
-			            			if(!Ext.isEmpty(comprador.codigoPais)){
-			            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
-			            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
-			            				slideDatos.getForm().findField('codigoPais').setValue("28");
-			            			}
-			            			
-			            			if(!Ext.isEmpty(comprador.paisNacimientoRepresentanteCodigo)){
-		            					slideDatos.getForm().findField('paisNacimientoRepresentanteCodigo').setValue(comprador.paisNacimientoRepresentanteCodigo);
-			            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
-			            				slideDatos.getForm().findField('paisNacimientoRepresentanteCodigo').setValue("28");
-			            			}
-		            				
+		        				   }		            				
 		    				   }
 		    			   }
 		    				wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
@@ -294,6 +273,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	 				    }
 		    			me.getView().unmask();
 						wizard.nextSlide();
+
+						}else{
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
 					},
 					failure: function(record, operation) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

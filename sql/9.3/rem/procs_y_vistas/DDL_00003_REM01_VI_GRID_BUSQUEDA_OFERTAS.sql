@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbrí
---## FECHA_CREACION=20210707
+--## FECHA_CREACION=20211202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13272
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 [REMVIP-7883] Versión inicial (Creación de la vista)
 --##        0.2 [HREOS-14529] Añadir nuevo campo para filtro (FECHA_OFERTA_PENDIENTE)
+--##        0.3 [REMVIP-10875] Añadir nuevo campo para filtro (FECHA_ENT_CRM_SF)
 --#########################################
 --*/
 
@@ -86,7 +87,8 @@ BEGIN
 				ACT.ACT_NUM_ACTIVO_PRINEX AS NUM_ACTIVO_PRINEX,
 				ACT.ACT_COD_PROMOCION_PRINEX AS COD_PROMO_PRINEX,
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
-				OFR.OFR_FECHA_OFERTA_PENDIENTE AS FECHA_OFERTA_PENDIENTE
+				OFR.OFR_FECHA_OFERTA_PENDIENTE AS FECHA_OFERTA_PENDIENTE,
+				OFR.FECHA_ENT_CRM_SF AS FECHA_ENT_CRM_SF
 		
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
     	    JOIN (SELECT MIN(ACT_ID) AS ACT_ID, OFR_ID FROM '|| V_ESQUEMA ||'.ACT_OFR GROUP BY OFR_ID)

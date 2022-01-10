@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Julian Dolz
---## FECHA_CREACION=20211028
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20211116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=DML_06017_REM01_update_TAP_T018_DefinicionOferta
+--## INCIDENCIA_LINK=HREOS-15529
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -39,12 +39,12 @@ DECLARE
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TAP'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'DML_06017_REM01_update_TAP_T018_DefinicionOferta';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-15529';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T018_DefinicionOferta',
-    		'(valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION || valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION) ? null : existeExpedienteComercialByNumExpediente(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? isExpedienteFirmado(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? null : ''''El expediente anterior no tiene un contrato firmado'''' : ''''El expediente anterior no existe''''  ')
+    		'(valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_DACION || valores[''''T018_DefinicionOferta''''][''''tipoOfertaAlquiler''''] == DDSubtipoOfertaAlquiler.CODIGO_SUBROGACION_EJECUCION) ? null 	: existeExpedienteComercialByNumExpediente(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? isExpedienteDelMismoActivo(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior''''])	? isExpedienteFirmado(valores[''''T018_DefinicionOferta''''][''''expedienteAnterior'''']) ? null : ''''El expediente anterior no tiene un contrato firmado'''' : ''''El expediente anterior no existe para este activo.''''	: ''''El expediente anterior no existe''''  ')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

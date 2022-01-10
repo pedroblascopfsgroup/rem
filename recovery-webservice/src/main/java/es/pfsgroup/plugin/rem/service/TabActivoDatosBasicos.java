@@ -16,6 +16,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -23,6 +27,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -44,6 +49,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -75,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
@@ -96,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
@@ -125,6 +133,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -195,7 +204,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private AnotacionApi anotacionApi;
 	
-
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
@@ -223,12 +233,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
-	
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -243,6 +259,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	}
 	
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public DtoActivoFichaCabecera getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
@@ -776,11 +793,24 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		//Aceptado/tramitada a comprobar si una oferta tiene tareas activas, si tiene alguna tarea activa,
 		//la oferta estara viva, si por el contrario, tiene todas las tareas finalizadas la oferta no estara viva
 		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivo(activo.getId(),ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
+		Oferta oferta = null;
 		if (!Checks.estaVacio(listaTareas)) {
 			for (TareaActivo tarea : listaTareas) {
+				Trabajo trabajo = tarea.getTramite().getTrabajo();
+				if(trabajo != null) {
+					oferta = ofertaApi.trabajoToOferta(trabajo);
+				}
 				if (!Checks.esNulo(tarea.getTareaFinalizada()) && !tarea.getTareaFinalizada()) {
-					tieneOfertaAlquilerViva = true;
-					break;
+					if(oferta != null && DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+						
+						tieneOfertaAlquilerViva = false;
+						
+					}else {
+						
+						tieneOfertaAlquilerViva = true;
+						break;
+						
+					}
 				}
 			}
 		}
@@ -1312,6 +1342,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
+
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		boolean borrarMotivoExcluirValidaciones = false;
 		
@@ -2250,7 +2281,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					|| dto.getExcluirValidacionesBool()!=null || dto.getMotivoGestionComercialCodigo()!=null)){
 				modificarCheckVisibleGestionComercialRestringida(activo,dto);
 			}
-			
+
 			Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoPrinexActivos activoPrinexActivos = genericDao.get(ActivoPrinexActivos.class, filterPrinex);
 			

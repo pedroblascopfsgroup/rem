@@ -1916,35 +1916,41 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				var gastosRefacturables = data.refacturable;
 				var gastosNoRefacturables= data.noRefacturable;
 			
-				var grid = me.lookupReference("gastoRefacturadoGrid");
-				
+		    	if(data.success == 'false') {
+		    		me.fireEvent("errorToast", data.error);
+		    	}else{
+					var grid = me.lookupReference("gastoRefacturadoGrid");
+					
+	
+					var arrayCodVal= new Array();
+					
+					for(j=0;j < gastosRefacturables.length;j++){				
+						var ArrayvaloresCombo=  gastosRefacturables[j].split(',');
+						
+						var idCombo = j;
+						var idGasto= ArrayvaloresCombo[0];
+						var gastoRefacturable= true;
+						
+						arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
+						
+					}
+					
+					var myStore = new Ext.data.Store({
+						    fields: ['idCombo','gastoRefacturable', 'idGasto'],
+						    idIndex: 0,
+						    data: arrayCodVal
+						    
+					});
+					
+					grid.setStore(myStore);
+					
+					destinatarioGastoCodigo.setReadOnly(arrayCodVal.length!=0);
+					buscadorNifEmisorField.setReadOnly(arrayCodVal.length!=0);
+					nifEmisor.setReadOnly(arrayCodVal.length!=0);
+					buscadorNifEmisorField.enableKeyEvents = (arrayCodVal.length==0);
+			
+				}	
 
-				var arrayCodVal= new Array();
-				
-				for(j=0;j < gastosRefacturables.length;j++){				
-					var ArrayvaloresCombo=  gastosRefacturables[j].split(',');
-					
-					var idCombo = j;
-					var idGasto= ArrayvaloresCombo[0];
-					var gastoRefacturable= true;
-					
-					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
-					
-				}
-				
-				var myStore = new Ext.data.Store({
-					    fields: ['idCombo','gastoRefacturable', 'idGasto'],
-					    idIndex: 0,
-					    data: arrayCodVal
-					    
-				});
-				
-				grid.setStore(myStore);
-				
-				destinatarioGastoCodigo.setReadOnly(arrayCodVal.length!=0);
-				buscadorNifEmisorField.setReadOnly(arrayCodVal.length!=0);
-				nifEmisor.setReadOnly(arrayCodVal.length!=0);
-				buscadorNifEmisorField.enableKeyEvents = (arrayCodVal.length==0);
 			},
 			failure : function(response) {
 				me.fireEvent("errorToast", HreRem

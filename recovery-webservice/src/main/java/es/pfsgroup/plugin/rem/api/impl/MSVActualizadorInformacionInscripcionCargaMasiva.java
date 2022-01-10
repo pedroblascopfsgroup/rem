@@ -6,8 +6,10 @@ import java.util.Date;
 
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -50,9 +53,14 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 	@Autowired
 	private GenericAdapter adapter;
 
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
-
 
 	protected static final Log logger = LogFactory.getLog(MSVActualizadorInformacionInscripcionCargaMasiva.class);
 	
@@ -80,6 +88,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)throws Exception {
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		final String numActivo = exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO);
 		final String situacionTitulo = exc.dameCelda(fila, COL_NUM.SITUACION_TITULO);
@@ -90,7 +99,6 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		final String fechaNota = exc.dameCelda(fila, COL_NUM.FECHA_NOTA_SIMPLE);
 		final String codAccion = exc.dameCelda(fila, COL_NUM.ACCION);
 
-		TransactionStatus transaction = null;
 		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 
@@ -179,6 +187,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				llamadaAsincrona.start();
 			}
 		}
+
 		return new ResultadoProcesarFila();
 	}
 

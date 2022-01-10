@@ -141,16 +141,24 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							bind : {
 								value : '{datosbasicosoferta.ventaCartera}',
 								readOnly : 'true',
-								hidden : '{esTipoAlquiler}'
+								hidden : '{esAlquilerOAlquilerNoComercial}'
 							}
 						},
 						{
 						xtype : 'datefieldbase',
 						formatter : 'date("d/m/Y")',
-						colspan: 3,
+						colspan: '{getcolSpanforSarebOrDefault}',
 						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
 						readOnly : true,
 						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+						},
+						{
+                            xtype : 'textfieldbase',
+                            fieldLabel : HreRem.i18n('filedlabel.numero.vai.havai'),
+                            bind : {
+                                value : '{datosbasicosoferta.numeroVaiHavaiSareb}',
+                                hidden : '{!esCarteraSareb}'
+                            }
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -228,7 +236,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						title : 'Bulk Advisory Note',
 						collapsible: false,
 						bind: {
-							hidden: '{!esCarteraAppleOrRemaining}'
+							hidden: '{!esCarteraAppleOrRemainingOrJaguar}'
 						},
 						colspan: 3,
 						layout: {
@@ -252,7 +260,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store: '{comboSiNoExclusionBulk}',
 									value : '{datosbasicosoferta.exclusionBulk}',
 									readOnly : '{!requisitosEdicionExclusionBulk}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},
 								{
@@ -261,7 +269,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									value : '{datosbasicosoferta.idAdvisoryNote}',
 									readOnly : '{!requisitosEdicionIdAdvisoryNote}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},	{
 								xtype : 'comboboxfieldbase',
@@ -426,7 +434,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        }
 						},
 						bind : {
-							hidden : '{esTipoAlquiler}' 
+							hidden : '{esAlquilerOAlquilerNoComercial}' 
 						},
 						items : [
 							{
@@ -457,6 +465,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store : '{comboRiesgoOperacion}',
 								    value : '{datosbasicosoferta.riesgoOperacionCodigo}',
 								    rawValue : '{datosbasicosoferta.riesgoOperacionDescripcion}',
+									readOnly : '{readOnlyDatosCfv}'
+								}
+							},
+							{
+								xtype : 'comboboxfieldbasedd',
+								fieldLabel : HreRem.i18n('fieldlabel.riesgo.operacion.bc'),
+								bind : {
+									store : '{comboRiesgoOperacion}',
+								    value : '{datosbasicosoferta.riesgoOperacionBcCodigo}',
+								    rawValue : '{datosbasicosoferta.riesgoOperacionBcDescripcion}',
+								    hidden: '{!esBankia}',
 									readOnly : '{readOnlyDatosCfv}'
 								}
 							}
@@ -708,8 +727,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						        type: 'table',
 						        columns: 2
 						    },
-							bind : {
-								hidden: '{esBankiaAlquiler}'
+						    bind : {
+								hidden: '{esAlquilerOAlquilerNoComercial}'
 							},
 							items : [
 								{
@@ -915,7 +934,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						listeners: {
 							beforeedit: function(editor, context) {
 					            var estado = context.record.get("campoCodigo");
-					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09';
+					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
 							}

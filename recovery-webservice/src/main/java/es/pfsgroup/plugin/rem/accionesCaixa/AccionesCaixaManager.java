@@ -72,8 +72,8 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception {
-        adapter.save(createRequestAccionAprobacion(dto));
+    public Boolean accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception {
+        return adapter.save(createRequestAccionAprobacion(dto));
     }
 
     public Map<String, String[]> createRequestAccionAprobacion(DtoAccionAprobacionCaixa dto){
@@ -99,31 +99,32 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Transactional
     @Override
-    public void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
+    public boolean accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
         ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
-        if (DDTipoOferta.isTipoAlquiler(ofr.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
+        DDTipoOferta tipoOferta = ofr.getTipoOferta();
+        if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
+        	
+			TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+			String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
+			dto.setEstadoBc(calcularEstadoBcRechazo(codigoTarea));
+			dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
+			
+			eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
+			eco.setFechaAnulacion(new Date());
 
-            ActivoTramite acTra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", eco.getTrabajo().getId()));
-			String motivoAnulacionExpediente = dto.getMotivoAnulacion();
-			if(eco.getOferta() != null && DDTipoOferta.isTipoAlquiler(eco.getOferta().getTipoOferta())) {
-				TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
-				if(tarea != null && tarea.getTareaProcedimiento() != null) {
-					if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
-						motivoAnulacionExpediente = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_GARANTIAS;
-					}else if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(tarea.getTareaProcedimiento().getCodigo())) {
-						motivoAnulacionExpediente = DDMotivoAnulacionExpediente.COD_CAIXA_RECH_PROPIEDAD;
-					}
-				}
-			}
-            adapter.anularTramiteAlquiler(acTra.getId(), motivoAnulacionExpediente);
+            genericDao.save(ExpedienteComercial.class, eco);
+			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
+			return true;
         }else {
             eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
             genericDao.save(ExpedienteComercial.class, eco);
 
             agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+            //TODO quitar llamada al replicar y ajustar para que el la llamada del controller tenga en cuenta las tareas del T017
             ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
-        }
+            return false;
+       }
     }
 
     @Override
@@ -355,15 +356,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
 
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
+                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_PTE_DOC));
         expediente.setEstadoBc(estadoExpedienteBc);
-        if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
-        	expediente.setFechaAnulacion(new Date());
-        }
-
 
         genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
+        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
     @Override
@@ -402,6 +399,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         
         if(expediente != null) {
         	 expediente.setBloqueado(0);
+        	 expediente.setMotivoEdicionCompradores(null);
 	        if(expediente.getOferta() != null && expediente.getOferta().getOfertaCaixa() != null) {
 	        	OfertaCaixa ofrCaixa = expediente.getOferta().getOfertaCaixa();
 	        	ofrCaixa.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_VALIDADO)));
@@ -644,10 +642,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
+    public boolean accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception {
     	this.createRequestAccionAprobacion(dto);
     	TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
     	expedienteComercialApi.setValoresTEB(dto, tarea, dto.getCodTarea());
+    	return true;
     }
 
     @Override
@@ -705,5 +704,64 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void sendReplicarOfertaAccionesAvanzarTarea(Long idTarea, Boolean success){
         replicacionOfertasApi.callReplicateOferta(idTarea, success);
+    }
+    
+    private Map<String, String[]> createRequestAccionRechazoComercialGeneric(DtoAccionRechazoCaixa dto){
+	    Map<String,String[]> map = new HashMap<String,String[]>();
+	
+	    String[] idTarea = {dto.getIdTarea().toString()};
+	    String[] resultado = {dto.getEstadoBc()};
+	    String[] motivoAnulacion = {dto.getMotivoAnulacion()};
+	    String[] fecha = {dto.getFechaReal()};
+	    String[] observacionesBc= {dto.getObservacionesBc()};
+	
+	    map.put("idTarea", idTarea);
+	    map.put("comboResultado", resultado);
+	    map.put("motivoAnulacion", motivoAnulacion);
+	    map.put("comboMotivoAnulacion", motivoAnulacion);
+        map.put("fechaSancion",  fecha);
+        map.put("fechaResolucion",  fecha);
+        map.put("observacionesBC",  observacionesBc);
+        map.put("observacionesBc",  observacionesBc);
+
+	    return map;
+    }
+    
+    private Map<String, String[]> createRequestAccionRechazoComercialT015_ElevarASancion(DtoAccionRechazoCaixa dto){
+	    Map<String,String[]> map = new HashMap<String,String[]>();
+	
+	    String[] idTarea = {dto.getIdTarea().toString()};
+	    String[] motivoAnulacion = {dto.getMotivoAnulacion()};
+	    String[] resultado = {dto.getEstadoBc()};
+	    String[] fecha = {dto.getFechaReal()};
+	    String[] observacionesBc= {dto.getObservacionesBc()};
+	
+	    map.put("idTarea", idTarea);
+	    map.put("resolucionOferta", resultado);
+	    map.put("fechaElevacion", fecha);
+	    map.put("motivoAnulacion", motivoAnulacion);
+	    map.put("observacionesBC", observacionesBc);
+	    
+	    return map;
+    }
+    
+    private Map<String, String[]> calcularMapTareasRechazo(String codigoTarea, DtoAccionRechazoCaixa dto) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(codigoTarea)) {
+			return createRequestAccionRechazoComercialT015_ElevarASancion(dto);
+		}else {
+			return createRequestAccionRechazoComercialGeneric(dto);
+
+		}
+    }
+    
+    private String calcularEstadoBcRechazo(String codigoTarea) {
+    	String resultado;
+    	if(TareaProcedimientoConstants.CODIGO_T018_ANALISIS_BC.equals(codigoTarea) || TareaProcedimientoConstants.CODIGO_T018_SCORING_BC.equals(codigoTarea)) {
+    		resultado = DDTipoAccionNoComercial.COD_RECHAZO_COMERCIAL;
+    	}
+    	else {
+    		resultado = DDSiNo.NO;
+    	}
+    	return resultado;
     }
 }

@@ -8,9 +8,9 @@ import java.text.ParseException;
 
 public interface AccionesCaixaApi {
 
-    void accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception;
+    Boolean accionAprobacion(DtoAccionAprobacionCaixa dto) throws Exception;
 
-    void accionRechazo(DtoAccionRechazoCaixa dto) throws Exception;
+    boolean accionRechazo(DtoAccionRechazoCaixa dto) throws Exception;
 
     Boolean accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception;
 
@@ -61,7 +61,7 @@ public interface AccionesCaixaApi {
 
     void accionArrasContabilizadas(DtoExpedienteFechaYOfertaCaixa dto) throws ParseException;
 
-    void accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception;
+    boolean accionContraoferta(DtoAccionAprobacionCaixa dto) throws Exception;
 
     void accionScoringBC(DtoAvanzaScoringBC dto) throws Exception;
 

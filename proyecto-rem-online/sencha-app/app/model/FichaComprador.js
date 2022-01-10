@@ -361,6 +361,19 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name:'oficinaTrabajo'
+		},
+		{
+			name:'nacionalidadCodigo'
+		},
+		{
+			name:'nacionalidadRprCodigo'
+		},
+		{
+			name:'motivoEdicionCompradores'
+		},
+		{
+			name:'isExpedienteAprobado',
+			type : 'boolean'
 		}
 		
 		

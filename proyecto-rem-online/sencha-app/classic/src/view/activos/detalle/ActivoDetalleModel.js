@@ -760,9 +760,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true; 
 			}else{
 				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
-					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo)))
-					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}
 			
 		},
@@ -1579,9 +1579,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    return false;
 		},
 
-		mostrarCamposDivarian: function(get){
+		mostrarCamposDivarianAndJaguar: function(get){
 	 	 	var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
-		    if(isSubcarteraDivarian){
+	 	 	var isSubcarteraJaguar = get('activo.isSubcarteraJaguar');
+		    if(isSubcarteraDivarian || isSubcarteraJaguar){
 			return true;
 		    }
 		    return false;
@@ -1759,12 +1760,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		esCarteraSarebBbvaBankiaCajamarLiberbank : function(get){
-			var me = this;
-
 			var activo = null;
-			if (me.data.activo != null) {
-				activo = me.data.activo.getData();
-			}
+			if(get('activo') != null)
+				activo = get('activo').data;
 			
 			if (activo != null || activo != undefined) {
 				var esCarteraSareb = activo.isCarteraSareb;
@@ -1933,6 +1931,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 				return false;
 			}
+		},
+		mostrarCamposDivarianAndBbvaAndJaguar: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var isSubcarteraJaguar = get('activo.isSubcarteraJaguar');
+		    var isBbva = get('activo.isCarteraBbva');
+		    if(isBbva || isSubcarteraDivarian || isSubcarteraJaguar){
+			return true;
+		    }
+		    return false;		 
 		 },
 		    
 		 esEditableDestinoComercialOresBankia: function(get){
@@ -1984,7 +1991,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	var isBankia = get('isCarteraBankia');	    	
 	    	var editarPorcentajeConstruccion = get('editarPorcentajeConstruccion');
 	    	
-	    	if (isBankia || editarPorcentajeConstruccion){
+	    	if (isBankia || !editarPorcentajeConstruccion){
 	    		return true;
 	    	}
 	    	return false;
@@ -2004,7 +2011,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			
 			return $AU.userIsRol(CONST.PERFILES["TASADORA"]);
-		}
+		},
+		
+		isSubcarteraCerberusOrJaguar: function(get) {
+			var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	var isJaguar = get('activo.isSubcarteraJaguar');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb
+	    		|| isJaguar){
+	    	return true;
+	    	}
+	    	return false;
+	    }
 	 },
     
 	 stores: {
@@ -4280,6 +4301,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
+			},
+			autoLoad: true
+		},
+		comboTasadoraCaixa: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
 		}

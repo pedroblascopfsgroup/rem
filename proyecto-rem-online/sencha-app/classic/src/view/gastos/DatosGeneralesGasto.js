@@ -331,9 +331,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.titular.carta.pago'),
 										name: 'buscadorNifTitularCartaPagoField',
 										bind: {
-											value: '{gasto.buscadorNifTitularCartaPago}'
+											value: '{gasto.buscadorNifTitularCartaPago}',
+												allowBlank: '{!esPropietarioLivingCenter}',
+												hidden: '{!esPropietarioLivingCenter}'
 										},
-										allowBlank: false,
 										triggers: {
 
 												buscarEmisor: {
@@ -360,7 +361,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.titular.carta.pago'),
 										name: 'nombreTitularCartaPago',
 										bind:{
-											value: '{gasto.nombreTitularCartaPago}'													
+											value: '{gasto.nombreTitularCartaPago}',			
+											hidden: '{!esPropietarioLivingCenter}'
 										},
 										readOnly: true
 									}

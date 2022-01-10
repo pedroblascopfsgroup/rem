@@ -32,7 +32,7 @@ public interface ExcelReportGeneratorApi {
 	
 	public int getLimit();
 
-	File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException;
+	File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request, String subcartera) throws IOException;
 	
 	File getAdvisoryNoteReportArrow(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException;
 	

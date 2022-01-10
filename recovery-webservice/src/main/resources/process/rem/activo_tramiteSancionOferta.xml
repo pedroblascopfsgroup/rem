@@ -62,6 +62,7 @@
 		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 		<transition to="T013_PBCReserva" name="esOmegaConReserva"></transition>
 		<transition to="T013_ResultadoPBC" name="esOmegaSinReserva"></transition>
+		<transition to="T013_PBCReserva" name="ConFormalizacionSinTanteoConAtribucionConReservaTitulizada"></transition>
 	</decision>
 	
 	<state name="T013_PBCReserva">
@@ -89,6 +90,7 @@
 	<decision name ="T013_PBCReservaDecision" expression="#{T013_PBCReservaDecision}">
 		<transition to="T013_ResultadoPBC" name="Aprueba"></transition>
 		<transition to="T013_ResolucionExpediente" name="Deniega"></transition>
+		<transition to="forkReserva" name="ApruebaTitulizada"></transition>
 	</decision>
 
 
@@ -172,6 +174,7 @@
 		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
 		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
+		<transition to="T013_PBCReserva" name="ApruebaConReservaTitulizada"></transition>
 	</decision>
 
 	<state name="T013_RespuestaOfertante">
@@ -229,7 +232,7 @@
 	</state>
 	
 	<decision name="T013_RatificacionComiteDecision" expression="#{T013_RatificacionComiteDecision}">
-		<transition to="forkReserva" name="AceptaConReserva"></transition>		
+		<transition to="forkReserva" name="AceptaConReserva"></transition>
 		<transition to="T013_RespuestaOfertante" name="Contraoferta"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
 		<transition to="T013_ResultadoPBC" name="esYubai"></transition>

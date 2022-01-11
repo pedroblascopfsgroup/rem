@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211223
+--## FECHA_CREACION=20220111
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16765
+--## INCIDENCIA_LINK=HREOS-16900
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -12,6 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16682]- Alejandra García
 --##        0.2 Sustituir el DD_TCO_ID por el DD_CBC_ID - [HREOS-16765]- Alejandra García
+--##        0.3 Añadir PEPs de IAEs - [HREOS-16896]- Alejandra García
+--##        0.4 Modificación del array porque el PEP XXXX-22-2-A-INC debe de tener un contrato vigente de alquiler y el -ROT (rotacional) no - [HREOS-16900]- Alejandra García
 --#########################################
 --*/
 
@@ -28,7 +30,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16765';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16900';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -47,28 +49,28 @@ DECLARE
 		--T_TABLA('192','XXXX-22-2-IBI','22','00','7','01','01','02','','','null'),
 		T_TABLA('193','XXXX-22-2-A-IBI','22','00','9','01','01','03','','','null'),
 		T_TABLA('194','XXXX-22-2-LIMP','22','00','13','15','73','01','','','null'),
-		T_TABLA('195','XXXX-22-2-A-ROT','22','00','31','15','73','03','02','','null'),
-		T_TABLA('196','XXXX-22-2-A-INC','22','00','30','15','73','03','01','','null'),
+		T_TABLA('195','XXXX-22-2-A-ROT','22','00','31','15','73','01','01','','null'),
+		T_TABLA('196','XXXX-22-2-A-INC','22','00','30','15','73','03','02','','null'),
 		--T_TABLA('197','XXXX-22-2-LIMP','22','00','13','15','73','02','','','null'),
 		--T_TABLA('198','XXXX-22-2-A-ROT','22','00','31','15','73','02','02','','null'),
 		--T_TABLA('199','XXXX-22-2-A-INC','22','00','30','15','73','02','01','','null'),
 		T_TABLA('200','XXXX-22-2-LIMP','22','00','13','15','75','01','','','null'),
-		T_TABLA('201','XXXX-22-2-A-ROT','22','00','31','15','75','03','02','','null'),
-		T_TABLA('202','XXXX-22-2-A-INC','22','00','30','15','75','03','01','','null'),
+		T_TABLA('201','XXXX-22-2-A-ROT','22','00','31','15','75','01','01','','null'),
+		T_TABLA('202','XXXX-22-2-A-INC','22','00','30','15','75','03','02','','null'),
 		--T_TABLA('203','XXXX-22-2-LIMP','22','00','13','15','75','02','','','null'),
 		--T_TABLA('204','XXXX-22-2-A-ROT','22','00','31','15','75','02','02','','null'),
 		--T_TABLA('205','XXXX-22-2-A-ROT','22','00','30','15','75','02','01','','null'),
 		T_TABLA('206','XXXX-22-2-LIMP','22','00','13','15','74','01','','','null'),
-		T_TABLA('207','XXXX-22-2-A-ROT','22','00','31','15','74','03','02','','null'),
-		T_TABLA('208','XXXX-22-2-A-INC','22','00','30','15','74','03','01','','null'),
+		T_TABLA('207','XXXX-22-2-A-ROT','22','00','31','15','74','01','01','','null'),
+		T_TABLA('208','XXXX-22-2-A-INC','22','00','30','15','74','03','02','','null'),
 		--T_TABLA('209','XXXX-22-2-LIMP','22','00','13','15','74','02','','','null'),
 		--T_TABLA('210','XXXX-22-2-A-ROT','22','00','31','15','74','02','02','','null'),
 		--T_TABLA('211','XXXX-22-2-A-INC','22','00','30','15','74','02','01','','null'),
 		T_TABLA('212','XXXX-22-2-REP POST 1','22','00','16','15','84','','','TR1','null'),
 		T_TABLA('213','XXXX-22-2-REP POST 2','22','00','17','15','84','','','TR2','null'),
 		T_TABLA('214','XXXX-22-2-MNT INC','22','00','21','15','78','01','','','null'),
-		T_TABLA('215','XXXX-22-2-A-ROT','22','00','31','15','78','03','02','','null'),
-		T_TABLA('216','XXXX-22-2-A-INC','22','00','30','15','78','03','01','','null'),
+		T_TABLA('215','XXXX-22-2-A-ROT','22','00','31','15','78','01','01','','null'),
+		T_TABLA('216','XXXX-22-2-A-INC','22','00','30','15','78','03','02','','null'),
 		--T_TABLA('217','XXXX-22-2-MNT INC','22','00','21','15','78','02','','','null'),
 		--T_TABLA('218','XXXX-22-2-A-ROT','22','00','31','15','78','02','02','','null'),
 		--T_TABLA('219','XXXX-22-2-A-INC','22','00','30','15','78','02','01','','null'),
@@ -207,20 +209,20 @@ DECLARE
 		--T_TABLA('351','XXXX-22-2-TP100%','22','02','42','13','151','','','','null'),
 		--Nuevos registros
 		T_TABLA('352','XXXX-22-2-MNT INC','22','00','21','15','158','01','','','null'),
-		T_TABLA('353','XXXX-22-2-A-ROT','22','00','31','15','158','03','02','','null'),
-		T_TABLA('354','XXXX-22-2-A-INC','22','00','30','15','158','03','01','','null'),
+		T_TABLA('353','XXXX-22-2-A-ROT','22','00','31','15','158','01','01','','null'),
+		T_TABLA('354','XXXX-22-2-A-INC','22','00','30','15','158','03','02','','null'),
 		--T_TABLA('355','XXXX-22-2-MNT INC','22','00','21','15','158','02','','','null'),
 		--T_TABLA('356','XXXX-22-2-A-ROT','22','00','31','15','158','02','02','','null'),
 		--T_TABLA('357','XXXX-22-2-A-INC','22','00','30','15','158','02','01','','null'),
 		T_TABLA('358','XXXX-22-2-MNT INC','22','00','21','15','79','01','','','null'),
-		T_TABLA('359','XXXX-22-2-A-ROT','22','00','31','15','79','03','02','','null'),
-		T_TABLA('360','XXXX-22-2-A-INC','22','00','30','15','79','03','01','','null'),
+		T_TABLA('359','XXXX-22-2-A-ROT','22','00','31','15','79','01','01','','null'),
+		T_TABLA('360','XXXX-22-2-A-INC','22','00','30','15','79','03','02','','null'),
 		--T_TABLA('361','XXXX-22-2-MNT INC','22','00','21','15','79','02','','','null'),
 		--T_TABLA('362','XXXX-22-2-A-ROT','22','00','31','15','79','02','02','','null'),
 		--T_TABLA('363','XXXX-22-2-A-INC','22','00','30','15','79','02','01','','null'),
 		T_TABLA('364','XXXX-22-2-MNT INC','22','00','21','15','77','01','','','null'),
-		T_TABLA('365','XXXX-22-2-A-ROT','22','00','31','15','77','03','02','','null'),
-		T_TABLA('366','XXXX-22-2-A-INC','22','00','30','15','77','03','01','','null'),
+		T_TABLA('365','XXXX-22-2-A-ROT','22','00','31','15','77','01','01','','null'),
+		T_TABLA('366','XXXX-22-2-A-INC','22','00','30','15','77','03','02','','null'),
 		--T_TABLA('367','XXXX-22-2-MNT INC','22','00','21','15','77','02','','','null'),
 		--T_TABLA('368','XXXX-22-2-A-ROT','22','00','31','15','77','02','02','','null'),
 		--T_TABLA('369','XXXX-22-2-A-INC','22','00','30','15','77','02','01','','null'),
@@ -234,8 +236,13 @@ DECLARE
 		T_TABLA('377','XXXX-22-2-INF MNTO','22','00','52','11','160','','','','null'),
 		T_TABLA('378','XXXX-22-2-A-INF ROT','22','00','54','14','157','','','','null'),
 		T_TABLA('379','XXXX-22-3-NOT NEG','22','00','93','11','43','01','','','null'),
-		T_TABLA('380','XXXX-22-3-A-NOT NEG','22','00','94','11','43','03','','','null')
+		T_TABLA('380','XXXX-22-3-A-NOT NEG','22','00','94','11','43','03','','','null'),
 		--T_TABLA('381','XXXX-22-3-NOT NEG','22','00','93','11','43','02','','','null')
+		--Registros IAEs
+		T_TABLA('382','XXXX-22-2-IAE','22','01','7','01','155','','','','null'),
+		T_TABLA('383','XXXX-22-2-A_IAE','22','01','8','01','156','','','','null'),
+		T_TABLA('384','XXXX-22-2-IAE_CF','22','01','9','01','154','','','','null')
+
     ); 
     V_TMP_TABLA T_TABLA;
 	
@@ -267,7 +274,7 @@ BEGIN
 				  , COGRUG_NEG = '''||V_TMP_TABLA(3)||''' 
 				  , COTACA_NEG = '''||V_TMP_TABLA(4)||'''
 				  , COSBAC_NEG = '''||V_TMP_TABLA(5)||'''
-				  , USUARIOMODIFICAR = ''HREOS-16682''
+				  , USUARIOMODIFICAR = '''||V_USUARIO||'''
 				  , FECHAMODIFICAR = SYSDATE
 				  , PRO_ID = NULL
 				  , DD_CBC_ID = (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''') 
@@ -324,7 +331,7 @@ BEGIN
 				  , '''||V_TMP_TABLA(4)||'''
 				  , '''||V_TMP_TABLA(5)||'''
 				  , 0
-				  , ''HREOS-16682''
+				  ,  '''||V_USUARIO||'''
 				  , SYSDATE
 				  , 0
 				  , (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''') 

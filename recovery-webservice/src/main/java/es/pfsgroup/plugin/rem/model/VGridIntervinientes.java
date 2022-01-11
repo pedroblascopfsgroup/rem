@@ -17,7 +17,7 @@ public class VGridIntervinientes implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "OFR_ID")
+	@Column(name = "ID")
 	private Long id;
 	
 	@Column(name="NUM_OFERTA")

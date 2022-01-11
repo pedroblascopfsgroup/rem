@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211223
+--## FECHA_CREACION=20220111
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16765
+--## INCIDENCIA_LINK=HREOS-16896
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16682]- Alejandra García
 --##        0.2 Sustituir el DD_TCO_ID por el DD_CBC_ID - [HREOS-16765]- Alejandra García
+--##        0.3 Añadir PEPs de IAEs - [HREOS-16896]- Alejandra García
 --#########################################
 --*/
 
@@ -28,7 +29,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16765';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16896';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -234,8 +235,13 @@ DECLARE
 		T_TABLA('377','XXXX-22-2-INF MNTO','22','00','52','11','160','','','','null'),
 		T_TABLA('378','XXXX-22-2-A-INF ROT','22','00','54','14','157','','','','null'),
 		T_TABLA('379','XXXX-22-3-NOT NEG','22','00','93','11','43','01','','','null'),
-		T_TABLA('380','XXXX-22-3-A-NOT NEG','22','00','94','11','43','03','','','null')
+		T_TABLA('380','XXXX-22-3-A-NOT NEG','22','00','94','11','43','03','','','null'),
 		--T_TABLA('381','XXXX-22-3-NOT NEG','22','00','93','11','43','02','','','null')
+		--Registros IAEs
+		T_TABLA('382','XXXX-22-2-IAE','22','01','7','01','155','','','','null'),
+		T_TABLA('383','XXXX-22-2-A_IAE','22','01','8','01','156','','','','null'),
+		T_TABLA('384','XXXX-22-2-IAE_CF','22','01','9','01','154','','','','null')
+
     ); 
     V_TMP_TABLA T_TABLA;
 	
@@ -267,7 +273,7 @@ BEGIN
 				  , COGRUG_NEG = '''||V_TMP_TABLA(3)||''' 
 				  , COTACA_NEG = '''||V_TMP_TABLA(4)||'''
 				  , COSBAC_NEG = '''||V_TMP_TABLA(5)||'''
-				  , USUARIOMODIFICAR = ''HREOS-16682''
+				  , USUARIOMODIFICAR = '''||V_USUARIO||'''
 				  , FECHAMODIFICAR = SYSDATE
 				  , PRO_ID = NULL
 				  , DD_CBC_ID = (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''') 
@@ -324,7 +330,7 @@ BEGIN
 				  , '''||V_TMP_TABLA(4)||'''
 				  , '''||V_TMP_TABLA(5)||'''
 				  , 0
-				  , ''HREOS-16682''
+				  ,  '''||V_USUARIO||'''
 				  , SYSDATE
 				  , 0
 				  , (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''') 

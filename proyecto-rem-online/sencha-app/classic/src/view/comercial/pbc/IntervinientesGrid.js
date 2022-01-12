@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.comercial.pbc.InvervinientesGrid', {
+Ext.define('HreRem.view.comercial.pbc.IntervinientesGrid', {
     extend		: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
     xtype		: 'intervinientesGrid',
 	topBar		: false,

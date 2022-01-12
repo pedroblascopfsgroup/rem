@@ -262,13 +262,13 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 				items: [
 					{
 	                	xtype: 'comboboxfieldbase',
-						reference: 'aprobacionPBCArrasRef',
+						reference: 'aprobacionPBCCNRef',
 						colspan: 1,
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.cn'),
 			        	bind: {
-		            		store: '{comboSiNoRem}'
-		            		//value: '{}'
-		            	}
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{ofertacaixapbc.aprobacionCN}'
+			            }
 					},
 	                {
 	                	xtype:'datefieldbase',
@@ -276,9 +276,7 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
 						reference: 'fechaSancionCNRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.fechaSancionCN}'
 	                }
 				]	
         	},
@@ -294,9 +292,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						colspan: 1,
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.arras'),
 			        	bind: {
-		            		store: '{comboSiNoRem}'
-		            		//value: '{}'
-		            	}
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{ofertacaixapbc.aprobacionArras}'
+			            }
 					},
 	                {
 	                	xtype:'datefieldbase',
@@ -304,16 +302,13 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
 						reference: 'fechaSancionArrasRef',
-	                	bind:		{
-	                		//value: '{}'
-	                		
-	                	}
+	                	bind:'{ofertacaixapbc.fechaSancionArras}'
 	                },
 	                {
 			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-				 		labelAlign: 'top'
+						bind:'{ofertacaixapbc.informeArras}'
 					}
 				]	
            },
@@ -325,29 +320,27 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 				items: [
 					{
 	                	xtype: 'comboboxfieldbase',
-						reference: 'aprobacionPBCArrasRef',
+						reference: 'aprobacionPBCVentaRef',
 						colspan: 1,
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.venta'),
 			        	bind: {
-		            		store: '{comboSiNoRem}'
-		            		//value: '{}'
-		            	}
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{ofertacaixapbc.aprobacionVenta}'
+			            }
 					},
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
-						reference: 'fechaSancionArrasRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+						reference: 'fechaSancionVentaRef',
+	                	bind:'{ofertacaixapbc.fechaSancionVenta}'
 	                },
 	                {
 			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-				 		labelAlign: 'top'
+						bind:'{ofertacaixapbc.informeVenta}'
 					}
 				]	
            },

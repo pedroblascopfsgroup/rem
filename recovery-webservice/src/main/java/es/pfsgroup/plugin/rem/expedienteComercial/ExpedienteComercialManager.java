@@ -15277,9 +15277,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					
 				}
 				
-				dtoOfertaCaixaPbc.setDtoPBCArras(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCARRAS));
-				dtoOfertaCaixaPbc.setDtoPBCVenta(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC));
-				dtoOfertaCaixaPbc.setDtoPBCCN(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCCN));
+				dtoOfertaCaixaPbc = this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCARRAS, dtoOfertaCaixaPbc);
+				dtoOfertaCaixaPbc = this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC, dtoOfertaCaixaPbc);
+				dtoOfertaCaixaPbc = this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCCN, dtoOfertaCaixaPbc);
 			}
 			
 		} catch (Exception ex) {
@@ -15289,20 +15289,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return dtoOfertaCaixaPbc;
 	}
 	
-	private DtoHistoricosTareasPbc historicoPbcToDto (Long idOferta, String tipoPbc) {
-		DtoHistoricosTareasPbc dto = new DtoHistoricosTareasPbc();
+	private DtoOfertaCaixaPbc historicoPbcToDto (Long idOferta, String tipoPbc, DtoOfertaCaixaPbc dto) {
 		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 		Filter filterTipoPbC =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", tipoPbc);
 		Filter filterActivo =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
 		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbC, filterActivo);
 		
 		if(historico !=  null) {
-			dto.setAprobacion(historico.getAprobacion());
-			dto.setFechaComunicacionRiesgo(historico.getFechaComunicacionRiesgo());
-			dto.setFechaEnvioDocumentacionBc(historico.getFechaEnvioDocumentacionBc());
-			dto.setFechaSancion(historico.getFechaSancion());
-			dto.setFechaSolicitudEstadoRiesgo(historico.getFechaSolicitudCalculoRiesgo());
-			dto.setInforme(historico.getInforme());
+			if (DDTipoTareaPbc.CODIGO_PBCARRAS.equals(tipoPbc)) {
+				dto.setAprobacionArras(!Checks.esNulo(historico.getAprobacion()) ? historico.getAprobacion() : false);
+				dto.setFechaSancionArras(historico.getFechaSancion());
+				dto.setInformeArras(historico.getInforme());
+			} else if (DDTipoTareaPbc.CODIGO_PBC.equals(tipoPbc)) {
+				dto.setAprobacionVenta(!Checks.esNulo(historico.getAprobacion()) ? historico.getAprobacion() : false);
+				dto.setFechaSancionVenta(historico.getFechaSancion());
+				dto.setInformeVenta(historico.getInforme());
+			} else if (DDTipoTareaPbc.CODIGO_PBCCN.equals(tipoPbc)) {
+				dto.setAprobacionCN(!Checks.esNulo(historico.getAprobacion()) ? historico.getAprobacion() : false);
+				dto.setFechaSancionCN(historico.getFechaSancion());
+			}
 		}
 		
 		return dto;

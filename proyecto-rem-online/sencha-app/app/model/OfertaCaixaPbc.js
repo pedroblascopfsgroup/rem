@@ -56,7 +56,40 @@ Ext.define('HreRem.model.OfertaCaixaPbc', {
     		},
     		{
     			name:'fondosBanco'
-    		}
+    		},
+	 		{
+				name: 'aprobacionCN',
+				type: 'boolean'
+			},
+		 	{
+				name: 'fechaSancionCN',
+    			type:'date',
+        		dateFormat: 'c'
+			},		
+		 	{	
+				name: 'aprobacionArras',
+				type: 'boolean'
+			},
+		 	{
+				name: 'fechaSancionArras',
+    			type:'date',
+        		dateFormat: 'c'
+			},
+			{
+				name: 'informeArras'
+			},
+			{
+				name: 'aprobacionVenta',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaSancionVenta',
+    			type:'date',
+        		dateFormat: 'c'
+			},
+		 	{
+				name: 'informeVenta'
+			}
     		
     ],
     

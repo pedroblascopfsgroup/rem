@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoOfertaCaixaPbc extends WebDto {
@@ -19,9 +21,17 @@ public class DtoOfertaCaixaPbc extends WebDto {
 	private Boolean pagoIntermediario;
 	private String paisTransferencia;
 	private Double fondosBanco;
-	private DtoHistoricosTareasPbc dtoPBCArras;
-	private DtoHistoricosTareasPbc dtoPBCVenta;
-	private DtoHistoricosTareasPbc dtoPBCCN;
+	
+	private Boolean aprobacionCN;
+	private Date fechaSancionCN;
+	
+	private Boolean aprobacionArras;
+	private Date fechaSancionArras;
+	private String informeArras;
+	
+	private Boolean aprobacionVenta;
+	private Date fechaSancionVenta;
+	private String informeVenta;
 
 	public String getRiesgoOperacion() {
 		return riesgoOperacion;
@@ -113,24 +123,53 @@ public class DtoOfertaCaixaPbc extends WebDto {
 	public void setFondosBanco(Double fondosBanco) {
 		this.fondosBanco = fondosBanco;
 	}
-	public DtoHistoricosTareasPbc getDtoPBCArras() {
-		return dtoPBCArras;
+	public Boolean getAprobacionCN() {
+		return aprobacionCN;
 	}
-	public void setDtoPBCArras(DtoHistoricosTareasPbc dtoPBCArras) {
-		this.dtoPBCArras = dtoPBCArras;
+	public void setAprobacionCN(Boolean aprobacionCN) {
+		this.aprobacionCN = aprobacionCN;
 	}
-	public DtoHistoricosTareasPbc getDtoPBCVenta() {
-		return dtoPBCVenta;
+	public Date getFechaSancionCN() {
+		return fechaSancionCN;
 	}
-	public void setDtoPBCVenta(DtoHistoricosTareasPbc dtoPBCVenta) {
-		this.dtoPBCVenta = dtoPBCVenta;
+	public void setFechaSancionCN(Date fechaSancionCN) {
+		this.fechaSancionCN = fechaSancionCN;
 	}
-	public DtoHistoricosTareasPbc getDtoPBCCN() {
-		return dtoPBCCN;
+	public Boolean getAprobacionArras() {
+		return aprobacionArras;
 	}
-	public void setDtoPBCCN(DtoHistoricosTareasPbc dtoPBCCN) {
-		this.dtoPBCCN = dtoPBCCN;
+	public void setAprobacionArras(Boolean aprobacionArras) {
+		this.aprobacionArras = aprobacionArras;
+	}
+	public Date getFechaSancionArras() {
+		return fechaSancionArras;
+	}
+	public void setFechaSancionArras(Date fechaSancionArras) {
+		this.fechaSancionArras = fechaSancionArras;
+	}
+	public String getInformeArras() {
+		return informeArras;
+	}
+	public void setInformeArras(String informeArras) {
+		this.informeArras = informeArras;
+	}
+	public Boolean getAprobacionVenta() {
+		return aprobacionVenta;
+	}
+	public void setAprobacionVenta(Boolean aprobacionVenta) {
+		this.aprobacionVenta = aprobacionVenta;
+	}
+	public Date getFechaSancionVenta() {
+		return fechaSancionVenta;
+	}
+	public void setFechaSancionVenta(Date fechaSancionVenta) {
+		this.fechaSancionVenta = fechaSancionVenta;
+	}
+	public String getInformeVenta() {
+		return informeVenta;
+	}
+	public void setInformeVenta(String informeVenta) {
+		this.informeVenta = informeVenta;
 	}
 	
-
 }

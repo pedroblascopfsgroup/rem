@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20211231
+--## FECHA_CREACION=20220113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -166,13 +166,14 @@ dcCalculado := '';
                 AND CAT_CATASTRO IS NOT NULL';
                 EXECUTE IMMEDIATE V_MSQL;
                 
+            IF ( var_cat_id2 IS NOT NULL) THEN
              V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
                 SET CAT_CORRECTO = 1,
-                CAT_CATASTRO = var_cat_id2
-                WHERE CAT_ID = var_cat_id 
-                AND CAT_CATASTRO IS NULL
-                AND var_cat_id IN (SELECT CAT.CAT_ID FROM '||V_ESQUEMA||'.CAT_CATASTRO CAT WHERE CAT.CAT_ID = '||var_cat_id||')';
+                CAT_CATASTRO = '||var_cat_id2||'
+                WHERE CAT_ID = '||var_cat_id||' 
+                AND CAT_CATASTRO IS NULL';
                 EXECUTE IMMEDIATE V_MSQL; 
+            END IF;
                 
                 
         

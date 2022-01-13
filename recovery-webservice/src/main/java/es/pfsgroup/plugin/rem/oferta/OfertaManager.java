@@ -649,7 +649,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						|| DDEstadosExpedienteComercial.isVendido(oferta.getExpedienteComercial().getEstado()))
 						&& !Checks.esNulo(ofertaDto.getCanalOrigenComisionamiento())) {
 				
-					errorsList.put("canalOrigenComisionamiento", "OK");
+					errorsList.put("origenComisionamiento", "OK");
 					
 				// Mirar si hace falta validar que no se pueda modificar la
 				// oferta si ha pasado al comité
@@ -837,14 +837,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
-			}
-		}
-		
-		if (!Checks.esNulo(ofertaDto.getCanalOrigenComisionamiento())) {
-			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
-					"codigo", ofertaDto.getCanalOrigenComisionamiento()));
-			if (Checks.esNulo(origenComprador)) {
-				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		
@@ -2161,8 +2153,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 			}
 
-		} else if(!Checks.esNulo(errorsList.get("canalOrigenComisionamiento"))) {
-			errorsList.remove("canalOrigenComisionamiento");
+		} else if(!Checks.esNulo(errorsList.get("origenComisionamiento"))) {
+			errorsList.remove("origenComisionamiento");
 			if (errorsList.isEmpty()) {
 				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
 						"codigo", ofertaDto.getCanalOrigenComisionamiento()));

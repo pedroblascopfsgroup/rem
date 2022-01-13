@@ -39,7 +39,10 @@ CREATE OR REPLACE PROCEDURE SP_CODIGOS_GASTOS (
 BEGIN
   DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-  --Rellenar la GLD_ENT de los gastos activos
+  --Cuando se ejecuta desde el ETL apr_gen_ru_salidas_facturas
+  IF pETL = 1 THEN
+
+--Rellenar la GLD_ENT de los gastos activos
   V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.GLD_ENT T1
               USING (
                   WITH PRINCIPAL AS (
@@ -160,9 +163,6 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] (' || sql%rowcount || ') FILAS MODIFICADAS EN GLD_ENT');
         PL_OUTPUT := PL_OUTPUT ||'[INFO]: FILAS MODIFICADAS EN GLD_ENT (' || sql%rowcount || ') '|| CHR(10);
-
-  --Cuando se ejecuta desde el ETL apr_gen_ru_salidas_facturas
-  IF pETL = 1 THEN
 
         V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV T1
               USING (

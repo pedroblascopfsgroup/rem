@@ -156,107 +156,72 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
         	},
         	{    
                 xtype: 'fieldsettable',
-				defaultType: 'displayfield',
+				defaultType: 'textfieldbase',
 				colspan: 3,
 				title: HreRem.i18n('title.hitos.arras'),
 				items: [
 					{
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
-						fieldLabel: HreRem.i18n('title.fecha.solicitud.calculo.riesgo'),
+	                	fieldLabel: HreRem.i18n('title.fecha.solicitud.calculo.riesgo'),
 						colspan: 1,
 						reference: 'fechaSolicitudCalculoRiesgoRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCArras.fechaSolicitudEstadoRiesgo}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.comunicacion.riesgo'),
 						colspan: 2,
 						reference: 'fechaComunicacionRiesgoRef',
-	                	bind:		{
-	                		//value: '{}'
-	                		
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCArras.fechaComunicacionRiesgo}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.encio.documentacion.bc'),
 						colspan: 1,
 						reference: 'fechaEnvioDocumentacionBCRef',
-	                	bind:		{
-	                		//value: '{}'
-	                		
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCArras.fechaEnvioDocumentacionBc}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion.bc'),
 						colspan: 2,
 						reference: 'fechaSancionBCRef',
-	                	bind:		{
-	                		//value: '{}'
-	                		
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCArras.fechaSancion}'
 	                }
 				]	
         	},
         	,
         	{    
                 xtype: 'fieldsettable',
-				defaultType: 'displayfield',
+				defaultType: 'textfieldbase',
 				colspan: 3,
 				title: HreRem.i18n('title.hitos.venta'),
 				items: [
 					{
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
-						fieldLabel: HreRem.i18n('title.fecha.solicitud.calculo.riesgo'),
+	                	fieldLabel: HreRem.i18n('title.fecha.solicitud.calculo.riesgo'),
 						colspan: 1,
 						reference: 'fechaSolicitudCalculoRiesgoRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCVenta.fechaSolicitudEstadoRiesgo}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
-						fieldLabel: HreRem.i18n('title.fecha.comunicacion.riesgo'),
+	                	fieldLabel: HreRem.i18n('title.fecha.comunicacion.riesgo'),
 						colspan: 2,
 						reference: 'fechaComunicacionRiesgoRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCVenta.fechaComunicacionRiesgo}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.encio.documentacion.bc'),
 						colspan: 1,
 						reference: 'fechaEnvioDocumentacionBCRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCVenta.fechaEnvioDocumentacionBc}'
 	                },
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion.bc'),
 						colspan: 2,
 						reference: 'fechaSancionBCRef',
-	                	bind:		{
-	                		//value: '{}'
-	                	}
+	                	bind:'{ofertacaixapbc.dtoPBCVenta.fechaSancion}'
 	                }
 				]	
         	},
         	{    
                 xtype: 'fieldsettable',
-				defaultType: 'displayfield',
+				defaultType: 'textfieldbase',
 				colspan: 3,
 				title: HreRem.i18n('title.pbc.cumplimiento.normativo'),
 				items: [
@@ -267,22 +232,20 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.cn'),
 			        	bind: {
 			            		store: '{comboSiNoBoolean}',
-			            		value: '{ofertacaixapbc.aprobacionCN}'
+			            		value: '{ofertacaixapbc.dtoPBCCN.aprobacion}'
 			            }
 					},
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
 						reference: 'fechaSancionCNRef',
-	                	bind:'{ofertacaixapbc.fechaSancionCN}'
+	                	bind:'{ofertacaixapbc.dtoPBCCN.fechaSancion}'
 	                }
 				]	
         	},
         	{    
                 xtype: 'fieldsettable',
-				defaultType: 'displayfield',
+				defaultType: 'textfieldbase',
 				colspan: 3,
 				title: HreRem.i18n('title.pbc.arras'),
 				items: [
@@ -293,28 +256,25 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.arras'),
 			        	bind: {
 			            		store: '{comboSiNoBoolean}',
-			            		value: '{ofertacaixapbc.aprobacionArras}'
+			            		value: '{ofertacaixapbc.dtoPBCArras.aprobacion}'
 			            }
 					},
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
 						reference: 'fechaSancionArrasRef',
-	                	bind:'{ofertacaixapbc.fechaSancionArras}'
+	                	bind:'{ofertacaixapbc.dtoPBCArras.fechaSancion}'
 	                },
 	                {
-			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-						bind:'{ofertacaixapbc.informeArras}'
+						bind:'{ofertacaixapbc.dtoPBCArras.informe}'
 					}
 				]	
            },
            {    
                 xtype: 'fieldsettable',
-				defaultType: 'displayfield',
+				defaultType: 'textfieldbase',
 				colspan: 3,
 				title: HreRem.i18n('title.pbc.venta'),
 				items: [
@@ -325,22 +285,19 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 	                	fieldLabel:  HreRem.i18n('title.aprobacion.pbc.venta'),
 			        	bind: {
 			            		store: '{comboSiNoBoolean}',
-			            		value: '{ofertacaixapbc.aprobacionVenta}'
+			            		value: '{ofertacaixapbc.dtoPBCVenta.aprobacion}'
 			            }
 					},
 	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('title.fecha.sancion'),
 						colspan: 2,
 						reference: 'fechaSancionVentaRef',
-	                	bind:'{ofertacaixapbc.fechaSancionVenta}'
+	                	bind: '{ofertacaixapbc.dtoPBCVenta.fechaSancion}'
 	                },
 	                {
-			        	xtype: 		'textfieldbase',
 						fieldLabel: HreRem.i18n('title.informe'),
 						colspan: 3,
-						bind:'{ofertacaixapbc.informeVenta}'
+						bind:'{ofertacaixapbc.dtoPBCVenta.informe}'
 					}
 				]	
            },

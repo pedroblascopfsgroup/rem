@@ -130,7 +130,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.HTP_HISTORICO_TAREAS_PBC... OK');
 
-			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'HistoricoTareasAS_PBC.HTP_ID IS ''Identificador único ''';
+			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'HTP_HISTORICO_TAREAS_PBC.HTP_ID IS ''Identificador único ''';
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna HTP_ID creado.');
 			

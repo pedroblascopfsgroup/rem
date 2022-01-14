@@ -186,7 +186,6 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
 	                }
 				]	
         	},
-        	,
         	{    
                 xtype: 'fieldsettable',
 				defaultType: 'textfieldbase',

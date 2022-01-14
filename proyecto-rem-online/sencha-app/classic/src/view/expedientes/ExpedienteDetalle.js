@@ -130,7 +130,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        }
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosexpediente', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_COMERCIALIZABLES_EXPEDIENTES']);
 
-	        if (esBankia) {
+	        if (esBankia && !$AU.userIsRol(CONST.PERFILES['USUARIO_BC'])) {
 	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'pbcexpediente', ocultarBotonesEdicion: true})}, ['TAB_PBC_EXPEDIENTES']);
 	        }
 	        

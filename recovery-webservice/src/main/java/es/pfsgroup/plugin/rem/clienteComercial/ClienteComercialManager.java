@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -34,7 +33,6 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
@@ -461,7 +459,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
+	public boolean updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
 
 		boolean isRelevanteBC = interlocutorCaixaService.esClienteInvolucradoBC(cliente);
 		Boolean documentoModificado = false;
@@ -755,10 +753,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		String idPersonaHayaCaixa = documentoModificado && cliente.getIdPersonaHayaCaixa() != null ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumento(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixa();
-		String idPersonaHaya = documentoModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumento()) : cliente.getIdPersonaHaya();
+		String idPersonaHayaCaixa = documentoModificado && cliente.getIdPersonaHayaCaixa() != null ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumento(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : null;
+		String idPersonaHaya = documentoModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumento()) : null;
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),idPersonaHayaCaixa,idPersonaHaya);
+		if (idPersonaHayaCaixa != null)
+			cliente.setIdPersonaHayaCaixa(idPersonaHayaCaixa);
+		if (idPersonaHaya != null)
+			cliente.setIdPersonaHaya(idPersonaHaya);
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -775,11 +778,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
 
-			String idPersonaHayaCaixaRte = documentoRteModificado ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumentoRepresentante(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixaRepresentante();
+			String idPersonaHayaCaixaRte = documentoRteModificado ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumentoRepresentante(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : null;
 			String idPersonaHayaRte = documentoRteModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumentoRepresentante()) : cliente.getIdPersonaHaya();
 
+			if (idPersonaHayaCaixaRte != null)
+				cliente.setIdPersonaHayaCaixaRepresentante(idPersonaHayaCaixaRte);
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),idPersonaHayaCaixaRte, idPersonaHayaRte);
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 		}
 
@@ -879,9 +884,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if (isRelevanteBC){
 			newData.clienteToDto(cliente);
-			interlocutorCaixaService.callReplicateClientAsync(oldData,newData,cliente);
+			return interlocutorCaixaService.hasChangestoBC(oldData,newData,cliente.getIdPersonaHayaCaixa());
 		}
-
+		return false;
 	}
 
 	@Override
@@ -953,6 +958,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception  {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaClienteDto.size(); i++) {
+			boolean replicarCliente = false;
 			HashMap<String, String> errorsList = null;
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
@@ -966,7 +972,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			} else {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.UPDATE);
 				if (errorsList.size() == 0) {
-					this.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
+					replicarCliente = this.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
 				}
 
 			}
@@ -975,6 +981,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
+				if (replicarCliente){
+					map.put("replicateToBC",Boolean.TRUE);
+					map.put("idClienteForBC",cliente.getId());
+				}
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
@@ -987,6 +997,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		}
 		return listaRespuesta;
+	}
+
+	@Override
+	public void replicarClienteToBC(Long id, String idSource) {
+		interlocutorCaixaService.callReplicateClientAsync(id,idSource);
 	}
 
 	@Override

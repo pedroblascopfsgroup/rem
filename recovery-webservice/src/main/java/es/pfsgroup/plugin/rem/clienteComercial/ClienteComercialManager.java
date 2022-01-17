@@ -753,10 +753,15 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		String idPersonaHayaCaixa = documentoModificado && cliente.getIdPersonaHayaCaixa() != null ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumento(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixa();
-		String idPersonaHaya = documentoModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumento()) : cliente.getIdPersonaHaya();
+		String idPersonaHayaCaixa = documentoModificado && cliente.getIdPersonaHayaCaixa() != null ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumento(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : null;
+		String idPersonaHaya = documentoModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumento()) : null;
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),idPersonaHayaCaixa,idPersonaHaya);
+		if (idPersonaHayaCaixa != null)
+			cliente.setIdPersonaHayaCaixa(idPersonaHayaCaixa);
+		if (idPersonaHaya != null)
+			cliente.setIdPersonaHaya(idPersonaHaya);
+
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -773,11 +778,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
 
-			String idPersonaHayaCaixaRte = documentoRteModificado ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumentoRepresentante(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : cliente.getIdPersonaHayaCaixaRepresentante();
+			String idPersonaHayaCaixaRte = documentoRteModificado ? interlocutorCaixaService.getIdPersonaHayaCaixa(null, null, clienteDto.getDocumentoRepresentante(), (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CAIXA)) : null;
 			String idPersonaHayaRte = documentoRteModificado ? interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumentoRepresentante()) : cliente.getIdPersonaHaya();
 
+			if (idPersonaHayaCaixaRte != null)
+				cliente.setIdPersonaHayaCaixaRepresentante(idPersonaHayaCaixaRte);
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),idPersonaHayaCaixaRte, idPersonaHayaRte);
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 		}
 

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220114
+--## FECHA_CREACION=20220117
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16900
@@ -15,6 +15,7 @@
 --##        0.3 Añadir PEPs de IAEs - [HREOS-16896]- Alejandra García
 --##        0.4 Modificación del array porque el PEP XXXX-22-2-A-INC debe de tener un contrato vigente de alquiler y el -ROT (rotacional) no - [HREOS-16900]- Alejandra García
 --##        0.4 Quitar el PEP XXXX-22-2-A-ROT  - [HREOS-16900]- Alejandra García
+--##        0.5 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
 --#########################################
 --*/
 
@@ -103,18 +104,18 @@ DECLARE
 		T_TABLA('240','XXXX-22-3-I-MNT INC','22','02','22','15','143','01','','','null'),
 		T_TABLA('241','XXXX-22-3-A-I-ADC OT','22','02','19','15','143','03','02','','null'),
 		T_TABLA('242','XXXX-22-3-A-I-MNTINC','22','02','24','15','143','03','01','','null'),
-		T_TABLA('243','XXXX-22-3-REQ DERR','22','00','24','15','118','','','','null'),
-		T_TABLA('244','XXXX-22-3-REQ LIMP','22','00','25','15','119','','','','null'),
-		T_TABLA('245','XXXX-22-3-REQ OTROS','22','00','26','15','120','','','','null'),
-		T_TABLA('246','XXXX-22-2-TAR.PL','22','00','28','13','121','01','','','null'),
-		T_TABLA('247','XXXX-22-2-A-TAR.PL','22','00','32','13','121','03','','','null'),
-		T_TABLA('248','XXXX-22-2-COM.BROK','22','00','36','10','122','01','','','null'),
-		T_TABLA('249','XXXX-22-2-A-COM.BROK','22','00','37','10','122','03','','','null'),
-		T_TABLA('250','XXXX-22-3-I-PUE','22','02','26','15','123','01','','','1'),
-		T_TABLA('251','XXXX-22-3-A-I-PUE','22','02','28','15','123','03','','','1'),
-		T_TABLA('252','XXXX-22-3-I-ALA','22','02','27','16','124','01','','','1'),
-		T_TABLA('253','XXXX-22-3-A-I-ALA','22','02','29','16','124','03','','','1'),
-		T_TABLA('254','XXXX-22-2-A-INF ROT','22','00','54','14','125','03','','','null'),
+		T_TABLA('243','XXXX-22-3-REQ DERR','22','00','24','15','161','','','','null'),
+		T_TABLA('244','XXXX-22-3-REQ LIMP','22','00','25','15','162','','','','null'),
+		T_TABLA('245','XXXX-22-3-REQ OTROS','22','00','26','15','163','','','','null'),
+		T_TABLA('246','XXXX-22-2-TAR.PL','22','00','28','13','164','01','','','null'),
+		T_TABLA('247','XXXX-22-2-A-TAR.PL','22','00','32','13','164','03','','','null'),
+		T_TABLA('248','XXXX-22-2-COM.BROK','22','00','36','10','165','01','','','null'),
+		T_TABLA('249','XXXX-22-2-A-COM.BROK','22','00','37','10','165','03','','','null'),
+		T_TABLA('250','XXXX-22-3-I-PUE','22','02','26','15','82','01','','','1'),
+		T_TABLA('251','XXXX-22-3-A-I-PUE','22','02','28','15','82','03','','','1'),
+		T_TABLA('252','XXXX-22-3-I-ALA','22','02','27','16','166','01','','','1'),
+		T_TABLA('253','XXXX-22-3-A-I-ALA','22','02','29','16','166','03','','','1'),
+		T_TABLA('254','XXXX-22-2-A-INF ROT','22','00','54','14','167','03','','','null'),
 		T_TABLA('255','XXXX-22-2-A-INF LOC','22','00','55','14','126','03','','','null'),
 		T_TABLA('256','XXXX-22-2-A-INF OCU','22','00','56','14','127','03','','','null'),
 		T_TABLA('257','XXXX-22-2-INF-REOCU','22','00','58','14','128','','','','null'),

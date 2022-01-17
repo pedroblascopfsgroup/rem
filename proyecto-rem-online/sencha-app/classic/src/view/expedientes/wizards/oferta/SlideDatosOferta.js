@@ -32,6 +32,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		var me = this;
 		var datosCartera = ('[reference="activosdetalle"]');
 		var isBk = false;
+		var isBkOrTitlizada = false;
 		var activosDetalle = me.up('[reference="activosdetalle"]');
 		
 		if(Ext.isEmpty(activosDetalle)){
@@ -41,6 +42,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		}
 		me.isBankia = isBk;
 
+        if(Ext.isEmpty(activosDetalle)){
+			isBkOrTitlizada = isBk || this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionTitulizada");
+		}else{
+			isBkOrTitlizada = isBk || me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraTitulizada');
+		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',
@@ -680,8 +686,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 								name: 'paisNacimientoCompradorCodigo',
 								reference: 'paisNacimientoCompradorCodigoRef',
-								allowBlank: !isBk,
-								hidden: !isBk,
+								allowBlank: !isBkOrTitlizada,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboPaises}',
 									value: '{oferta.paisNacimientoCompradorCodigo}'
@@ -694,10 +700,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
 								reference: 'provinciaNacimientoCompradorComboRef',
 								name: 'provinciaNacimiento',
-								allowBlank: !isBk,
+								allowBlank: !isBkOrTitlizada,
 								chainedStore: 'comboMunicipioNacimientoOfr',
 								chainedReference: 'localidadNacimientoCompradorCodigoRef',
-								hidden: !isBk,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboProvincia}',
 									value: '{oferta.provinciaNacimiento}'
@@ -713,8 +719,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 								reference: 'localidadNacimientoCompradorCodigoRef',
 								name: 'localidadNacimientoCompradorCodigo',
-								allowBlank: !isBk,
-								hidden: !isBk,
+								allowBlank: !isBkOrTitlizada,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboMunicipioNacimientoOfr}',
 									disabled: '{!oferta.provinciaNacimiento}',

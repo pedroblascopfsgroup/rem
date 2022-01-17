@@ -58,8 +58,9 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
     
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaFirmaPropietario.class);
-    
-   	private static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
+
+	private static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
+	private static final String CODIGO_T017_FIRMA_PROPIETARIO = "T017_FirmaPropietario";
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
@@ -188,7 +189,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_FIRMA_PROPIETARIO};
+		return new String[]{CODIGO_T013_FIRMA_PROPIETARIO, CODIGO_T017_FIRMA_PROPIETARIO};
 	}
 
 	public String[] getKeys() {

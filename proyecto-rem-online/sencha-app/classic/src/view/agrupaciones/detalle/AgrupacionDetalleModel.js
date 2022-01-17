@@ -802,7 +802,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		    		return true;
 	    	}
 	    	return false;
-	     }
+	     },
+	     esAgrupacionTitulizada: function(get) {
+            var me = this;
+            var tipoCartera = get('agrupacionficha.codigoCartera');
+            var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+
+            if(tipoCartera == CONST.CARTERA['TITULIZADA']
+                && (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']
+                || tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER']
+                || tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
+                    return true;
+            }
+            return false;
+         }
     },
 				
     stores: {

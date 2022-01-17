@@ -4065,6 +4065,31 @@
 		
 		me.down('[name=ncontratoPrinex]').validate();
     },
+    T017_FirmaPropietarioValidacion: function() {
+        var me = this;
+
+        me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+        me.deshabilitarCampo(me.down('[name=notario]'));
+        me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+        me.deshabilitarCampo(me.down('[name=precioEscrituracion]'));
+        me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+
+        me.down('[name=comboFirma]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.habilitarCampo(me.down('[name=fechaFirma]'));
+                me.habilitarCampo(me.down('[name=notario]'));
+                me.habilitarCampo(me.down('[name=numProtocolo]'));
+                me.habilitarCampo(me.down('[name=precioEscrituracion]'));
+                me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
+            } else {
+                me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+                me.deshabilitarCampo(me.down('[name=notario]'));
+                me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+                me.deshabilitarCampo(me.down('[name=precioEscrituracion]'));
+                me.habilitarCampo(me.down('[name=motivoAnulacion]'));
+            }
+        })
+    },
 	
     habilitarCampo: function(campo) {
         var me = this;

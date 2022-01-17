@@ -523,6 +523,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		JUDICIAL: '01',
 		NO_JUDICIAL: '02',
 		PDV: '03',
+		COLATERAL: '04',
 		UNIDAD_ALQUILABLE: '05'
 	},
 

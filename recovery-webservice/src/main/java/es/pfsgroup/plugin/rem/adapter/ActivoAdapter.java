@@ -4539,7 +4539,8 @@ public class ActivoAdapter {
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))){
 				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
 						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 				

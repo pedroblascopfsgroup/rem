@@ -80,7 +80,7 @@ public interface ClienteComercialApi {
 	 *            a null
 	 * @return void
 	 */
-	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields)  throws Exception;
+	public boolean updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields)  throws Exception;
 
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de
@@ -119,5 +119,7 @@ public interface ClienteComercialApi {
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception;
 
 	public ClienteComercial getClienteComercialByDocumento(String documento);
+	
+	public void replicarClienteToBC(Long id, String idSource);
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,15 @@ public class ClientesController {
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
 
+				if (listaRespuesta != null && !listaRespuesta.isEmpty())
+				for (Map<String, Object> map: listaRespuesta) {
+					if (map.containsKey("replicateToBC") && Boolean.TRUE.equals(map.get("replicateToBC")))
+						try {
+							clienteComercialApi.replicarClienteToBC((Long)map.get("idClienteForBC"), CaixaBcRestClient.ID_CLIENTE);
+						}catch (Exception e){
+							logger.error("Error replicando cliente a BC", e);
+						}
+				}
 			}
 
 		} catch (Exception e) {

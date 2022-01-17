@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220117
+--## FECHA_CREACION=20220118
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-11055
@@ -192,7 +192,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                     JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
                                     LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
                                     JOIN '||V_ESQUEMA||'.DD_EEB_ESTADO_EXPEDIENTE_BC EEB ON EEB.DD_EEB_ID = ECO.DD_EEB_ID
-                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'')
+                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'')
                                     AND EXISTS '||vQUERY||'
                          UNION
                           SELECT ACT.ACT_ID

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211228
+--## FECHA_CREACION=20220119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16822
+--## INCIDENCIA_LINK=MIREC-6304
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario DD_BCO_BAJA_CONTABLE_BBVA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-16822] - Alejandra García
+--## 		0.2 Corrección error, insertar datos después de crear la tabla- [MIREC-6304] - Alejandra García
 --##########################################
 --*/
 
@@ -36,6 +37,17 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_BCO_BAJA_CONTABLE_BBVA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_ITEM VARCHAR2(25 CHAR):= 'MIREC-6304';
+
+	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+                  --DD_BCO_CODIGO        	--DD_BCO_DESCRIPCION y DD_BCO_DESCRIPCION_LARGA
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        T_TIPO_DATA('01','Revisada'),
+        T_TIPO_DATA('02','No revisada'),
+        T_TIPO_DATA('03','No')
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
 
 BEGIN
 
@@ -153,6 +165,65 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
 	
 	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');	 
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA||' ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_BCO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe lo modificamos
+        IF V_NUM_TABLAS > 0 THEN				
+          
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+                    'SET   DD_BCO_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+                        ', DD_BCO_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+                        ', USUARIOMODIFICAR = '''||TRIM(V_ITEM)||''' 
+                         , FECHAMODIFICAR = SYSDATE '||
+                    'WHERE DD_BCO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+          
+       --Si no existe, lo insertamos   
+       ELSE
+       
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' 
+                      (' ||'
+                            DD_BCO_ID
+                          , DD_BCO_CODIGO
+                          , DD_BCO_DESCRIPCION
+                          , DD_BCO_DESCRIPCION_LARGA
+                          , VERSION
+                          , USUARIOCREAR
+                          , FECHACREAR
+                          , BORRADO) ' ||
+                      'SELECT 
+                           '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                          ,'''||TRIM(V_TMP_TIPO_DATA(1))||'''
+                          ,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                          ,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                          , 0
+                          , '''||TRIM(V_ITEM)||'''
+                          ,SYSDATE
+                          ,0
+                      FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        
+       END IF;
+      END LOOP;
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO '||V_TEXT_TABLA||' MODIFICADO CORRECTAMENTE ');
 
 
 EXCEPTION

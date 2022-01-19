@@ -24,7 +24,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
 @Entity
@@ -61,10 +60,6 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CBC_ID")
 	private DDCarteraBc carteraBc;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EAL_ID")
-	private DDTipoEstadoAlquiler tipoEstadoAlquiler;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTR_ID")
@@ -157,14 +152,6 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public DDTipoEstadoAlquiler getTipoEstadoAlquiler() {
-		return tipoEstadoAlquiler;
-	}
-
-	public void setTipoEstadoAlquiler(DDTipoEstadoAlquiler tipoEstadoAlquiler) {
-		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
 	}
 
 	public DDTipoTransmision getTipoTransmision() {

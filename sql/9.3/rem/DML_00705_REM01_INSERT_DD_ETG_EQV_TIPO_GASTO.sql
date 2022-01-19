@@ -16,6 +16,7 @@
 --##        0.4 Modificación del array porque el PEP XXXX-22-2-A-INC debe de tener un contrato vigente de alquiler y el -ROT (rotacional) no - [HREOS-16900]- Alejandra García
 --##        0.4 Quitar el PEP XXXX-22-2-A-ROT  - [HREOS-16900]- Alejandra García
 --##        0.5 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
+--##        0.6 Añadir dos líneas nuevas de Alarmas y Colocación puerta antiocupa, y modificación códigos Alarmas y Duplicado Cédula Habitabilidad - [HREOS-16953] - Alejandra García
 --#########################################
 --*/
 
@@ -73,8 +74,10 @@ DECLARE
 		T_TABLA('210','XXXX-22-2-A-AGUA','22','00','44','09','36','03','','','null'),
 		T_TABLA('211','XXXX-22-2-OTROS','22','00','45','09','38','01','','','null'),
 		T_TABLA('212','XXXX-22-2-A-OTROS','22','00','46','09','38','03','','','null'),
-		T_TABLA('213','XXXX-22-1-PUE','22','00','48','15','82','','','','0'),
-		T_TABLA('214','XXXX-22-1-ALA','22','00','49','16','86','','','','0'),
+		T_TABLA('213','XXXX-22-1-PUE','22','00','48','15','82','01','','','0'),
+		T_TABLA('315','XXXX-22-1-PUE','22','00','48','15','82','03','','','0'),
+		T_TABLA('214','XXXX-22-1-ALA','22','00','49','16','86','01','','','0'),
+		T_TABLA('316','XXXX-22-1-ALA','22','00','49','16','86','03','','','0'),
 		T_TABLA('215','XXXX-22-1-VIGILANCIA','22','00','50','16','85','','','','null'),
 		T_TABLA('216','XXXX-22-2-INF MNTO','22','00','52','14','68','01','','','null'),
 		T_TABLA('217','XXXX-22-3-ASESORIA','22','00','69','11','49','01','','','null'),
@@ -113,9 +116,9 @@ DECLARE
 		T_TABLA('249','XXXX-22-2-A-COM.BROK','22','00','37','10','165','03','','','null'),
 		T_TABLA('250','XXXX-22-3-I-PUE','22','02','26','15','82','01','','','1'),
 		T_TABLA('251','XXXX-22-3-A-I-PUE','22','02','28','15','82','03','','','1'),
-		T_TABLA('252','XXXX-22-3-I-ALA','22','02','27','16','166','01','','','1'),
-		T_TABLA('253','XXXX-22-3-A-I-ALA','22','02','29','16','166','03','','','1'),
-		T_TABLA('254','XXXX-22-2-A-INF ROT','22','00','54','14','167','03','','','null'),
+		T_TABLA('252','XXXX-22-3-I-ALA','22','02','27','16','86','01','','','1'),
+		T_TABLA('253','XXXX-22-3-A-I-ALA','22','02','29','16','86','03','','','1'),
+		T_TABLA('254','XXXX-22-2-A-INF ROT','22','00','54','14','166','03','','','null'),
 		T_TABLA('255','XXXX-22-2-A-INF LOC','22','00','55','14','126','03','','','null'),
 		T_TABLA('256','XXXX-22-2-A-INF OCU','22','00','56','14','127','03','','','null'),
 		T_TABLA('257','XXXX-22-2-INF-REOCU','22','00','58','14','128','','','','null'),
@@ -237,8 +240,8 @@ BEGIN
 				, ELEMENTO_PEP
 		  ) VALUES (
 			  	'||V_ESQUEMA||'.S_DD_ETG_EQV_TIPO_GASTO_RU.NEXTVAL
-				  , (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(6)||''')
-				  , (SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TABLA(7)||''')
+				  , (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(6)||''' AND BORRADO = 0 )
+				  , (SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TABLA(7)||''' AND BORRADO = 0 )
 				  , '''||V_TMP_TABLA(1)||'''
 				  , '''||V_TMP_TABLA(2)||'''
 				  , '''||V_TMP_TABLA(2)||'''
@@ -252,11 +255,11 @@ BEGIN
 				  ,  '''||V_USUARIO||'''
 				  , SYSDATE
 				  , 0
-				  , (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''') 
-				  , (SELECT DD_EAL_ID FROM '||V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO = '''||V_TMP_TABLA(9)||''')
-				  , (SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRANSMISION WHERE DD_TTR_CODIGO = '''||V_TMP_TABLA(10)||''') 
+				  , (SELECT DD_CBC_ID FROM '||V_ESQUEMA||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = '''||V_TMP_TABLA(8)||''' AND BORRADO = 0 ) 
+				  , (SELECT DD_EAL_ID FROM '||V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO = '''||V_TMP_TABLA(9)||''' AND BORRADO = 0 )
+				  , (SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRANSMISION WHERE DD_TTR_CODIGO = '''||V_TMP_TABLA(10)||''' AND BORRADO = 0 ) 
 				  , '||V_TMP_TABLA(11)||'
-				  , (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
+				  , (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'' AND EJE2.BORRADO = 0 )
 				  , '''||V_TMP_TABLA(2)||'''
 		)';
 		EXECUTE IMMEDIATE V_SQL;	

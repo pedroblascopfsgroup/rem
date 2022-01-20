@@ -467,7 +467,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
             }
         } else {
         	if(!Ext.isEmpty(form.findField('nombrePrescriptor')) && Ext.isEmpty(form.findField('nombrePrescriptor').value)){
-        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.prescriptor"));
+        		if(form.findField('tipoOferta').value == CONST.TIPOS_OFERTA['VENTA'] || form.findField('tipoOferta').value == CONST.TIPOS_OFERTA['ALQUILER']){
+        			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.prescriptor"));
+        		}
         	}else{
         		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador"));
         	}

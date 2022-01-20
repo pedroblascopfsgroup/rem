@@ -595,6 +595,7 @@ public class CatastroManager implements CatastroApi {
 					activoCatastro.setActivo(activo);
 					if(catastro != null) {
 						activoCatastro.setCatastro(catastro);
+						activoCatastro.setRefCatastral(dto.getRefCatastral());
 					}else {
 						activoCatastro.setRefCatastral(dto.getRefCatastral());
 					}
@@ -647,6 +648,7 @@ public class CatastroManager implements CatastroApi {
 		if(ac != null && acn == null) {
 			if(catastro != null) {
 				ac.setCatastro(catastro);
+				ac.setRefCatastral(dto.getRefCatastral());
 			}else {
 				ac.setRefCatastral(dto.getRefCatastral());
 				ac.setCatastro(null);

@@ -82,6 +82,10 @@ public class VisitaDto implements Serializable {
 	@Diccionary(clase = DDOrigenComprador.class, message = "El codOrigenComprador no existe", groups = {
 			Insert.class, Update.class })
 	private String codOrigenComprador;
+	private String codOportunidad;
+	private String codEstadoOportunidad;
+	private String codSubestadoOportunidad;
+	private Date fechaAltaOportunidad;
 	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
@@ -223,6 +227,30 @@ public class VisitaDto implements Serializable {
 	}
 	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
 		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
+	}
+	public String getCodOportunidad() {
+		return codOportunidad;
+	}
+	public void setCodOportunidad(String codOportunidad) {
+		this.codOportunidad = codOportunidad;
+	}
+	public String getCodEstadoOportunidad() {
+		return codEstadoOportunidad;
+	}
+	public void setCodEstadoOportunidad(String codEstadoOportunidad) {
+		this.codEstadoOportunidad = codEstadoOportunidad;
+	}
+	public String getCodSubestadoOportunidad() {
+		return codSubestadoOportunidad;
+	}
+	public void setCodSubestadoOportunidad(String codSubestadoOportunidad) {
+		this.codSubestadoOportunidad = codSubestadoOportunidad;
+	}
+	public Date getFechaAltaOportunidad() {
+		return fechaAltaOportunidad;
+	}
+	public void setFechaAltaOportunidad(Date fechaAltaOportunidad) {
+		this.fechaAltaOportunidad = fechaAltaOportunidad;
 	}
 	
 }

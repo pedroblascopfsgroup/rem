@@ -362,6 +362,21 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
 			}
 			
+			if(!Checks.esNulo(visitaDto.getCodOportunidad()) ) {
+				visita.setCodOportunidad(visitaDto.getCodOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodEstadoOportunidad())) {
+				visita.setCodEstadoOportunidad(visitaDto.getCodEstadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodSubestadoOportunidad())) {
+				visita.setCodSubestadoOportunidad(visitaDto.getCodSubestadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getFechaAltaOportunidad())) {
+				visita.setFechaAltaOportunidad(visitaDto.getFechaAltaOportunidad());
+
+			}
+
+
 		}
 
 		return errorsList;
@@ -535,6 +550,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
 			}
 			
+			if(!Checks.esNulo(visitaDto.getCodOportunidad()) ) {
+				visita.setCodOportunidad(visitaDto.getCodOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodEstadoOportunidad())) {
+				visita.setCodEstadoOportunidad(visitaDto.getCodEstadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodSubestadoOportunidad())) {
+				visita.setCodSubestadoOportunidad(visitaDto.getCodSubestadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getFechaAltaOportunidad())) {
+				visita.setFechaAltaOportunidad(visitaDto.getFechaAltaOportunidad());
+
+			}
 		}
 
 		return errorsList;

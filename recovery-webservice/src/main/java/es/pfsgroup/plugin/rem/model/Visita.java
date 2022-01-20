@@ -145,7 +145,19 @@ public class Visita implements Serializable, Auditable {
     
     @Column(name = "VIS_NUMERO_CONTACTO")
     private Long numeroContacto;
-    
+
+    @Column(name = "VIS_CODIGO_OPORTUNIDAD")
+    private String codOportunidad;
+
+    @Column(name = "VIS_ESTADO_OPORTUNIDAD")
+	private String codEstadoOportunidad;
+
+    @Column(name = "VIS_CIERRE_OPORTUNIDAD")
+	private String codSubestadoOportunidad;
+
+    @Column(name = "VIS_ALTA_OPORTUNIDAD")
+	private Date fechaAltaOportunidad;
+
 	@Version   
 	private Long version;
 
@@ -383,6 +395,38 @@ public class Visita implements Serializable, Auditable {
 
 	public void setNumeroContacto(Long numeroContacto) {
 		this.numeroContacto = numeroContacto;
+	}
+
+	public String getCodOportunidad() {
+		return codOportunidad;
+	}
+
+	public void setCodOportunidad(String codOportunidad) {
+		this.codOportunidad = codOportunidad;
+	}
+
+	public String getCodEstadoOportunidad() {
+		return codEstadoOportunidad;
+	}
+
+	public void setCodEstadoOportunidad(String codEstadoOportunidad) {
+		this.codEstadoOportunidad = codEstadoOportunidad;
+	}
+
+	public String getCodSubestadoOportunidad() {
+		return codSubestadoOportunidad;
+	}
+
+	public void setCodSubestadoOportunidad(String codSubestadoOportunidad) {
+		this.codSubestadoOportunidad = codSubestadoOportunidad;
+	}
+
+	public Date getFechaAltaOportunidad() {
+		return fechaAltaOportunidad;
+	}
+
+	public void setFechaAltaOportunidad(Date fechaAltaOportunidad) {
+		this.fechaAltaOportunidad = fechaAltaOportunidad;
 	}
    
 }

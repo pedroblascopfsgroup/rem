@@ -77,6 +77,7 @@ public class DDEstadoExpedienteBc implements Auditable, Dictionary {
 	public static final String PTE_AGENDAR = "045";
 	public static final String PTE_REVISAR_CONDICIONES_BC = "046";
 	public static final String PTE_SANCION_BC = "047";
+	public static final String PTE_CALCULO_RIESGO_HRE = "048";
 	
 	private static final long serialVersionUID = 1L;
 

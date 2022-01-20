@@ -14,6 +14,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -21,12 +22,15 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterService {
@@ -54,6 +58,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean aprueba = false;
+		boolean estadoBcModificado = false;
 		String estadoExp = null;
 		String estadoBc = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
@@ -90,11 +95,35 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		estadoBcModificado = true;
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
+		if(estadoBcModificado) {
+			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		}
+		
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico != null) {
+			historico.setActiva(false);
+			
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+		
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+		
+		HistoricoTareaPbc htp = new HistoricoTareaPbc();
+		htp.setOferta(expedienteComercial.getOferta());
+		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		
+		genericDao.save(HistoricoTareaPbc.class, htp);
 
-		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+		HistoricoSancionesBc historicoBc = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
-		genericDao.save(HistoricoSancionesBc.class, historico);
+		genericDao.save(HistoricoSancionesBc.class, historicoBc);
 	}
 
 	public String[] getCodigoTarea() {

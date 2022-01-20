@@ -155,7 +155,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
         DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
         ofrCaixa.setRiesgoOperacion(rop);
-
+        
+        HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
+        htp.setFechaSancion(new Date());
+        if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea())
+        		||DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
+        	htp.setFechaComunicacionRiesgo(new Date());
+        }
+        
+        genericDao.save(HistoricoTareaPbc.class, htp);
+        
         genericDao.save(OfertaCaixa.class, ofrCaixa);
     }
 
@@ -166,6 +175,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
+        
+        HistoricoTareaPbc htp = createHistoricoTareaPbc(expediente.getOferta(),DDTipoTareaPbc.CODIGO_PBCARRAS);
+        htp.setFechaSancion(new Date());
+        htp.setAprobacion(true);
+        genericDao.save(HistoricoTareaPbc.class, htp);	
+        
         genericDao.save(ExpedienteComercial.class, expediente);
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
@@ -178,6 +193,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
         expediente.setEstadoBc(estadoExpedienteBc);
         genericDao.save(ExpedienteComercial.class, expediente);
+        
+        HistoricoTareaPbc htp = createHistoricoTareaPbc(expediente.getOferta(),DDTipoTareaPbc.CODIGO_PBC);
+        htp.setFechaSancion(new Date());
+        htp.setAprobacion(true);
+        genericDao.save(HistoricoTareaPbc.class, htp);	
+        
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
     }
 
@@ -310,6 +331,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             reserva.setEstadoReserva(genericDao.get(DDEstadosReserva.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_ANULADA)));
             genericDao.save(Reserva.class, reserva);
         }
+        
+        HistoricoTareaPbc htp = createHistoricoTareaPbc(expediente.getOferta(),DDTipoTareaPbc.CODIGO_PBCARRAS);
+        htp.setFechaSancion(new Date());
+        htp.setAprobacion(false);
+        genericDao.save(HistoricoTareaPbc.class, htp);	
+        
         ofertaApi.finalizarOferta(expediente.getOferta());
         genericDao.save(ExpedienteComercial.class, expediente);
 		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
@@ -332,7 +359,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void accionIngresoFinalRechazado(DtoOnlyExpedienteYOfertaCaixa dto) {
         ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-
         
         Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO);
         if(reservaApi.tieneReservaFirmada(expediente)) {
@@ -344,6 +370,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
         	expediente.setFechaAnulacion(new Date());
         }
+        
+        HistoricoTareaPbc htp = createHistoricoTareaPbc(expediente.getOferta(),DDTipoTareaPbc.CODIGO_PBCARRAS);
+        htp.setFechaSancion(new Date());
+        htp.setAprobacion(false);
+        genericDao.save(HistoricoTareaPbc.class, htp);	
 
         ofertaApi.finalizarOferta(expediente.getOferta());
         genericDao.save(ExpedienteComercial.class, expediente);
@@ -764,4 +795,24 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     	}
     	return resultado;
     }
+    
+    private HistoricoTareaPbc createHistoricoTareaPbc(Oferta oferta, String codTipoTarea) {			
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codTipoTarea);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico == null) {
+			historico = new HistoricoTareaPbc();
+		}
+		
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoTarea);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+		
+		historico.setOferta(oferta);
+		historico.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		
+		return historico;
+	}
+	
 }

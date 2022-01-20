@@ -4,11 +4,18 @@ import es.capgemini.devon.dto.WebDto;
 
 public class DtoAccionResultadoRiesgoCaixa extends WebDto {
 
-    private Long idExpediente;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Long idExpediente;
 
     private Long numOferta;
 
     private String riesgoOperacion;
+    
+    private String codTipoTarea;
 
     public Long getIdExpediente() {
         return idExpediente;
@@ -33,4 +40,12 @@ public class DtoAccionResultadoRiesgoCaixa extends WebDto {
     public void setRiesgoOperacion(String riesgoOperacion) {
         this.riesgoOperacion = riesgoOperacion;
     }
+
+	public String getCodTipoTarea() {
+		return codTipoTarea;
+	}
+
+	public void setCodTipoTarea(String codTipoTarea) {
+		this.codTipoTarea = codTipoTarea;
+	}
 }

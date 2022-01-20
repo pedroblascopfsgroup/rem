@@ -3175,4 +3175,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getIntervinientesPBC(Long numOferta, WebDto dto, ModelMap model, HttpServletRequest request) {
+
+		try {
+			DtoPage page = expedienteComercialApi.getIntervinientesByOferta(numOferta, dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

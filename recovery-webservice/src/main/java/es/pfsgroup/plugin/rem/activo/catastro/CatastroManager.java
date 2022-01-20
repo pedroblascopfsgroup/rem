@@ -740,11 +740,8 @@ public class CatastroManager implements CatastroApi {
 							if (!Checks.esNulo(via)) dtoCatastro.setTipoVia(via.getDescripcion());
 						}
 						dtoCatastro.setNumeroVia((String) cat.get("numVia"));
-						//(Double) cat.get("piso"); usar checkObjectByType
 						dtoCatastro.setPlanta((String) cat.get("planta"));
 						dtoCatastro.setPuerta((String) cat.get("puerta"));
-						//(String) cat.get("escalera");
-						//(Double) cat.get("uso"); usar checkObjectByType
 						dtoCatastro.setProvinciaCod((String) cat.get("codProvincia"));
 						if (!Checks.esNulo(cat.get("codProvincia"))) {
 							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codProvincia"));
@@ -762,6 +759,7 @@ public class CatastroManager implements CatastroApi {
 						String lon = checkObjectByType(cat.get("lon").toString(), "bigdecimal");
 						dtoCatastro.setLongitud(lon != null ? new BigDecimal(lon) : null);
 						dtoCatastro.setCatastroCorrecto((Boolean) cat.get("correcto"));
+						dtoCatastro.setNombreVia(cat.getString("nombreVia"));
 						
 						lista.add(dtoCatastro);
 					}

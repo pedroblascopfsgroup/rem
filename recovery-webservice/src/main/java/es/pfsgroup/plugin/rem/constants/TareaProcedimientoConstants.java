@@ -29,6 +29,8 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_ELEVAR = "T015_ElevarASancion";
     	public static final String CODIGO_SANCION_PATRIMONIO = "T015_SancionPatrimonio";
     	public static final String CODIGO_SCORING_BC = "T015_ScoringBC";	
+    	public static final String CODIGO_DATOSPBC = "T015_DatosPBC";
+    	public static final String CODIGO_CALCULO_RIESGO = "T015_CalculoRiesgo";
     }
     
     public class TramiteAlquilerNoCmT018{

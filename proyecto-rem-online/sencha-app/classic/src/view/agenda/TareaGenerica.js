@@ -4016,6 +4016,57 @@
 		}
 	},
 	
+	T015_DatosPBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T015_CalculoRiesgoValidacion: function(){
+    	var me = this; 
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/usuarioTieneFuncionAvanzarPBC'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+			    	me.campoObligatorio(comboRiesgo);
+			    	me.desbloquearCampo(comboRiesgo);
+    				comboRiesgo.allowBlank = false;
+		    	}else{
+		    		me.bloquearCampo(comboRiesgo);
+			    	comboRiesgo.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+    
+    T015_PBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/tieneExpedienteRiesgo'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+					me.campoObligatorio(comboResultado);
+					me.desbloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;    		
+		    	}else{
+		    		me.bloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+	
 	T018_AgendarYFirmarValidacion: function(){
 		var me = this;
 		var comboIrClRod = me.down('[name=comboIrClRod]');
@@ -4065,6 +4116,7 @@
 		
 		me.down('[name=ncontratoPrinex]').validate();
     },
+   
     T017_FirmaPropietarioValidacion: function() {
         var me = this;
 
@@ -4089,6 +4141,20 @@
                 me.habilitarCampo(me.down('[name=motivoAnulacion]'));
             }
         })
+    },
+    
+	T018_DatosPBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T018_CalculoRiesgoValidacion: function(){
+    	var me = this; 
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	me.campoObligatorio(comboRiesgo);
+    	comboRiesgo.allowBlank = false;
     },
 	
     habilitarCampo: function(campo) {

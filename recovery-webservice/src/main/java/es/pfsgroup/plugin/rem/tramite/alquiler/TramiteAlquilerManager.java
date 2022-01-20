@@ -13,11 +13,14 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -27,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 
 @Service("tramiteAlquilerManager")
@@ -40,6 +44,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	private static final String T015_AceptacionCliente = "T015_AceptacionCliente";
 	
 	private static final String CAMPO_DEF_OFERTA_TIPOTRATAMIENTO = "tipoTratamiento";
+	private static final String FUNCION_FUN_AVANZAR_PBC = "FUN_AVANZAR_PBC";
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -55,6 +60,12 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
     
     @Resource
 	private MessageService messageServices;
+    
+    @Autowired
+	private FuncionesApi funcionApi;
+    
+    @Autowired
+	private GenericAdapter genericAdapter;
 		
 	@Override
 	public boolean haPasadoScoring(Long idTramite) {
@@ -296,6 +307,29 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 			resultado = messageServices.getMessage("tramite.alquiler.deposito");
 		}
 			
+		return resultado;
+	}
+	
+	@Override
+	public boolean expedienteTieneRiesgo(Long idExpediente){
+		boolean riesgoAlto = false;
+		ExpedienteComercial eco = expedienteComercialDao.get(idExpediente);
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		if(funcionApi.elUsuarioTieneFuncion(FUNCION_FUN_AVANZAR_PBC, usuario) || (eco != null && eco.getOferta() != null && eco.getOferta().getOfertaCaixa() != null
+				&& eco.getOferta().getOfertaCaixa().getRiesgoOperacion() != null 
+				&& DDRiesgoOperacion.CODIGO_ROP_ALTO.equals(eco.getOferta().getOfertaCaixa().getRiesgoOperacion().getCodigo()))) {
+			riesgoAlto = true;
+		}
+		return riesgoAlto;
+	}
+	
+	@Override
+	public boolean siUsuarioTieneFuncionAvanzarPBC() {
+		boolean resultado = false;
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+		if(funcionApi.elUsuarioTieneFuncion(FUNCION_FUN_AVANZAR_PBC, usuario)) {
+			resultado = true;
+		}
 		return resultado;
 	}
 	

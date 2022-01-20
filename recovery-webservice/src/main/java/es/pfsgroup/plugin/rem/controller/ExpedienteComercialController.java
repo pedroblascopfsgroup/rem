@@ -13,8 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
 
@@ -3127,6 +3126,43 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try{
 			model.put(RESPONSE_DATA_KEY, dtoTestigos);
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.deleteTestigos(dtoTestigos));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView tieneExpedienteRiesgo(Long idExpediente, ModelMap model) {
+		try{
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.expedienteTieneRiesgo(idExpediente));
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+		} catch (Exception e) {
+			logger.error("error en ExpedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView usuarioTieneFuncionAvanzarPBC(Long idExpediente, ModelMap model) {
+		try{
+			model.put("exp",idExpediente);
+			model.put(RESPONSE_DATA_KEY, tramiteAlquilerApi.siUsuarioTieneFuncionAvanzarPBC());
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

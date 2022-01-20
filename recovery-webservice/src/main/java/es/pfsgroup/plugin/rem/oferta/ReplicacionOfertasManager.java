@@ -67,10 +67,11 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
                 || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
                 || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
-                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado);
+                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado)
+                || calculaT015DatosPBC(codTarea,codEstado);
     }
 
-    private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
+	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea) &&
                 (DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado) || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
             return true;
@@ -181,4 +182,12 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         return false;
     }
+    
+    private boolean calculaT015DatosPBC(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
 }

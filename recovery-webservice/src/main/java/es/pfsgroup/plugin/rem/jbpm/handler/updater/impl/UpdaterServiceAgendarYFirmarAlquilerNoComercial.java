@@ -28,12 +28,14 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 
 @Component
@@ -115,18 +117,30 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 				for(ActivoOferta activoOferta : activosOferta){
 					activo = activoOferta.getPrimaryKey().getActivo();
 					
+					if (!Checks.esNulo(activo.getActivoPublicacion()) && 
+							DDTipoComercializacion.CODIGO_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
+						
+						Filter filtroTipoComercializacion = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoComercializacion.CODIGO_ALQUILER_VENTA);
+						DDTipoComercializacion tipoComercializacion = genericDao.get(DDTipoComercializacion.class, filtroTipoComercializacion);
+						
+						activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
+					}
+					
+					genericDao.save(ActivoPublicacion.class, activo.getActivoPublicacion());
+					
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
 					
 					if(!Checks.esNulo(activoPatrimonio)){
 						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-						
+						activoPatrimonio.setCheckHPM(true);						
 					} else {
 						activoPatrimonio = new ActivoPatrimonio();
 						activoPatrimonio.setActivo(activo);
 						if (!Checks.esNulo(tipoEstadoAlquiler)){
 							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 						}
+						activoPatrimonio.setCheckHPM(true);
 					}
 					
 					if (!Checks.esNulo(situacionComercial)) {

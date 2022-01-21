@@ -406,6 +406,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         
         if(expediente != null) {
         	 expediente.setBloqueado(0);
+        	 expediente.setMotivoEdicionCompradores(null);
 	        if(expediente.getOferta() != null && expediente.getOferta().getOfertaCaixa() != null) {
 	        	OfertaCaixa ofrCaixa = expediente.getOferta().getOfertaCaixa();
 	        	ofrCaixa.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_VALIDADO)));

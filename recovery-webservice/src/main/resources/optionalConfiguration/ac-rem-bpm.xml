@@ -825,7 +825,11 @@
             def avanzaScoring (String comboReqAnalisisTec) {
             	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
 				return tramiteAlquilerNoComercialManager.avanzaScoring(tareaExterna, comboReqAnalisisTec);
-            }
+            }	
+			def esTitulizada = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esTitulizada(tareaExterna);
+			}
            
   			 ]]></value>
   		</list>

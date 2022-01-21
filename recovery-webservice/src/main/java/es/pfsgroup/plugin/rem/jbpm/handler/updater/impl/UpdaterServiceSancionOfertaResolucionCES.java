@@ -193,6 +193,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
 						Double nuevoImporte = Double.valueOf(doubleValue);
@@ -202,7 +203,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						
 						if(activo != null && activo.getSubcartera() != null &&
 								(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
-								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 							String codigoBulk = nuevoImporte > 750000d ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 							
 							OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 

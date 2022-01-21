@@ -172,16 +172,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 esCarteraAppleOrArrowOrRemaining: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo ||
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo &&  (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
+			  CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
 		 },
 
-		 esCarteraAppleOrRemaining: function(get) {
+		 esCarteraAppleOrRemainingOrJaguar: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
+			  CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
 		 },
 		 
 		 esCarteraAppleOAgora: function(get) {
@@ -598,8 +597,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
 	 		var isRemaining = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
 	 		var isArrow = CONST.SUBCARTERA['DIVARIANARROW'] === me.get('expediente.subcarteraCodigo');
+	 		var isJaguar = CONST.SUBCARTERA['JAGUAR'] === me.get('expediente.subcarteraCodigo');
 	 		
-	 		return isApple == true || isRemaining == true || isArrow == true;	 			
+	 		return isApple == true || isRemaining == true || isArrow == true || isJaguar == true; 			
 	 	},
 	 	
 	 	esComiteHaya: function(get){
@@ -762,7 +762,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
 	 
 			 return (isAlquiler || isAlquilerNoComercial);
-		 }
+		 },
+        getcolSpanforSarebOrDefault: function(get){
+           var me= this;
+           var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+           var numColumnas;
+
+           if (carteraCodigo == CONST.CARTERA['SAREB']){
+            numColumnas = 1;
+           }else{
+            numColumnas = 3
+           }
+
+           return numColumnas;
+        }
 
 	 },
 	

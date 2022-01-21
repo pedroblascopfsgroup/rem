@@ -147,10 +147,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						{
 						xtype : 'datefieldbase',
 						formatter : 'date("d/m/Y")',
-						colspan: 3,
+						colspan: '{getcolSpanforSarebOrDefault}',
 						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
 						readOnly : true,
 						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+						},
+						{
+                            xtype : 'textfieldbase',
+                            fieldLabel : HreRem.i18n('filedlabel.numero.vai.havai'),
+                            bind : {
+                                value : '{datosbasicosoferta.numeroVaiHavaiSareb}',
+                                hidden : '{!esCarteraSareb}'
+                            }
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -228,7 +236,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						title : 'Bulk Advisory Note',
 						collapsible: false,
 						bind: {
-							hidden: '{!esCarteraAppleOrRemaining}'
+							hidden: '{!esCarteraAppleOrRemainingOrJaguar}'
 						},
 						colspan: 3,
 						layout: {
@@ -252,7 +260,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									store: '{comboSiNoExclusionBulk}',
 									value : '{datosbasicosoferta.exclusionBulk}',
 									readOnly : '{!requisitosEdicionExclusionBulk}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},
 								{
@@ -261,7 +269,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									value : '{datosbasicosoferta.idAdvisoryNote}',
 									readOnly : '{!requisitosEdicionIdAdvisoryNote}',
-									hidden : '{!esCarteraAppleOrRemaining}'
+									hidden : '{!esCarteraAppleOrRemainingOrJaguar}'
 								}
 							},	{
 								xtype : 'comboboxfieldbase',

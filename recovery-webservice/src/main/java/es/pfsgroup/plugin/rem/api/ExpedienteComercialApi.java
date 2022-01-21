@@ -1403,6 +1403,8 @@ public interface ExpedienteComercialApi {
 	
 	boolean doTramitacionAsincrona(Activo activo, Oferta oferta);
 
+	boolean esJaguar(TareaExterna tareaExterna);
+	
 	List<DDEntidadFinanciera> getListEntidadFinanciera(Long idExpediente);
 
 	public void createReservaAndCondicionesReagendarArras(ExpedienteComercial expediente, Double importe, Integer mesesFianza, Oferta oferta);
@@ -1489,4 +1491,6 @@ public interface ExpedienteComercialApi {
 	 * @return true si pertenece a la cartera, false si no.
 	 */
 	public boolean checkEstadoBC(TareaExterna tareaExterna);
+		
+	boolean esTitulizada(TareaExterna tareaExterna);
 }

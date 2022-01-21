@@ -151,16 +151,19 @@ public class CatastroManager implements CatastroApi {
 	public List<DtoDatosCatastro> getDatosCatastroWs(Long idActivo, String refCatastral) {
 		List<DtoDatosCatastro> listDto = new ArrayList<DtoDatosCatastro>();
 		boolean referenciaValida =  this.isReferenciaValida(refCatastral);
+		List<DtoDatosCatastro> lista = new ArrayList<DtoDatosCatastro>();
 			
 		if(referenciaValida || refCatastral.length() < 20 ) {
-			List<DtoDatosCatastro> lista = consultaCatastroRem3(idActivo, refCatastral);
+			 lista = consultaCatastroRem3(idActivo, refCatastral);
 			
 			if (!lista.isEmpty()) {
 				existeCatastro(lista);
 				listDto.addAll(lista);
 			}
 			
-		}else if(!referenciaValida) {
+		}
+		
+		if(!referenciaValida || lista.isEmpty()) {
 			DtoDatosCatastro dto = new DtoDatosCatastro();
 			dto.setCatastroCorrecto(false);
 			dto.setRefCatastral(refCatastral);
@@ -635,7 +638,11 @@ public class CatastroManager implements CatastroApi {
 	}
 	
 	private ActivoCatastro getActivoCatastroByActivoAndReferencia(Long idActivo, String refCatastral) {
-		return genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "catastro.refCatastral", refCatastral));
+		ActivoCatastro ac = genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "catastro.refCatastral", refCatastral));
+		if(ac == null) {
+			ac = genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo), genericDao.createFilter(FilterType.EQUALS, "refCatastral", refCatastral));
+		}
+		return ac;
 	}
 	
 	@Override
@@ -742,6 +749,7 @@ public class CatastroManager implements CatastroApi {
 						dtoCatastro.setNumeroVia((String) cat.get("numVia"));
 						dtoCatastro.setPlanta((String) cat.get("planta"));
 						dtoCatastro.setPuerta((String) cat.get("puerta"));
+						dtoCatastro.setEscalera((String) cat.get("escalera"));
 						dtoCatastro.setProvinciaCod((String) cat.get("codProvincia"));
 						if (!Checks.esNulo(cat.get("codProvincia"))) {
 							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codProvincia"));
@@ -760,6 +768,7 @@ public class CatastroManager implements CatastroApi {
 						dtoCatastro.setLongitud(lon != null ? new BigDecimal(lon) : null);
 						dtoCatastro.setCatastroCorrecto((Boolean) cat.get("correcto"));
 						dtoCatastro.setNombreVia(cat.getString("nombreVia"));
+						dtoCatastro.setUso(cat.getString("uso"));
 						
 						lista.add(dtoCatastro);
 					}
@@ -861,6 +870,8 @@ public class CatastroManager implements CatastroApi {
 				}
 				catastro.setLatitud(datosCatastro.getLatitud());
 				catastro.setLongitud(datosCatastro.getLongitud());
+				catastro.setEscalera(datosCatastro.getEscalera());
+				catastro.setUsoPrincipal(datosCatastro.getUso());
 				
 				genericDao.save(Catastro.class, catastro);
 			}

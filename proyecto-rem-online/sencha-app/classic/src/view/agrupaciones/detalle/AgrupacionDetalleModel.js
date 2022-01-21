@@ -802,7 +802,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		    		return true;
 	    	}
 	    	return false;
-	     }
+	     },
+	     esAgrupacionTitulizada: function(get) {
+            var me = this;
+            var tipoCartera = get('agrupacionficha.codigoCartera');
+            var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+
+            if(tipoCartera == CONST.CARTERA['TITULIZADA']
+                && (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']
+                || tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER']
+                || tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
+                    return true;
+            }
+            return false;
+         }
     },
 				
     stores: {
@@ -835,6 +848,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     	
 		storeFotos: {    			
     		 model: 'HreRem.model.Fotos',
+			 sorters: [
+			 			{
+			        		property: 'numeroActivo',
+			        		direction: 'ASC'	
+			 			},
+			 			{
+			        		property: 'orden',
+			        		direction: 'ASC'	
+			 			}
+			 ],
 		     proxy: {
 		        type: 'uxproxy',
 		        api: {
@@ -1219,6 +1242,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			},
 			autoLoad: false
-		}
+		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	}
     }
 });

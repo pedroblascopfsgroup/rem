@@ -52,6 +52,9 @@ Ext.define('HreRem.model.Fotos', {
     		},
     		{
     			name:'plano'
+    		},
+    		{
+    			name:'codigoTipoFoto'
     		}
 
     ],

@@ -146,8 +146,8 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.download")
 	FileItem download(Long id) throws Exception;
 
-	@BusinessOperationDefinition("activoManager.uploadFoto")
-	String uploadFoto(WebFileItem fileItem);
+	@BusinessOperationDefinition("activoManager.uploadFotos")
+	String uploadFotos(List<WebFileItem> webFileItemList);
 
 	/**
 	 * Registra una foto del gestor documental

@@ -233,63 +233,57 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFoto")
+	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotos")
 	@Transactional(readOnly = false)
-	public String uploadFoto(WebFileItem fileItem) {
+	public String uploadFotos(List<WebFileItem> webFileItemList) {
 
-		Long idAgrupacion = Long.parseLong(fileItem.getParameter("idEntidad"));
-		ActivoAgrupacion agrupacion = this.get(idAgrupacion);
-		SUELOS suelos = Boolean.valueOf(fileItem.getParameter("suelos")) ? SUELOS.SI : SUELOS.NO;
-		PLANO plano = Boolean.valueOf(fileItem.getParameter("plano")) ? PLANO.SI : PLANO.NO;
-		if(agrupacion != null) {
-			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
-			ActivoFoto activoFoto = null;
-			FileResponse fileReponse = null;
-			try {
-				if (gestorDocumentalFotos.isActive()) {
-					
-					if (fileItem.getParameter("codigoDescripcionFoto") != null) {
+		for(WebFileItem webFileItem : webFileItemList) {
+			Long idAgrupacion = Long.parseLong(webFileItem.getParameter("idEntidad"));
+			ActivoAgrupacion agrupacion = this.get(idAgrupacion);
+			SUELOS suelos = Boolean.valueOf(webFileItem.getParameter("suelos")) ? SUELOS.SI : SUELOS.NO;
+			PLANO plano = Boolean.valueOf(webFileItem.getParameter("plano")) ? PLANO.SI : PLANO.NO;
+			if(agrupacion != null) {
+				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
+				ActivoFoto activoFoto = null;
+				FileResponse fileReponse = null;
+				try {
+					if (gestorDocumentalFotos.isActive()) {
 						
-						DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto")));
-						
-						if (descripcionFoto != null ) {
-							fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),fileItem.getFileItem().getFileName(),
-								PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden, suelos, plano);
+						if (webFileItem.getParameter("codigoDescripcionFoto") != null) {
+							
+							DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto")));
+							
+							if (descripcionFoto != null ) {
+								fileReponse = gestorDocumentalFotos.upload(webFileItem.getFileItem().getFile(),webFileItem.getFileItem().getFileName(),
+									PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden, suelos, plano);
+							}
 						}
-	
+						activoFoto = new ActivoFoto(fileReponse.getData());
+		
+					} else {
+						activoFoto = new ActivoFoto(webFileItem.getFileItem());
+						activoFoto.setOrden(orden);
 					}
-					activoFoto = new ActivoFoto(fileReponse.getData());
-	
-				} else {
-					activoFoto = new ActivoFoto(fileItem.getFileItem());
-					activoFoto.setOrden(orden);
+		
+					activoFoto.setAgrupacion(agrupacion);
+					activoFoto.setTamanyo(webFileItem.getFileItem().getLength());
+					activoFoto.setNombre(webFileItem.getFileItem().getFileName());
+					activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+					activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
+					activoFoto.setPrincipal(true);		
+					activoFoto.setSuelos(suelos == SUELOS.SI ? true : false);
+					activoFoto.setPlano(plano == PLANO.SI ? true : false);
+					activoFoto.setFechaDocumento(new Date());
+					Auditoria.save(activoFoto);
+					agrupacion.getFotos().add(activoFoto);
+		
+					activoAgrupacionDao.save(agrupacion);
+				} catch (Exception e) {
+		
 				}
-	
-				activoFoto.setAgrupacion(agrupacion);
-	
-				activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-	
-				activoFoto.setNombre(fileItem.getFileItem().getFileName());
-	
-				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
-				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
-	
-				activoFoto.setPrincipal(true);
-				
-				activoFoto.setSuelos(suelos == SUELOS.SI ? true : false);
-				activoFoto.setPlano(plano == PLANO.SI ? true : false);
-	
-				activoFoto.setFechaDocumento(new Date());
-	
-				Auditoria.save(activoFoto);
-	
-				agrupacion.getFotos().add(activoFoto);
-	
-				activoAgrupacionDao.save(agrupacion);
-			} catch (Exception e) {
-	
 			}
 		}
+		
 		return "success";
 
 	}
@@ -403,88 +397,82 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotoSubdivision")
+	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotosSubdivision")
 	@Transactional(readOnly = false)
-	public String uploadFotoSubdivision(WebFileItem fileItem) {
+	public String uploadFotosSubdivision(List<WebFileItem> webFileItemList) {
 
-		Long subdivisionId = Long.parseLong(fileItem.getParameter("id"));
-		Long agrupacionId = Long.parseLong(fileItem.getParameter("agrId"));
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
-		TIPO tipo = null;
-		SITUACION situacion;
-		PRINCIPAL principal = null;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-		FileResponse fileReponse = null;
-		ActivoFoto activoFoto = null;
-		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-		orden++;
-		try {
-			//el gestor documental no esta activo en local/inte, para probar negarlo
-			if (gestorDocumentalFotos.isActive()) {
-				
-				if (tipoFoto.getCodigo().equals("01")) {
-					tipo = TIPO.WEB;
-				} else if (tipoFoto.getCodigo().equals("02")) {
-					tipo = TIPO.TECNICA;
-				} else if (tipoFoto.getCodigo().equals("03")) {
-					tipo = TIPO.TESTIGO;
-				}
-				if (Boolean.valueOf(fileItem.getParameter("principal"))) {
-					principal = PRINCIPAL.SI;
-				} else {
-					principal = PRINCIPAL.NO;
-				}
-				if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
-					situacion = SITUACION.INTERIOR;
-				} else {
-					situacion = SITUACION.EXTERIOR;
-				}
-				
-				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
-				
-					fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
-							tipo,principal,situacion, orden);
+		for(WebFileItem webFileItem : webFileItemList) {
+			Long subdivisionId = Long.parseLong(webFileItem.getParameter("id"));
+			Long agrupacionId = Long.parseLong(webFileItem.getParameter("agrId"));
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
+			TIPO tipo = null;
+			SITUACION situacion;
+			PRINCIPAL principal = null;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+			FileResponse fileReponse = null;
+			ActivoFoto activoFoto = null;
+			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
+			orden++;
+			try {
+				//el gestor documental no esta activo en local/inte, para probar negarlo
+				if (gestorDocumentalFotos.isActive()) {
 					
+					if (tipoFoto.getCodigo().equals("01")) {
+						tipo = TIPO.WEB;
+					} else if (tipoFoto.getCodigo().equals("02")) {
+						tipo = TIPO.TECNICA;
+					} else if (tipoFoto.getCodigo().equals("03")) {
+						tipo = TIPO.TESTIGO;
+					}
+					if (Boolean.valueOf(webFileItem.getParameter("principal"))) {
+						principal = PRINCIPAL.SI;
+					} else {
+						principal = PRINCIPAL.NO;
+					}
+					if (Boolean.valueOf(webFileItem.getParameter("interiorExterior"))) {
+						situacion = SITUACION.INTERIOR;
+					} else {
+						situacion = SITUACION.EXTERIOR;
+					}
+					
+					if (webFileItem.getParameter("codigoDescripcionFoto") != null) {
+					
+						fileReponse = gestorDocumentalFotos.uploadSubdivision(webFileItem.getFileItem().getFile(),
+								webFileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
+								genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
+								tipo,principal,situacion, orden);
+						
+					}
+						 
+					activoFoto = new ActivoFoto(fileReponse.getData());
+
+				} else {
+					activoFoto = new ActivoFoto(webFileItem.getFileItem());
+					activoFoto.setOrden(orden);
 				}
-					 
-				activoFoto = new ActivoFoto(fileReponse.getData());
 
-			} else {
-				activoFoto = new ActivoFoto(fileItem.getFileItem());
-				activoFoto.setOrden(orden);
+				activoFoto.setSubdivision(subdivisionId);
+				activoFoto.setAgrupacion(agrupacion);
+				activoFoto.setTamanyo(webFileItem.getFileItem().getLength());
+				activoFoto.setNombre(webFileItem.getFileItem().getFileName());				
+				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
+				activoFoto.setPrincipal(Boolean.valueOf(webFileItem.getParameter("principal")));			
+				activoFoto.setTipoFoto(tipoFoto);			
+				activoFoto.setInteriorExterior(Boolean.valueOf(webFileItem.getParameter("interiorExterior")));
+				activoFoto.setFechaDocumento(new Date());			
+				Auditoria.save(activoFoto);
+				agrupacion.getFotos().add(activoFoto);
+
+				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				
+			} catch (Exception e) {
+				logger.error(e);
 			}
-
-			activoFoto.setSubdivision(subdivisionId);
-
-			activoFoto.setAgrupacion(agrupacion);
-
-			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-
-			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
-
-			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
-			
-			activoFoto.setTipoFoto(tipoFoto);
-			
-			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
-
-			activoFoto.setFechaDocumento(new Date());			
-
-			Auditoria.save(activoFoto);
-
-			agrupacion.getFotos().add(activoFoto);
-
-			genericDao.save(ActivoAgrupacion.class, agrupacion);
-		} catch (Exception e) {
-			logger.error(e);
 		}
+		
 		return "success";
 	}
 

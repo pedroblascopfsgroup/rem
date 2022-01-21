@@ -265,6 +265,8 @@ func-rem-hydraModificacionPBC|R-Ellendale
 func-rem-HREOS-16365|R-Ellendale
 func-rem-pestanyaPBC|R-Ellendale
 func-rem-leadsOficinasBC|R-Ellendale
+rem_mirror|func-rem-pestanyaPBC
+func-rem-pestanyaPBC-HREOS-16750|func-rem-pestanyaPBC
 func-rem-cargaAutomaticaPromociones|R-Persica
 func-rem-mejorasGestionFotos|R-Persica
 func-rem-reincorporacionEstadoTitulo|R-Persica

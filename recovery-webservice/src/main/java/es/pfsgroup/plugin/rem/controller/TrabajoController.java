@@ -351,10 +351,9 @@ public class TrabajoController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
-
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			
-			String errores = trabajoApi.upload(fileItem);			
+			String errores = trabajoApi.upload(webFileItem);			
 
 			model.put("errorMessage", errores);
 			model.put("success", errores==null);
@@ -869,16 +868,15 @@ public class TrabajoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response)
 		throws Exception {
 		
 		ModelMap model = new ModelMap();
 		
 		try {
-
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 			
-			String errores = trabajoApi.uploadFoto(fileItem);			
+			String errores = trabajoApi.uploadFotos(webFileItemList);			
 
 			model.put("errores", errores);
 			model.put("success", errores!=null);
@@ -1431,9 +1429,11 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView subeListaActivos(HttpServletRequest request, HttpServletResponse response){
 		ModelMap model = new ModelMap();
 		Page page = null;
+		
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-			page = trabajoAdapter.getListActivosBySubidaExcel(fileItem);
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
+			page = trabajoAdapter.getListActivosBySubidaExcel(webFileItem);
 			if(!Checks.esNulo(page)) {
 				model.put("data", page.getResults());
 				model.put("totalCount", page.getTotalCount());

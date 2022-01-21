@@ -254,4 +254,11 @@ func-rem-gastosIAE|func-rem-cambioJerarquiaPrefacturasBBVA
 rem_mirror|func-rem-PEP2022
 rem_mirror|func-rem-pestanyaPBC
 func-rem-pestanyaPBC-HREOS-16750|func-rem-pestanyaPBC
-
+rem_mirror|func-rem-hydraModificacionPBC
+rem_mirror|func-rem-HREOS-16365
+rem_mirror|func-rem-leadsOficinasBC
+func-rem-gastosIAE|R-Ellendale
+func-rem-hydraModificacionPBC|R-Ellendale
+func-rem-HREOS-16365|R-Ellendale
+func-rem-pestanyaPBC|R-Ellendale
+func-rem-leadsOficinasBC|R-Ellendale

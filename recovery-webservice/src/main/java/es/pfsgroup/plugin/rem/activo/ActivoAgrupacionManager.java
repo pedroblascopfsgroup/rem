@@ -255,7 +255,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							
 							if (descripcionFoto != null ) {
 								fileReponse = gestorDocumentalFotos.upload(webFileItem.getFileItem().getFile(),webFileItem.getFileItem().getFileName(),
-									PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden, suelos, plano);
+										PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden, suelos, plano);
 							}
 						}
 						activoFoto = new ActivoFoto(fileReponse.getData());

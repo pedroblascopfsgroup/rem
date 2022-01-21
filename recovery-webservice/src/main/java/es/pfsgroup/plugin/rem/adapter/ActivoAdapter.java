@@ -458,7 +458,6 @@ public class ActivoAdapter {
 				} else if (DDTipoFoto.COD_TESTIGO.equals(tipoFoto.getCodigo())) {
 					tipo = TIPO.TESTIGO;
 				}
-
 			}
 
 			if (gestorDocumentalFotos.isActive()) {

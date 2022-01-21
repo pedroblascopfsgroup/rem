@@ -10,6 +10,8 @@ public class DtoAccionResultadoRiesgoCaixa extends WebDto {
 	private static final long serialVersionUID = 1L;
 
 	private Long idExpediente;
+    
+    private Long idTarea;
 
     private Long numOferta;
 
@@ -47,5 +49,13 @@ public class DtoAccionResultadoRiesgoCaixa extends WebDto {
 
 	public void setCodTipoTarea(String codTipoTarea) {
 		this.codTipoTarea = codTipoTarea;
+	}
+
+	public Long getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(Long idTarea) {
+		this.idTarea = idTarea;
 	}
 }

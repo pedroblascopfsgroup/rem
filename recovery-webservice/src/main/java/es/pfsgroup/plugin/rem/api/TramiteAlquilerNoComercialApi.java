@@ -24,9 +24,9 @@ public interface TramiteAlquilerNoComercialApi {
 
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 
-	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
-
 	boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior);
+
+	String avanzaScoring(TareaExterna tareaExterna, String comboReqAnalisisTec);
 	
 }
 

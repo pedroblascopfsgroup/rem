@@ -236,7 +236,6 @@ public class AgendaController extends TareaController {
 						String idTarea = adapter.getIdTareaFormParameterMap(request.getParameterMap());
 
 						replicacionOfertasApi.callReplicateOferta(Long.parseLong(idTarea), success);
-						spPublicacionApi.callSpPublicacionAsincrono(Long.parseLong(idTarea), success);
 					}
 					
 					if(esBulk && cumpleCondiciones) {

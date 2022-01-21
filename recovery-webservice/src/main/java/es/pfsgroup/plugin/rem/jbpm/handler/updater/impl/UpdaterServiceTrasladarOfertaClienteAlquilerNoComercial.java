@@ -17,7 +17,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -38,13 +37,9 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 	@Autowired
 	private OfertaApi ofertaApi;
 	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
-	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
-	private static final String COMBO_IRCLROD = "comboIrClRod";
 	private static final String FECHA_RESOLUCION = "fechaResolucion";
 
 	private static final String CODIGO_T018_TRASLADAR_OFERTA_CLIENTE = "T018_TrasladarOfertaCliente";
@@ -55,23 +50,24 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
-		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
-		DDEstadoExpedienteBc estadoExpedienteBc = null;
+		String estadoExpedienteComercial = null;
+		String estadoExpedienteBc = null;
 		String fechaResolucion = null;
 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_AGENDAR));
+					estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+					estadoExpedienteBc = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
+
 				}else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_REVISAR_CONDICIONES_BC));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC));
+					estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_REVISAR_CONDICIONES_BC;
+					estadoExpedienteBc = DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC;
 				}
 				
-				expedienteComercial.setEstado(estadoExpedienteComercial);
-				expedienteComercial.setEstadoBc(estadoExpedienteBc);
+				expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteComercial)));
+				expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteBc)));
 
 			}
 			

@@ -35,7 +35,7 @@ public class TareaProcedimientoConstants {
     
     public class TramiteAlquilerNoCmT018{
     	public static final String CLROD = "T018_PteClRod";
-
+    	public static final String CODIGO_DATOSPBC = "T018_DatosPBC";
     	
     	
     }

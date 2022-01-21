@@ -151,9 +151,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto){
+    public void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto) throws Exception{
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
-        DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
+    	DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
         ofrCaixa.setRiesgoOperacion(rop);
         
         HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
@@ -164,8 +164,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         }
         
         genericDao.save(HistoricoTareaPbc.class, htp);
-        
         genericDao.save(OfertaCaixa.class, ofrCaixa);
+            
+        if(ofrCaixa.getOferta() != null  
+        		&& (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) 
+        				|| DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))){
+        	ofrCaixa.getOferta().getActivoPrincipal();
+        	adapter.save(createRequestAccionCalculoRiesgo(dto));
+        }
+        
     }
 
     @Override
@@ -815,4 +822,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 		return historico;
 	}
 	
+    public Map<String, String[]> createRequestAccionCalculoRiesgo(DtoAccionResultadoRiesgoCaixa dto) throws ParseException {
+        Map<String,String[]> map = new HashMap<String,String[]>();
+        
+        String[] idTarea = {dto.getIdTarea().toString()};
+        String[] riesgoOperacion = {dto.getRiesgoOperacion()};
+        
+        map.put("idTarea", idTarea);
+        map.put("comboRiesgo", riesgoOperacion);
+
+        return map;
+    }
+
 }

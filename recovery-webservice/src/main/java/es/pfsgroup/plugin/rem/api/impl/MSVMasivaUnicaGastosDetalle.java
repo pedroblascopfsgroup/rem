@@ -42,7 +42,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -63,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -428,17 +426,10 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 											   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 											   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 										   }
-										   if (DDCarteraBc.CODIGO_ALQUILER.equals(gastoLineaDetalleEntidad.getCarteraBc().getCodigo())) {
-											   Filter filtroPatrimonioActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacionActivo.getActivo().getId());
-											   ActivoPatrimonio patrimonio = genericDao.get(ActivoPatrimonio.class, filtroPatrimonioActivo);
-											   if (patrimonio != null && patrimonio.getTipoEstadoAlquiler() != null && patrimonio.getTipoEstadoAlquiler().getCodigo() != null) {
-												   Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo", patrimonio.getTipoEstadoAlquiler().getCodigo());
-												   DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-												   if (tipoEstadoAlquiler != null) {
-													   gastoLineaDetalleEntidad.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-												   }
-											   }
-										   }
+									   } else {
+											Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+											DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+											gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 									   }
 									   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null && activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo() != null) {
 										   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
@@ -477,18 +468,10 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 								   }
-								   if (DDCarteraBc.CODIGO_ALQUILER.equals(gastoLineaDetalleEntidad.getCarteraBc().getCodigo())) {
-									   Filter filtroPatrimonioActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-									   ActivoPatrimonio patrimonio = genericDao.get(ActivoPatrimonio.class, filtroPatrimonioActivo);
-									   if (patrimonio != null && patrimonio.getTipoEstadoAlquiler() != null 
-											   && patrimonio.getTipoEstadoAlquiler().getCodigo() != null) {
-										   Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo", patrimonio.getTipoEstadoAlquiler().getCodigo());
-										   DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-										   if (tipoEstadoAlquiler != null) {
-											   gastoLineaDetalleEntidad.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-										   }
-									   }
-								   }
+							   } else {
+									Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+									DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 							   }
 							   if (activo.getTipoTransmision() != null && activo.getTipoTransmision().getCodigo() != null) {
 								   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());

@@ -1,17 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211221
+--## FECHA_CREACION=20220117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16682
+--## INCIDENCIA_LINK=HREOS-16953
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INSERTAMOS SUBTIPO GASTO
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-16682] - Alejandra García
+--##        0.2 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
 --#########################################
 --*/
 
@@ -26,7 +27,7 @@ DECLARE
 	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
  	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
  	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16682'; -- USUARIO CREAR/MODIFICAR
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-16953'; -- USUARIO CREAR/MODIFICAR
 	V_COUNT NUMBER(16); -- Vble. para comprobar
 	V_TGA_ID NUMBER(16); 
 	err_num NUMBER; -- Numero de errores
@@ -36,16 +37,6 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--DD_STG_CODIGO  --DESCRIPCION  --DD_TGA_CODIGO
-      T_TIPO_DATA('152','Monitorio','05'),
-      T_TIPO_DATA('153','Derribos','15'),
-      T_TIPO_DATA('118','Requerimientos Derribos','15'),
-      T_TIPO_DATA('119','Requerimientos Limpiezas','15'),
-      T_TIPO_DATA('120','Requerimientos Otros','15'),
-      T_TIPO_DATA('121','ComisiónTarifa Plana','13'),
-      T_TIPO_DATA('122','Comisión broker','10'),
-      T_TIPO_DATA('123','Colocación puerta antiocupa - 1ª Posesión','15'),
-      T_TIPO_DATA('124','Alarmas - Primera Posesión','16'),
-      T_TIPO_DATA('125','Duplicado Cédula Habitabilidad','14'),
       T_TIPO_DATA('126','Informes localizar arrendatario inmueble','14'),
       T_TIPO_DATA('127','Informes Ocupacionales Morosidad +  Inf. 24h AL','14'),
       T_TIPO_DATA('128','Informes Reocupados','14'),
@@ -72,10 +63,20 @@ DECLARE
       T_TIPO_DATA('149','Comisión Gestión Gestorías Cuota Fijo','13'),
       T_TIPO_DATA('150','Tarifa plana Prorrata 0%','13'),
       T_TIPO_DATA('151','Tarifa plana Prorrata 100%','13'),
+      T_TIPO_DATA('152','Monitorio','05'),
+      T_TIPO_DATA('153','Derribos','15'),
+	  --Del 154 - 156 se metieron en HREOS-16745
+      T_TIPO_DATA('157','Duplicado Certif. eficiencia energética (CEE)','14'),
       T_TIPO_DATA('158','Humedades','15'),
       T_TIPO_DATA('159','Acompañamiento','15'),
       T_TIPO_DATA('160','Acompañamiento','11'),
-      T_TIPO_DATA('157','Duplicado Certif. eficiencia energética (CEE)','14')
+	  T_TIPO_DATA('161','Requerimientos Derribos','15'),
+      T_TIPO_DATA('162','Requerimientos Limpiezas','15'),
+      T_TIPO_DATA('163','Requerimientos Otros','15'),
+      T_TIPO_DATA('164','Comisión Tarifa Plana','13'),
+      T_TIPO_DATA('165','Comisión broker','10'),
+      T_TIPO_DATA('166','Alarmas - Primera Posesión','16'),
+      T_TIPO_DATA('167','Duplicado Cédula Habitabilidad','14')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 	

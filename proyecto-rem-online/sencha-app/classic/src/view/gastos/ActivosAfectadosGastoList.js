@@ -269,16 +269,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            }
 				},
 				{
-					text : HreRem.i18n('header.activos.afectados.estado.alquiler'),
-					dataIndex : 'estadoAlquiler',
-					flex : 1,
-					bind:	{
-						hidden:'{!esPropietarioCaixa}' 
-                	}
-				},
-				{
-					text : HreRem.i18n('header.activos.afectados.tipo.comercializacion'),
-					dataIndex : 'tipoComercializacion',
+					text : HreRem.i18n('header.activos.afectados.cartera.bc'),
+					dataIndex : 'carteraBc',
 					flex : 1,
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
@@ -291,6 +283,22 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
                 	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.primera.posesion'),
+					dataIndex : 'primeraPosesion',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
+					dataIndex : 'subpartidaEdif',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
 				},
 				{
 					text : HreRem.i18n('header.activos.afectados.grupo'),
@@ -315,22 +323,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
                 	} 
-				},
-				{
-					text : HreRem.i18n('header.activos.afectados.primera.posesion'),
-					dataIndex : 'primeraPosesion',
-					flex : 1,
-					bind:	{
-						hidden:'{!esPropietarioCaixa}' 
-                	} 
-				},
-				{
-					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
-					dataIndex : 'subpartidaEdif',
-					flex : 1,
-					bind:	{
-						hidden:'{!esPropietarioCaixa}' 
-                	}
 				},
 				{
 					text : HreRem.i18n('header.activos.afectados.elemento.pep'),

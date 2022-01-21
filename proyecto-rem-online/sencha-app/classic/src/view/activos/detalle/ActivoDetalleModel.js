@@ -1625,9 +1625,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		isGestorSeguridadOAssetManager:function(get){
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			
+
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']) 
-				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo));
+				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (CONST.TIPO_TITULO_ACTIVO['JUDICIAL'] === tipoTituloCodigo
+				                                                            || CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL'] === tipoTituloCodigo
+				                                                            || CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo
+				                                                            || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo));
 		},
 		
 		isAssetManager:function(get){
@@ -4206,6 +4209,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	},
 		comboEstadoDeposito: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

@@ -78,10 +78,20 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
                     var l = nodes.length,
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos Técnicas (' + l + ' item' + s + ' seleccionado' +  s + ')');
+					if (l < 1){
+                		this.up('form').getForm().findField('nombre').setValue();
+                		this.up('form').getForm().findField('codigoTipoFoto').setValue();
+                		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
+                		this.up('form').getForm().findField('fechaDocumento').setValue();
+						this.up('form').getForm().findField('orden').setValue();
+					}
                 },
                 itemclick: function(dataview,record) {
                 	if(Ext.isEmpty(record.getData().nombre)){
                 		this.up('form').getForm().findField('nombre').setValue();
+                	}
+					if(Ext.isEmpty(record.getData().codigoTipoFoto)){
+                		this.up('form').getForm().findField('codigoTipoFoto').setValue();
                 	}
                 	if(Ext.isEmpty(record.getData().codigoDescripcionFoto)){
                 		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
@@ -132,6 +142,18 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 		                	bind: {
 								value: '{fotoWeb.nombre}'
 							}
+		                },
+						{ 
+		                	xtype: 'comboboxfieldbase',
+		                	name: 'codigoTipoFoto',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+		                	editable: false,
+		                	queryMode: 'local',
+		                	bind: {
+		                		store: '{storeTipoFoto}',
+				        		value: '{fotoWeb.codigoTipoFoto}'
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'codigoDescripcionFoto',

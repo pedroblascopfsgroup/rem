@@ -2,7 +2,10 @@ package es.pfsgroup.framework.paradise.fileUpload.adapter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -24,53 +27,71 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 @Service
 public class UploadAdapter {
 
-	
 	@Autowired
 	private GenericABMDao genericDao;	
 	@Resource
 	Properties appProperties;
 	
 	public WebFileItem getWebFileItem (HttpServletRequest request) {
-		Boolean crear = true;
-		MultipartRequest multipartRequest = (MultipartRequest) request;
-        MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
-        WebFileItem webFileItem = new WebFileItem();
-        FileItem fileItem = null;
-		File file;		
+		WebFileItem webFileItem = new WebFileItem();
+		List<WebFileItem> webFileItemList = getWebMultipleFileItem(request);
+		if (webFileItemList != null && !webFileItemList.isEmpty())
+			webFileItem = webFileItemList.get(0);
 		
-		try {
-			
-			String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/"; 
-			if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
-				file = new File(rutaFichero+multipartFile.getOriginalFilename());
-				file.createNewFile(); 
-			    FileOutputStream fos = new FileOutputStream(file); 
-			    fos.write(multipartFile.getBytes());
-			    fos.close();
-			
-				fileItem = new FileItem(file); 
-				fileItem.setContentType(multipartFile.getContentType());
-				fileItem.setLength(multipartFile.getSize());
-				String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
-				fileItem.setFileName(fileName);
-				
-				Enumeration<?> parameters = request.getParameterNames();		
-				
-				while (parameters.hasMoreElements()) {			
-					String key = (String) parameters.nextElement();
-		
-					webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
-				}
-			}else {
-				crear = false;
-			}
-		} catch (Exception e) {
-			throw new BusinessOperationException(e);
-		}
-		if(crear) {
-			webFileItem.setFileItem(fileItem);
-		}
 		return webFileItem;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<WebFileItem> getWebMultipleFileItem (HttpServletRequest request) {
+		Boolean crear = true;
+		
+		List<WebFileItem> webFileItemList = new ArrayList<WebFileItem>();
+		MultipartRequest multipartRequest = (MultipartRequest) request;
+		Iterator it = multipartRequest.getFileNames();
+		
+		while (it.hasNext()) {
+			MultipartFile multipartFile = multipartRequest.getFile(it.next().toString());
+		    WebFileItem webFileItem = new WebFileItem();
+		    FileItem fileItem = null;
+			File file;		
+			
+			try {
+				
+				String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/"; 
+				if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
+					file = new File(rutaFichero+multipartFile.getOriginalFilename());
+					file.createNewFile(); 
+				    FileOutputStream fos = new FileOutputStream(file); 
+				    fos.write(multipartFile.getBytes());
+				    fos.close();
+				
+					fileItem = new FileItem(file); 
+					fileItem.setContentType(multipartFile.getContentType());
+					fileItem.setLength(multipartFile.getSize());
+					String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
+					fileItem.setFileName(fileName);
+					
+					Enumeration<?> parameters = request.getParameterNames();		
+					
+					while (parameters.hasMoreElements()) {			
+						String key = (String) parameters.nextElement();
+			
+						webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
+					}
+				}else {
+					crear = false;
+				}
+			} catch (Exception e) {
+				throw new BusinessOperationException(e);
+			}
+			
+			if(crear) {
+				webFileItem.setFileItem(fileItem);
+				webFileItemList.add(webFileItem);
+			}
+		}
+		
+		return webFileItemList;		
 	}
 	
 	public Adjunto saveBLOB (FileItem fileItem) throws Exception {

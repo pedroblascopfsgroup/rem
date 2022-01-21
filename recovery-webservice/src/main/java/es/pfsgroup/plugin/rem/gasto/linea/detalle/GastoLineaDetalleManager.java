@@ -1246,23 +1246,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 								   }
-								   if (DDCarteraBc.CODIGO_ALQUILER.equals(gastoLineaDetalleEntidad.getCarteraBc().getCodigo())) {
-									Filter filtroActivoPatrimonio = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacionActivo.getActivo().getId());
-									ActivoPatrimonio actPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoPatrimonio);
-									if (actPatrimonio != null && actPatrimonio.getTipoEstadoAlquiler() != null) {
-										Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo", actPatrimonio.getTipoEstadoAlquiler().getCodigo());
-										DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-										if (tipoEstadoAlquiler != null) {
-										   gastoLineaDetalleEntidad.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-									  	}
-									}
-								}
-							}
-							if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null) {
-								Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
-								DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
-								if (tipoTransmision != null) {
-								   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+							   } else {
+								Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+								DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+								gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   }
+							   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null) {
+								   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
+								   DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+								   if (tipoTransmision != null) {
+									   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
 								}
 							}
 						}
@@ -1321,17 +1314,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 							   }
-							   if (DDCarteraBc.CODIGO_ALQUILER.equals(gastoLineaDetalleEntidad.getCarteraBc().getCodigo())) {
-								Filter filtroActivoPatrimonio = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-								ActivoPatrimonio actPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoPatrimonio);
-								if (actPatrimonio != null && actPatrimonio.getTipoEstadoAlquiler() != null) {
-									Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo", actPatrimonio.getTipoEstadoAlquiler().getCodigo());
-									DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-									if (tipoEstadoAlquiler != null) {
-									   gastoLineaDetalleEntidad.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-								  	}
-								}
-							}
+						} else {
+							Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+							DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+							gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 						}
 						if (activo.getTipoTransmision() != null) {
 							Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
@@ -2082,17 +2068,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 						   gldEnt.setCarteraBc(ddCarteraBc);
 						}
-						if (DDCarteraBc.CODIGO_ALQUILER.equals(gldEnt.getCarteraBc().getCodigo())) {
-							Filter filtroActivoPatrimonio = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoTrabajo.getActivo().getId());
-							ActivoPatrimonio actPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoPatrimonio);
-							if (actPatrimonio != null && actPatrimonio.getTipoEstadoAlquiler() != null) {
-								Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo", actPatrimonio.getTipoEstadoAlquiler().getCodigo());
-								DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-								if (tipoEstadoAlquiler != null) {
-								   gldEnt.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-							  	}
-							}
-						}
+					} else {
+						Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+						DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+						gldEnt.setCarteraBc(ddCarteraBc);
 					}
 					if (activoTrabajo.getActivo().getTipoTransmision() != null) {
 						Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getActivo().getTipoTransmision().getCodigo());

@@ -1,10 +1,10 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220112
+--## FECHA_CREACION=20220119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16896
+--## INCIDENCIA_LINK=HREOS-16968
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16596] - Alejandra García
 --##        0.2 Añadir merge a la GLD_ENT - [HREOS-16896] - Alejandra García
+--##        0.3 Quitar merge a la GLD_ENT y el filtro del campo DD_EAL_ID en la LFACT_SIN_PROV y FACT_PROV- [HREOS-16968] - Alejandra García
 --##########################################
 --*/
 
@@ -41,128 +42,6 @@ BEGIN
 
   --Cuando se ejecuta desde el ETL apr_gen_ru_salidas_facturas
   IF pETL = 1 THEN
-
---Rellenar la GLD_ENT de los gastos activos
-  V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.GLD_ENT T1
-              USING (
-                  WITH PRINCIPAL AS (
-                        SELECT 
-                              GEN.GLD_ENT_ID
-                            , TBJ.TBJ_PRIM_TOMA_POS PRIM_TOMA_POSESION
-                            , SED.DD_SED_ID 
-                            , ACTTBJ.ACT_ID
-                        FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-                        JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                              AND GLD.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
-                            AND GEN.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.dd_ent_entidad_gasto dd_ent on dd_ent.dd_ent_id = gen.dd_ent_id and dd_ent.dd_ent_codigo = ''ACT''
-                        JOIN '|| V_ESQUEMA ||'.GLD_TBJ ON GLD_TBJ.GLD_ID = GLD.GLD_ID
-                            AND GLD_TBJ.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID = GLD_TBJ.TBJ_ID
-                            AND TBJ.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_TBJ ACTTBJ ON ACTTBJ.TBJ_ID = TBJ.TBJ_ID AND GEN.ENT_ID = ACTTBJ.ACT_ID
-                        LEFT JOIN '|| V_ESQUEMA ||'.DD_SED_SUBPARTIDA_EDIFICACION SED ON SED.DD_SED_CODIGO = TBJ.TBJ_CODIGO_SUBPARTIDA
-                              AND SED.BORRADO = 0
-                        WHERE GPV.BORRADO = 0
-                    ),PRIMERA_TOMA_POSESION AS (
-                        SELECT
-                             P.GLD_ENT_ID
-                            ,P.ACT_ID
-                            ,P.PRIM_TOMA_POSESION
-                            ,ROW_NUMBER() OVER(PARTITION BY P.GLD_ENT_ID, P.ACT_ID ORDER BY P.PRIM_TOMA_POSESION DESC NULLS LAST) RN
-                        FROM PRINCIPAL P
-                    ),SUBPARTIDA_EDIFICACION AS (
-                        SELECT
-                             P.GLD_ENT_ID
-                            ,P.ACT_ID
-                            ,P.DD_SED_ID
-                            ,ROW_NUMBER() OVER(PARTITION BY P.GLD_ENT_ID,P.ACT_ID ORDER BY P.DD_SED_ID DESC NULLS LAST) RN
-                        FROM PRINCIPAL P
-                    )
-                    SELECT 
-                            GEN.GLD_ENT_ID
-                            , CASE 
-                                WHEN DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  AND DCA.DCA_EST_CONTRATO = ''Alquilada''
-                                    THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
-                                ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
-                              END AS DD_CBC_ID
-                            , PTA.DD_EAL_ID
-                            , ACT.DD_TTR_ID
-                            , PRIM.PRIM_TOMA_POSESION
-                            , SED.DD_SED_ID
-                        FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-                        JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                              AND GLD.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
-                            AND GEN.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
-                            AND GIC.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
-                            AND EJE.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                            AND PRO.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GEN.ENT_ID
-                            AND ACT.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID = ACT.ACT_ID
-                            AND PTA.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_DCA_DATOS_CONTRATO_ALQ DCA ON DCA.ACT_ID=PTA.ACT_ID
-                            AND DCA.BORRADO = 0
-                        LEFT JOIN PRIMERA_TOMA_POSESION PRIM ON GEN.GLD_ENT_ID = PRIM.GLD_ENT_ID AND ACT.ACT_ID = PRIM.ACT_ID AND PRIM.RN = 1
-                        LEFT JOIN SUBPARTIDA_EDIFICACION SED ON GEN.GLD_ENT_ID = SED.GLD_ENT_ID AND ACT.ACT_ID = SED.ACT_ID AND SED.RN = 1
-                        JOIN '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_SIN_PROV FACTSIN ON FACTSIN.FAC_ID_REM=GPV.GPV_NUM_GASTO_HAYA
-                        WHERE GPV.BORRADO = 0
-                        AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
-                        AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0
-                        UNION
-                        SELECT 
-                            GEN.GLD_ENT_ID
-                            , CASE 
-                                WHEN DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  AND DCA.DCA_EST_CONTRATO = ''Alquilada''
-                                    THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
-                                ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
-                              END AS DD_CBC_ID
-                            , PTA.DD_EAL_ID
-                            , ACT.DD_TTR_ID
-                            , PRIM.PRIM_TOMA_POSESION
-                            , SED.DD_SED_ID
-                        FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-                        JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                              AND GLD.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
-                            AND GEN.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
-                            AND GIC.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
-                            AND EJE.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                            AND PRO.BORRADO = 0
-                        JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GEN.ENT_ID
-                            AND ACT.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID = ACT.ACT_ID
-                            AND PTA.BORRADO = 0
-                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_DCA_DATOS_CONTRATO_ALQ DCA ON DCA.ACT_ID=PTA.ACT_ID
-                            AND DCA.BORRADO = 0
-                        LEFT JOIN PRIMERA_TOMA_POSESION PRIM ON GEN.GLD_ENT_ID = PRIM.GLD_ENT_ID AND ACT.ACT_ID = PRIM.ACT_ID AND PRIM.RN = 1
-                        LEFT JOIN SUBPARTIDA_EDIFICACION SED ON GEN.GLD_ENT_ID = SED.GLD_ENT_ID AND ACT.ACT_ID = SED.ACT_ID AND SED.RN = 1
-                        JOIN '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_PROV FACT ON FACT.FAC_ID_REM=GPV.GPV_NUM_GASTO_HAYA
-                        WHERE GPV.BORRADO = 0
-                        AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
-                        AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0
-              ) T2 ON (T1.GLD_ENT_ID = T2.GLD_ENT_ID)
-              WHEN MATCHED THEN UPDATE SET
-                  T1.DD_CBC_ID = T2.DD_CBC_ID
-                , T1.DD_EAL_ID = T2.DD_EAL_ID
-                , T1.DD_TTR_ID = T2.DD_TTR_ID
-                , T1.PRIM_TOMA_POSESION = T2.PRIM_TOMA_POSESION
-                , T1.DD_SED_ID = T2.DD_SED_ID
-                , T1.USUARIOMODIFICAR = ''HREOS-16896''
-                , T1.FECHAMODIFICAR = SYSDATE                
-                 ';
-
-        EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] (' || sql%rowcount || ') FILAS MODIFICADAS EN GLD_ENT');
-        PL_OUTPUT := PL_OUTPUT ||'[INFO]: FILAS MODIFICADAS EN GLD_ENT (' || sql%rowcount || ') '|| CHR(10);
 
         V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV T1
               USING (
@@ -206,7 +85,6 @@ BEGIN
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
-                    AND NVL(ETG.DD_EAL_ID ,NVL(GEN.DD_EAL_ID, 0)) = NVL(GEN.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
@@ -310,7 +188,6 @@ BEGIN
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
-                    AND NVL(ETG.DD_EAL_ID ,NVL(GEN.DD_EAL_ID, 0)) = NVL(GEN.DD_EAL_ID, 0)
                     AND ETG.EJE_ID = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')

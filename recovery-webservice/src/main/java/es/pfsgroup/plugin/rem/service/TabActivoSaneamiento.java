@@ -153,8 +153,12 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			if(!Checks.estaVacio(tramitacionTitulo) && !Checks.esNulo(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion())
-				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())
-				&& !Checks.esNulo(activo.getTitulo().getEstado()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(activo.getTitulo().getEstado().getCodigo())
+				&& (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())
+				|| DDEstadoPresentacion.NULO.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())	
+				|| DDEstadoPresentacion.IMPOSIBLE_INSCRIPCION.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo()))
+				&& !Checks.esNulo(activo.getTitulo().getEstado()) && (DDEstadoTitulo.ESTADO_SUBSANAR.equals(activo.getTitulo().getEstado().getCodigo())
+						||DDEstadoTitulo.ESTADO_NULO.equals(activo.getTitulo().getEstado().getCodigo())
+						||DDEstadoTitulo.ESTADO_IMPOSIBLE_INSCRIPCION.equals(activo.getTitulo().getEstado().getCodigo()))
 			) {
 				puedeEditar = true;
 
@@ -406,8 +410,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion())
 				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(listasTramitacion.get(0).getEstadoPresentacion().getCodigo())
-				&& !Checks.esNulo(actTituloAdicional.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(actTituloAdicional.getEstadoTitulo().getCodigo())
-			) {
+				&& !Checks.esNulo(actTituloAdicional.getEstadoTitulo()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(actTituloAdicional.getEstadoTitulo().getCodigo())){
 				puedeEditar = true;
 
 			}

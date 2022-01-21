@@ -44,6 +44,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -124,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -155,6 +157,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -175,6 +178,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
@@ -431,6 +435,7 @@ public class ActivoAdapter {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
 		String descripcion  = null;
+		TIPO tipo = null;
 		boolean resultado = false;
 		try {
 			
@@ -443,6 +448,18 @@ public class ActivoAdapter {
 				descripcion = ddDescripcionFoto.getDescripcion();
 				activoFoto.setDescripcionFoto(ddDescripcionFoto);
 				activoFoto.setDescripcion(descripcion);
+			}
+			if (!Checks.esNulo(dtoFoto.getCodigoTipoFoto())) {
+				Filter codTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoTipoFoto());
+				DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, codTipo);
+				activoFoto.setTipoFoto(tipoFoto);
+				if (DDTipoFoto.COD_WEB.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.WEB;
+				} else if(DDTipoFoto.COD_TECNICA.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.TECNICA;
+				} else if (DDTipoFoto.COD_TESTIGO.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.TESTIGO;
+				}
 			}
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -463,7 +480,7 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, descripcion, principal, situacion, dtoFoto.getOrden());
+					tipo, descripcion, principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
@@ -5597,6 +5614,15 @@ public class ActivoAdapter {
 
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Dictionary> getEstadosPresentacionAdicional(){
+		List lista = new ArrayList();	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.INSCRITO));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.PRESENTACION_EN_REGISTRO));	
+		return lista;
 	}
 	
 	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long idActivo) {

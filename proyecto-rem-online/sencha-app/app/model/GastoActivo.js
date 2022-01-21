@@ -73,16 +73,10 @@ Ext.define('HreRem.model.GastoActivo', {
             	type: 'number'
             },
             {
-            	name:'estadoAlquilerCodigo'
+            	name:'carteraBcCodigo'
             },
             {
-            	name:'estadoAlquiler'
-            },
-            {
-            	name:'tipoComercializacionCodigo'
-            },
-            {
-            	name:'tipoComercializacion'
+            	name:'carteraBc'
             },
             {
             	name:'tipoTransmisionCodigo'

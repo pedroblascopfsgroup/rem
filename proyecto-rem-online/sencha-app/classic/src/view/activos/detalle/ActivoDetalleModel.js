@@ -4217,6 +4217,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	},
 		comboEstadoDeposito: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

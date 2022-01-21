@@ -719,102 +719,108 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	onClickBotonGuardarInfoFoto: function(btn){
 		var me = this;
 		var tienePrincipal = false;
-		btn.up('tabpanel').mask();
 		form= btn.up('tabpanel').getActiveTab().getForm();
-		if(btn.up('tabpanel').getActiveTab().xtype == 'fotoswebagrupacion'){
-			var fotosActuales = me.lookupReference("imageDataView").getStore().data.items;
-		}
-		else if(btn.up('tabpanel').getActiveTab().xtype == 'fotossubdivision'){
-			var fotosActuales = me.lookupReference("imageDataViewSubdivision").getStore().data.items;
-		}
-		
-		for (i=0; i < fotosActuales.length; i++) {
-			if(form.getValues().id != fotosActuales[i].data.id && form.getValues().principal){
-				console.log(i+" id"+fotosActuales[i].data.id)
-				console.log(i+" es princpal ?"+fotosActuales[i].data.principal)
-				console.log(i+" interior exterior ? "+fotosActuales[i].data.interiorExterior)
-				if (fotosActuales[i].data.principal == 'true' && form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior){
-					tienePrincipal = true;
-	            	break;
-	            }
+		if (form.isValid()){
+			btn.up('tabpanel').mask();
+			if(btn.up('tabpanel').getActiveTab().xtype == 'fotoswebagrupacion'){
+				var fotosActuales = me.lookupReference("imageDataView").getStore().data.items;
 			}
-		}
+			else if(btn.up('tabpanel').getActiveTab().xtype == 'fotossubdivision'){
+				var fotosActuales = me.lookupReference("imageDataViewSubdivision").getStore().data.items;
+			}
 			
-		btn.up('tabpanel').mask();
-		form= btn.up('tabpanel').getActiveTab().getForm();
-		var url =  $AC.getRemoteUrl('activo/updateFotosById');
-		var params={"id":form.findField("id").getValue()};
-		if(form.findField("nombre")!=null){
-			params['nombre']= form.findField("nombre").getValue();
-		}
-		if(form.findField("principal")!=null){
-			params['principal']= form.findField("principal").getValue();
-		}
-		if(form.findField("interiorExterior")!=null){
-			params['interiorExterior']= form.findField("interiorExterior").getValue();
-		}
-		if(form.findField("orden")!=null){
-			params['orden']= form.findField("orden").getValue();
-		}
-		if(form.findField("codigoDescripcionFoto")!=null){
-			params['codigoDescripcionFoto']= form.findField("codigoDescripcionFoto").getValue();
-		}
-		if(form.findField("fechaDocumento")!=null){
-			params['fechaDocumento']= form.findField("fechaDocumento").getValue();
-		}
-		if(form.findField("suelos")!=null){
-			params['suelos']= form.findField("suelos").getValue();
-		}
-		if(form.findField("plano")!=null){
-			params['plano']= form.findField("plano").getValue();
-		}
-		if(!tienePrincipal){
-	       Ext.Ajax.request({
-			     url: url,
-			     params:params,
-			     success: function (a, operation, context) {
-			    	btn.up('tabpanel').unmask();
-			    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			    	me.onClickBotonRefrescar();
-			    	activeTab = btn.up('tabpanel').getActiveTab();
-	
-					if (!activeTab.saveMultiple) {
-						if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-							me.onClickBotonRefrescar();
+			for (i=0; i < fotosActuales.length; i++) {
+				if(form.getValues().id != fotosActuales[i].data.id && form.getValues().principal){
+					console.log(i+" id"+fotosActuales[i].data.id)
+					console.log(i+" es princpal ?"+fotosActuales[i].data.principal)
+					console.log(i+" interior exterior ? "+fotosActuales[i].data.interiorExterior)
+					if (fotosActuales[i].data.principal == 'true' && form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior){
+						tienePrincipal = true;
+		            	break;
+		            }
+				}
+			}
+			
+			btn.up('tabpanel').mask();
+			form= btn.up('tabpanel').getActiveTab().getForm();
+			var url =  $AC.getRemoteUrl('activo/updateFotosById');
+			var params={"id":form.findField("id").getValue()};
+			if(form.findField("nombre")!=null){
+				params['nombre']= form.findField("nombre").getValue();
+			}
+			if(form.findField("principal")!=null){
+				params['principal']= form.findField("principal").getValue();
+			}
+			if(form.findField("interiorExterior")!=null){
+				params['interiorExterior']= form.findField("interiorExterior").getValue();
+			}
+			if(form.findField("orden")!=null){
+				params['orden']= form.findField("orden").getValue();
+			}
+			if(form.findField("codigoDescripcionFoto")!=null){
+				params['codigoDescripcionFoto']= form.findField("codigoDescripcionFoto").getValue();
+			}
+			if (form.findField("codigoTipoFoto") != null) {
+				params['codigoTipoFoto'] = form.findField("codigoTipoFoto").getValue();
+			}
+			if(form.findField("fechaDocumento")!=null){
+				params['fechaDocumento']= form.findField("fechaDocumento").getValue();
+			}
+			if(form.findField("suelos")!=null){
+				params['suelos']= form.findField("suelos").getValue();
+			}
+			if(form.findField("plano")!=null){
+				params['plano']= form.findField("plano").getValue();
+			}
+					
+			if(!tienePrincipal){
+		       Ext.Ajax.request({
+				     url: url,
+				     params:params,
+				     success: function (a, operation, context) {
+				    	btn.up('tabpanel').unmask();
+				    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	me.onClickBotonRefrescar();
+				    	activeTab = btn.up('tabpanel').getActiveTab();
+		
+						if (!activeTab.saveMultiple) {
+							if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
+								me.onClickBotonRefrescar();
+								
+							}
+						} else {
 							
-						}
-					} else {
-						
-						var records = activeTab.getBindRecords();
-						
-						for (i=0; i<records.length; i++) {
-							me.onClickBotonRefrescar();
-						}
-	
-					}	
-	
-					btn.hide();
-					Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
-									function (field, index) 
-										{ 
-											field.fireEvent('save');
-											field.fireEvent('update');});
-					me.getViewModel().set("editingfotos", false);
-	            },
-	            failure: function (a, operation, context) {
-	            	  Ext.toast({
-					     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
-					     width: 360,
-					     height: 100,
-					     align: 't'									     
-					 });
-	            	  btn.up('tabpanel').unmask();
-	            }
-		    });
-		}
-		else{
-			me.fireEvent("errorToast", "Ya dispone de una foto principal");
-			btn.up('tabpanel').unmask();
+							var records = activeTab.getBindRecords();
+							
+							for (i=0; i<records.length; i++) {
+								me.onClickBotonRefrescar();
+							}
+		
+						}	
+		
+						btn.hide();
+						Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+										function (field, index) 
+											{ 
+												field.fireEvent('save');
+												field.fireEvent('update');});
+						me.getViewModel().set("editingfotos", false);
+		            },
+		            failure: function (a, operation, context) {
+		            	  Ext.toast({
+						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+						     width: 360,
+						     height: 100,
+						     align: 't'									     
+						 });
+		            	  btn.up('tabpanel').unmask();
+		            }
+			    });
+			}
+			else{
+				me.fireEvent("errorToast", "Ya dispone de una foto principal");
+				btn.up('tabpanel').unmask();
+			}
 		}
 	},
 

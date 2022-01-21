@@ -53,7 +53,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
     	
     				{
 	    				xtype: 'formBase', 
-	    				url: $AC.getRemoteUrl("agrupacion/uploadFotoSubdivision"),
+	    				url: $AC.getRemoteUrl("agrupacion/uploadFotosSubdivision"),
 	    				reference: 'adjuntarFotoSubdivisionFormRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
@@ -64,10 +64,10 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 	    				items: 
 	    					[
 					    	   {
-							        xtype: 'filefield',
+							        xtype: 'multiplefilefield',
 							        cls: 'filefield-base',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-							        name: 'fileUpload',							        
+							        name: 'multipleFileUpload',							        
 							        anchor: '100%',
 							        width: '100%',
 							        allowBlank: false,
@@ -80,18 +80,26 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 							        align: 'right',
 							        vtype: 'onlyImages',
 							        listeners: {
-				                        change: function(fld, value) {
-				                        	var lastIndex = null,
-				                        	fileName = null;
-				                        	if(!Ext.isEmpty(value)) {
-					                        	lastIndex = value.lastIndexOf('\\');
-										        if (lastIndex == -1) return;
-										        fileName = value.substring(lastIndex + 1);
-					                            fld.setRawValue(fileName);
-				                        	}
-				                        }
-				                    }
-							        
+							        	change: function (filefield, newFileName, oldFileName) {
+							        		var me = this,
+					                        	fileList = filefield.getFileList(),
+					                            fileNames = Ext.Array.pluck(fileList, 'name');
+					                        
+					                        filefield.setRawValue(fileNames.join(', '));
+					                        
+				                        	if (fileList.length > 1) {
+				                        		me.up('form').down('[name=principal]').hide();
+				                        		me.up('form').down('[name=principal]').disable();	
+				                        		me.up('form').down('fieldcontainer[reference=radioInterior]').hide();
+				                        		me.up('form').down('fieldcontainer[reference=radioInterior]').disable();
+			                				} else {
+			                					me.up('form').down('[name=principal]').show();
+			                					me.up('form').down('[name=principal]').enable();	
+			                					me.up('form').down('fieldcontainer[reference=radioInterior]').show();
+			                					me.up('form').down('fieldcontainer[reference=radioInterior]').enable();
+			                				}
+					                    }
+				                    }							        
 					    		},
 					    		{ 
 									xtype: 'combobox',
@@ -107,12 +115,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', {
 									width: '100%',
 									listeners: {
 			                			change: function(cmp, newValue, oldValue, eOpts ) {
+			                				var fileList = this.up('form').down('[name=multipleFileUpload]').getFileList();
 			                				if (newValue != '01') {
 			                					this.up('form').down('[name=principal]').hide();
 			                					this.up('form').down('[name=principal]').disable();	
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').hide();
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').disable();
-			                				} else {
+			                				} else if (newValue == '01' && fileList.length < 2) {
 			                					this.up('form').down('[name=principal]').show();
 			                					this.up('form').down('[name=principal]').enable();	
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').show();

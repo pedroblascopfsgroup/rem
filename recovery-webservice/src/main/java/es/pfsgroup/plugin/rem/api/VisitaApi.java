@@ -131,4 +131,8 @@ public interface VisitaApi {
 	 * @return Devuelve una visita.
 	 */
 	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter);
+
+	public void llamarServicioContactos(List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
+
+	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> listaRespuesta);
 }

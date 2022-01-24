@@ -112,6 +112,8 @@ public class VisitasController {
 			} 
 			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
+				visitaApi.checkReplicarClienteProveedor(listaRespuesta);
+				visitaApi.llamarServicioContactos(listaVisitaDto, jsonFields);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");

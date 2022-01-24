@@ -183,6 +183,7 @@ public class ClienteDto implements Serializable{
 	private String codProvinciaNacimiento;
 	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
 	private String codProvinciaNacimientoRepresentante;
+	private String idClienteBc;
 	
 	
 		
@@ -516,5 +517,11 @@ public class ClienteDto implements Serializable{
 	}
 	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
 		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
+	}
+	public String getIdClienteBc() {
+		return idClienteBc;
+	}
+	public void setIdClienteBc(String idClienteBc) {
+		this.idClienteBc = idClienteBc;
 	}
 }

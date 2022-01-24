@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDSuborigenContrato;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
@@ -94,6 +96,34 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	
 	@Column(name="ACTIVO_PROMO_ESTRATEG")
 	private Boolean activoPromoEstrategico;
+	
+	@Column(name="PRECIO_COMPRA")
+	private Double precioCompra;
+	
+	@Column(name="ALTA_PRIMA_OPCION_COMPRA")
+	private Boolean altaPrimaOpcionCompra;
+	
+	@Column(name="RENUNCIA_DERECHO_TANTEO")
+	private Boolean renunciaDerechoTanteo;
+	
+	@ManyToOne(fetch= FetchType.LAZY)
+	@JoinColumn(name="DD_SOC_ID")
+	private DDSuborigenContrato suborigenContrato;
+	
+	@Column(name = "OBLIGADO_CUMPLIMIENTO")
+	private Date fechaObligadoCumplimiento;
+	
+	@Column(name="FIANZA_OBLIGATORIA")
+	private Double fianzaObligatoria;
+	
+	@Column(name = "FECHA_AVAL_BANC")
+	private Date fechaAvalBancario;
+	
+	@Column(name="IMPORTE_AVAL_BANC")
+	private Double importeAvalBancario;
+	
+	@Column(name="IMPORTE_DEPOS_BANC")
+	private Double importeDepositoBancario;
 	
 	@Version
 	private Long version;
@@ -228,6 +258,77 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	public void setActivoPromoEstrategico(Boolean activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
-	
+
+	public Double getPrecioCompra() {
+		return precioCompra;
+	}
+
+	public void setPrecioCompra(Double precioCompra) {
+		this.precioCompra = precioCompra;
+	}
+
+	public Boolean getAltaPrimaOpcionCompra() {
+		return altaPrimaOpcionCompra;
+	}
+
+	public void setAltaPrimaOpcionCompra(Boolean altaPrimaOpcionCompra) {
+		this.altaPrimaOpcionCompra = altaPrimaOpcionCompra;
+	}
+
+	public Boolean getRenunciaDerechoTanteo() {
+		return renunciaDerechoTanteo;
+	}
+
+	public void setRenunciaDerechoTanteo(Boolean renunciaDerechoTanteo) {
+		this.renunciaDerechoTanteo = renunciaDerechoTanteo;
+	}
+
+	public DDSuborigenContrato getSuborigenContrato() {
+		return suborigenContrato;
+	}
+
+	public void setSuborigenContrato(DDSuborigenContrato suborigenContrato) {
+		this.suborigenContrato = suborigenContrato;
+	}
+
+	public Date getFechaObligadoCumplimiento() {
+		return fechaObligadoCumplimiento;
+	}
+
+	public void setFechaObligadoCumplimiento(Date fechaObligadoCumplimiento) {
+		this.fechaObligadoCumplimiento = fechaObligadoCumplimiento;
+	}
+
+	public Double getFianzaObligatoria() {
+		return fianzaObligatoria;
+	}
+
+	public void setFianzaObligatoria(Double fianzaObligatoria) {
+		this.fianzaObligatoria = fianzaObligatoria;
+	}
+
+	public Date getFechaAvalBancario() {
+		return fechaAvalBancario;
+	}
+
+	public void setFechaAvalBancario(Date fechaAvalBancario) {
+		this.fechaAvalBancario = fechaAvalBancario;
+	}
+
+	public Double getImporteAvalBancario() {
+		return importeAvalBancario;
+	}
+
+	public void setImporteAvalBancario(Double importeAvalBancario) {
+		this.importeAvalBancario = importeAvalBancario;
+	}
+
+	public Double getImporteDepositoBancario() {
+		return importeDepositoBancario;
+	}
+
+	public void setImporteDepositoBancario(Double importeDepositoBancario) {
+		this.importeDepositoBancario = importeDepositoBancario;
+	}
 	
 }

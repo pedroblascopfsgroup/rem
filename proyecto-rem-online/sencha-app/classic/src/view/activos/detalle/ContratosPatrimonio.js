@@ -112,6 +112,64 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										bind : '{contrato.estadoContrato}',
 										readOnly : true
 									},
+									{
+										xtype: 'comboboxfieldbasedd',
+										fieldLabel: HreRem.i18n('fieldlabel.suborigen.contrato'),
+										reference: 'cesionDeUsoRef',
+										bind: {
+											readOnly: true,
+											store: '{comboSuborigenContrato}',
+											value: '{contrato.suborigenContrato}',
+											rawValue: '{contrato.suborigenContratoDescripcion}',
+											hidden: '{!contrato.isCarteraCajamar}'
+										}
+									},
+									{
+										xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+										fieldLabel : HreRem.i18n('fieldlabel.obligado.cumplimiento'),
+										bind : {
+											value: '{contrato.fechaObligadoCumplimiento}',
+											hidden: '{!contrato.isCarteraCajamar}'
+											},
+										readOnly : true
+										
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fianza.obligatoria'),
+										bind: {
+											value: '{contrato.fianzaObligatoria}',
+											hidden: '{!contrato.isCarteraCajamar}'
+										}
+									},
+									{
+										xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+										fieldLabel : HreRem.i18n('fieldlabel.fecha.registro.aval.bancario'),
+										bind : {
+											value: '{contrato.fechaAvalBancario}',
+											hidden: '{!contrato.isCarteraCajamar}'
+											},
+										readOnly : true
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.importe.aval.bancario'),
+										bind: {
+											value: '{contrato.importeAvalBancario}',
+											hidden: '{!contrato.isCarteraCajamar}'
+										}
+									},
+									{
+										xtype : 'currencyfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.importe.deposito.bancario'),
+										colspan: 1,
+										bind: {
+											value: '{contrato.importeDepositoBancario}',
+											hidden: '{!contrato.isCarteraCajamar}'
+										}
+									},
 									{ //Oferta REM
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.oferta.REM'),

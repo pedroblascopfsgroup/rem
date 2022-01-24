@@ -4,8 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.aspectj.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
@@ -14,10 +17,12 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Component
@@ -48,6 +53,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 	public DtoActivoPatrimonioContrato getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonioContrato activoPatrimonioContratoDto = new DtoActivoPatrimonioContrato();		
 		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioDao.getActivoPatrimonioContratoByActivo(activo.getId());
+		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo); //Listado de ofertas del activo
 		
 		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
@@ -60,6 +66,25 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 			}	
 			activoPatrimonioContratoDto.setMultiplesResultados(listActivoPatrimonioContrato.size() > 1);
 			activoPatrimonioContratoDto.setTieneRegistro(listActivoPatrimonioContrato.size() >= 1); //Tiene más de un registro
+			if (activoP.getSuborigenContrato() != null) {
+				activoPatrimonioContratoDto.setSuborigenContrato(activoP.getSuborigenContrato().getCodigo());
+				activoPatrimonioContratoDto.setSuborigenContratoDescripcion(activoP.getSuborigenContrato().getDescripcion());
+			}
+			if (activoP.getFechaObligadoCumplimiento() != null) {
+				activoPatrimonioContratoDto.setFechaObligadoCumplimiento(activoP.getFechaObligadoCumplimiento());
+			}
+			if (activoP.getFianzaObligatoria() != null) {
+				activoPatrimonioContratoDto.setFianzaObligatoria(activoP.getFianzaObligatoria());
+			}
+			if (activoP.getFechaAvalBancario() != null) {
+				activoPatrimonioContratoDto.setFechaAvalBancario(activoP.getFechaAvalBancario());
+			}
+			if (activoP.getImporteAvalBancario() != null) {
+				activoPatrimonioContratoDto.setImporteAvalBancario(activoP.getImporteAvalBancario());
+			}
+			if (activoP.getImporteDepositoBancario() != null) {
+				activoPatrimonioContratoDto.setImporteDepositoBancario(activoP.getImporteDepositoBancario());
+			}
 		}
 		
 		if(!Checks.estaVacio(listadoOfertas)) {
@@ -94,6 +119,10 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 					activoPatrimonioContratoDto.setIdExpediente(aux.getId());
 				}
 			}
+		}
+		
+		if (activo != null) {
+			activoPatrimonioContratoDto.setIsCarteraCajamar(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()));
 		}
 		
 		return activoPatrimonioContratoDto;

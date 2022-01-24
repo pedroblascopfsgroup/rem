@@ -77,6 +77,21 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		},
     		{
     			name: 'activoPromoEstrategico'
+    		},
+    		{
+    			name: 'precioCompra'
+    		},
+    		{
+    			name: 'altaPrimaOpcionCompra',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'renunciaDerechoTanteo',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraCajamar',
+    			type: 'boolean'
     		}
     ],
     

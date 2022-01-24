@@ -35,7 +35,14 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Long idExpediente;
 	private String idContratoAntiguo;
 	private Boolean esDivarian;
-
+	private String suborigenContrato;
+	private String suborigenContratoDescripcion;
+	private Date fechaObligadoCumplimiento;
+	private Double fianzaObligatoria;
+	private Date fechaAvalBancario;
+	private Double importeAvalBancario;
+	private Double importeDepositoBancario;
+	private Boolean isCarteraCajamar;
 	
 	
 	public Long getIdActivo() {
@@ -163,6 +170,54 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	}
 	public void setEsDivarian(Boolean esDivarian) {
 		this.esDivarian = esDivarian;
+	}
+	public String getSuborigenContrato() {
+		return suborigenContrato;
+	}
+	public void setSuborigenContrato(String suborigenContrato) {
+		this.suborigenContrato = suborigenContrato;
+	}
+	public String getSuborigenContratoDescripcion() {
+		return suborigenContratoDescripcion;
+	}
+	public void setSuborigenContratoDescripcion(String suborigenContratoDescripcion) {
+		this.suborigenContratoDescripcion = suborigenContratoDescripcion;
+	}
+	public Date getFechaObligadoCumplimiento() {
+		return fechaObligadoCumplimiento;
+	}
+	public void setFechaObligadoCumplimiento(Date fechaObligadoCumplimiento) {
+		this.fechaObligadoCumplimiento = fechaObligadoCumplimiento;
+	}
+	public Double getFianzaObligatoria() {
+		return fianzaObligatoria;
+	}
+	public void setFianzaObligatoria(Double fianzaObligatoria) {
+		this.fianzaObligatoria = fianzaObligatoria;
+	}
+	public Date getFechaAvalBancario() {
+		return fechaAvalBancario;
+	}
+	public void setFechaAvalBancario(Date fechaAvalBancario) {
+		this.fechaAvalBancario = fechaAvalBancario;
+	}
+	public Double getImporteAvalBancario() {
+		return importeAvalBancario;
+	}
+	public void setImporteAvalBancario(Double importeAvalBancario) {
+		this.importeAvalBancario = importeAvalBancario;
+	}
+	public Double getImporteDepositoBancario() {
+		return importeDepositoBancario;
+	}
+	public void setImporteDepositoBancario(Double importeDepositoBancario) {
+		this.importeDepositoBancario = importeDepositoBancario;
+	}
+	public Boolean getIsCarteraCajamar() {
+		return isCarteraCajamar;
+	}
+	public void setIsCarteraCajamar(Boolean isCarteraCajamar) {
+		this.isCarteraCajamar = isCarteraCajamar;
 	}
 	
 }

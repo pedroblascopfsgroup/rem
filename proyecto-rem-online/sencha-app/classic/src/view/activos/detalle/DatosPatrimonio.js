@@ -212,7 +212,39 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								value: '{patrimonio.activoPromoEstrategico}',
 								hidden: true	
 							}
-						},	
+						},
+						{
+							xtype : 'currencyfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.precio.compra'),
+							colspan: 1,
+							bind: {
+								value: '{patrimonio.precioCompra}',
+								readOnly: true,
+								hidden: '{!patrimonio.isCarteraCajamar}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.alta.prima.opcion.compra'),
+							colspan: 1,
+							bind: {
+								store: '{comboSiNoBoolean}',
+								value: '{patrimonio.altaPrimaOpcionCompra}',
+								readOnly: true,
+								hidden: '{!patrimonio.isCarteraCajamar}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.renucia.derecho.tanteo'),
+							colspan: 1,
+							bind: {
+								store: '{comboSiNoBoolean}',
+								value: '{patrimonio.renunciaDerechoTanteo}',
+								readOnly: true,
+								hidden: '{!patrimonio.isCarteraCajamar}'
+							}
+						},
 						{
 							xtype: 'displayfieldbase',
 							colspan: 3,

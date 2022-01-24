@@ -50,7 +50,11 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Boolean isCarteraTitulizada;
 	private String acuerdoPago;
 	private String moroso;
-	private String activoPromoEstrategico;	
+	private String activoPromoEstrategico;
+	private Double precioCompra;
+	private Boolean altaPrimaOpcionCompra;
+	private Boolean renunciaDerechoTanteo;
+	private Boolean isCarteraCajamar;
 	
 	public Boolean getChkSubrogado() {
 		return chkSubrogado;
@@ -243,6 +247,30 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setActivoPromoEstrategico(String activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
+	}
+	public Double getPrecioCompra() {
+		return precioCompra;
+	}
+	public void setPrecioCompra(Double precioCompra) {
+		this.precioCompra = precioCompra;
+	}
+	public Boolean getAltaPrimaOpcionCompra() {
+		return altaPrimaOpcionCompra;
+	}
+	public void setAltaPrimaOpcionCompra(Boolean altaPrimaOpcionCompra) {
+		this.altaPrimaOpcionCompra = altaPrimaOpcionCompra;
+	}
+	public Boolean getRenunciaDerechoTanteo() {
+		return renunciaDerechoTanteo;
+	}
+	public void setRenunciaDerechoTanteo(Boolean renunciaDerechoTanteo) {
+		this.renunciaDerechoTanteo = renunciaDerechoTanteo;
+	}
+	public Boolean getIsCarteraCajamar() {
+		return isCarteraCajamar;
+	}
+	public void setIsCarteraCajamar(Boolean isCarteraCajamar) {
+		this.isCarteraCajamar = isCarteraCajamar;
 	}
     
 }

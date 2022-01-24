@@ -175,7 +175,17 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 			|| destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"] 
         	|| (destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"]) 
         	|| (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){
-				if(wizard.lookupController().getView().getViewModel().get('isCarteraBankia')){
+
+			if(wizard.lookupController().getView().getViewModel().getData().esAgrupacionCaixa){
+				if(!Ext.isEmpty(form.findField('codTipoDocumentoRte')) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+     					&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+					
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
+					return false;
+				}
+			}
+			if(wizard.lookupController().getView().getViewModel().get('isCarteraBankia')){
 	            	 var tipoComercializacionCodigo = wizard.down('[xtype=slidedatosoferta]').down('[name=tipoOferta]').value;
 	                 if(CONST.TIPOS_OFERTA["VENTA"] === tipoComercializacionCodigo){
 	                 	if(Ext.isEmpty(wizard.lookupController().getView().getViewModel().get('canalVentaBC').selection)){
@@ -188,6 +198,13 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 	     					return;
 	     				}
 	                 }
+                 	if(!Ext.isEmpty(form.findField('codTipoDocumentoRte')) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+                 				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+                 		
+                 		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
+                 		return false;
+                 	}
             	}
             	if (me.view.up().lookupController().getViewModel().get('activo.isCarteraLiberbank') && valueDestComercial == "Venta"){
             		var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');

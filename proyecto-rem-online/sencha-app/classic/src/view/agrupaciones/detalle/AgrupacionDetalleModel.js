@@ -848,6 +848,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     	
 		storeFotos: {    			
     		 model: 'HreRem.model.Fotos',
+			 sorters: [
+			 			{
+			        		property: 'numeroActivo',
+			        		direction: 'ASC'	
+			 			},
+			 			{
+			        		property: 'orden',
+			        		direction: 'ASC'	
+			 			}
+			 ],
 		     proxy: {
 		        type: 'uxproxy',
 		        api: {
@@ -1232,6 +1242,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			},
 			autoLoad: false
-		}
+		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	}
     }
 });

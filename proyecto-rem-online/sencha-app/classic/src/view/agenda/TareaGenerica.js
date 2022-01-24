@@ -3107,7 +3107,7 @@
 			    	if(!Ext.isEmpty(dto)){		
 			    		me.down('[name=checkboxVentaDirecta]').setValue(dto.ventaDirecta);
 			    		if(!Ext.isEmpty(dto.fechaIngresoCheque)){
-				    		me.down('[name=fechaIngreso]').setValue(Ext.Date.format(dto.fechaIngresoCheque, 'd/m/Y'));
+				    		me.down('[name=fechaIngreso]').setValue(Ext.Date.format(new Date(dto.fechaIngresoCheque), 'd/m/Y'));
 			    		}
 			    	}
 			    }

@@ -758,9 +758,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					return false;
 				}
 				return true; 
+			}else if (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo) {
+				return !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+				    || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}else{
-				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+				return !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
 					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
 					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}

@@ -474,6 +474,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
 			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
 		}
+		if (((JSONObject) jsonFields).containsKey("idClienteBc")) {
+			cliente.setIdClienteBc(clienteDto.getIdClienteBc());
+		}
 		if (((JSONObject) jsonFields).containsKey("razonSocial")) {
 			cliente.setRazonSocial(clienteDto.getRazonSocial());
 		}

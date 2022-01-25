@@ -277,6 +277,9 @@ public class ClienteComercial implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CLC_ACEPTACION_OFERTA")
     private DDSinSiNo aceptacionOferta;
+
+	@Column(name = "CLC_BC_ID")
+	private String idClienteBc;
     
 	@Version   
 	private Long version;
@@ -815,5 +818,13 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
 		this.aceptacionOferta = aceptacionOferta;
+	}
+
+	public String getIdClienteBc() {
+		return idClienteBc;
+	}
+
+	public void setIdClienteBc(String idClienteBc) {
+		this.idClienteBc = idClienteBc;
 	}
 }

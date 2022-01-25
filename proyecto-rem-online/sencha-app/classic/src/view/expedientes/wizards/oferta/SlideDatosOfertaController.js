@@ -177,7 +177,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
         	|| (destinoComercialActivo !== CONST.TIPO_COMERCIALIZACION_ACTIVO["VENTA"] && valueDestComercial === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_NO_COMERCIAL"])){
 
 			if(wizard.lookupController().getView().getViewModel().getData().esAgrupacionCaixa){
-				if(!Ext.isEmpty(form.findField('codTipoDocumentoRte')) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+				if(!Ext.isEmpty(form.findField('codTipoDocumentoRte').value) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
      				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
      					&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 					
@@ -198,7 +198,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 	     					return;
 	     				}
 	                 }
-                 	if(!Ext.isEmpty(form.findField('codTipoDocumentoRte')) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+                 	if(!Ext.isEmpty(form.findField('codTipoDocumentoRte').value) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
                  			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
                  				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
                  		

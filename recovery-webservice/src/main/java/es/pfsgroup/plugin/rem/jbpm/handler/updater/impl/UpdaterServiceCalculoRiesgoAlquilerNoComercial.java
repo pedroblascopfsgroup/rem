@@ -63,9 +63,8 @@ public class UpdaterServiceCalculoRiesgoAlquilerNoComercial implements UpdaterSe
 				if(DDRiesgoOperacion.CODIGO_ROP_NO_APLICA.equals(comboResultado)) {
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_PTE_ENVIO;
 				}else if(DDRiesgoOperacion.CODIGO_ROP_ALTO.equals(comboResultado)){
-					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_PDTE_BC;
-				} else if(DDRiesgoOperacion.CODIGO_ROP_MEDIO.equals(comboResultado) 
-						||DDRiesgoOperacion.CODIGO_ROP_BAJO.equals(comboResultado)) {
+					//estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_PDTE_BC;
+				} else if(DDRiesgoOperacion.CODIGO_ROP_MEDIO.equals(comboResultado) || DDRiesgoOperacion.CODIGO_ROP_BAJO.equals(comboResultado)) {
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
 				}
 				

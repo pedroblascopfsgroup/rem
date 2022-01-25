@@ -158,18 +158,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         
         HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
         htp.setFechaSancion(new Date());
-        if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea())
-        		||DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
+        if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
         	htp.setFechaComunicacionRiesgo(new Date());
         }
         
         genericDao.save(HistoricoTareaPbc.class, htp);
         genericDao.save(OfertaCaixa.class, ofrCaixa);
             
-        if(ofrCaixa.getOferta() != null  
-        		&& (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) 
-        				|| DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))){
-        	ofrCaixa.getOferta().getActivoPrincipal();
+        if(ofrCaixa.getOferta() != null  && (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))){
+        	dto.setRiesgoOperacion(rop.getCodigo());
         	adapter.save(createRequestAccionCalculoRiesgo(dto));
         }
         

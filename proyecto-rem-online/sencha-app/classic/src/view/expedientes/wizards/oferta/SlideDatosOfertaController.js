@@ -588,8 +588,16 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		
 		getComboTipoOferta: function(combo){
 			var me = this;
+			var activosDetalle = me.getView().down('[reference="activosdetalle"]');
+			var codCartera = null;
+
+			if(Ext.isEmpty(activosDetalle)){
+				codCartera = me.getViewModel().get('agrupacionficha.codigoCartera');
+			}else{
+				codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+			}
 			combo.getStore().getProxy().setExtraParams({
-				'codCartera' : me.getViewModel().get("activo.entidadPropietariaCodigo"),
+				'codCartera' : codCartera,
 				'idActivo': me.getViewModel().get("activo.id"),
 				'idAgrupacion': combo.up("wizardBase").oferta.data.idAgrupacion
 			});

@@ -2050,6 +2050,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 	    	return false;
+	    },
+	    
+	    isCamposEnabledByTipoAlquilerAndCarteras: function(get) {
+	    	var me = this,
+	    	tipoAlquiler = get('patrimonio.tipoAlquilerCodigo'),
+	    	isCajamaryUnicaja = get('isCarteraCajamarYUnicaja');
+	    	
+	    	if (isCajamaryUnicaja && CONST.TIPO_ALQUILER['CON_OPCION_COMPRA'] === tipoAlquiler) {
+				return true;
+			}
+	    	return false;
 	    }
 	 },
     

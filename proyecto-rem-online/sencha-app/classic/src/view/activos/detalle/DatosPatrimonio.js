@@ -220,7 +220,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							bind: {
 								value: '{patrimonio.precioCompra}',
 								readOnly: true,
-								hidden: '{!isCarteraCajamarYUnicaja}'
+								hidden: '{!isCamposEnabledByTipoAlquilerAndCarteras}'
 							}
 						},
 						{
@@ -231,7 +231,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboSiNoBoolean}',
 								value: '{patrimonio.altaPrimaOpcionCompra}',
 								readOnly: true,
-								hidden: '{!isCarteraCajamarYUnicaja}'
+								hidden: '{!isCamposEnabledByTipoAlquilerAndCarteras}'
 							}
 						},
 						{

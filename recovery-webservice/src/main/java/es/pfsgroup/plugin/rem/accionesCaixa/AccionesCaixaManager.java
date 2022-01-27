@@ -700,6 +700,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("idTarea", idTarea);
         map.put("observaciones", observaciones);
         map.put("comboResultado", comboResultado);
+        map.put("comboResolucion", comboResultado);
 
 
         return map;

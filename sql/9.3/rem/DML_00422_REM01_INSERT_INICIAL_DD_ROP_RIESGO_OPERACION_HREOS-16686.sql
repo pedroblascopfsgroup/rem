@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20211220
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20210124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16686
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA   OCULTAR
-      T_TIPO_DATA('04',			'No aplica',			    'No aplica')
+      T_TIPO_DATA('04',			'No aplica',			    'No aplica' , 'NA')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -62,6 +62,8 @@ BEGIN
           SET 
             DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
             DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+			DD_'||V_CHARS||'_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
+			DD_'||V_CHARS||'_CODIGO_PBC = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
 			    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -77,13 +79,13 @@ BEGIN
         V_MSQL := '
           	INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
 				DD_'||V_CHARS||'_ID, DD_'||V_CHARS||'_CODIGO, DD_'||V_CHARS||'_DESCRIPCION, DD_'||V_CHARS||'_DESCRIPCION_LARGA, 
-				VERSION, USUARIOCREAR, FECHACREAR)
+				VERSION, USUARIOCREAR, FECHACREAR, DD_'||V_CHARS||'_CODIGO_C4C, DD_'||V_CHARS||'_CODIGO_PBC)
           	SELECT 
 	            '|| V_ID || ',
 	            '''||V_TMP_TIPO_DATA(1)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
 	            '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-	            0, '''||V_USUARIO||''', SYSDATE FROM DUAL';
+	            0, '''||V_USUARIO||''', SYSDATE, '''||TRIM(V_TMP_TIPO_DATA(4))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''' FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
       

@@ -43,6 +43,7 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Double importeAvalBancario;
 	private Double importeDepositoBancario;
 	private Boolean isCarteraCajamar;
+	private Boolean isCarteraLiberbank;
 	
 	
 	public Long getIdActivo() {
@@ -218,6 +219,12 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	}
 	public void setIsCarteraCajamar(Boolean isCarteraCajamar) {
 		this.isCarteraCajamar = isCarteraCajamar;
+	}
+	public Boolean getIsCarteraLiberbank() {
+		return isCarteraLiberbank;
+	}
+	public void setIsCarteraLiberbank(Boolean isCarteraLiberbank) {
+		this.isCarteraLiberbank = isCarteraLiberbank;
 	}
 	
 }

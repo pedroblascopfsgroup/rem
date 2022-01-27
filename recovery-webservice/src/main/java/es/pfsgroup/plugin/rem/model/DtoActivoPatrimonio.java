@@ -55,6 +55,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Boolean altaPrimaOpcionCompra;
 	private Boolean renunciaDerechoTanteo;
 	private Boolean isCarteraCajamar;
+	private Boolean isCarteraLiberbank;
 	
 	public Boolean getChkSubrogado() {
 		return chkSubrogado;
@@ -271,6 +272,12 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setIsCarteraCajamar(Boolean isCarteraCajamar) {
 		this.isCarteraCajamar = isCarteraCajamar;
+	}
+	public Boolean getIsCarteraLiberbank() {
+		return isCarteraLiberbank;
+	}
+	public void setIsCarteraLiberbank(Boolean isCarteraLiberbank) {
+		this.isCarteraLiberbank = isCarteraLiberbank;
 	}
     
 }

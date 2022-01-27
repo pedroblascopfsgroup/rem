@@ -220,7 +220,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							bind: {
 								value: '{patrimonio.precioCompra}',
 								readOnly: true,
-								hidden: '{!patrimonio.isCarteraCajamar}'
+								hidden: '{!isCarteraCajamarYUnicaja}'
 							}
 						},
 						{
@@ -231,7 +231,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboSiNoBoolean}',
 								value: '{patrimonio.altaPrimaOpcionCompra}',
 								readOnly: true,
-								hidden: '{!patrimonio.isCarteraCajamar}'
+								hidden: '{!isCarteraCajamarYUnicaja}'
 							}
 						},
 						{
@@ -242,7 +242,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboSiNoBoolean}',
 								value: '{patrimonio.renunciaDerechoTanteo}',
 								readOnly: true,
-								hidden: '{!patrimonio.isCarteraCajamar}'
+								hidden: '{!isCarteraCajamarYUnicaja}'
 							}
 						},
 						{

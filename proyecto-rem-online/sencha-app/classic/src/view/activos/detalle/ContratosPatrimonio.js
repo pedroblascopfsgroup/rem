@@ -121,7 +121,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 											store: '{comboSuborigenContrato}',
 											value: '{contrato.suborigenContrato}',
 											rawValue: '{contrato.suborigenContratoDescripcion}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 										}
 									},
 									{
@@ -130,7 +130,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										fieldLabel : HreRem.i18n('fieldlabel.obligado.cumplimiento'),
 										bind : {
 											value: '{contrato.fechaObligadoCumplimiento}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 											},
 										readOnly : true
 										
@@ -140,7 +140,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										fieldLabel: HreRem.i18n('fieldlabel.fianza.obligatoria'),
 										bind: {
 											value: '{contrato.fianzaObligatoria}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 										}
 									},
 									{
@@ -149,7 +149,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.registro.aval.bancario'),
 										bind : {
 											value: '{contrato.fechaAvalBancario}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 											},
 										readOnly : true
 									},
@@ -158,7 +158,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										fieldLabel: HreRem.i18n('fieldlabel.importe.aval.bancario'),
 										bind: {
 											value: '{contrato.importeAvalBancario}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 										}
 									},
 									{
@@ -167,7 +167,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										colspan: 1,
 										bind: {
 											value: '{contrato.importeDepositoBancario}',
-											hidden: '{!contrato.isCarteraCajamar}'
+											hidden: '{!isCarteraCajamarYUnicaja}'
 										}
 									},
 									{ //Oferta REM

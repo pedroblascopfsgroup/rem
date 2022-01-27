@@ -110,6 +110,10 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
 			{
     			name: 'isCarteraCajamar',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraLiberbank',
+    			type: 'boolean'
     		}
     		
     ],

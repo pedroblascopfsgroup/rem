@@ -123,6 +123,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 		
 		if (activo != null) {
 			activoPatrimonioContratoDto.setIsCarteraCajamar(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()));
+			activoPatrimonioContratoDto.setIsCarteraCajamar(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()));
 		}
 		
 		return activoPatrimonioContratoDto;

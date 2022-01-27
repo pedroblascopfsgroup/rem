@@ -92,6 +92,10 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		{
     			name: 'isCarteraCajamar',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraLiberbank',
+    			type: 'boolean'
     		}
     ],
     

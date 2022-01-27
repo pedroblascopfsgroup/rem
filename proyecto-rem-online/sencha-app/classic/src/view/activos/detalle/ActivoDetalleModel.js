@@ -2031,6 +2031,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	return true;
 	    	}
 	    	return false;
+	    },
+	    
+	    isCarteraCajamar: function(get){
+			 var isCajamar = get('activo.isCarteraCajamar');
+			 if(isCajamar){
+				 return true;
+			 }
+			 return false;
+		 },
+	    
+	    isCarteraCajamarYUnicaja: function(get) {
+	    	var me = this,
+	    	isUnicaja = get('isCarteraLiberbank'),
+	    	isCajamar = get('isCarteraCajamar');
+	    	
+	    	if (isUnicaja || isCajamar) {
+				return true;
+			}
+	    	return false;
 	    }
 	 },
     

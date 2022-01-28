@@ -65,6 +65,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		'fotoswebactivo' : {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
+		
+		'fotostecnicasactivo' : {
+			updateOrdenFotos : 'updateOrdenFotosInterno'
+		},
 
 
          'saneamientoactivo cargasactivogrid': {
@@ -3771,89 +3775,94 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardarInfoFoto : function(btn) {
 		var me = this;
 		var tienePrincipal = false;
-		btn.up('tabpanel').mask();
 		form = btn.up('tabpanel').getActiveTab().getForm();
-		var fotosActuales = btn.up('tabpanel').getActiveTab().down('dataview')
-				.getStore().data.items;
-		for (i = 0; i < fotosActuales.length; i++) {
-			if (form.getValues().id != fotosActuales[i].data.id
-					&& form.getValues().principal) {
-				console.log(i + " id" + fotosActuales[i].data.id)
-				console.log(i + " es princpal ?"
-						+ fotosActuales[i].data.principal)
-				console.log(i + " interior exterior ? "
-						+ fotosActuales[i].data.interiorExterior)
-				if (fotosActuales[i].data.principal == 'true'
-						&& form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior) {
-					tienePrincipal = true;
-					break;
-				}
-			}
-		}
-		if (!tienePrincipal) {
-			var url = $AC.getRemoteUrl('activo/updateFotosById');
-			var tienePrincipal = false;
-			var params = {
-				"id" : form.findField("id").getValue()
-			};
-			if (form.findField("nombre") != null) {
-				params['nombre'] = form.findField("nombre").getValue();
-			}
-			if (form.findField("principal") != null) {
-				params['principal'] = form.findField("principal").getValue();
-			}
-			if (form.findField("interiorExterior") != null) {
-				params['interiorExterior'] = form.findField("interiorExterior")
-						.getValue();
-			}
-			if (form.findField("orden") != null) {
-				params['orden'] = form.findField("orden").getValue();
-			}
-			if (form.findField("codigoDescripcionFoto") != null) {
-				params['codigoDescripcionFoto'] = form.findField("codigoDescripcionFoto")
-						.getValue();
-			}
-			if (form.findField("fechaDocumento") != null) {
-				params['fechaDocumento'] = form.findField("fechaDocumento")
-						.getValue();
-			}
-
-			Ext.Ajax.request({
-				url : url,
-				params : params,
-				success : function(a, operation, context) {
-					btn.up('tabpanel').unmask();
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					me.onClickBotonRefrescar();
-					btn.hide();
-					btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-					btn.up('tabbar').down('button[itemId=botoneditar]').show();
-					Ext.Array.each(btn.up('tabpanel').getActiveTab()
-									.query('field[isReadOnlyEdit]'), function(
-									field, index) {
-								field.fireEvent('save');
-								field.fireEvent('update');
-							});
-					if (Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
-						me.getViewModel().set("editingFirstLevel", false);
-					} else {
-						me.getViewModel().set("editing", false);
+		if (form.isValid()){
+			btn.up('tabpanel').mask();
+			var fotosActuales = btn.up('tabpanel').getActiveTab().down('dataview')
+					.getStore().data.items;
+			for (i = 0; i < fotosActuales.length; i++) {
+				if (form.getValues().id != fotosActuales[i].data.id
+						&& form.getValues().principal) {
+					console.log(i + " id" + fotosActuales[i].data.id)
+					console.log(i + " es princpal ?"
+							+ fotosActuales[i].data.principal)
+					console.log(i + " interior exterior ? "
+							+ fotosActuales[i].data.interiorExterior)
+					if (fotosActuales[i].data.principal == 'true'
+							&& form.getValues().interiorExterior.toString() == fotosActuales[i].data.interiorExterior) {
+						tienePrincipal = true;
+						break;
 					}
-					me.getViewModel().notify();
-				},
-				failure : function(a, operation, context) {
-					Ext.toast({
-								html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
-								width : 360,
-								height : 100,
-								align : 't'
-							});
-					btn.up('tabpanel').unmask();
 				}
-			});
-		} else {
-			me.fireEvent("errorToast", "Ya dispone de una foto principal");
-			btn.up('tabpanel').unmask();
+			}
+			if (!tienePrincipal) {
+				var url = $AC.getRemoteUrl('activo/updateFotosById');
+				var tienePrincipal = false;
+				var params = {
+					"id" : form.findField("id").getValue()
+				};
+				if (form.findField("nombre") != null) {
+					params['nombre'] = form.findField("nombre").getValue();
+				}
+				if (form.findField("principal") != null) {
+					params['principal'] = form.findField("principal").getValue();
+				}
+				if (form.findField("interiorExterior") != null) {
+					params['interiorExterior'] = form.findField("interiorExterior")
+							.getValue();
+				}
+				if (form.findField("orden") != null) {
+					params['orden'] = form.findField("orden").getValue();
+				}
+				if (form.findField("codigoDescripcionFoto") != null) {
+					params['codigoDescripcionFoto'] = form.findField("codigoDescripcionFoto")
+							.getValue();
+				}
+				if (form.findField("codigoTipoFoto") != null) {
+					params['codigoTipoFoto'] = form.findField("codigoTipoFoto").getValue();
+				}
+				if (form.findField("fechaDocumento") != null) {
+					params['fechaDocumento'] = form.findField("fechaDocumento")
+							.getValue();
+				}
+	
+				Ext.Ajax.request({
+					url : url,
+					params : params,
+					success : function(a, operation, context) {
+						btn.up('tabpanel').unmask();
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.onClickBotonRefrescar();
+						btn.hide();
+						btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+						btn.up('tabbar').down('button[itemId=botoneditar]').show();
+						Ext.Array.each(btn.up('tabpanel').getActiveTab()
+										.query('field[isReadOnlyEdit]'), function(
+										field, index) {
+									field.fireEvent('save');
+									field.fireEvent('update');
+								});
+						if (Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+							me.getViewModel().set("editingFirstLevel", false);
+						} else {
+							me.getViewModel().set("editing", false);
+						}
+						me.getViewModel().notify();
+					},
+					failure : function(a, operation, context) {
+						Ext.toast({
+									html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+									width : 360,
+									height : 100,
+									align : 't'
+								});
+						btn.up('tabpanel').unmask();
+					}
+				});
+			} else {
+				me.fireEvent("errorToast", "Ya dispone de una foto principal");
+				btn.up('tabpanel').unmask();
+			}
 		}
 	},
 
@@ -7203,8 +7212,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	validarEdicionHistoricoTitulo : function(editor, grid, record) {
 		var me = this;
+		codigoNoEditable = grid.record.data.codigoEstadoPresentacion;
 		var isBankia = me.getViewModel().get('activo.isCarteraBankia');
 		if (isBankia) {
+			return false;
+		}
+		if (codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] || codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS']
+				|| codigoNoEditable == CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO']){
 			return false;
 		}
 		return grid.rowIdx == 0;
@@ -7214,6 +7228,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			oldValue, eOps) {
 		var me = this;
 		var items = combo.up().items.items, fechas = [];
+		var codigoAnterior = combo.up().view.grid.store.data.items[0].data.codigoEstadoPresentacion;
 		for (item in items) {
 			fechas[items[item].dataIndex] = items[item];
 		}
@@ -7237,17 +7252,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					noSubsanado = true;
 				}
 			}
+			if (noSubsanado && (newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] 
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])) {
 
-			if (noSubsanado&& newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
 				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
-				combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['NULO']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['NULO']); 
+				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']){
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']); 
+				}
 				return;
 			};
 		}
-		
-		gridCalifcacion.disableAddButton(true);
-		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
-			gridCalifcacion.disableAddButton(false);
+		gridCalifcacion.disableAddButton(false);
+		if ((codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE'])
+		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'])
+		|| (codigoAnterior != null && codigoAnterior ==  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])){
+			gridCalifcacion.disableAddButton(true);
+		}
 		switch (newValue) {
 
 			case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO'] :
@@ -7276,10 +7301,47 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(false);
 				fechas['fechaInscripcion'].allowBlank = false;
 				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(false);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaPresentacionRegistro'].allowBlank = true;
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true);
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
+				
+			case CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO'] :
+				fechas['fechaPresentacionRegistro'].setDisabled(true)
+				fechas['fechaPresentacionRegistro'].setValue();
+				fechas['fechaCalificacion'].setDisabled(true);
+				fechas['fechaCalificacion'].setValue();
+				fechas['fechaInscripcion'].setDisabled(true);
+				fechas['fechaInscripcion'].setValue();
+				break;
 		}
 
 		me.usuarioLogadoPuedeEditar();
-	},
+	},	
 	checkDateInterval : function(obj) {
 		if (!obj.readOnly && !obj.disabled) {
 			var me = this;

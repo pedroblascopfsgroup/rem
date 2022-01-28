@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220113
+--## FECHA_CREACION=20220125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -17,7 +17,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;						
 
-CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL IS
+CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL AS
 	
     
    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
@@ -85,7 +85,7 @@ CREATE OR REPLACE PROCEDURE SP_VALIDACION_REF_CATASTRAL IS
 
 
 BEGIN
-
+DBMS_OUTPUT.PUT_LINE('[INICIO]');
 myArray := pesoPosicion(13,15,12,5,4,17,9,21,3,7,1);
 FOR r_product IN c_product
 
@@ -98,9 +98,11 @@ var_cat_id2 := r_product.CAT_ID2;
 var_LONGREF := r_product.LONGREF;
 dcCalculado := '';
     IF (var_LONGREF != 20) THEN
-        dbms_output.put_line('La longitud de la REF distinta de 20 ');
+       
         V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
-                        SET CAT_CORRECTO = 0
+                        SET CAT_CORRECTO = 0,
+                        USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
+                        FECHAMODIFICAR = SYSDATE
                         WHERE CAT_ID = '||var_cat_id;
                        EXECUTE IMMEDIATE V_MSQL;
         ELSE              
@@ -157,11 +159,11 @@ dcCalculado := '';
     end if;
 
     IF ( dcCalculado =  var2 ) THEN
-            dbms_output.put_line('CORRECTO ');
-            dbms_output.put_line('dcCalculado '||dcCalculado||' ');
-            dbms_output.put_line('SUBSTR '||var2||' ');
+            
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
-                SET CAT_CORRECTO = 1
+                SET CAT_CORRECTO = 1,
+                        USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
+                        FECHAMODIFICAR = SYSDATE
                 WHERE CAT_ID = '||var_cat_id||' 
                 AND CAT_CATASTRO IS NOT NULL';
                 EXECUTE IMMEDIATE V_MSQL;
@@ -169,7 +171,9 @@ dcCalculado := '';
             IF ( var_cat_id2 IS NOT NULL) THEN
              V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
                 SET CAT_CORRECTO = 1,
-                CAT_CATASTRO = '||var_cat_id2||'
+                CAT_CATASTRO = '||var_cat_id2||',
+                        USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
+                        FECHAMODIFICAR = SYSDATE
                 WHERE CAT_ID = '||var_cat_id||' 
                 AND CAT_CATASTRO IS NULL';
                 EXECUTE IMMEDIATE V_MSQL; 
@@ -178,22 +182,21 @@ dcCalculado := '';
                 
         
          ELSE
-          dbms_output.put_line('DISTINTO ');
-            dbms_output.put_line('dcCalculado '||dcCalculado||' ');
-            dbms_output.put_line('SUBSTR '||var2||' ');
+          
            V_MSQL := ' UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO
-                SET CAT_CORRECTO = 0
+                SET CAT_CORRECTO = 0,
+                        USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
+                        FECHAMODIFICAR = SYSDATE
                 WHERE CAT_ID = '||var_cat_id;
-                EXECUTE IMMEDIATE V_MSQL;
-                
+                EXECUTE IMMEDIATE V_MSQL;           
            
         end if;
 
 
 END LOOP;
 
-
-
+COMMIT;
+DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 EXCEPTION
    WHEN OTHERS THEN

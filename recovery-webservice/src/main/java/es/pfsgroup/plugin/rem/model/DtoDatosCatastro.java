@@ -27,7 +27,8 @@ public class DtoDatosCatastro  {
 	private String planta;
 	private String domicilio;
 	private Boolean catastroCorrecto;
-	
+	private String escalera;
+	private String uso;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -166,6 +167,18 @@ public class DtoDatosCatastro  {
 	}
 	public void setCatastroCorrecto(Boolean catastroCorrecto) {
 		this.catastroCorrecto = catastroCorrecto;
+	}
+	public String getEscalera() {
+		return escalera;
+	}
+	public void setEscalera(String escalera) {
+		this.escalera = escalera;
+	}
+	public String getUso() {
+		return uso;
+	}
+	public void setUso(String uso) {
+		this.uso = uso;
 	}  
 	
 }

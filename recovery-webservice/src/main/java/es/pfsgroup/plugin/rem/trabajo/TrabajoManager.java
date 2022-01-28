@@ -500,10 +500,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public Object getTrabajoById(Long id, String pestana) {
 
-		Trabajo trabajo = findOne(id);
 		Object dto = null;
 
 		try {
+			
+			Trabajo trabajo = findOne(id);
 
 			if (PESTANA_FICHA.equals(pestana)) {
 				dto = trabajoToDtoFichaTrabajo(trabajo);
@@ -3464,6 +3465,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(trabajo.getIdentificadorReam() != null) {
 			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
 		}
+		
+		if(trabajo.getRefacturacionTrabajo() != null) {
+			dtoTrabajo.setRefacturacionTrabajoDescripcion(trabajo.getRefacturacionTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getCalculoMargenTrabajo() != null) {
+			dtoTrabajo.setTipoCalculoMargenDescripcion(trabajo.getCalculoMargenTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getPorcentajeMargen() != null) {
+			dtoTrabajo.setPorcentajeMargen(trabajo.getPorcentajeMargen());
+		}
+		
+		if(trabajo.getImporteMargen() != null) {
+			dtoTrabajo.setImporteMargen(trabajo.getImporteMargen());
+		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		
@@ -4746,36 +4763,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
-	@BusinessOperation(overrides = "trabajoManager.uploadFoto")
+	@BusinessOperation(overrides = "trabajoManager.uploadFotos")
 	@Transactional(readOnly = false)
-	public String uploadFoto(WebFileItem fileItem) {
+	public String uploadFotos(List<WebFileItem> webFileItemList) {
 
-		Trabajo trabajo = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		for(WebFileItem webFileItem : webFileItemList) {
+			Trabajo trabajo = findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
+			TrabajoFoto trabajoFoto = new TrabajoFoto(webFileItem.getFileItem());
 
-		TrabajoFoto trabajoFoto = new TrabajoFoto(fileItem.getFileItem());
+			trabajoFoto.setTrabajo(trabajo);
+			trabajoFoto.setTamanyo(webFileItem.getFileItem().getLength());
+			trabajoFoto.setNombre(webFileItem.getFileItem().getFileName());
+			trabajoFoto.setDescripcion(webFileItem.getParameter("descripcion"));
+			trabajoFoto.setSolicitanteProveedor(Boolean.valueOf(webFileItem.getParameter("solicitanteProveedor")));
+			trabajoFoto.setFechaDocumento(new Date());
 
-		trabajoFoto.setTrabajo(trabajo);
+			Integer orden = trabajoDao.getMaxOrdenFotoById(Long.parseLong(webFileItem.getParameter("idEntidad")));
+			orden++;
 
-		trabajoFoto.setTamanyo(fileItem.getFileItem().getLength());
+			trabajoFoto.setOrden(orden);
+			Auditoria.save(trabajoFoto);
+			trabajo.getFotos().add(trabajoFoto);
 
-		trabajoFoto.setNombre(fileItem.getFileItem().getFileName());
-
-		trabajoFoto.setDescripcion(fileItem.getParameter("descripcion"));
-
-		trabajoFoto.setSolicitanteProveedor(Boolean.valueOf(fileItem.getParameter("solicitanteProveedor")));
-
-		trabajoFoto.setFechaDocumento(new Date());
-
-		Integer orden = trabajoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		orden++;
-
-		trabajoFoto.setOrden(orden);
-
-		Auditoria.save(trabajoFoto);
-
-		trabajo.getFotos().add(trabajoFoto);
-
-		trabajoDao.save(trabajo);
+			trabajoDao.save(trabajo);
+		}
 
 		return "success";
 

@@ -46,6 +46,9 @@ Ext.define('HreRem.model.Fotos', {
     		},
     		{
     			name:'numeroActivo'
+    		},
+    		{
+    			name:'codigoTipoFoto'
     		}
 
     ],

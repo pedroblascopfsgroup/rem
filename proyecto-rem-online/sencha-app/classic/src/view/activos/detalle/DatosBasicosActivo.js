@@ -830,16 +830,12 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				        { 
 				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel:  HreRem.i18n('fieldlabel.comunidad.autonoma'),
-				        	forceSelection: true,
 				        	readOnly: true,
-				        	bind: {		
+				        	bind: {
 				        		store: '{storeComunidadesAutonomas}',
-			            		value: '{activo.provinciaCodigo}',
-								rawValue: '{activo.provinciaDescripcion}'
-			            	},
-							valueField: 'id',
-							allowBlank: false
-								
+			            		value: '{activo.codComunidadAutonoma}',
+								rawValue: '{activo.comunidadDescripcion}'
+			            	}
 					     },
 				        {
 			                	xtype: 'button',

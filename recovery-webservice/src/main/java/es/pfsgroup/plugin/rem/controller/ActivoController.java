@@ -32,6 +32,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -1194,6 +1195,10 @@ public class ActivoController extends ParadiseJsonController {
 									}
 								}
 							}
+							
+							if (!Checks.esNulo(aListaActivoFoto.getTipoFoto())) {
+								fotoDto.setCodigoTipoFoto(aListaActivoFoto.getTipoFoto().getCodigo());
+							}
 
 						} catch (IllegalAccessException e) {
 							logger.error("error en activoController", e);
@@ -1510,9 +1515,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request, DtoSubirDocumento dto) {
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			adapter.upload(webFileItem, null);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
@@ -1627,13 +1633,13 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			String errores = activoApi.uploadFoto(fileItem);
+			String errores = activoApi.uploadFotos(webFileItemList);
 
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
@@ -3605,10 +3611,11 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadPlusvalia(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+		
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 
-			String errores = activoApi.uploadDocumentoPlusvalia(fileItem, null, null);
+			String errores = activoApi.uploadDocumentoPlusvalia(webFileItem, null, null);
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 
@@ -4184,9 +4191,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadFacturaGastoAsociado(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			adapter.uploadFactura(webFileItem);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
@@ -4350,6 +4358,11 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadosPresentacionAdicional() {	
+		return createModelAndViewJson(new ModelMap("data", adapter.getEstadosPresentacionAdicional()));
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoDistritoByCodPostal(ModelMap model, String codPostal) {
 		
 		try {
@@ -4362,7 +4375,6 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
-
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListHistoricoOcupadoTitulo(Long id, ModelMap model){

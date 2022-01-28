@@ -160,6 +160,18 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		{
     			name: 'perteneceGastoOPrefactura',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'refacturacionTrabajoDescripcion'
+    		},
+    		{
+    			name: 'tipoCalculoMargenDescripcion'
+    		},
+    		{
+    			name: 'porcentajeMargen'
+    		},
+    		{
+    			name: 'importeMargen'
     		}
     		
     ],

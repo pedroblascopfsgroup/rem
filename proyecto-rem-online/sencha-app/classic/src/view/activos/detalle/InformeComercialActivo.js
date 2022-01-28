@@ -1053,6 +1053,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							xtype:'fieldsettable',
 							title: HreRem.i18n('title.info.comercial.estado.conservacion'),
 							defaultType: 'textfieldbase',
+							colspan: 3,
 							items :
 								[
 									{
@@ -1332,149 +1333,149 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 													bind:		'{infoComercial.porcEdiEjecutada}'
 								                }					
 											]
-									},
-									{
-										xtype:'fieldsettable',
-										defaultType: 'textfieldbase',
-										title:HreRem.i18n('title.info.comercial.equipamientos'),
-										colspan: 3,
-										items :[
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboDisponibilidad}',
-									            		value: '{infoComercial.jardinCod}',
-									            		rawValue: '{infoComercial.jardinDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.jardin')//,
-													//colspan: 2
-								                },		{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboAdmision}',
-									            		value: '{infoComercial.admiteMascotaCod}',
-									            		rawValue: '{infoComercial.admiteMascotaDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.admite.mascota')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboDisponibilidad}',
-									            		value: '{infoComercial.piscinaCod}',
-									            		rawValue: '{infoComercial.piscinaDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.piscina')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboSinSino}',
-									            		value: '{infoComercial.zonaVerdeCod}',
-									            		rawValue: '{infoComercial.zonaVerdeDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.verdes')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboSinSino}',
-									            		value: '{infoComercial.conserjeCod}',
-									            		rawValue: '{infoComercial.conserjeDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.conserje')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboSinSino}',
-									            		value: '{infoComercial.accesoMovReducidaCod}',
-									            		rawValue: '{infoComercial.accesoMovReducidaDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.acc.mov.reducida')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboSinSino}',
-									            		value: '{infoComercial.zonaDeportivaCod}',
-									            		rawValue: '{infoComercial.zonaDeportivaDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.deportivas')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboDisponibilidad}',
-									            		value: '{infoComercial.gimnasioCod}',
-									            		rawValue: '{infoComercial.gimnasioDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.gimnasio')
-								                }
-											]
-									},
-									{
-										xtype:'fieldsettable',
-										defaultType: 'textfieldbase',
-										title:HreRem.i18n('title.info.comercial.com.servicios'),
-										colspan: 3,
-										items :[
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboComunicacionUbicacion}',
-									            		value: '{infoComercial.ubicacionCod}',
-									            		rawValue: '{infoComercial.ubicacionDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.ubicacion')
-								                },
-												{ 
-													xtype: 'comboboxfieldbasedd',
-										        	bind: {
-									            		store: '{comboValoracionUbicacion}',
-									            		value: '{infoComercial.valUbicacionCod}',
-									            		rawValue: '{infoComercial.valUbicacionDesc}'
-									            	},
-									            	displayField: 'descripcion',
-						    						valueField: 'codigo',
-													fieldLabel: HreRem.i18n('fieldlabel.info.comercial.val.ubicacion')
-								                }				
-											]
-									},
-									{
-										xtype:'fieldsettable',
-										defaultType: 'textfieldbase',
-										title:HreRem.i18n('title.info.comercial.desc.comercial'),
-										colspan: 3,
-										items :[
-												{ 
-											 		xtype: 		'textareafieldbase',
-													bind:		'{infoComercial.descripcionComercial}',
-											 		maxWidth:	1600,
-											 		height: 	120
-											   }				
-											]
 									}
 							]
 			            },
+			            {
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:HreRem.i18n('title.info.comercial.equipamientos'),
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.jardinCod}',
+						            		rawValue: '{infoComercial.jardinDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.jardin')//,
+										//colspan: 2
+					                },		{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboAdmision}',
+						            		value: '{infoComercial.admiteMascotaCod}',
+						            		rawValue: '{infoComercial.admiteMascotaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.admite.mascota')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.piscinaCod}',
+						            		rawValue: '{infoComercial.piscinaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.piscina')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.zonaVerdeCod}',
+						            		rawValue: '{infoComercial.zonaVerdeDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.verdes')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.conserjeCod}',
+						            		rawValue: '{infoComercial.conserjeDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.conserje')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.accesoMovReducidaCod}',
+						            		rawValue: '{infoComercial.accesoMovReducidaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.acc.mov.reducida')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.zonaDeportivaCod}',
+						            		rawValue: '{infoComercial.zonaDeportivaDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.zonas.deportivas')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboDisponibilidad}',
+						            		value: '{infoComercial.gimnasioCod}',
+						            		rawValue: '{infoComercial.gimnasioDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.gimnasio')
+					                }
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:HreRem.i18n('title.info.comercial.com.servicios'),
+							colspan: 3,
+							items :[
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboComunicacionUbicacion}',
+						            		value: '{infoComercial.ubicacionCod}',
+						            		rawValue: '{infoComercial.ubicacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.ubicacion')
+					                },
+									{ 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboValoracionUbicacion}',
+						            		value: '{infoComercial.valUbicacionCod}',
+						            		rawValue: '{infoComercial.valUbicacionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.val.ubicacion')
+					                }				
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title:HreRem.i18n('title.info.comercial.desc.comercial'),
+							colspan: 3,
+							items :[
+									{ 
+								 		xtype: 		'textareafieldbase',
+										bind:		'{infoComercial.descripcionComercial}',
+								 		maxWidth:	1600,
+								 		height: 	120
+								   }				
+								]
+						}
             	]
 			},
 // Otra Información de interes

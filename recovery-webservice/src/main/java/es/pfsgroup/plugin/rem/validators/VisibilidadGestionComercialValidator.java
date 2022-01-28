@@ -175,7 +175,9 @@ public class VisibilidadGestionComercialValidator {
 					if(activoPropietario != null && activoPropietario.getPropietario() !=null && Arrays.asList(SOCIEDADES_PARTICIPADAS).contains(activoPropietario.getPropietario().getDocIdentificativo())){
 						erroresActivo.add(VALID_ACTIVO_PROPIETARIO_SOCIEDAD);
 					}
-				}		
+				}else if(DDCartera.isCarteraTitulizada(activoActual.getCartera()) || DDCartera.isBFA(activoActual.getCartera())) {
+					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+				}
 				
 				if (activoActual.getFechaVentaExterna() != null && activoActual.getFechaVentaExterna() != null) {
 					erroresActivo.add(VALID_ACTIVO_VENTA_EXTERNA);

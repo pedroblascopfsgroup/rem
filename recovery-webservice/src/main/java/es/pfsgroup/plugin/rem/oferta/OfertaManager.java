@@ -2372,6 +2372,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 
+		if(oferta.getFechaAlta() == null){
+			oferta.setFechaAlta(fechaAccion);
+		}
+
 		// Si el activo de la oferta no comercializable, vendido, no publicado
 		// rechazamos la oferta
 		if (listaActivoOferta != null && !listaActivoOferta.isEmpty()) {

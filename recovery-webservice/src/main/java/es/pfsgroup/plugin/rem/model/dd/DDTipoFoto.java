@@ -38,6 +38,7 @@ public class DDTipoFoto implements Auditable, Dictionary {
 	public static String COD_WEB="01";
 	
 	public static String COD_TECNICA="02";
+	public static String COD_TESTIGO="03";
 
 	@Id
 	@Column(name = "DD_TFO_ID")

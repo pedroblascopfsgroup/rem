@@ -1,21 +1,23 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ReplicacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.activo.ActivoAgrupacionManager;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("replicacionOfertasManager")
 public class ReplicacionOfertasManager extends BusinessOperationOverrider<ReplicacionOfertasApi> implements ReplicacionOfertasApi{
+
+    protected static final Log logger = LogFactory.getLog(ReplicacionOfertasManager.class);
 
     @Autowired
     private TareaActivoApi tareaActivoApi;
@@ -25,6 +27,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
     @Autowired
     private OfertaApi ofertaApi;
+
+    @Autowired
+    private SpPublicacionApi spPublicacionApi;
 
     @Override
     public String managerName() {
@@ -47,6 +52,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         if(eco != null && tarea != null && success){
             lanzarReplicate = calculaLanzarReplicateByEco(eco, tarea);
+            lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
             if(lanzarReplicate)
                 ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
         }
@@ -181,4 +187,14 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         return false;
     }
+
+    private void lanzarSPPublicaciones(String idTarea, Boolean success){
+        try {
+            spPublicacionApi.callSpPublicacionAsincrono(Long.parseLong(idTarea), success);
+        }catch (Exception e){
+            logger.error("Error en el servicio de publicaciones");
+            e.printStackTrace();
+        }
+    }
+
 }

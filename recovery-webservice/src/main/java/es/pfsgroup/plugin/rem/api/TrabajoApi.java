@@ -278,8 +278,8 @@ public interface TrabajoApi {
 	@BusinessOperationDefinition("trabajoManager.saveActivoTrabajo")
 	public boolean saveActivoTrabajo(DtoActivoTrabajo activoTrabajo);
 
-	@BusinessOperationDefinition("trabajoManager.uploadFoto")
-	public String uploadFoto(WebFileItem fileItem);
+	@BusinessOperationDefinition("trabajoManager.uploadFotos")
+	public String uploadFotos(List<WebFileItem> webFileItemList);
 
 	/**
 	 * Devuelve los activos de una agrupación con la información necesaria para

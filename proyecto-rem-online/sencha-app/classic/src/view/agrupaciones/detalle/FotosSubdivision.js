@@ -64,6 +64,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                     var l = nodes.length,
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos (' + l + ' item' + s + ' seleccionado' +  s + ')');
+					if (l < 1){
+                		this.up('form').getForm().findField('nombre').setValue();
+                		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
+                		this.up('form').getForm().findField('codigoTipoFoto').setValue();
+                		this.up('form').getForm().findField('fechaDocumento').setValue();
+						this.up('form').getForm().findField('orden').setValue();
+						this.up('form').getForm().findField('principal').setValue();
+						this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
+                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
+					}
                 },
                 itemclick: function(dataview,record) {                	
                 	if (record.getData().principal ==  true || record.getData().principal == "true") {
@@ -84,6 +94,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 
                 	if(Ext.isEmpty(record.getData().nombre)){
                 		this.up('form').getForm().findField('nombre').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().codigoTipoFoto)){
+                		this.up('form').getForm().findField('codigoTipoFoto').setValue();
                 	}
                 	if(Ext.isEmpty(record.getData().codigoDescripcionFoto)){
                 		this.up('form').getForm().findField('codigoDescripcionFoto').setValue();
@@ -139,6 +152,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 		                	bind: {
 								value: '{nombre}'
 							}
+		                },
+						{ 
+		                	xtype: 'comboboxfieldbase',
+		                	name: 'codigoTipoFoto',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+		                	editable: false,
+		                	queryMode: 'local',
+		                	bind: {
+		                		store: '{storeTipoFoto}',
+				        		value: '{codigoTipoFoto}'
+							},
+							allowBlank: false
 		                },
 		                { 
 		                	name: 'codigoDescripcionFoto',

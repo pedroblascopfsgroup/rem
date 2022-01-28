@@ -108,8 +108,8 @@
     <decision name ="T017_ResolucionCESDecision" expression="#{T017_ResolucionCESDecision}">
         <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
         <transition to="forkReservaNo" name="AceptaSinReserva"></transition> 
-        <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
-  		<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition> 
+        <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+  		<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition> 
         <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
@@ -137,8 +137,8 @@
     <decision name ="T017_RespuestaOfertanteCESDecision" expression="#{T017_RespuestaOfertanteCESDecision}">
         <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
         <transition to="forkReservaNo" name="AceptaSinReserva"></transition>
-        <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
- 		<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition>   
+        <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+ 		<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition>   
         <transition to="T017_RatificacionComiteCES" name="Contraoferta"></transition> 
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
@@ -166,8 +166,8 @@
   <decision name ="T017_RatificacionComiteCESDecision" expression="#{T017_RatificacionComiteCESDecision}">
     <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
     <transition to="forkReservaNo" name="AceptaSinReserva"></transition>
-    <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
- 	<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition>  
+    <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+ 	<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition>  
     <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
 	<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
@@ -181,12 +181,6 @@
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork><!--Fork Resolucion CES ACEPTA SIN RESERVA-->
 
-    <fork name="forkReservaSiBbva">  
-        <transition to="T017_PBCReserva" name="reserva"></transition>
-    </fork>
-    <fork name="forkReservaNoBbva">  
-        <transition to="T017_PBCVenta" name="venta"></transition>
-    </fork>
 
     <state name="T017_AdvisoryNote">
 		<event type="node-enter">
@@ -306,7 +300,7 @@
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_ResolucionPROManzanaDecision" expression="#{T017_ResolucionPROManzanaDecision}">
         <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
-        <transition to="join2" name="ApruebaBC"></transition> <!--Nodo de union-->
+        <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union-->
         <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
 	</decision> <!--Decision Resolucion Pro Manzana Resolucion Expediente / Resolucion Expediente / NODO DE UNION PREGUNTAR A SOLER -->
@@ -468,7 +462,7 @@
 	</state>
 	<decision name ="T017_PBCVentaDecision" expression="#{T017_PBCVentaDecision}">
         <transition to="join1" name="Aprueba"></transition> <!--Nodo de union-->
-        <transition to="join2" name="ApruebaBC"></transition> <!--Nodo de union BC-->
+        <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union BC-->
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
 	</decision> <!--Decision PBCReserva : Resolucion Expediente / InstruccionesReserva -->

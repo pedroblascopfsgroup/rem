@@ -273,7 +273,7 @@
 		<transition to="T017_ResolucionDivarianDecision" name="avanzaBPM"></transition>
 	</state>
 	<decision name ="T017_ResolucionDivarianDecision" expression="#{T017_ResolucionDivarianDecision}">
-        <transition to="T017_PosicionamientoYFirma" name="Acepta"></transition> <!--Nodo de union-->
+        <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
         <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
 	</decision>
@@ -299,7 +299,7 @@
 		<transition to="T017_ResolucionPROManzanaDecision" name="avanzaBPM"></transition>
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_ResolucionPROManzanaDecision" expression="#{T017_ResolucionPROManzanaDecision}">
-        <transition to="T017_PosicionamientoYFirma" name="Acepta"></transition> <!--Nodo de union-->
+        <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
         <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union-->
         <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
@@ -461,7 +461,7 @@
 		<transition to="T017_PBCVentaDecision" name="avanzaBPM"></transition>
 	</state>
 	<decision name ="T017_PBCVentaDecision" expression="#{T017_PBCVentaDecision}">
-        <transition to="T017_PosicionamientoYFirma" name="Aprueba"></transition> <!--Nodo de union-->
+        <transition to="join1" name="Aprueba"></transition> <!--Nodo de union-->
         <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union BC-->
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>

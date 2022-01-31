@@ -835,7 +835,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				        		store: '{storeComunidadesAutonomas}',
 			            		value: '{activo.codComunidadAutonoma}',
 								rawValue: '{activo.comunidadDescripcion}'
-			            	},
+			            	}
 					     },
 				        {
 			                	xtype: 'button',

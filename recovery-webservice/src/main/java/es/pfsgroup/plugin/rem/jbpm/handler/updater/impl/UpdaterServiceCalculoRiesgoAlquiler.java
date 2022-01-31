@@ -60,12 +60,12 @@ public class UpdaterServiceCalculoRiesgoAlquiler implements UpdaterService {
 				String estadoCodigo = null;
 				String estadoBcCodigo = null;
 				estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
-				if(comboResultado.equals(DDRiesgoOperacion.CODIGO_ROP_NO_APLICA)) {
+				
+				if(DDRiesgoOperacion.CODIGO_ROP_NO_APLICA.equals(comboResultado)) {
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
-				}else if(comboResultado.equals(DDRiesgoOperacion.CODIGO_ROP_ALTO)){
+				}else if(DDRiesgoOperacion.CODIGO_ROP_ALTO.equals(comboResultado)){
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_PDTE_BC;
-				} else if(comboResultado.equals(DDRiesgoOperacion.CODIGO_ROP_MEDIO) 
-						||comboResultado.equals(DDRiesgoOperacion.CODIGO_ROP_BAJO)) {
+				} else if(DDRiesgoOperacion.CODIGO_ROP_MEDIO.equals(comboResultado) ||DDRiesgoOperacion.CODIGO_ROP_BAJO.equals(comboResultado)) {
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
 				}
 				

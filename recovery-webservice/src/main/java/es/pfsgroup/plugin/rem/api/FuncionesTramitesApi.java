@@ -10,6 +10,8 @@ public interface FuncionesTramitesApi {
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 	
 	boolean isTramiteAprobado(ExpedienteComercial eco);
+
+	boolean tieneCampoClasificacionRelleno(TareaExterna tareaExterna);
 	
 }
 

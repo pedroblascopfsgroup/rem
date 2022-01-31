@@ -822,11 +822,14 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkEstadoBC(tareaExterna);
             }
-			
 			def esTitulizada = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esTitulizada(tareaExterna);
 			}
+			def tieneCampoClasificacionRelleno = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesManager.tieneCampoClasificacionRelleno(tareaExterna);
+            }
            
   			 ]]></value>
   		</list>

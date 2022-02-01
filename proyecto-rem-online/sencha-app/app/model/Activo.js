@@ -1379,7 +1379,13 @@ Ext.define('HreRem.model.Activo', {
     				return (data.isSubcarteraDivarian || data.isSubcarteraApple || data.isSubcarteraJaguar);
     			},
     			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar']
-    		}  		
+    		},
+            {
+                name: 'codComunidadAutonoma'
+            },
+            {
+                name: 'comunidadDescripcion'
+            }
     ],
     
 	proxy: {

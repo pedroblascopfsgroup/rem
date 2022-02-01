@@ -435,4 +435,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isCarteraCaixa(Activo activo);
 
     Page findTasaciones(DtoFiltroTasaciones dto);
+
+	String getCodComunidadAutonomaByCodProvincia(String codProvincia);
+
+	String getDescripcionComunidadAutonomaByCodProvincia(String codProvincia);
+
 }

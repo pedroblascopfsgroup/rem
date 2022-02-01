@@ -2511,4 +2511,26 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return r;
 	}
+
+	@Override
+	public String getCodComunidadAutonomaByCodProvincia(String codProvincia) {
+		String codComunidadAutonoma = rawDao.getExecuteSQL("SELECT CCA.DD_CCA_CODIGO " +
+				"FROM REMMASTER.DD_CCA_COMUNIDAD CCA"
+				+ "			INNER JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_CCA_ID = CCA.DD_CCA_ID"
+				+ "			WHERE PRV.DD_PRV_CODIGO = '" + codProvincia + "'"
+				+ "         AND ROWNUM = 1 ");
+
+		return codComunidadAutonoma;
+	}
+
+	@Override
+	public String getDescripcionComunidadAutonomaByCodProvincia(String codProvincia) {
+		String descripcionComunidadAutonoma = rawDao.getExecuteSQL("SELECT CCA.DD_CCA_DESCRIPCION " +
+				"FROM REMMASTER.DD_CCA_COMUNIDAD CCA"
+				+ "			INNER JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_CCA_ID = CCA.DD_CCA_ID"
+				+ "			WHERE PRV.DD_PRV_CODIGO = '" + codProvincia + "'"
+				+ "         AND ROWNUM = 1 ");
+
+		return descripcionComunidadAutonoma;
+	}
 }

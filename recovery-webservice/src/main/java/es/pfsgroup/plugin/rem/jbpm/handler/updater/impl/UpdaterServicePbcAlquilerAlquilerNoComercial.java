@@ -66,32 +66,12 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 			}
 		}
 		
-		TareaExterna tareaExternaAnterior = activoTramiteApi.getTareaAnteriorByCodigoTarea(tramite.getId(), ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_PBC_ALQUILER);
-		
-		if(tareaExternaAnterior != null 
-				&& !ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_SCORING.equals(tareaExternaAnterior.getTareaProcedimiento().getCodigo()) 
-				&& aprueba) {
-			estado = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
-			estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
+		if(aprueba) {
+			estado = DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 		}else {
-			List <TareaExternaValor> listTex = tareaExternaAnterior.getValores();
-			for (TareaExternaValor tareaExternaValor : listTex) {
-				
-				if(aprueba) {
-					if(COMBO_REQ_ANALISIS_TECNICO.equals(tareaExternaValor.getNombre()) && !Checks.esNulo(tareaExternaValor.getValor())) {
-						if(DDSiNo.SI.equals(tareaExternaValor.getValor())) {
-							estado = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
-						}else{
-							estado = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
-							estadoBc = DDEstadoExpedienteBc.PTE_SANCION_BC;
-						}
-					}
-				}else {
-					estado = DDEstadosExpedienteComercial.ANULADO;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
-				}
-			}	
+			estado = DDEstadosExpedienteComercial.ANULADO;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 		}
 		
 		estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estado));

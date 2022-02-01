@@ -17,9 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -134,7 +131,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -290,8 +286,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null
 					&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
-				BeanUtils.copyProperty(activoDto, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
-				BeanUtils.copyProperty(activoDto, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+				DDProvincia provincia = activo.getLocalizacion().getLocalizacionBien().getProvincia();
+				BeanUtils.copyProperty(activoDto, "provinciaCodigo", provincia.getCodigo());
+				BeanUtils.copyProperty(activoDto, "provinciaDescripcion", provincia.getDescripcion());
+				BeanUtils.copyProperty(activoDto, "codComunidadAutonoma", activoDao.getCodComunidadAutonomaByCodProvincia(provincia.getCodigo()));
+				BeanUtils.copyProperty(activoDto, "comunidadDescripcion", activoDao.getDescripcionComunidadAutonomaByCodProvincia(provincia.getCodigo()));
 
 			}
 			

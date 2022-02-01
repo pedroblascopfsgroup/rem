@@ -1385,7 +1385,13 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'bajaContableBBVADescripcion'
-			} 		
+			},
+            {
+                name: 'codComunidadAutonoma'
+            },
+            {
+                name: 'comunidadDescripcion'
+            }
     ],
     
 	proxy: {

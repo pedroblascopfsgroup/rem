@@ -488,7 +488,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
-	public ModelAndView getFotosAgrupacionById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
+	public ModelAndView getFotosAgrupacionById(Long id, String tipoFoto, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();
@@ -504,35 +504,42 @@ public class AgrupacionController extends ParadiseJsonController {
 
 				for (int i = 0; i < listaFotos.size(); i++) {
 
-					try {
-
-						DtoFoto fotoDto = new DtoFoto();
-
-						if (listaFotos.get(i).getRemoteId() != null) {
-							BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
-						} else {
-							BeanUtils.copyProperty(fotoDto, "path",
-									"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
-						}
-
-						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
+					if (listaFotos.get(i).getTipoFoto() != null && listaFotos.get(i).getTipoFoto().getCodigo().equals(tipoFoto)) {
 						
-						BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
-						
-						if(listaFotos.get(i).getDescripcionFoto() != null) {
-							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
-							BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
-							if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
-								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
+						try {
+	
+							DtoFoto fotoDto = new DtoFoto();
+	
+							if (listaFotos.get(i).getRemoteId() != null) {
+								BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
+							} else {
+								BeanUtils.copyProperty(fotoDto, "path",
+										"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
 							}
+	
+							BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
+							
+							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
+							
+							if(listaFotos.get(i).getDescripcionFoto() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
+								BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
+								if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
+									BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
+								}
+							}
+							
+							if(listaFotos.get(i).getActivo() != null && listaFotos.get(i).getActivo().getNumActivo() != null) {
+								BeanUtils.copyProperty(fotoDto, "numeroActivo", listaFotos.get(i).getActivo().getNumActivo());
+							}
+	
+							listaDtoFotos.add(fotoDto);
+	
+						} catch (IllegalAccessException e) {
+							logger.error(e);
+						} catch (InvocationTargetException e) {
+							logger.error(e);
 						}
-
-						listaDtoFotos.add(fotoDto);
-
-					} catch (IllegalAccessException e) {
-						logger.error(e);
-					} catch (InvocationTargetException e) {
-						logger.error(e);
 					}
 
 				}
@@ -632,6 +639,10 @@ public class AgrupacionController extends ParadiseJsonController {
 							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
 						}
 					}
+					
+					if (!Checks.esNulo(listaFotos.get(i).getTipoFoto())) {
+						fotoDto.setCodigoTipoFoto(listaFotos.get(i).getTipoFoto().getCodigo());
+					}
 
 					listaDtoFotos.add(fotoDto);
 
@@ -660,15 +671,15 @@ public class AgrupacionController extends ParadiseJsonController {
 	 */
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
+		WebFileItem webFileItem = new WebFileItem();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFoto(fileItem);
+			String errores = activoAgrupacionApi.uploadFotos(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -683,15 +694,14 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFotoSubdivision(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotosSubdivision(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFotoSubdivision(fileItem);
+			String errores = activoAgrupacionApi.uploadFotosSubdivision(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -1171,9 +1181,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView upload(HttpServletRequest request) {
 
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			agrupacionAdjuntos.uploadDocumento(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {

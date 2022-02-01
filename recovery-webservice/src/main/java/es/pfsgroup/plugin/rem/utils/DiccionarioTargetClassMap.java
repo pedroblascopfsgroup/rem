@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -371,7 +372,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("fuenteTestigos", DDFuenteTestigos.class);
 		mapa.put("recomendacionRCDC", DDRecomendacionRCDC.class);
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
-		
+		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -63,7 +63,7 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 		
 		if (aprueba) {
 			estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			estadoBc =  DDEstadoExpedienteBc.CODIGO_INGRESO_FINAL_DOCUMENTACION_APORTADA_A_BC;
+			estadoBc =  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 		} else{
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;

@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220126
+--## FECHA_CREACION=20220201
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17018
+--## INCIDENCIA_LINK=HREOS-17087
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -18,6 +18,7 @@
 --##        0.5 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
 --##        0.6 Añadir dos líneas nuevas de Alarmas y Colocación puerta antiocupa, y modificación códigos Alarmas y Duplicado Cédula Habitabilidad - [HREOS-16953] - Alejandra García
 --##        0.7 Añadir Promociones y cambiar todos los códigos de los subtipos nuevos del PEP - [HREOS-17018] - Alejandra García
+--##        0.8 Modificar códigos gastos IAE - [HREOS-17087] - Alejandra García
 --#########################################
 --*/
 
@@ -182,9 +183,9 @@ DECLARE
 		T_TABLA('310','XXXX-22-3-NOT NEG','22','00','93','11','43','01','','','null','','null'),
 		T_TABLA('311','XXXX-22-3-A-NOT NEG','22','00','94','11','43','03','','','null','','null'),
 		--Registros IAEs
-		T_TABLA('312','XXXX-22-2-IAE','22','01','7','01','155','','','','null','','null'),
-		T_TABLA('313','XXXX-22-2-A_IAE','22','01','8','01','156','','','','null','','null'),
-		T_TABLA('314','XXXX-22-2-IAE_CF','22','01','9','01','154','','','','null','','null'),
+		T_TABLA('312','XXXX-22-2-IAE','22','01','7','01','238','','','','null','','null'),
+		T_TABLA('313','XXXX-22-2-A_IAE','22','01','8','01','239','','','','null','','null'),
+		T_TABLA('314','XXXX-22-2-IAE_CF','22','01','9','01','237','','','','null','','null'),
 		--Promociones
 		T_TABLA('315','0015-22-4-10017966_OP','22','02','82','','','','','','null','01','10017966'),
 		T_TABLA('316','0015-22-4-5933434_OP','22','03','32','','','','','','null','01','5933434'),

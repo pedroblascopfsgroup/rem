@@ -34,6 +34,7 @@ public class AltaAsuntosLegalReoManager extends BusinessOperationOverrider<AltaA
 	private static final String POST_METHOD = "POST";
 	private static final String REM3_BASE_URL = "rem3.base.url";
 	private static final String REM3_ALTA_ASUNTOS_LEGAL_REO = "rem3.alta.asuntos.legal.reo";
+	private static final String PROPIEDAD_ACTIVAR_ALTA_ASUNTOS_LEGAL_REO = "rem3.alta.asuntos.legal.reo.activo";
 	 
 	@Autowired
     private HttpClientFacade httpClientFacade;
@@ -123,5 +124,14 @@ public class AltaAsuntosLegalReoManager extends BusinessOperationOverrider<AltaA
             logger.error("Error al trazar la llamada al WS", e);
         }
     }
+    
+    @Override
+	public boolean modoAltaAsuntosLegalReoActivado() {
+		Boolean activado = Boolean.valueOf(appProperties.getProperty(PROPIEDAD_ACTIVAR_ALTA_ASUNTOS_LEGAL_REO));
+		if (activado == null) {
+			activado = false;
+		}
+		return activado;
+	}
 
 }

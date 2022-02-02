@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,11 +15,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.service.*;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
@@ -80,7 +73,6 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
@@ -89,6 +81,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -171,8 +164,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
-import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -182,6 +173,8 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.service.TabActivoCargas;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
@@ -190,22 +183,12 @@ import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.AltaAsuntosLegalReoAsync;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
-import es.pfsgroup.plugin.rem.service.TabActivoCargas;
-import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
-import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
-import es.pfsgroup.plugin.rem.service.TabActivoService;
-import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 @Service
 public class ActivoAdapter {
@@ -351,6 +334,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
+	
+	@Autowired
+	private AltaAsuntosLegalReoApi altaAsuntosLegalReoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -5680,6 +5666,9 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public void llamadaAltaAsuntosLegalReoAsync(List<Long> numEntidadList, boolean isNumAgrupacionList) {
+		
+		if(!altaAsuntosLegalReoApi.modoAltaAsuntosLegalReoActivado())
+			return;
 		
 		logger.error("ActivoAdapter > llamadaAltaAsuntosLegalReoAsync");
 		logger.error("NUMEROS DE ENTIDADES: "+numEntidadList.toString());

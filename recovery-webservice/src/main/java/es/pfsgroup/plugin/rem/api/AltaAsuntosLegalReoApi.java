@@ -13,4 +13,6 @@ public interface AltaAsuntosLegalReoApi {
 
 	public JSONObject altaAsuntosLegalReo(List<Long> numActivosList, String userName, int segundosTimeout, ModelMap model);
 
+	public boolean modoAltaAsuntosLegalReoActivado();
+
 }

@@ -74,17 +74,11 @@ public class VElementosLineaDetalle implements Serializable{
 	@Column(name = "IMPORTE_PROPORCIONAL_SUJETO")
 	private Double importeProporcinalSujeto;
 	
-	@Column(name = "ESTADOALQ_COD")
-	private String estadoAlquilerCodigo;
-	
-	@Column(name = "ESTADOALQ_DESC")
-	private String estadoAlquiler;
-	
 	@Column(name = "TIPOCOMERC_COD")
-	private String tipoComercializacionCodigo;
+	private String carteraBcCodigo;
 	
 	@Column(name = "TIPOCOMERC_DESC")
-	private String tipoComercializacion;
+	private String carteraBc;
 	
 	@Column(name = "TIPOTRANS_COD")
 	private String tipoTransmisionCodigo;
@@ -248,37 +242,21 @@ public class VElementosLineaDetalle implements Serializable{
 	public void setImporteProporcinalSujeto(Double importeProporcinalSujeto) {
 		this.importeProporcinalSujeto = importeProporcinalSujeto;
 	}
-
-	public String getEstadoAlquilerCodigo() {
-		return estadoAlquilerCodigo;
+	
+	public String getCarteraBcCodigo() {
+		return carteraBcCodigo;
 	}
 
-	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
-		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	public void setCarteraBcCodigo(String carteraBcCodigo) {
+		this.carteraBcCodigo = carteraBcCodigo;
 	}
 
-	public String getEstadoAlquiler() {
-		return estadoAlquiler;
+	public String getCarteraBc() {
+		return carteraBc;
 	}
 
-	public void setEstadoAlquiler(String estadoAlquiler) {
-		this.estadoAlquiler = estadoAlquiler;
-	}
-
-	public String getTipoComercializacionCodigo() {
-		return tipoComercializacionCodigo;
-	}
-
-	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
-		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
-	}
-
-	public String getTipoComercializacion() {
-		return tipoComercializacion;
-	}
-
-	public void setTipoComercializacion(String tipoComercializacion) {
-		this.tipoComercializacion = tipoComercializacion;
+	public void setCarteraBc(String carteraBc) {
+		this.carteraBc = carteraBc;
 	}
 
 	public String getTipoTransmisionCodigo() {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211217
+--## FECHA_CREACION=20220113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16682
+--## INCIDENCIA_LINK=HREOS-16906
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_SAP.
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16630] - Alejandra García
 --##        0.2 Añadir error nuevo - [HREOS-16682] - Alejandra García
+--##        0.3 Quitar error de activos no migrados, añadir error nuevo - [HREOS-16906] - Alejandra García
 --##########################################
 --*/
 
@@ -38,7 +39,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_LES_LISTADO_ERRORES_SAP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16630';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16906';
 
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -48,7 +49,7 @@ DECLARE
 	T_TIPO_DATA('El gasto tiene más de 997 líneas'                                  , '02','02','01','001'),
 	T_TIPO_DATA('El activo no tiene participación en la línea de detalle'           , '02','02','01','002'),
 	T_TIPO_DATA('No se ha podido determinar Grupo-Tipo-Subtipo para este registro'  , '02','02','01','003'),
-	T_TIPO_DATA('Gastos con activos no migrados'                                    , '02','02','01','004')
+	T_TIPO_DATA('Emisor del gasto sin código BC'                                    , '02','02','01','004')
 
 
     ); 

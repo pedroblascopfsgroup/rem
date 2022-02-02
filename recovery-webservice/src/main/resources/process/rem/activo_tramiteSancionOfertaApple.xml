@@ -29,6 +29,7 @@
 	<decision name ="T017_DefinicionOfertaDecision" expression="#{T017_DefinicionOfertaDecision}">
         <transition to="T017_ResolucionCES" name="noMayorista"></transition>
 		<transition to="T017_PBC_CN" name="mayorista"></transition>
+		<transition to="T017_FirmaPropietario" name="sinFormalizacion"></transition>
 	</decision>
 	
 	<state name="T017_PBC_CN">
@@ -55,6 +56,32 @@
 	<decision name ="T017_PBC_CNDecision" expression="#{T017_PBC_CNDecision}">
         <transition to="T017_ResolucionCES" name="resultadoPositivo"></transition>
 		<transition to="T017_ResolucionExpediente" name="resultadoNegativo"></transition>
+	</decision>
+
+	<state name="T017_FirmaPropietario">
+		<event type="node-enter">
+			<action name="miTarea"
+					class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+					config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+					class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+					config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_FirmaPropietarioDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_FirmaPropietarioDecision" expression="#{T017_FirmaPropietarioDecision}">
+		<transition to="T017_CierreEconomico" name="Si"></transition>
+		<transition to="T017_ResolucionExpediente" name="No"></transition>
 	</decision>
 	
 	<state name="T017_ResolucionCES">

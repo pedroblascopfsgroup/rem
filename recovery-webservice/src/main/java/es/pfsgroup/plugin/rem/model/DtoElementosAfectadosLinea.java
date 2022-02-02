@@ -44,13 +44,9 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private Double importeTotalSujetoLinea;
 	 
-	 private String estadoAlquilerCodigo;
+	 private String carteraBcCodigo;
 	 
-	 private String estadoAlquiler;
-	 
-	 private String tipoComercializacionCodigo;
-	 
-	 private String tipoComercializacion;
+	 private String carteraBc;
 	 
 	 private String tipoTransmisionCodigo;
 	 
@@ -190,36 +186,20 @@ public class DtoElementosAfectadosLinea extends WebDto {
 		this.importeTotalSujetoLinea = importeTotalSujetoLinea;
 	}
 
-	public String getEstadoAlquilerCodigo() {
-		return estadoAlquilerCodigo;
+	public String getCarteraBcCodigo() {
+		return carteraBcCodigo;
 	}
 
-	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
-		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	public void setCarteraBcCodigo(String carteraBcCodigo) {
+		this.carteraBcCodigo = carteraBcCodigo;
 	}
 
-	public String getEstadoAlquiler() {
-		return estadoAlquiler;
+	public String getCarteraBc() {
+		return carteraBc;
 	}
 
-	public void setEstadoAlquiler(String estadoAlquiler) {
-		this.estadoAlquiler = estadoAlquiler;
-	}
-
-	public String getTipoComercializacionCodigo() {
-		return tipoComercializacionCodigo;
-	}
-
-	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
-		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
-	}
-
-	public String getTipoComercializacion() {
-		return tipoComercializacion;
-	}
-
-	public void setTipoComercializacion(String tipoComercializacion) {
-		this.tipoComercializacion = tipoComercializacion;
+	public void setCarteraBc(String carteraBc) {
+		this.carteraBc = carteraBc;
 	}
 
 	public String getTipoTransmisionCodigo() {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220127
+--## FECHA_CREACION=20220201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17018
@@ -14,6 +14,7 @@
 --##        0.1 Versión inicial - [HREOS-16682] - Alejandra García
 --##        0.2 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
 --##        0.3 Añadir subtipos de promociones y cambiar todos los códigos de los subtipos nuevos del PEP - [HREOS-17018] - Alejandra García
+--##        0.3 Añadir update - [HREOS-17087] - Alejandra García
 --#########################################
 --*/
 
@@ -70,7 +71,7 @@ DECLARE
       T_TIPO_DATA('186','Humedades','15'),
       T_TIPO_DATA('187','Acompañamiento','15'),
       T_TIPO_DATA('188','Acompañamiento','11'),
-	  T_TIPO_DATA('189','Requerimientos Derribos','15'),
+	    T_TIPO_DATA('189','Requerimientos Derribos','15'),
       T_TIPO_DATA('190','Requerimientos Limpiezas','15'),
       T_TIPO_DATA('191','Requerimientos Otros','15'),
       T_TIPO_DATA('192','Comisión Tarifa Plana','13'),
@@ -163,6 +164,23 @@ BEGIN
 		ELSE
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] YA EXISTE SUBTIPO GASTO CON CODIGO '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+
+      -- Si existe se modifica.
+      DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+
+      V_MSQL := 'SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0';
+			EXECUTE IMMEDIATE V_MSQL INTO V_TGA_ID;
+
+      V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO 
+                SET DD_TGA_ID = '||V_TGA_ID||'
+              , DD_STG_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+              , DD_STG_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+              , USUARIOMODIFICAR = '''||V_USUARIO||''' 
+              , FECHAMODIFICAR = SYSDATE 
+               WHERE DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+      EXECUTE IMMEDIATE V_MSQL;
+      DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+
 
 		END IF;
 

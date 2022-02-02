@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
@@ -915,6 +917,27 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getTiposImpuestoFiltered(String esBankia) {
 		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia);
 		return createModelAndViewJson(new ModelMap("data", lista));	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "generic/avanzaTareaDatosPbc")
+	public void avanzaTareaDatosPbc(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		
+		AvanzarDatosPBCDto jsonData = null;
+        ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+        JSONObject jsonFields = null;
+        
+		try {
+			jsonData = (AvanzarDatosPBCDto) request.getRequestData(AvanzarDatosPBCDto.class);
+			model.put("success", genericApi.avanzaDatosPbc(jsonData));
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se han obtenido fotos para este activo/Agrupacion");
+			model.put("success", false);
+		}finally {
+			restApi.sendResponse(response, model, request);
+	
+		}	
 	}
  }
 

@@ -86,7 +86,6 @@ T_TIPO_DATA('90362456','110224457')
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
- 
     -- LOOP para insertar los valores en OFR_OFERTAS
     DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZACION EN OFR_OFERTAS ');
         
@@ -144,7 +143,44 @@ BEGIN
          
        --Si no existe, no hacemos nada
        ELSE
-       DBMS_OUTPUT.PUT_LINE('[INFO]: LA OFERTA A ACTUALIZAR NO EXISTE');       
+          DBMS_OUTPUT.PUT_LINE('[WARN]: La oferta: '''||TRIM(V_TMP_TIPO_DATA(1))||''' no tiene expediente, NO SE MODIFICA GEX ');
+          --Comprobamos el dato a insertar
+          V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' OFR WHERE OFR.OFR_NUM_OFERTA = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+          
+          --Si existe lo actualizamos
+          IF V_NUM_TABLAS > 0 THEN				
+
+            --Comprobamos si existe el proveedor
+            V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_PROVEEDOR||' WHERE PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+            --Si existe, se actualiza
+            IF V_NUM_TABLAS > 0 then
+              
+              V_SQL:='SELECT PVE_ID FROM '||V_ESQUEMA||'.'||V_TABLA_PROVEEDOR||' WHERE PVE_COD_REM='||TRIM(V_TMP_TIPO_DATA(2))||'';
+              EXECUTE IMMEDIATE V_SQL INTO V_ID;
+              
+              V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
+                        PVE_ID_PRESCRIPTOR='||V_ID||',
+                        USUARIOMODIFICAR = '''||V_USUARIO||''', 
+                        FECHAMODIFICAR = SYSDATE
+                        WHERE OFR_NUM_OFERTA='||TRIM(V_TMP_TIPO_DATA(1))||'';
+
+              EXECUTE IMMEDIATE V_SQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ACTUALIZADO CORRECTAMENTE '''||TRIM(V_TMP_TIPO_DATA(1))||''' - '''||TRIM(V_TMP_TIPO_DATA(2))||'''');
+
+              --Si no existe no se hace nada
+            ELSE
+              DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE EL PROVEEDOR CON EL CODIGO INDICADO: '''||TRIM(V_TMP_TIPO_DATA(2))||'''');
+            END IF;
+            
+          
+        --Si no existe, no hacemos nada
+        ELSE
+        DBMS_OUTPUT.PUT_LINE('[ERROR]: LA OFERTA A ACTUALIZAR NO EXISTE');       
+          
+        END IF;
         
        END IF;
       END LOOP;

@@ -103,7 +103,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
                         	
             llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 
-            registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"), null);
+            registrarLlamada(urlEnvio, json, llamada.getString("resultado"), llamada.getString("mensaje"), null);
 
         } catch (Exception e) {
             logger.error("error en RecoveryController", e);
@@ -169,11 +169,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }else{
         	map.put("subtipoActivo", null);
         }
-        if(activo.getEstadoActivo() != null) {
-        	map.put("estado", activo.getEstadoActivo());
-        }else {
-            map.put("estado", "1");
-        }
+        map.put("estado", true);
         map.put("referenciaCatastral", activoCatastro.getRefCatastral());
         if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
         	map.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());

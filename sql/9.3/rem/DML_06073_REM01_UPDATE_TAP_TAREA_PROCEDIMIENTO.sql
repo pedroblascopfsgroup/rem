@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jesus Jativa
---## FECHA_CREACION=20220203
+--## FECHA_CREACION=20220204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17093
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(800);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('valores[''''T017_PBCVenta''''][''''comboArras''''] != DDSiNo.SI ? valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? checkBBVA() ? ''''ApruebaBBVA'''' : checkBankia() ? ''''ApruebaBC'''' : ''''Aprueba'''' : ''''Deniega'''' : ''''ReagendarArras''''')
+    	T_TIPO_DATA('T017_PBCVenta','valores[''''T017_PBCVenta''''][''''comboArras''''] != DDSiNo.SI ? valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? checkBBVA() ? ''''ApruebaBBVA'''' : checkBankia() ? ''''ApruebaBC'''' : ''''Aprueba'''' : ''''Deniega'''' : ''''ReagendarArras''''')
     );
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

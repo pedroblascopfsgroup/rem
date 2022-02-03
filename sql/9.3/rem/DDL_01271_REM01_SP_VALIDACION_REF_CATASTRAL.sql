@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220125
+--## FECHA_CREACION=20220203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -130,7 +130,8 @@ dcCalculado := '';
             end if;
             
         END LOOP;
-        dcCalculado := CONCAT(dcCalculado,(substr(letraDc,sumaDigitos,1)));
+        dcCalculado := CONCAT(dcCalculado,(substr(letraDc,sumaDigitos+1,1)));
+        sumaDigitos := 0;
         FOR i IN 1..LENGTH(r_product.CAD2) LOOP
             var := substr(r_product.CAD2,i,1);
             valorCaracter  := NULL;
@@ -155,7 +156,7 @@ dcCalculado := '';
             
         END LOOP;
      
-    dcCalculado := CONCAT(dcCalculado,(substr(letraDc,sumaDigitos,1)));
+    dcCalculado := CONCAT(dcCalculado,(substr(letraDc,sumaDigitos+1,1)));
     end if;
 
     IF ( dcCalculado =  var2 ) THEN
@@ -164,8 +165,7 @@ dcCalculado := '';
                 SET CAT_CORRECTO = 1,
                         USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
                         FECHAMODIFICAR = SYSDATE
-                WHERE CAT_ID = '||var_cat_id||' 
-                AND CAT_CATASTRO IS NOT NULL';
+                WHERE CAT_ID = '||var_cat_id||;
                 EXECUTE IMMEDIATE V_MSQL;
                 
             IF ( var_cat_id2 IS NOT NULL) THEN
@@ -174,8 +174,7 @@ dcCalculado := '';
                 CAT_CATASTRO = '||var_cat_id2||',
                         USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
                         FECHAMODIFICAR = SYSDATE
-                WHERE CAT_ID = '||var_cat_id||' 
-                AND CAT_CATASTRO IS NULL';
+                WHERE CAT_ID = '||var_cat_id||;
                 EXECUTE IMMEDIATE V_MSQL; 
             END IF;
                 

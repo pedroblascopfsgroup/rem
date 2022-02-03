@@ -38,14 +38,14 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
       -- 					TIPO TRABAJO(DD_TGA_CODIGO),   		SUBTIPO(DD_STG_CODIGO),  			DESCRIPCION,  			                    DESCRIPCION LARGA
-		T_TIPO_DATA(			'16',								'118',							'Alarmas Instalación',			            'Alarmas Instalación'),
-		T_TIPO_DATA(			'16',								'119',							'Alarmas Mantenimiento',			        'Alarmas Mantenimiento'),
-		T_TIPO_DATA(			'16',								'120',							'Vigilancia',	                            'Vigilancia'),
-		T_TIPO_DATA(			'16',								'121',							'Colocación puerta antiocupa',              'Colocación puerta antiocupa'),
-		T_TIPO_DATA(			'16',								'122',							'Acudas',			                        'Acudas'),
-		T_TIPO_DATA(			'16',								'123',							'CRA',			                            'CRA'),
-		T_TIPO_DATA(			'16',								'124',							'Alquiler PAO',			                    'Alquiler PAO'),
-        T_TIPO_DATA(			'16',								'125',							'Alquiler alarmas',		                    'Alquiler alarmas')
+		T_TIPO_DATA(			'16',								'239',							'Alarmas Instalación',			            'Alarmas Instalación'),
+		T_TIPO_DATA(			'16',								'240',							'Alarmas Mantenimiento',			        'Alarmas Mantenimiento'),
+		T_TIPO_DATA(			'16',								'241',							'Vigilancia',	                            'Vigilancia'),
+		T_TIPO_DATA(			'16',								'242',							'Colocación puerta antiocupa',              'Colocación puerta antiocupa'),
+		T_TIPO_DATA(			'16',								'243',							'Acudas',			                        'Acudas'),
+		T_TIPO_DATA(			'16',								'244',							'CRA',			                            'CRA'),
+		T_TIPO_DATA(			'16',								'245',							'Alquiler PAO',			                    'Alquiler PAO'),
+        T_TIPO_DATA(			'16',								'246',							'Alquiler alarmas',		                    'Alquiler alarmas')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

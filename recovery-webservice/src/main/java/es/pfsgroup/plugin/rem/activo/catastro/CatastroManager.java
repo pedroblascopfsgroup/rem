@@ -734,19 +734,19 @@ public class CatastroManager implements CatastroApi {
 						
 						DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
 						
-						if(Checks.esNulo(cat.get("referenciaCatastral"))) {
+						if(!Checks.esNulo(cat.get("referenciaCatastral"))) {
 							dtoCatastro.setRefCatastral((String) cat.get("referenciaCatastral"));
 						}
 						
-						if(Checks.esNulo(cat.get("superficieConstruida"))) {
+						if(!Checks.esNulo(cat.get("superficieConstruida"))) {
 							String superficie = checkObjectByType(cat.get("superficieConstruida").toString(), "double");
 							dtoCatastro.setSuperficieConstruida(superficie != null ? Double.parseDouble(superficie) : null);
 						}
-						if(Checks.esNulo(cat.get("anyoConstruccion"))) {
+						if(!Checks.esNulo(cat.get("anyoConstruccion"))) {
 							String anyoConstruccion = checkObjectByType(cat.get("anyoConstruccion").toString(), "int");
 							dtoCatastro.setAnyoConstruccion(anyoConstruccion != null ? Integer.parseInt(anyoConstruccion) : null);
 						}
-						if(Checks.esNulo(cat.get("codPostal"))) {
+						if(!Checks.esNulo(cat.get("codPostal"))) {
 							dtoCatastro.setCodigoPostal((String) cat.get("codPostal"));
 						}
 				
@@ -756,16 +756,16 @@ public class CatastroManager implements CatastroApi {
 							DDTipoVia via = genericDao.get(DDTipoVia.class, tpvFilter);
 							if (!Checks.esNulo(via)) dtoCatastro.setTipoVia(via.getDescripcion());
 						}
-						if(Checks.esNulo(cat.get("numVia"))) {
+						if(!Checks.esNulo(cat.get("numVia"))) {
 							dtoCatastro.setNumeroVia((String) cat.get("numVia"));
 						}
-						if(Checks.esNulo(cat.get("planta"))) {
+						if(!Checks.esNulo(cat.get("planta"))) {
 							dtoCatastro.setPlanta((String) cat.get("planta"));
 						}
-						if(Checks.esNulo(cat.get("puerta"))) {
+						if(!Checks.esNulo(cat.get("puerta"))) {
 							dtoCatastro.setPuerta((String) cat.get("puerta"));
 						}
-						if(Checks.esNulo(cat.get("escalera"))) {
+						if(!Checks.esNulo(cat.get("escalera"))) {
 							dtoCatastro.setEscalera((String) cat.get("escalera"));
 						}
 						if (!Checks.esNulo(cat.get("codProvincia"))) {

@@ -67,7 +67,7 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 		}
 		
 		if(aprueba) {
-			estado = DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+			estado = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 			estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 		}else {
 			estado = DDEstadosExpedienteComercial.ANULADO;

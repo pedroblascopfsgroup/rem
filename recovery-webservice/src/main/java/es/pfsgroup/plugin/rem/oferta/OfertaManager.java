@@ -681,7 +681,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Activo activo = activoApi.getByNumActivo(ofertaDto.getIdActivoHaya());
 				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
 					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
-				}else if(activo != null && DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())) {
+				}else if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
 					if(!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumento().getCodigo()) 
 						&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumento().getCodigo())
 						&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumento().getCodigo())) {
@@ -793,7 +793,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (Checks.esNulo(tpd)) {
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
 					}else if(activo != null 
-							&& DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())
+							&& DDCartera.isCarteraBk(activo.getCartera())
 							&& (!DD_TDI_CODIGO_NIF.equals(tpd.getCodigo()) 
 									&& !DD_TDI_CODIGO_DNI.equals(tpd.getCodigo())
 									&& !DD_TDI_CODIGO_NIE.equals(tpd.getCodigo()))) {

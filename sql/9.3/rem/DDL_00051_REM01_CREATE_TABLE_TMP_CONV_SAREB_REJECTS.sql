@@ -1,17 +1,18 @@
 --/*
 --#########################################
---## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20201106
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20211111
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11966
+--## INCIDENCIA_LINK=HREOS-16235
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla temporal de rechazos para el proceso de convivencia de Sareb
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-11966
+--##        0.2 Santi Monzó - 20211111 - HREOS-16235 añadimos el campo ON_PROMOCION
 --#########################################
 ----*/
 
@@ -61,6 +62,7 @@ BEGIN
 		, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
 		, ID_REGISTRO NUMBER(16)
         , NUEVO NUMBER(1)
+		, ON_PROMOCION VARCHAR2(50 CHAR)
 	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] LA TABLA '''||V_TABLA||''' HA SIDO CREADA CON ÉXITO.');

@@ -758,6 +758,7 @@ public class CatastroManager implements CatastroApi {
 						}
 						if(!Checks.esNulo(cat.get("numVia"))) {
 							dtoCatastro.setNumeroVia((String) cat.get("numVia"));
+							dtoCatastro.setDomicilio((String) cat.get("numVia"));
 						}
 						if(!Checks.esNulo(cat.get("planta"))) {
 							dtoCatastro.setPlanta((String) cat.get("planta"));
@@ -802,6 +803,8 @@ public class CatastroManager implements CatastroApi {
 						if (!Checks.esNulo(cat.get("uso"))) {
 							dtoCatastro.setUso(cat.getString("uso"));
 						}
+						
+						
 						
 						lista.add(dtoCatastro);
 					}

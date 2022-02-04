@@ -165,7 +165,7 @@ dcCalculado := '';
                 SET CAT_CORRECTO = 1,
                         USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
                         FECHAMODIFICAR = SYSDATE
-                WHERE CAT_ID = '||var_cat_id||;
+                WHERE CAT_ID = '||var_cat_id;
                 EXECUTE IMMEDIATE V_MSQL;
                 
             IF ( var_cat_id2 IS NOT NULL) THEN
@@ -174,7 +174,7 @@ dcCalculado := '';
                 CAT_CATASTRO = '||var_cat_id2||',
                         USUARIOMODIFICAR = ''SP_VALIDACION_REF_CATASTRAL'',
                         FECHAMODIFICAR = SYSDATE
-                WHERE CAT_ID = '||var_cat_id||;
+                WHERE CAT_ID = '||var_cat_id;
                 EXECUTE IMMEDIATE V_MSQL; 
             END IF;
                 

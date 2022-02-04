@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20220107
+--## FECHA_CREACION=20220204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16737
@@ -58,7 +58,7 @@ BEGIN
         ,CAT_ANYO_CONSTRUCCION	        VARCHAR2(50 CHAR)
         ,CAT_COD_POSTAL	                VARCHAR2(50 CHAR)
         ,DD_TVI_ID	                    VARCHAR2(50 CHAR)
-        ,CAT_DESCRIPCION_VIA	        VARCHAR2(50 CHAR)
+        ,CAT_DESCRIPCION_VIA	        VARCHAR2(100 CHAR)
         ,CAT_NUM_VIA	                VARCHAR2(50 CHAR)
         ,CAT_PISO	                    VARCHAR2(50 CHAR)
         ,CAT_PLANTA	                    VARCHAR2(50 CHAR)

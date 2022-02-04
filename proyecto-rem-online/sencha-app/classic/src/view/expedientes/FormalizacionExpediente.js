@@ -818,20 +818,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							fieldLabel : HreRem
 									.i18n('fieldlabel.formalizacion.fecha.venta'),
 							bind :{
-								value:'{resolucion.fechaVenta}',
-								hidden: '{esBankia}'
-							}
-
-						},
-						{
-							xtype : 'datefieldbase',
-							readOnly: 'true',
-							formatter : 'date("d/m/Y")',
-							fieldLabel : HreRem.i18n('fieldlabel.formalizacion.fecha.venta'),
-							bind : {
-								value:'{resolucion.fechaFirmaContrato}',
-								hidden: '{!esBankia}'
-							}
+								value:'{resolucion.fechaVenta}'							}
 
 						},
 						{

@@ -294,6 +294,15 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				if (descripcion != null) {
 					metadata.put("descripcion", descripcion);
 				}
+				if (tipo != null) {
+					if (tipo.equals(TIPO.WEB)) {
+						metadata.put("tipo", "01");
+					} else if (tipo.equals(TIPO.TECNICA)) {
+						metadata.put("tipo", "02");
+					} else if (tipo.equals(TIPO.TESTIGO)) {
+						metadata.put("tipo", "03");
+					}
+				}
 				if (principal != null) {
 					if (principal.equals(PRINCIPAL.SI)) {
 						metadata.put("principal", "1");

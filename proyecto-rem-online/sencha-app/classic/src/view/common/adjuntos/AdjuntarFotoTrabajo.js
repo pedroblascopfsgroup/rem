@@ -53,7 +53,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoTrabajo', {
     	me.items = [
     				{
 	    				xtype: 'formBase', 
-	    				url: $AC.getRemoteUrl("trabajo/uploadFoto"),
+	    				url: $AC.getRemoteUrl("trabajo/uploadFotos"),
 	    				reference: 'adjuntarFotoTrabajoFormRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
@@ -65,9 +65,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoTrabajo', {
 	    					[
 
 					    		{
-							        xtype: 'filefield',
+							        xtype: 'multiplefilefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-							        name: 'fileUpload',							        
+							        name: 'multipleFileUpload',							        
 							        anchor: '100%',
 							        width: '100%',
 							        allowBlank: false,
@@ -80,16 +80,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoTrabajo', {
 							        align: 'right',
 							        vtype: 'onlyImages',
 							        listeners: {
-				                        change: function(fld, value) {
-				                        	var lastIndex = null,
-				                        	fileName = null;
-				                        	if(!Ext.isEmpty(value)) {
-					                        	lastIndex = value.lastIndexOf('\\');
-										        if (lastIndex == -1) return;
-										        fileName = value.substring(lastIndex + 1);
-					                            fld.setRawValue(fileName);
-				                        	}
-				                        }
+							        	change: function (filefield, newFileName, oldFileName) {
+							        		var me = this,
+					                        	fileList = filefield.getFileList(),
+					                            fileNames = Ext.Array.pluck(fileList, 'name');
+					                        
+					                        filefield.setRawValue(fileNames.join(', '));
+					                    }
 				                    }
 					    		},
 					    		{ 

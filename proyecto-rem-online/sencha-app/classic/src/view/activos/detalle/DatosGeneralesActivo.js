@@ -119,15 +119,15 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    
 	    var ocultarSituacionposesoriaactivo = false;
 	    var tipoTituloCodigo = me.lookupController().getViewModel().get('activo').get('tipoTituloCodigo');
-	    var subtipoClaseActivoCodigo = me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == '02';
+	    var subtipoClaseActivoCodigo = me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == null ? true : me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == '02';
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']) 
-	    			|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))) 
+	    			|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))) 
 	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
 	    }else{
 	    	if (!(($AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO') && !$AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']))
 	    			|| ($AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO') && ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT'])	 
-	    					&& (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))))) {
+	    					&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))))) {
 				ocultarSituacionposesoriaactivo = true;
 	    	}
 	    }

@@ -30,7 +30,11 @@
     </beans:bean>
     
     <!-- MultipartResolver multipart/form-data -->
-    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+<!-- 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> -->
+	<bean id="multipartResolver" class="es.capgemini.pfs.web.utils.MultiCommonsMultipartResolver">
+	 <property name="maxUploadSize" value="10000000" />
+	 <property name="maxInMemorySize" value="5000000" />
+	</bean>
 
     <beans:bean name="jsonViewFilter" class="org.springframework.web.servlet.view.json.filter.SimplePropertyFilter">
         <property name="excludeBeforePropNames">

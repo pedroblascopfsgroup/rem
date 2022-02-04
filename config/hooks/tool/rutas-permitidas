@@ -225,6 +225,7 @@ rem_mirror|func-rem-cuadreContableBBVA
 func-rem-cuadreContableBBVA|R-Chislett
 func-rem-fichaClientes|R-Chislett
 rem_mirror|func-rem-mejorasRendimiento-F5
+rem_mirror|func-rem-reincorporacionEstadoTitulo
 func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
@@ -240,10 +241,12 @@ func-rem-confirmacionTitulares|func-rem-procesoOfertas
 rem_mirror|func-rem-jupiter
 R-Hydra|R-Hydra-ProcesoOfertas
 R-Hydra-ProcesoOfertas|R-Hydra-ProcesoOfertas-f2
+rem_mirror|func-rem-mejorasGestionFotos
 rem_mirror|func-rem-hydra-accionesNoComercial
 rem_mirror|R-Hydra-ProcesoOfertas-f2
 rem_mirror|func-rem-onboardingTitulizada
 func-rem-onboardingTitulizada|R-Hydra-ProcesoOfertas-f2
+rem_mirror|func-rem-cargaAutomaticaPromociones
 rem_mirror|func-rem-comercialHydra-Incidencias
 func-rem-comercialHydra-Incidencias|R-Salustiana
 func-rem-hydra-accionesNoComercial|R-Salustiana
@@ -251,3 +254,6 @@ rem_mirror|func-rem-tasadorasTitulizada
 func-rem-PEP2022|func-rem-devengosIBI2022
 func-rem-devengosIBI2022|func-rem-cambioJerarquiaPrefacturasBBVA
 rem_mirror|func-rem-PEP2022
+func-rem-cargaAutomaticaPromociones|R-Persica
+func-rem-mejorasGestionFotos|R-Persica
+func-rem-reincorporacionEstadoTitulo|R-Persica

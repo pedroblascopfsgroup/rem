@@ -1625,19 +1625,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		isGestorSeguridadOAssetManager:function(get){
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']) 
-				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (CONST.TIPO_TITULO_ACTIVO['JUDICIAL'] === tipoTituloCodigo
-				                                                            || CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL'] === tipoTituloCodigo
-				                                                            || CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo
-				                                                            || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo));
+				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo
+				                                                          || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo)|| subtipoClaseActivoCodigo === true));
 		},
 		
 		isAssetManager:function(get){
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			
-			return $AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true);
+			return $AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) 
+			&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) 
+			|| subtipoClaseActivoCodigo === true);
 		},
 		
 	    esActivoMacc: function (get) {
@@ -1732,10 +1732,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			var isCarteraSareb = get('activo.isCarteraSareb');
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			
 			if(isCarteraSareb != true 
-					&& !($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))){
+					&& !($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) 
+					&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) 
+					|| subtipoClaseActivoCodigo === true))){
 				return false;
 			}
 			return true;
@@ -4209,6 +4211,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
 		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	},
 		comboEstadoDeposito: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

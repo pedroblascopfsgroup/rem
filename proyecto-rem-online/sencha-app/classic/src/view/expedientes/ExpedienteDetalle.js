@@ -123,7 +123,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        	var dataExpediente = me.lookupController().getView().getViewModel().getData().expediente.getData();
 	        	var tipoExpediente = dataExpediente.tipoExpedienteCodigo;
 	        	if (dataExpediente.esBankia && (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpediente || CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER_NO_COMERCIAL'] == tipoExpediente)) {
-	        		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'garantiasexpediente', ocultarBotonesEdicion: false})}, ['TAB_GARANTIAS_EXPEDIENTE']); //TAB_OFERTA_EXPEDIENTES
+	        		items.push({xtype: 'garantiasexpediente', ocultarBotonesEdicion: false});
 	        	}
 	        	
 	        }

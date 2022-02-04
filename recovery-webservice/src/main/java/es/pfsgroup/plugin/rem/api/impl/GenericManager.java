@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -247,6 +248,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 	@Autowired
 	private RestApi restApi;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 
 
 
@@ -2065,6 +2069,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		}
 		return idPersonaHayaCaixa;
+	}
+
+	@Override
+	public String getIdPersonaHayaSinCartera(String documentoInterlocutor){
+		return interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(documentoInterlocutor);
 	}
 
 	@Override

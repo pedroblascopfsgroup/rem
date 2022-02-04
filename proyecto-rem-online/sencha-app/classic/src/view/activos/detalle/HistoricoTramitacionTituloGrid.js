@@ -155,6 +155,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 	        me.saveSuccessFn = function() {
 		    	var me = this;
 		    	me.up('saneamientoactivo').funcionRecargar();
+		    	me.up('admision').funcionRecargar();
 		    	return true;
 		    };
    },
@@ -179,7 +180,13 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
                       }
                       me.unmask();
                       me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-						me.saveSuccessFn();											
+					  me.saveSuccessFn();		
+					  var grid = me.lookupController().lookupReference('calificacionnegativagridad');
+						if(a.data.estadoPresentacion === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+							grid.setDisabledAddBtn(true)
+						}else{
+							grid.setDisabledAddBtn(true);
+						}
                   },
                   
 				failure: function (a, operation) {
@@ -271,7 +278,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    	if (isBankia)	return true;
 	if (tieneDatosStore) {
 		var codigoUltimoRegistro = me.getUltimoRegistro().data.codigoEstadoPresentacion;
-		if (codigoUltimoRegistro != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
+		if (codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] || codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS']
+				|| codigoUltimoRegistro == CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO']){
+			return false;
+		} else if (codigoUltimoRegistro != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
 			return true;
 		} else if (codigoUltimoRegistro === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
 					&& me.getUltimoRegistro().data.tieneCalificacionNoSubsanada == 1) {

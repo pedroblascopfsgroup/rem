@@ -359,6 +359,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var gencat = context.record.get("gencat");
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+        var codigoTipoOferta = context.record.get('codigoTipoOferta');
+
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
 				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
@@ -366,7 +368,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				return false;
 			}
 			var activo = me.lookupController().getViewModel().get('activo');
-			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
+			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA'] && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
 				if(activo.get('cambioEstadoActivo')){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
@@ -407,7 +409,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
-				var codigoTipoOferta = context.record.get('codigoTipoOferta');
 				if(CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
 					if(Ext.isEmpty(me.lookupController().getViewModel().get('canalVentaBC').selection)){
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.venta.bc"));

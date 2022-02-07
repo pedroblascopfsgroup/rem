@@ -169,9 +169,8 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }else{
         	map.put("subtipoActivo", null);
         }
-        
         map.put("estado", true);
-
+        map.put("tipoGarantia", "1");
         map.put("referenciaCatastral", activoCatastro.getRefCatastral());
         if(activo.getBien() != null && activo.getBien().getDatosRegistralesActivo() != null){
         	map.put("finca", activo.getBien().getDatosRegistralesActivo().getNumFinca());
@@ -247,12 +246,12 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         map.put("codigoPostal", activo.getCodPostal());
         if(activo.getTipoBien() != null){
         	if(activo.getTipoBien().getCodigo().equals("01")) {
-        		map.put("tipoActivo", "01");
+        		map.put("tipoActivo", "1");
         	}else {
         		map.put("tipoActivo", "0");
         	}
         }else{
-        	map.put("tipoActivo", "01");
+        	map.put("tipoActivo", "1");
         }
         if(activo.getTipoActivo() != null){
         	if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())) {

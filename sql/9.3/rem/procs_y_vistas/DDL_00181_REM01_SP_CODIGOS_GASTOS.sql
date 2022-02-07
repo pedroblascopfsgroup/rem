@@ -1,10 +1,10 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220127
+--## FECHA_CREACION=20220202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17018
+--## INCIDENCIA_LINK=HREOS-17073
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Añadir merge a la GLD_ENT - [HREOS-16896] - Alejandra García
 --##        0.3 Quitar merge a la GLD_ENT y el filtro del campo DD_EAL_ID en la LFACT_SIN_PROV y FACT_PROV- [HREOS-16968] - Alejandra García
 --##        0.4 Modificar filtro del la ETG- [HREOS-17018] - Alejandra García
+--##        0.5 Corrección filtro del la ETG- [HREOS-17073] - Alejandra García
 --##########################################
 --*/
 
@@ -135,7 +136,7 @@ BEGIN
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
-                    AND NVL(ETG.PROMOCION, NVL(GEN.PROMOCION, 0)) = NVL(GEN.PROMOCION, 0)
+                    AND NVL(ETG.PROMOCION, NVL(GLD.PROMOCION, 0)) = NVL(GLD.PROMOCION, 0)
                     AND ETG.BORRADO = 0
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND T1.ID_ACTIVO_ESPECIAL = T2.ID_ACTIVO_ESPECIAL )
               WHEN MATCHED THEN UPDATE SET
@@ -229,9 +230,7 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
                   AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
-                    AND GEN.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID)D = GPV.DD_TGA_ID
+                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID) = GPV.DD_TGA_ID
                     AND NVL(ETG.DD_STG_ID, GLD.DD_STG_ID) = GLD.DD_STG_ID AND CASE 
                                                               WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
                                                               WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
@@ -242,7 +241,7 @@ BEGIN
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
-                    AND NVL(ETG.PROMOCION, NVL(GEN.PROMOCION, 0)) = NVL(GEN.PROMOCION, 0)
+                    AND NVL(ETG.PROMOCION, NVL(GLD.PROMOCION, 0)) = NVL(GLD.PROMOCION, 0)
                     AND ETG.BORRADO = 0
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND T1.ID_ACTIVO_ESPECIAL = T2.ID_ACTIVO_ESPECIAL)
               WHEN MATCHED THEN UPDATE SET

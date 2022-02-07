@@ -462,7 +462,8 @@
 	</state>
 	<decision name ="T017_PBCVentaDecision" expression="#{T017_PBCVentaDecision}">
         <transition to="join1" name="Aprueba"></transition> <!--Nodo de union-->
-        <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union BC-->
+		<transition to="T017_PosicionamientoYFirma" name="ApruebaBBVA"></transition>
+		<transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union BC-->
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
 	</decision> <!--Decision PBCReserva : Resolucion Expediente / InstruccionesReserva -->

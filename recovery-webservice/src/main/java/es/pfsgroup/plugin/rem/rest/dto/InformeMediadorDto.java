@@ -64,7 +64,6 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(procesar = false)
 	private Long idUsuarioRemAccion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoComercializacion.class,foreingField="codigo", 
 				message = "El codTipoVenta no existe", groups = { Insert.class, Update.class })
 	private String codTipoVenta;
@@ -317,51 +316,39 @@ public class InformeMediadorDto implements Serializable {
 	
 	private Boolean aptoUsoEnBruto;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	//@Diccionary(clase = .class,foreingField="codigo",  message = "El codAccesibilidad no existe",
 	//groups = { Insert.class, Update.class })
 	private String codAccesibilidad;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float edificabilidadSuperficieTecho;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(procesar = false)
 	private Float parcelaSuperficie;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float porcentajeUrbanizacionEjecutado;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDClasificacion.class,foreingField="codigo",  message = "El clasificacion no existe",
 				groups = { Insert.class, Update.class })
 	private String clasificacion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDUsoActivo.class,foreingField="codigo",  message = "El codUso no existe",
 				groups = { Insert.class, Update.class })
 	private String codUso;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float metrosLinealesFachadaPrincipal;
 	
 	private Boolean almacen;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float almacenSuperficie;
 	
 	private Boolean superficieVentaExposicion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float superficieVentaExposicionConstruido;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean entreplanta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float altura;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float porcentajeEdificacionEjecutada;
 	
 	@NotNull(groups = { Insert.class, Update.class })

@@ -260,6 +260,10 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@JoinColumn(name = "DD_EIC_ID")
 	private DDEstadoInterlocutor estadoInterlocutor;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EIC_REPR_ID")
+	private DDEstadoInterlocutor estadoInterlocutorRepresentante;
+
 	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
 	private String idPersonaHayaCaixaRepresentante;
 	
@@ -888,5 +892,18 @@ public class CompradorExpediente implements Serializable, Auditable {
 	public void setNacionalidadRprCodigo(DDPaises nacionalidadRprCodigo) {
 		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}
-	
+
+	public DDEstadoInterlocutor getEstadoInterlocutorRepresentante() {
+		return estadoInterlocutorRepresentante;
+	}
+
+	public void setEstadoInterlocutorRepresentante(DDEstadoInterlocutor estadoInterlocutorRepresentante) {
+		this.estadoInterlocutorRepresentante = estadoInterlocutorRepresentante;
+	}
+
+	public void setEstadoInterlocutorRepSiTiene(DDEstadoInterlocutor estadoInterlocutorRepresentante) {
+		if (documentoRepresentante != null)
+		this.estadoInterlocutorRepresentante = estadoInterlocutorRepresentante;
+	}
+
 }

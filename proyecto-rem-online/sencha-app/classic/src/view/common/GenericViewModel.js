@@ -483,16 +483,13 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     		
     		
     		storeComunidadesAutonomas: {
-	    		model: 'HreRem.model.ComboBase',
-		    	proxy: {
-			        type: 'ajax',
-			        url: 'resources/data/comunidadesautonomas.json',
-			       	reader: {
-				        rootProperty: 'data',
-				        type: 'json'
-			    	}
-		    	}
-	    	},
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'comunidadAutonoma'}
+                }
+            },
 	    	
 	   		comboInscritaNoInscrita: {
     			data : [

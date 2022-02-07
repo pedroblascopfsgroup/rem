@@ -37,6 +37,7 @@ public class DtoFoto extends WebDto {
 	private Boolean principal;
 	private Boolean interiorExterior;
 	private String numeroActivo;
+	private String codigoTipoFoto;
 	
 	
 	// Mapeados a mano
@@ -187,6 +188,16 @@ public class DtoFoto extends WebDto {
 
 	public void setCodigoSubtipoActivo(String codigoSubtipoActivo) {
 		this.codigoSubtipoActivo = codigoSubtipoActivo;
+	}
+
+
+	public String getCodigoTipoFoto() {
+		return codigoTipoFoto;
+	}
+
+
+	public void setCodigoTipoFoto(String codigoTipoFoto) {
+		this.codigoTipoFoto = codigoTipoFoto;
 	}
 	
 }

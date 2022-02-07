@@ -398,7 +398,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoTecnicoDescripcion;
 	private String tieneGestionDndCodigo;
 	private String tieneGestionDndDescripcion;
-	
+
+	private String codComunidadAutonoma;
+	private String comunidadDescripcion;
+
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2999,5 +3002,20 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
 		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
 	}
-	
+
+	public String getCodComunidadAutonoma() {
+		return codComunidadAutonoma;
+	}
+
+	public void setCodComunidadAutonoma(String codComunidadAutonoma) {
+		this.codComunidadAutonoma = codComunidadAutonoma;
+	}
+
+	public String getComunidadDescripcion() {
+		return comunidadDescripcion;
+	}
+
+	public void setComunidadDescripcion(String comunidadDescripcion) {
+		this.comunidadDescripcion = comunidadDescripcion;
+	}
 }

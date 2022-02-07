@@ -392,6 +392,8 @@ public interface GenericApi {
 
 	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion);
 
+	String getIdPersonaHayaSinCartera(String documentoInterlocutor);
+
 	List<DDEstadoOferta> getEstadosOfertaWeb();
 	
 	String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera);

@@ -279,7 +279,7 @@ public class ClienteComercial implements Serializable, Auditable {
     private DDSinSiNo aceptacionOferta;
 
 	@Column(name = "CLC_BC_ID")
-	private String idClienteBc;
+	private String idClienteBC;
     
 	@Version   
 	private Long version;
@@ -820,11 +820,11 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.aceptacionOferta = aceptacionOferta;
 	}
 
-	public String getIdClienteBc() {
-		return idClienteBc;
+	public String getIdClienteBC() {
+		return idClienteBC;
 	}
 
-	public void setIdClienteBc(String idClienteBc) {
-		this.idClienteBc = idClienteBc;
+	public void setIdClienteBC(String idClienteBC) {
+		this.idClienteBC = idClienteBC;
 	}
 }

@@ -402,8 +402,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
 			}
 			
-			if(!Checks.esNulo(visitaDto.getIdVisitaBc())) {
-				visita.setIdVisitaBc(visitaDto.getIdVisitaBc());
+			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
+				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
 			}
 			
 			visitaDao.save(visita);
@@ -596,8 +596,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
 			}
 			
-			if(!Checks.esNulo(visitaDto.getIdVisitaBc())) {
-				visita.setIdVisitaBc(visitaDto.getIdVisitaBc());
+			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
+				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
 			}
 			
 			visitaDao.saveOrUpdate(visita);
@@ -790,7 +790,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	private boolean esVisitaCaixaConIdVisitaBc(Visita visita) {
 		if(visita != null 
-				&& visita.getIdVisitaBc() != null
+				&& visita.getIdVisitaBC() != null
 				&& visita.getPrescriptor() != null
 				&& visita.getPrescriptor().getTipoProveedor() != null 
 				&& visita.getPrescriptor().getTipoProveedor().getCodigo() != null 

@@ -147,7 +147,7 @@ public class Visita implements Serializable, Auditable {
     private Long numeroContacto;
     
     @Column(name="VIS_BC_ID")
-    private String idVisitaBc; 
+    private String idVisitaBC;
     
 	@Version   
 	private Long version;
@@ -388,12 +388,11 @@ public class Visita implements Serializable, Auditable {
 		this.numeroContacto = numeroContacto;
 	}
 
-	public String getIdVisitaBc() {
-		return idVisitaBc;
+	public String getIdVisitaBC() {
+		return idVisitaBC;
 	}
 
-	public void setIdVisitaBc(String idVisitaBc) {
-		this.idVisitaBc = idVisitaBc;
+	public void setIdVisitaBC(String idVisitaBC) {
+		this.idVisitaBC = idVisitaBC;
 	}
-   
 }

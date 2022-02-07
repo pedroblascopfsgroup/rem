@@ -83,7 +83,7 @@ public class VisitaDto implements Serializable {
 			Insert.class, Update.class })
 	private String codOrigenComprador;
 	
-	private String idVisitaBc;
+	private String idVisitaBC;
 	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
@@ -226,11 +226,12 @@ public class VisitaDto implements Serializable {
 	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
 		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
 	}
-	public String getIdVisitaBc() {
-		return idVisitaBc;
+
+	public String getIdVisitaBC() {
+		return idVisitaBC;
 	}
-	public void setIdVisitaBc(String idVisitaBc) {
-		this.idVisitaBc = idVisitaBc;
+
+	public void setIdVisitaBC(String idVisitaBC) {
+		this.idVisitaBC = idVisitaBC;
 	}
-	
 }

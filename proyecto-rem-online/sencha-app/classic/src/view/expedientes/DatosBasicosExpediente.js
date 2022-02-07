@@ -341,7 +341,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.posicionamiento'),
 			        	bind: {
 			        		value: '{expediente.fechaPosicionamiento}',
-			        		hidden: '{esOfertaVenta}'	
+			        		hidden: '{!esOfertaVenta}'	
 			        	}
 			        },
 	                {//FechaFirmaContrato

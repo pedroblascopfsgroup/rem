@@ -88,6 +88,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 					for(TareaExternaValor valor :  valores){
 						if(COMBO_FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							expediente.setFechaFirmaContrato(ft.parse(valor.getValor()));
+							expediente.setFechaVenta(ft.parse(valor.getValor()));
 						}
 						if(COMBO_NUMERO_PROTOCOLO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							expediente.setNumeroProtocolo(valor.getValor());

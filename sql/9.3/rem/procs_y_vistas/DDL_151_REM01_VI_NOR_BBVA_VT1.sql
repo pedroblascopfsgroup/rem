@@ -17,7 +17,7 @@
 --##        0.5 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES
 --##        0.6 REMVIP-9399 - VRO - se corrige calculo campos DEP_JURIDICAMENTE y FECHA_DEP_JURIDICA
 --##        0.7 REMVIP-10156 - JAC - se modifican errores en la query y logica de calculo de algunos campos
---##        0.8 REMVIP-HREOS-17051 - JEG - cambio uic bbva y añadir nueva tabla act_bbva_uic
+--##        0.8 HREOS-17051 - JEG - cambio uic bbva y añadir nueva tabla act_bbva_uic
 --##########################################
 --*/
 

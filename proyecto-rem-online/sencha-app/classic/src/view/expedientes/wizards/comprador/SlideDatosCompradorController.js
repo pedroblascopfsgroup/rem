@@ -50,7 +50,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				return record.data.codigoC4C != null;
 			});
 		}
-		
+		me.checkExpedienteBloqueado();
 	},
 
 	onClickCancelar: function() {
@@ -88,13 +88,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 	permitirEdicionDatos: function() {
 		var me = this;
+	    var bloqueado = me.getView().up('wizardBase').expediente.get('bloqueado');
 
-		if ($AU.userIsRol('HAYASUPER')) {
+		if (!bloqueado && $AU.userIsRol('HAYASUPER')) {
 			return true;
 		}
 
 		if ($AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES'])) {
-			if (!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe()) {
+			if (bloqueado || (!$AU.userHasFunction(['MODIFICAR_TAB_COMPRADORES_EXPEDIENTES_RESERVA']) && me.checkCoe())) {
 				return false;
 			}
 			return true;
@@ -121,22 +122,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef'),
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
-		if (((tieneReserva && (estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['APROBADO']))
-                       || (!tieneReserva && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']))
-				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
-
-			campoTipoPersona.disable();
-			campoTipoDocumentoRte.disable();
-			campoNumeroDocumentoRte.disable();
-			campoSeleccionClienteUrsus.disable();
-			campoEstadoCivil.disable();
-			campoRegEconomico.disable();
-			campoTipoDocumentoConyuge.disable();
-			campoNumeroDocumentoConyugue.disable();
-			campoNumeroUrsus.setReadOnly(true);
-			campoNumeroUrsusBh.setReadOnly(true);			
-			numeroDocumentoConyuge.disable();
-		}
+		
 		if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 			campoTipoDocumentoConyuge.clearValue;
 			campoNumeroDocumentoConyugue.clearValue;
@@ -251,6 +237,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo'),
 				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
 				codigoPaisRte = me.lookupReference('paisRte');
+				nacionalidadCodigo = me.lookupReference('nacionalidadCodigo');
+				nacionalidadRprCodigo = me.lookupReference('nacionalidadRprCodigo');
 
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					if(!Ext.isEmpty(campoEstadoCivil)){
@@ -322,6 +310,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if (!Ext.isEmpty(fechaNacRep)) {
 							campoMunicipioRpr.allowBlank = true;
 						}
+						if (!Ext.isEmpty(nacionalidadCodigo) && esBankia) {
+							nacionalidadCodigo.allowBlank = false;
+						}
+						if (!Ext.isEmpty(nacionalidadRprCodigo)) {
+							nacionalidadRprCodigo.allowBlank = true;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
@@ -354,20 +348,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						}
 						if (!Ext.isEmpty(campoPaisRpr) && esBankia) {
 							campoPaisRpr.allowBlank = false;
-							if (campoPaisRpr.value == null) {
-								campoPaisRpr.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(codigoPaisRte)) {
 							codigoPaisRte.allowBlank = false;
-							if (codigoPaisRte.value == null) {
-								codigoPaisRte.setValue("28");
-							}
 						}
 						if (!Ext.isEmpty(fechaNacRep) && esBankia) {
 							campoMunicipioRpr.allowBlank = false;
 						}
-						
+						if (!Ext.isEmpty(nacionalidadCodigo)) {
+							nacionalidadCodigo.allowBlank = true;
+						}
+						if (!Ext.isEmpty(nacionalidadRprCodigo) && esBankia) {
+							nacionalidadRprCodigo.allowBlank = false;
+						}
 					}
 				}
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
@@ -396,11 +389,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if(!Ext.isEmpty(campoProvinciaRpr)) campoProvinciaRpr.validate();
 				if(!Ext.isEmpty(campoMunicipioRpr)) campoMunicipioRpr.validate();
 				if(!Ext.isEmpty(fechaNacRep)) fechaNacRep.validate();
+				if(!Ext.isEmpty(nacionalidadCodigo)) nacionalidadCodigo.validate();
+				if(!Ext.isEmpty(nacionalidadRprCodigo)) nacionalidadRprCodigo.validate();
 			}
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);
 			me.bloquearCampos();
+			me.checkExpedienteBloqueado();
 		}catch(err) {
 			Ext.global.console.log(err);
 		}
@@ -1048,6 +1044,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.datos.rem'));
 		else 
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
+
+        me.checkExpedienteBloqueado();
 	},
 	
 	getAdvertenciaProblemasUrsus : function(problemasUrsusComprador) {
@@ -1106,5 +1104,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}else{
 			return true;
 		}
+	},
+
+	checkExpedienteBloqueado: function(){
+	    var me = this;
+	    var bloqueado = me.getView().up('wizardBase').expediente.get('bloqueado');
+
+        if(bloqueado == true){
+            var myItems = me.view.items.items;
+            myItems.forEach( function(valor, indice, items) {
+                switch(valor.xtype){
+                    case 'checkboxfieldbase':
+                    case 'textfieldbase':
+                        valor.setReadOnly(true);
+                        valor.allowBlank = true;
+                        valor.validate();
+                        break;
+                    case 'fieldsettable':
+                        me.bloquearCamposExpedienteBloqueado(valor.items.items);
+                        break;
+                }
+            });
+        }
+	},
+
+	bloquearCamposExpedienteBloqueado: function(fieldSetTableItems){
+	    var me = this;
+	    fieldSetTableItems.forEach( function(valor, indice, items){
+	        if(valor.xtype == 'fieldsettable' || valor.xtype == 'container'){
+                me.bloquearCamposExpedienteBloqueado(valor.items.items);
+	        }
+	        else if(valor.xtype != 'label' && valor.xtype != 'button'){
+                valor.setReadOnly(true);
+                valor.allowBlank = true;
+                valor.validate();
+	        }
+	    });
 	}
 });

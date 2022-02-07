@@ -1,21 +1,23 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ReplicacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.activo.ActivoAgrupacionManager;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("replicacionOfertasManager")
 public class ReplicacionOfertasManager extends BusinessOperationOverrider<ReplicacionOfertasApi> implements ReplicacionOfertasApi{
+
+    protected static final Log logger = LogFactory.getLog(ReplicacionOfertasManager.class);
 
     @Autowired
     private TareaActivoApi tareaActivoApi;
@@ -25,6 +27,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
     @Autowired
     private OfertaApi ofertaApi;
+
+    @Autowired
+    private SpPublicacionApi spPublicacionApi;
 
     @Override
     public String managerName() {
@@ -47,6 +52,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         if(eco != null && tarea != null && success){
             lanzarReplicate = calculaLanzarReplicateByEco(eco, tarea);
+            lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
             if(lanzarReplicate)
                 ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
         }
@@ -61,25 +67,13 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             return false;
         }
 
-        if(calculaT017ResolucionExpdiente(codTarea, codEstado)){
-            return true;
-        } else if (calculaResolucionT018DefinicionOferta(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018AnalisisTecnico(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018AnalisisBc(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018ScoringBc(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018ResolucionComite(codTarea, codEstado)) {
-            return true;
-        } else if (calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado)) {
-            return true;
-        } else if (calculaT017AgendarFechaArras(codTarea, codEstado)){
-            return true;
-        }
-
-        return false;
+        return calculaT017ResolucionExpdiente(codTarea, codEstado) || calculaResolucionT018DefinicionOferta(codTarea, codEstado)
+                || calculaResolucionT018AnalisisTecnico(codTarea, codEstado) || calculaResolucionT018AnalisisBc(codTarea, codEstado)
+                || calculaResolucionT018ScoringBc(codTarea, codEstado) || calculaResolucionT018ResolucionComite(codTarea, codEstado)
+                || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
+                || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
+                || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
+                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado);
     }
 
     private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -144,4 +138,63 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         return false;
     }
+
+    private boolean calculaT017ResolucionCES(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.CODIGO_RESOLUCION_CES_T017.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT018PtClRod(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CLROD.equals(codTarea) && (DDEstadoExpedienteBc.PTE_TRASLADAR_OFERTA_AL_CLIENTE.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015ElevarASancion(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_ELEVAR.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_OFERTA_PDTE_SCORING.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_CONTRAOFERTADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015SancionBc(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015SancionPatrimonio(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SANCION_PATRIMONIO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_ENVIO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+    
+    private boolean calculaT015ScoringBc(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_SCORING_BC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_GARANTIAS_ADICIONALES.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private void lanzarSPPublicaciones(String idTarea, Boolean success){
+        try {
+            spPublicacionApi.callSpPublicacionAsincrono(Long.parseLong(idTarea), success);
+        }catch (Exception e){
+            logger.error("Error en el servicio de publicaciones");
+            e.printStackTrace();
+        }
+    }
+
 }

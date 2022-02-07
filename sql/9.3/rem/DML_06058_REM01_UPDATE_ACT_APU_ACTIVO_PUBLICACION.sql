@@ -1,0 +1,114 @@
+--/*
+--##########################################
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20211222
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16797
+--## PRODUCTO=NO
+--##
+--## Finalidad: 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USU VARCHAR2(25 CHAR):= 'HREOS-16797';
+
+BEGIN	
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICAMOS ACT_APU_ACTIVO_PUBLICACION ');
+
+    V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
+    USING (
+        SELECT AHP_ACTUAL.ACT_ID, MAX(AHP_ACTUAL.AHP_FECHA_INI_VENTA) AHP_FECHA_INI_VENTA
+        FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP_ACTUAL
+        WHERE AHP_ACTUAL.BORRADO = 0
+        AND AHP_ACTUAL.AHP_FECHA_INI_VENTA IS NOT NULL
+        AND AHP_ACTUAL.AHP_FECHA_INI_VENTA < TO_DATE(''21/12/21'',''dd/mm/yy'')
+        AND EXISTS (SELECT DISTINCT ACT.ACT_ID 
+                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AHP.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+                    WHERE AHP.BORRADO = 0
+                    AND CRA.DD_CRA_CODIGO = ''03''
+                    AND AHP.USUARIOCREAR IN (''SP_CAMBIO_EST_PUB_AGR'',''STOCK_BC_PORTALES'',''SP_CAMBIO_EST_PUB'')
+                    AND TRUNC(SYSDATE) = TRUNC(AHP.FECHACREAR)
+                    AND TRUNC(SYSDATE) = TRUNC(AHP.AHP_FECHA_INI_VENTA)
+                    AND AHP.ACT_ID = AHP_ACTUAL.ACT_ID)
+        GROUP BY AHP_ACTUAL.ACT_ID
+    ) AUX ON (APU.ACT_ID = AUX.ACT_ID AND APU.BORRADO = 0)
+     WHEN MATCHED THEN
+        UPDATE SET
+                APU.USUARIOMODIFICAR = '''||V_USU||'''
+                , APU.FECHAMODIFICAR = SYSDATE
+                , APU.APU_FECHA_CAMB_PUBL_VENTA = AUX.AHP_FECHA_INI_VENTA';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZADOS '|| SQL%ROWCOUNT ||' REGISTROS EN ACT_APU_ACTIVO_PUBLICACION PARA VENTA');
+
+    V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
+    USING (
+        SELECT AHP_ACTUAL.ACT_ID, MAX(AHP_ACTUAL.AHP_FECHA_INI_ALQUILER) AHP_FECHA_INI_ALQUILER
+        FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP_ACTUAL
+        WHERE AHP_ACTUAL.BORRADO = 0
+        AND AHP_ACTUAL.AHP_FECHA_INI_ALQUILER IS NOT NULL
+        AND AHP_ACTUAL.AHP_FECHA_INI_ALQUILER < TO_DATE(''21/12/21'',''dd/mm/yy'')
+        AND EXISTS (SELECT DISTINCT ACT.ACT_ID 
+                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AHP.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+                    WHERE AHP.BORRADO = 0
+                    AND CRA.DD_CRA_CODIGO = ''03''
+                    AND AHP.USUARIOCREAR IN (''SP_CAMBIO_EST_PUB_AGR'',''STOCK_BC_PORTALES'',''SP_CAMBIO_EST_PUB'')
+                    AND TRUNC(SYSDATE) = TRUNC(AHP.FECHACREAR)
+                    AND TRUNC(SYSDATE) = TRUNC(AHP.AHP_FECHA_INI_ALQUILER)
+                    AND AHP.ACT_ID = AHP_ACTUAL.ACT_ID)
+        GROUP BY AHP_ACTUAL.ACT_ID
+    ) AUX ON (APU.ACT_ID = AUX.ACT_ID AND APU.BORRADO = 0)
+     WHEN MATCHED THEN
+        UPDATE SET
+                APU.USUARIOMODIFICAR = '''||V_USU||'''
+                , APU.FECHAMODIFICAR = SYSDATE
+                , APU.APU_FECHA_CAMB_PUBL_ALQ = AUX.AHP_FECHA_INI_ALQUILER';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZADOS '|| SQL%ROWCOUNT ||' REGISTROS EN ACT_APU_ACTIVO_PUBLICACION PARA ALQUILER');
+
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN] ');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

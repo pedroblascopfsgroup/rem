@@ -266,6 +266,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
 
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
+
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -337,7 +340,7 @@ public class AgrupacionAdapter {
 
 		try {
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
-			
+		
 			if (agrupacionVistaCalculado != null) {
 				if (agrupacionVistaCalculado.getNumActivosPublicados() != null) {
 					BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVistaCalculado.getNumActivosPublicados());
@@ -903,6 +906,13 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 			}
+			
+			
+			if(agrupacion.getActivoPrincipal() != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+			}else if(activoCero != null) {
+				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);
@@ -1078,7 +1088,7 @@ public class AgrupacionAdapter {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
 				if (activoAgrupacionActivo != null) {
 					if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
-						throw new JsonViewerException("El activo se encuentra en la agrupacion");
+						return;
 					}
 				}
 			}
@@ -2523,6 +2533,7 @@ public class AgrupacionAdapter {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
 		Activo activo = null;
 		Oferta ofertaNueva = null;
+		Boolean permiteOfertaNoComercialActivoAlquilado = false;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
@@ -2572,6 +2583,25 @@ public class AgrupacionAdapter {
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			String codigoEstado = this.getEstadoNuevaOferta(agrupacion);
+			
+			if(!Checks.esNulo(agrupacion.getActivoPrincipal())){
+				permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(agrupacion.getActivoPrincipal(), dto.getTipoOferta());
+			}else {
+				if(!Checks.esNulo(agrupacion.getActivos())){
+					for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()){
+						
+						if (!Checks.esNulo(activoAgrupacion.getActivo())){
+							permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(activoAgrupacion.getActivo(), dto.getTipoOferta());
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			if (permiteOfertaNoComercialActivoAlquilado) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;
+			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
@@ -2649,7 +2679,7 @@ public class AgrupacionAdapter {
 			}
 
 			if (clienteComercial.getIdPersonaHayaCaixa() == null || clienteComercial.getIdPersonaHayaCaixa().trim().isEmpty() )
-			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento(), null));
 
 			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty())
 				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
@@ -2670,6 +2700,19 @@ public class AgrupacionAdapter {
 				if (dto.getAntiguoDeudor() != null) {
 					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
 				}
+				
+				if (dto.getNacionalidadCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+					iap.setNacionalidadCodigo(nacionalidad);
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					iap.setNacionalidadRprCodigo(nacionalidad);
+				}
+				
 				genericDao.save(InfoAdicionalPersona.class, iap);
 			}
 			
@@ -2827,7 +2870,7 @@ public class AgrupacionAdapter {
 				 */
 
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
 				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
@@ -3059,14 +3102,30 @@ public class AgrupacionAdapter {
 								
 				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
-			
-			OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
-			
-			if (ofrCaixa != null) {
-				if (dto.getCheckSubasta() != null) {
-					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+
+			if (particularValidatorApi.esOfertaCaixa(ofertaNueva != null ? ofertaNueva.getNumOferta().toString() : null)){
+				OfertaCaixa ofrCaixa = ofertaNueva.getOfertaCaixa();
+
+				if (ofrCaixa == null){
+					ofrCaixa = new OfertaCaixa();
+					ofrCaixa.setOferta(oferta);
+					ofrCaixa.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+					oferta.setOfertaCaixa(ofrCaixa);
+					genericDao.save(Oferta.class,ofertaNueva);
 				}
+
+				if (dto.getCheckSubasta() != null){
+					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
+					genericDao.save(OfertaCaixa.class,ofrCaixa);
+				}
+
+				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
+					ofertaApi.llamadaPbc(oferta);
+				}
+
 			}
+
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);
@@ -4912,7 +4971,7 @@ public class AgrupacionAdapter {
 
 	private String getEstadoNuevaOferta(ActivoAgrupacion agrupacion) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
+		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
 			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
@@ -4928,7 +4987,12 @@ public class AgrupacionAdapter {
 					&& activoAgrupacionActivoDao.algunActivoDeAgrRestringidaEnAgrLoteComercial(activosID)) {
 				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 			}
+
+			if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipoAgrupacion) && (activoAgrupacionActivoDao.algunActivoAlquilado(activosID) || activoAgrupacionActivoDao.algunActivoVendido(activosID))) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			}
 		}
+		
 
 		// Comprobar si la grupación tiene ofertas aceptadas para establecer la
 		// nueva oferta en estado congelada.

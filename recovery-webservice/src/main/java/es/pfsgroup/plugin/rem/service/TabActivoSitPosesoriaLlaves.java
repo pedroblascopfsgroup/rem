@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
@@ -60,6 +61,8 @@ import javax.annotation.Resource;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
+	
+	private static final String REST_CLIENT_PERMITIR_ENVIO_FENIX = "rest.client.permitir.envio.fenix";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -102,6 +105,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Resource
+    private Properties appProperties;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -147,7 +153,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "conTituloCodigo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 				BeanUtils.copyProperty(activoDto, "conTituloDescripcion", activo.getSituacionPosesoria().getConTitulo().getDescripcion());
 				
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
@@ -170,7 +176,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))
 						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) &&
 						activo.getAdjNoJudicial() != null) {
 					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
@@ -516,7 +523,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		transactionManager.commit(transaction);
 
-		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada())){
+		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada()) && Boolean.valueOf(appProperties.getProperty(REST_CLIENT_PERMITIR_ENVIO_FENIX))){
 			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 			llamadaAsincrona.start();
 		}

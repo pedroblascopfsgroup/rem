@@ -997,7 +997,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						}else {
 							ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
 						}
-
+						comprador.setIsExpedienteAprobado(funcionesTramitesApi.isTramiteAprobado(expediente));
+						comprador.setMotivoEdicionCompradores(expediente.getMotivoEdicionCompradores());
 					}
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
@@ -1022,6 +1023,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				comprador.setNumeroClienteUrsus(null);
 				comprador.setNumeroClienteUrsusBh(null);
 			}
+			
+			
 			model.put(RESPONSE_DATA_KEY, comprador);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
@@ -1866,7 +1869,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			if(!Checks.estaVacio(listaAN)) {
 				File file = null;
 				if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) || subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)) {
-					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request,DDSubcartera.CODIGO_APPLE_INMOBILIARIO);
+				}else if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_JAGUAR)) {
+					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request,DDSubcartera.CODIGO_JAGUAR);
 				}else if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) {
 					file = excelReportGeneratorApi.getAdvisoryNoteReportArrow(listaAN, request);
 				}
@@ -2745,7 +2750,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSancionesBk(ModelMap model, WebDto webDto, Long idExpediente) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getSancionesBk(idExpediente));
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getListHistoricoSancionesBC(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (Exception e) {

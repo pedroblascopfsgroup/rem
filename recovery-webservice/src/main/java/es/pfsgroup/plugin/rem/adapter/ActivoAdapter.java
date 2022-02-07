@@ -44,6 +44,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -116,34 +117,46 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDDesarrolloPlanteamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
+import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -153,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
@@ -162,18 +176,21 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.service.TabActivoCargas;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -405,6 +422,7 @@ public class ActivoAdapter {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
 		String descripcion  = null;
+		TIPO tipo = null;
 		boolean resultado = false;
 		try {
 			
@@ -417,6 +435,18 @@ public class ActivoAdapter {
 				descripcion = ddDescripcionFoto.getDescripcion();
 				activoFoto.setDescripcionFoto(ddDescripcionFoto);
 				activoFoto.setDescripcion(descripcion);
+			}
+			if (!Checks.esNulo(dtoFoto.getCodigoTipoFoto())) {
+				Filter codTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoTipoFoto());
+				DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, codTipo);
+				activoFoto.setTipoFoto(tipoFoto);
+				if (DDTipoFoto.COD_WEB.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.WEB;
+				} else if(DDTipoFoto.COD_TECNICA.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.TECNICA;
+				} else if (DDTipoFoto.COD_TESTIGO.equals(tipoFoto.getCodigo())) {
+					tipo = TIPO.TESTIGO;
+				}
 			}
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -437,7 +467,7 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, descripcion, principal, situacion, dtoFoto.getOrden());
+					tipo, descripcion, principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
@@ -1546,7 +1576,10 @@ public class ActivoAdapter {
 				
 				if (tasacionSeleccionada.getTipoDatoUtilizadoInmuebleComparable() != null)
 					BeanUtils.copyProperty(dtoTasacion, "tipoDatoUtilizadoInmuebleComparableCodigo", tasacionSeleccionada.getTipoDatoUtilizadoInmuebleComparable().getCodigo());
-					
+
+				if (tasacionSeleccionada.getTasadoraCaixa() != null)
+					BeanUtils.copyProperty(dtoTasacion, "tasadoraCaixaCodigo", tasacionSeleccionada.getTasadoraCaixa().getCodigo());
+
 				if (tasacionSeleccionada.getCodigoFirma() != null) {
 					ActivoProveedor tasadora = this.getTasadoraByCodProveedorUvem(tasacionSeleccionada.getCodigoFirma().toString());
 					if (tasadora != null) {
@@ -4109,6 +4142,12 @@ public class ActivoAdapter {
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			String codigoEstado = this.getEstadoNuevaOferta(activo);
+			
+			Boolean permiteOfertaNoComercialActivoAlquilado = activoApi.isPermiteOfertaNoComercialActivoAlquilado(activo, dto.getTipoOferta());
+			
+			if (permiteOfertaNoComercialActivoAlquilado) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			}
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
@@ -4185,7 +4224,7 @@ public class ActivoAdapter {
 			}
 
 			if (clienteComercial.getIdPersonaHayaCaixa() == null || clienteComercial.getIdPersonaHayaCaixa().trim().isEmpty())
-			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento()));
+			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento(), null));
 
 			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty() )
 				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
@@ -4211,7 +4250,18 @@ public class ActivoAdapter {
 				if (dto.getAntiguoDeudor() != null) {
 					iap.setAntiguoDeudor(dto.getAntiguoDeudor());
 				}
-
+				
+				if (dto.getNacionalidadCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadCodigo()));
+					iap.setNacionalidadCodigo(nacionalidad);
+				}
+				
+				if (dto.getNacionalidadRprCodigo() != null) {
+					DDPaises nacionalidad = (DDPaises) genericDao.get(DDPaises.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getNacionalidadRprCodigo()));
+					iap.setNacionalidadRprCodigo(nacionalidad);
+				}
 				genericDao.save(InfoAdicionalPersona.class, iap);
 
 			}
@@ -4368,7 +4418,7 @@ public class ActivoAdapter {
 
 				if (clienteComercial.getDocumentoRepresentante() != null && !clienteComercial.getDocumentoRepresentante().trim().isEmpty()){
 					if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-						clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante()));
+						clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
 					InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 
@@ -4502,7 +4552,8 @@ public class ActivoAdapter {
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))){
 				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
 						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 				
@@ -4979,7 +5030,6 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean createTasacion(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idActivo) {
-
 		Activo activo = activoApi.get(idActivo);
 		NMBBien bienActivo = activo.getBien();
 		NMBValoracionesBien valoracionBienActivo = new NMBValoracionesBien();
@@ -5018,17 +5068,15 @@ public class ActivoAdapter {
 		activo.getTasacion().add(activoTasacionNuevo);
 		activoApi.saveOrUpdate(activo);
 
-
 		return true;
 	}
 	
 	@Transactional(readOnly = false)
 	public boolean saveTasacion(DtoTasacion dtoTasacion) {
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTasacion.getId());
 		ActivoTasacion activoTasacion = genericDao.get(ActivoTasacion.class, filtro);
 		Activo activo = activoTasacion.getActivo();
-		
+
 		try {
 			beanUtilNotNull.copyProperties(activoTasacion, dtoTasacion);
 		} catch (IllegalAccessException e) {
@@ -5134,6 +5182,11 @@ public class ActivoAdapter {
 		if (dtoTasacion.getTipoDatoUtilizadoInmuebleComparableCodigo() != null) {
 			DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable = genericDao.get(DDTipoDatoUtilizadoInmuebleComparable.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTipoDatoUtilizadoInmuebleComparableCodigo()));
 			activoTasacion.setTipoDatoUtilizadoInmuebleComparable(tipoDatoUtilizadoInmuebleComparable);
+		}
+
+		if (dtoTasacion.getTasadoraCaixaCodigo() != null) {
+			DDTasadoraCaixa tasadora = genericDao.get(DDTasadoraCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTasacion.getTasadoraCaixaCodigo()));
+			activoTasacion.setTasadoraCaixa(tasadora);
 		}
 
 		genericDao.save(ActivoTasacion.class, activoTasacion);
@@ -5540,6 +5593,15 @@ public class ActivoAdapter {
 
 		return genericDao.getListOrdered(VPreciosVigentes.class, order, filtro, filtroFecha);
 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Dictionary> getEstadosPresentacionAdicional(){
+		List lista = new ArrayList();	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.INSCRITO));	
+		lista.add(utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPresentacion.class, DDEstadoPresentacion.PRESENTACION_EN_REGISTRO));	
+		return lista;
 	}
 	
 	public List<VPreciosVigentesCaixa> getPreciosVigentesCaixaById(Long idActivo) {

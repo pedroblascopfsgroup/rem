@@ -130,6 +130,16 @@ public class InterlocutorCaixaService {
 
     }
 
+    public void callReplicateClientAsync(final Long id, final String tipoId){
+            hibernateUtils.flushSession();
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    caixaBcRestClient.callReplicateClientUpdate(id,tipoId);
+                }
+            });
+            thread.start();
+    }
+
     public String getIdPersonaHayaCaixaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){
 
         if (cartera != null && documento != null && DDCartera.CODIGO_CAIXA.equals(cartera.getCodigo())){
@@ -140,12 +150,14 @@ public class InterlocutorCaixaService {
     }
 
     @Transactional
-    public String getIdPersonaHayaCaixa(Oferta oferta, Activo activo,String documento){
+    public String getIdPersonaHayaCaixa(Oferta oferta, Activo activo,String documento, DDCartera cartera){
 
-        if (activo == null){
-            activo = oferta != null ? oferta.getActivoPrincipal() : null;
+        if(cartera == null){
+            if (activo == null){
+                activo = oferta != null ? oferta.getActivoPrincipal() : null;
+            }
+            cartera = activo != null ? activo.getCartera() : null;
         }
-        DDCartera cartera = activo != null ? activo.getCartera() : null;
 
         if (DDCartera.CODIGO_CAIXA.equals(cartera != null ? cartera.getCodigo() : null)){
             DDSubcartera subCartera = activo != null ? activo.getSubcartera() : null;

@@ -80,7 +80,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
 							cls: 'cabecera-info-field',
 							bind :{ 
-								value: '{expediente.tipoAlquiler}',
+								value: '{expediente.tpoAlquiler}',
 								hidden: '{esOfertaVenta}',
 								store: '{comboTipoAlquiler}'
 							}
@@ -349,21 +349,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 	                	bind:		{
 	                		value: '{expediente.fechaVenta}',
-	                		fieldLabel:'{fechaVentaEsAlquiler}',
-	                		hidden: '{esBankia}'
+	                		fieldLabel:'{fechaVentaEsAlquiler}'
 	                		}
 	                	//,readOnly: true
 	                	//readOnly: !$AU.userIsRol("HAYASUPER")
-	                },
-	                {
-	                	xtype:'datefieldbase',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-						formatter: 'date("d/m/Y")',
-	                	bind:		{
-	                		value: '{expediente.fechaFirmaContrato}',
-	                		readOnly: true,
-	                		hidden: '{!esBankia}'
-	                		}	                	
 	                },
 	                {
 	                	xtype:'datefieldbase',

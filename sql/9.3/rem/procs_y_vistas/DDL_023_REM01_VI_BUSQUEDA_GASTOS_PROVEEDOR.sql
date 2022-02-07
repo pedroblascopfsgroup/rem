@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20210610
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20211118
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10618
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16416
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR.
 --##           
@@ -16,6 +16,7 @@
 --##        0.4 Adaptación de consulta al nuevo modelo de facturación - Daniel Algaba - HREOS-10618
 --##        0.5 Optimización de la vista - HREOS-13460
 --##		0.6 Optimización búsqueda módulo administración - IRC - HREOS-14269
+--##		0.7 Añadir campo Fecha creación - Alejandra García - HREOS-16416
 --##########################################
 --*/
 
@@ -94,6 +95,8 @@ BEGIN
 			, PVE.DD_TPR_ID
 			, GGE.DD_EAH_ID
 			, GGE.DD_EAP_ID
+			, GPV.FECHACREAR AS FECHA_CREACION
+
 		FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
 		INNER JOIN '|| V_ESQUEMA ||'.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GPV.GPV_ID = GDE.GPV_ID
 		    AND GDE.BORRADO = 0
@@ -157,6 +160,7 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.SUJETO_IMPUESTO_INDIRECTO IS ''Indica si el gasto está sujeto a impuestos indirectos.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.DD_EGA_CODIGO IS ''Código de estado del gasto.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.DD_EGA_DESCRIPCION IS ''Descripcion de estado del gasto.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.FECHA_CREACION IS ''Fecha creación del gasto.''';
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR...Creada OK');
 

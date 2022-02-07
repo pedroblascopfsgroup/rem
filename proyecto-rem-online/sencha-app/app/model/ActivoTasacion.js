@@ -310,7 +310,10 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
     		{
     		    name: 'tipoDatoUtilizadoInmuebleComparableCodigo'
-    		}    		
+    		},
+    		{
+    			name: 'tasadoraCaixaCodigo'
+    		}
     ],
     
 	proxy: {

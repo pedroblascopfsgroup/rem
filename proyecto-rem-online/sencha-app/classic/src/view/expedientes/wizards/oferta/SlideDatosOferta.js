@@ -32,6 +32,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		var me = this;
 		var datosCartera = ('[reference="activosdetalle"]');
 		var isBk = false;
+		var isBkOrTitlizada = false;
 		var activosDetalle = me.up('[reference="activosdetalle"]');
 		
 		if(Ext.isEmpty(activosDetalle)){
@@ -40,7 +41,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			isBk = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraBankia');
 		}
 		me.isBankia = isBk;
-		
+
+        if(Ext.isEmpty(activosDetalle)){
+			isBkOrTitlizada = isBk || this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionTitulizada");
+		}else{
+			isBkOrTitlizada = isBk || me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraTitulizada');
+		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
 			{itemId: 'btnGuardar',
@@ -253,6 +259,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var municipioRepresentante = form.down('field[name=municipioRteCodigo]');
 	    								var importe = form.down('field[name=importeOferta]');
 	    								var tipoOferta = form.down('field[name=tipoOferta]');
+	    								var nacionalidadCodigo = form.down('field[name=nacionalidadCodigo]');
+	    								var nacionalidadRprCodigo = form.down('field[name=nacionalidadRprCodigo]');
+	    								var fieldSetTableRepresentante = form.down('[reference=datosRepresentante]');
 	    								if(value=="1"){
 	    									estadoCivil.setDisabled(false);
 	    									apellidos.setDisabled(false);
@@ -273,6 +282,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									provinciaRepresentante.allowBlank = true;
 	    									municipioRepresentante.allowBlank = true;
 	    									
+	    									if(isBk){
+	    										nacionalidadCodigo.allowBlank = false;
+	    										nacionalidadRprCodigo.allowBlank = true;
+	    									}
+	    									
+	    									fieldSetTableRepresentante.setHidden(true);
 	    									razonSocial.reset();
 	    								}else{
 	    									apellidos.setDisabled(true);
@@ -289,13 +304,15 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									paisRepresentante.setValue("28");
 	    									provinciaRepresentante.allowBlank = false;
 	    									municipioRepresentante.allowBlank = false;
-	    									
+                                            fieldSetTableRepresentante.setHidden(false);
 	    									if(isBk){
 	    										paisNacimientoRepresentante.allowBlank = false;
 		    									paisNacimientoRepresentante.setValue("28");
 		    									provinciaNacimientoRepresentante.allowBlank = false;
 		    									municipioNacimientoRepresentante.allowBlank = false;
 		    									fechaNacimientaRepresentante.allowBlank = false;
+		    									nacionalidadCodigo.allowBlank = true;
+		    									nacionalidadRprCodigo.allowBlank = false;
 	    									}
 	    									
 	    									apellidos.reset();
@@ -322,6 +339,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								if(!Ext.isEmpty(paisRepresentante)) paisRepresentante.validate();
 	    								if(!Ext.isEmpty(provinciaRepresentante)) provinciaRepresentante.validate();
 	    								if(!Ext.isEmpty(municipioRepresentante)) municipioRepresentante.validate();
+	    								if(!Ext.isEmpty(nacionalidadCodigo)) nacionalidadCodigo.validate();
+	    								if(!Ext.isEmpty(nacionalidadRprCodigo)) nacionalidadRprCodigo.validate()
 	    								
 	    							}
 	    						},
@@ -569,12 +588,20 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								displayField: 'descripcion',
 								valueField: 'codigo'
 							},
-					        {
-								xtype: 'displayfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.campo.vacio'),
-					        	readOnly: true,
-					        	allowBlank:true
-					        },
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+								name: 'nacionalidadCodigo',
+								reference: 'nacionalidadCodigo',
+								allowBlank: !isBk,
+								hidden: !isBk,
+								bind: {
+									store: '{comboPaises}',
+									value: '{oferta.nacionalidadCodigo}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+							},
 							{
 								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
@@ -659,8 +686,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.pais.nacimiento'),
 								name: 'paisNacimientoCompradorCodigo',
 								reference: 'paisNacimientoCompradorCodigoRef',
-								allowBlank: !isBk,
-								hidden: !isBk,
+								allowBlank: !isBkOrTitlizada,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboPaises}',
 									value: '{oferta.paisNacimientoCompradorCodigo}'
@@ -673,10 +700,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.provincia.nacimiento'),
 								reference: 'provinciaNacimientoCompradorComboRef',
 								name: 'provinciaNacimiento',
-								allowBlank: !isBk,
+								allowBlank: !isBkOrTitlizada,
 								chainedStore: 'comboMunicipioNacimientoOfr',
 								chainedReference: 'localidadNacimientoCompradorCodigoRef',
-								hidden: !isBk,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboProvincia}',
 									value: '{oferta.provinciaNacimiento}'
@@ -692,8 +719,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.municipio.nacimiento'),
 								reference: 'localidadNacimientoCompradorCodigoRef',
 								name: 'localidadNacimientoCompradorCodigo',
-								allowBlank: !isBk,
-								hidden: !isBk,
+								allowBlank: !isBkOrTitlizada,
+								hidden: !isBkOrTitlizada,
 								bind: {
 									store: '{comboMunicipioNacimientoOfr}',
 									disabled: '{!oferta.provinciaNacimiento}',
@@ -813,7 +840,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 					defaultType: 'textfieldbase',
 					title: HreRem.i18n('title.datos.representante'),
 					reference: 'datosRepresentante',
-					hidden: false,
+					bind:{
+                        hidden: 'esPersonaJuridica'
+					},
 					disabled: false,
 					layout: {
 						type: 'table',
@@ -852,6 +881,21 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							reference: 'apellidosRte',
 							name: 'apellidosRte',
 							padding: '5px'
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.nacionalidad.pais'),
+							name: 'nacionalidadRprCodigo',
+							reference: 'nacionalidadRprCodigo',
+							padding: '5px',
+							allowBlank: !isBk,
+							hidden: !isBk,
+							bind: {
+								store: '{comboPaises}',
+								value: '{oferta.nacionalidadRprCodigo}'
+							},
+							displayField: 'descripcion',
+							valueField: 'codigo'
 						},
 						{
 							xtype: 'comboboxfieldbase',

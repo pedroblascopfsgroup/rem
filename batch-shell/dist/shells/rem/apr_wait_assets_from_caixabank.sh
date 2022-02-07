@@ -15,7 +15,7 @@ IFS=','
 arrayfichero=$fichero
 
 #Calculo de hora limite
-hora_limite=`date --date="130 minutes" +%Y%m%d%H%M%S`
+hora_limite=`date --date="300 minutes" +%Y%m%d%H%M%S`
 hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
@@ -48,6 +48,7 @@ then
 else
    for fichero in $arrayfichero
    do
+            ./ftp/ftp_mv_backup_bc.sh $fichero$fecha$extensionTxt
             ficheroTxt=$DIR_INPUT_AUX$fichero$fecha$extensionTxt
             mv $ficheroTxt $DIR_DESTINO$fichero$extensionTxt
 

@@ -110,6 +110,9 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private ReplicacionOfertasApi replicacionOfertasApi;
 	
+	@Autowired
+	private SpPublicacionApi spPublicacionApi;
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
 	
@@ -667,19 +670,21 @@ public class AgendaController extends TareaController {
 							if (!eco.getDevolAutoNumber()) {
 								salto = adapter.saltoTareaByCodigo(tarea.getId(), ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
 								//llamar al ws
-								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-								UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
-								
-								eco.setCorrecw(dto.getCorrecw());
-								eco.setComoa3(dto.getComoa3());
+								//dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+								//UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								if (!Checks.esNulo(dto)){
+									eco.setCorrecw(dto.getCorrecw());
+									eco.setComoa3(dto.getComoa3());
+								}
 								genericDao.save(ExpedienteComercial.class, eco);
 								
 							}else {
-								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
-								
-								eco.setCorrecw(dto.getCorrecw());
-								eco.setComoa3(dto.getComoa3());
+								//dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+										//UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								if (!Checks.esNulo(dto)){
+									eco.setCorrecw(dto.getCorrecw());
+									eco.setComoa3(dto.getComoa3());
+								}
 								genericDao.save(ExpedienteComercial.class, eco);
 								Long correcw = eco.getCorrecw();
 								Long comoa3 = eco.getComoa3();

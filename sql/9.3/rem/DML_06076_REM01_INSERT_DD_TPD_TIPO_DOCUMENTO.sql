@@ -79,7 +79,7 @@ BEGIN
                 
             V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (DD_TPD_ID, DD_TPD_CODIGO, DD_TPD_DESCRIPCION, DD_TPD_DESCRIPCION_LARGA,DD_TPD_MATRICULA_GD, USUARIOCREAR, FECHACREAR,DD_TPD_VISIBLE) 
                     VALUES 
-                    ('''||V_ID||''','''||TIPO_CODIGO||''','''||TIPO_DESCRIPCION||''','''||TIPO_DESCRIPCION_LARGA||''','''||TIPO_MATRICULA||''','''||V_USUARIO||''', SYSDATE,1)';
+                    ('''||V_ID||''','''||TIPO_CODIGO||''','''||TIPO_DESCRIPCION||''','''||TIPO_DESCRIPCION_LARGA||''','''||TIPO_MATRICULA||''','''||V_USUARIO||''', SYSDATE,0)';
                 EXECUTE IMMEDIATE V_SQL;
 
             DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADO CORRECTAMENTE '''||TIPO_DESCRIPCION||''' con codigo '''||TIPO_CODIGO||''' ');

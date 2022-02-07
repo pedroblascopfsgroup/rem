@@ -734,77 +734,71 @@ public class CatastroManager implements CatastroApi {
 						
 						DtoDatosCatastro dtoCatastro = new DtoDatosCatastro();
 						
-						if(!Checks.esNulo(cat.get("referenciaCatastral"))) {
-							dtoCatastro.setRefCatastral((String) cat.get("referenciaCatastral"));
-						}
+						dtoCatastro.setRefCatastral(cat.getString("referenciaCatastral"));
 						
-						if(!Checks.esNulo(cat.get("superficieConstruida"))) {
-							String superficie = checkObjectByType(cat.get("superficieConstruida").toString(), "double");
+						
+						String superficieString = cat.getString("superficieConstruida");
+						if(superficieString != null) {
+							String superficie = checkObjectByType(superficieString, "double");
 							dtoCatastro.setSuperficieConstruida(superficie != null ? Double.parseDouble(superficie) : null);
 						}
-						if(!Checks.esNulo(cat.get("anyoConstruccion"))) {
-							String anyoConstruccion = checkObjectByType(cat.get("anyoConstruccion").toString(), "int");
+						
+						String anyoConstruccionString = cat.getString("anyoConstruccion");
+						if(anyoConstruccionString != null) {
+							String anyoConstruccion = checkObjectByType(anyoConstruccionString, "int");
 							dtoCatastro.setAnyoConstruccion(anyoConstruccion != null ? Integer.parseInt(anyoConstruccion) : null);
 						}
-						if(!Checks.esNulo(cat.get("codPostal"))) {
-							dtoCatastro.setCodigoPostal((String) cat.get("codPostal"));
-						}
+						
+						dtoCatastro.setCodigoPostal(cat.getString("codPostal"));
+						
 				
-						if (!Checks.esNulo(cat.get("codTipoVia"))) {
-							dtoCatastro.setTipoViaCod((String) cat.get("codTipoVia"));
-							Filter tpvFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codTipoVia"));
+						dtoCatastro.setTipoViaCod(cat.getString("codTipoVia"));
+						if(dtoCatastro.getTipoViaCod() != null) {
+							Filter tpvFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoCatastro.getTipoViaCod());
 							DDTipoVia via = genericDao.get(DDTipoVia.class, tpvFilter);
-							if (!Checks.esNulo(via)) dtoCatastro.setTipoVia(via.getDescripcion());
+							if (!Checks.esNulo(via)) {
+								dtoCatastro.setTipoVia(via.getDescripcion());
+							}
 						}
-						if(!Checks.esNulo(cat.get("numVia"))) {
-							dtoCatastro.setNumeroVia((String) cat.get("numVia"));
-							dtoCatastro.setDomicilio((String) cat.get("numVia"));
-						}
-						if(!Checks.esNulo(cat.get("planta"))) {
-							dtoCatastro.setPlanta((String) cat.get("planta"));
-						}
-						if(!Checks.esNulo(cat.get("puerta"))) {
-							dtoCatastro.setPuerta((String) cat.get("puerta"));
-						}
-						if(!Checks.esNulo(cat.get("escalera"))) {
-							dtoCatastro.setEscalera((String) cat.get("escalera"));
-						}
-						if (!Checks.esNulo(cat.get("codProvincia"))) {
-							dtoCatastro.setProvinciaCod((String) cat.get("codProvincia"));
-							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codProvincia"));
+						
+						
+						dtoCatastro.setNumeroVia((String) cat.getString("numVia"));
+						dtoCatastro.setDomicilio((String) cat.getString("numVia"));
+						dtoCatastro.setPlanta(cat.getString("planta"));
+						dtoCatastro.setPuerta((String) cat.getString("puerta"));
+						dtoCatastro.setEscalera(cat.getString("escalera"));
+						
+						dtoCatastro.setProvinciaCod(cat.getString("codProvincia"));
+						if(dtoCatastro.getProvinciaCod() != null) {
+							Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoCatastro.getProvinciaCod());
 							DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
 							if (!Checks.esNulo(provincia)) {
 								dtoCatastro.setProvincia(provincia.getDescripcion());
 							}
 						}
 						
-						if (!Checks.esNulo(cat.get("codMunicipio"))) {
-							dtoCatastro.setMunicipioCod((String) cat.get("codMunicipio"));
-							Filter munFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",(String)cat.get("codMunicipio"));
+						dtoCatastro.setMunicipioCod(cat.getString("codMunicipio"));
+						if(dtoCatastro.getMunicipioCod()!= null) {
+							Filter munFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoCatastro.getMunicipioCod());
 							Localidad municipio = genericDao.get(Localidad.class, munFilter);
 							if (!Checks.esNulo(municipio)) {
 								dtoCatastro.setMunicipio(municipio.getDescripcion());
 							}
 						}
-						if (!Checks.esNulo(cat.get("lat"))) {
-							String lat = checkObjectByType(cat.get("lat").toString(), "bigdecimal");
+						if (!Checks.esNulo(cat.getString("lat"))) {
+							String lat = checkObjectByType(cat.getString("lat"), "bigdecimal");
 							dtoCatastro.setLatitud(lat != null ? new BigDecimal(lat) : null);
 						}
-						if (!Checks.esNulo(cat.get("lon"))) {
-							String lon = checkObjectByType(cat.get("lon").toString(), "bigdecimal");
+						if (!Checks.esNulo(cat.getString("lon"))) {
+							String lon = checkObjectByType(cat.getString("lon"), "bigdecimal");
 							dtoCatastro.setLongitud(lon != null ? new BigDecimal(lon) : null);
 						}
-						if (!Checks.esNulo(cat.get("correcto"))) {
+						if (!Checks.esNulo(cat.getString("correcto"))) {
 							dtoCatastro.setCatastroCorrecto((Boolean) cat.get("correcto"));
 						}
-						if (!Checks.esNulo(cat.get("nombreVia"))) {
-							dtoCatastro.setNombreVia(cat.getString("nombreVia"));
-						}
-						if (!Checks.esNulo(cat.get("uso"))) {
-							dtoCatastro.setUso(cat.getString("uso"));
-						}
 						
-						
+						dtoCatastro.setNombreVia(cat.getString("nombreVia"));
+						dtoCatastro.setUso(cat.getString("uso"));
 						
 						lista.add(dtoCatastro);
 					}

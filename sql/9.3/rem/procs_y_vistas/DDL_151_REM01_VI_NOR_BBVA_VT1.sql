@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20210806
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10156
+--## INCIDENCIA_LINK=HREOS-17051
 --## PRODUCTO=NO
 --## Finalidad: Vista para filtrar por los activos BBVA
 --##           
@@ -17,6 +17,7 @@
 --##        0.5 REMVIP-8960 - VRO - se pone LEFT en dd_eca_estado_carga_activos y se mete tabla BIE_DATOS_REGISTRALES
 --##        0.6 REMVIP-9399 - VRO - se corrige calculo campos DEP_JURIDICAMENTE y FECHA_DEP_JURIDICA
 --##        0.7 REMVIP-10156 - JAC - se modifican errores en la query y logica de calculo de algunos campos
+--##        0.8 REMVIP-HREOS-17051 - JEG - cambio uic bbva y añadir nueva tabla act_bbva_uic
 --##########################################
 --*/
 
@@ -133,7 +134,7 @@ BEGIN
             THEN COALESCE(PRO.PRO_DOCIDENTIF,CPR.CPR_DOCIDENTIF)
             ELSE ''NULL''
         END AS NIF_EMPRESA_TITULIZADORA
-        ,COALESCE(BBVA.BBVA_UIC,''NULL'') AS IUC
+        ,COALESCE(UIC.BBVA_UIC,''NULL'') AS IUC
         ,COALESCE(REG.REG_IDUFIR,''NULL'') AS IDUFIR
         ,''NULL'' AS REST_IDUFIR
         ,CASE
@@ -262,6 +263,7 @@ BEGIN
         GROUP BY ID_AAII
     ) CANCEL 
     ON act.act_num_activo = CANCEL.ID_AAII
+    JOIN '||V_ESQUEMA||'.ACT_BBVA_UIC UIC ON UIC.ACT_ID = BBVA.ACT_ID AND UIC.BORRADO = 0
     WHERE ACT.BORRADO = 0 AND COALESCE(PRO.PRO_DOCIDENTIF,CPR.CPR_DOCIDENTIF) IS NOT NULL
     ';
 		

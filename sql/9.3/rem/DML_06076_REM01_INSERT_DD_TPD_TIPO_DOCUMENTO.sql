@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20220204
+--## FECHA_CREACION=20220207
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11067
@@ -24,7 +24,7 @@ SET DEFINE OFF;
 DECLARE
        
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#REMMASTER#'; -- Configuracion Esquema Master
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_TABLA VARCHAR2(25 CHAR):= 'DD_TPD_TIPO_DOCUMENTO';
     V_SQL VARCHAR2(4000 CHAR); -- Sentencia a ejecutar
     V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-11067';
@@ -44,9 +44,9 @@ DECLARE
     TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
 	
 	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
-		  T_JBV('Informes técnicos del trabajo','Documentos de trabajos técnicos','OP-13-DOCT-20','187'),
-          T_JBV('Informe okupación y/o desokupacion', 'Informe okupación y/o desokupacion','OP-13-ESIN-97','188'),
-          T_JBV('Presupuesto','Presupuesto inversión','OP-13-PRES-07','189')
+		  T_JBV('Resolución contrato','Resolución contrato','OP-13-CNCV-51','187'),
+          T_JBV('Alquiler: informe estado', 'Alquiler: informe estado','OP-13-ESIN-EI','188'),
+          T_JBV('Parte de visita','Parte de visita','OP-13-CERJ-85','189')
 	); 
 	V_TMP_JBV T_JBV;
 

@@ -35,8 +35,6 @@ public interface TramiteAlquilerApi {
 	
 	void irClRod(ExpedienteComercial eco);
 
-	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
-
 	String checkGarantiasNinguna(TareaExterna tareaExterna, String valor);
 	
 }

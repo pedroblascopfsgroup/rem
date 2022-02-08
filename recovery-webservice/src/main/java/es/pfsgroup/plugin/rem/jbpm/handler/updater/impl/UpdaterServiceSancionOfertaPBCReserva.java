@@ -24,6 +24,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
@@ -72,6 +73,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+	
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 	
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
@@ -212,26 +216,8 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 					}
 					
 					if (DDCartera.isCarteraBk(activo.getCartera())){
-						
-						Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
-						Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
-						Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
-						HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
-						
-						if (historico != null) {
-							historico.setActiva(false);
-							
-							genericDao.save(HistoricoTareaPbc.class, historico);
-						}
-						
-						Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
-						DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
-						
-						HistoricoTareaPbc htp = new HistoricoTareaPbc();
-						htp.setOferta(ofertaAceptada);
-						htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
-						
-						genericDao.save(HistoricoTareaPbc.class, htp);
+						funcionesTramitesApi.desactivarHistoricoPbc(ofertaAceptada.getId(), DDTipoTareaPbc.CODIGO_PBC);
+						genericDao.save(HistoricoTareaPbc.class, funcionesTramitesApi.createHistoricoPbc(ofertaAceptada.getId(), DDTipoTareaPbc.CODIGO_PBC));
 					}
 					
 				}else if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())){

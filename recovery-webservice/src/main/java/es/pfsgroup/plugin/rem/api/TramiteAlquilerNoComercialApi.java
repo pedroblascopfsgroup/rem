@@ -22,8 +22,6 @@ public interface TramiteAlquilerNoComercialApi {
 
 	boolean isTramiteT018Aprobado(List<String> tareasActivas);
 
-	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
-
 	String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna);
 
 	boolean isExpedienteDelMismoActivo(TareaExterna tareaExterna, String expedienteAnterior);

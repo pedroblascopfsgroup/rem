@@ -169,16 +169,6 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		return isAprobado;
 	}
 	
-	@Override
-	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
-		boolean camposRellenos = false;
-
-		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null ) {
-			camposRellenos = true;
-		}
-		
-		return camposRellenos;
-	}
 	
 	@Override
 	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {

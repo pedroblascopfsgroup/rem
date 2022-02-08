@@ -67,9 +67,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
 	private DDTipoAlta tipoAlta;
-
-	@Column(name = "BBVA_UIC")
-  	private String uicBbva;
     
 	@Column(name = "BBVA_CEXPER")
   	private String cexperBbva;
@@ -172,14 +169,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 
 	public void setTipoAlta(DDTipoAlta tipoAlta) {
 		this.tipoAlta = tipoAlta;
-	}
-
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
 	}
 
 	public String getCexperBbva() {

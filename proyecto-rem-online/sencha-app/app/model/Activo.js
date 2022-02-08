@@ -1172,9 +1172,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'idOrigenHre'
     		},
     		{
-    			name: 'uicBbva'
-    		},
-    		{
     			name: 'cexperBbva'
     		},
     		{

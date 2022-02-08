@@ -9635,5 +9635,53 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	@Transactional
+	@Override
+	public Boolean createActivoBbvaUic(Long idActivo, String uicBbva) {
+		
+		try {				
+			if(uicBbva!=null && idActivo!=null) {
+				ActivoBbvaUic activoBbvaUic = new ActivoBbvaUic();	
+				Activo activo= genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+				
+				activoBbvaUic.setActivo(activo);
+				activoBbvaUic.setUicBbva(uicBbva);
+				activoBbvaUic.setAuditoria(Auditoria.getNewInstance());				
+
+				genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
+				return true;
+			}			
+			
+			return false;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+	}
+	
+	@Transactional
+	@Override
+	public Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) {
+		
+		try {					
+			if(uicBbva!=null && idActivo!=null) {
+
+				Filter activoBbvaUic1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				Filter activoBbvaUic2 = genericDao.createFilter(FilterType.EQUALS, "uicBbva", uicBbva);
+				ActivoBbvaUic activoBbvaUic = genericDao.get(ActivoBbvaUic.class, activoBbvaUic1,activoBbvaUic2);
+				
+				Auditoria.delete(activoBbvaUic);
+				
+				genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
+				return true;
+			}
+			
+			return false;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+	}
 }
 

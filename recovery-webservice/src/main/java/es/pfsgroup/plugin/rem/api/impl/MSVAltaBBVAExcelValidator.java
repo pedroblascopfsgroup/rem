@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.AltaActivoTPFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -330,6 +331,9 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			DDTipoTransmision tipoTransmision=null;
 			DDTipoAlta tipoAlta = null;
 			
+			//ACT_BBVA_UIC
+			ActivoBbvaUic activoBbvaUic = new ActivoBbvaUic();
+			
 			Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo",  DDSinSiNo.CODIGO_SI);
 			Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo",  DDSinSiNo.CODIGO_NO);				
 			DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
@@ -420,7 +424,10 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				activoBBVA.setTipoAlta(tipoAlta);
 			}
 			if(colIuc !=null && !colIuc.isEmpty()) {
-				activoBBVA.setUicBbva(colIuc);
+				activoBbvaUic.setActivo(activo);
+				activoBbvaUic.setUicBbva(colIuc);	
+
+				genericDao.save(ActivoBbvaUic.class,activoBbvaUic);
 			}			
 			if(colCexper!=null && !colCexper.isEmpty()) {
 				activoBBVA.setCexperBbva(colCexper);

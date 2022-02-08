@@ -1172,7 +1172,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
 			activoDto.setLineaFactura(activoBbva.getLineaFactura());
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
-			activoDto.setUicBbva(activoBbva.getUicBbva());
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
 
 			if(activoBbva.getCodPromocion() != null)
@@ -2066,14 +2065,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				//No comprobar los nulos, porque siempre se van a setear,
 				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
-				activoBbva.setUicBbva(dto.getUicBbva());
 				activoBbva.setCexperBbva(dto.getCexperBbva());
 			}
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
 				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
 				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
 				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
-				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
+				dto.getCexperBbva() !=  null
 
 			) {
 				

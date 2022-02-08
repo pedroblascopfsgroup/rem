@@ -321,7 +321,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String numActivoBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
-    private String uicBbva;
     private String cexperBbva;
     private String tipoTransmisionCodigo;
     private String tipoAltaCodigo;
@@ -2320,14 +2319,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIdOrigenHre(Long idOrigenHre) {
 		this.idOrigenHre = idOrigenHre;
-	}
-
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
 	}
 
 	public String getCexperBbva() {

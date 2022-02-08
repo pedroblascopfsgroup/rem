@@ -4425,4 +4425,49 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@SuppressWarnings("unchecked")
+		@RequestMapping(method = RequestMethod.GET)
+		public ModelAndView getActivoBbvaUic(Long id) {
+			ModelMap model = new ModelMap();
+			
+			try {
+				List<DtoActivoBbvaUic> dtoActivoBbvaUicList = adapter.getActivoBbvaUic(id);
+				model.put("data", dtoActivoBbvaUicList);
+				model.put("success", true);			
+			} catch (Exception e) {
+				logger.error(e.getMessage(),e);
+				model.put("success", false);		
+			}
+			
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView createActivoBbvaUic(Long idActivo, String uicBbva,ModelMap model) {
+			try {
+				Boolean success = activoApi.createActivoBbvaUic(idActivo, uicBbva);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				logger.error("error en createActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView destroyActivoBbvaUic(Long idActivo, String uicBbva,ModelMap model) {
+			try {
+				Boolean success = activoApi.destroyActivoBbvaUic(idActivo, uicBbva);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+
+			} catch (Exception e) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				logger.error("error en destroyActivoBbvaUic", e);
+			}
+
+			return createModelAndViewJson(model);
+		}
 }

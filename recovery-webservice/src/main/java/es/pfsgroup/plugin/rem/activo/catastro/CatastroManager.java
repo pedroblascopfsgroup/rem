@@ -238,14 +238,16 @@ public class CatastroManager implements CatastroApi {
 			dto = new DtoDatosCatastroGrid();
 			
 			dto.setNombre(GEODISTANCIA);
-			dto.setDatoRem("-");
-			dto.setDatoCatastro("-");
-			dto.setCoincidencia(calculoCoincidencia(calculoGeodistancia(
-					Double.parseDouble(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().toString() : "0"),
-					Double.parseDouble(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().toString() : "0"),
-					Double.parseDouble(dtoCatastro.getLatitud() != null ? dtoCatastro.getLatitud().toString() : "0"),
-					Double.parseDouble(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().toString() : "0")
-			)));
+			Double geodistancia = calculoGeodistancia(
+				(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().doubleValue() : 0.0),
+				(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().doubleValue() : 0.0),
+				(dtoCatastro.getLatitud() != null ? dtoCatastro.getLatitud().doubleValue() : 0.0),
+				(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().doubleValue() : 0.0)
+			);
+			
+			dto.setDatoRem(geodistancia.toString());
+			dto.setDatoCatastro(geodistancia.toString());
+			dto.setCoincidencia(calculoCoincidencia(geodistancia));
 			
 			listDto.add(dto);
 			
@@ -902,6 +904,7 @@ public class CatastroManager implements CatastroApi {
 				catastro.setLongitud(datosCatastro.getLongitud());
 				catastro.setEscalera(datosCatastro.getEscalera());
 				catastro.setUsoPrincipal(datosCatastro.getUso());
+				catastro.setDescripcionVia(datosCatastro.getNombreVia());
 				
 				genericDao.save(Catastro.class, catastro);
 			}

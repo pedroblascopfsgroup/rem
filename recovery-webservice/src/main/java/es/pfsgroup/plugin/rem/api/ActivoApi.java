@@ -1489,8 +1489,8 @@ public interface ActivoApi {
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
-	
-	Boolean createActivoBbvaUic(Long idActivo, String uicBbva) throws Exception;
-	
+		
 	Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) throws Exception;
+
+	Boolean createActivoBbvaUic(Long idActivo, String uicBbva, Long idUic)throws Exception;
 }

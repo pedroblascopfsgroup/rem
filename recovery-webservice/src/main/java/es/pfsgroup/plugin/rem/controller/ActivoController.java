@@ -4444,9 +4444,9 @@ public class ActivoController extends ParadiseJsonController {
 		}
 	
 	@RequestMapping(method = RequestMethod.POST)
-		public ModelAndView createActivoBbvaUic(Long idActivo, String uicBbva,ModelMap model) {
+		public ModelAndView createActivoBbvaUic(Long idActivo, String uicBbva, Long idUic, ModelMap model) {
 			try {
-				Boolean success = activoApi.createActivoBbvaUic(idActivo, uicBbva);
+				Boolean success = activoApi.createActivoBbvaUic(idActivo, uicBbva, idUic);
 				model.put(RESPONSE_SUCCESS_KEY, success);
 
 			} catch (Exception e) {

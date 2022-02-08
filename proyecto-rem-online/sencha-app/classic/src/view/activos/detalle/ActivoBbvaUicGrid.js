@@ -21,9 +21,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
                 flex	 : 1,
                 dataIndex: 'uicBbva',
 		        editor: {
-		        			xtype:'textfield',
-		        			allowBlank: false
-		        	     }
+        			xtype:'textfield',
+        			allowBlank: false
+        	     }
             },{               
                 text	 : HreRem.i18n('fieldlabel.activo.bbva.id.activo'),
                 flex	 : 1,
@@ -56,7 +56,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
 	 onDeleteClick: function(btn, context){
 	   	var me = this;
 		var uicBbva = me.getSelection()[0].getData().uicBbva;
-		var idActivo = me.getSelection()[0].getData().idActivo;
+		var idActivo = me.lookupController().getView().getViewModel().get('activo.id');
 	       Ext.Msg.show({
 				   title: HreRem.i18n('title.confirmar.eliminacion'),
 				   msg: HreRem.i18n('msg.desea.eliminar'),
@@ -110,26 +110,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
    editFuncion: function(btn, context){
 	   	var me = this;
 	   	if (me.isValidRecord(context.record)) {
+	   		me.mask(HreRem.i18n("msg.mask.espere"));
 	   		var uicBbva = context.record.get('uicBbva');
+	   		var idUic = context.record.get('id');
+	   		if(!me.isNumeric(idUic)){
+	   			idUic = null;
+	   		}
 	   		var idActivo = me.lookupController().getView().getViewModel().get('activo.id');
-		
 	   		url = $AC.getRemoteUrl('activo/createActivoBbvaUic');
 			Ext.Ajax.request({
 				url : url,
 				method : 'POST',
 				params : {
 						idActivo: idActivo, 
-						uicBbva: uicBbva
+						uicBbva: uicBbva,
+						idUic: idUic
 				},
 				success : function(response, opts) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					me.recargarGrid();
 				},
 				failure : function(record, operation) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				},
 				callback : function(record, operation) {
-					
+					me.recargarGrid();
+					me.unmask();
 				}
 			});  		
 		}       
@@ -137,5 +142,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
    recargarGrid: function() {
 	   	var me = this; 
  		me.getStore().load();	
-   } 
+   },
+   
+   isNumeric: function(val) {
+	    return /^-?\d+$/.test(val);
+	}
 });

@@ -9636,20 +9636,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
-	@Transactional
+	@Transactional(readOnly = false)
 	@Override
-	public Boolean createActivoBbvaUic(Long idActivo, String uicBbva) {
+	public Boolean createActivoBbvaUic(Long idActivo, String uicBbva, Long idUic) throws Exception  {
 		
 		try {				
 			if(uicBbva!=null && idActivo!=null) {
-				ActivoBbvaUic activoBbvaUic = new ActivoBbvaUic();	
-				Activo activo= genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+				ActivoBbvaUic activoBbvaUic = null;
+				if(idUic == null) {
+					activoBbvaUic = new ActivoBbvaUic();	
+					Activo activo= genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+					activoBbvaUic.setActivo(activo);
+					activoBbvaUic.setAuditoria(Auditoria.getNewInstance());
+				}else {
+					activoBbvaUic = genericDao.get(ActivoBbvaUic.class, genericDao.createFilter(FilterType.EQUALS, "id", idUic));
+				}
 				
-				activoBbvaUic.setActivo(activo);
-				activoBbvaUic.setUicBbva(uicBbva);
-				activoBbvaUic.setAuditoria(Auditoria.getNewInstance());				
-
-				genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
+				if(activoBbvaUic != null) {
+					activoBbvaUic.setUicBbva(uicBbva);
+					genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
+				}
 				return true;
 			}			
 			
@@ -9660,7 +9666,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 	}
 	
-	@Transactional
+	@Transactional(readOnly = false)
 	@Override
 	public Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) {
 		

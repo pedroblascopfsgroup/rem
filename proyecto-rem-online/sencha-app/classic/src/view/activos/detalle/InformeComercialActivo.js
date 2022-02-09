@@ -951,7 +951,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.patio'),
 										bind:		'{infoComercial.superficiePatio}',
 										colspan: 2
-					                },
+					                }
 									/*{ 
 										fieldLabel: 'Superficie útil'
 					                },*/

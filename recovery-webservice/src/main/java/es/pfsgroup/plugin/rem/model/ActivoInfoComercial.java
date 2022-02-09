@@ -407,7 +407,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	private String orientacion;
 
 	@ManyToOne
-	@JoinColumn(name = "DD_TCL_ID")
+	@JoinColumn(name = "ICO_CALEFACCION")
 	private DDTipoClimatizacion calefaccion;
 
 	@Column(name="ICO_SUP_TERRAZA")

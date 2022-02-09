@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220202
+--## FECHA_CREACION=20220209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17073
@@ -15,6 +15,7 @@
 --##        0.3 Quitar merge a la GLD_ENT y el filtro del campo DD_EAL_ID en la LFACT_SIN_PROV y FACT_PROV- [HREOS-16968] - Alejandra García
 --##        0.4 Modificar filtro del la ETG- [HREOS-17018] - Alejandra García
 --##        0.5 Corrección filtro del la ETG- [HREOS-17073] - Alejandra García
+--##        0.6 Corrección filtro del la ETG campos TGA y STG- [HREOS-17073] - Alejandra García
 --##########################################
 --*/
 
@@ -78,12 +79,19 @@ BEGIN
                   AND PRO.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID AND GEN.ENT_ID = AUX.ACT_ID
                     AND GEN.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID) = GPV.DD_TGA_ID
-                    AND NVL(ETG.DD_STG_ID, GLD.DD_STG_ID) = GLD.DD_STG_ID AND CASE 
-                                                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
-                                                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
-                                                              ELSE ETG.PRO_ID
-                                                          END = PRO.PRO_ID
+                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
+                                                                                              WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.PROMOCION IS NOT NULL THEN 0
+                                                                                              ELSE GPV.DD_TGA_ID
+                                                                                              END
+                    AND NVL(ETG.DD_STG_ID, 0) = CASE
+                                                  WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.PROMOCION IS NOT NULL THEN 0
+                                                  ELSE GLD.DD_STG_ID 
+                                                  END 
+                    AND CASE 
+                        WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
+                        WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
+                        ELSE ETG.PRO_ID
+                    END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
@@ -125,12 +133,19 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
                   AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID) = GPV.DD_TGA_ID
-                    AND NVL(ETG.DD_STG_ID, GLD.DD_STG_ID) = GLD.DD_STG_ID AND CASE 
-                                                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
-                                                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
-                                                              ELSE ETG.PRO_ID
-                                                          END = PRO.PRO_ID
+                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
+                                                                                              WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.PROMOCION IS NOT NULL THEN 0
+                                                                                              ELSE GPV.DD_TGA_ID
+                                                                                              END
+                    AND NVL(ETG.DD_STG_ID, 0) = CASE
+                                                  WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.PROMOCION IS NOT NULL THEN 0
+                                                  ELSE GLD.DD_STG_ID 
+                                                  END 
+                    AND CASE 
+                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
+                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
+                              ELSE ETG.PRO_ID
+                          END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND ETG.EJE_ID = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
@@ -183,12 +198,19 @@ BEGIN
                   AND PRO.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
                     AND GEN.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID) = GPV.DD_TGA_ID
-                    AND NVL(ETG.DD_STG_ID, GLD.DD_STG_ID) = GLD.DD_STG_ID AND CASE 
-                                                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
-                                                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
-                                                              ELSE ETG.PRO_ID
-                                                          END = PRO.PRO_ID
+                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
+                                                                                              WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.PROMOCION IS NOT NULL THEN 0
+                                                                                              ELSE GPV.DD_TGA_ID
+                                                                                              END
+                    AND NVL(ETG.DD_STG_ID, 0) = CASE
+                                                  WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.PROMOCION IS NOT NULL THEN 0
+                                                  ELSE GLD.DD_STG_ID 
+                                                  END 
+                    AND CASE 
+                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
+                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
+                              ELSE ETG.PRO_ID
+                          END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
@@ -230,12 +252,19 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
                   AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
-                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, GPV.DD_TGA_ID) = GPV.DD_TGA_ID
-                    AND NVL(ETG.DD_STG_ID, GLD.DD_STG_ID) = GLD.DD_STG_ID AND CASE 
-                                                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
-                                                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
-                                                              ELSE ETG.PRO_ID
-                                                          END = PRO.PRO_ID
+                JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
+                                                                                              WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.PROMOCION IS NOT NULL THEN 0
+                                                                                              ELSE GPV.DD_TGA_ID
+                                                                                              END
+                    AND NVL(ETG.DD_STG_ID, 0) = CASE
+                                                  WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.PROMOCION IS NOT NULL THEN 0
+                                                  ELSE GLD.DD_STG_ID 
+                                                  END 
+                    AND CASE 
+                              WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
+                              WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID
+                              ELSE ETG.PRO_ID
+                          END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND ETG.EJE_ID = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')

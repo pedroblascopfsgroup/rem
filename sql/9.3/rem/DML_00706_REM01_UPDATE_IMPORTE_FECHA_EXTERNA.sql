@@ -38,7 +38,7 @@ BEGIN
     
             V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
                         SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''15/12/2021'', ''DD/MM/YYYY'')
-                            ,ACT_VENTA_EXTERNA_IMPORTE = 9999
+                            ,ACT_VENTA_EXTERNA_IMPORTE = 1
                             ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                             ,FECHAMODIFICAR = SYSDATE
                         WHERE ACT_NUM_ACTIVO IN (SELECT ACT_NUM_ACTIVO_ANT FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO)';

@@ -354,7 +354,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setArmEmpotradosDesc(activoInfoComercial.getArmariosEmpotrados().getDescripcion());
 			}
 			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) 
-				informeComercial.setCalefaccion(activoInfoComercial.getCalefaccion());
+				informeComercial.setCalefaccion(activoInfoComercial.getCalefaccion().getDescripcion());
 			if (!Checks.esNulo(activoInfoComercial.getTipoCalefaccion())) {
 				informeComercial.setTipoCalefaccionCod(activoInfoComercial.getTipoCalefaccion().getCodigo());
 				informeComercial.setTipoCalefaccionDesc(activoInfoComercial.getTipoCalefaccion().getDescripcion());
@@ -748,7 +748,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				actInfoComercial.setArmariosEmpotrados(genericDao.get(DDSinSiNo.class, filtro));
 			}
 			if (!Checks.esNulo(activoInformeDto.getCalefaccion())) {
-				actInfoComercial.setCalefaccion(activoInformeDto.getCalefaccion());
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCalefaccion());
+				actInfoComercial.setCalefaccion(genericDao.get(DDTipoClimatizacion.class, filtro));
 			}
 			if (!Checks.esNulo(activoInformeDto.getTipoCalefaccionCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getTipoCalefaccionCod());

@@ -192,4 +192,11 @@ public class DDCartera implements Auditable, Dictionary {
 		return is;
 	}
 
+	public static boolean isCarteraTitulizada(DDCartera cartera) {
+		boolean isCarteraTitulizada = false;
+		if(cartera != null && ( CODIGO_CARTERA_TITULIZADA.equals(cartera.getCodigo()))) {
+			isCarteraTitulizada = true;
+		}
+		return isCarteraTitulizada;
+	}
 }

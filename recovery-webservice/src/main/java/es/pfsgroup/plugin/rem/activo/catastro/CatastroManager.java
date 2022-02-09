@@ -153,14 +153,11 @@ public class CatastroManager implements CatastroApi {
 		boolean referenciaValida =  this.isReferenciaValida(refCatastral);
 		List<DtoDatosCatastro> lista = new ArrayList<DtoDatosCatastro>();
 			
-		if(referenciaValida || refCatastral.length() < 20 ) {
-			 lista = consultaCatastroRem3(idActivo, refCatastral);
-			
-			if (!lista.isEmpty()) {
-				existeCatastro(lista);
-				listDto.addAll(lista);
-			}
-			
+		 lista = consultaCatastroRem3(idActivo, refCatastral);
+		
+		if (!lista.isEmpty()) {
+			existeCatastro(lista);
+			listDto.addAll(lista);
 		}
 		
 		if(!referenciaValida || lista.isEmpty()) {

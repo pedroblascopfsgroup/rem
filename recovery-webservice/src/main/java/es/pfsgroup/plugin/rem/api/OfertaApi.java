@@ -812,7 +812,7 @@ public interface OfertaApi {
 
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
 	
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo);
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna);
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 

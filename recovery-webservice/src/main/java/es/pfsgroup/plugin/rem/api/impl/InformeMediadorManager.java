@@ -1455,14 +1455,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 		}
 		
-		if (!Checks.esNulo(informe.getCodesCalefaccion())) {
-			for (String codCalefaccion : informe.getCodesCalefaccion()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codCalefaccion);
-				DDTipoClimatizacion calefaccion = genericDao.get(DDTipoClimatizacion.class, filtro);
-				if (Checks.esNulo(calefaccion)) {
-					errorsList.put("codesCalefaccion", RestApi.REST_MSG_UNKNOWN_KEY);
-					break;
-				}
+		if (!Checks.esNulo(informe.getCodCalefaccion())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion());
+			DDTipoClimatizacion calefaccion = genericDao.get(DDTipoClimatizacion.class, filtro);
+			if (Checks.esNulo(calefaccion)) {
+				errorsList.put("codCalefaccion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
 		

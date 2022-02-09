@@ -702,11 +702,11 @@ public class InformeMediadorDto implements Serializable {
 		this.codesOrientacion = codesOrientacion;
 	}
 
-	public List<String> getCodCalefaccion() {
+	public String getCodCalefaccion() {
 		return codCalefaccion;
 	}
 
-	public void setCodesCalefaccion(List<String> codCalefaccion) {
+	public void setCodesCalefaccion(String codCalefaccion) {
 		this.codCalefaccion = codCalefaccion;
 	}
 

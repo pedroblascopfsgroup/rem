@@ -406,8 +406,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name="ICO_ORIENTACION")
 	private String orientacion;
 
-	@Column(name="ICO_CALEFACCION")
-	private String calefaccion;
+	@ManyToOne
+	@JoinColumn(name = "DD_TCL_ID")
+	private DDTipoClimatizacion calefaccion;
 
 	@Column(name="ICO_SUP_TERRAZA")
 	private Float superficieTerraza;
@@ -1172,11 +1173,11 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.orientacion = orientacion;
 	}
 
-	public String getCalefaccion() {
+	public DDTipoClimatizacion getCalefaccion() {
 		return calefaccion;
 	}
 
-	public void setCalefaccion(String calefaccion) {
+	public void setCalefaccion(DDTipoClimatizacion calefaccion) {
 		this.calefaccion = calefaccion;
 	}
 

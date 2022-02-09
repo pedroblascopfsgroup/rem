@@ -198,7 +198,9 @@ public class InformeMediadorDto implements Serializable {
 	private List<String> codesOrientacion;
 	
 	@NotNull(groups = { Insert.class, Update.class })
-	private List<String> codesCalefaccion;
+	@Diccionary(clase = DDTipoClimatizacion.class,foreingField="codigo",  message = "El codCalefaccion no existe", 
+	groups = { Insert.class,Update.class })
+	private String codCalefaccion;
 	
 	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoCalefaccion.class,foreingField="codigo",  message = "El codTipoCalefaccion no existe", 
@@ -700,12 +702,12 @@ public class InformeMediadorDto implements Serializable {
 		this.codesOrientacion = codesOrientacion;
 	}
 
-	public List<String> getCodesCalefaccion() {
-		return codesCalefaccion;
+	public List<String> getCodCalefaccion() {
+		return codCalefaccion;
 	}
 
-	public void setCodesCalefaccion(List<String> codesCalefaccion) {
-		this.codesCalefaccion = codesCalefaccion;
+	public void setCodesCalefaccion(List<String> codCalefaccion) {
+		this.codCalefaccion = codCalefaccion;
 	}
 
 	public String getCodTipoCalefaccion() {

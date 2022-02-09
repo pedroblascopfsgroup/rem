@@ -1579,14 +1579,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		}
 		informeEntity.setOrientacion(orientacion);
 	
-		String calefaccion = "";
-		for (int i = 0; i < informe.getCodesCalefaccion().size(); i++) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodesCalefaccion().get(i));
-			DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, filtro);
-			calefaccion += ddClimatizacion.getDescripcion();
-			if (i != informe.getCodesCalefaccion().size()-1) calefaccion += ",";
-		}
-		informeEntity.setCalefaccion(calefaccion);
+		DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion()));
+		informeEntity.setCalefaccion(ddClimatizacion);
 		
 		DDTipoCalefaccion tca = genericDao.get(DDTipoCalefaccion.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoCalefaccion()));

@@ -192,8 +192,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		ClienteGDPR clienteGDPR = null; //HREOS-4937
 		cliente = new ClienteComercial();			
 		beanUtilNotNull.copyProperties(cliente, clienteDto);
-		cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());					
+		cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());
 
+		if(cliente.getIdClienteBC() == null && clienteDto.getIdClienteBC() != null){
+			cliente.setIdClienteBC(clienteDto.getIdClienteBC());
+		}
 		if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));
@@ -474,7 +477,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
 			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
 		}
-		if (((JSONObject) jsonFields).containsKey("idClienteBc")) {
+		if (((JSONObject) jsonFields).containsKey("idClienteBC")) {
 			cliente.setIdClienteBC(clienteDto.getIdClienteBC());
 		}
 		if (((JSONObject) jsonFields).containsKey("razonSocial")) {

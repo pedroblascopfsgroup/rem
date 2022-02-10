@@ -16,6 +16,8 @@ public class DtoAccionResultadoRiesgoCaixa extends WebDto {
     private Long numOferta;
 
     private String riesgoOperacion;
+    
+    private boolean puedeAvanzar;
 
     public Long getIdExpediente() {
         return idExpediente;
@@ -47,5 +49,13 @@ public class DtoAccionResultadoRiesgoCaixa extends WebDto {
 
 	public void setIdTarea(Long idTarea) {
 		this.idTarea = idTarea;
+	}
+
+	public boolean isPuedeAvanzar() {
+		return puedeAvanzar;
+	}
+
+	public void setPuedeAvanzar(boolean puedeAvanzar) {
+		this.puedeAvanzar = puedeAvanzar;
 	}
 }

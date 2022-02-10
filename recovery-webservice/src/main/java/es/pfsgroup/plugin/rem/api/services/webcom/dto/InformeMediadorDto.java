@@ -104,8 +104,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	private LongDataType anyoRehabilitacion;
 	@WebcomRequired
 	private StringDataType licenciaApertura;
-	//@WebcomRequired
-	//private DateDataType fechaRecepcionInforme; //falta en vista
+	@WebcomRequired
+	private DateDataType fechaRecepcionInforme;
 	@WebcomRequired
 	private DateDataType ultimaModificacionInforme;
 	@WebcomRequired
@@ -392,12 +392,12 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setLicenciaApertura(StringDataType licenciaApertura) {
 		this.licenciaApertura = licenciaApertura;
 	}
-	/*public DateDataType getFechaRecepcionInforme() {
+	public DateDataType getFechaRecepcionInforme() {
 		return fechaRecepcionInforme;
 	}
 	public void setFechaRecepcionInforme(DateDataType fechaRecepcionInforme) {
 		this.fechaRecepcionInforme = fechaRecepcionInforme;
-	}*/
+	}
 	public DateDataType getUltimaModificacionInforme() {
 		return ultimaModificacionInforme;
 	}

@@ -132,38 +132,28 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	private String codigoPostal;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Integer numeroDormitorios;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "comercialNumBanyos")
 	private Integer numeroBanyos;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "comercialNumAseos")
 	private Integer numeroAseos;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(procesar = false)
 	private Integer numeroPlazasGaraje;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean terraza;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean patio;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean ascensor;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(procesar = false)
 	private Float utilSuperficie;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean rehabilitado;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "anyoRehabilitacion")
 	private Integer anyoRehabilitacion;
 
@@ -179,136 +169,105 @@ public class InformeMediadorDto implements Serializable {
 	private String codEstadoConservacion;
 	
 	@EntityDefinition(procesar = false)
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean anejoTrastero;
 	
 	@EntityDefinition(procesar = false)
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean anejoGaraje;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDRatingCocina.class,foreingField="codigo", 
 				message = "El cocinaRating no existe", groups = { Insert.class, Update.class })
 	private String cocinaRating;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean cocinaAmueblada;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private List<String> codesOrientacion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoClimatizacion.class,foreingField="codigo",  message = "El codCalefaccion no existe", 
 	groups = { Insert.class,Update.class })
 	private String codCalefaccion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoCalefaccion.class,foreingField="codigo",  message = "El codTipoCalefaccion no existe", 
 				groups = { Insert.class,Update.class })
 	private String codTipoCalefaccion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoClimatizacion.class,foreingField="codigo",  message = "El codTipoCalefaccion no existe", 
 				groups = { Insert.class,Update.class })
 	private String codAireAcondicionado;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	public Boolean existenArmariosEmpotrados;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float superficieTerraza;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float superficiePatio;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDExteriorInterior.class,foreingField="codigo",  message = "El codTipoCalefaccion no existe", 
 				groups = { Insert.class,Update.class })
 	private String exteriorInterior;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	public Boolean existenZonasVerdes;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	public Boolean existeConserjeVigilancia;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDDisponibilidad.class,foreingField="codigo",  message = "El jardin no existe", 
 				groups = { Insert.class,Update.class })
 	private String jardin;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDDisponibilidad.class,foreingField="codigo",  message = "El piscina no existe", 
 				groups = { Insert.class,Update.class })
 	private String piscina;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean existenInstalacionesDeportivas;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDDisponibilidad.class,foreingField="codigo",  message = "El piscina no existe", 
 				groups = { Insert.class,Update.class })
 	public String gimnasio;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean accesoMinusvalidosOtrasCaracteristicas;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoConservacionEdificio.class, message = "El codEstadoConservacionEdificio no existe", groups = {
 			Insert.class, Update.class })
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacionEdificio.class)
 	private String codEstadoConservacionEdificio;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "numPlantas")
 	private Integer numeroPlantasEdificio;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoPuerta.class,foreingField="codigo",  message = "El codTipoPuertaAcceso no existe", 
 				groups = { Insert.class,Update.class })
 	private String codTipoPuertaAcceso;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoPuertasInteriores no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoPuertasInteriores;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoVentanas no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoVentanas;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoPersianas no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoPersianas;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoPintura no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoPintura;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoSolados no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoSolados;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDAdmision.class,foreingField="codigo",  message = "El codAdmiteMascota no existe", 
 				groups = { Insert.class,Update.class })
 	private String codAdmiteMascota;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoMobiliario.class,foreingField="codigo",  message = "El codEstadoBanyos no existe", 
 				groups = { Insert.class,Update.class })
 	private String codEstadoBanyos;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDValoracionUbicacion.class,foreingField="codigo",  message = "El codValoracionUbicacion no existe", 
 				groups = { Insert.class,Update.class })
 	private String codValoracionUbicacion;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDUbicacionActivo.class,foreingField="codigo",  message = "El codUbicacion no existe",
 				groups = { Insert.class, Update.class })
 	@EntityDefinition(propertyName = "ubicacionActivo", classObj = DDUbicacionActivo.class)
@@ -318,8 +277,6 @@ public class InformeMediadorDto implements Serializable {
 	
 	private Boolean aptoUsoEnBruto;
 	
-	//@Diccionary(clase = .class,foreingField="codigo",  message = "El codAccesibilidad no existe",
-	//groups = { Insert.class, Update.class })
 	private String codAccesibilidad;
 	
 	private Float edificabilidadSuperficieTecho;
@@ -368,25 +325,18 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoVenta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoMaxRenta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoMinRenta;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoRenta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Integer numeroSalones;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Integer numeroEstancias;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Integer numeroPlantas;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private List<TestigosOpcionalesDto> testigos;
 
 	

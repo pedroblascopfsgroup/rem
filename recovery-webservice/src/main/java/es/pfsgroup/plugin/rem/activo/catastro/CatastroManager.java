@@ -235,6 +235,7 @@ public class CatastroManager implements CatastroApi {
 			dto = new DtoDatosCatastroGrid();
 			
 			dto.setNombre(GEODISTANCIA);
+			
 			Double geodistancia = calculoGeodistancia(
 				(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().doubleValue() : 0.0),
 				(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().doubleValue() : 0.0),
@@ -242,8 +243,8 @@ public class CatastroManager implements CatastroApi {
 				(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().doubleValue() : 0.0)
 			);
 			
-			dto.setDatoRem(geodistancia.toString());
-			dto.setDatoCatastro(geodistancia.toString());
+			dto.setDatoRem("-");
+			dto.setDatoCatastro("-");
 			dto.setCoincidencia(calculoCoincidencia(geodistancia));
 			
 			listDto.add(dto);

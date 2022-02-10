@@ -281,15 +281,17 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 				if (!Checks.esNulo(cliente)) {
-					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()) {
-						if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
-							Activo activo = (Activo) genericDao.get(Activo.class,
-									genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-							if(activo != null) {
-								cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento()));
-								genericDao.save(ClienteComercial.class,cliente);
-								errorsList.put("idCliente", cliente.getId().toString());
-							}
+					if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
+						Activo activo = (Activo) genericDao.get(Activo.class,
+								genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
+						if(activo != null) {
+							String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
+							cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
+							genericDao.save(ClienteComercial.class,cliente);
+							InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+							iap.setIdPersonaHayaCaixa(idPersonaCaixa);
+							genericDao.save(InfoAdicionalPersona.class, iap);
+							errorsList.put("idCliente", cliente.getId().toString());
 						}
 					}
 					visita.setCliente(cliente);

@@ -165,8 +165,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         genericDao.save(HistoricoTareaPbc.class, htp);
         genericDao.save(OfertaCaixa.class, ofrCaixa);
             
-        if(ofrCaixa.getOferta() != null  && (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))){
-        	dto.setRiesgoOperacion(rop.getCodigo());
+        if(ofrCaixa.getOferta() != null  
+        		&& (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))
+        		&& dto.getPuedeAvanzar() != null && dto.getPuedeAvanzar()){
+            dto.setRiesgoOperacion(rop.getCodigo());
         	adapter.save(createRequestAccionCalculoRiesgo(dto));
         }
         

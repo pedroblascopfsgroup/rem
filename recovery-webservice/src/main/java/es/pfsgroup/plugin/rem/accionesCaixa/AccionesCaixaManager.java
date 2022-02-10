@@ -159,7 +159,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             
         if(ofrCaixa.getOferta() != null  
         		&& (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))
-        		&& dto.isPuedeAvanzar()){
+        		&& dto.getPuedeAvanzar() != null && dto.getPuedeAvanzar()){
         	adapter.save(createRequestAccionCalculoRiesgo(dto));
         }
         

@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -36,10 +37,6 @@ import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
@@ -281,18 +278,23 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 				if (!Checks.esNulo(cliente)) {
-					if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
-						Activo activo = (Activo) genericDao.get(Activo.class,
-								genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-						if(activo != null) {
-							String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
-							cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
-							genericDao.save(ClienteComercial.class,cliente);
-							InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
-							iap.setIdPersonaHayaCaixa(idPersonaCaixa);
-							genericDao.save(InfoAdicionalPersona.class, iap);
-							errorsList.put("idCliente", cliente.getId().toString());
+					InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
+						|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
+						if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
+							Activo activo = (Activo) genericDao.get(Activo.class,
+									genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
+							if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
+								String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
+								cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
+								genericDao.save(ClienteComercial.class,cliente);
+								iap.setIdPersonaHayaCaixa(idPersonaCaixa);
+								genericDao.save(InfoAdicionalPersona.class, iap);
+								errorsList.put("idCliente", cliente.getId().toString());
+							}
 						}
+					} else {
+						errorsList.put("idCliente", cliente.getId().toString());
 					}
 					visita.setCliente(cliente);
 				}
@@ -339,10 +341,16 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 								visitaDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
-					if (apiResp != null && apiResp.getIdPersonaHaya() == null){
+					InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+					if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
+							|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
 						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
 						apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
 						genericDao.save(ActivoProveedor.class,apiResp);
+						iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+						genericDao.save(InfoAdicionalPersona.class,iap);
+						errorsList.put("idResponsable", apiResp.getId().toString());
+					}else{
 						errorsList.put("idResponsable", apiResp.getId().toString());
 					}
 					visita.setApiResponsable(apiResp);
@@ -436,16 +444,23 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 					if (!Checks.esNulo(cliente)) {
-						if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()) {
+						InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+						if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
+								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
 							if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
 								Activo activo = (Activo) genericDao.get(Activo.class,
 										genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-								if(activo != null) {
-									cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento()));
+								if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
+									String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
+									cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
 									genericDao.save(ClienteComercial.class,cliente);
+									iap.setIdPersonaHayaCaixa(idPersonaCaixa);
+									genericDao.save(InfoAdicionalPersona.class, iap);
 									errorsList.put("idCliente", cliente.getId().toString());
 								}
 							}
+						} else {
+							errorsList.put("idCliente", cliente.getId().toString());
 						}
 						visita.setCliente(cliente);
 					}
@@ -514,10 +529,16 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 									visitaDto.getIdProveedorRemResponsable()));
 					if (!Checks.esNulo(apiResp)) {
-						if (apiResp != null && apiResp.getIdPersonaHaya() == null){
+						InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+						if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
+								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
 							MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
 							apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
 							genericDao.save(ActivoProveedor.class,apiResp);
+							iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+							genericDao.save(InfoAdicionalPersona.class,iap);
+							errorsList.put("idResponsable", apiResp.getId().toString());
+						}else{
 							errorsList.put("idResponsable", apiResp.getId().toString());
 						}
 						visita.setApiResponsable(apiResp);
@@ -824,11 +845,17 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	public void checkReplicarClienteProveedor(ArrayList<Map<String,Object>> errorList) {
 		for(Map<String, Object> map : errorList) {
 			if(map.get("idCliente") != null) {
-				interlocutorCaixaService.callReplicateClientAsync(Long.parseLong(map.get("idCliente").toString()), CaixaBcRestClient.ID_CLIENTE);
+				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(map.get("idCliente").toString()), CaixaBcRestClient.ID_CLIENTE);
 			}
 			if(map.get("idResponsable") != null) {
-				interlocutorCaixaService.callReplicateClientAsync(Long.parseLong(map.get("idResponsable").toString()), CaixaBcRestClient.ID_PROVEEDOR);
+				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(map.get("idResponsable").toString()), CaixaBcRestClient.ID_PROVEEDOR);
 			}
 		}
+	}
+
+	@Override
+	public void callAsync(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception {
+		checkReplicarClienteProveedor(listaRespuesta);
+		llamarServicioContactos(listaVisitaDto, jsonFields);
 	}
 }

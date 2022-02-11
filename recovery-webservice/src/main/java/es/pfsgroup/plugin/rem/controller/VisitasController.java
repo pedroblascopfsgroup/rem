@@ -112,8 +112,22 @@ public class VisitasController {
 			} 
 			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
-				visitaApi.checkReplicarClienteProveedor(listaRespuesta);
-				visitaApi.llamarServicioContactos(listaVisitaDto, jsonFields);
+				final ArrayList<Map<String, Object>> listaRespuestaAsync = listaRespuesta;
+				final List<VisitaDto> listaVisitaDtoAsync = listaVisitaDto;
+				final JSONObject jsonFieldsAsync = jsonFields;
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						try {
+							visitaApi.callAsync(listaRespuestaAsync, listaVisitaDtoAsync, jsonFieldsAsync);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				thread.start();
+
+				//visitaApi.checkReplicarClienteProveedor(listaRespuesta);
+				//visitaApi.llamarServicioContactos(listaVisitaDto, jsonFields);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");

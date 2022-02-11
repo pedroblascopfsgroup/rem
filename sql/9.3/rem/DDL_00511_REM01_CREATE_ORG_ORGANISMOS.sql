@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220209
+--## FECHA_CREACION=20220211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17109
@@ -68,6 +68,7 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
 		ORG_ID           			NUMBER(16,0)                  NOT NULL,
+		ACT_ID        				NUMBER(16,0),
 		DD_CCA_ID        			NUMBER(16,0),
 		DD_ORG_ID					NUMBER(16,0),
 		DD_TAU_ID					NUMBER(16,0),
@@ -96,6 +97,12 @@ BEGIN
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ORG_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
+
+	-- Creamos foreing key activos
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT ORG_ACT_ID_FK FOREIGN KEY (ACT_ID)
+                       REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID)';					   
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' ORG_ACT_ID_FK... FK creada.');
 
 	-- Creamos foreing key comunidades autónomas
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT ORG_DD_CCA_ID_FK FOREIGN KEY (DD_CCA_ID)

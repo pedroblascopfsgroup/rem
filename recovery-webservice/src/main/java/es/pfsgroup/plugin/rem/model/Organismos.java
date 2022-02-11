@@ -92,6 +92,10 @@ public class Organismos implements Serializable, Auditable {
 	@SequenceGenerator(name = "OrganismosGenerator", sequenceName = "S_ORG_ORGANISMOS")
 	private Long id;
 
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private Activo activo;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ORG_ID")
 	private DDOrganismos organismo;
@@ -167,6 +171,14 @@ public class Organismos implements Serializable, Auditable {
 
 	public void setComunidad(DDComunidadAutonoma comunidad) {
 		this.comunidad = comunidad;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
 }

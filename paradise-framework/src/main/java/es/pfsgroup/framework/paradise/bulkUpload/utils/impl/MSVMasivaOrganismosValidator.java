@@ -51,8 +51,8 @@ public class MSVMasivaOrganismosValidator extends MSVExcelValidatorAbstract{
 	
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
-		static final int FILA_CABECERA = 1;
-		static final int DATOS_PRIMERA_FILA = 2;
+		static final int FILA_CABECERA = 0;
+		static final int DATOS_PRIMERA_FILA = 1;
 		
         static final int NUM_ACTIVO_HAYA = 	0;
 		static final int COD_ORGANISMO = 	1;

@@ -37,6 +37,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -92,6 +93,9 @@ public class GenericController extends ParadiseJsonController{
 
 	@Autowired
 	private AccionesCaixaController accionesCaixaController;
+	
+	@Autowired
+    public AccionesCaixaApi accionesCaixaApi;
 	
 
 	
@@ -935,6 +939,7 @@ public class GenericController extends ParadiseJsonController{
 		try {
 			jsonData = (AvanzarDatosPBCDto) request.getRequestData(AvanzarDatosPBCDto.class);
 			model.put("success", genericApi.avanzaDatosPbc(jsonData));
+			accionesCaixaApi.sendReplicarOfertaAccion(jsonData.getIdExpediente());
 		} catch (Exception e) {
 			model.put("error", e.getMessage());
 			model.put("descError", "No se han obtenido fotos para este activo/Agrupacion");

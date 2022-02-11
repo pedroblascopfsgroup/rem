@@ -135,6 +135,8 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FECHA_TITULO_Y_POSESION = "AFTYFS";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION = "CFGREC";
 
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DE_ORGANISMOS = "CMO";
+
 	private static final long serialVersionUID = 5938440720826995243L;
 
 

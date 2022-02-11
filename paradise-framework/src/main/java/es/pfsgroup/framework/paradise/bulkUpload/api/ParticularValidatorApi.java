@@ -1510,4 +1510,10 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	Boolean existeOrganismo(String codOrganismo);
+
+	Boolean existeComunidadAutonoma(String codComunidadAutonoma);
+
+	Boolean existeActuacion(String codActuacion);
+
 }

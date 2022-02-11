@@ -1,6 +1,9 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +24,8 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVMasivaAltaBBVAValidator.COL_NUM;
 
 @Service
 @Transactional()
@@ -9399,5 +9404,53 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						);
 		return !"0".equals(resultado);
     }
+	
+	@Override
+	public Boolean existeOrganismo(String codOrganismo){
+		if(Checks.esNulo(codOrganismo) || !StringUtils.isAlphanumeric(codOrganismo))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codOrganismo", codOrganismo);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_ORG_ORGANISMOS WHERE"
+				+ "		 DD_ORG_CODIGO = :codOrganismo "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeComunidadAutonoma(String codComunidadAutonoma){
+		if(Checks.esNulo(codComunidadAutonoma) || !StringUtils.isAlphanumeric(codComunidadAutonoma))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codComunidadAutonoma", codComunidadAutonoma);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM REMMASTER.DD_CCA_COMUNIDAD WHERE"
+				+ "		 DD_CCA_CODIGO = :codComunidadAutonoma "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeActuacion(String codActuacion){
+		if(Checks.esNulo(codActuacion) || !StringUtils.isAlphanumeric(codActuacion))
+			return false;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codActuacion", codActuacion);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TAU_TIPO_ACTUACION WHERE"
+				+ "		 DD_TAU_CODIGO = :codActuacion "
+				+ "		 	AND BORRADO = 0");
+		return "0".equals(resultado);
+	}
 }
 

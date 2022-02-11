@@ -207,8 +207,8 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 	}
     
     private boolean calculaT015CalculoRiesgo(String codTarea, String codEstado) {
-    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
-                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
             return true;
 
         return false;

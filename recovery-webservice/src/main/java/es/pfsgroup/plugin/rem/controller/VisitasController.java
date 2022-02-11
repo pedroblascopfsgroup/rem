@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,16 +117,16 @@ public class VisitasController {
 				final ArrayList<Map<String, Object>> listaRespuestaAsync = listaRespuesta;
 				final List<VisitaDto> listaVisitaDtoAsync = listaVisitaDto;
 				final JSONObject jsonFieldsAsync = jsonFields;
-				Thread thread = new Thread(new Runnable() {
-					public void run() {
+				/*Thread thread = new Thread(new Runnable() {
+					public void run() {*/
 						try {
-							visitaApi.callAsync(listaRespuestaAsync, listaVisitaDtoAsync, jsonFieldsAsync);
-						} catch (Exception e) {
+							visitaApi.callLlamadasVisitas(listaRespuestaAsync, listaVisitaDtoAsync, jsonFieldsAsync);
+						} catch (HttpClientException e) {
 							e.printStackTrace();
-						}
+						}/*
 					}
 				});
-				thread.start();
+				thread.start();*/
 
 				//visitaApi.checkReplicarClienteProveedor(listaRespuesta);
 				//visitaApi.llamarServicioContactos(listaVisitaDto, jsonFields);

@@ -1,6 +1,6 @@
 --#########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220211
+--## FECHA_CREACION=20220212
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-10952
@@ -38,7 +38,7 @@ BEGIN
 		      
 		      V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1
 						USING(
-							SELECT DISTINCT ACT2.ACt_ID,ACT.ACT_NUM_aCTIVO,
+							SELECT DISTINCT ACT.ACt_ID,ACT.ACT_NUM_aCTIVO,
                                 adn.adn_fecha_titulo,
                                 BIE_ADJ.BIE_ADJ_F_DECRETO_FIRME,
                                 COALESCE(bie_adj.bie_adj_f_decreto_firme,adn.adn_fecha_titulo) AS FECHA_PONER

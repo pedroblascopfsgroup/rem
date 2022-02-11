@@ -1525,10 +1525,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				el tipo comercializacion en informe debe modificar el del activo?*/
 		
 		//Caracteristicas del activo
-		informeEntity.setNumDormitorios(informe.getNumeroDormitorios().longValue());
-		informeEntity.setNumBanyos(informe.getNumeroBanyos().longValue());
-		informeEntity.setNumAseos(informe.getNumeroAseos().longValue());
-		informeEntity.setNumGaraje(informe.getNumeroPlazasGaraje().longValue());		
+		informeEntity.setNumDormitorios(!Checks.esNulo(informe.getNumeroDormitorios())
+				? informe.getNumeroDormitorios().longValue() : null);
+		informeEntity.setNumBanyos(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroBanyos().longValue() : null);
+		informeEntity.setNumAseos(!Checks.esNulo(informe.getNumeroAseos())
+				? informe.getNumeroAseos().longValue() : null);
+		informeEntity.setNumGaraje(!Checks.esNulo(informe.getNumeroPlazasGaraje())
+				? informe.getNumeroPlazasGaraje().longValue() : null);	
 		informeEntity.setTerraza(!Checks.esNulo(informe.getTerraza())
 				? informe.getTerraza() ? ddSi : ddNo : null);
 		informeEntity.setPatio(!Checks.esNulo(informe.getPatio())
@@ -1558,9 +1562,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				? informe.getOcupado() ? ddSi : ddNo : null);
 		informeEntity.setVisitable(!Checks.esNulo(informe.getVisitableFechaVisita())
 				? informe.getVisitableFechaVisita() ? ddSi : ddNo : null);
-		informeEntity.setNumSalones(informe.getNumeroSalones().longValue());
-		informeEntity.setNumEstancias(informe.getNumeroEstancias().longValue());
-		informeEntity.setNumPlantas(informe.getNumeroPlantas().longValue());
+		informeEntity.setNumSalones(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroSalones().longValue() : null);
+		informeEntity.setNumEstancias(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroEstancias().longValue() : null);
+		informeEntity.setNumPlantas(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroPlantas().longValue() : null);
 		
 		//Descripcion comercial
 		informeEntity.setDescripcionComercial(informe.getDescripcionComercial());
@@ -1616,7 +1623,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			informeEntity.setEstadoConservacionEdificio(esc);
 		}
 		
-		informeEntity.setNumPlantasEdificio(informe.getNumeroPlantasEdificio().longValue());
+		informeEntity.setNumPlantasEdificio(!Checks.esNulo(informe.getNumeroPlantasEdificio())
+				? informe.getNumeroPlantasEdificio().longValue() : null);
 		
 		if (!Checks.esNulo(informe.getCodTipoPuertaAcceso())) {
 			DDTipoPuerta tpu = genericDao.get(DDTipoPuerta.class,

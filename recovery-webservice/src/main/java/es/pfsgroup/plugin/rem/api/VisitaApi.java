@@ -135,4 +135,6 @@ public interface VisitaApi {
 	public void llamarServicioContactos(List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
 
 	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> listaRespuesta);
+
+	void callAsync(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
 }

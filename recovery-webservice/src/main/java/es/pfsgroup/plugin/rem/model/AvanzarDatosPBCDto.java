@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class AvanzarDatosPBCDto implements Serializable {
     private Long idTarea;
+    private Long idExpediente;
     private String comboResultado;
     private DatosPBCDto datosPBCDto;
     
@@ -25,5 +26,11 @@ public class AvanzarDatosPBCDto implements Serializable {
 	}
 	public void setDatosPBCDto(DatosPBCDto datosPBCDto) {
 		this.datosPBCDto = datosPBCDto;
+	}
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
 	}
 }

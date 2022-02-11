@@ -42,10 +42,8 @@ public class UpdaterServiceCalculoRiesgoAlquilerNoComercial implements UpdaterSe
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		String comboResultado = null;
-		String respuestaComprador = null;
 	
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -70,7 +68,6 @@ public class UpdaterServiceCalculoRiesgoAlquilerNoComercial implements UpdaterSe
 				if(estadoBcCodigo != null) {
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcCodigo));
 					expediente.setEstadoBc(estadoBc);
-					estadoBcModificado = true;
 				}
 				
 				if(estadoCodigo != null) {
@@ -85,9 +82,7 @@ public class UpdaterServiceCalculoRiesgoAlquilerNoComercial implements UpdaterSe
 				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expediente, respuestaComprador));
-				}
+				
 			}
 		}
 	}

@@ -74,7 +74,8 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
                 || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
                 || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado)
-                || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado);
+                || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado)
+                || calculaT015CalculoRiesgo(codTarea,codEstado) || calculaT018CalculoRiesgo(codTarea,codEstado);
     }
 
 	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -200,6 +201,21 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     private boolean calculaT018DatosPBC(String codTarea, String codEstado) {
     	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT015CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    private boolean calculaT018CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
             return true;
 
         return false;

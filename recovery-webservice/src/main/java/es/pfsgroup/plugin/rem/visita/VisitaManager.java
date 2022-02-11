@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -854,7 +853,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 
 	@Override
-	public void callAsync(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception {
+	public void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception {
 		checkReplicarClienteProveedor(listaRespuesta);
 		llamarServicioContactos(listaVisitaDto, jsonFields);
 	}

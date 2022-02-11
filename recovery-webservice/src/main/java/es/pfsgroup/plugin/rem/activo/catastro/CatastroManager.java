@@ -235,16 +235,19 @@ public class CatastroManager implements CatastroApi {
 			dto = new DtoDatosCatastroGrid();
 			
 			dto.setNombre(GEODISTANCIA);
-			Double geodistancia = calculoGeodistancia(
-				(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().doubleValue() : 0.0),
-				(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().doubleValue() : 0.0),
-				(dtoCatastro.getLatitud() != null ? dtoCatastro.getLatitud().doubleValue() : 0.0),
-				(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().doubleValue() : 0.0)
-			);
 			
-			dto.setDatoRem(geodistancia.toString());
-			dto.setDatoCatastro(geodistancia.toString());
-			dto.setCoincidencia(calculoCoincidencia(geodistancia));
+			dto.setDatoRem("");
+			dto.setDatoCatastro("");
+			if(dtoCatastroRem.getLatitud() != null && dtoCatastroRem.getLongitud() != null && dtoCatastro.getLatitud() != null && dtoCatastro.getLongitud() != null) {
+				Double geodistancia = calculoGeodistancia(
+					(dtoCatastroRem.getLatitud() != null ? dtoCatastroRem.getLatitud().doubleValue() : 0.0),
+					(dtoCatastroRem.getLongitud() != null ? dtoCatastroRem.getLongitud().doubleValue() : 0.0),
+					(dtoCatastro.getLatitud() != null ? dtoCatastro.getLatitud().doubleValue() : 0.0),
+					(dtoCatastro.getLongitud() != null ? dtoCatastro.getLongitud().doubleValue() : 0.0)
+				);
+				dto.setCoincidencia(geodistancia < 1);
+				dto.setProbabilidad("Diferencia de distancia: " + String.format("%.2f", geodistancia));
+			}
 			
 			listDto.add(dto);
 			

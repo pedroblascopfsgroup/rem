@@ -1562,11 +1562,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				? informe.getOcupado() ? ddSi : ddNo : null);
 		informeEntity.setVisitable(!Checks.esNulo(informe.getVisitableFechaVisita())
 				? informe.getVisitableFechaVisita() ? ddSi : ddNo : null);
-		informeEntity.setNumSalones(!Checks.esNulo(informe.getNumeroBanyos())
+		informeEntity.setNumSalones(!Checks.esNulo(informe.getNumeroSalones())
 				? informe.getNumeroSalones().longValue() : null);
-		informeEntity.setNumEstancias(!Checks.esNulo(informe.getNumeroBanyos())
+		informeEntity.setNumEstancias(!Checks.esNulo(informe.getNumeroEstancias())
 				? informe.getNumeroEstancias().longValue() : null);
-		informeEntity.setNumPlantas(!Checks.esNulo(informe.getNumeroBanyos())
+		informeEntity.setNumPlantas(!Checks.esNulo(informe.getNumeroPlantas())
 				? informe.getNumeroPlantas().longValue() : null);
 		
 		//Descripcion comercial

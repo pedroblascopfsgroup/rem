@@ -42,7 +42,6 @@ public class UpdaterServiceCalculoRiesgoAlquiler implements UpdaterService {
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		String comboResultado = null;
 	
@@ -71,7 +70,6 @@ public class UpdaterServiceCalculoRiesgoAlquiler implements UpdaterService {
 				if(estadoBcCodigo != null) {
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcCodigo));
 					expediente.setEstadoBc(estadoBc);
-					estadoBcModificado = true;
 				}
 				
 				if(estadoCodigo != null) {
@@ -86,9 +84,6 @@ public class UpdaterServiceCalculoRiesgoAlquiler implements UpdaterService {
 				
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
-				}
 			}
 		}
 	}

@@ -341,6 +341,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 								visitaDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
 					InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+					visita.setApiResponsable(apiResp);
 					if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
 							|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
 						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
@@ -529,6 +530,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 									visitaDto.getIdProveedorRemResponsable()));
 					if (!Checks.esNulo(apiResp)) {
 						InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+						visita.setApiResponsable(apiResp);
 						if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
 								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
 							MaestroDePersonas maestroDePersonas = new MaestroDePersonas();

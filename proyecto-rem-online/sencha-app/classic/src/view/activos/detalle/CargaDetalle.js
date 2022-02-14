@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
     viewModel: {
         type: 'activodetalle'
     },
-        
+    scrollable: 'y', 
     requires: ['HreRem.model.ActivoCargas'],
     
     listeners: {
@@ -74,11 +74,11 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 									    type: 'table',
 									        // The total column count must be specified here
 									        columns: 2,
-									        trAttrs: {height: '45px', width: '100%'},
+									        trAttrs: {height: '25px', width: '100%'},
 									        tdAttrs: {width: '50%'},
 									        tableAttrs: {
 									            style: {
-									                width: '100%'
+									            	width: '100%'
 												}
 									        }
 										},
@@ -147,11 +147,11 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 									    type: 'table',
 									        // The total column count must be specified here
 									        columns: 2,
-									        trAttrs: {height: '45px', width: '100%'},
+									        trAttrs: {height: '25px', width: '100%'},
 									        tdAttrs: {width: '50%'},
 									        tableAttrs: {
 									            style: {
-									                width: '100%'
+									            	width: '100%'
 												}
 									        }
 										},
@@ -225,11 +225,11 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 									    type: 'table',
 									        // The total column count must be specified here
 									        columns: 2,
-									        trAttrs: {height: '45px', width: '100%'},
+									        trAttrs: {height: '25px', width: '100%'},
 									        tdAttrs: {width: '50%'},
 									        tableAttrs: {
 									            style: {
-									                width: '100%'
+									            	width: '100%'
 												}
 									        }
 										},
@@ -291,11 +291,11 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 								    type: 'table',
 								        // The total column count must be specified here
 								        columns: 2,
-								        trAttrs: {height: '45px', width: '100%'},
+								        trAttrs: {height: '25px', width: '100%'},
 								        tdAttrs: {width: '50%'},
 								        tableAttrs: {
 								            style: {
-								                width: '100%'
+								            	width: '100%'
 											}
 								        }
 									},
@@ -329,7 +329,96 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 						
 										]
 					                 
-					       }
+					       },
+					       {    
+								xtype:'fieldset',
+								padding: 10,
+								cls: 'x-fieldset-detalle-carga',
+								layout: {
+								    type: 'table',
+								    // The total column count must be specified here
+							        columns: 2,
+							        trAttrs: {height: '25px', width: '100%'},
+							        tdAttrs: {width: '50%'},
+							        tableAttrs: {
+							            style: {
+							            	width: '100%'
+										}
+							        }
+								},
+								defaultType: 'textfieldbase',
+								collapsed: false,
+								scrollable	: 'y',
+								bind : {
+									hidden: '{!isCarteraBankia}'
+								},
+								items :
+										[
+											{
+									        	xtype: 'comboboxfieldbase',
+									        	reference: 'indicadorPreferente',
+									        	name: 'indicadorPreferente',
+									        	editable: false,
+									        	readOnly: true,
+												fieldLabel: HreRem.i18n('header.indicador.preferente'),
+									        	bind: {
+													store: '{comboSiNoBoolean}',
+								            		value: '{carga.indicadorPreferente}'
+								            	}
+									        },
+									        {
+									        	xtype: 'comboboxfieldbase',
+									        	reference: 'identificadorCargaEjecutada',
+									        	name: 'identificadorCargaEjecutada',
+									        	editable: false,
+									        	readOnly: true,
+												fieldLabel: HreRem.i18n('header.identificador.carga.ejecutada'),
+									        	bind: {
+													store: '{comboSiNoBoolean}',
+								            		value: '{carga.identificadorCargaEjecutada}'
+								            	}
+									        },
+									        {
+									        	xtype: 'comboboxfieldbase',
+									        	reference: 'igualdadRango',
+									        	name: 'igualdadRango',
+									        	editable: false,
+									        	readOnly: true,
+												fieldLabel: HreRem.i18n('header.igualdad.rango'),
+									        	bind: {
+													store: '{comboSiNoBoolean}',
+								            		value: '{carga.igualdadRango}'
+								            	}
+									        },
+									        {
+									        	xtype: 'comboboxfieldbase',
+									        	reference: 'identificadorCargaIndefinida',
+									        	name: 'identificadorCargaIndefinida',
+									        	editable: false,
+									        	readOnly: true,
+												fieldLabel: HreRem.i18n('header.identificador.carga.idefinida'),
+									        	bind: {
+													store: '{comboSiNoBoolean}',
+								            		value: '{carga.identificadorCargaIndefinida}'
+								            	}
+									        },
+									        {
+									        	xtype: 'comboboxfieldbase',
+									        	reference: 'identificadorCargaEconomica',
+									        	name: 'identificadorCargaEconomica',
+									        	editable: false,
+									        	readOnly: true,
+												fieldLabel: HreRem.i18n('header.identificador.carga.economica'),
+									        	bind: {
+													store: '{comboSiNoBoolean}',
+								            		value: '{carga.identificadorCargaEconomica}'
+								            	}
+									        }
+							       
+					
+									]
+				                 
+				       }
 					]
     			}
     	

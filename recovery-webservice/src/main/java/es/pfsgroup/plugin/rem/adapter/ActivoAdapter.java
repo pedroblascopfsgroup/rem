@@ -915,6 +915,31 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "fechaPresentacionRpCarta",
 								activoCarga.getFechaPresentacionRpCarta());
 					}
+					
+					if (!Checks.esNulo(activoCarga.getIndicadorPreferente())) {
+						beanUtilNotNull.copyProperty(cargaDto, "indicadorPreferente",
+								activoCarga.getIndicadorPreferente());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEjecutada())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEjecutada",
+								activoCarga.getIdentificadorCargaEjecutada());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIgualdadRango())) {
+						beanUtilNotNull.copyProperty(cargaDto, "igualdadRango",
+								activoCarga.getIgualdadRango());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaIndefinida())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaIndefinida",
+								activoCarga.getIdentificadorCargaIndefinida());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEconomica())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEconomica",
+								activoCarga.getIdentificadorCargaEconomica());
+					}
 
 
 				} catch (IllegalAccessException e) {

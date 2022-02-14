@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211104
+--## FECHA_CREACION=20220210
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16167
+--## INCIDENCIA_LINK=HREOS-17073
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial 
 --##        0.2 Revisión - [HREOS-15516] - Alejandra García
 --##        0.3 Añadir nuevos registros - [HREOS-16167] - Alejandra García
+--##        0.4 El DD_ETG_CODIGO 178 estaba repetido lo he cambiado por el 179 - [HREOS-17073] - Alejandra García
 --#########################################
 --*/
 
@@ -117,7 +118,7 @@ DECLARE
 		T_TABLA('11','51','176','3','22','1','','','',''),
 		T_TABLA('16','86','177','3','42','5','','','',''),
 		T_TABLA('16','87','178','3','42','5','','','',''),
-		T_TABLA('16','85','178','3','42','5','','','',''),
+		T_TABLA('16','85','179','3','42','5','','','',''),
 		T_TABLA('13','56','180','3','2','0','','','',''),
 		T_TABLA('13','55','181','3','2','0','','','',''),
 		T_TABLA('19','100','182','3','31','9','3','31','10','0'),

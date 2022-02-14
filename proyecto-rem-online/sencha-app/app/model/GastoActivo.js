@@ -104,6 +104,12 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name:'elementoPep'
+            },
+            {
+            	name:'promocionCodigo'
+            },
+            {
+            	name:'promocion'
             }
             
     ],

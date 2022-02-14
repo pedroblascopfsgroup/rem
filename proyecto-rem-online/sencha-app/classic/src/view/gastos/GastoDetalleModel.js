@@ -930,6 +930,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     			type: 'uxproxy',
     			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
     		}
-    	}
+    	},
+
+    	comboSiNoRem: {
+            data : [
+                {"codigo":"1", "descripcion":"Si"},
+                {"codigo":"0", "descripcion":"No"}
+            ]
+        }
 	}
 });

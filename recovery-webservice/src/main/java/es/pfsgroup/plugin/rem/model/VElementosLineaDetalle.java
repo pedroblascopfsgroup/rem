@@ -106,6 +106,12 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "ELEMENTO_PEP")
 	private String elementoPep;
+	
+	@Column(name = "PROMOCION_COD")
+	private String promocionCodigo;
+	
+	@Column(name = "PROMOCION_DESC")
+	private String promocion;
 
 	public Long getId() {
 		return id;
@@ -329,6 +335,22 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setElementoPep(String elementoPep) {
 		this.elementoPep = elementoPep;
+	}
+
+	public String getPromocionCodigo() {
+		return promocionCodigo;
+	}
+
+	public void setPromocionCodigo(String promocionCodigo) {
+		this.promocionCodigo = promocionCodigo;
+	}
+
+	public String getPromocion() {
+		return promocion;
+	}
+
+	public void setPromocion(String promocion) {
+		this.promocion = promocion;
 	}
 
 }

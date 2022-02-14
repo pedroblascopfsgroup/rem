@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220202
+--## FECHA_CREACION=20220210
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17087
+--## INCIDENCIA_LINK=HREOS-17073
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -20,6 +20,7 @@
 --##        0.7 Añadir Promociones y cambiar todos los códigos de los subtipos nuevos del PEP - [HREOS-17018] - Alejandra García
 --##        0.8 Modificar códigos gastos IAE - [HREOS-17087] - Alejandra García
 --##        0.9 Dejar vacía la posición del campo DD_EAL_CODIGO en el array y quitarlo del insert - [HREOS-17087] - Alejandra García
+--##        0.10 Cambio del campo PROMOCION por el DD_PRO_ID - [HREOS-17073] - Alejandra García
 --#########################################
 --*/
 
@@ -43,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_TABLA IS TABLE OF T_TABLA;
 	
     M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(															--*******El DD_EAL_CODIGO ya NO se utiliza en la tabla, el array en esa posición está vacío**
-      --DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    PROMOCION
+      --DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    DD_PRO_ID
 		T_TABLA('185','XXXX-22-2-COM','22','00','2','05','26','01','','','null','',''),
 		T_TABLA('186','XXXX-22-2-COM','22','00','2','05','27','01','','','null','',''),
 		T_TABLA('187','XXXX-22-2-A-COM','22','00','3','05','26','03','','','null','',''),
@@ -77,9 +78,9 @@ DECLARE
 		T_TABLA('211','XXXX-22-2-OTROS','22','00','45','09','38','01','','','null','',''),
 		T_TABLA('212','XXXX-22-2-A-OTROS','22','00','46','09','38','03','','','null','',''),
 		T_TABLA('213','XXXX-22-1-PUE','22','00','48','15','82','01','','','0','',''),
-		T_TABLA('315','XXXX-22-1-PUE','22','00','48','15','82','03','','','0','',''),
+		T_TABLA('397','XXXX-22-1-PUE','22','00','48','15','82','03','','','0','',''),
 		T_TABLA('214','XXXX-22-1-ALA','22','00','49','16','86','01','','','0','',''),
-		T_TABLA('316','XXXX-22-1-ALA','22','00','49','16','86','03','','','0','',''),
+		T_TABLA('398','XXXX-22-1-ALA','22','00','49','16','86','03','','','0','',''),
 		T_TABLA('215','XXXX-22-1-VIGILANCIA','22','00','50','16','85','','','','null','',''),
 		T_TABLA('216','XXXX-22-2-INF MNTO','22','00','52','14','68','01','','','null','',''),
 		T_TABLA('217','XXXX-22-3-ASESORIA','22','00','69','11','49','01','','','null','',''),
@@ -270,6 +271,8 @@ DECLARE
 		T_TABLA('395','0015-22-4-10017966_SG','22','03','29','','','','','','null','???','10017966'),
 		T_TABLA('396','0015-22-4-5933434_SG','22','03','78','','','','','','null','???','5933434')*/--FALTA SABER EL DD_SED_CODIGO
 
+		/*Los códigos 397(XXXX-22-1-PUE) y 398(XXXX-22-1-ALA) está cogismos por dos registros de arriba, líneas 81 y 83*/
+
 
     ); 
     V_TMP_TABLA T_TABLA;
@@ -324,7 +327,7 @@ BEGIN
 				, EJE_ID
 				, ELEMENTO_PEP
 				, DD_SED_ID
-				, PROMOCION
+				, DD_PRO_ID
 		  ) VALUES (
 			  	'||V_ESQUEMA||'.S_DD_ETG_EQV_TIPO_GASTO_RU.NEXTVAL
 				  , (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(6)||''' AND BORRADO = 0 )
@@ -348,7 +351,7 @@ BEGIN
 				  , (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'' AND EJE2.BORRADO = 0 )
 				  , '''||V_TMP_TABLA(2)||'''
 				  , (SELECT DD_SED_ID FROM '||V_ESQUEMA||'.DD_SED_SUBPARTIDA_EDIFICACION WHERE DD_SED_CODIGO = '''||V_TMP_TABLA(12)||''' AND BORRADO = 0 )
-				  , '''||V_TMP_TABLA(13)||'''
+				  , (SELECT DD_PRO_ID FROM '||V_ESQUEMA||'.DD_PRO_PROMOCIONES WHERE DD_PRO_CODIGO = '''||V_TMP_TABLA(13)||''' AND BORRADO = 0 )
 		)';
 		EXECUTE IMMEDIATE V_SQL;	
 	

@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDPromociones;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
@@ -1466,6 +1467,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleEntidad.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalleEntidad.getAuditoria().setFechaModificar(new Date());
 		
+		
+		if (!Checks.esNulo(dto.getPrimeraPosesion())) {
+			gastoLineaDetalleEntidad.setPrimeraPosesion(dto.getPrimeraPosesion().equals("1") ? true : false);
+		}
+		
 		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 		
 		if(gastoLineaDetalleEntidad.getGastoLineaDetalle() != null) {
@@ -2089,6 +2095,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						DDSubpartidasEdificacion subpartida = genericDao.get(DDSubpartidasEdificacion.class, filtroCodigoSubpartida);
 						if (subpartida != null) {
 						   gldEnt.setSubpartidasEdificacion(subpartida);
+						}
+					}
+					if (activoTrabajo.getTrabajo().getNombreProyecto() != null) {
+						Filter filtroCodigoProyecto = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getTrabajo().getNombreProyecto());
+						DDPromociones codigoProyecto = genericDao.get(DDPromociones.class, filtroCodigoProyecto);
+						if (codigoProyecto != null) {
+						   gldEnt.setPromocion(codigoProyecto);
 						}
 					}
 				}

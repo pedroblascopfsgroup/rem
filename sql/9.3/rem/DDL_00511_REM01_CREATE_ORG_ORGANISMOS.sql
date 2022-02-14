@@ -68,7 +68,7 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
 		ORG_ID           			NUMBER(16,0)                  NOT NULL,
-		ACT_ID        				NUMBER(16,0),
+		ACT_ID						NUMBER(16,0)				  NOT NULL,
 		DD_CCA_ID        			NUMBER(16,0),
 		DD_ORG_ID					NUMBER(16,0),
 		DD_TAU_ID					NUMBER(16,0),
@@ -98,12 +98,12 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 
-	-- Creamos foreing key activos
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT ORG_ACT_ID_FK FOREIGN KEY (ACT_ID)
+		-- Creamos foreing key comunidades autónomas
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT ORG_ACT_ID_ID_FK FOREIGN KEY (ACT_ID)
                        REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID)';					   
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' ORG_ACT_ID_FK... FK creada.');
-
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' ORG_DD_CCA_ID_FK... FK creada.');
+	
 	-- Creamos foreing key comunidades autónomas
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT ORG_DD_CCA_ID_FK FOREIGN KEY (DD_CCA_ID)
                        REFERENCES '||V_ESQUEMA_M||'.DD_CCA_COMUNIDAD (DD_CCA_ID)';					   

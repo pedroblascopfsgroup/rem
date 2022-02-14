@@ -1731,7 +1731,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						xtype: 'historicodestinocomercialactivoform'
 					}
 					]
-			} // Fin Histórico Destino Comercial
+			}, // Fin Histórico Destino Comercial
+			{	// Registro Comunicación organismos ---------------------------------------------------------
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.historico.comunicacion.organismos'),
+				items :
+					[
+						{
+							xtype: 'organismosGrid'
+						}
+					]
+			} //Registro Comunicación organismos
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });

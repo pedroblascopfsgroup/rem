@@ -48,6 +48,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -147,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDOrganismos;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
@@ -164,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTAUTipoActuacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
@@ -9635,5 +9638,87 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public List<DtoOrganismos> getOrganismosByActivo(Long idActivo) {
+		List<DtoOrganismos> organismos = new ArrayList<DtoOrganismos>();
+		
+		if (!Checks.esNulo(idActivo)) {
+			Order order = new Order(OrderType.DESC, "id");
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			List<Organismos> organismosList = genericDao.getListOrdered(Organismos.class,order, filter);
+			
+			for (Organismos organismo : organismosList) {
+				DtoOrganismos dto = this.organismoToDto(organismo);
+				organismos.add(dto);
+			}
+		}
+		return organismos;
+	}
+	
+	private DtoOrganismos organismoToDto(Organismos organismo) {
+		DtoOrganismos dto = new DtoOrganismos();
+		dto.setIdOrganismo(organismo.getId());
+		if(organismo.getOrganismo() != null) {
+			dto.setOrganismo(organismo.getOrganismo().getCodigo());
+			dto.setOrganismoDesc(organismo.getOrganismo().getDescripcion());
+		}
+		if(organismo.getComunidad() != null) {
+			dto.setComunidadAutonoma(organismo.getComunidad().getCodigo());
+			dto.setComunidadAutonomaDesc(organismo.getComunidad().getDescripcion());
+		}
+		if(organismo.getTipoActuacion() != null) {
+			dto.setTipoActuacion(organismo.getTipoActuacion().getCodigo());
+			dto.setComunidadAutonomaDesc(organismo.getComunidad().getDescripcion());
+		}
+		
+		dto.setFechaOrganismo(organismo.getFechaOrganismo());
+		dto.setGestorOrganismo(organismo.getAuditoria().getUsuarioCrear());
+		
+		return dto;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteOrganismoById(Long idOrganismo) {
+		
+		if (!Checks.esNulo(idOrganismo)) {
+			Organismos organismo = genericDao.get(Organismos.class, genericDao.createFilter(FilterType.EQUALS, "id", idOrganismo));
+			if(organismo != null) {
+				Auditoria.delete(organismo);
+				genericDao.save(Organismos.class, organismo);
+			}
+		}
+	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void saveOrUpdateOrganismo(Long idActivo, DtoOrganismos dto) {
+		Organismos organismo = null;
+		
+		if (!Checks.esNulo(dto.getIdOrganismo())) {
+			organismo = genericDao.get(Organismos.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOrganismo()));
+		}else {
+			organismo = new Organismos();
+			organismo.setActivo(this.get(idActivo));
+			organismo.setAuditoria(Auditoria.getNewInstance());
+		}
+		
+		organismo.setFechaOrganismo(dto.getFechaOrganismo());
+		
+		if(dto.getComunidadAutonoma() != null) {
+			organismo.setComunidad(genericDao.get(DDComunidadAutonoma.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getComunidadAutonoma())));
+		}
+		if(dto.getTipoActuacion() != null) {
+			organismo.setTipoActuacion(genericDao.get(DDTAUTipoActuacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoActuacion())));
+		}
+		if(dto.getOrganismo() != null) {
+			organismo.setOrganismo(genericDao.get(DDOrganismos.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getOrganismo())));
+		}
+		
+		genericDao.save(Organismos.class, organismo);
+	}
+	
 }
 

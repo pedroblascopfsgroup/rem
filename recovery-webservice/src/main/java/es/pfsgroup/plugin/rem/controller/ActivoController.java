@@ -4425,4 +4425,49 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOrganismosByActivo(Long idActivo, ModelMap model) {
+		try {
+			List<DtoOrganismos> lista = activoApi.getOrganismosByActivo(idActivo);
+			model.put(RESPONSE_DATA_KEY, lista);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView deleteOrganismoById(Long idOrganismo,  ModelMap model) {
+		try {
+			activoApi.deleteOrganismoById(idOrganismo);
+			model.put(RESPONSE_DATA_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOrganismo(Long idActivo, DtoOrganismos dto, ModelMap model) {
+		try {
+			activoApi.saveOrUpdateOrganismo(idActivo, dto);
+			model.put(RESPONSE_DATA_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

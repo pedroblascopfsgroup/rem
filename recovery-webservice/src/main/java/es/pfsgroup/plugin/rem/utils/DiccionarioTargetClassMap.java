@@ -372,6 +372,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("recomendacionRCDC", DDRecomendacionRCDC.class);
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+		mapa.put("tipoActuacion", DDTAUTipoActuacion.class);
+		mapa.put("tipoOrganismo", DDOrganismos.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

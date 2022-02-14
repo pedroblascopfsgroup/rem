@@ -820,6 +820,8 @@ public interface OfertaApi {
 
 	void replicarOferta(Long numOferta);
 
+	void replicateOfertaFlushASYNC(Long numOferta);
+
 	void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
 
     void pbcFlush(LlamadaPbcDto dto);

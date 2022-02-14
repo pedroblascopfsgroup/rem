@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDPromociones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
@@ -201,6 +202,10 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	
 	@Column(name = "ELEMENTO_PEP")
 	private String elementoPep;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRO_ID")
+	private DDPromociones promocion;
 	
 	@Version   
 	private Long version;
@@ -622,4 +627,13 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	public void setSubpartidasEdificacion(DDSubpartidasEdificacion subpartidasEdificacion) {
 		this.subpartidasEdificacion = subpartidasEdificacion;
 	}
+
+	public DDPromociones getPromocion() {
+		return promocion;
+	}
+
+	public void setPromocion(DDPromociones promocion) {
+		this.promocion = promocion;
+	}
+	
 }

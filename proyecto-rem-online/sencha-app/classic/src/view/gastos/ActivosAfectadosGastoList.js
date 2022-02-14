@@ -32,6 +32,9 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				if (columnas[i].dataIndex == 'participacion') {
 					participacion = columnas[i];
 				}
+				if (columnas[i].dataIndex == 'primeraPosesion') {
+					primeraPosesion = columnas[i];
+				}
 			}
 
 			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
@@ -290,7 +293,15 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					flex : 1,
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
-                	} 
+                	},
+    				editor: {
+    					xtype: 'combobox',
+    					bind: {
+    						store: '{comboSiNoRem}'
+    					},
+    					displayField: 'descripcion',
+    					valueField: 'codigo'
+    				}
 				},
 				{
 					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
@@ -327,6 +338,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				{
 					text : HreRem.i18n('header.activos.afectados.elemento.pep'),
 					dataIndex : 'elementoPep',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.codigo.promocion'),
+					dataIndex : 'promocion',
 					flex : 1,
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
@@ -452,9 +471,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
             params: {
             	id: data.id,
             	participacion:data.participacion,
-            	referenciaCatastral: data.referenciaCatastral
+            	referenciaCatastral: data.referenciaCatastral,
+            	primeraPosesion:data.primeraPosesion
             },  	
 			success: function(a, operation, c){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				me.up('gastodetalle').down('contabilidadgasto').funcionRecargar();

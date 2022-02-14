@@ -1434,11 +1434,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		
 		if (!Checks.esNulo(informe.getTestigos()) && !Checks.estaVacio(informe.getTestigos())) {
 			for (TestigosOpcionalesDto testigo : informe.getTestigos()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble());
-				DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
-				if (!Checks.esNulo(subtipo)) {
-					boolean error = subtipo.getTipoActivo().getCodigo().equals(testigo.getCodTipoActivo()) ? true : false;
-					if (!error) errorsList.put("testigosTipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+				if (testigo.getCodSubtipoInmueble() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble());
+					DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+					if (!Checks.esNulo(subtipo)) {
+						boolean error = subtipo.getTipoActivo().getCodigo().equals(testigo.getCodTipoActivo()) ? true : false;
+						if (!error) errorsList.put("testigosTipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+					}
 				}
 			}
 			

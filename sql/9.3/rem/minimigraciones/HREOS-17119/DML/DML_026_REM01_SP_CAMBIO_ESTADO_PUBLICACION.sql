@@ -68,7 +68,7 @@ BEGIN
         V_COUNT := V_COUNT + 1;
     END LOOP;
      
-    DBMS_OUTPUT.PUT_LINE('  [INFO] Se ha recalculado el rating para '||V_COUNT||' de Bankia');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] Se ha recalculado el rating para '||V_COUNT||' de Cajamar');
     CLOSE RECALCULAR_RATING;
      
     COMMIT;

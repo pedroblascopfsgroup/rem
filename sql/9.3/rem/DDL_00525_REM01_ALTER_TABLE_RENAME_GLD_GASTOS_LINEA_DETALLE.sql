@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220210
+--## FECHA_CREACION=20220215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17073
+--## INCIDENCIA_LINK=MIREC-6315
 --## PRODUCTO=NO
 --## Finalidad: Borrar Constraint y Cambiar nombre a columna en GLD_GASTOS_LINEA_DETALLE
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - [HREOS-17073] - Alejandra García
+--##        0.2 Corrección nombre FK - [MIREC-6315] - Alejandra García
 --##########################################
 --*/
 
@@ -42,7 +43,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(			
         -- 		 NOMBRE FK                  NOMBRE ANTERIOR     NOMBRE NUEVO      COMENTARIO		
-        T_ALTER('GLD_ENT_DD_PRO_ID_FK',     'PROMOCION',        'DD_PRO_ID'  ,    'Promoción')
+        T_ALTER('GLD_DD_PRO_ID_FK',     'PROMOCION',        'DD_PRO_ID'  ,    'Promoción')
 	);
 	V_T_ALTER T_ALTER;
 

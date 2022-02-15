@@ -243,6 +243,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "ICO_ASCENSOR")
 	private DDSinSiNo ascensor;
+	
+	@Column(name="ICO_SUP_UTIL")
+	private Float superficieUtil;
 
 	@ManyToOne
 	@JoinColumn(name = "ICO_REHABILITADO")
@@ -835,6 +838,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAscensor(DDSinSiNo ascensor) {
 		this.ascensor = ascensor;
+	}
+	
+	public Float getSuperficieUtil() {
+		return superficieUtil;
+	}
+
+	public void setSuperficieUtil(Float superficieUtil) {
+		this.superficieUtil = superficieUtil;
 	}
 
 	public DDSinSiNo getRehabilitado() {

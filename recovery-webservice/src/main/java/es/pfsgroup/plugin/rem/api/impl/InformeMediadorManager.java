@@ -1542,7 +1542,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		informeEntity.setAscensor(!Checks.esNulo(informe.getAscensor())
 				? informe.getAscensor() ? ddSi : ddNo : null);
 		
-		/*informe.getUtilSuperficie en info registral*/
+		informeEntity.setSuperficieUtil(informe.getUtilSuperficie());
 		
 		informeEntity.setRehabilitado(!Checks.esNulo(informe.getRehabilitado())
 				? informe.getRehabilitado() ? ddSi : ddNo : null);

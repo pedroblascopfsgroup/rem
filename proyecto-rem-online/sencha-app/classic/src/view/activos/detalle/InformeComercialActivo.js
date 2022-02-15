@@ -102,8 +102,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
-									bind: '{infoComercial.fechaVisita}',
-									readOnly: true
+									bind: '{infoComercial.fechaVisita}'
 								},
 							// Fila 3
 								{
@@ -496,7 +495,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                { 
 					                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
 					                	reference: 'numeroMediadorInforme',
-					                	bind:		'{infoComercial.numeroVia}'
+					                	bind:		'{infoComercial.numeroDomicilio}'
 					                },
 					            // Fila 2
 					                {
@@ -507,7 +506,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			 						{ 
 					                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
 					                	reference: 'plantaMediadorInforme',
-					                	bind:		'{infoComercial.planta}'
+					                	bind:		'{infoComercial.piso}'
 					                },
 									{ 
 					                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
@@ -570,7 +569,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										maskRe: /^\d*$/, 
 					                	maxLength: 5	                	
 									},
-									{
+									/*{
 										xtype: 'comboboxfieldbasedd',
 							        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
 							        	bind: {
@@ -586,11 +585,10 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										reference: 'fieldlabelDistrito',
 										bind: '{infoComercial.distrito}'
 					                },
-					            // Fila 5
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.zona'),
 										bind:		'{infoComercial.zona}'
-					                },
+					                },*/
 					                { 
 										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 										reference: 'latitudmediador',
@@ -601,7 +599,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										reference: 'longitudmediador',
 										bind:		'{infoComercial.longitud}'
 					                },
-					            // Fila 6
 					                {
 										// Label vacía para generar un espacio por cuestión de estética.
 										xtype: 'label',
@@ -945,16 +942,14 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estancias'),
 										bind:		'{infoComercial.estancias}'
 					                },
-
-
-									{ 
+					                { 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.patio'),
-										bind:		'{infoComercial.superficiePatio}',
-										colspan: 2
+										bind:		'{infoComercial.superficiePatio}'
+					                },
+					                { 
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.sup.util'),
+										bind:		'{infoComercial.superficieUtil}'
 					                }
-									/*{ 
-										fieldLabel: 'Superficie útil'
-					                },*/
 								]
 						}
 				]

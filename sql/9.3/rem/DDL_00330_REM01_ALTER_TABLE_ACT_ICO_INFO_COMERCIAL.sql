@@ -70,6 +70,7 @@ DECLARE
     T_COL('ADD_CONSTRAINT', 'FK_ICO_DD_TCL_ID', 'DD_TCL_ID','DD_TCL_TIPO_CLIMATIZACION','DD_TCL_ID',''),
     T_COL('ADD_COLUMN', 'ICO_ARM_EMPOTRADOS', 'NUMBER(16,0)', 'Indicador armarios empotrados activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_ARM_EMPOTRADOS', 'ICO_ARM_EMPOTRADOS','DD_SIN_SINO','DD_SIN_ID','1'),
+    T_COL('ADD_COLUMN', 'ICO_SUP_UTIL', 'NUMBER(13,2)', 'Superficie útil activo'),
     T_COL('ADD_COLUMN', 'ICO_SUP_TERRAZA', 'NUMBER(13,2)', 'Superficie terraza activo'),
     T_COL('ADD_COLUMN', 'ICO_SUP_PATIO', 'NUMBER(13,2)', 'Superficie patio activo'),
     T_COL('ADD_COLUMN', 'DD_EXI_ID', 'NUMBER(16,0)', 'Id Tipo exterior/interior'),

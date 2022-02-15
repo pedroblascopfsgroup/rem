@@ -695,7 +695,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.renta'),
 									width:		280,
-									bind:		'{valoraciones.valorEstimadoVenta}',
+									bind:		'{valoraciones.valorEstimadoRenta}',
 									renderer: function(value) {
 		   				        		return Ext.util.Format.currency(value);
 		   				        	}

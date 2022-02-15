@@ -176,6 +176,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'plazasGaraje' },
 	 { name: 'terrazaCod' },
 	 { name: 'terrazaDesc' },
+	 { name: 'superficieUtil' },
 	 { name: 'superficieTerraza' },
 	 { name: 'patioCod' },
 	 { name: 'patioDesc' },

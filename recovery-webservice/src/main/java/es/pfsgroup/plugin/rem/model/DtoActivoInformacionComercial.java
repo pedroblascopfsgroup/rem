@@ -81,6 +81,7 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private Integer plazasGaraje;
 	private String terrazaCod;
 	private String terrazaDesc;
+	private Double superficieUtil;
 	private Double superficieTerraza;
 	private String patioCod;
 	private String patioDesc;
@@ -393,6 +394,12 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setTerrazaDesc(String terrazaDesc) {
 		this.terrazaDesc = terrazaDesc;
+	}
+	public Double getSuperficieUtil() {
+		return superficieUtil;
+	}
+	public void setSuperficieUtil(Double superficieUtil) {
+		this.superficieUtil = superficieUtil;
 	}
 	public Double getSuperficieTerraza() {
 		return superficieTerraza;

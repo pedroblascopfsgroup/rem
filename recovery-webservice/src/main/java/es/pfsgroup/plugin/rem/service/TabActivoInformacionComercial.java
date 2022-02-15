@@ -158,7 +158,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				
 				if(activoInfoComercial.getMediadorInforme().getAutorizacionWeb() != null){
 					informeComercial.setAutorizacionWeb(activoInfoComercial.getMediadorInforme().getAutorizacionWeb() == 1 ? true : false);
-					//fechaAutorizacionHasta
+					informeComercial.setFechaAutorizacionHasta(activoInfoComercial.getFechaAutorizacionHasta());
 				}else{
 					informeComercial.setAutorizacionWeb(false);
 				}
@@ -236,6 +236,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInfoComercial.getNombreVia()))
 				informeComercial.setNombreVia(activoInfoComercial.getNombreVia());
+			if (!Checks.esNulo(activoInfoComercial.getNumeroVia()))
+				informeComercial.setNumeroDomicilio(activoInfoComercial.getNumeroVia());
 			if (!Checks.esNulo(activoInfoComercial.getEscalera()))
 				informeComercial.setEscalera(activoInfoComercial.getEscalera());
 			if (!Checks.esNulo(activoInfoComercial.getPlanta()))
@@ -307,6 +309,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setTerrazaCod(activoInfoComercial.getTerraza().getCodigo());
 				informeComercial.setTerrazaDesc(activoInfoComercial.getTerraza().getDescripcion());
 			}
+			if (!Checks.esNulo(activoInfoComercial.getSuperficieUtil()))
+				informeComercial.setSuperficieUtil(activoInfoComercial.getSuperficieUtil().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getSuperficieTerraza())) 
 				informeComercial.setSuperficieTerraza(activoInfoComercial.getSuperficieTerraza().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getPatio())) {
@@ -705,15 +709,15 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			if (!Checks.esNulo(activoInformeDto.getPlantas())) {
 				actInfoComercial.setNumPlantas(activoInformeDto.getPlantas().longValue());
 			}
-
 			if (!Checks.esNulo(activoInformeDto.getSuperficieTerraza())) {
 				actInfoComercial.setSuperficieTerraza(activoInformeDto.getSuperficieTerraza().floatValue());
 			}
-
 			if (!Checks.esNulo(activoInformeDto.getSuperficiePatio())) {
 				actInfoComercial.setSuperficiePatio(activoInformeDto.getSuperficiePatio().floatValue());
 			}
-
+			if (!Checks.esNulo(activoInformeDto.getSuperficieUtil())) {
+				actInfoComercial.setSuperficieUtil(activoInformeDto.getSuperficieUtil().floatValue());
+			}
 			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionCod());
 				actInfoComercial.setEstadoConservacion(genericDao.get(DDEstadoConservacion.class, filtro));

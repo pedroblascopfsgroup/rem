@@ -108,13 +108,10 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "numeroVia")
 	private String numeroCalle;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private String escalera;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private String planta;
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private String puerta;
 
 	@NotNull(groups = { Insert.class, Update.class })
@@ -310,19 +307,15 @@ public class InformeMediadorDto implements Serializable {
 	
 	private Float porcentajeEdificacionEjecutada;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean ocupado;
 	
 	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean visitableFechaVisita;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoMaxVenta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoMinVenta;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Float valorEstimadoVenta;
 	
 	private Float valorEstimadoMaxRenta;

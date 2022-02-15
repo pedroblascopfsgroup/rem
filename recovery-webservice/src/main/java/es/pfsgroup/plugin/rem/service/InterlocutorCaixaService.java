@@ -140,10 +140,10 @@ public class InterlocutorCaixaService {
             thread.start();
     }
 
-    public void callReplicateClientSync(final Long id, final String tipoId){
+    public void callReplicateClientSync(final Long id, final String tipoId, final String dataSourceCode){
         hibernateUtils.flushSession();
 
-        caixaBcRestClient.callReplicateClientUpdate(id,tipoId);
+        caixaBcRestClient.callReplicateClient(id, tipoId, dataSourceCode);
     }
 
     public String getIdPersonaHayaCaixaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){

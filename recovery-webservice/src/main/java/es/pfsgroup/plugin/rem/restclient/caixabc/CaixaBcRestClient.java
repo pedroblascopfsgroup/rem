@@ -39,6 +39,7 @@ public class CaixaBcRestClient {
     public static final String ID_CLIENTE = "idCliente";
     public static final String ID_COMPRADOR = "idCompradorExpediente";
     public static final String ID_PROVEEDOR = "idProveedor";
+    public static final String KEY_FASE_1 = "01";
 
 
     public ReplicacionClientesResponse callReplicateClient(Long numOferta,String dataSourceCode){
@@ -75,6 +76,31 @@ public class CaixaBcRestClient {
                     else if (ID_PROVEEDOR.equals(tipoID))
                         params.put(ID_PROVEEDOR, id);
                     params.put("dataSourceCode", KEY_FASE_UPDATE);
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(ReplicacionClientesResponse.class);
+                    printReplicateClientResponse(resp);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+        return resp;
+
+    }
+
+    public ReplicacionClientesResponse callReplicateClient(Long id, String tipoID, String dataSourceCode){
+        ReplicacionClientesResponse resp = null;
+
+        try {
+            if (this.isActive()){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_CLIENTES_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    if (ID_CLIENTE.equals(tipoID))
+                        params.put(ID_CLIENTE, id);
+                    else if (ID_PROVEEDOR.equals(tipoID))
+                        params.put(ID_PROVEEDOR, id);
+                    params.put("dataSourceCode", dataSourceCode);
                     HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
                     resp = request.post(ReplicacionClientesResponse.class);
                     printReplicateClientResponse(resp);

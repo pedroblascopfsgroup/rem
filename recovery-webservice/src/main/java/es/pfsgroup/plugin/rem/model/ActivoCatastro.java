@@ -96,7 +96,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 	
 	@Column(name = "CAT_OBSERVACIONES")
 	private String observaciones;
-	
 
 	@Column(name = "CAT_RESULTADO")
 	private String resultadoSiNO;
@@ -107,6 +106,20 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_ALTERACION")
 	private Date fechaAlteracion;
 	
+	@Column(name = "CAT_ORIGEN_DATOS_CATASTRALES")
+	private String origenDatosCatastrales;
+	
+	@Column(name = "CAT_CLASE_USO_CATASTRAL")
+	private String claseUsoCatastral;
+	
+	@Column(name = "CAT_VIGENTE")
+	private Boolean catastroVigente;
+	
+	@Column(name = "CAT_VALOR_CATASTRAL")
+	private Double valorCatastral;
+	
+	@Column(name = "CAT_MONEDA")
+	private String tipoMoneda;
 	
 	@Version   
 	private Long version;
@@ -114,10 +127,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -293,11 +302,45 @@ public class ActivoCatastro implements Serializable, Auditable {
 	public void setFechaAlteracion(Date fechaAlteracion) {
 		this.fechaAlteracion = fechaAlteracion;
 	}
-	
-	
-	
-	
 
+	public String getOrigenDatosCatastrales() {
+		return origenDatosCatastrales;
+	}
 
+	public void setOrigenDatosCatastrales(String origenDatosCatastrales) {
+		this.origenDatosCatastrales = origenDatosCatastrales;
+	}
+
+	public String getClaseUsoCatastral() {
+		return claseUsoCatastral;
+	}
+
+	public void setClaseUsoCatastral(String claseUsoCatastral) {
+		this.claseUsoCatastral = claseUsoCatastral;
+	}
+
+	public Boolean getCatastroVigente() {
+		return catastroVigente;
+	}
+
+	public void setCatastroVigente(Boolean catastroVigente) {
+		this.catastroVigente = catastroVigente;
+	}
+
+	public Double getValorCatastral() {
+		return valorCatastral;
+	}
+
+	public void setValorCatastral(Double valorCatastral) {
+		this.valorCatastral = valorCatastral;
+	}
+
+	public String getTipoMoneda() {
+		return tipoMoneda;
+	}
+
+	public void setTipoMoneda(String tipoMoneda) {
+		this.tipoMoneda = tipoMoneda;
+	}
 
 }

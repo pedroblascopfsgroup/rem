@@ -696,6 +696,63 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		xtype:'datefield'
 			        	},
 			        	flex: 1
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.origen.datos.catastrales'),
+			        	dataIndex: 'origenDatosCatastrales',
+			        	flex: 1,
+			        	readOnly : true,
+			        	bind: {
+			        		hidden: '{!isCarteraBankia}'
+			        	}
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.clase.uso.catastral'),
+			        	dataIndex: 'claseUsoCatastral',
+			        	flex: 1,
+			        	readOnly : true,
+			        	bind: {
+			        		hidden: '{!isCarteraBankia}'
+			        	}
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.vigente'),
+			        	dataIndex: 'catastroVigente',
+			        	flex: 1,
+			        	readOnly : true,
+			        	bind: {
+			        		hidden: '{!isCarteraBankia}'
+			        	},
+			        	renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+			        	}
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.valor.catastral'),
+			        	dataIndex: 'valorCatastral',
+			        	flex: 1,
+			        	readOnly : true,
+			        	bind: {
+			        		hidden: '{!isCarteraBankia}'
+			        	},
+			        	renderer: function(value) {
+			        		return Ext.util.Format.currency(value);
+			        	}
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.moneda'),
+			        	dataIndex: 'tipoMoneda',
+			        	flex: 1,
+			        	readOnly : true,
+			        	bind: {
+			        		hidden: '{!isCarteraBankia}'
+			        	}
 			        }
 			       	        
 			    ],

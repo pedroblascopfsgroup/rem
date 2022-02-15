@@ -565,7 +565,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 										reference: 'codPostalMediadorInforme',
 										readOnly: esUA,
-										bind:		'{infoComercial.codigoPostal}',
+										bind:		'{infoComercial.codPostal}',
 										vtype: 'codigoPostal',
 										maskRe: /^\d*$/, 
 					                	maxLength: 5	                	

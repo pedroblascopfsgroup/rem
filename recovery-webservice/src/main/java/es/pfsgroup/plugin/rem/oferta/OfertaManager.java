@@ -2564,6 +2564,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			updateStateDispComercialActivosByOferta(oferta);
 			darDebajaAgrSiOfertaEsLoteCrm(oferta);
 			genericDao.save(Oferta.class, oferta);
+			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);

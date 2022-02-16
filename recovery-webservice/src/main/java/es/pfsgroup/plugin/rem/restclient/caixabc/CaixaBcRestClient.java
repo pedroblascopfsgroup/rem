@@ -113,6 +113,32 @@ public class CaixaBcRestClient {
 
     }
 
+    public ReplicacionClientesResponse callReplicateClientVisita(Long id, String tipoID, String dataSourceCode, Boolean vieneVisita){
+        ReplicacionClientesResponse resp = null;
+
+        try {
+            if (this.isActive()){
+                String endpoint = getRem3Endpoint(REM3_URL,REPLICACION_CLIENTES_ENDPOINT);
+                if (endpoint != null) {
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    if (ID_CLIENTE.equals(tipoID))
+                        params.put(ID_CLIENTE, id);
+                    else if (ID_PROVEEDOR.equals(tipoID))
+                        params.put(ID_PROVEEDOR, id);
+                    params.put("dataSourceCode", dataSourceCode);
+                    params.put("vieneVisita", vieneVisita);
+                    HttpSimplePostRequest request = new HttpSimplePostRequest(endpoint, params);
+                    resp = request.post(ReplicacionClientesResponse.class);
+                    printReplicateClientResponse(resp);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error en " + this.getClass().toString(), e);
+        }
+        return resp;
+
+    }
+
     public ReplicacionClientesResponse callReplicateClientUpdateComprador(Long id,Long numOferta){
         ReplicacionClientesResponse resp = null;
 

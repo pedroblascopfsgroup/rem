@@ -348,15 +348,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
 						genericDao.save(ActivoProveedor.class,apiResp);
 						iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+						genericDao.save(InfoAdicionalPersona.class,iap);
 						errorsList.put("idResponsable", apiResp.getId().toString());
 					}else{
 						errorsList.put("idResponsable", apiResp.getId().toString());
 					}
-					if(iap.getTipoSocioComercial() == null){
+					/*if(iap.getTipoSocioComercial() == null){
 						iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,
 								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSocioComercial.CODIGO_PRESCRIPTOR)));
-					}
-					genericDao.save(InfoAdicionalPersona.class,iap);
+					}*/
 					visita.setApiResponsable(apiResp);
 				}
 			}
@@ -541,15 +541,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
 							genericDao.save(ActivoProveedor.class,apiResp);
 							iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+							genericDao.save(InfoAdicionalPersona.class,iap);
 							errorsList.put("idResponsable", apiResp.getId().toString());
 						}else{
 							errorsList.put("idResponsable", apiResp.getId().toString());
 						}
-						if(iap.getTipoSocioComercial() == null){
+						/*if(iap.getTipoSocioComercial() == null){
 							iap.setTipoSocioComercial(genericDao.get(DDTipoSocioComercial.class,
 									genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSocioComercial.CODIGO_PRESCRIPTOR)));
-						}
-						genericDao.save(InfoAdicionalPersona.class,iap);
+						}*/
 						visita.setApiResponsable(apiResp);
 					}
 				} else {
@@ -857,7 +857,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(map.get("idCliente").toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE);
 			}
 			if(map.get("idResponsable") != null) {
-				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(map.get("idResponsable").toString()), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE);
+				interlocutorCaixaService.callReplicateClientSyncVisitas(Long.parseLong(map.get("idResponsable").toString()), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE, true);
 			}
 		}
 	}
@@ -871,6 +871,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 
 	private boolean comprobarCondicionesEnvioVisita() {
+		//TODO pasar aqui las condiciones de contactos y remodelar un poco el envio
 		return true;
 	}
 }

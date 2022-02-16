@@ -172,7 +172,7 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
 		boolean camposRellenos = false;
 
-		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null ) {
+		if(eco.getMotivoAnulacion() != null ) {
 			camposRellenos = true;
 		}
 		

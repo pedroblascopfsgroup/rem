@@ -179,7 +179,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
 		boolean camposRellenos = false;
 
-		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null && !Checks.isFechaNula(eco.getFechaAnulacion())) {
+		if(eco.getMotivoAnulacion() != null && !Checks.isFechaNula(eco.getFechaAnulacion())) {
 			camposRellenos = true;
 		}
 		

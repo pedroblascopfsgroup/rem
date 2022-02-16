@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220215
+--## FECHA_CREACION=20220216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17162
@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
 --##        0.2 Modificación campos - [HREOS-14716] - Alejandra García
---##        0.3 Añadir campos nuevos - [HREOS-17162] - Alejandra García
+--##        0.3 Añadir campos nuevos y cambiar de 15,2 a 10,2 en campo CAPITAL_PENDIENTE- [HREOS-17162] - Alejandra García
 --##########################################
 --*/
 
@@ -65,7 +65,7 @@ BEGIN
         TIPO_CARGA           VARCHAR2(3 CHAR),
         INTERLOCUTOR         VARCHAR2(40 CHAR),
         FEC_INI              DATE,
-        CAPITAL_PENDIENTE    NUMBER(15,2),
+        CAPITAL_PENDIENTE    NUMBER(10,2),
         FEC_FIN              DATE,
         COD_ESTADO_CARGA     VARCHAR2(3 CHAR),
         BORRADO              NUMBER(1,0) DEFAULT 0,

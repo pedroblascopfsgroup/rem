@@ -503,11 +503,16 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 
 			//Otra info de interes
-			//informeComercial.setModificadoInforme(activoInfoComercial);
-			//informeComercial.setCompletadoInforme(activoInfoComercial);
-			//informeComercial.setFechaModificadoInforme(activoInfoComercial);
-			//informeComercial.setFechaCompletadoInforme(activoInfoComercial);
-			//informeComercial.setFechaRecepcionInforme(activoInfoComercial);
+			if (!Checks.esNulo(activoInfoComercial.getUsuarioModificacionInforme())) 
+				informeComercial.setModificadoInforme(activoInfoComercial.getUsuarioModificacionInforme().getNombre());
+			if (!Checks.esNulo(activoInfoComercial.getUsuarioInformeCompleto())) 
+				informeComercial.setCompletadoInforme(activoInfoComercial.getUsuarioInformeCompleto().getNombre());
+			if (!Checks.esNulo(activoInfoComercial.getModificacionInforme())) 
+				informeComercial.setFechaModificadoInforme(activoInfoComercial.getModificacionInforme());
+			if (!Checks.esNulo(activoInfoComercial.getInformeCompleto())) 
+				informeComercial.setFechaCompletadoInforme(activoInfoComercial.getInformeCompleto());
+			if (!Checks.esNulo(activoInfoComercial.getRecepcionInforme())) 
+				informeComercial.setFechaRecepcionInforme(activoInfoComercial.getRecepcionInforme());
 		}		
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña

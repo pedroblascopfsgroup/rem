@@ -19,7 +19,16 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'telefonoMediador'
     		},
 			{
-    			name:'fechaVisita'
+    			name:'fechaVisita',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
     	    {
     	    	name: 'nombreMediadorEspejo'
@@ -283,9 +292,39 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	//Otra info de interes
 	 { name: 'modificadoInforme' },
 	 { name: 'completadoInforme' },
-	 { name: 'fechaModificadoInforme' },
-	 { name: 'fechaCompletadoInforme' },
-	 { name: 'fechaRecepcionInforme' }
+	 { name: 'fechaModificadoInforme',
+		convert: function(value) {
+			if (!Ext.isEmpty(value)) {
+				if  ((typeof value) == 'string') {
+					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+				} else {
+					return value;
+				}
+			}
+		}
+	},
+	 { name: 'fechaCompletadoInforme',
+		convert: function(value) {
+			if (!Ext.isEmpty(value)) {
+				if  ((typeof value) == 'string') {
+					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+				} else {
+					return value;
+				}
+			}
+		}
+	 },
+	 { name: 'fechaRecepcionInforme',
+		convert: function(value) {
+			if (!Ext.isEmpty(value)) {
+				if  ((typeof value) == 'string') {
+					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+				} else {
+					return value;
+				}
+			}
+		}
+	 }
     ],
     
 	proxy: {

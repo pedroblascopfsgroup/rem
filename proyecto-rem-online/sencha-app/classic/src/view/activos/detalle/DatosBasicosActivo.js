@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.OrganismosGrid'],
     
     initComponent: function () {
 

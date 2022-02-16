@@ -9669,7 +9669,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		if(organismo.getTipoActuacion() != null) {
 			dto.setTipoActuacion(organismo.getTipoActuacion().getCodigo());
-			dto.setComunidadAutonomaDesc(organismo.getComunidad().getDescripcion());
+			dto.setTipoActuacionDesc(organismo.getTipoActuacion().getDescripcion());
 		}
 		
 		dto.setFechaOrganismo(organismo.getFechaOrganismo());

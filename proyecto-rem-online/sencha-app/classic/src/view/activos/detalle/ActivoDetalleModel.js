@@ -4359,7 +4359,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getOrganismosByActivo',
 				extraParams: {idActivo: '{activo.id}'}
-			}
+			},
+			autoLoad: true
 		}
 	 }
 	 

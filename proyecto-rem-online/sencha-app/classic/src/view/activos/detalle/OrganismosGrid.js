@@ -25,18 +25,16 @@ Ext.define('HreRem.view.activos.detalle.OrganismosGrid', {
 	            dataIndex: 'organismo',
 	            flex: 1,
 	            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-	            	var nameStore = 'comboTipoOrganismo';
-	            	var nameRawValue =  'organismoDesc';
-	            	//return me.loadStoreFunction(nameStore, nameRawValue, record, value);
+	            	return me.loadCombosValues(record, 'comboTipoOrganismo', 'organismoDesc', value);
 	        	},
+	        	
         		editor: {
-        			xtype: 'comboboxfieldbasedd',
+        			xtype: 'combobox',
         			addUxReadOnlyEditFieldPlugin: false,
         			allowBlank: false,
 	        		bind: {
 	            		store: '{comboTipoOrganismo}',
-	            		value: '{organismo}',
-	            		rawValue: '{organismoDesc}'
+	            		value: '{organismo}'
 	            	},
 	            	displayField: 'descripcion',
 					valueField: 'codigo'
@@ -47,16 +45,12 @@ Ext.define('HreRem.view.activos.detalle.OrganismosGrid', {
 	            dataIndex: 'comunidadAutonoma',
 	            flex: 1,
 	            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-	            	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboComunidadAutonoma').findRecord('codigo', value);
-	            	var descripcion;
-	        		if(!Ext.isEmpty(foundedRecord)) {
-	        			descripcion = foundedRecord.getData().descripcion;
-	        		}
-	            	return descripcion;
+	            	return me.loadCombosValues(record, 'comboComunidadAutonoma', 'comunidadAutonomaDesc', value);
+
 	        	},
 	        	
 	        	editor: {
-        			xxtype: 'combobox',
+        			xtype: 'combobox',
         			allowBlank: false,
 	        		bind: {
 	            		store: '{comboComunidadAutonoma}',
@@ -82,12 +76,7 @@ Ext.define('HreRem.view.activos.detalle.OrganismosGrid', {
 	            dataIndex: 'tipoActuacion',
 	            flex: 1,
 	            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-	            	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboTipoActuacion').findRecord('codigo', value);
-	            	var descripcion;
-	        		if(!Ext.isEmpty(foundedRecord)) {
-	        			descripcion = foundedRecord.getData().descripcion;
-	        		}
-	            	return descripcion;
+	            	return me.loadCombosValues(record, 'comboTipoActuacion', 'tipoActuacionDesc', value);
 	        	},
         		editor: {
         			xtype: 'combobox',
@@ -199,19 +188,14 @@ Ext.define('HreRem.view.activos.detalle.OrganismosGrid', {
 		}
 	 },
 	 
-	 loadStoreFunction: function(nameStore, nameRawValue, record, value){
-		var store = this.up('activosdetallemain').getViewModel().getStore(nameStore);
-		var descripcion;
-		 
-     	if(store.isLoaded()){
-	     	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore(nameStore).findRecord('codigo', value);
-	     	
-	 		if(!Ext.isEmpty(foundedRecord)) {
-	 			descripcion = foundedRecord.getData().descripcion;
-	 		}
-     	}else{
-     		descripcion = recod.get(nameRawValue);
-     	}
+	 loadCombosValues: function(record, nameStore, nameRawValue, value){
+		var foundedRecord = this.up('activosdetallemain').getViewModel().getStore(nameStore).findRecord('codigo', value);
+     	var descripcion;
+ 		if(!Ext.isEmpty(foundedRecord)) {
+ 			descripcion = foundedRecord.getData().descripcion;
+ 		}else{
+ 			descripcion = record.get(nameRawValue);
+ 		}
      	return descripcion;
 	 }
    

@@ -419,6 +419,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
 				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
 			}
+
+			if(!Checks.esNulo(visitaDto.getTipoVisita())) {
+				DDTipoComercializacionVisita tipoVisita = genericDao.get(DDTipoComercializacionVisita.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getTipoVisita()));
+				visita.setTipoComVisita(tipoVisita);
+			}
 			
 			visitaDao.save(visita);
 			
@@ -630,6 +635,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			
 			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
 				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
+			}
+
+			if(!Checks.esNulo(visitaDto.getTipoVisita())) {
+				DDTipoComercializacionVisita tipoVisita = genericDao.get(DDTipoComercializacionVisita.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getTipoVisita()));
+				visita.setTipoComVisita(tipoVisita);
 			}
 			
 			visitaDao.saveOrUpdate(visita);

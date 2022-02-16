@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacionVisita;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -84,6 +85,9 @@ public class VisitaDto implements Serializable {
 	private String codOrigenComprador;
 	
 	private String idVisitaBC;
+	@Diccionary(clase = DDTipoComercializacionVisita.class, message = "El tipoVisita no existe", groups = {
+			Insert.class, Update.class })
+	private String tipoVisita;
 	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
@@ -233,5 +237,13 @@ public class VisitaDto implements Serializable {
 
 	public void setIdVisitaBC(String idVisitaBC) {
 		this.idVisitaBC = idVisitaBC;
+	}
+
+	public String getTipoVisita() {
+		return tipoVisita;
+	}
+
+	public void setTipoVisita(String tipoVisita) {
+		this.tipoVisita = tipoVisita;
 	}
 }

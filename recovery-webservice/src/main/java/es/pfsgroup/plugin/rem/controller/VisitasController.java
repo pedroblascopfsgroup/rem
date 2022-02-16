@@ -122,7 +122,10 @@ public class VisitasController {
 						try {
 							visitaApi.callLlamadasVisitas(listaRespuestaAsync, listaVisitaDtoAsync, jsonFieldsAsync);
 						} catch (HttpClientException e) {
-							e.printStackTrace();
+							if(e.getResponseCode() != 200){
+								e.printStackTrace();
+								throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
+							}
 						}/*
 					}
 				});

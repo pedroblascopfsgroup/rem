@@ -89,6 +89,8 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String rehabilitadoCod;
 	private String rehabilitadoDesc;
 	private Integer anyoRehabilitacion;
+	private String licenciaObraCod;
+	private String licenciaObraDesc;
 	private String estadoConservacionCod;
 	private String estadoConservacionDesc;
 	private String anejoGarajeCod;
@@ -442,6 +444,18 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
+	}
+	public String getLicenciaObraCod() {
+		return licenciaObraCod;
+	}
+	public void setLicenciaObraCod(String licenciaObraCod) {
+		this.licenciaObraCod = licenciaObraCod;
+	}
+	public String getLicenciaObraDesc() {
+		return licenciaObraDesc;
+	}
+	public void setLicenciaObraDesc(String licenciaObraDesc) {
+		this.licenciaObraDesc = licenciaObraDesc;
 	}
 	public String getEstadoConservacionCod() {
 		return estadoConservacionCod;

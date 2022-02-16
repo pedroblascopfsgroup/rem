@@ -670,7 +670,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.venta'),
 									width:		280,
-									bind:		'{valoraciones.valorEstimadoVenta}',
+									bind:		'{valoraciones.valorEstimadoVentaICO}',
 									renderer: function(value) {
 		   				        		return Ext.util.Format.currency(value);
 		   				        	}
@@ -695,7 +695,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.renta'),
 									width:		280,
-									bind:		'{valoraciones.valorEstimadoRenta}',
+									bind:		'{valoraciones.valorEstimadoRentaICO}',
 									renderer: function(value) {
 		   				        		return Ext.util.Format.currency(value);
 		   				        	}

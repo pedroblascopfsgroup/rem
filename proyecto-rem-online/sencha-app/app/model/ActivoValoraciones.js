@@ -170,10 +170,10 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     			type: 'boolean'
     		},
     	    { 
-    			name: 'valorEstimadoVenta' 
+    			name: 'valorEstimadoVentaICO' 
     	    },
     		{ 
-    	    	name: 'valorEstimadoRenta' 
+    	    	name: 'valorEstimadoRentaICO' 
     	    },
     		{ 
     	    	name: 'valorEstimadoMinVenta' 

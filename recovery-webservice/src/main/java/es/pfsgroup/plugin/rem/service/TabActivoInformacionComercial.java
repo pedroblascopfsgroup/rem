@@ -407,7 +407,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setAdmiteMascotaCod(activoInfoComercial.getAdmiteMascotas().getCodigo());
 				informeComercial.setAdmiteMascotaDesc(activoInfoComercial.getAdmiteMascotas().getDescripcion());
 			}
-
+			if (!Checks.esNulo(activoInfoComercial.getLicenciaObra())) {
+				informeComercial.setLicenciaObraCod(activoInfoComercial.getLicenciaObra().getCodigo());
+				informeComercial.setLicenciaObraDesc(activoInfoComercial.getLicenciaObra().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getLicenciaApertura())) {
 				informeComercial.setLicenciaAperturaCod(activoInfoComercial.getLicenciaApertura().getCodigo());
 				informeComercial.setLicenciaAperturaDesc(activoInfoComercial.getLicenciaApertura().getDescripcion());

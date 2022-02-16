@@ -114,6 +114,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_ANO_REHABILITACION")
 	private Integer anyoRehabilitacion;
+	
+	@Column(name = "ICO_LIC_OBRA")
+	private DDSinSiNo licenciaObra;
 
 	@Column(name = "ICO_FECHA_ULTIMA_VISITA")
 	private Date fechaUltimaVisita;
@@ -558,6 +561,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
+	}
+
+	public DDSinSiNo getLicenciaObra() {
+		return licenciaObra;
+	}
+
+	public void setLicenciaObra(DDSinSiNo licenciaObra) {
+		this.licenciaObra = licenciaObra;
 	}
 
 	public Date getFechaUltimaVisita() {

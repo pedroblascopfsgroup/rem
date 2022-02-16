@@ -193,6 +193,8 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'rehabilitadoCod' },
 	 { name: 'rehabilitadoDesc' },
 	 { name: 'anyoRehabilitacion' },
+	 { name: 'licenciaObraCod' },
+	 { name: 'licenciaObraDesc' },
 	 { name: 'estadoConservacionCod' },
 	 { name: 'estadoConservacionDesc' },
 	 { name: 'anejoGarajeCod' },

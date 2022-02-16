@@ -53,6 +53,8 @@ DECLARE
     T_COL('ADD_CONSTRAINT', 'FK_ICO_REHABILITADO', 'ICO_REHABILITADO','DD_SIN_SINO','DD_SIN_ID','1'),
     T_COL('ADD_COLUMN', 'ICO_LIC_APERTURA', 'NUMBER(16,0)', 'Indicador licencia apertura activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_LIC_APERTURA', 'ICO_LIC_APERTURA','DD_SIN_SINO','DD_SIN_ID','1'), 
+    T_COL('ADD_COLUMN', 'ICO_LIC_OBRA', 'NUMBER(16,0)', 'Indicador licencia obra activo'),
+    T_COL('ADD_CONSTRAINT', 'FK_ICO_LIC_OBRA', 'ICO_LIC_OBRA','DD_SIN_SINO','DD_SIN_ID','1'), 
     T_COL('ADD_COLUMN', 'ICO_ANEJO_GARAJE', 'NUMBER(16,0)', 'Indicador anejo garaje activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_ANEJO_GARAJE', 'ICO_ANEJO_GARAJE','DD_SIN_SINO','DD_SIN_ID','1'),
     T_COL('ADD_COLUMN', 'ICO_ANEJO_TRASTERO', 'NUMBER(16,0)', 'Indicador anejo trastero activo'),

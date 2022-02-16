@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
@@ -38,6 +40,7 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerPBC.class);
     	
 	private static final String COMBO_RESULTADO = "comboResultado";
+	private static final String CAMPO_OBSERVACIONES = "observaciones";
 
 	private static final String CODIGO_T015_PBC = "T015_PBC";
 
@@ -51,6 +54,7 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 		boolean aprueba = false;
 		String estadoExp = null;
 		String estadoBc = null;
+		String observaciones = null;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -59,6 +63,10 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 					aprueba = true;
 				}
 			}
+			if(CAMPO_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				observaciones = valor.getValor();
+			}
+			
 		}
 		
 		if (aprueba) {
@@ -68,6 +76,9 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 			estadoExp =  DDEstadosExpedienteComercial.DENEGADO;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			Oferta oferta = expedienteComercial.getOferta();
+			expedienteComercial.setFechaAnulacion(new Date());
+			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
 			
 			if(oferta != null) {
 				ofertaApi.finalizarOferta(oferta);

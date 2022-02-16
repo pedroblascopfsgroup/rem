@@ -831,6 +831,17 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.conservacion')
+					                },
+					                { 
+										xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboSinSino}',
+						            		value: '{infoComercial.licenciaObraCod}',
+						            		rawValue: '{infoComercial.licenciaObraDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.licencia.obra')
 					                }
 								]
 						},

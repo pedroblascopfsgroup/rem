@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
@@ -321,6 +322,14 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 											   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
 										   }
 									   }
+									   if (activoAgrupacionActivo.getActivo().getSituacionComercial() != null && activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo() != null
+											  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo())) {
+										   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+										   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+										   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+									   } else {
+										   gastoLineaDetalleEntidad.setSituacionComercial(null);
+									   }
 								   }
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 								}
@@ -362,6 +371,14 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 								   if (tipoTransmision != null) {
 									   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
 								   }
+							   }
+							   if (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo() != null
+										  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+									   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+									   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+									   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+							   } else {
+									   gastoLineaDetalleEntidad.setSituacionComercial(null);
 							   }
 						   }
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);

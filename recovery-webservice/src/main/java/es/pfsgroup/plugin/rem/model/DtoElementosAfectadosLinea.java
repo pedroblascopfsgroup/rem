@@ -69,6 +69,10 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 private String promocionCodigo;
 	 
 	 private String promocion;
+	 
+	 private String situacionComercialCodigo;
+	 
+	 private String situacionComercial;
 
 	public Long getId() {
 		return id;
@@ -292,6 +296,22 @@ public class DtoElementosAfectadosLinea extends WebDto {
 
 	public void setPromocion(String promocion) {
 		this.promocion = promocion;
+	}
+
+	public String getSituacionComercialCodigo() {
+		return situacionComercialCodigo;
+	}
+
+	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
+		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+
+	public String getSituacionComercial() {
+		return situacionComercial;
+	}
+
+	public void setSituacionComercial(String situacionComercial) {
+		this.situacionComercial = situacionComercial;
 	}
 	
 }

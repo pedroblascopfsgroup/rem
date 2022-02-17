@@ -43,8 +43,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('cesionOtrasOperaciones','31',  'Inmueble cedido para otras Operaciones.',  'Inmueble cedido para otras Operaciones.'),
-    	T_TIPO_DATA('procesoCesionOtrasOperaciones','31',  'Inmueble en proceso de cesión para otras Operaciones.',  'Inmueble en proceso de cesión para otras Operaciones.'),
+    	T_TIPO_DATA('cesionOtrasOperaciones','31',  'Inmueble cesión Otras Corporaciones.',  'Inmueble cedido para otras Operaciones.'),
+    	T_TIPO_DATA('procesoCesionOtrasOperaciones','31',  'Inmueble en proceso cesión Otras Corporaciones.',  'Inmueble en proceso de cesión para otras Operaciones.'),
         T_TIPO_DATA('sinGestionHRE','31',  'Inmueble sin gestion HRE',  'Inmueble sin gestion HRE')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

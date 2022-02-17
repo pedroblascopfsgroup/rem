@@ -114,25 +114,16 @@ public class VisitasController {
 			} 
 			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
-				final ArrayList<Map<String, Object>> listaRespuestaAsync = listaRespuesta;
-				final List<VisitaDto> listaVisitaDtoAsync = listaVisitaDto;
-				final JSONObject jsonFieldsAsync = jsonFields;
-				/*Thread thread = new Thread(new Runnable() {
-					public void run() {*/
-						try {
-							visitaApi.callLlamadasVisitas(listaRespuestaAsync, listaVisitaDtoAsync, jsonFieldsAsync);
-						} catch (HttpClientException e) {
-							if(e.getResponseCode() != 200){
-								e.printStackTrace();
-								throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
-							}
-						}/*
-					}
-				});
-				thread.start();*/
 
-				//visitaApi.checkReplicarClienteProveedor(listaRespuesta);
-				//visitaApi.llamarServicioContactos(listaVisitaDto, jsonFields);
+				try {
+					visitaApi.callLlamadasVisitas(listaRespuesta, listaVisitaDto, jsonFields);
+				} catch (HttpClientException e) {
+					if(e.getResponseCode() != 200){
+						e.printStackTrace();
+						throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
+					}
+				}
+
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");

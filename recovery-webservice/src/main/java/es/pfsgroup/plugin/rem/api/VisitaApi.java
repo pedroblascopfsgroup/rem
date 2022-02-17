@@ -132,9 +132,9 @@ public interface VisitaApi {
 	 */
 	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter);
 
-	public void llamarServicioContactos(List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
+	public void llamarServicioContactos(Visita visita, JSONObject jsonFields) throws Exception;
 
-	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> listaRespuesta);
+	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> errorList, VisitaDto visita);
 
-	void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
+    void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
 }

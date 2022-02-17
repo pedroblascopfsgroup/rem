@@ -14,7 +14,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
@@ -23,15 +22,13 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
@@ -45,9 +42,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	@Autowired
 	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
 	
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;

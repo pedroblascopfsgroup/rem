@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -22,7 +20,6 @@ import es.pfsgroup.plugin.rem.model.DtoTiposAlquilerNoComercial;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Service("tramiteAlquilerNoComercialManager")
 public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComercialApi {
@@ -190,6 +187,12 @@ public class TramiteAlquilerNoComercialManager implements TramiteAlquilerNoComer
 		}
 		
 		return avanzaBPM;
+	}
+
+	@Override
+	public String avanzaAprobarPbcAlquiler(TareaExterna tareaExterna) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

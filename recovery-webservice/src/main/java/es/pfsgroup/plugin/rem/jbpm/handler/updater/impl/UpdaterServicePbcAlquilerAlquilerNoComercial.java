@@ -69,7 +69,7 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 			estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 		}else {
 			estado = DDEstadosExpedienteComercial.ANULADO;
-			estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);

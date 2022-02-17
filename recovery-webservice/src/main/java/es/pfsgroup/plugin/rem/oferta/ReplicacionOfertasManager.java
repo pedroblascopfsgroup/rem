@@ -232,7 +232,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     
     private boolean calculaT018PBCAlquiler(String codTarea, String codEstado) {
     	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_PBC_ALQUILER.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
-                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
             return true;
 
         return false;

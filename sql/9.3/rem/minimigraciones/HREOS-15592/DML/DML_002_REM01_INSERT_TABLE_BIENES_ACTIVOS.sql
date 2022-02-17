@@ -187,8 +187,6 @@ BEGIN
 			ACT_DESCRIPCION,
 			DD_RTG_ID,
 			ACT_DIVISION_HORIZONTAL,
-			ACT_FECHA_REV_CARGAS,
-			ACT_CON_CARGAS,
 			ACT_GESTION_HRE,
 			DD_TPA_ID,
 			DD_SAC_ID,
@@ -207,8 +205,7 @@ BEGIN
 			ACT_SELLO_CALIDAD,
 			ACT_GESTOR_SELLO_CALIDAD,
 			ACT_FECHA_SELLO_CALIDAD,
-			SDV_ID,
-			
+			SDV_ID,		
 			DD_TCO_ID,
 			VERSION,
 			USUARIOCREAR,
@@ -220,8 +217,7 @@ BEGIN
 			BORRADO,
 			DD_TCR_ID,
 			DD_TAL_ID,
-			ACT_IBI_EXENTO,
-			
+			ACT_IBI_EXENTO,	
 			OK_TECNICO,
 			ACT_ACTIVO_DEMANDA_AFECT_COM,
 			ACT_EN_TRAMITE,
@@ -239,8 +235,6 @@ BEGIN
 			DD_TTR_ID,			
 			DD_EQG_ID
 
-
-
 		)
 		SELECT
 			'||V_ESQUEMA||'.S_ACT_ACTIVO.NEXTVAL                              ACT_ID,
@@ -253,9 +247,7 @@ BEGIN
 			'||V_ESQUEMA||'.S_BIE_BIEN.NEXTVAL                                BIE_ID,
 			ACT.ACT_DESCRIPCION                                               ACT_DESCRIPCION,
 			ACT.DD_RTG_ID						                              DD_RTG_ID,
-			NVL(ACT.ACT_DIVISION_HORIZONTAL,0)                                ACT_DIVISION_HORIZONTAL,
-			ACT.ACT_FECHA_REV_CARGAS                                          ACT_FECHA_REV_CARGAS,
-			ACT.ACT_CON_CARGAS                                                ACT_CON_CARGAS,
+			NVL(ACT.ACT_DIVISION_HORIZONTAL,0)                                ACT_DIVISION_HORIZONTAL,		
 			ACT.ACT_GESTION_HRE                                               ACT_GESTION_HRE,
 			ACT.DD_TPA_ID						                              DD_TPA_ID,
 			ACT.DD_SAC_ID							                          DD_SAC_ID,
@@ -275,7 +267,6 @@ BEGIN
 			ACT.ACT_GESTOR_SELLO_CALIDAD											ACT_GESTOR_SELLO_CALIDAD,
 			ACT.ACT_FECHA_SELLO_CALIDAD												ACT_FECHA_SELLO_CALIDAD,
 			ACT.SDV_ID                 			                              SDV_ID,
-		
 			ACT.DD_TCO_ID													  DD_TCO_ID,
 			''0''                                                             VERSION,
 			'''||V_USUARIO||'''                                               USUARIOCREAR,
@@ -288,7 +279,6 @@ BEGIN
 			ACT.DD_TCR_ID 													  DD_TCR_ID,
 			ACT.DD_TAL_ID													  DD_TAL_ID,
 			ACT.ACT_IBI_EXENTO 												  ACT_IBI_EXENTO,
-			
 			ACT.OK_TECNICO OK_TECNICO,
 			ACT.ACT_ACTIVO_DEMANDA_AFECT_COM ACT_ACTIVO_DEMANDA_AFECT_COM,
 			ACT.ACT_EN_TRAMITE ACT_EN_TRAMITE,

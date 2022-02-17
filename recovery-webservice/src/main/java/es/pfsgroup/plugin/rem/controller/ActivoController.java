@@ -4427,30 +4427,34 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-		@RequestMapping(method = RequestMethod.GET)
-		public ModelAndView getActivoBbvaUic(Long id) {
-			ModelMap model = new ModelMap();
-			
-			try {
-				List<DtoActivoBbvaUic> dtoActivoBbvaUicList = adapter.getActivoBbvaUic(id);
-				model.put("data", dtoActivoBbvaUicList);
-				model.put("success", true);			
-			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
-				model.put("success", false);		
-			}
-			
-			return createModelAndViewJson(model);
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivoBbvaUic(Long id, ModelMap model) {
+		
+		try {
+			List<DtoActivoBbvaUic> dtoActivoBbvaUicList = adapter.getActivoBbvaUic(id);
+			model.put("data", dtoActivoBbvaUicList);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
 		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	List<DtoActivoBbvaUic> getActivoBbvaUic(Long id){
+		return adapter.getActivoBbvaUic(id);
+	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-		public ModelAndView createActivoBbvaUic(Long idActivo, String uicBbva, Long idUic, ModelMap model) {
+		public ModelAndView createActivoBbvaUic(DtoActivoBbvaUic dto, ModelMap model) {
 			try {
-				Boolean success = activoApi.createActivoBbvaUic(idActivo, uicBbva, idUic);
+				Boolean success = activoApi.createActivoBbvaUic(dto);
 				model.put(RESPONSE_SUCCESS_KEY, success);
 
 			} catch (Exception e) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 				logger.error("error en createActivoBbvaUic", e);
 			}
 

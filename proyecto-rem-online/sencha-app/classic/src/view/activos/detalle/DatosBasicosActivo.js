@@ -1538,7 +1538,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype: 'activobbvauicgrid'
+										xtype: 'activobbvauicgrid',
+										idPrincipal : 'activo.id',
+										propagationButton: true,
+										reference: 'activobbvauicgridref',
+										targetGrid	: 'activobbvauic',
+										bind: {
+									        store: '{storeActivoBbvaUic}'
+									    }
 									}
 									]
 							}

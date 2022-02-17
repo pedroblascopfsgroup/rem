@@ -14,6 +14,10 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 
 @SuppressWarnings("rawtypes")
@@ -427,6 +431,35 @@ class ActivoControllerDispachableMethods {
 					if ("false".equals(mm.getModel().get("success").toString())
 							&& !Checks.esNulo(mm.getModel().get("msgError"))) {
 							throw new JsonViewerException(mm.getModel().get("msgError").toString());
+					}
+				}
+			}
+		});
+		
+		/*
+		 * TAB_BBVA_UIC
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_BBVA_UIC_ACTIVO, new DispachableMethod<DtoActivoBbvaUic>() {
+
+			@Override
+			public Class<DtoActivoBbvaUic> getArgumentType() {
+				return DtoActivoBbvaUic.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoBbvaUic dto, HttpServletRequest request) {
+				if (dto != null ){
+					boolean existe = false;
+					List<DtoActivoBbvaUic> listBbvaActivoProp = controller.getActivoBbvaUic(dto.getIdActivo());
+					
+					for (DtoActivoBbvaUic dtoActivoBbvaUic : listBbvaActivoProp) {
+						if (dtoActivoBbvaUic.getUicBbva().equals(dto.getUicBbva())) {
+							existe = true;
+						}
+					}
+					
+					if (!existe) {
+						this.controller.createActivoBbvaUic(dto, new ModelMap());
 					}
 				}
 			}

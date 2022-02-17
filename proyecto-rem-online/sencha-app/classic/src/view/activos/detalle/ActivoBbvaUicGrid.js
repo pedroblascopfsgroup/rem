@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
     extend: 'HreRem.view.common.GridBaseEditableRow',
     xtype: 'activobbvauicgrid',
-    idPrincipal: 'id',
     topBar: true,
 	bind: {
 		store: '{storeActivoBbvaUic}'
@@ -112,9 +111,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
 	   	if (me.isValidRecord(context.record)) {
 	   		me.mask(HreRem.i18n("msg.mask.espere"));
 	   		var uicBbva = context.record.get('uicBbva');
-	   		var idUic = context.record.get('id');
-	   		if(!me.isNumeric(idUic)){
-	   			idUic = null;
+	   		var id = context.record.get('id');
+	   		if(!me.isNumeric(id)){
+	   			id = null;
 	   		}
 	   		var idActivo = me.lookupController().getView().getViewModel().get('activo.id');
 	   		url = $AC.getRemoteUrl('activo/createActivoBbvaUic');
@@ -124,7 +123,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
 				params : {
 						idActivo: idActivo, 
 						uicBbva: uicBbva,
-						idUic: idUic
+						id: id
 				},
 				success : function(response, opts) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));

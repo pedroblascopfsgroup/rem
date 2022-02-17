@@ -133,6 +133,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		'informecomercialactivo historicomediadorgrid' : {
 			onClickPropagation : 'onClickPropagationCalificacionNegativa'
 		},
+		
+		'datosbasicosactivo activobbvauicgrid': {
+	        onClickPropagation: 'onClickPropagationCalificacionNegativa'
+	    },
 
 		'adjuntosplusvalias gridBase' : {
 			abrirFormulario : 'abrirFormularioAdjuntarDocumentosPlusvalia',
@@ -4134,7 +4138,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, idActivo = me.getViewModel().get('activo').id, url = $AC
 				.getRemoteUrl('activo/getActivosPropagables'), form = grid
 				.up('form');
-
 		form.mask(HreRem.i18n("msg.mask.espere"));
 
 		Ext.Ajax.request({
@@ -4700,6 +4703,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
 				};
 				me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData),successFn);
+			} else if (targetGrid == 'activobbvauic') {
+				var successFn = function(record, operation) {
+					window.destroy();
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.getView().fireEvent("refreshComponentOnActivate","container[reference=tabBuscadorActivos]");
+				};
+				me.saveActivo(me.createTabDataBbvaUic(activosSeleccionados, window.tabData),successFn);
 			}
 		}
 		window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -4781,6 +4792,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else if (targetGrid == 'condicionesespecificas') {
 					propagableData = me
 							.createTabDataCondicionesEspecificas(activos);
+					activos = []
+				} else if (targetGrid == 'activobbvauic') {
+					propagableData = me
+						.createTabDataBbvaUic(activos);
 					activos = []
 				}
 			}
@@ -8857,6 +8872,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(disabled) {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
-    }
+    },
+    
+	createTabDataBbvaUic : function(listadoActivos, records4) {
+
+		var me = this, tabData = {};
+		tabData.id = me.getViewModel().get("activo.id");
+		tabData.models = [];
+		var uic = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().uicBbva;
+		Ext.Array.each(listadoActivos, function(record, index) {
+			var model = {};
+			model.name = 'activobbvauic';
+			model.type = 'activo';
+			model.data = {};
+			model.data.idActivo = record.data.activoId;
+			model.data.uicBbva = uic;
+			tabData.models.push(model);
+		}); 
+		
+		return tabData;
+	}
 });
 

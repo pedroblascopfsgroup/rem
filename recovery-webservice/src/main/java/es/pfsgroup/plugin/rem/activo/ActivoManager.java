@@ -9638,22 +9638,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Transactional(readOnly = false)
 	@Override
-	public Boolean createActivoBbvaUic(Long idActivo, String uicBbva, Long idUic) throws Exception  {
+	public Boolean createActivoBbvaUic(DtoActivoBbvaUic dto) throws Exception  {
 		
 		try {				
-			if(uicBbva!=null && idActivo!=null) {
+			if(dto.getUicBbva()!=null && dto.getIdActivo()!=null) {
 				ActivoBbvaUic activoBbvaUic = null;
-				if(idUic == null) {
+				if(dto.getId() == null) {
 					activoBbvaUic = new ActivoBbvaUic();	
-					Activo activo= genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+					Activo activo= genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
 					activoBbvaUic.setActivo(activo);
 					activoBbvaUic.setAuditoria(Auditoria.getNewInstance());
 				}else {
-					activoBbvaUic = genericDao.get(ActivoBbvaUic.class, genericDao.createFilter(FilterType.EQUALS, "id", idUic));
+					activoBbvaUic = genericDao.get(ActivoBbvaUic.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
 				}
 				
 				if(activoBbvaUic != null) {
-					activoBbvaUic.setUicBbva(uicBbva);
+					activoBbvaUic.setUicBbva(dto.getUicBbva());
 					genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
 				}
 				return true;

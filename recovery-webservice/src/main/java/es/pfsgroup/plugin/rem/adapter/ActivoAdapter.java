@@ -5668,13 +5668,14 @@ public class ActivoAdapter {
 		return filters;
 	}
 	
-	public List<DtoActivoBbvaUic> getActivoBbvaUic(Long idActivo) throws Exception {
+	public List<DtoActivoBbvaUic> getActivoBbvaUic(Long idActivo){
 		List<DtoActivoBbvaUic> dtoLista = new ArrayList<DtoActivoBbvaUic>();
 		List<ActivoBbvaUic> listaActivoBbvaUic = new ArrayList<ActivoBbvaUic>();		
 
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-	    listaActivoBbvaUic = genericDao.getList(ActivoBbvaUic.class, filtroActivo, filtroBorrado);
+		Order order = new Order(OrderType.DESC, "id");
+	    listaActivoBbvaUic = genericDao.getListOrdered(ActivoBbvaUic.class, order, filtroActivo, filtroBorrado);
 	
 		if (listaActivoBbvaUic != null) {						
 			for (ActivoBbvaUic activoBbvaUic : listaActivoBbvaUic) {

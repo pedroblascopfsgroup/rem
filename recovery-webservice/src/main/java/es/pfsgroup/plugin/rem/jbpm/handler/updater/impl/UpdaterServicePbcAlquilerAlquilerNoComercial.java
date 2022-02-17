@@ -69,23 +69,17 @@ public class UpdaterServicePbcAlquilerAlquilerNoComercial implements UpdaterServ
 			estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 		}else {
 			estado = DDEstadosExpedienteComercial.ANULADO;
-			estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+			estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 			expedienteComercial.setFechaAnulacion(new Date());
 			expedienteComercial.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
 			expedienteComercial.setDetalleAnulacionCntAlquiler(observaciones);
+			ofertaApi.rechazarOferta(oferta);
 		}
 
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estado)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoBc)));
 		
-		if(!aprueba) {
-			ofertaApi.rechazarOferta(oferta);
-		}
-		
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
 	}
 
 	public String[] getCodigoTarea() {

@@ -31,14 +31,14 @@ public class TareaProcedimientoConstants {
     	public static final String CODIGO_SCORING_BC = "T015_ScoringBC";	
     	public static final String CODIGO_DATOSPBC = "T015_DatosPBC";
     	public static final String CODIGO_CALCULO_RIESGO = "T015_CalculoRiesgo";
+    	public static final String CODIGO_PBC_ALQUILER = "T015_PBC";
     }
     
     public class TramiteAlquilerNoCmT018{
     	public static final String CLROD = "T018_PteClRod";
     	public static final String CODIGO_DATOSPBC = "T018_DatosPBC";
     	public static final String CODIGO_CALCULO_RIESGO = "T018_CalculoRiesgo";
-    	
-    	
+    	public static final String CODIGO_PBC_ALQUILER = "T018_PbcAlquiler";
     }
 
 }

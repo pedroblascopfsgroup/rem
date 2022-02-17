@@ -282,17 +282,7 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		expedienteComercialDao.save(eco);
 	}
 	
-	@Override
-	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
-		boolean camposRellenos = false;
-		
-		if(!Checks.isFechaNula(eco.getFechaAnulacion()) && eco.getMotivoAnulacion() != null) {
-			camposRellenos = true;
-		}
-		
-		return camposRellenos;
-	}
-	
+
 	@Override
 	public String checkGarantiasNinguna(TareaExterna tareaExterna, String expedienteAnterior) {
 		String resultado = null;

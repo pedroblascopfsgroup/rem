@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -26,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -43,6 +45,12 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private TramiteAlquilerApi tramiteAlquilerApi;
+	
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     
@@ -101,26 +109,9 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
 		
-		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId());
-		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
-		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
-		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		funcionesTramitesApi.desactivarHistoricoPbc(expedienteComercial.getOferta().getId(), DDTipoTareaPbc.CODIGO_PBC);
+		genericDao.save(HistoricoTareaPbc.class, funcionesTramitesApi.createHistoricoPbc(expedienteComercial.getOferta().getId(), DDTipoTareaPbc.CODIGO_PBC));
 		
-		if (historico != null) {
-			historico.setActiva(false);
-			
-			genericDao.save(HistoricoTareaPbc.class, historico);
-		}
-		
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
-		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
-		
-		HistoricoTareaPbc htp = new HistoricoTareaPbc();
-		htp.setOferta(expedienteComercial.getOferta());
-		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
-		
-		genericDao.save(HistoricoTareaPbc.class, htp);
-
 		HistoricoSancionesBc historicoBc = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
 		genericDao.save(HistoricoSancionesBc.class, historicoBc);

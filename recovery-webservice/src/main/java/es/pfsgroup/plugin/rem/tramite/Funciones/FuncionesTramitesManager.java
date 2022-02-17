@@ -6,19 +6,26 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Service("funcionesTramitesManager")
 public class FuncionesTramitesManager implements FuncionesTramitesApi {
@@ -39,28 +46,17 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
 	@Override
 	public boolean tieneRellenosCamposAnulacion(TareaExterna tareaExterna){
 		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
 		
 		return tieneRellenosCamposAnulacion(eco);
-	}
-	
-	@Override
-	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
-		boolean camposRellenos = false;
-		Oferta oferta = eco.getOferta();
-		if(oferta != null) {
-			if(DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
-				camposRellenos = tramiteVentaApi.tieneRellenosCamposAnulacion(eco);
-			}else if(DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta())){
-				camposRellenos = tramiteAlquilerApi.tieneRellenosCamposAnulacion(eco);
-			}else if(DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())){
-				camposRellenos = tramiteAlquilerNoComercialApi.tieneRellenosCamposAnulacion(eco);
-			}	
-		}	
-				
-		return camposRellenos;
 	}
 
 	@Override
@@ -86,6 +82,49 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		}
 		
 		return isAprobado;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void desactivarHistoricoPbc(Long idOferta, String codigoTipoTarea) {
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codigoTipoTarea);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (historico != null) {
+			historico.setActiva(false);
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+	}
+	
+	@Override
+	public HistoricoTareaPbc createHistoricoPbc(Long idOferta, String codigoTipoTarea) {
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codigoTipoTarea);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc htp = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+		
+		if (htp == null) {
+			htp = new HistoricoTareaPbc();
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoTarea);
+			DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+			htp.setOferta(ofertaApi.getOfertaById(idOferta));
+			htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+		}
+
+		return htp;
+	}
+	
+	@Override
+	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
+		boolean camposRellenos = false;
+		
+		if(!Checks.isFechaNula(eco.getFechaAnulacion()) && eco.getMotivoAnulacion() != null) {
+			camposRellenos = true;
+		}
+		
+		return camposRellenos;
 	}
 	
 	

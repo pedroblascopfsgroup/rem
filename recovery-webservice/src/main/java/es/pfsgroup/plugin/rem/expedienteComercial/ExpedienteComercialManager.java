@@ -35,7 +35,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -99,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesApi;
+import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -211,7 +211,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
-import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -453,6 +452,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
+	
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -13277,7 +13279,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
 		
-		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) funcionesTramitesApi.createHistoricoPbc(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	
@@ -14078,7 +14080,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
 		
-		if (!Checks.esNulo(dto.getMotivoAnulacion())) createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBC);
+		if (!Checks.esNulo(dto.getMotivoAnulacion())) funcionesTramitesApi.createHistoricoPbc(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
 	private List<FechaArrasExpediente> listFechaArrasFiltradaSinAnulados(List<FechaArrasExpediente> listaFechaArrasExp){
@@ -14216,7 +14218,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		genericDao.save(ExpedienteComercial.class, expediente);
 		
-		createHistoricoTareaPbc(oferta, DDTipoTareaPbc.CODIGO_PBCARRAS);
+		funcionesTramitesApi.createHistoricoPbc(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC);
 	}
 
 	private boolean tieneInterlocutoresNoEnviados(ExpedienteComercial eco){
@@ -15323,28 +15325,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}		
 		
 		return dto;
-	}
-	
-	private void createHistoricoTareaPbc(Oferta oferta, String codTipoTarea) {			
-		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
-		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", codTipoTarea);
-		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
-		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
-		
-		if (historico != null) {
-			historico.setActiva(false);
-			
-			genericDao.save(HistoricoTareaPbc.class, historico);
-		}
-		
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoTarea);
-		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
-		
-		HistoricoTareaPbc htp = new HistoricoTareaPbc();
-		htp.setOferta(oferta);
-		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
-		
-		genericDao.save(HistoricoTareaPbc.class, htp);
 	}
 	
 	@Override

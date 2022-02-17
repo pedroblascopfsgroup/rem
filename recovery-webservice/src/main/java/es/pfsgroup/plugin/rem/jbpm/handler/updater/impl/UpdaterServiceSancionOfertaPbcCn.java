@@ -64,6 +64,7 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = null;
 		boolean estadoBcModificado = false;
+		boolean aprobado = false;
 		//Activo activo = ofertaAceptada.getActivoPrincipal();
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
@@ -76,6 +77,7 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 
 					if(COMBO_RESULTADO.equals(valor.getNombre()) || COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if(DDSiNo.SI.equals(valor.getValor())) {
+							aprobado = true;
 							expediente.setEstadoPbcCn(1);							
 							DDEstadoExpedienteBc estadoBc = (DDEstadoExpedienteBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoExpedienteBc.class,DDEstadoExpedienteBc.CODIGO_PDTE_APROBACION_BC);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.PTE_SANCION));
@@ -101,6 +103,7 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 				htp.setOferta(ofertaAceptada);
 				htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
 				htp.setFechaSancion(new Date());
+				htp.setAprobacion(aprobado);
 				
 				genericDao.save(HistoricoTareaPbc.class, htp);
 			}

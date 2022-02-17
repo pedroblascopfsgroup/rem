@@ -89,10 +89,6 @@ public class UpdaterServiceSancionOfertaAlquilerPBC implements UpdaterService {
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
 		estadoBcModificado = true;
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
 	}
 
 	public String[] getCodigoTarea() {

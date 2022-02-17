@@ -1237,7 +1237,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										bind:		{
 						            		value:'{infoComercial.porcEdiEjecutada}',
 				        					hidden: '{!infoComercial.isSueloComercialConstruccion}'
-										},
+										}
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.edificabilidad.techo'),

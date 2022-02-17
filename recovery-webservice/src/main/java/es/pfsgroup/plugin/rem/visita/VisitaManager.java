@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -797,7 +798,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 		urlBase = appProperties.getProperty(REM3_URL);
 		endpoint = urlBase + appProperties.getProperty(CONTACTOS_ENDPOINT) + "/" + visita.getNumVisitaRem();
-		result = httpClient.processRequest(endpoint, "POST",null,"",30000,"UTF-8");
+		try {
+			result = httpClient.processRequest(endpoint, "POST", null, "", 30000, "UTF-8");
+		}catch(HttpClientException e){
+			if(e.getResponseCode() != 200){
+				e.printStackTrace();
+				throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
+			}
+		}
 
 	}
 
@@ -834,7 +842,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	public void checkReplicarClienteProveedor(ArrayList<Map<String,Object>> errorList, VisitaDto visita) {
 		for(Map<String, Object> map : errorList) {
 			if(map.get("idCliente") != null && visita.getIdClienteRem() != null
-					&& visita.getIdClienteRem().toString().equals(map.get("idCliente"))) {
+					&& visita.getIdClienteRem().toString().equals(map.get("idCliente"))
+					&& map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())) {
 
 				ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visita.getIdClienteRem()),
@@ -843,7 +852,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE);
 			}
 			if(map.get("idResponsable") != null && visita.getIdProveedorRemResponsable() != null
-					&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))) {
+					&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))
+					&& map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())) {
 
 				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",

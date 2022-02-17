@@ -414,8 +414,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         for(CompradorExpediente compradorExpediente: cex){
         	if(DDEstadoInterlocutor.isSolicitudBaja(compradorExpediente.getEstadoInterlocutor()) || DDEstadoInterlocutor.isBaja(compradorExpediente.getEstadoInterlocutor())) {
         		compradorExpediente.setEstadoInterlocutor(eicInActivo);
+                compradorExpediente.setEstadoInterlocutorRepSiTiene(eicInActivo);
         	}else {
         		compradorExpediente.setEstadoInterlocutor(eicActivo);
+                compradorExpediente.setEstadoInterlocutorRepSiTiene(eicActivo);
 
         	}
             genericDao.update(CompradorExpediente.class, compradorExpediente);

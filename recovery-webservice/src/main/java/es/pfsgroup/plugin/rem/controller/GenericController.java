@@ -950,7 +950,6 @@ public class GenericController extends ParadiseJsonController{
 		}	
 	}
 
-
 	@RequestMapping(method = RequestMethod.GET)
 	public void idPersonaHayaSinCartera(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
 							  @RequestParam (required = false) String documentoInterlocutor){

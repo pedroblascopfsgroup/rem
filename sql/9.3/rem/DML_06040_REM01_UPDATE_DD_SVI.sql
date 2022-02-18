@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20220208
+--## FECHA_CREACION=20220218
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-17091
@@ -44,14 +44,14 @@ DECLARE
       T_TIPO_DATA('02',        '20',         'Z002',       'ZM03',           ''   ),
       T_TIPO_DATA('02',        '21',         'Z002',       'ZM03',           ''   ),
       T_TIPO_DATA('02',        '23',         'Z002',       'ZM03',           ''   ),
-      T_TIPO_DATA('04',        '01',         'Z004',       'ZM05',           ''   ),
-      T_TIPO_DATA('04',        '02',         'Z004',       'ZM05',           ''   ),
-      T_TIPO_DATA('04',        '03',         'Z004',       'ZM04',           ''   ),
+      T_TIPO_DATA('04',        '01',         'Z004',       'ZM05',           'Z19'),
+      T_TIPO_DATA('04',        '02',         'Z004',       'ZM05',           'Z19'),
+      T_TIPO_DATA('04',        '03',         'Z004',       'ZM05',           'Z41'),
       T_TIPO_DATA('04',        '04',         'Z004',       'ZM05',           'Z22'),
       T_TIPO_DATA('04',        '19',         'Z004',       'ZM05',           'Z19'),
       T_TIPO_DATA('05',        '05',         'Z004',       'ZM05',           'Z22'),
       T_TIPO_DATA('05',        '06',         'Z004',       'ZM05',           'Z25'),
-      T_TIPO_DATA('05',        '07',         'Z004',       'ZM05',           'Z37'),
+      T_TIPO_DATA('05',        '07',         'Z005',       'Z005',           'Z37'),
       T_TIPO_DATA('05',        '08',         'Z004',       'ZM05',           'Z22'),
       T_TIPO_DATA('05',        '09',         'Z004',       'ZM05',           'Z30'),
       T_TIPO_DATA('05',        '10',         'Z004',       'ZM05',           'Z19'),

@@ -814,13 +814,15 @@ public interface OfertaApi {
 
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
 	
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo);
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna);
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
 
 	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
 
 	void replicarOferta(Long numOferta);
+
+	void replicateOfertaFlushASYNC(Long numOferta);
 
 	void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
 

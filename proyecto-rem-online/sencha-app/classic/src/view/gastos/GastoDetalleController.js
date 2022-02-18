@@ -3020,5 +3020,26 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
         var me = this;
         me.getView().fireEvent('abrirDetalleActivoPreciosTasacion', record);
 
+    },
+
+    onVisualizaPagoUrgente: function(get){
+        var me = this,
+        gasto = me.getViewModel().get('gasto'),
+		cartera = me.getViewModel().get('gasto').get('cartera'),
+		subcartera = me.getViewModel().get('gasto').get('subcartera');
+        
+        if ((CONST.CARTERA['SAREB'] == cartera || CONST.CARTERA['THIRD'] == cartera || CONST.CARTERA['ZEUS'] == cartera
+        		|| CONST.CARTERA['GIANTS'] == cartera || CONST.CARTERA['GALEON'] == cartera)
+        		|| (CONST.CARTERA['CERBERUS'] == cartera && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcartera
+        				|| CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera || CONST.SUBCARTERA['JAIPURINMOBILIARIO'] == subcartera
+        				|| CONST.SUBCARTERA['JAIPURFINANCIERO'] == subcartera || CONST.SUBCARTERA['AGORAFINANCIERO'] == subcartera
+        				|| CONST.SUBCARTERA['DIVARIANARROW'] == subcartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera
+        				|| CONST.SUBCARTERA['ONETOONE'] == subcartera || CONST.SUBCARTERA['JAGUAR'] == subcartera))) {
+        	me.lookupReference('pagoUrgente').setHidden(false);
+		} else {
+			me.lookupReference('pagoUrgente').setHidden(true);
+		}
+        
+
     }
 });

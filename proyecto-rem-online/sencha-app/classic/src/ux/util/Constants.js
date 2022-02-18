@@ -285,6 +285,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		USGAI:'158',
 		JAGUAR:'70',
 		TITEDT:'162',
+		ONETOONE:'68',
 		TITTDA:'163'
     },
 

@@ -366,6 +366,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}else {
 						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
 							Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
+							dto.setSubcartera(activo.getSubcartera().getCodigo());
 							if(activo == null || gasto.getCartera()==null || activo.getSubcartera()==null || gasto.getTipoGasto()==null) {
 								dto.setVisibleSuplidos(false);
 								break;
@@ -1314,6 +1315,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setImporteBrutoLbk(importeBrutoLbk.getImporteBrutoLbk());
 			}
 			
+			if (!Checks.esNulo(detalleGasto.getPagoUrgente())) {
+				dto.setPagoUrgente(detalleGasto.getPagoUrgente());
+			}		
 		}
 
 		return dto;
@@ -1505,6 +1509,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				&& (gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
 					DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo()))) {
 						gastoLineaDetalleApi.actualizarDiariosLbk(gasto.getId());
+				}
+				
+				if (dto.getPagoUrgente() != null) {
+					detalleGasto.setPagoUrgente(dto.getPagoUrgente());
 				}
 						
 				

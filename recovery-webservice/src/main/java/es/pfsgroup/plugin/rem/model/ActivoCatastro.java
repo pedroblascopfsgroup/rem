@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +22,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseUsoCatastral;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenDatosCatastrales;
 
 
 
@@ -106,11 +109,13 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_ALTERACION")
 	private Date fechaAlteracion;
 	
-	@Column(name = "CAT_ORIGEN_DATOS_CATASTRALES")
-	private String origenDatosCatastrales;
-	
-	@Column(name = "CAT_CLASE_USO_CATASTRAL")
-	private String claseUsoCatastral;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ODC_ID")
+	private DDOrigenDatosCatastrales origenDatosCatastrales;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CUC_ID")
+	private DDClaseUsoCatastral claseUsoCatastral;
 	
 	@Column(name = "CAT_VIGENTE")
 	private Boolean catastroVigente;
@@ -303,22 +308,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 		this.fechaAlteracion = fechaAlteracion;
 	}
 
-	public String getOrigenDatosCatastrales() {
-		return origenDatosCatastrales;
-	}
-
-	public void setOrigenDatosCatastrales(String origenDatosCatastrales) {
-		this.origenDatosCatastrales = origenDatosCatastrales;
-	}
-
-	public String getClaseUsoCatastral() {
-		return claseUsoCatastral;
-	}
-
-	public void setClaseUsoCatastral(String claseUsoCatastral) {
-		this.claseUsoCatastral = claseUsoCatastral;
-	}
-
 	public Boolean getCatastroVigente() {
 		return catastroVigente;
 	}
@@ -341,6 +330,22 @@ public class ActivoCatastro implements Serializable, Auditable {
 
 	public void setTipoMoneda(String tipoMoneda) {
 		this.tipoMoneda = tipoMoneda;
+	}
+
+	public DDOrigenDatosCatastrales getOrigenDatosCatastrales() {
+		return origenDatosCatastrales;
+	}
+
+	public void setOrigenDatosCatastrales(DDOrigenDatosCatastrales origenDatosCatastrales) {
+		this.origenDatosCatastrales = origenDatosCatastrales;
+	}
+
+	public DDClaseUsoCatastral getClaseUsoCatastral() {
+		return claseUsoCatastral;
+	}
+
+	public void setClaseUsoCatastral(DDClaseUsoCatastral claseUsoCatastral) {
+		this.claseUsoCatastral = claseUsoCatastral;
 	}
 
 }

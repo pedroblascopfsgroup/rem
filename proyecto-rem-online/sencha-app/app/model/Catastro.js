@@ -80,22 +80,6 @@ Ext.define('HreRem.model.Catastro', {
     			name:'fechaAlteracion',
     			type:'date',
     			dateFormat: 'c'
-    		},
-    		{
-    			name:'origenDatosCatastrales'
-    		},
-    		{
-    			name:'claseUsoCatastral'
-    		},
-    		{
-    			name:'catastroVigente',
-    			type: 'boolean'
-    		},
-    		{
-    			name:'valorCatastral'
-    		},
-    		{
-    			name:'tipoMoneda'
     		}
     ],
     

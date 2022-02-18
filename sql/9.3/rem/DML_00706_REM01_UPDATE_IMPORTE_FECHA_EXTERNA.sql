@@ -37,7 +37,7 @@ BEGIN
 
     
             V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
-                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''15/12/2021'', ''DD/MM/YYYY'')
+                        SET ACT_VENTA_EXTERNA_FECHA = TO_DATE(''18/02/2022'', ''DD/MM/YYYY'')
                             ,ACT_VENTA_EXTERNA_IMPORTE = 1
                             ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                             ,FECHAMODIFICAR = SYSDATE

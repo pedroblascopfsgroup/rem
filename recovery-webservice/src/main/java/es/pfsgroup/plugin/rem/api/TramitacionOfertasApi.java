@@ -11,12 +11,17 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.DtoSaveAndReplicateResult;
+
 
 public interface TramitacionOfertasApi {
 
 	String getSubtipoTrabajoByOferta(Oferta oferta);
 
 	boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion,Boolean asincrono) throws JsonViewerException, Exception, Error;
+
+	DtoSaveAndReplicateResult saveOfertaAndCheckIfReplicate(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono) throws JsonViewerException, Exception, Error;
+
 
 	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce,
 			Activo activo) throws Exception;

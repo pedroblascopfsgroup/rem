@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.oferta.ReplicacionOfertasManager;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -157,6 +159,12 @@ public class OfertasController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
+
+	@Autowired
+	private ReplicacionOfertasManager replicacionOfertasManager;
 	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -849,6 +857,10 @@ public class OfertasController {
 						if (resultado) {
 							error = null;
 							errorDesc = null;
+
+						if (particularValidatorApi.esOfertaCaixa(ofrNumOferta)){
+								replicacionOfertasManager.callReplicateOferta(tareaId,Boolean.TRUE);
+							}
 						}						
 						model.put("id", id);
 						model.put("ofrNumOferta", ofrNumOferta);

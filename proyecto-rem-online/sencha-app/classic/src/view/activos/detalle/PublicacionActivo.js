@@ -22,7 +22,8 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 
 		activate: function(tabPanel) {
 			var me = this;
-			var muestraEdicion = me.up('activosdetallemain').getViewModel().getData().activo.getData().aplicaComercializar
+			var muestraEdicion = (me.up('activosdetallemain').getViewModel().getData().activo.getData().aplicaComercializar
+			                        || me.up('activosdetallemain').getViewModel().getData().activo.getData().entidadPropietariaCodigo == CONST.CARTERA['BANKIA'])
 					&& !me.up('activosdetallemain').getViewModel().getData().activo.getData().isVendido;
 			var pestanyaInformeComercial = me.down('informecomercialactivo');
 			var pestanyaDatosPublicacion = me.down('datospublicacionactivo');

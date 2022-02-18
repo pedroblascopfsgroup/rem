@@ -5,23 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -486,7 +470,11 @@ public class Oferta implements Serializable, Auditable {
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private OfertaCaixa ofertaCaixa;   
+    private OfertaCaixa ofertaCaixa;
+
+	@Transient
+	private Boolean replicateBC;
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1532,4 +1520,12 @@ public class Oferta implements Serializable, Auditable {
 		this.idOfertaSalesforce = idOfertaSalesforce;
 	}
 	
+
+	public Boolean getReplicateBC() {
+		return Boolean.TRUE.equals(replicateBC);
+	}
+
+	public void setReplicateBC(Boolean replicateBC) {
+		this.replicateBC = replicateBC;
+	}
 }

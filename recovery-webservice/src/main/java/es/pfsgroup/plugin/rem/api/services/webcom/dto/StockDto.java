@@ -402,6 +402,10 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType proNombre; 
 	
+	private StringDataType nombreGestorComercialAlquiler;
+	private StringDataType telefonoGestorComercialAlquiler;
+	private StringDataType emailGestorComercialAlquiler;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1297,5 +1301,23 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setProNombre(StringDataType proNombre) {
 		this.proNombre = proNombre;
+	}
+	public StringDataType getNombreGestorComercialAlquiler() {
+		return nombreGestorComercialAlquiler;
+	}
+	public void setNombreGestorComercialAlquiler(StringDataType nombreGestorComercialAlquiler) {
+		this.nombreGestorComercialAlquiler = nombreGestorComercialAlquiler;
+	}
+	public StringDataType getTelefonoGestorComercialAlquiler() {
+		return telefonoGestorComercialAlquiler;
+	}
+	public void setTelefonoGestorComercialAlquiler(StringDataType telefonoGestorComercialAlquiler) {
+		this.telefonoGestorComercialAlquiler = telefonoGestorComercialAlquiler;
+	}
+	public StringDataType getEmailGestorComercialAlquiler() {
+		return emailGestorComercialAlquiler;
+	}
+	public void setEmailGestorComercialAlquiler(StringDataType emailGestorComercialAlquiler) {
+		this.emailGestorComercialAlquiler = emailGestorComercialAlquiler;
 	}
 }

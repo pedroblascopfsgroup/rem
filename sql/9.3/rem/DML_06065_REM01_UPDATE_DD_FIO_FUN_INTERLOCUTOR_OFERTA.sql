@@ -62,7 +62,7 @@ BEGIN
         V_MSQL := '
           UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
           SET 
-            DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+            DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''',
             DD_'||V_CHARS||'_CODIGO_C4C = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
             DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
             DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
@@ -84,7 +84,7 @@ BEGIN
 				VERSION, USUARIOCREAR, FECHACREAR)
           	SELECT 
 	            '|| V_ID || ',
-	            '''||V_TMP_TIPO_DATA(2)||''',
+	            '''||V_TMP_TIPO_DATA(1)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
 	            '''||V_TMP_TIPO_DATA(3)||''',
 	            '''||V_TMP_TIPO_DATA(3)||''',

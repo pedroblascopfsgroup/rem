@@ -57,10 +57,8 @@ BEGIN
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
 	ADN_ID,
 	ACT_ID,
-	
 	ADN_FECHA_TITULO,
 	ADN_VALOR_ADQUISICION,
-	
 	ADN_TRAMITADOR_TITULO,
 	ADN_NUM_REFERENCIA,
 	VERSION,
@@ -74,25 +72,23 @@ BEGIN
 	FECHA_POSESION
 	)
 	SELECT
-	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL       ADN_ID,
-	ACT2.ACT_ID,	
-	TO_DATE(''18/02/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,
-	''Antonio Perez Coca'' 								 ADN_TRAMITADOR_TITULO,
+	'||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL     ADN_ID,
+	ACT2.ACT_ID											ACT_ID,
+	TO_DATE(''18/02/2022'', ''DD/MM/YYYY'')              ADN_FECHA_TITULO,	
 	NULL												 ADN_VALOR_ADQUISICION,
+   ''Antonio Perez Coca'' 								 ADN_TRAMITADOR_TITULO,
 	NULL                               					 ADN_NUM_REFERENCIA,
-	''0''                                                 VERSION,
-	'''||V_USUARIO||'''                                   USUARIOCREAR,
-	SYSDATE                                               FECHACREAR,
-	NULL                                                  USUARIOMODIFICAR,
-	NULL                                                  FECHAMODIFICAR,
-	NULL                                                  USUARIOBORRAR,
-	NULL                                                  FECHABORRAR,
-	ADN.BORRADO                                            BORRADO,
-	NULL							FECHA_POSESION
-	FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
-	JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
+	0                                                 VERSION,
+	'''||V_USUARIO||'''                                 USUARIOCREAR,
+	SYSDATE                                             FECHACREAR,
+	NULL                                                USUARIOMODIFICAR,
+	NULL                                                FECHAMODIFICAR,
+	NULL                                                USUARIOBORRAR,
+	NULL                                                FECHABORRAR,
+	0                                         			BORRADO,
+	NULL												FECHA_POSESION
+	FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 	JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
-	JOIN '||V_ESQUEMA||'.'||V_TABLA||' ADN ON ADN.ACT_ID = ACT.ACT_ID
 	')
 	;
   

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,20 +51,15 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Boolean haPasadoScoringBC = tramiteAlquilerApi.haPasadoScoringBC(tramite.getId());
 		String comboResultado = null;
-		String respuestaComprador = null;
 	
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			for(TareaExternaValor valor :  valores){
 				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					comboResultado = valor.getValor();
-				}
-				if(COMBO_RESPUESTA_COMPRADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					respuestaComprador = valor.getValor();
 				}
 			}
 
@@ -89,7 +85,6 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				if(estadoBcCodigo != null) {
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcCodigo));
 					expediente.setEstadoBc(estadoBc);
-					estadoBcModificado = true;
 				}
 				
 				if(estadoCodigo != null) {
@@ -97,8 +92,8 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expediente, respuestaComprador));
+				if(DDEstadosExpedienteComercial.PTE_PBC.equals(estadoCodigo)){
+					ofertaApi.llamadaPbc(ofertaAceptada, DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 				}
 			}
 

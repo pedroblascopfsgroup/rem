@@ -3027,9 +3027,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
         gasto = me.getViewModel().get('gasto'),
 		cartera = me.getViewModel().get('gasto').get('cartera'),
 		subcartera = me.getViewModel().get('gasto').get('subcartera'),
-		destinatario = me.getViewModel().get('gasto').get('destinatario');
+		nombreGestoria = me.getViewModel().get('gasto').get('nombreGestoria');
         
-        if (CONST.TIPOS_DESTINATARIO_GASTO['HAYA'] == destinatario || ((CONST.CARTERA['SAREB'] == cartera || CONST.CARTERA['THIRD'] == cartera || CONST.CARTERA['ZEUS'] == cartera
+        if ((nombreGestoria != null || !Ext.isEmpty(nombreGestoria)) && ((CONST.CARTERA['SAREB'] == cartera || CONST.CARTERA['THIRD'] == cartera || CONST.CARTERA['ZEUS'] == cartera
         		|| CONST.CARTERA['GIANTS'] == cartera || CONST.CARTERA['GALEON'] == cartera)
         		|| (CONST.CARTERA['CERBERUS'] == cartera && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcartera
         				|| CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera || CONST.SUBCARTERA['JAIPURINMOBILIARIO'] == subcartera

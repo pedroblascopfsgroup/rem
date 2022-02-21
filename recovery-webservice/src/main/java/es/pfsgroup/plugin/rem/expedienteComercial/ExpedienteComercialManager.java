@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -211,6 +212,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -455,7 +457,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;
-	
+
 	@Override
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
@@ -812,7 +814,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							o.setEstadoOferta(est);
 							if (Checks.esNulo(o.getFechaOfertaPendiente())) o.setFechaOfertaPendiente(new Date());
 							genericDao.save(Oferta.class, o);
-							if (pdteDocu) ofertaApi.llamadaPbc(o);
+							if (pdteDocu) ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 						}
 					}
 				}
@@ -13279,7 +13281,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente, filtroFechaRespuesta);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
-		
+
 		if (!Checks.esNulo(dto.getMotivoAnulacion())) funcionesTramitesApi.createHistoricoPbc(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
@@ -14080,7 +14082,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		FechaArrasExpediente fechaArrasExpediente =  this.getUltimaPropuesta(idExpediente,null);
 		
 		this.createOrUpdatePropuesta(fechaArrasExpediente,dto,idExpediente);
-		
+
 		if (!Checks.esNulo(dto.getMotivoAnulacion())) funcionesTramitesApi.createHistoricoPbc(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC);
 	}
 	
@@ -15238,19 +15240,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return !estadosBcNoPermitidos.contains(codEstadoBC);
 	}
-	
-	
+
+
 	@Override
 	public DtoOfertaCaixaPbc getOfertaCaixaPbc(ExpedienteComercial expediente) {
 		Oferta oferta = null;
 		DtoOfertaCaixaPbc dtoOfertaCaixaPbc = new DtoOfertaCaixaPbc();
-		try { 
+		try {
 			oferta = expediente.getOferta();
 			if(!Checks.esNulo(oferta)) {
 				Filter ofrCaixaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 				OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, ofrCaixaFilter);
 				if(!Checks.esNulo(ofrCaixa)) {
-					
+
 					if(ofrCaixa.getRiesgoOperacion() != null) {
 						dtoOfertaCaixaPbc.setRiesgoOperacion(ofrCaixa.getRiesgoOperacion().getDescripcion());
 					}
@@ -15264,12 +15266,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dtoOfertaCaixaPbc.setProcedenciaFondosPropios(ofrCaixa.getProcedenciaFondosPropios().getDescripcion());
 					}
 					if(ofrCaixa.getMedioPago() != null) {
-						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getDescripcion()); 
+						dtoOfertaCaixaPbc.setMedioPago(ofrCaixa.getMedioPago().getDescripcion());
 					}
 					if(ofrCaixa.getPaisTransferencia() != null) {
 						dtoOfertaCaixaPbc.setPaisTransferencia(ofrCaixa.getPaisTransferencia().getDescripcion());
 					}
-					
+
 					dtoOfertaCaixaPbc.setOfertaSospechosa(oferta.getOfertaSospechosa());
 					dtoOfertaCaixaPbc.setDeteccionIndicio(ofrCaixa.getDeteccionIndicio());
 					dtoOfertaCaixaPbc.setActitudIncoherente(ofrCaixa.getActitudIncoherente());
@@ -15279,21 +15281,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dtoOfertaCaixaPbc.setOtraProcedenciaFondosPropios(ofrCaixa.getOtraProcedenciaFondosPropios());
 					dtoOfertaCaixaPbc.setPagoIntermediario(ofrCaixa.getPagoIntermediario());
 					dtoOfertaCaixaPbc.setFondosBanco(ofrCaixa.getFondosBanco());
-					
+
 				}
-				
+
 				dtoOfertaCaixaPbc.setDtoPBCArras(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCARRAS));
 				dtoOfertaCaixaPbc.setDtoPBCVenta(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBC));
 				dtoOfertaCaixaPbc.setDtoPBCCN(this.historicoPbcToDto(oferta.getId(), DDTipoTareaPbc.CODIGO_PBCCN));
 			}
-			
+
 		} catch (Exception ex) {
 			logger.error("error en OfertasManager getOfertaCaixaPbc", ex);
 		}
 
 		return dtoOfertaCaixaPbc;
 	}
-	
+
 	private DtoHistoricosTareasPbc historicoPbcToDto (Long idOferta, String tipoPbc) {
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = new Date();
@@ -15323,11 +15325,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaSolicitudEstadoRiesgo(formato.format(date));
 			}
 			dto.setInforme(historico.getInforme());
-		}		
-		
+		}
+
 		return dto;
 	}
-	
+
 	@Override
 	public DtoPage getIntervinientesByOferta(Long numOferta, WebDto dto) {
 
@@ -15340,17 +15342,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return new DtoPage(intervinientes, intervinientes.size());
 	}
-	
+
 	private DtoInterviniente intervinienteToDto(VGridIntervinientes interviniente) {
 		DtoInterviniente intervinienteDto = new DtoInterviniente();
 
-		intervinienteDto.setNombre(!Checks.esNulo(interviniente.getNombre()) 
+		intervinienteDto.setNombre(!Checks.esNulo(interviniente.getNombre())
 				? interviniente.getNombre() : null);
-		intervinienteDto.setApellidos(!Checks.esNulo(interviniente.getApellidos()) 
+		intervinienteDto.setApellidos(!Checks.esNulo(interviniente.getApellidos())
 				? interviniente.getApellidos() : null);
-		intervinienteDto.setTipoDocumento(!Checks.esNulo(interviniente.getTipoDocumento()) 
+		intervinienteDto.setTipoDocumento(!Checks.esNulo(interviniente.getTipoDocumento())
 				? interviniente.getTipoDocumento() : null);
-		intervinienteDto.setNumDocumento(!Checks.esNulo(interviniente.getNumDocumento()) 
+		intervinienteDto.setNumDocumento(!Checks.esNulo(interviniente.getNumDocumento())
 				? interviniente.getNumDocumento() : null);
 		intervinienteDto.setRol(!Checks.esNulo(interviniente.getRol()) ? interviniente.getRol() : null);
 

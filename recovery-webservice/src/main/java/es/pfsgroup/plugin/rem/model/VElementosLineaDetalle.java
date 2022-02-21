@@ -112,6 +112,12 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "PROMOCION_DESC")
 	private String promocion;
+	
+	@Column(name = "SITUACIONCOMER_COD")
+	private String situacionComercialCodigo;
+	
+	@Column(name = "SITUACIONCOMER_DESC")
+	private String situacionComercial;
 
 	public Long getId() {
 		return id;
@@ -351,6 +357,22 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setPromocion(String promocion) {
 		this.promocion = promocion;
+	}
+
+	public String getSituacionComercialCodigo() {
+		return situacionComercialCodigo;
+	}
+
+	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
+		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+
+	public String getSituacionComercial() {
+		return situacionComercial;
+	}
+
+	public void setSituacionComercial(String situacionComercial) {
+		this.situacionComercial = situacionComercial;
 	}
 
 }

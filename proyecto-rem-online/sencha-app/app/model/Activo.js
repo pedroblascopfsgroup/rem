@@ -1385,6 +1385,9 @@ Ext.define('HreRem.model.Activo', {
             },
             {
                 name: 'comunidadDescripcion'
+            },
+            {
+            	name: 'numeroInmuebleAnterior'
             }
     ],
     

@@ -1254,7 +1254,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (activoCaixa.getCategoriaComercializacion() != null) {
 				activoDto.setCategoriaComercializacionCod(activoCaixa.getCategoriaComercializacion().getCodigo());
 				activoDto.setCategoriaComercializacionDesc(activoCaixa.getCategoriaComercializacion().getDescripcion());
-			}			
+			}	
+			if (activoCaixa.getNumeroInmuebleAnterior() != null) {
+				activoDto.setNumeroInmuebleAnterior(activoCaixa.getNumeroInmuebleAnterior());
+			}
 		}
 
 		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -1858,6 +1861,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if (dto.getCategoriaComercializacionCod() != null) {
 					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
 					activoCaixa.setCategoriaComercializacion(categComerc);
+				}
+				if (dto.getNumeroInmuebleAnterior() != null) {
+					activoCaixa.setNumeroInmuebleAnterior(dto.getNumeroInmuebleAnterior());
 				}
 			}
 

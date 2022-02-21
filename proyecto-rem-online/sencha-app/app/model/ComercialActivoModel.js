@@ -173,6 +173,12 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		},
 		{
 			name: 'tipoTransmisionDescripcion'
+		},
+		{
+			name: 'segmentacionCarteraCodigo;'
+		},
+		{
+			name: 'segmentacionCarteraDescripcion'
 		}
     ],
     

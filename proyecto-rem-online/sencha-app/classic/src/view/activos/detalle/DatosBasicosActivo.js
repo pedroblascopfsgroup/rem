@@ -480,6 +480,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		readOnly : '{!editarSegmentoDivarianandBbva}',
 										rawValue: '{activo.tipoSegmentoDescripcion}'
 				                	}
+				                },
+				                {
+				                	xtype: 'textfieldbase',
+				                	fieldLabel: HreRem.i18n('fieldlabel.numero.inmueble.anterior'),
+				                	name: 'motivoActivo',
+				                	bind: {
+				                		readOnly : true,
+				                		value: '{activo.numeroInmuebleAnterior}',
+				                		hidden: '{!activo.isCarteraBankia}'
+				                	},
+				                	maxLength: 20
 				                }
 				               
 				            ]

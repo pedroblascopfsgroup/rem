@@ -4326,6 +4326,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
+		},
+		comboSegmentacionCartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'segmentacionCartera'}
+			}
 		}
 	 }
 });

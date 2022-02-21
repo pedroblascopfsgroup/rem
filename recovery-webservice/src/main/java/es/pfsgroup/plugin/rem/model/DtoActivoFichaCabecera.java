@@ -401,6 +401,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private String codComunidadAutonoma;
 	private String comunidadDescripcion;
+	private String numeroInmuebleAnterior;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -3018,4 +3019,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setComunidadDescripcion(String comunidadDescripcion) {
 		this.comunidadDescripcion = comunidadDescripcion;
 	}
+
+	public String getNumeroInmuebleAnterior() {
+		return numeroInmuebleAnterior;
+	}
+
+	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
+		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
+	}
+	
 }

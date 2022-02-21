@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=David Gonzalez
---## FECHA_CREACION=20200422
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220210
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=version-2.20.1-rem
+--## VERSION_ARTEFACTO=version-2.35.3-rem
 --## INCIDENCIA_LINK=REMVIP-7058
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
@@ -31,6 +31,7 @@
 --##		1.12 (2020311) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar
 --##		1.13 (2020312) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar añadida condición estado reserva firmada
 --##		1.14 (20200422) - REMVIP-7058 - Se añade subcartera 151 y 152 (Divarian para cartera Cerberus)
+--##		1.15 (20220210) - Juan alfonso - REMVIP-11136 - Se añade subcartera 70 (Jaguar para cartera cerberus)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -129,7 +130,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
                                                             AND OFR.OFR_NUM_OFERTA = :1 
 							    AND RES.BORRADO = 0';
                                                             
@@ -150,7 +151,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1 
 							    AND RES.BORRADO = 0';                                                        
@@ -445,7 +446,8 @@ BEGIN
 		--PASO 1/4 Actualizar el estado del expediente a "Reservado" si no es de Apple
 
                 V_MSQL := '
-		SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
+		SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') 
+		AND DD_SCR_CODIGO IN ( ''138'',''70'')';
                 EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
                 
                 V_MSQL := '
@@ -785,7 +787,8 @@ BEGIN
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
  		    V_MSQL := '
-		    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
+		    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') 
+		    AND DD_SCR_CODIGO IN ( ''138'',''70'')';
                     EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
             
                     IF V_ACTIVO_APPLE = 1 THEN
@@ -1221,7 +1224,7 @@ BEGIN
 										   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.DD_SCR_ID = SCR.DD_SCR_ID 
 										   WHERE ACT.ACT_ID = '||V_ACT_ID INTO V_SUBCARTERA;
 										   
-	                    IF (V_CARTERA = '08' OR (V_CARTERA = '07' AND V_SUBCARTERA = '138')) THEN
+	                    IF (V_CARTERA = '08' OR (V_CARTERA = '07' AND ( V_SUBCARTERA = '138' OR V_SUBCARTERA = '70' ))) THEN
                         
 	                        V_MSQL := '
 	                        UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL

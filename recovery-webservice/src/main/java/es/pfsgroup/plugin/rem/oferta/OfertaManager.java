@@ -44,6 +44,7 @@ import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -108,7 +109,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
-import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -190,7 +190,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -287,6 +286,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
    	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
+	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES = "T017_RespuestaOfertanteCES";
+	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM = "T017_RespuestaOfertantePM";
+	private static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
+	private static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	
+	private static final String APRUEBA_COMBO_RESPUESTA = "01";
+	private static final String CONTRAOFERTA_COMBO_RESPUESTA = "03";
+	private static final String COMBO_RESOLUCION = "comboRespuesta";
+	
 
 
 	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
@@ -7392,11 +7400,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo());
+		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(),tareaExterna);
 	}
 	
 	@Override
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo) {
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna) {
 
 		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			return null;
@@ -7413,9 +7421,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
+		Boolean esContraoferta = false;
 		
 		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
+		
+		if (!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getValores())) {
+			List<TareaExternaValor> valoresTarea = tareaExterna.getValores();
+			for (TareaExternaValor valor : valoresTarea) {
+				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
+					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA) 
+					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{		
+					esContraoferta = true;
+					break;
+				}
+			}
+		}
 		
 		if(solicitaReserva) {
 			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
@@ -7440,9 +7461,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if ((CODIGO_T017_RESOLUCION_CES.equals(codigo) 
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo))) {
-				
+			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo) 
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
+					||(CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
+					|| CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigo)
+					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo) 
+					&& esContraoferta )) {		
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7450,7 +7474,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
+			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo) 
+					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo) 
+					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo) 
+					&& esContraoferta )
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
@@ -7931,6 +7958,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public void replicarOferta(Long numOferta){
 		caixaBcRestClient.callReplicateOfertaNoSession(numOferta);
+	}
+
+	@Override
+	public void replicateOfertaFlushASYNC(final Long numOferta) {
+		hibernateUtils.flushSession();
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+					replicarOferta(numOferta);
+			}
+		});
+		thread.start();
+
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;
 
@@ -60,7 +61,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		boolean aprueba = false;
-		boolean estadoBcModificado = false;
 		String estadoExp = null;
 		String estadoBc = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
@@ -97,18 +97,13 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		
 		expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 		expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));
-		estadoBcModificado = true;
-		genericDao.save(ExpedienteComercial.class, expedienteComercial);	
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
-		
-		funcionesTramitesApi.desactivarHistoricoPbc(expedienteComercial.getOferta().getId(), DDTipoTareaPbc.CODIGO_PBC);
-		genericDao.save(HistoricoTareaPbc.class, funcionesTramitesApi.createHistoricoPbc(expedienteComercial.getOferta().getId(), DDTipoTareaPbc.CODIGO_PBC));
-		
-		HistoricoSancionesBc historicoBc = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
-				
-		genericDao.save(HistoricoSancionesBc.class, historicoBc);
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+
+		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
+
+		genericDao.save(HistoricoSancionesBc.class, historico);
+
+		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

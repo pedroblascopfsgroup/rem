@@ -8865,6 +8865,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(disabled) {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
+    },
+    
+    onSelectDiscrepanciasLocalizacion : function(combo, value) {
+		var me = this;
+		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
+		if(value.get('codigo') === 'false'){
+			textObservacionesLoc.setValue('');
+		}
     }
 });
 

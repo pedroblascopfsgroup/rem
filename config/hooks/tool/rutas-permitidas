@@ -238,6 +238,7 @@ rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-jupiter
+rem_mirror|rem-legalReo
 rem_mirror|func-rem-jaguar
 func-rem-modeloHydra|func-rem-preparacionHYDRA
 func-rem-preparacionHYDRA|func-rem-comercialHydra

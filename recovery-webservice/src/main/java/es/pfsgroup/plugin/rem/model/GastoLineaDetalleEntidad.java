@@ -24,6 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDPromociones;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
@@ -88,6 +89,10 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRO_ID")
 	private DDPromociones promocion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCM_ID")
+	private DDSituacionComercial situacionComercial;
 	
 	@Version   
 	private Long version;
@@ -229,6 +234,14 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 
 	public void setPromocion(DDPromociones promocion) {
 		this.promocion = promocion;
+	}
+
+	public DDSituacionComercial getSituacionComercial() {
+		return situacionComercial;
+	}
+
+	public void setSituacionComercial(DDSituacionComercial situacionComercial) {
+		this.situacionComercial = situacionComercial;
 	}
 	
 }

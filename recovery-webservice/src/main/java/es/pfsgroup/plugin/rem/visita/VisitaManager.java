@@ -841,26 +841,29 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	@Override
 	public void checkReplicarClienteProveedor(ArrayList<Map<String,Object>> errorList, VisitaDto visita) {
 		for(Map<String, Object> map : errorList) {
-			if(map.get("idCliente") != null && visita.getIdClienteRem() != null
-					&& visita.getIdClienteRem().toString().equals(map.get("idCliente"))
-					&& map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())) {
+			if(map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom() != null
+					&& visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())){
 
-				ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
-						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visita.getIdClienteRem()),
-						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
+				if(map.get("idCliente") != null && visita.getIdClienteRem() != null
+						&& visita.getIdClienteRem().toString().equals(map.get("idCliente"))) {
 
-				interlocutorCaixaService.callReplicateClientSync(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE);
+					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visita.getIdClienteRem()),
+							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
+
+					interlocutorCaixaService.callReplicateClientSync(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE);
+				}
+				if(map.get("idResponsable") != null && visita.getIdProveedorRemResponsable() != null
+						&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))) {
+
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visita.getIdProveedorRemResponsable()));
+
+					interlocutorCaixaService.callReplicateClientSyncVisitas(apiResp.getId(), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE, true);
+				}
 			}
-			if(map.get("idResponsable") != null && visita.getIdProveedorRemResponsable() != null
-					&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))
-					&& map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())) {
 
-				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-								visita.getIdProveedorRemResponsable()));
-
-				interlocutorCaixaService.callReplicateClientSyncVisitas(apiResp.getId(), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE, true);
-			}
 		}
 	}
 

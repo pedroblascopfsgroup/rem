@@ -75,7 +75,7 @@ public class InterlocutorCaixaService {
     }
 
     public boolean esClienteInvolucradoBC(ClienteComercial clienteComercial) {
-    return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
+        return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
     }
 
     public void callReplicateClientAsync(final Comprador comprador, final Oferta oferta){

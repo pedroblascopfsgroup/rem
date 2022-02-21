@@ -350,6 +350,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					bind:	{
 						hidden:'{!esPropietarioCaixa}' 
                 	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.situacion.comercial'),
+					dataIndex : 'situacionComercial',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
 				}
 		];
 		 me.dockedItems = [

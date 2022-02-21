@@ -64,6 +64,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_BOARDING = "buzonboarding";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
+	private static final String BUZON_OFR_JAGUAR = "buzonofrjaguar";
 	private static final String STR_MISSING_VALUE = "---";
 	private static final String HTTP = "http";
 	private static final String HTTPS = "https";
@@ -119,6 +120,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario supervisor= null;
 		String emailPrescriptor = null;
 		Usuario buzonOfertaApple = null;
+		Usuario buzonOfertaJaguar = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
 		limpiarMails();
@@ -133,11 +135,19 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		} else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
+		} else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) 
+				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+				|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))){
 			// por activo
 			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			emailPrescriptor = oferta.getPrescriptor().getEmail();
-			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+			if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){					
+					buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);	
+			}
+			if (DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())){					
+				buzonOfertaJaguar = usuarioManager.getByUsername(BUZON_OFR_JAGUAR);	
+		}
+			
 		} else {
 			if(!Checks.esNulo(activo)) {
 				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -200,20 +210,18 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+					|| (!Checks.esNulo(activo.getSubcartera()) 
+					&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))){
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);	
 
 			}
 			
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
-				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
-			}
-			
 			if(!Checks.esNulo(usuario)){		
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSubcartera()) 
+					&& (!DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| !DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
 				}
 			}
@@ -243,6 +251,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				mailsPara.add(buzonOfertaApple.getEmail());
+			}
+			if(buzonOfertaJaguar != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaJaguar.getEmail());
 			}
 
 			mailsCC.add(this.getCorreoFrom());
@@ -741,6 +752,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario supervisor= null;
 		String emailPrescriptor = null;
 		Usuario buzonOfertaApple = null;
+		Usuario buzonOfertaJaguar = null;
 		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		limpiarMails();
 
@@ -754,11 +766,19 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
+		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) 
+				&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()) )){
 			// por activo
 			gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			emailPrescriptor = oferta.getPrescriptor().getEmail();
-			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+			if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);	
+			}
+			if (DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+				buzonOfertaJaguar = usuarioManager.getByUsername(BUZON_OFR_JAGUAR);	
+			}
+			
 		} else {
 			if(!Checks.esNulo(activo)) {
 				gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -816,13 +836,17 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+					|| (!Checks.esNulo(activo.getSubcartera()) 
+					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))){
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
 			}
 			
 			if(!Checks.esNulo(gcom)){		
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSubcartera()) 
+						&& ( !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						|| !DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
 				}
 			}
@@ -852,6 +876,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				mailsPara.add(buzonOfertaApple.getEmail());
+			}
+			if(buzonOfertaJaguar != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaJaguar.getEmail());
 			}
 
 			mailsCC.add(this.getCorreoFrom());
@@ -963,6 +990,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario supervisor= null;
 		String emailPrescriptor = null;
 		Usuario buzonOfertaApple = null;
+		Usuario buzonOfertaJaguar = null;
 		limpiarMails();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
@@ -975,11 +1003,19 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
+		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) 
+				&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+				|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))){
 			// por activo
 			gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			emailPrescriptor = oferta.getPrescriptor().getEmail();
-			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+			if( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);	
+			}
+			if( DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+				buzonOfertaJaguar = usuarioManager.getByUsername(BUZON_OFR_JAGUAR);	
+			}
+			
 		} else {
 			if(!Checks.esNulo(activo)) {
 				gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -1036,13 +1072,17 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+					|| (!Checks.esNulo(activo.getSubcartera()) 
+					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))){
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
 			}
 			
 			if(!Checks.esNulo(gcom)){		
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSubcartera()) 
+					&& (!DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| !DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
 				}
 			}
@@ -1073,6 +1113,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				mailsPara.add(buzonOfertaApple.getEmail());
 			}
+			if(buzonOfertaJaguar != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaJaguar.getEmail());
+			}
 
 			mailsCC.add(this.getCorreoFrom());			
 			
@@ -1102,6 +1145,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario supervisor= null;
 		String emailPrescriptor = null;
 		Usuario buzonOfertaApple = null;
+		Usuario buzonOfertaJaguar = null;
 		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
 		limpiarMails();
 
@@ -1115,11 +1159,18 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
-			// por activo
-			gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-			emailPrescriptor = oferta.getPrescriptor().getEmail();
-			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		}  else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) 
+					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))){
+					// por activo
+					gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+					emailPrescriptor = oferta.getPrescriptor().getEmail();
+					if( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+						buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);	
+					}
+					if( DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
+						buzonOfertaJaguar = usuarioManager.getByUsername(BUZON_OFR_JAGUAR);	
+					}
 		} else {
 			if(!Checks.esNulo(activo)) {
 				gcom = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -1177,13 +1228,17 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+					|| (!Checks.esNulo(activo.getSubcartera()) 
+					&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))){
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
 			}
 			
 			if(!Checks.esNulo(gcom)){		
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSubcartera()) 
+					&& ( !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+					|| !DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
 				}
 			}
@@ -1213,6 +1268,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				mailsPara.add(buzonOfertaApple.getEmail());
+			}
+			if(buzonOfertaJaguar != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaJaguar.getEmail());
 			}
 
 			mailsCC.add(this.getCorreoFrom());

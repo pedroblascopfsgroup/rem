@@ -2,7 +2,7 @@
 
 cd $DIR_INPUT_AUX
 
-lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://Intercambio.haya.es <<EOF
+lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://Intercambio2.haya.es <<EOF
 cd Archivos/recep/
 mget $1
 bye
@@ -12,7 +12,7 @@ check_integrity_1=`md5sum $1`
 rm -f $1
 sleep 30
 
-lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://Intercambio.haya.es <<EOF
+lftp -u usr_pfsbc,9f32bfd20b -p 22 sftp://Intercambio2.haya.es <<EOF
 cd Archivos/recep/
 mget $1
 bye

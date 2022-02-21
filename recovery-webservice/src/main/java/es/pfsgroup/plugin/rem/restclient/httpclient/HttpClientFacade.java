@@ -83,6 +83,11 @@ public class HttpClientFacade {
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);
 
 			restApi.trace(jsonString);
+			
+			JSONObject jsonRespuesta = execute(httpclient, method);
+			logger.error("Respuesta: " + jsonRespuesta.toString());
+			logger.error("Respuesta httpClient [url=" + serviceUrl + ", method=" + sendMethod
+					+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 
 			return execute(httpclient, method);
 		} catch (HttpClientException e) {

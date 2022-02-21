@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDPromociones;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -1257,8 +1258,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 								   DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
 								   if (tipoTransmision != null) {
 									   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
-								}
-							}
+								   }
+							   }
+							   if (activoAgrupacionActivo.getActivo().getSituacionComercial() != null && activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo() != null
+										  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo())) {
+									   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+									   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+									   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+							   } else {
+									   gastoLineaDetalleEntidad.setSituacionComercial(null);
+							   }
 						}
 						newEntidadGastoLineaDetalle.add(gastoLineaDetalleEntidad);
 						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
@@ -1327,6 +1336,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
 							}
 						}
+						if (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo() != null
+								  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+							   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+							   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+							   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+					   } else {
+							   gastoLineaDetalleEntidad.setSituacionComercial(null);
+					   }
 					}
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
 					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
@@ -2104,6 +2121,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						   gldEnt.setPromocion(codigoProyecto);
 						}
 					}
+					if (activoTrabajo.getActivo().getSituacionComercial() != null && activoTrabajo.getActivo().getSituacionComercial().getCodigo() != null
+							  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoTrabajo.getActivo().getSituacionComercial().getCodigo())) {
+					   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+					   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+					   gldEnt.setSituacionComercial(ddSituacionComercial);
+				   } else {
+					   gldEnt.setSituacionComercial(null);
+				   }
 				}
 				genericDao.save(GastoLineaDetalleEntidad.class, gldEnt);
 			}

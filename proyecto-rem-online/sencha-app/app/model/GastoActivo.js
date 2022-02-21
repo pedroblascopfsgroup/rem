@@ -110,6 +110,12 @@ Ext.define('HreRem.model.GastoActivo', {
             },
             {
             	name:'promocion'
+            },
+            {
+            	name:'situacionComercialCodigo'
+            },
+            {
+            	name:'situacionComercial'
             }
             
     ],

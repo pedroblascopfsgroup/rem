@@ -1,10 +1,10 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220210
+--## FECHA_CREACION=20220217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17073
+--## INCIDENCIA_LINK=HREOS-17208
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##        0.5 Corrección filtro del la ETG- [HREOS-17073] - Alejandra García
 --##        0.6 Corrección filtro del la ETG campos TGA y STG- [HREOS-17073] - Alejandra García
 --##        0.7 Cambiar campo PROMOCION por DD_PRO_ID - [HREOS-17073] - Alejandra García
+--##        0.8 Añadir campo DD_SCM_ID como nuevo parámetro- [HREOS-17208] - Alejandra García
 --##########################################
 --*/
 
@@ -103,6 +104,7 @@ BEGIN
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
+                    AND NVL(ETG.DD_SCM_ID, 0) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                 SELECT
@@ -222,6 +224,7 @@ BEGIN
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
+                    AND NVL(ETG.DD_SCM_ID, 0) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                  SELECT

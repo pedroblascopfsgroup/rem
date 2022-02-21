@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-11128 - Añadido nombre propietario
 --##########################################
 --*/
 
@@ -46,6 +47,7 @@ BEGIN
 	BBVA.BBVA_NUM_ACTIVO AS ID_BBVA,
 	GDE.GDE_FECHA_TOPE_PAGO AS FECHA_TOPE_PAGO, 
 	PRO.PRO_DOCIDENTIF AS CIF_PROPIETARIO, 
+	PRO.PRO_NOMBRE AS NOMBRE_PROPIETARIO,
 	PVE.PVE_DOCIDENTIF AS CIF_PROVEEDOR,
 	PVE.PVE_NOMBRE AS NOMBRE_PROVEEDOR, 
 	GGE.GGE_FECHA_EAH AS FECHA_AUTORIZACION,

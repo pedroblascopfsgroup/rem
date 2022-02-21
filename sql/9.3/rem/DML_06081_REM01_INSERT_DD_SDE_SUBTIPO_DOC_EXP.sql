@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('88','Resolución arras	'	,'Resolución arras	','04','OP-07-CNCV-AW', ''),
+    	T_TIPO_DATA('90','Resolución arras	'	,'Resolución arras	','04','OP-07-CNCV-AW', ''),
       T_TIPO_DATA('89','Justificante devolución de arras'	,'Justificante devolución de arras','04','OP-07-CERA-DX', '')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -66,7 +66,7 @@ BEGIN
 					', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', DD_'||V_TEXT_CHARS||'_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
           			', DD_TDE_ID = (SELECT DD_TDE_ID FROM DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = '''||V_TMP_TIPO_DATA(4)||''') '||
-					', USUARIOMODIFICAR = ''HREOS-10974'' , FECHAMODIFICAR = SYSDATE '||
+					', USUARIOMODIFICAR = ''REMVIP-10974'' , FECHAMODIFICAR = SYSDATE '||
 					', DD_'||V_TEXT_CHARS||'_VINCULABLE = 1'||
           			', DD_SDE_TPD_ID = (SELECT DD_TPD_ID FROM DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_CODIGO = '''||V_TMP_TIPO_DATA(6)||''') '||
 					'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -80,7 +80,7 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'DD_'||V_TEXT_CHARS||'_ID, DD_TDE_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_'||V_TEXT_CHARS||'_MATRICULA_GD, VERSION, USUARIOCREAR, FECHACREAR, BORRADO,DD_'||V_TEXT_CHARS||'_VINCULABLE,DD_SDE_TPD_ID) ' ||
-                      'SELECT '|| V_ID || ', (SELECT DD_TDE_ID FROM DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = '''||V_TMP_TIPO_DATA(4)||'''), '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''', 0, ''HREOS-10974'',SYSDATE,0 '||
+                      'SELECT '|| V_ID || ', (SELECT DD_TDE_ID FROM DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = '''||V_TMP_TIPO_DATA(4)||'''), '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''', 0, ''REMVIP-10974'',SYSDATE,0 '||
 					  ', 1'||
           			  ', (SELECT DD_TPD_ID FROM DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_CODIGO = '''||V_TMP_TIPO_DATA(6)||''')  FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;

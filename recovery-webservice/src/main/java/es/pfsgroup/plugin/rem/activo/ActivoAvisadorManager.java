@@ -387,34 +387,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
+		// Aviso 22: Discrepancias de localizacion
+		if(activo.getDiscrepanciasLocalizacion() != null && activo.getDiscrepanciasLocalizacion()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Discrepancias localización");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
 		return listaAvisos;
 	}
 	
-	public boolean updateActivoAlquilado(Long id, Activo activo, List<ActivoOferta> listaActivoOfertas) {
-		
-		if (listaActivoOfertas != null && listaActivoOfertas.size() > 0) {
 
-			for (ActivoOferta activoOferta : listaActivoOfertas) {
-
-				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-
-				if (oferta != null && oferta.getEstadoOferta() != null
-						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
-						&& (DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(oferta.getTipoOferta().getCodigo())
-						|| DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()))) {
-
-					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
-							genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-					
-					if (expediente != null && expediente.getEstado() != null
-							&& DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
-						
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
 }

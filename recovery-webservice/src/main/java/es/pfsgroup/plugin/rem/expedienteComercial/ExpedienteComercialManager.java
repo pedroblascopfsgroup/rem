@@ -35,7 +35,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -211,7 +210,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
-import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -13940,13 +13938,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(tar != null && tar.getTareaExterna() != null) {
 			
 			List<ValorTareaBC> valores = genericDao.getList(ValorTareaBC.class,  genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tar.getTareaExterna().getId()));	
-			if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codigoTarea)) {
-				dto = new DtoScreening();
-			} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)) {
-				dto = new DtoScreening();
-			}else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION.equals(codigoTarea)) {
+			
+			if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION.equals(codigoTarea)) {
 				dto = new DtoAccionAprobacionCaixa();
-			} else if (ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codigoTarea)) {
+			} else if (ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codigoTarea)
+					|| ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCORING.equals(codigoTarea)
+					|| ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING.equals(codigoTarea)
+					|| ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCORING.equals(codigoTarea)) {
 				dto = new DtoScreening();
 			}
 			if(valores != null) {

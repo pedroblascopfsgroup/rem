@@ -13,8 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
 
@@ -2656,9 +2655,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getValoresTareaBloqueoScreening(ModelMap model, Long idTarea) {
+	public ModelAndView getValoresTareaBloqueo(ModelMap model, Long idTarea, String codTarea) {
 		try {
-			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, codTarea);
 			model.put(RESPONSE_DATA_KEY, dto);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 

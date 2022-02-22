@@ -100,7 +100,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		List<String> tareasBloqueo = new ArrayList<String>();
 		
 		tareasBloqueo.addAll(this.devolverTareasBloqueoScreening());
-		tareasBloqueo.addAll(this.devolverTareasBloqueoScroring());
+		tareasBloqueo.addAll(this.devolverTareasBloqueoScoring());
 
 		for (TareaExterna tareaExterna : tareasActivas) {
 			if(codigoTarea != tareaExterna.getTareaProcedimiento().getCodigo()) {
@@ -115,6 +115,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return tieneMasUnaTareaBloqueoActiva;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<String> devolverTareasBloqueoScreening(){
 		String[] tareasBloqueoScreening = {
 				ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING, 
@@ -124,11 +125,12 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return Arrays.asList(tareasBloqueoScreening);
 	}
 	
-	private List<String> devolverTareasBloqueoScroring(){
+	@SuppressWarnings("unchecked")
+	private List<String> devolverTareasBloqueoScoring(){
 		String[] tareasBloqueoScoring = {
-				ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING, 
-				ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING,
-				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING};
+				ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCORING, 
+				ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCORING,
+				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING};
 		return Arrays.asList(tareasBloqueoScoring);
 	}
 }

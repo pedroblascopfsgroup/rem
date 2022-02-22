@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,6 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		
 		String estadoExpedienteComercial = null;
 		String estadoExpedienteBc = null;
-		String fechaResolucion = null;
 
 		for(TareaExternaValor valor :  valores){
 			
@@ -67,16 +67,11 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 				expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteBc)));
 
 			}
-			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaResolucion = valor.getValor();
-			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaResolucion));
+		expedienteComercialApi.update(expedienteComercial,false);
 
+		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

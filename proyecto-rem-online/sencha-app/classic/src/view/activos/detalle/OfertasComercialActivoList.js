@@ -584,12 +584,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 				return false;
 			}
-		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
-			return false;
-		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
-			return false;
 		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
@@ -16,6 +18,8 @@ import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService.TramiteAlquilerT015;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -88,5 +92,43 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		return isAprobado;
 	}
 	
+	@Override
+	public boolean tieneMasUnaTareaBloqueo(ExpedienteComercial eco, String codigoTarea) {
+		boolean tieneMasUnaTareaBloqueoActiva = false;
+		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
+		List<String> codigoTareasActivas = new ArrayList<String>();
+		List<String> tareasBloqueo = new ArrayList<String>();
+		
+		tareasBloqueo.addAll(this.devolverTareasBloqueoScreening());
+		tareasBloqueo.addAll(this.devolverTareasBloqueoScroring());
+
+		for (TareaExterna tareaExterna : tareasActivas) {
+			if(codigoTarea != tareaExterna.getTareaProcedimiento().getCodigo()) {
+				codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
+			}
+		}
+			
+		if(CollectionUtils.containsAny(tareasActivas, tareasBloqueo)) {
+			tieneMasUnaTareaBloqueoActiva = true;
+		} 
+		
+		return tieneMasUnaTareaBloqueoActiva;
+	}
+
+	private List<String> devolverTareasBloqueoScreening(){
+		String[] tareasBloqueoScreening = {
+				ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING, 
+				ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING,
+				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING};
+		
+		return Arrays.asList(tareasBloqueoScreening);
+	}
 	
+	private List<String> devolverTareasBloqueoScroring(){
+		String[] tareasBloqueoScoring = {
+				ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING, 
+				ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING,
+				ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING};
+		return Arrays.asList(tareasBloqueoScoring);
+	}
 }

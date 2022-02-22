@@ -77,7 +77,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado)
                 || calculaT015CalculoRiesgo(codTarea,codEstado) || calculaT018CalculoRiesgo(codTarea,codEstado)
                 || calculaT015PBCAlquiler(codTarea,codEstado) || calculaT018PBCAlquiler(codTarea,codEstado)
-                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado);
+                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado) || calculaT018TrasladarOfertaCliente(codTarea, codEstado);
     }
 
 	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -245,6 +245,15 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_VALORAR_ACUERDO_SIN_GARANTIAS_ADICIONALES.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaT018TrasladarOfertaCliente(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_T018_TRASLADAR_OFERTA_CLIENTE.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE.equals(codEstado)
+                    || DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC.equals(codEstado)))
             return true;
 
         return false;

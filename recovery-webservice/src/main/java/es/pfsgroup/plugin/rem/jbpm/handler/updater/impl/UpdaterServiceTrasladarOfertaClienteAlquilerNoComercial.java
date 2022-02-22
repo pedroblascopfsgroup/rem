@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,6 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		
 		String estadoExpedienteComercial = null;
 		String estadoExpedienteBc = null;
-		String fechaResolucion = null;
 
 		for(TareaExternaValor valor :  valores){
 			
@@ -70,35 +70,30 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 				expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteBc)));
 
 			}
-			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaResolucion = valor.getValor();
-			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaResolucion));
-		
 		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId());
 		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
 		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
 		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
-		
+
 		if (historico != null) {
 			historico.setActiva(false);
-			
+
 			genericDao.save(HistoricoTareaPbc.class, historico);
 		}
-		
+
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
 		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
-		
+
 		HistoricoTareaPbc htp = new HistoricoTareaPbc();
 		htp.setOferta(expedienteComercial.getOferta());
 		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
-		
+
 		genericDao.save(HistoricoTareaPbc.class, htp);
+		expedienteComercialApi.update(expedienteComercial,false);
+
+		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

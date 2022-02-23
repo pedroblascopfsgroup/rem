@@ -587,6 +587,12 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_GESTION_DND")
     private DDSinSiNo tieneGestionDnd;
     
+    @Column(name = "ACT_DISCREPANCIAS_LOC")
+    private Boolean discrepanciasLocalizacion;
+
+    @Column(name = "ACT_OBSERVACIONES_DISC_LOC")
+    private String discrepanciasLocalizacionObservaciones;
+
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1090,7 +1096,7 @@ public class Activo implements Serializable, Auditable {
   			return null;
   		}
   	}
-  	
+
   	public String getMunicipioDescripcion() {
   		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getLocalidad() != null) {
   			return bien.getLocalizaciones().get(0).getLocalidad().getDescripcion();
@@ -1098,7 +1104,7 @@ public class Activo implements Serializable, Auditable {
   			return null;
   		}
   	}
-  	
+
   	public void setMunicipio(String codigoMunicipio) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getLocalidad().setCodigo(codigoMunicipio);
@@ -1134,9 +1140,9 @@ public class Activo implements Serializable, Auditable {
   		} else {
   			return null;
   		}
-  		
+
   	}
-  	
+
   	public void setProvincia(String codProvincia) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getProvincia().setCodigo(codProvincia);
@@ -2243,8 +2249,25 @@ public class Activo implements Serializable, Auditable {
 		DDTipoVia tipoVia = null;
   		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getTipoVia() != null) {
   			tipoVia =  bien.getLocalizaciones().get(0).getTipoVia();
-  		} 
-  		
+  		}
+
   		return tipoVia;
   	}
+
+	public Boolean getDiscrepanciasLocalizacion() {
+		return discrepanciasLocalizacion;
+	}
+
+	public void setDiscrepanciasLocalizacion(Boolean discrepanciasLocalizacion) {
+		this.discrepanciasLocalizacion = discrepanciasLocalizacion;
+	}
+
+	public String getDiscrepanciasLocalizacionObservaciones() {
+		return discrepanciasLocalizacionObservaciones;
+	}
+
+	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
+		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
+	}
+
 }

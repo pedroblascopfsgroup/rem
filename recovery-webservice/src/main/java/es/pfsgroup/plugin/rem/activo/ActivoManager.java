@@ -9636,5 +9636,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public Activo getActivoMatrizIfIsUA(Long idActivo) {
+		Activo activo = this.get(idActivo);
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		
+		if(esUA) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activo=activoMatriz;
+					}
+			}
+		}
+		
+		return activo;
+	}
 }
 

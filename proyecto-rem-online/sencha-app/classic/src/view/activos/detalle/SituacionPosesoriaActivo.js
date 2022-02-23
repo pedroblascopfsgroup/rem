@@ -119,8 +119,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	fieldLabel: 'Tapiado',
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{situacionPosesoria.accesoTapiado}',
-					            		readOnly: '{isAssetManager}'
+					            		value: '{situacionPosesoria.accesoTapiado}'
 					            	},
 					            	labelWidth: 80,
 					            	width: 200,
@@ -157,8 +156,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	reference: 'datefieldTapiado',
 						        	fieldLabel: 'Fecha tapiado',
 						        	bind: {
-						        		value: '{situacionPosesoria.fechaAccesoTapiado}',
-						        		readOnly: '{isAssetManager}'
+						        		value: '{situacionPosesoria.fechaAccesoTapiado}'
 						        	},
 					            	labelWidth: 100,
 					            	width: 200

@@ -27,6 +27,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.controller.CatastroController;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoCatastroCorrecto;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
+import es.pfsgroup.plugin.rem.model.VActivoCatastro;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
@@ -93,6 +95,9 @@ public class CatastroManager implements CatastroApi {
 
     @Autowired
     private LogTrustWebService trustMe;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
 	public DtoDatosCatastro getDatosCatastroRem(Long idActivo) {
 		DtoDatosCatastro dto = new DtoDatosCatastro();
@@ -875,8 +880,11 @@ public class CatastroManager implements CatastroApi {
 
 		for(DtoDatosCatastro datosCatastro : listadoCatastro) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",datosCatastro.getRefCatastral());
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
-			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+			Filter filtroMun = genericDao.createFilter(FilterType.EQUALS,"localidad.codigo",datosCatastro.getMunicipioCod());
+			Filter filtroPrv = genericDao.createFilter(FilterType.EQUALS,"provincia.codigo",datosCatastro.getProvinciaCod());
+			
+			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroMun,filtroPrv);
+			
 			if (Checks.esNulo(catastro)) {
 				catastro = new Catastro();
 				catastro.setRefCatastral(datosCatastro.getRefCatastral());
@@ -996,5 +1004,12 @@ public class CatastroManager implements CatastroApi {
 	    }
 	    return true;
 
+	}
+	
+	@Override
+	public List<VActivoCatastro> getListActivoCatastroByIdActivo(Long id) {
+		
+		Activo activo = activoApi.getActivoMatrizIfIsUA(id);
+		return genericDao.getList(VActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,  "idActivo", activo.getId()));
 	}
 }

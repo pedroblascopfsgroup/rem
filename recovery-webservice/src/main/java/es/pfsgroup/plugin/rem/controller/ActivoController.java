@@ -736,7 +736,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListCatastroById(Long id, ModelMap model, HttpServletRequest request) {
-		model.put(RESPONSE_DATA_KEY, adapter.getListCatastroById(id));
+		model.put(RESPONSE_DATA_KEY, catastroApi.getListActivoCatastroByIdActivo(id));
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "catastro", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);

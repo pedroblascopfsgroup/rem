@@ -1581,7 +1581,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return null;
     }
     
-    
+    @Override
+    public Activo getActivoMatrizByNumAgrupacion(Long numAgrupacion) {
+
+    	String sql = "SELECT act "
+    			+ "FROM ACT_ACTIVO act "
+    			+ "JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aga.ACT_ID = act.ACT_ID "
+    			+ "JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_ID = aga.AGR_ID "
+    			+ "WHERE aga.AGA_PRINCIPAL = 1 "
+    			+ "AND agr.AGR_NUM_AGRUP_REM  = "+ numAgrupacion;
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((Activo) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult());
+		}
+		return null;
+    }
 
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {

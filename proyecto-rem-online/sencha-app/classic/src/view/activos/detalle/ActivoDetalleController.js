@@ -291,7 +291,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		);
 		faseDatosRegistro.setStore(storefaseDatosRegistro);
 		faseDatosRegistro.getStore().load();
-	
+
 	},
 	
 	
@@ -8820,9 +8820,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var datosCatastro = gridDatosCatastro.getStore().getData().items;
     	var hayAlgunoMarcado = false;
     	var window =  btn.up('window');
-    	var arrayReferencias = [];   
+    	var arrayReferencias = [];
     	var params =  {};
-    	for(i = 0; i < datosCatastro.length;i++){ 
+    	for(i = 0; i < datosCatastro.length;i++){
     		if(datosCatastro[i].data.check === true){
     			hayAlgunoMarcado = true;
     			var datCat = datosCatastro[i].data;
@@ -8831,21 +8831,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				catCorrecto = "";
     			}
     			arrayReferencias.push(datCat.refCatastral + "-" + catCorrecto);
-    			
+
     		}
 		}
     	if(window.modificar){
     		if(arrayReferencias.length != 1){
     			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.modificar.referencia"));
     			return;
-    		} 
+    		}
     		params = {
 				idActivo : me.getView().idActivo,
 				referenciaAnterior: window.refCatastral,
 				nuevaReferencia: arrayReferencias[0]
 			};
 			url = $AC.getRemoteUrl('catastro/updateCatastro');
-    	}else{ 
+    	}else{
     		if(!hayAlgunoMarcado){
 	    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
 	    		return;
@@ -8856,16 +8856,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				arrayReferencias: arrayReferencias
 			};
     	}
-    	
+
     	window.mask(HreRem.i18n("msg.mask.loading"));
 		Ext.Ajax.request({
 			url : url,
 			method : 'GET',
-			params : params, 
+			params : params,
 			success : function(response, opts) {
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				window.unmask();
-				window.close(); 
+				window.close();
 				var grid = me.getView();
 				grid.getStore().load();
 			},
@@ -8874,8 +8874,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				window.unmask();
 			}
 		});
-	}, 
-	
+	},
+
 	buscarReferenciaCatastral: function(textfield){
 		var me = this;
 		if(!textfield.isValid()) return;
@@ -8896,10 +8896,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				var data = Ext.decode(response.responseText);
 				var datosRem = data.datosRem;
 				var datosCat = data.datosCatastro;
-				
+
 				var myStoreRem = new Ext.data.Store({data: datosRem});
 				var myStoreCat = new Ext.data.Store({data: datosCat});
-				
+
 				gridDatosRem.setStore(myStoreRem);
 				gridDatosCatastro.setStore(myStoreCat);
 				guardarReferencia.setDisabled(false);
@@ -8912,18 +8912,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				gridDatosCatastro.unmask();
 			}
 		});
-		
+
 	},
 	abrirVentanaEditarCatastro: function(grid, record){
 		var me = this;
 		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, refCatastral: record.getData().refCatastral, parent: grid}).show();
 	},
-	
+
 	cargarReferenciaCatastral: function(store){
 		var me = this;
 		if(store.data.length == 1){
 			this.getViewModel().data.activo.refCatastral = store.getData().getAt(0).data.descripcion;
 		}
-	}
+    },
+
+    onSelectDiscrepanciasLocalizacion : function(combo, value) {
+		var me = this;
+		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
+		if(value.get('codigo') === 'false'){
+			textObservacionesLoc.setValue('');
+		}
+    }
 });
 

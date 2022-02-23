@@ -946,6 +946,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
+							},
+							rowdblclick: function(grid, record){
+								var allowCopy = record.get("campoCodigo") == '08';
+								if (allowCopy){
+									var elem = document.createElement('textarea');
+								    elem.value = record.get("texto");
+								    document.body.appendChild(elem);
+								    elem.select();
+								    document.execCommand('copy');
+								    document.body.removeChild(elem);
+									me.fireEvent("infoToast", "Texto copiado correctamente");
+								}
 							}
 						},
 						columns : [{

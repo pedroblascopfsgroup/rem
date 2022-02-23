@@ -874,8 +874,11 @@ public class CatastroManager implements CatastroApi {
 
 		for(DtoDatosCatastro datosCatastro : listadoCatastro) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",datosCatastro.getRefCatastral());
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false);
-			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroBorrado);
+			Filter filtroMun = genericDao.createFilter(FilterType.EQUALS,"localidad.codigo",datosCatastro.getMunicipioCod());
+			Filter filtroPrv = genericDao.createFilter(FilterType.EQUALS,"provincia.codigo",datosCatastro.getProvinciaCod());
+			
+			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroMun,filtroPrv);
+			
 			if (Checks.esNulo(catastro)) {
 				catastro = new Catastro();
 				catastro.setRefCatastral(datosCatastro.getRefCatastral());

@@ -43,12 +43,12 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
     (
     	--      DD_LOC_CODIGO	       DESCRIPCION						  DD_UPO_CODIGO
-        T_TIPO_DATA('03099'			,'ORIHUELA COSTA'		        ,  '000800'		),
-        T_TIPO_DATA('17101'			,'RIUCLAR'		              ,  '000501'		),
-        T_TIPO_DATA('18089'			,'BALCONES (LOS)'	          ,  '000103'		),
-        T_TIPO_DATA('30009'			,'HURTADO'	                ,  '000305'		),
-        T_TIPO_DATA('38001'			,'QUINTA (LA)'	            ,  '002602'		),
-        T_TIPO_DATA('38001'			,'TAUCHO'	                  ,  '002603'		),
+        T_TIPO_DATA('03099'			,'ORIHUELA COSTA'		        ,  '030990800'),
+        T_TIPO_DATA('17101'			,'RIUCLAR'		              ,  '171010501'),
+        T_TIPO_DATA('18089'			,'BALCONES (LOS)'	          ,  '180890103'),
+        T_TIPO_DATA('30009'			,'HURTADO'	                ,  '300090305'),
+        T_TIPO_DATA('38001'			,'QUINTA (LA)'	            ,  '380012602'),
+        T_TIPO_DATA('38001'			,'TAUCHO'	                  ,  '380012603'),
         T_TIPO_DATA('46046'			,'DROVA (LA)'	              ,  '460460102'),
         T_TIPO_DATA('46211'			,'MONTE REAL'	              ,  '462110102')
     ); 

@@ -38,15 +38,23 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
     	me.editOnSelect = $AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
     	
     	me.columns= [
+    		{
+	        	dataIndex: 'idActivoCatastro',
+	        	hidden: true
+    		},
+    		{
+    			dataIndex: 'idActivo',
+	        	hidden: true
+    		},
 		    {   
 				text: HreRem.i18n('fieldlabel.referencia.catastral'),
 	        	dataIndex: 'refCatastral',
-	        	flex: 2
+	        	flex: 1.5
 	        },
             {
             	xtype: 'actioncolumn',
             	text	 : HreRem.i18n('fieldlabel.referencia.catastral.correcto'),
-                flex	 : 0.5,
+                flex	 : 0.7,
                 dataIndex: 'correcto',
                 renderer: coloredRender,
                 items: [{
@@ -64,103 +72,97 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
 			        }]
                 		
             },
-	        {
-				text: HreRem.i18n('fieldlabel.poligono'),
-	        	dataIndex: 'poligono'
-	        },	
-			{
-	            text: HreRem.i18n('fieldlabel.parcela'),
-	            dataIndex: 'parcela',
-	        	flex: 1
-	        },
-	        {   
-	        	text: HreRem.i18n('fieldlabel.titular.catastral'),
-	        	dataIndex: 'titularCatastral',
-	        	flex: 1
-	        },
-	        
-	        {   text: HreRem.i18n('fieldlabel.superficie.construida'),
-	        	dataIndex: 'superficieConstruida',
-	        	renderer: Ext.util.Format.numberRenderer('0,000.00')
-	        },
-	        {   text: HreRem.i18n('fieldlabel.superficie.util'),
-	        	dataIndex: 'superficieUtil',
-	        	renderer: Ext.util.Format.numberRenderer('0,000.00')
-	        },
-	        {   text: HreRem.i18n('fieldlabel.superficie.repercusion.elementos.comunes'), 
-	        	dataIndex: 'superficieReperComun',
-	        	renderer: Ext.util.Format.numberRenderer('0,000.00')
-	        },
-	        {   text: HreRem.i18n('fieldlabel.superficie.parcela'), 
-	        	dataIndex: 'superficieParcela',
-	        	renderer: Ext.util.Format.numberRenderer('0,000.00')
-	        },
-	        {   text: HreRem.i18n('fieldlabel.superficie.suelo'),
-	        	dataIndex: 'superficieSuelo',
-	        	renderer: Ext.util.Format.numberRenderer('0,000.00')
-	        },
-	        {   text: HreRem.i18n('fieldlabel.valor.catastral.construccion'),
+            {   text: HreRem.i18n('fieldlabel.valor.catastral.construccion'),
 	        	dataIndex: 'valorCatastralConst',
 	        	renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
 	        	},
-	        	flex: 1
+	        	flex: 0.7
 	        },
 	        {   text: HreRem.i18n('fieldlabel.valor.catastral.suelo'),
 	        	dataIndex: 'valorCatastralSuelo',
 	        	renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
 	        	},
-	        	flex: 1
+	        	flex: 0.7
 	        },
 	        {   text: HreRem.i18n('fieldlabel.fecha.revision.valor.catastral'),
 	        	dataIndex: 'fechaRevValorCatastral',
 	        	formatter: 'date("d/m/Y")',
-                flex: 1 
+                flex: 0.7
 	        },
 	        {   text: HreRem.i18n('fieldlabel.fecha.alta.catastro'),
 	        	dataIndex: 'fechaAltaCatastro',
 	        	formatter: 'date("d/m/Y")',
-                flex: 1 
-	        },
-	        {   text: HreRem.i18n('fieldlabel.fecha.baja.catastro'),
-	        	dataIndex: 'fechaBajaCatastro',
-	        	formatter: 'date("d/m/Y")',
-                flex: 1 
-	        },
-	        {   
-	        	text: HreRem.i18n('fieldlabel.observaciones'),
-	        	dataIndex: 'observaciones',
-	        	flex: 1
+                flex: 0.7 
 	        },
 	        {
-	        	text: HreRem.i18n('fieldlabel.resultadoSiNO'),
-	        	dataIndex: 'resultadoSiNO', 
-	        	renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-		            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
-		            var descripcion;
-		        	if(!Ext.isEmpty(foundedRecord)) {
-		        		descripcion = foundedRecord.getData().descripcion;
-		        	}
-		            return descripcion;
-		        },
-	        	flex: 1
+	            text: HreRem.i18n('fieldlabel.superficie.parcela'),
+	            dataIndex: 'superficieParcela',
+	            renderer: Ext.util.Format.numberRenderer('0,000.00'),
+	        	flex: 0.5
+	        },
 	        
-	        	       
+	        {   text: HreRem.i18n('fieldlabel.superficie.construida'),
+	        	dataIndex: 'superficieConstruida',
+	        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+	        	flex: 0.5
 	        },
-	        {   
-	        	text: HreRem.i18n('fieldlabel.fechaSoliciud901'),
-	        	dataIndex: 'fechaSolicitud901',
-	        	formatter: 'date("d/m/Y")',
+	        {
+	            text: HreRem.i18n('fieldlabel.anyo.construccion'),
+	            dataIndex: 'anyoConstruccion',
+	        	flex: 0.5
+	        }, 
+	        {   text: HreRem.i18n('fieldlabel.codigo.postal'),
+	        	dataIndex: 'codigoPostal',
+	        	flex: 0.5
+	        }, 
+	        {
+	            text: HreRem.i18n('fieldlabel.tipo.via'),
+	            dataIndex: 'tipoVia',
+	            flex: 0.5
+	        },
+	        {   text: HreRem.i18n('fieldlabel.nombre.via'),
+	        	dataIndex: 'nombreVia',
+	        	flex: 1
+	        },
+	        {   text: HreRem.i18n('fieldlabel.numero.via'),
+	        	dataIndex: 'numeroVia',
+	        	flex: 0.5
+	        },
+	        {   text: HreRem.i18n('fieldlabel.puerta'),
+	        	dataIndex: 'puerta',
+	        	flex: 0.5
+	        },
+	        {   text: HreRem.i18n('header.num.planta'),
+	        	dataIndex: 'planta',
+	        	flex: 0.5
+	        },
+	        {   text:  HreRem.i18n('fieldlabel.escalera'),
+	        	dataIndex: 'escalera',
+	        	flex: 0.5
+	        },
+	        {
+	        	text: HreRem.i18n('fieldlabel.provincia'),
+	        	dataIndex: 'provincia',
 	        	flex: 1
 	        },
 	        {   
-	        	text: HreRem.i18n('fieldlabel.alteracion.catastral'),
-	        	dataIndex: 'fechaAlteracion',
-	        	formatter: 'date("d/m/Y")',
+	        	text: HreRem.i18n('fieldlabel.municipio'),
+	        	dataIndex: 'municipio',
+	        	flex: 1
+	        },
+	        {   
+	        	text: HreRem.i18n('fieldlabel.latitud'),
+	        	dataIndex: 'latitud',
+	        	flex: 1
+	        },
+	        {   
+	        	text: HreRem.i18n('fieldlabel.longitud'),
+	        	dataIndex: 'longitud',
 	        	flex: 1
 	        }
-	       	        
+     
 	    ]; 	
 //	    dockedItems : [
 //	        {

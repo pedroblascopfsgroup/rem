@@ -6,6 +6,7 @@ import java.util.List;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
+import es.pfsgroup.plugin.rem.model.VActivoCatastro;
 
 public interface CatastroApi {
 
@@ -34,6 +35,8 @@ public interface CatastroApi {
 	void updateCatastro(Long idActivo, String referenciaAnterior, String nuevaReferencia);
 
 	boolean isReferenciaValida(String refCatastral);
+
+	List<VActivoCatastro> getListActivoCatastroByIdActivo(Long id);
 	
 }
 

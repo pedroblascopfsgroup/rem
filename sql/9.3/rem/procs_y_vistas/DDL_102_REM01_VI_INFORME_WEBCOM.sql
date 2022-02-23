@@ -1,12 +1,7 @@
 --/*
 --##########################################
-<<<<<<< HEAD
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20220216
-=======
---## AUTOR=Juan José Sanjuan
---## FECHA_CREACION=20220304
->>>>>>> func-rem-informeMediador
+--## FECHA_CREACION=20220223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-16330

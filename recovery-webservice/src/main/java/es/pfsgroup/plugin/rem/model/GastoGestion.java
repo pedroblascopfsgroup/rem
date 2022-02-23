@@ -149,6 +149,17 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_MOTIVO_RECHAZO")
     private String motivoRechazoGestionGasto;
     
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="GGE_CLIENTE_PAGADOR")
+    private ActivoPropietario gestionGastoClientePagador;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="GGE_CLIENTE_INFORMADOR")
+    private ActivoPropietario gestionGastoClienteInformador;
+    
+    @Column(name="GGE_FECHA_ENVIO_INFORMATIVA")
+    private Date fechaEnvioInformativa;
+    
 	@Version   
 	private Long version;
 
@@ -396,6 +407,30 @@ public class GastoGestion implements Serializable, Auditable {
 
 	public void setMotivoRechazoGestionGasto(String motivoRechazoGestionGasto) {
 		this.motivoRechazoGestionGasto = motivoRechazoGestionGasto;
+	}
+
+	public ActivoPropietario getGestionGastoClientePagador() {
+		return gestionGastoClientePagador;
+	}
+
+	public void setGestionGastoClientePagador(ActivoPropietario gestionGastoClientePagador) {
+		this.gestionGastoClientePagador = gestionGastoClientePagador;
+	}
+
+	public ActivoPropietario getGestionGastoClienteInformador() {
+		return gestionGastoClienteInformador;
+	}
+
+	public void setGestionGastoClienteInformador(ActivoPropietario gestionGastoClienteInformador) {
+		this.gestionGastoClienteInformador = gestionGastoClienteInformador;
+	}
+
+	public Date getFechaEnvioInformativa() {
+		return fechaEnvioInformativa;
+	}
+
+	public void setFechaEnvioInformativa(Date fechaEnvioInformativa) {
+		this.fechaEnvioInformativa = fechaEnvioInformativa;
 	}
 	
 }

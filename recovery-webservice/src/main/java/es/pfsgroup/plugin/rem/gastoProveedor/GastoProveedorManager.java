@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
+import es.pfsgroup.plugin.rem.model.HistoricoEnvioPedidos;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;

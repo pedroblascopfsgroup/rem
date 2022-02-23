@@ -658,6 +658,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInformeDto.getAnyoConstruccion())) 
 				actInfoComercial.setAnyoConstruccion(activoInformeDto.getAnyoConstruccion());
+			if (!Checks.esNulo(activoInformeDto.getLicenciaObraCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getLicenciaObraCod());
+				actInfoComercial.setLicenciaObra(genericDao.get(DDSinSiNo.class, filtro));
+			}
 			
 			//Caracteristicas del activo
 			if (!Checks.esNulo(activoInformeDto.getDormitorios())) 

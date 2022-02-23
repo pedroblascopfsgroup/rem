@@ -115,7 +115,8 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_ANO_REHABILITACION")
 	private Integer anyoRehabilitacion;
 	
-	@Column(name = "ICO_LIC_OBRA")
+	@ManyToOne
+	@JoinColumn(name = "ICO_LIC_OBRA")
 	private DDSinSiNo licenciaObra;
 
 	@Column(name = "ICO_FECHA_ULTIMA_VISITA")

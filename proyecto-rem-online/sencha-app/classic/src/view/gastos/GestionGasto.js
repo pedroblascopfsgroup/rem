@@ -144,6 +144,87 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			},
 			{   
 				xtype:'fieldsettable',
+				title: HreRem.i18n('title.gasto.gestion.envio'),
+				listeners:{
+					afterrender: function(get){
+						var me =this;
+						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+						
+						if (cartera != CONST.CARTERA['BANKIA']) {
+							me.setHidden(true);
+						}else{
+							me.setHidden(false);
+						}												
+					}
+				},
+				items :
+					[
+						{   
+							xtype:'fieldset',
+							height: 110,
+							margin: '10 10 10 0',
+							layout: {
+								type: 'table',
+						        columns: 1
+						    },
+							title: HreRem.i18n('title.gasto.gestion.envio.pago'),
+							items :
+								[
+									{
+										xtype: 'textfieldbase',
+										reference: 'gestionGastoClientePagadorRef',
+										fieldLabel: HreRem.i18n('fieldlabel.cliente.pagador'),
+										readOnly: true,
+										bind:		{
+											value: '{gestion.gestionGastoClientePagador}'
+										}
+										
+									},
+									{
+						        		xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.propietario'),
+							        	bind: '{gestion.fechaEnvioPropietario}',
+							        	readOnly: true,
+							        	maxValue: null
+							        }
+								]
+						},
+						{   
+							xtype:'fieldset',
+							title: HreRem.i18n('title.gasto.gestion.envio.informativo'),
+							height: 110,
+							margin: '10 10 10 0',
+							layout: {
+								type: 'table',
+						        columns: 1
+						    },
+							items :
+								[
+									{
+										xtype: 'textfieldbase',
+										reference: 'gestionGastoClienteInformadorRef',
+										fieldLabel: HreRem.i18n('fieldlabel.cliente.informador'),
+										readOnly: true,
+										bind:		{
+											value: '{gestion.gestionGastoClienteInformador}'
+										}
+										
+									},
+									{
+						        		xtype:'datefieldbase',
+										formatter: 'date("d/m/Y")',
+							        	fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.informativa'),
+							        	bind: '{gestion.fechaEnvioInformativa}',
+							        	readOnly: true,
+							        	maxValue: null
+							        }
+								]
+						}
+					]
+			},
+			{   
+				xtype:'fieldsettable',
 				title: HreRem.i18n('title.gasto.gestion.gestion'),
 //				bind:{
 //					disabled: '{!esGastoAnulado}'
@@ -273,8 +354,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 					afterrender: function(get){
 						var me =this;
 						var grid = me.items.items[0];
-						var fechaGestorPropietario = me.up().items.items[1].child("[reference='fechaGestorPropietario']");
-						var gestionMotivoRechazo = me.up().items.items[1].child("[reference='gestionMotivoRechazoPropietario']");
+						var fechaGestorPropietario = me.up().items.items[2].child("[reference='fechaGestorPropietario']");
+						var gestionMotivoRechazo = me.up().items.items[2].child("[reference='gestionMotivoRechazoPropietario']");
 						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
 						
 						if (cartera != CONST.CARTERA['BANKIA']) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20220218
+--## FECHA_CREACION=20220223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-17091
@@ -100,8 +100,8 @@ BEGIN
           V_MSQL := '
             UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
             SET 
-              DD_'||V_CHARS||'_EXTUSC_SIN = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
-              DD_'||V_CHARS||'_EXTUSC_RET = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
+              DD_'||V_CHARS||'_EXTUSC_SIN = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
+              DD_'||V_CHARS||'_EXTUSC_RET = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
               DD_'||V_CHARS||'_RESRCOD = '''||TRIM(V_TMP_TIPO_DATA(5))||''',
   	          USUARIOMODIFICAR = '''||V_USUARIO||''',
               FECHAMODIFICAR = SYSDATE

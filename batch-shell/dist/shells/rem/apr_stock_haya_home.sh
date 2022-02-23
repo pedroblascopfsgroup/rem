@@ -20,13 +20,18 @@ if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
-    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
+    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default  "$@"
     SALIDA_SHELL=$?
     if [[ "$SALIDA_SHELL" == "0" ]] ; then
         DIR_SALIDA=$(cat ${DIR_CONFIG}${CFG_FILE} | grep 'output_dir;' | cut -d';' -f2)
-        FECHA=$(date +%Y%m%d)
-        fichero="STOCK_*_HH_${FECHA}_*.csv"
         cd "$DIR_SALIDA"  &> /dev/null
+        FECHA=$(date +%Y%m%d)
+        NUEVA_FECHA=$(date +%Y%m%d -d "+1 days")
+        fichero=`ls -tr STOCK_ACTIVOS_HH_${FECHA}_*.csv | tail -1` ; mv $fichero STOCK_ACTIVOS_HH_${NUEVA_FECHA}.csv
+        fichero=`ls -tr STOCK_AGRUPACIONES_HH_${FECHA}_*.csv | tail -1` ; mv $fichero STOCK_AGRUPACIONES_HH_${NUEVA_FECHA}.csv
+        fichero=`ls -tr STOCK_API_HH_${FECHA}_*.csv | tail -1` ; mv $fichero STOCK_API_HH_${NUEVA_FECHA}.csv
+        fichero=`ls -tr STOCK_GESTORES_HH_${FECHA}_*.csv | tail -1` ; mv $fichero STOCK_GESTORES_HH_${NUEVA_FECHA}.csv
+        fichero="STOCK_*_HH_${NUEVA_FECHA}.csv"
         if [[ `ls $fichero 2> /dev/null | wc -l` -gt 0  ]] ; then
             echo "Subiendo ficheros $fichero al FTP..."
 lftp -u $SFTP_HH_USER,$SFTP_HH_PASS sftp://${SFTP_HH_HOST} <<EOF

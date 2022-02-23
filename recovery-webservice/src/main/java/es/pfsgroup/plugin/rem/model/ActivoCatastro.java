@@ -24,6 +24,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseUsoCatastral;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDatosCatastrales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoMoneda;
 
 
 
@@ -123,8 +124,9 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_VALOR_CATASTRAL")
 	private Double valorCatastral;
 	
-	@Column(name = "CAT_MONEDA")
-	private String tipoMoneda;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MON_ID")
+	private DDTipoMoneda tipoMoneda;
 	
 	@Version   
 	private Long version;
@@ -324,14 +326,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 		this.valorCatastral = valorCatastral;
 	}
 
-	public String getTipoMoneda() {
-		return tipoMoneda;
-	}
-
-	public void setTipoMoneda(String tipoMoneda) {
-		this.tipoMoneda = tipoMoneda;
-	}
-
 	public DDOrigenDatosCatastrales getOrigenDatosCatastrales() {
 		return origenDatosCatastrales;
 	}
@@ -346,6 +340,14 @@ public class ActivoCatastro implements Serializable, Auditable {
 
 	public void setClaseUsoCatastral(DDClaseUsoCatastral claseUsoCatastral) {
 		this.claseUsoCatastral = claseUsoCatastral;
+	}
+
+	public DDTipoMoneda getTipoMoneda() {
+		return tipoMoneda;
+	}
+
+	public void setTipoMoneda(DDTipoMoneda tipoMoneda) {
+		this.tipoMoneda = tipoMoneda;
 	}
 
 }

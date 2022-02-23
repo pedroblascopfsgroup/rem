@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220218
+--## FECHA_CREACION=20220223
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17168
@@ -35,7 +35,7 @@ DECLARE
         T_TIPO_DATA('DD_CUC_ID', 'NUMBER(16,0)','', 'Clase de uso catastral', 'FK_DD_CUC_ID',	V_ESQUEMA||'.DD_CUC_CLASE_USO_CATASTRAL', ' DD_CUC_ID'),
         T_TIPO_DATA('CAT_VIGENTE','NUMBER(1,0)','DEFAULT 0', 'Idica si el catrasto está vigente', '', '', ''),
         T_TIPO_DATA('CAT_VALOR_CATASTRAL', 'NUMBER(16,2)','', 'Indica el valor catastral', '', '', ''),
-        T_TIPO_DATA('CAT_MONEDA', 'VARCHAR2(5 CHAR)','', 'Tipo de moneda', '', '', '')
+        T_TIPO_DATA('DD_MON_ID', 'NUMBER(16,0)','', 'Tipo de moneda', 'FK_DD_MON_ID',	V_ESQUEMA||'.DD_MON_TIPO_MONEDA', ' DD_MON_ID')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

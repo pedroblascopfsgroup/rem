@@ -638,7 +638,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Validación para la actualización de ofertas
 			oferta = getOfertaByIdOfertaWebcomNumOfertaRem(ofertaDto.getIdOfertaWebcom(), ofertaDto.getIdOfertaRem());
 			if (Checks.esNulo(oferta)) {
-				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 
 			// Mirar si hace falta validar que no se pueda modificar la
@@ -663,7 +663,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Visita visita = genericDao.get(Visita.class,
 					genericDao.createFilter(FilterType.EQUALS, "numVisitaRem", ofertaDto.getIdVisitaRem()));
 			if (Checks.esNulo(visita)) {
-				errorsList.put("idVisitaRem", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idVisitaRem", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 
 		}
@@ -672,10 +672,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ClienteComercial cliente = genericDao.get(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 			if (Checks.esNulo(cliente)) {
-				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOW_KEY);
 			}else {
 				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
-					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOW_KEY);
 				}
 			}
 		}
@@ -691,7 +691,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
 
 					if (Checks.esNulo(activo)) {
-						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOW_KEY);
 						break;
 
 					} else {
@@ -708,20 +708,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			} else {
-				errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("activosLote", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 			Activo activo = genericDao.get(Activo.class,
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
 			if (Checks.esNulo(activo)) {
-				errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 			Usuario user = genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));
 			if (Checks.esNulo(user)) {
-				errorsList.put("idUsuarioRem", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idUsuarioRem", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 
@@ -729,39 +729,39 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDTipoOferta tipoOfr = genericDao.get(DDTipoOferta.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodTipoOferta()));
 			if (Checks.esNulo(tipoOfr)) {
-				errorsList.put("codTipoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("codTipoOferta", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())) {
 			ActivoProveedor pres = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
 			if (Checks.esNulo(pres)) {
-				errorsList.put("idProveedorRemPrescriptor", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemPrescriptor", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())) {
 			ActivoProveedor cust = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigoProveedorRem", ofertaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("IdProveedorRemCustodio", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())) {
 			ActivoProveedor apiResp = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigoProveedorRem", ofertaDto.getIdProveedorRemResponsable()));
 			if (Checks.esNulo(apiResp)) {
-				errorsList.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemResponsable", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())) {
 			ActivoProveedor fdv = genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
-				errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOW_KEY);
 			} else {
 				if (fdv.getTipoProveedor() == null
 						|| !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)) {
-					errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+					errorsList.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOW_KEY);
 				}
 			}
 		}
@@ -772,7 +772,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDTipoDocumento tpd = genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento()));
 					if (Checks.esNulo(tpd)) {
-						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
+						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOW_KEY);
 					}
 				}
 			}
@@ -833,7 +833,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigo", ofertaDto.getOrigenLeadProveedor()));
 			if (Checks.esNulo(origenComprador)) {
-				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		
@@ -846,11 +846,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			} else if (!Checks.esNulo(ofertaDto.getTipoFinanciacion())) {
 				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
-					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOW_KEY);
 				}
 			} else if (!Checks.esNulo(ofertaDto.getEntidadFinanciacion())) {
 				if (Checks.esNulo(ofertaDto.getFinanciacion())) {
-					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOWN_KEY);
+					errorsList.put("financiacion", RestApi.REST_MSG_UNKNOW_KEY);
 				}			
 			}
 		}
@@ -859,7 +859,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionDC());
 			DDRespuestaOfertante recomendacionDC = genericDao.get(DDRespuestaOfertante.class, filtro);
 			if(recomendacionDC == null) {
-				errorsList.put("recomendacionDC", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("recomendacionDC", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		
@@ -867,7 +867,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionRC());
 			DDRespuestaOfertante recomendacionRC = genericDao.get(DDRespuestaOfertante.class, filtro);
 			if(recomendacionRC == null) {
-				errorsList.put("recomendacionRC", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("recomendacionRC", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		
@@ -875,7 +875,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getRecomendacionRC());
 			DDRecomendacionRCDC recomendacionRequerida = genericDao.get(DDRecomendacionRCDC.class, filtro);
 			if(recomendacionRequerida == null) {
-				errorsList.put("recomendacionRequerida", RestApi.REST_MSG_UNKNOWN_KEY);
+				errorsList.put("recomendacionRequerida", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 		if ((!Checks.esNulo(ofertaDto.getRecomendacionRC()) && !DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionRC()))

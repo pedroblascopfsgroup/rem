@@ -360,6 +360,7 @@ public class OfertasController {
 				model.put("data", listaRespuesta);
 			}
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("descError", e.getMessage());
 		}
 
 		restApi.sendResponse(response, model, request);

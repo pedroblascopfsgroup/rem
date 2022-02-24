@@ -70,8 +70,6 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);
-
-		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

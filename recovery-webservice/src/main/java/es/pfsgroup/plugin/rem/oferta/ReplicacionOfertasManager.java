@@ -31,6 +31,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     @Autowired
     private SpPublicacionApi spPublicacionApi;
 
+    @Autowired
+    private LlamadaPBCApi llamadaPBCApi;
+    
     @Override
     public String managerName() {
         return "replicacionOfertasManager";
@@ -55,6 +58,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
             if(lanzarReplicate)
                 ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+            	llamadaPBCApi.callPBC(eco, tarea);
         }
     }
 

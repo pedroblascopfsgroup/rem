@@ -92,9 +92,6 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
-				if(DDEstadosExpedienteComercial.PTE_PBC.equals(estadoCodigo)){
-					ofertaApi.llamadaPbc(ofertaAceptada, DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
-				}
 			}
 
 		}

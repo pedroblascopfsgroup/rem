@@ -92,8 +92,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
 		genericDao.save(HistoricoSancionesBc.class, historico);
-
-		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

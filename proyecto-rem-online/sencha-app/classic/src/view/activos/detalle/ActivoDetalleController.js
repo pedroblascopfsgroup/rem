@@ -8915,8 +8915,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	},
 	abrirVentanaEditarCatastro: function(grid, record){
-		var me = this;
-		Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, refCatastral: record.getData().refCatastral, parent: grid}).show();
+		var me = this; 
+		Ext.Msg.show({ 
+			title : HreRem.i18n('title.mensaje.confirmacion'),
+			msg : HreRem.i18n('msg.desea.eliminar'),
+			buttons : Ext.MessageBox.YESNO,
+			buttonText: {
+		       	yes: 'Modificar referencia catastral',
+		        no: 'Modificar valores de la referencia catastral'
+		    },
+			fn : function(buttonId) {
+				if (buttonId == 'yes') {
+					Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, refCatastral: record.getData().refCatastral, parent: grid}).show();
+				}else if(buttonId == 'no'){
+					var data = [
+						idActivoCatastro= record.get('idActivoCatastro'),  
+						refCatastral= record.get('refCatastral'),
+						valorCatastralConst= record.get('valorCatastralConst'),  
+						valorCatastralSuelo= record.get('valorCatastralSuelo'),
+						fechaRevValorCatastral= record.get('fechaRevValorCatastral')
+					]; 
+					Ext.create("HreRem.view.activos.detalle.VentanaEditarDatosCatastrales", {data:data , parent: grid}).show();
+				}
+			}
+		});
 	},
 
 	cargarReferenciaCatastral: function(store){

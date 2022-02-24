@@ -2655,9 +2655,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getValoresTareaBloqueoScreening(ModelMap model, Long idTarea) {
+	public ModelAndView getValoresTareaBloqueo(ModelMap model, Long idTarea, String codTarea) {
 		try {
-			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING);
+			DtoScreening dto = (DtoScreening) expedienteComercialApi.devolverValoresTEB(idTarea, codTarea);
 			model.put(RESPONSE_DATA_KEY, dto);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 

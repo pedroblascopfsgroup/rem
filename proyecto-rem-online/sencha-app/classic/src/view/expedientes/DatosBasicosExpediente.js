@@ -28,32 +28,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.expediente.ficha.objeto'), 
 				items :
 					[
-						{   
-							xtype : 'fieldsettable',
-							defaultType : 'displayfieldbase',
-							title : 'Pruebas Screening',
-							collapsible: false,
-							bind: {
-								hidden: !$AU.userIsRol("HAYASUPER")
-							},
-							colspan: 3,
-							items : [ 
-									{
-										text : "Boton para lanzar BoqueoScreening",
-					                	xtype: "button" ,
-					                	handler: 'pruebaBloqueo',
-					                	scale: "large",
-					                	margin: '0 0 10 0'
-					                },	
-					                {
-					                	text : "Boton para lanzar DesboqueoScreening",
-					                	xtype: "button",
-					                	handler: 'pruebaDesBloqueo',
-					                	scale: "large",
-					                	margin: '0 0 10 0'
-					                }
-					            ]
-						},	
 		                {
 		                	xtype: 'displayfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.num.expediente'),

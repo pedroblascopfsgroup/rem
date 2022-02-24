@@ -60,6 +60,8 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public static final String CODIGO_PDTE_CL_ROD = "040";
     public static final String CODIGO_RECHAZO_PBC = "041";
     public static final String ACCION_RECHAZO_MODIFICACION_TITULARES = "025";
+    public static final String ACCION_BLOQUEO_SCORING = "042";
+    public static final String ACCION_DESBLOQUEO_SCORING = "043";
 
 
     private final Log logger = LogFactory.getLog(getClass());
@@ -533,6 +535,35 @@ public class AccionesCaixaController extends ParadiseJsonController {
             boolean success = accionesCaixaApi.avanzarTareaGenerico(dto);
             accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.containsKey("idTarea") ? Long.parseLong(dto.get("idTarea").toString()) : null, success);
             model.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionBloqueoScoring(DtoScreening dto) {
+        ModelMap model = new ModelMap();
+        try {
+            expedienteComercialApi.tareaBloqueoScreening(dto);
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+
+    }
+
+    public ModelAndView accionDesbloqueoScoring(DtoScreening dto) {
+        ModelMap model = new ModelMap();
+        try {
+            expedienteComercialApi.tareaDesbloqueoScreening(dto);
+            model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);

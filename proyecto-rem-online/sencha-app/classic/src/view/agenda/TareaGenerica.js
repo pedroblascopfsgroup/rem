@@ -3426,6 +3426,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T017_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3438,10 +3439,48 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreening');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	},
+	
+	T017_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T017_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo'); 
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
@@ -3465,6 +3504,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T015_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3477,10 +3517,50 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreeningAlquiler');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	
+		
+	},
+	
+	T015_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T015_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
@@ -3943,6 +4023,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T018_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3955,10 +4036,47 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreeningAlquilerNoComercial');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+	},
+	
+	T018_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T018_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;

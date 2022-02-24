@@ -108,7 +108,8 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String cocAmuebladaDesc;
 	private String armEmpotradosCod;
 	private String armEmpotradosDesc;
-	private String calefaccion;
+	private String calefaccionCod;
+	private String calefaccionDesc;
 	private String tipoCalefaccionCod;
 	private String tipoCalefaccionDesc;
 	private String aireAcondCod;
@@ -547,11 +548,17 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	public void setArmEmpotradosDesc(String armEmpotradosDesc) {
 		this.armEmpotradosDesc = armEmpotradosDesc;
 	}
-	public String getCalefaccion() {
-		return calefaccion;
+	public String getCalefaccionCod() {
+		return calefaccionCod;
 	}
-	public void setCalefaccion(String calefaccion) {
-		this.calefaccion = calefaccion;
+	public void setCalefaccionCod(String calefaccionCod) {
+		this.calefaccionCod = calefaccionCod;
+	}
+	public String getCalefaccionDesc() {
+		return calefaccionDesc;
+	}
+	public void setCalefaccionDesc(String calefaccionDesc) {
+		this.calefaccionDesc = calefaccionDesc;
 	}
 	public String getTipoCalefaccionCod() {
 		return tipoCalefaccionCod;

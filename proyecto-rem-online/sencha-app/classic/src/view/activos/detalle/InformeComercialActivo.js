@@ -956,9 +956,16 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			    						valueField: 'codigo',
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.armarios.empotrados')
 					                },
-									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.calefaccion'),
-										bind:		'{infoComercial.calefaccion}'
+									{
+					                	xtype: 'comboboxfieldbasedd',
+							        	bind: {
+						            		store: '{comboTipoClimatizacion}',
+						            		value: '{infoComercial.calefaccionCod}',
+						            		rawValue: '{infoComercial.calefaccionDesc}'
+						            	},
+						            	displayField: 'descripcion',
+			    						valueField: 'codigo',
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.calefaccion')
 					                },
 									{ 
 										xtype: 'comboboxfieldbasedd',

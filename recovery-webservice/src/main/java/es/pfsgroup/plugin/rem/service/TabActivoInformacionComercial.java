@@ -358,7 +358,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setArmEmpotradosDesc(activoInfoComercial.getArmariosEmpotrados().getDescripcion());
 			}
 			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) 
-				informeComercial.setCalefaccion(activoInfoComercial.getCalefaccion().getDescripcion());
+				informeComercial.setCalefaccionCod(activoInfoComercial.getCalefaccion().getCodigo());
+				informeComercial.setCalefaccionDesc(activoInfoComercial.getCalefaccion().getDescripcion());
 			if (!Checks.esNulo(activoInfoComercial.getTipoCalefaccion())) {
 				informeComercial.setTipoCalefaccionCod(activoInfoComercial.getTipoCalefaccion().getCodigo());
 				informeComercial.setTipoCalefaccionDesc(activoInfoComercial.getTipoCalefaccion().getDescripcion());
@@ -751,8 +752,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getArmEmpotradosCod());
 				actInfoComercial.setArmariosEmpotrados(genericDao.get(DDSinSiNo.class, filtro));
 			}
-			if (!Checks.esNulo(activoInformeDto.getCalefaccion())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCalefaccion());
+			if (!Checks.esNulo(activoInformeDto.getCalefaccionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCalefaccionCod());
 				actInfoComercial.setCalefaccion(genericDao.get(DDTipoClimatizacion.class, filtro));
 			}
 			if (!Checks.esNulo(activoInformeDto.getTipoCalefaccionCod())) {

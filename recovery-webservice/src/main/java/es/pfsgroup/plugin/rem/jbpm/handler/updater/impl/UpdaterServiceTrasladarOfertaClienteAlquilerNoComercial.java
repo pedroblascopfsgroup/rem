@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -34,10 +32,7 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-	@Autowired
-	private OfertaApi ofertaApi;
-	
+  
     protected static final Log logger = LogFactory.getLog(UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
@@ -91,7 +86,9 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
 
 		genericDao.save(HistoricoTareaPbc.class, htp);
-		expedienteComercialApi.update(expedienteComercial,false);
+
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
 	}
 
 	public String[] getCodigoTarea() {

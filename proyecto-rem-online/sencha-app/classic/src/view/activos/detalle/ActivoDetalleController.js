@@ -8865,6 +8865,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(value.get('codigo') === 'false'){
 			textObservacionesLoc.setValue('');
 		}
+    },
+
+    validateTipoDocumento : function(value){
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.lookupReference('cbTipoDocumento').value) && me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
+    		&& me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')) {
+    		
+    		return 'Error! Tipo de documento incorrecto para caixabank';
+    	}else{
+    		return true;
+    	}
     }
+    
 });
 

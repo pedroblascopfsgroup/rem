@@ -163,6 +163,17 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		
 		return Arrays.asList(tareasBloqueoScreening);
 	}
+
+	public boolean tieneCampoClasificacionRelleno(TareaExterna tareaExterna) {
+		boolean isRelleno = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		
+		if(eco != null && eco.getOferta() != null && eco.getOferta().getClasificacion() != null) {
+			isRelleno = true;
+		}
+		return isRelleno;
+
+	}
 	
 	@SuppressWarnings("unchecked")
 	private List<String> devolverTareasBloqueoScoring(){

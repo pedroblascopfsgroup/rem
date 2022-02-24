@@ -32,6 +32,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase');
+				
 		if(form.isValid()){
 			if (me.comprobarDocumentoIdentidadCliente()) {
 				wizard.codTipoDocumento = form.lookupReference('tipoDocumentoNuevoComprador').getValue();
@@ -43,6 +44,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				if(!Ext.isEmpty(wizard.oferta)){
 					idAgrupacion = wizard.oferta.get('idAgrupacion');
 					idActivo = wizard.oferta.get('idActivo');
+				}
+				
+				if(me.getView().up().expediente != null){
+					if(me.getView().up().expediente.data.esBankia){
+			        	if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			        				&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+			        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+			        		return false;
+			        	}
+			        }
+				}else{
+					if(idAgrupacion == null){
+						if(me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}else{
+						if(me.view.up().lookupController().getViewModel().getData().esAgrupacionCaixa){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}
 				}
 				Ext.Ajax.request({
 					url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
@@ -282,10 +314,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				   }
 				});
-	
+				
 			} else {
 				me.fireEvent('errorToast', HreRem.i18n('msg.numero.documento.comprador.incorrecto'));
 			}
+			
 		}
 	},
 

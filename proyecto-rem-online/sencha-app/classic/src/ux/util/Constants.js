@@ -738,7 +738,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		IDENT_BANCO_DE_ESPAÑA: '11',
 		NIF_PAIS_ORIGEN: '13',
 		OTRO: '14',
-		NIF: '15'
+		NIF: '15',
+		NIE: '12'
 	},
 	DD_REGIMEN_MATRIMONIAL:{
 		COD_GANANCIALES:'1',

@@ -206,6 +206,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoAntDeudor = me.lookupReference('antiguoDeudor'),
 				campoApellidos = me.lookupReference('apellidos'),
 				campoApellidosRte = me.lookupReference('apellidosRte'),
+				campoTipoDocumentoComprador = me.lookupReference('tipoDocumento'),
 				campoCodigoPostalRte = me.lookupReference('codigoPostalRte'),
 				campoDireccion = me.lookupReference('direccion'),
 				campoDireccionRte = me.lookupReference('direccionRte'),
@@ -397,6 +398,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			console.log(form);
 			me.bloquearCampos();
 			me.checkExpedienteBloqueado();
+						
 		}catch(err) {
 			Ext.global.console.log(err);
 		}
@@ -910,7 +912,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	 */
 	comprobarDatosFormularioComprador: function() {
 		var me = this,
-			form = me.getView();
+			form = me.getView(),
+			expediente = me.getView().up('wizardBase').expediente,
+			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+			campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+			campoTipoDocumentoComprador = me.lookupReference('tipoDocumento');
 
 		me.comprobarObligatoriedadCamposNexos();
 
@@ -918,6 +924,29 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
+		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoConyuge.getValue()) && campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
+				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+					&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.conyuge"));
+			return false;
+		}
+
+		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoRte.getValue()) && campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
+				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+					&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+	
+			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
+			return false
+		}
+
+		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoDocumentoComprador.getValue()) && campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
+				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+					&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+
+			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.comprador"));
+			return false
+		}
+		
 		form.updateRecord();
 		
 //		if(me.getViewModel().get("comprador").data.esCarteraBankia){

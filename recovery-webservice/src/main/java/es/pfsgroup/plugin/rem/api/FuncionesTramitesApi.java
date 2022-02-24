@@ -17,6 +17,8 @@ public interface FuncionesTramitesApi {
 	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
 	
 	boolean tieneMasUnaTareaBloqueo(ExpedienteComercial eco, String codigoTarea);
+
+	boolean tieneCampoClasificacionRelleno(TareaExterna tareaExterna);
 	
 }
 

@@ -2383,23 +2383,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 					if(ofertaDto.getVinculoCaixa() != null) {
 						iap.setVinculoCaixa(genericDao.get(DDVinculoCaixa.class,genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getVinculoCaixa())));
-						modificado = true;
 					}
 					if(ofertaDto.getSociedadEmpleadoGrupoCaixa() != null) {
 						iap.setSociedad(ofertaDto.getSociedadEmpleadoGrupoCaixa());
-						modificado = true;
 					}
 
 					if(ofertaDto.getOficinaEmpleadoCaixa() != null) {
 						iap.setOficinaTrabajo(Integer.toString(ofertaDto.getOficinaEmpleadoCaixa()));
-						modificado = true;
 					}
 					if(ofertaDto.getEsAntiguoDeudor() != null) {
 						iap.setAntiguoDeudor(ofertaDto.getEsAntiguoDeudor());
-						modificado = true;
 					}
-
-					cliente.setInfoAdicionalPersona(iap);
 
 					genericDao.save(InfoAdicionalPersona.class, iap);
 

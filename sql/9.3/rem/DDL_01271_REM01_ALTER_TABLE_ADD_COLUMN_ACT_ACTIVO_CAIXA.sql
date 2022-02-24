@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220221
+--## FECHA_CREACION=20220224
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17152
@@ -31,7 +31,6 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('DD_CBC_ID', 'NUMBER(16,0)','', 'Segmentación cartera', 'FK_ACT_CAIXA_DD_CBC_ID',	V_ESQUEMA||'.DD_CBC_CARTERA_BC', 'DD_CBC_ID'),
         T_TIPO_DATA('CBX_NUMERO_INMUEBLE_ANTERIOR', 'VARCHAR2(20 CHAR)','', 'Número de inmueble anterior', '', '', '')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

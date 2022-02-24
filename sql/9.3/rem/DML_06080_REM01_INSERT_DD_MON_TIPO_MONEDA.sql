@@ -211,7 +211,7 @@ DECLARE
       T_TIPO_DATA('TMM','Manat (antiguo)'),
       T_TIPO_DATA('TMT','Manat'),
       T_TIPO_DATA('TND','Dinar'),
-      T_TIPO_DATA('TOP','Pa''anga'),
+      T_TIPO_DATA('TOP','Pa''''anga'),
       T_TIPO_DATA('TPE','Escudo de Timor'),
       T_TIPO_DATA('TRL','Lira (antigua)'),
       T_TIPO_DATA('TRY','Lira'),

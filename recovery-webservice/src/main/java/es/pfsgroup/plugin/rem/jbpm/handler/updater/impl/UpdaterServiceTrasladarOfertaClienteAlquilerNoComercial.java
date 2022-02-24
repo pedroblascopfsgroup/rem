@@ -92,8 +92,6 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 
 		genericDao.save(HistoricoTareaPbc.class, htp);
 		expedienteComercialApi.update(expedienteComercial,false);
-
-		ofertaApi.llamadaPbc(expedienteComercial.getOferta(), DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC);
 	}
 
 	public String[] getCodigoTarea() {

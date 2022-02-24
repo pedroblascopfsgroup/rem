@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,15 +49,28 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
         DDEstadoExpedienteBc estadoBc = eco.getEstadoBc();
         String codEstado = estadoBc != null ? estadoBc.getCodigo() : null;
 
+        
+        List<String> codigos = this.devolverCodigosLlamadaPbc(codTarea, codEstado);
+        String codigoAccion = null;
+        
+        for (String codigo : codigos) {
+			if(codigo != null) {
+				codigoAccion = codigo;
+				break;
+			}
+		}
+        
 
-        return (String) 
-			(this.calcularLlamadaPBCT015GarantiasAdicionales(codTarea, codEstado) != null 
-	    		? this.calcularLlamadaPBCT015GarantiasAdicionales(codTarea, codEstado) 
-	            : this.calcularLlamadaPBCT015SancionBC(codTarea, codEstado) != null
-	            	? this.calcularLlamadaPBCT015SancionBC(codTarea, codEstado) != null
-	            	: this.calcularLlamadaPBCT018TrasladarOfertaCliente(codTarea, codEstado) != null
-	            		? this.calcularLlamadaPBCT018TrasladarOfertaCliente(codTarea, codEstado)
-	            		: null);
+        return codigoAccion;
+    }
+    
+    private List<String> devolverCodigosLlamadaPbc(String codTarea, String codEstado) {
+    	List<String> codigos = new ArrayList<String>();
+    	codigos.add(this.calcularLlamadaPBCT015GarantiasAdicionales(codTarea, codEstado));
+        codigos.add(this.calcularLlamadaPBCT015SancionBC(codTarea, codEstado));
+        codigos.add(this.calcularLlamadaPBCT018TrasladarOfertaCliente(codTarea, codEstado));
+        
+        return codigos;
     }
 
     private String calcularLlamadaPBCT015GarantiasAdicionales(String codTarea, String codEstado) {

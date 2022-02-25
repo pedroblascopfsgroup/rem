@@ -2706,8 +2706,6 @@ public class AgrupacionAdapter {
 					clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 				}
 			}
-			
-			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			if (clienteComercial.getIdPersonaHayaCaixa() == null || clienteComercial.getIdPersonaHayaCaixa().trim().isEmpty() )
 			clienteComercial.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumento(), null));
@@ -2919,11 +2917,6 @@ public class AgrupacionAdapter {
 
 			Oferta oferta = new Oferta();
 
-			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
-
-			oferta.setActivosOferta(listaActOfr);
-			oferta.setCliente(clienteComercial);
-
 			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
 			if (sistemaOrigen != null)
 				oferta.setOrigen(sistemaOrigen);
@@ -2952,6 +2945,11 @@ public class AgrupacionAdapter {
 					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
+			
+			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
+
+			oferta.setActivosOferta(listaActOfr);
+			oferta.setCliente(clienteComercial);
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 		

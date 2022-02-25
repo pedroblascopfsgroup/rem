@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaEditarDatosCatastrales', {
     
     modificar: null,
     
-    data: null,
+    datos: null,
     
     initComponent: function() {
     	var me = this;
@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaEditarDatosCatastrales', {
     			itemId: 'btnGuardar', 
     			text: 'Guardar', 
     			reference: 'guardarRefCatastralRef',
-    			handler: 'onClickGuardarReferencia'
+    			handler: 'onClickActualizarReferencia'
     		}
     	];
 
@@ -62,6 +62,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaEditarDatosCatastrales', {
     						{
 			                	xtype: 'displayfieldbase',
 			                	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
+			                	reference:'refCatastral',
 			                	readOnly: true,
 			                	colspan: 3,
 			                	value:refCatastral,
@@ -69,16 +70,19 @@ Ext.define('HreRem.view.activos.detalle.VentanaEditarDatosCatastrales', {
 			                },
 			                {
 								xtype: 'numberfield',
+								reference:'valorConstruccion',
 								fieldLabel: HreRem.i18n('fieldlabel.valor.catastral.construccion'),
 			                	value:valorCatastralConst
 							},
 							{
 								xtype: 'numberfield',
+								reference:'valorSuelo',
 								fieldLabel: HreRem.i18n('fieldlabel.valor.catastral.suelo'),
 								value:valorCatastralSuelo
 							},
 							{
 			                	xtype: 'datefield',
+			                	reference:'fechaRevision',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.revision.valor.catastral'),
 			                	formatter: 'date("d/m/Y")',
 			                	value:fechaRevValorCatastral

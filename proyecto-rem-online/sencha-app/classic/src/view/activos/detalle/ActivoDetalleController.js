@@ -8935,7 +8935,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						valorCatastralSuelo= record.get('valorCatastralSuelo'),
 						fechaRevValorCatastral= record.get('fechaRevValorCatastral')
 					]; 
-					Ext.create("HreRem.view.activos.detalle.VentanaEditarDatosCatastrales", {data:data , parent: grid}).show();
+					Ext.create("HreRem.view.activos.detalle.VentanaEditarDatosCatastrales", {idActivoCatastro: record.get('idActivoCatastro'), datos:data , parent: grid}).show();
 				}
 			}
 		});
@@ -8953,7 +8953,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
 		if(value.get('codigo') === 'false'){
 			textObservacionesLoc.setValue('');
-		}
+    }
+    },
+    
+    onClickActualizarReferencia: function(btn) {
+    	var me = this;
+    	var window =  btn.up('window');
+    	var params = {
+    			idActivoCatastro : window.idActivoCatastro,
+    			refCatastral: window.down('[reference="refCatastral"]').getValue(),
+				valorCatastralConst: window.down('[reference="valorConstruccion"]').getValue(),
+				valorCatastralSuelo: window.down('[reference="valorSuelo"]').getValue(),
+				fechaRevValorCatastral: window.down('[reference="fechaRevision"]').getValue()
+			};
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+    	Ext.Ajax.request({
+			url : $AC.getRemoteUrl('catastro/updateReferenciaCatastro'),
+			method : 'GET',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				window.unmask();
+				window.parent.getStore().load();
+				window.close();
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				window.unmask();
+			}
+		});
     }
 });
 

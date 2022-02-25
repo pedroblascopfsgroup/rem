@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
+import es.pfsgroup.plugin.rem.model.UpdateReferenciaCatastroDto;
 
 @Controller
 public class CatastroController extends ParadiseJsonController {
@@ -109,4 +110,19 @@ public class CatastroController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView updateReferenciaCatastro(UpdateReferenciaCatastroDto data, ModelMap model){
+		try{
+			catastroApi.updateReferenciaCatastro(data);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

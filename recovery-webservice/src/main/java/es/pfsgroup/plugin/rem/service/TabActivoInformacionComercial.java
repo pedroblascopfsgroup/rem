@@ -357,9 +357,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setArmEmpotradosCod(activoInfoComercial.getArmariosEmpotrados().getCodigo());
 				informeComercial.setArmEmpotradosDesc(activoInfoComercial.getArmariosEmpotrados().getDescripcion());
 			}
-			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) 
+			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) {
 				informeComercial.setCalefaccionCod(activoInfoComercial.getCalefaccion().getCodigo());
 				informeComercial.setCalefaccionDesc(activoInfoComercial.getCalefaccion().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getTipoCalefaccion())) {
 				informeComercial.setTipoCalefaccionCod(activoInfoComercial.getTipoCalefaccion().getCodigo());
 				informeComercial.setTipoCalefaccionDesc(activoInfoComercial.getTipoCalefaccion().getDescripcion());

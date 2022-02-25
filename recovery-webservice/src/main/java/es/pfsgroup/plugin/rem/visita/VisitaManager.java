@@ -851,7 +851,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visita.getIdClienteRem()),
 							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 
-					interlocutorCaixaService.callReplicateClientSync(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE);
+					interlocutorCaixaService.callReplicateClientSyncVisitas(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE, true);
 				}
 				if(map.get("idResponsable") != null && visita.getIdProveedorRemResponsable() != null
 						&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))) {

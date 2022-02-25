@@ -8917,8 +8917,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	abrirVentanaEditarCatastro: function(grid, record){
 		var me = this; 
 		Ext.Msg.show({ 
-			title : HreRem.i18n('title.mensaje.confirmacion'),
-			msg : HreRem.i18n('msg.desea.eliminar'),
+			title : HreRem.i18n('title.referencia.catastral.editar'),
+			msg : HreRem.i18n('text.referencia.catastral.editar'),
 			buttons : Ext.MessageBox.YESNO,
 			buttonText: {
 		       	yes: 'Modificar referencia catastral',

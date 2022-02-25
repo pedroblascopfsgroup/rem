@@ -17,6 +17,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaEditarDatosCatastrales', {
     
     initComponent: function() {
     	var me = this;
+    	me.setTitle(HreRem.i18n("title.referencia.catastral.ventana.modificar"));
     	
     	me.buttons = [ 
     		{ 

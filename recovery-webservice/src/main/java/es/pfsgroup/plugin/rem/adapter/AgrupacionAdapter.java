@@ -5342,7 +5342,16 @@ public class AgrupacionAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("error en agrupacionAdapter", e);
 		}
-		DDCartera carteraActivoAux = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal().getCartera() : agrupacion.getActivos().get(0).getActivo().getCartera();
+		DDCartera carteraActivoAux = null;
+		
+		if(agrupacion.getActivoPrincipal() != null) {
+			carteraActivoAux = agrupacion.getActivoPrincipal().getCartera();
+		}else {
+			if(!agrupacion.getActivos().isEmpty()) {
+				carteraActivoAux = agrupacion.getActivos().get(0).getActivo().getCartera();
+			}
+		}
+		
 		if (DDCartera.isCarteraBk(carteraActivoAux) && 
 				(DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion()) || DDTipoAgrupacion.isRestringidaAlquiler(agrupacion.getTipoAgrupacion())
 				|| DDTipoAgrupacion.isRestringidaObrem(agrupacion.getTipoAgrupacion()))) {

@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoCatastroCorrecto;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
 import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
+import es.pfsgroup.plugin.rem.model.UpdateReferenciaCatastroDto;
 import es.pfsgroup.plugin.rem.model.VActivoCatastro;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
@@ -1011,5 +1012,19 @@ public class CatastroManager implements CatastroApi {
 		
 		Activo activo = activoApi.getActivoMatrizIfIsUA(id);
 		return genericDao.getList(VActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,  "idActivo", activo.getId()));
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void updateReferenciaCatastro(UpdateReferenciaCatastroDto data) {
+		ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS, "id", data.getIdActivoCatastro()));
+		
+		if(activoCatastro != null) {
+			if(data.getValorCatastralConst() != null) activoCatastro.setValorCatastralConst(data.getValorCatastralConst());
+			if(data.getValorCatastralSuelo() != null) activoCatastro.setValorCatastralSuelo(data.getValorCatastralSuelo());
+			if(!Checks.isFechaNula(data.getFechaRevValorCatastral())) activoCatastro.setFechaRevValorCatastral(data.getFechaRevValorCatastral());
+			genericDao.save(ActivoCatastro.class, activoCatastro);
+		}
+		
 	}
 }

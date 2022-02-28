@@ -242,7 +242,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM = "T017_RespuestaOfertantePM";
 	private static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	private static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
-	
+
 	private static final String APRUEBA_COMBO_RESPUESTA = "01";
 	private static final String CONTRAOFERTA_COMBO_RESPUESTA = "03";
 	private static final String COMBO_RESOLUCION = "comboRespuesta";
@@ -251,7 +251,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String DD_TDI_CODIGO_DNI= "01";
 	private static final String DD_TDI_CODIGO_NIE= "12";
 	public static final String REST_DD_TDI_NO_PERMITIDO = "TIPO DOCUMENTO NO PERMITIDO";
-
 
 	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_URL = "rest.client.generate.excel.url.base";
 	private static final String CONSTANTE_GENERAR_EXCEL_REM_API_ENDPOINT = "rest.client.generate.excel.endpoint";
@@ -717,14 +716,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
 					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 				}else if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
-					if(!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumento().getCodigo()) 
+					if(!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumento().getCodigo())
 						&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumento().getCodigo())
 						&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumento().getCodigo())) {
 						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
 					}
-					
-					if(cliente.getTipoDocumentoRepresentante() != null 
-							&& (!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null) 
+
+					if(cliente.getTipoDocumentoRepresentante() != null
+							&& (!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
 							&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
 							&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null))) {
 						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
@@ -837,9 +836,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo activo = activoApi.getByNumActivo(ofertaDto.getIdActivoHaya());
 					if (Checks.esNulo(tpd)) {
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
-					}else if(activo != null 
+					}else if(activo != null
 							&& DDCartera.isCarteraBk(activo.getCartera())
-							&& (!DD_TDI_CODIGO_NIF.equals(tpd.getCodigo()) 
+							&& (!DD_TDI_CODIGO_NIF.equals(tpd.getCodigo())
 									&& !DD_TDI_CODIGO_DNI.equals(tpd.getCodigo())
 									&& !DD_TDI_CODIGO_NIE.equals(tpd.getCodigo()))) {
 						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
@@ -7815,7 +7814,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
 		Boolean esContraoferta = false;
-		
+
 		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
 		
@@ -7823,14 +7822,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<TareaExternaValor> valoresTarea = tareaExterna.getValores();
 			for (TareaExternaValor valor : valoresTarea) {
 				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
-					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA) 
-					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{		
+					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA)
+					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{
 					esContraoferta = true;
 					break;
 				}
 			}
 		}
-		
+
 		if(solicitaReserva) {
 			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
 					&& tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
@@ -7854,12 +7853,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo) 
+			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
 					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
 					||(CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
 					|| CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo) 
-					&& esContraoferta )) {		
+					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo)
+					&& esContraoferta )) {
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7867,9 +7866,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo) 
-					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo) 
-					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo) 
+			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
+					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo)
+					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo)
 					&& esContraoferta )
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				

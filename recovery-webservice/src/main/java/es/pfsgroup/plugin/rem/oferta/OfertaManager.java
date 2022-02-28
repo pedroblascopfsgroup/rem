@@ -962,7 +962,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| (!Checks.esNulo(ofertaDto.getRecomendacionDC()) && DDRespuestaOfertante.CODIGO_RECHAZA.equals(ofertaDto.getRecomendacionDC())))
 				&& Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())) {
 			errorsList.put("codMotivoRechazoRCDC", RestApi.REST_MSG_MISSING_REQUIRED);
-		} else if ((Checks.esNulo(ofertaDto.getRecomendacionRC()) || Checks.esNulo(ofertaDto.getRecomendacionDC()))
+		} else if ((Checks.esNulo(ofertaDto.getRecomendacionRC()) && Checks.esNulo(ofertaDto.getRecomendacionDC()))
 				&& !Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())){
 			errorsList.put("recomendacionRC||recomendacionDC", RestApi.REST_MSG_MISSING_REQUIRED);
 		}

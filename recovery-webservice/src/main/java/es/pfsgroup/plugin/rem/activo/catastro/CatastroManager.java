@@ -25,7 +25,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -148,9 +147,18 @@ public class CatastroManager implements CatastroApi {
 				}
 			}
 			
-			NMBBien bien = activo.getBien();
-			if(bien != null && bien.getBienEntidad() != null && bien.getBienEntidad().getSuperficieConstruida() != null) {
-				dto.setSuperficieConstruida((double) bien.getBienEntidad().getSuperficieConstruida());	
+			ActivoInfoRegistral air = activo.getInfoRegistral();
+			
+			if(air != null) {
+				if(air.getSuperficieElementosComunes() != null) {
+					dto.setSuperficieReperComun((double) air.getSuperficieElementosComunes()); 
+				}
+				if(air.getSuperficieParcela() != null) {
+					dto.setSuperficieReperComun((double) air.getSuperficieParcela()); 
+				}
+				if(air.getInfoRegistralBien() != null && air.getInfoRegistralBien().getSuperficieConstruida() != null) {
+					dto.setSuperficieConstruida(air.getInfoRegistralBien().getSuperficieConstruida().doubleValue());	
+				}
 			}
 			
 		}

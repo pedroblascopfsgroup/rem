@@ -25,6 +25,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -109,9 +110,7 @@ public class CatastroManager implements CatastroApi {
 			ActivoInfoComercial infoC = activo.getInfoComercial();
 				
 			dto.setIdActivo(idActivo);
-			dto.setDireccion(activo.getDireccionCompleta());
-			dto.setSuperficieConstruida((double)activo.getTotalSuperficieConstruida());			
-			//dto.setSuperficieReperComun(superficieReperComun); ¿De donde sale esto?
+			dto.setDireccion(activo.getDireccionCompleta());		
 			dto.setCodigoPostal(activo.getCodPostal());
 			dto.setNombreVia(activo.getNombreVia());
 			dto.setNumeroVia(activo.getNumeroDomicilio());
@@ -148,6 +147,12 @@ public class CatastroManager implements CatastroApi {
 					dto.setTipoVia(activo.getTipoVia().getDescripcion());
 				}
 			}
+			
+			NMBBien bien = activo.getBien();
+			if(bien != null && bien.getBienEntidad() != null && bien.getBienEntidad().getSuperficieConstruida() != null) {
+				dto.setSuperficieConstruida((double) bien.getBienEntidad().getSuperficieConstruida());	
+			}
+			
 		}
 		return dto;
 	}

@@ -115,7 +115,6 @@ public class CatastroManager implements CatastroApi {
 			dto.setCodigoPostal(activo.getCodPostal());
 			dto.setNombreVia(activo.getNombreVia());
 			dto.setNumeroVia(activo.getNumeroDomicilio());
-			dto.setTipoVia(activo.getTipoVia().getDescripcion());
 			dto.setProvincia(activo.getProvinciaDescripcion());
 			dto.setMunicipio(activo.getMunicipioDescripcion());
 			dto.setPuerta(activo.getPuerta());
@@ -181,8 +180,8 @@ public class CatastroManager implements CatastroApi {
 	@Override
 	public List<DtoDatosCatastroGrid> validarCatastro (DtoDatosCatastro dtoCatastroRem, DtoDatosCatastro dtoCatastro){
 		List<DtoDatosCatastroGrid> listDto = new ArrayList<DtoDatosCatastroGrid>();
-		List<DtoDatosCatastroGrid> listDtoGenerales = this. validarCatastroDatosBásicos(dtoCatastroRem, dtoCatastro);
-		List<DtoDatosCatastroGrid> listDtoDireccion = this. validarCatastroDireccion(dtoCatastroRem, dtoCatastro);
+		List<DtoDatosCatastroGrid> listDtoGenerales = this.validarCatastroDatosBásicos(dtoCatastroRem, dtoCatastro);
+		List<DtoDatosCatastroGrid> listDtoDireccion = this.validarCatastroDireccion(dtoCatastroRem, dtoCatastro);
 		
 		listDto.addAll(listDtoDireccion);
 		listDto.addAll(listDtoGenerales);
@@ -429,7 +428,7 @@ public class CatastroManager implements CatastroApi {
 		
 	private Double calculoSimilaridad(String nombreCalleDatoRem, String nombreCalleCatastro) {
 		
-		return calculoSimililtud(nombreCalleDatoRem,nombreCalleCatastro);
+		return calculoSimililtud(nombreCalleDatoRem.toUpperCase(),nombreCalleCatastro.toUpperCase());
 	}
 
 	private Double calculoSimililtud(String nombreCalleDatoRem, String nombreCalleCatastro) {

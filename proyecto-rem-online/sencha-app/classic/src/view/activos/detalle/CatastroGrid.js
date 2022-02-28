@@ -187,7 +187,7 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
    onDeleteClick : function() {
 		var me = this;
 		var grid = me;
-		var idCatastro = me.getSelection()[0].getData().idCatastro;
+		var idCatastro = me.getSelection()[0].getData().idActivoCatastro;
 		Ext.Msg.show({
 			title : HreRem.i18n('title.mensaje.confirmacion'),
 			msg : HreRem.i18n('msg.desea.eliminar'),

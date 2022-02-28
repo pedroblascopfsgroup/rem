@@ -109,9 +109,7 @@ public class CatastroManager implements CatastroApi {
 			ActivoInfoComercial infoC = activo.getInfoComercial();
 				
 			dto.setIdActivo(idActivo);
-			dto.setDireccion(activo.getDireccionCompleta());
-			dto.setSuperficieConstruida((double)activo.getTotalSuperficieConstruida());			
-			//dto.setSuperficieReperComun(superficieReperComun); ¿De donde sale esto?
+			dto.setDireccion(activo.getDireccionCompleta());		
 			dto.setCodigoPostal(activo.getCodPostal());
 			dto.setNombreVia(activo.getNombreVia());
 			dto.setNumeroVia(activo.getNumeroDomicilio());
@@ -148,6 +146,21 @@ public class CatastroManager implements CatastroApi {
 					dto.setTipoVia(activo.getTipoVia().getDescripcion());
 				}
 			}
+			
+			ActivoInfoRegistral air = activo.getInfoRegistral();
+			
+			if(air != null) {
+				if(air.getSuperficieElementosComunes() != null) {
+					dto.setSuperficieReperComun((double) air.getSuperficieElementosComunes()); 
+				}
+				if(air.getSuperficieParcela() != null) {
+					dto.setSuperficieReperComun((double) air.getSuperficieParcela()); 
+				}
+				if(air.getInfoRegistralBien() != null && air.getInfoRegistralBien().getSuperficieConstruida() != null) {
+					dto.setSuperficieConstruida(air.getInfoRegistralBien().getSuperficieConstruida().doubleValue());	
+				}
+			}
+			
 		}
 		return dto;
 	}

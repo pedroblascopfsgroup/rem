@@ -400,6 +400,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoTecnicoDescripcion;
 	private String tieneGestionDndCodigo;
 	private String tieneGestionDndDescripcion;
+	
+	private Boolean esHayaHome;
+	
 
 	private String codComunidadAutonoma;
 	private String comunidadDescripcion;
@@ -2989,6 +2992,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTieneGestionDndDescripcion(String tieneGestionDndDescripcion) {
 		this.tieneGestionDndDescripcion = tieneGestionDndDescripcion;
+	}
+
+	public Boolean getEsHayaHome() {
+		return esHayaHome;
+	}
+
+	public void setEsHayaHome(Boolean esHayaHome) {
+		this.esHayaHome = esHayaHome;
 	}
 
 

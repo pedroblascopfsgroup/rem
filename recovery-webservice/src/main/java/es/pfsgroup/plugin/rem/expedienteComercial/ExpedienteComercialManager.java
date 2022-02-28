@@ -5754,6 +5754,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 				
 			} else {
+				asignarFIORep(compradorExpediente);
 				genericDao.save(Comprador.class, comprador);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -15340,5 +15341,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esTitulizada;
 	}
-	
+
+	private CompradorExpediente asignarFIORep(CompradorExpediente compradorExpediente){
+
+		DDInterlocutorOferta interlocutorRep = null;
+		if(compradorExpediente.getDocumentoRepresentante() != null){
+			Comprador com = compradorExpediente.getPrimaryKey().getComprador();
+			if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(com.getTipoPersona().getCodigo())){
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_APODERADO_EMPRESA));
+			}else if(com.getTipoPersona() != null && DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(com.getTipoPersona().getCodigo())){
+				interlocutorRep = genericDao.get(DDInterlocutorOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDInterlocutorOferta.CODIGO_TUTOR));
+			}
+			if (interlocutorRep != null)
+				compradorExpediente.setInterlocutorOfertaRepresentante(interlocutorRep);
+		}
+		return compradorExpediente;
+	}
+
 }

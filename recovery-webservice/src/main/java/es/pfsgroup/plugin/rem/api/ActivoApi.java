@@ -145,8 +145,8 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.download")
 	FileItem download(Long id) throws Exception;
 
-	@BusinessOperationDefinition("activoManager.uploadFoto")
-	String uploadFoto(WebFileItem fileItem);
+	@BusinessOperationDefinition("activoManager.uploadFotos")
+	String uploadFotos(List<WebFileItem> webFileItemList);
 
 	/**
 	 * Registra una foto del gestor documental
@@ -1484,6 +1484,16 @@ public interface ActivoApi {
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
+	boolean esActivoHayaHome(Long idActivo);
+
+	boolean esActivoAlquiler(Long idActivo);
+
+	Activo activoByIdAgrupacion(Long idAgrupacion);
+
+	boolean isActivoConReservaAlquiler(Activo activo);
+
+	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	
     Page findTasaciones(DtoFiltroTasaciones dto);
 
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);

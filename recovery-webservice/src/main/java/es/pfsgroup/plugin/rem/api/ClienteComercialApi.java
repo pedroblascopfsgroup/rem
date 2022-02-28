@@ -20,13 +20,12 @@ public interface ClienteComercialApi {
 	public ClienteComercial getClienteComercialById(Long id);
 
 	/**
-	 * Devuelve un ClienteComercial por idClienteWebcom.
+	 * Devuelve un ClienteComercial por idClienteWebcom o idClienteRem almacenados en el dto.
 	 * 
-	 * @param idClienteWebcom
-	 *            a consultar
+	 * @param clienteDto
 	 * @return ClienteComercial
 	 */
-	public ClienteComercial getClienteComercialByIdClienteWebcom(Long idClienteWebcom);
+	public ClienteComercial getClienteComercialByIdClienteWebcomOrIdClienteRem(ClienteDto clienteDto);
 
 	/**
 	 * Devuelve un ClienteComercial por idClienteRem
@@ -65,9 +64,9 @@ public interface ClienteComercialApi {
 	 * 
 	 * @param clienteDto
 	 *            con la información del clienteComercial a dar de alta
-	 * @return void
+	 * @return ClienteComercial
 	 */
-	public void saveClienteComercial(ClienteDto clienteDto) throws Exception;
+	public ClienteComercial saveClienteComercial(ClienteDto clienteDto) throws Exception;
 
 	/**
 	 * Actualiza un ClienteComercial a partir de la información pasada por
@@ -119,6 +118,8 @@ public interface ClienteComercialApi {
 	 */
 	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception;
 
+	public ClienteComercial getClienteComercialByDocumento(String documento);
+	
 	public void replicarClienteToBC(Long id, String idSource);
 
 }

@@ -51,7 +51,7 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String ALQUILADO = "15";
 	public static final String EN_DEVOLUCION = "16";
 	public static final String ANULADO_PDTE_DEVOLUCION = "17";
-	public static final String PTE_SCORING = "18";
+	
 	public static final String PTE_SEGURO_RENTAS = "19";
 	public static final String PTE_ELEVAR_SANCION = "20";
 	public static final String ELEVAR_A_SANCION = "21";
@@ -92,6 +92,22 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_PBC_ALQUILER_HRE = "57";
 	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "58";
 	public static final String PTE_REVISAR_CONDICIONES_BC = "59";
+	
+	//Estados Alquiler HayaHome
+	public static final String PENDIENTE_SANCION = "144";
+	public static final String CONGELADA = "145";
+	public static final String DESCARTADA = "146";
+	
+	public static final String PDTE_FIRMA_CONTRATO_RESERVA = "147";
+	public static final String PTE_SCORING = "148";
+	public static final String PDTE_POSICIONAMIENTO_FIRMA = "149";
+	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "150";
+	public static final String PDTE_FIRMA = "151";
+	public static final String PDTE_REGISTRO_FIRMAS_SISTEMA = "152";
+	public static final String FINALIZADA = "153";
+	public static final String CANCELADA = "154";
+	public static final String BORRADOR = "155";
+	
 	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";
 

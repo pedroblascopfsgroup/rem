@@ -283,6 +283,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		GAT:'156',
 		EDT:'157',
 		USGAI:'158',
+		ONETOONE:'68',
 		JAGUAR:'70',
 		TITEDT:'162',
 		TITTDA:'163'
@@ -759,7 +760,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	DD_ESP_ESTADO_PRESENTACION:{
 		PRESENTACION_EN_REGISTRO:'01',
 		CALIFICADO_NEGATIVAMENTE:'02',
-		INSCRITO:'03'
+		INSCRITO:'03',
+		NULO:'04',
+		INMATRICULADOS:'05',
+		IMPOSIBLE_INSCRIPCION:'06',
+		DESCONOCIDO:'07'
+		
 	},
 	
 	DD_CLASE_OFERTA:{

@@ -425,6 +425,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
 
+	public Activo getActivoMatrizByNumAgrupacion(Long numAgrupacion);
+	
 	@SuppressWarnings("unchecked")
 	List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion);
 
@@ -433,4 +435,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isCarteraCaixa(Activo activo);
 
     Page findTasaciones(DtoFiltroTasaciones dto);
+
+	String getCodComunidadAutonomaByCodProvincia(String codProvincia);
+
+	String getDescripcionComunidadAutonomaByCodProvincia(String codProvincia);
+
 }

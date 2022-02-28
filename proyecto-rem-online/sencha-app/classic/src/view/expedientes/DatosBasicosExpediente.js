@@ -113,7 +113,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							hidden: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
-		                
+						{
+							fieldLabel:  HreRem.i18n('fieldlabel.subestado'),
+		                	xtype: 'comboboxfieldbase',
+							readOnly: !$AU.userIsRol("HAYASUPER"),
+		                	bind: {
+								store: '{comboSubestadoExpediente}',
+								value: '{expediente.codigoSubestado}',
+								hidden: '{!expediente.esActivoHayaHome}'								
+							}
+						},
 		                {
 		                	xtype: 'comboboxfieldbase',
 		                	bind: {
@@ -349,21 +358,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						formatter: 'date("d/m/Y")',
 	                	bind:		{
 	                		value: '{expediente.fechaVenta}',
-	                		fieldLabel:'{fechaVentaEsAlquiler}',
-	                		hidden: '{esBankia}'
+	                		fieldLabel:'{fechaVentaEsAlquiler}'
 	                		}
 	                	//,readOnly: true
 	                	//readOnly: !$AU.userIsRol("HAYASUPER")
-	                },
-	                {
-	                	xtype:'datefieldbase',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-						formatter: 'date("d/m/Y")',
-	                	bind:		{
-	                		value: '{expediente.fechaFirmaContrato}',
-	                		readOnly: true,
-	                		hidden: '{!esBankia}'
-	                		}	                	
 	                },
 	                {
 	                	xtype:'datefieldbase',

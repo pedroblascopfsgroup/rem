@@ -333,6 +333,12 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkBankia(tareaExterna);
             }
+
+            def checkBBVA = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkBBVA(tareaExterna);
+            }
+
             def checkCajamar = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkCajamar(tareaExterna);

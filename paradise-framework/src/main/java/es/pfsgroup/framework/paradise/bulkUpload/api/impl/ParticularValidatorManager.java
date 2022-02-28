@@ -6276,7 +6276,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_ACM_ACCION_MASIVA ACM "
-				+ "WHERE ACM.DD_ACM_CODIGO = :codAccion"
+				+ "WHERE ACM.DD_ACM_CODIGO = :codAccion "
 				+ "AND ACM.DD_ACM_CODIGO NOT IN('02')");
 
 		return !"0".equals(resultado);

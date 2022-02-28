@@ -182,6 +182,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -1575,7 +1576,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
 
-				dto.setOrigen(oferta.getOrigen());
+				if (oferta.getOrigen() != null)
+					dto.setOrigen(oferta.getOrigen().getDescripcion());
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 					if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
@@ -1675,6 +1677,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
 					dto.setCodigoEstado(expediente.getEstado().getCodigo());
+				}
+				
+				if (!Checks.esNulo(expediente.getSubestadoExpediente())) {
+					dto.setSubestadoExpediente(expediente.getSubestadoExpediente().getDescripcion());
+					dto.setCodigoSubestado(expediente.getSubestadoExpediente().getCodigo());
 				}
 
 				dto.setFechaAlta(expediente.getFechaAlta());
@@ -1937,6 +1944,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
+				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo.getId()));
+				
+				
+				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+				if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
+					dto.setTieneTramiteComercial(true);
+				} else {
+					dto.setTieneTramiteComercial(false);
+				}
 			}
 			
 			if(expediente.getEstadoBc() != null) {
@@ -6018,6 +6034,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
+				}
+				
+				if (!Checks.esNulo(dto.getCodigoSubestado())) {
+					DDSubestadosExpedienteComercial subestadoExpedienteComercial = genericDao.get(DDSubestadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoSubestado()));
+					expedienteComercial.setSubestadoExpediente(subestadoExpedienteComercial);
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())
@@ -11456,7 +11478,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			esApple = false;
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
-					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 				esApple = true;
 			}
 		}
@@ -14891,6 +14914,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				codigoEstadoInterlocutor = DDEstadoInterlocutor.CODIGO_ACTIVO;
 			}
 			compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
+			compradorExpediente.setEstadoInterlocutorRepSiTiene(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
 			genericDao.update(CompradorExpediente.class, compradorExpediente);
 
 		}
@@ -14902,6 +14926,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	private void updateAndReplicate(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor, Boolean llamaReplicarClientes,DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
 		compradorExpediente.setEstadoInterlocutor(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
+		compradorExpediente.setEstadoInterlocutorRepSiTiene(genericDao.get(DDEstadoInterlocutor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoInterlocutor)));
 		genericDao.update(CompradorExpediente.class, compradorExpediente);
 
 		if(new BigDecimal(100).equals(eco.getImporteParticipacionTotal()) && !llamaReplicarClientes) {

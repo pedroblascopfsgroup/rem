@@ -199,6 +199,31 @@ public class CompradorExpediente implements Serializable, Auditable {
     @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
     private Integer numUrsusConyugeBh;
 
+    @Column(name = "CEX_NOMBRE_CONTACTO")
+    private String nombreContacto;
+    
+    @Column(name = "CEX_APELLIDOS_CONTACTO")
+    private String apellidosContacto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONTACTO")
+	private DDTipoDocumento tipoDocumentoContacto;
+    
+    @Column(name = "CEX_DOCUMENTO_CONTACTO")
+    private String documentoContacto;
+
+    @Column(name = "CEX_TELEFONO_CONTACTO")
+    private String telefonoContacto;
+    
+    @Column(name = "CEX_EMAIL_CONTACTO")
+    private String emailContacto;
+    
+    @Column(name = "ID_CLIENTE_REM_REPRESENTANTE")
+    private Long idClienteRemRepresentante;
+    
+    @Column(name = "ID_CLIENTE_CONTACTO")
+	private Long idClienteContacto;
+	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECL_ID")
     private DDEstadoContrasteListas estadoContrasteListas;
@@ -720,6 +745,70 @@ public class CompradorExpediente implements Serializable, Auditable {
 
 	public void setNumUrsusConyugeBh(Integer numUrsusConyugeBh) {
 		this.numUrsusConyugeBh = numUrsusConyugeBh;
+	}
+
+	public String getNombreContacto() {
+		return nombreContacto;
+	}
+
+	public void setNombreContacto(String nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+
+	public String getApellidosContacto() {
+		return apellidosContacto;
+	}
+
+	public void setApellidosContacto(String apellidosContacto) {
+		this.apellidosContacto = apellidosContacto;
+	}
+
+	public DDTipoDocumento getTipoDocumentoContacto() {
+		return tipoDocumentoContacto;
+	}
+
+	public void setTipoDocumentoContacto(DDTipoDocumento tipoDocumentoContacto) {
+		this.tipoDocumentoContacto = tipoDocumentoContacto;
+	}
+
+	public String getDocumentoContacto() {
+		return documentoContacto;
+	}
+
+	public void setDocumentoContacto(String documentoContacto) {
+		this.documentoContacto = documentoContacto;
+	}
+
+	public String getTelefonoContacto() {
+		return telefonoContacto;
+	}
+
+	public void setTelefonoContacto(String telefonoContacto) {
+		this.telefonoContacto = telefonoContacto;
+	}
+
+	public String getEmailContacto() {
+		return emailContacto;
+	}
+
+	public void setEmailContacto(String emailContacto) {
+		this.emailContacto = emailContacto;
+	}
+
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
 	}
 
 	@Override

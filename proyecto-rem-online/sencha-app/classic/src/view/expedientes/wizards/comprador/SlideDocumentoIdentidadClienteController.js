@@ -93,6 +93,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    			var pedirDoc = Ext.decode(response.responseText).data;
 		    			var comprador=datos.comprador;
 		    			var destinoComercial= datos.destinoComercial;
+						var esHayaHome= datos.esHayaHome;
 		    			var carteraInternacional = datos.carteraInternacional;
 		    			var slideDatos;
 		    			var success = datos.success;
@@ -176,6 +177,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('vinculoCaixa').setValue(comprador.vinculoCaixaCodigo);
 		            				slideDatos.getForm().findField('vinculoCaixa').setReadOnly(true);
 		            			}
+								
 	
 		            			if(!Ext.isEmpty(comprador.codigoPais)){
 		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
@@ -247,6 +249,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			}
 		            			
 		        			}
+							if(!Ext.isEmpty(esHayaHome) && esHayaHome == "true"){
+								slideDatos.getForm().findField('tipoOferta').setValue('01');
+	            				slideDatos.getForm().findField('tipoOferta').setReadOnly(true);
+							}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
 		        			wizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2));
 		        			wizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100;

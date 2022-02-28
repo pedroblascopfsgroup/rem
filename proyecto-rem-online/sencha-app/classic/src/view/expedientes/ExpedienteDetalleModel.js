@@ -1238,6 +1238,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'estadosExpediente'}
 			}
 	    },
+
+		comboSubestadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subestadosExpediente'}
+			}
+	    },
 	    
 	    comboColaboradorPrescriptor: {
 	    	model: 'HreRem.model.ComboBase',

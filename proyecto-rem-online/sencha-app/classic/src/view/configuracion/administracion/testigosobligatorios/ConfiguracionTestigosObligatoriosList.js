@@ -31,6 +31,7 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 			            bind: {
 			            	store: '{comboCartera}'
 			            },
+						allowBlank: false,
 			            reference: 'cbColCartera',
 			            chainedStore: '{comboSubcarteraFiltered}',
 						chainedReference: 'cbColSubcartera',
@@ -48,9 +49,9 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 			            displayField: 'descripcion',
 			            valueField: 'codigo',
 			            bind: {
-			            	store: '{comboSubcarteraFiltered}',
-							disabled: '{!cbColCartera.selection}'
+			            	store: '{comboSubcarteraFiltered}'
 			            },
+						allowBlank: false,
 			            reference: 'cbColSubcartera'
 			        }
 		        },
@@ -62,7 +63,8 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 	        			xtype: 'combobox',
 	        			bind: {
 		            		store: '{comboTiposComercializacion}'
-		            	},					            	
+		            	},	
+						allowBlank: false,				            	
 		            	displayField: 'descripcion',
 						valueField: 'codigo'
 		        	}		            
@@ -75,7 +77,8 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 	        			xtype: 'combobox',
 	        			bind: {
 		            		store: '{comboEquipoGestion}'
-		            	},					            	
+		            	},	
+						allowBlank: false,				            	
 		            	displayField: 'descripcion',
 						valueField: 'codigo'
 		        	}		            
@@ -85,7 +88,9 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 		            text: HreRem.i18n('header.configuracion.testigos.obligatorios.porcentaje.descuento'),
 		            flex: 1,
 		            editor: {
-		        		xtype:'numberfield'
+		        		xtype:'numberfield',
+						minValue: 0,
+						maxValue: 100
 		        	},
 		        	renderer: function(value) {
 		            	return Ext.util.Format.number(value, '0.00%');
@@ -96,7 +101,8 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 		            text: HreRem.i18n('header.configuracion.testigos.obligatorios.importe.minimo'),
 		            flex: 1,
 		            editor: {
-		        		xtype:'numberfield'
+		        		xtype:'numberfield',
+						minValue: 0
 		        	},
 		        	renderer: function(value) {
 		        		return Ext.util.Format.currency(value);
@@ -118,18 +124,13 @@ Ext.define('HreRem.view.configuracion.administracion.testigosobligatorios.Config
 		
 		    ];
 
-		    me.dockedItems = [
-		        {
-		            xtype: 'pagingtoolbar',
-		            dock: 'bottom',
-		            itemId: 'activosPaginationToolbar',
-		            inputItemWidth: 100,
-		            displayInfo: true,
-		            bind: {
-		                store: '{configuraciontestigosobligatorios}'
-		            }
-		        }
-		    ];
+		    me.dockedItems = [{
+			    xtype: 'toolbar',
+			    dock: 'bottom',
+			    items: [
+			        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'reloadInfo'}
+			    ]
+			}];
 
 		    me.callParent();
    },

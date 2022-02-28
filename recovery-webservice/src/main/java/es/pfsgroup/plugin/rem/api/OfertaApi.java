@@ -829,6 +829,17 @@ public interface OfertaApi {
     public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
 
 	boolean updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario) throws ParseException;
+
+	/**
+	 * Devuelve una Oferta por idOfertaHayaHome y numOfertaRem.
+	 *
+	 * @param idOfertaHayaHome
+	 *            a consultar
+	 * @param numOfertaRem
+	 *            a consultar
+	 * @return Oferta
+	 */
+	public Oferta getOfertaByIdOfertaHayaHomeNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem) throws Exception;
 	
 	String getClienteByidExpedienteGD(Long idExpediente);
 

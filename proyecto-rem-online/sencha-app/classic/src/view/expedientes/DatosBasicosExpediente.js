@@ -113,7 +113,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							hidden: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
-		                
+						{
+							fieldLabel:  HreRem.i18n('fieldlabel.subestado'),
+		                	xtype: 'comboboxfieldbase',
+							readOnly: !$AU.userIsRol("HAYASUPER"),
+		                	bind: {
+								store: '{comboSubestadoExpediente}',
+								value: '{expediente.codigoSubestado}',
+								hidden: '{!expediente.esActivoHayaHome}'								
+							}
+						},
 		                {
 		                	xtype: 'comboboxfieldbase',
 		                	bind: {

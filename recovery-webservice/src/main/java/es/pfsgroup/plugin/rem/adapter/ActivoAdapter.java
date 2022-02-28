@@ -4393,7 +4393,10 @@ public class ActivoAdapter {
 			
 			Oferta oferta = new Oferta();
 			oferta.setVentaDirecta(dto.getVentaDirecta());
-			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+
+			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+			if (sistemaOrigen != null)
+				oferta.setOrigen(sistemaOrigen);
 			
 			oferta.setNumOferta(numOferta);
 			if (!Checks.esNulo(dto.getImporteOferta())) {

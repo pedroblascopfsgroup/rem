@@ -945,7 +945,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 				compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
-				compradorBusqueda.setIdPersonaHayaCaixa(cliente.getInfoAdicionalPersona() != null ? cliente.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 			}
 			if (!Checks.esNulo(cliente.getTipoPersona())
 					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
@@ -981,7 +980,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getEmail())) {
 				compradorBusqueda.setEmail(cliente.getEmail());
 			}
-			
+
+			compradorBusqueda.setIdPersonaHayaCaixa(cliente.getIdPersonaHayaCaixa());
 			compradorBusqueda.setFechaNacimientoConstitucion(cliente.getFechaNacimiento());
 			compradorBusqueda.setDireccion(cliente.getDireccion());
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());

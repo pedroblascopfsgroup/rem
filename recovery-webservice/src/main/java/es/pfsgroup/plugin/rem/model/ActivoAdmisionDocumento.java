@@ -23,7 +23,10 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDIncidenciaCee;
 import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionCee;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionCee;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 
 
@@ -120,6 +123,14 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	
 	@Column(name = "ADO_NO_VALIDADO")
 	private Boolean noValidado;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_MEC_ID")
+    private DDMotivoExoneracionCee motivoExoneracionCee;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_ICE_ID")
+    private DDIncidenciaCee incidenciaCee;
 		
 	@Version   
 	private Long version;
@@ -319,4 +330,21 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	public void setNoValidado(Boolean noValidado) {
 		this.noValidado = noValidado;
 	}
+
+	public DDMotivoExoneracionCee getMotivoExoneracionCee() {
+		return motivoExoneracionCee;
+	}
+
+	public void setMotivoExoneracionCee(DDMotivoExoneracionCee motivoExoneracionCee) {
+		this.motivoExoneracionCee = motivoExoneracionCee;
+	}
+
+	public DDIncidenciaCee getIncidenciaCee() {
+		return incidenciaCee;
+	}
+
+	public void setIncidenciaCee(DDIncidenciaCee incidenciaCee) {
+		this.incidenciaCee = incidenciaCee;
+	}
+	
 }

@@ -2945,6 +2945,8 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setEmision(null);
 				activoAdmisionDocumento.setRegistro(null);
 				activoAdmisionDocumento.setTipoListaEmisiones(null);
+				activoAdmisionDocumento.setMotivoExoneracionCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
 
 			} else {
 
@@ -3020,6 +3022,20 @@ public class ActivoAdapter {
 				DDListaEmisiones emision = (DDListaEmisiones) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDListaEmisiones.class, dtoAdmisionDocumento.getLetraEmisiones());
 				activoAdmisionDocumento.setTipoListaEmisiones(emision);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getMotivoExoneracionCee())) {
+				DDMotivoExoneracionCee motivoExoneracionCee = (DDMotivoExoneracionCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDMotivoExoneracionCee.class, dtoAdmisionDocumento.getMotivoExoneracionCee());
+				activoAdmisionDocumento.setMotivoExoneracionCee(motivoExoneracionCee);
+				dtoAdmisionDocumento.setIncidenciaCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getIncidenciaCee())) {
+				DDIncidenciaCee incidenciaCee = (DDIncidenciaCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDIncidenciaCee.class, dtoAdmisionDocumento.getIncidenciaCee());
+				activoAdmisionDocumento.setIncidenciaCee(incidenciaCee);
 			}
 
 		} catch (IllegalAccessException e) {

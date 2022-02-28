@@ -373,6 +373,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
 		mapa.put("segmentacionCartera", DDCarteraBc.class);
+		mapa.put("motivoExoneracionCee", DDMotivoExoneracionCee.class);
+		mapa.put("incidenciaCee", DDIncidenciaCee.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

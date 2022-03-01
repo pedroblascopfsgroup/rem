@@ -99,6 +99,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
 	private static final String FECHA_FIRMA = "fechaFirma";
 	private static final String COMBO_RESULTADO= "comboResultado";
+	private static final String FECHA_INICIO = "fechaInicio";
+	private static final String FECHA_FIN = "fechaFin";
 	
 	private static final String CODIGO_T015_FIRMA = "T015_Firma";
 	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
@@ -109,6 +111,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		boolean anular = false;
 		boolean modificadoEstadoBC = false;
 		String fechaFirma = null;
+		boolean fechaOfertaModificada = false;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
@@ -140,7 +143,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			
 			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
-					expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+					expedienteComercial.setFechaFirmaContrato(ft.parse(valor.getValor()));
 					expedienteComercial.setFechaVenta(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha anulación.", e);
@@ -149,6 +152,26 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
 				anular = true;
+			}
+			if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+					oferta.setFechaInicioContrato(ft.parse(valor.getValor()));
+					fechaOfertaModificada = true;
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha inicio.", e);
+				}
+				fechaFirma = valor.getValor();
+			}
+			if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					expedienteComercial.setFechaFinAlquiler(ft.parse(valor.getValor()));
+					oferta.setFechaFinContrato(ft.parse(valor.getValor()));
+					fechaOfertaModificada = true;
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha fin.", e);
+				}
+				fechaFirma = valor.getValor();
 			}
 
 		}
@@ -220,7 +243,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			ofertaApi.finalizarOferta(oferta);
 			
 		}
-		
+//		if(fechaOfertaModificada) {
+//			genericDao.save(Oferta.class, oferta);
+//		}
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(modificadoEstadoBC) {

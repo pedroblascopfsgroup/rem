@@ -1673,6 +1673,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		//Otras caracteristicas otras tipologias
 		informeEntity.setLicenciaApertura(!Checks.esNulo(informe.getLicenciaApertura()) 
 				? informe.getLicenciaApertura() ? ddSi : ddNo : null);
+		informeEntity.setLicenciaObra(!Checks.esNulo(informe.getLicenciaObra()) 
+				? informe.getLicenciaObra() ? ddSi : ddNo : null);
 		informeEntity.setSalidaHumos(!Checks.esNulo(informe.getSalidaHumosOtrasCaracteristicas()) 
 				? informe.getSalidaHumosOtrasCaracteristicas() ? ddSi : ddNo : null);
 		informeEntity.setAptoUsoBruto(!Checks.esNulo(informe.getAptoUsoEnBruto()) 

@@ -156,6 +156,8 @@ public class InformeMediadorDto implements Serializable {
 
 	private Boolean licenciaApertura;
 	
+	private Boolean licenciaObra;
+	
 	@NotNull(groups = { Insert.class, Update.class })
 	private String descripcionComercial;
 	
@@ -587,6 +589,14 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setLicenciaApertura(Boolean licenciaApertura) {
 		this.licenciaApertura = licenciaApertura;
+	}
+	
+	public Boolean getLicenciaObra() {
+		return licenciaObra;
+	}
+
+	public void setLicenciaObra(Boolean licenciaObra) {
+		this.licenciaObra = licenciaObra;
 	}
 
 	public String getDescripcionComercial() {

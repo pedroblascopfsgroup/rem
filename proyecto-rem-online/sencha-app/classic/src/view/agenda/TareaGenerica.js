@@ -3749,10 +3749,14 @@
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var fechaFirma = me.down('[name=fechaFirma]');
 		var lugarFirma = me.down('[name=lugarFirma]');
+		var fechaInicio = me.down('[name=fechaInicio]');
+		var fechaFin = me.down('[name=fechaFin]');
 
 		
 		me.deshabilitarCampo(fechaFirma);
 		me.deshabilitarCampo(lugarFirma);
+		me.campoObligatorio(fechaInicio);
+		me.campoObligatorio(fechaFin);
 		comboRespuesta.addListener('change', function(combo) {
 			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
 				me.habilitarCampo(fechaFirma);

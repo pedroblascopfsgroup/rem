@@ -2997,10 +2997,15 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "aplica",
 					BooleanUtils.toBoolean(dtoAdmisionDocumento.getAplica()));
 
-			if (dtoAdmisionDocumento.getEstadoDocumento() != null) {
+			if (!Checks.esNulo(dtoAdmisionDocumento.getEstadoDocumento())) {
 				DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDEstadoDocumento.class, dtoAdmisionDocumento.getEstadoDocumento());
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
+				if (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(dtoAdmisionDocumento.getEstadoDocumento()) || 
+						!Checks.esNulo(dtoAdmisionDocumento.getFechaObtencion())) {
+					dtoAdmisionDocumento.setIncidenciaCee(null);
+					activoAdmisionDocumento.setIncidenciaCee(null);
+				}
 			}
 			
 			if (dtoAdmisionDocumento.getTipoCalificacionCodigo() != null) {

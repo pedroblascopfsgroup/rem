@@ -685,8 +685,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				if(sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
 					errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
-				} else {
-					errorsList.put("ofertaLote nulo o false", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
 

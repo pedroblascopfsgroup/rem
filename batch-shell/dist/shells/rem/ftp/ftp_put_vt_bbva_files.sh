@@ -8,7 +8,7 @@ else
     ficheros="vt1.txt"
 fi
 
-lftp -u bbva_rem,\\YyaMLsW sftp://intercambio.haya.es <<EOF
+lftp -u bbva_rem,\\YyaMLsW sftp://intercambio2.haya.es <<EOF
 cd /Archivos/Haya_To_BBVA
 mput $ficheros
 bye

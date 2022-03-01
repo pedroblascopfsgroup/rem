@@ -4,20 +4,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     bind		: {
         store: '{storeOfertasActivo}'
     },
+	topBar: true,
     requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm', 'HreRem.view.expedientes.wizards.oferta.SlideDatosOferta'],
-    topBar		: true,
 	removeButton: false,
     listeners	: {    	
     	select: 'onSelectedRow',
     	deselect: 'onDeselectedRow',
-    	focusenter: function() {
-    		var me = this;
-    		me.evaluarEdicion();
-    	},
     	boxReady: function() {
     		var me = this;
     		me.evaluarEdicion();
     		me.calcularMostrarBotonClonarExpediente();
+    	},
+		focusenter: function() {
+    		var me = this;
+    		me.evaluarEdicion();
     	},
     	rowclick: 'onOfertaListClick'    		
     },
@@ -397,6 +397,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					}
 				}
 				
+			}
+			
+			if (activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1"){
+				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
+				me.up('activosdetalle').lookupController().refrescarActivo(true);
+				return false;
 			} 
 			
 		}
@@ -690,7 +696,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
-		}
+		} else if(activo.get('esHayaHome')=="true"){ 
+			me.setTopBar(false);
+		} 
 		
    },
 

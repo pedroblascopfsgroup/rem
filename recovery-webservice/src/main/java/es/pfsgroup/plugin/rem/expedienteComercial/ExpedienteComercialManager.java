@@ -125,6 +125,93 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.BulkOferta.BulkOfertaPk;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
+import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacionContratoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
+import es.pfsgroup.plugin.rem.model.dd.DDGrupoImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingScoringServicer;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenFianzaCCAA;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoRepercutido;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
@@ -1490,7 +1577,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {
 
-				dto.setOrigen(oferta.getOrigen());
+				if (oferta.getOrigen() != null)
+					dto.setOrigen(oferta.getOrigen().getDescripcion());
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 					if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
@@ -1590,6 +1678,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getEstado())) {
 					dto.setEstado(expediente.getEstado().getDescripcion());
 					dto.setCodigoEstado(expediente.getEstado().getCodigo());
+				}
+				
+				if (!Checks.esNulo(expediente.getSubestadoExpediente())) {
+					dto.setSubestadoExpediente(expediente.getSubestadoExpediente().getDescripcion());
+					dto.setCodigoSubestado(expediente.getSubestadoExpediente().getCodigo());
 				}
 
 				dto.setFechaAlta(expediente.getFechaAlta());
@@ -1852,6 +1945,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
+				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo.getId()));
+				
+				
+				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+				if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
+					dto.setTieneTramiteComercial(true);
+				} else {
+					dto.setTieneTramiteComercial(false);
+				}
 			}
 			
 			if(expediente.getEstadoBc() != null) {
@@ -5934,6 +6036,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), estadoExpedienteComercial);
 
+				}
+				
+				if (!Checks.esNulo(dto.getCodigoSubestado())) {
+					DDSubestadosExpedienteComercial subestadoExpedienteComercial = genericDao.get(DDSubestadosExpedienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoSubestado()));
+					expedienteComercial.setSubestadoExpediente(subestadoExpedienteComercial);
 				}
 
 				if (!Checks.esNulo(dto.getConflictoIntereses())
@@ -11372,7 +11480,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			esApple = false;
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
-					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
 				esApple = true;
 			}
 		}

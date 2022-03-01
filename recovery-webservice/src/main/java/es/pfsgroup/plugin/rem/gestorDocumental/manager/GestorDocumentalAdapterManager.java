@@ -1613,25 +1613,31 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				cartera = agrupacion.getActivoPrincipal().getCartera();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					cartera= agrupacionActivo.getActivo().getCartera();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						cartera= agrupacionActivo.getActivo().getCartera();
+				}
 			}
 			DDSubcartera subcartera = null;
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				subcartera = agrupacion.getActivoPrincipal().getSubcartera();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					subcartera= agrupacionActivo.getActivo().getSubcartera();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						subcartera= agrupacionActivo.getActivo().getSubcartera();
+				}
 			}
 			ActivoPropietario actPro = null;
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				actPro = agrupacion.getActivoPrincipal().getPropietarioPrincipal();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					actPro= agrupacionActivo.getActivo().getPropietarioPrincipal();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						actPro= agrupacionActivo.getActivo().getPropietarioPrincipal();
+				}
 			}
 			cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);		
 		}

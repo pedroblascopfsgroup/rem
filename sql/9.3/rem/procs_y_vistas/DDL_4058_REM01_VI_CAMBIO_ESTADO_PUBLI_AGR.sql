@@ -292,6 +292,20 @@ BEGIN
  
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR.ES_CONDICIONADO_PUBLI IS ''Campo calculado en la vista V_ACT_ESTADO_DISP'' ';
     EXECUTE IMMEDIATE V_MSQL;        
+    
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
 END;
 /
 

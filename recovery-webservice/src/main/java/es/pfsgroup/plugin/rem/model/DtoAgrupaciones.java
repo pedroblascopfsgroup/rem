@@ -87,6 +87,9 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean marcaDeExcluido;
 	private String motivoDeExcluidoCodigo;
 	private Integer sumatorio;
+	
+	private Boolean perimetroMacc;
+	private Boolean esHayaHome;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -541,6 +544,18 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setMarcaDeExcluido(Boolean marcaDeExcluido) {
 		this.marcaDeExcluido = marcaDeExcluido;
+	}
+	public Boolean getPerimetroMacc() {
+		return perimetroMacc;
+	}
+	public void setPerimetroMacc(Boolean perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+	public Boolean getEsHayaHome() {
+		return esHayaHome;
+	}
+	public void setEsHayaHome(Boolean esHayaHome) {
+		this.esHayaHome = esHayaHome;
 	}
 	
 	

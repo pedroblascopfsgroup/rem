@@ -4,20 +4,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     bind		: {
         store: '{storeOfertasActivo}'
     },
+	topBar: true,
     requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm', 'HreRem.view.expedientes.wizards.oferta.SlideDatosOferta'],
-    topBar		: true,
 	removeButton: false,
     listeners	: {    	
     	select: 'onSelectedRow',
     	deselect: 'onDeselectedRow',
-    	focusenter: function() {
-    		var me = this;
-    		me.evaluarEdicion();
-    	},
     	boxReady: function() {
     		var me = this;
     		me.evaluarEdicion();
     		me.calcularMostrarBotonClonarExpediente();
+    	},
+		focusenter: function() {
+    		var me = this;
+    		me.evaluarEdicion();
     	},
     	rowclick: 'onOfertaListClick'    		
     },
@@ -359,6 +359,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var gencat = context.record.get("gencat");
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+        var codigoTipoOferta = context.record.get('codigoTipoOferta');
+
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
 				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
@@ -366,7 +368,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				return false;
 			}
 			var activo = me.lookupController().getViewModel().get('activo');
-			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
+			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA'] && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
 				if(activo.get('cambioEstadoActivo')){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
@@ -395,13 +397,18 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					}
 				}
 				
+			}
+			
+			if (activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')=="1"){
+				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
+				me.up('activosdetalle').lookupController().refrescarActivo(true);
+				return false;
 			} 
 			
 		}
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
-				var codigoTipoOferta = context.record.get('codigoTipoOferta');
 				if(CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
 					if(Ext.isEmpty(me.lookupController().getViewModel().get('canalVentaBC').selection)){
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.canal.venta.bc"));
@@ -695,7 +702,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
-		}
+		} else if(activo.get('esHayaHome')=="true"){ 
+			me.setTopBar(false);
+		} 
 		
    },
 

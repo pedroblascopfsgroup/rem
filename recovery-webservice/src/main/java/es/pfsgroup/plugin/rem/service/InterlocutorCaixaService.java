@@ -253,6 +253,8 @@ public class InterlocutorCaixaService {
         older.setVinculoCaixa(newer.getVinculoCaixa());
 
         newer.getAuditoria().setBorrado(Boolean.TRUE);
+        newer.getAuditoria().setUsuarioBorrar("MERGE_IAP");
+        newer.getAuditoria().setFechaBorrar(new Date());
 
         genericDao.save(InfoAdicionalPersona.class, newer);
         return genericDao.save(InfoAdicionalPersona.class, older);

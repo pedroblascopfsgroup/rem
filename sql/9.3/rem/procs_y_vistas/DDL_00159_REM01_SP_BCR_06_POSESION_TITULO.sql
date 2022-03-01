@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211105
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220301
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16087
+--## INCIDENCIA_LINK=HREOS-17150
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -33,6 +33,7 @@
 --##        0.21 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.22 Se añade el check de Perímetro alquiler, marcado cuando esté alquilar y desmarcado si es solo Venta - [HREOS-16087] - Daniel Algaba
 --##        0.23 Añadido posibilidad de revivir activos si vuelven a llegar - [HREOS-16087] - Daniel Algaba
+--##        0.24 Añadido tipo alquiler - [HREOS-17150] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -1075,6 +1076,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                      , CASE WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN 1
                             WHEN AUX.DESTINO_COMERCIAL = ''VT'' THEN 0
                       END CHECK_HPM
+                     , CASE WHEN AUX.TIPO_ALQUILER = ''01'' THEN 1
+                        ELSE 0
+                      END CHECK_SUBROGADO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
                   JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID
@@ -1083,8 +1087,26 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   WHEN MATCHED THEN UPDATE SET
                       ACT.DD_EAL_ID = US.DD_EAL_ID
                      ,ACT.CHECK_HPM = US.CHECK_HPM
+                     ,ACT.CHECK_SUBROGADO = US.CHECK_SUBROGADO
                      ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                      ,ACT.FECHAMODIFICAR = SYSDATE
+                  WHEN NOT MATCHED THEN 
+                    INSERT  
+                        ( ACT_PTA_ID
+                        , ACT_ID
+                        , DD_EAL_ID
+                        , CHECK_HPM
+                        , CHECK_SUBROGADO
+                        , USUARIOCREAR
+                        , FECHACREAR)
+                    VALUES 
+                        ('|| V_ESQUEMA ||'.S_ACT_PTA_PATRIMONIO_ACTIVO.NEXTVAL
+                        , US.ACT_ID
+                        , US.DD_EAL_ID
+                        , US.CHECK_HPM
+                        , US.CHECK_SUBROGADO
+                        , ''STOCK_BC''
+                        , SYSDATE)
                   ';
    EXECUTE IMMEDIATE V_MSQL;
    

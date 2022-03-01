@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20211123
+--## AUTOR=Javier Esbrí
+--## FECHA_CREACION=20220301
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16493
+--## INCIDENCIA_LINK=HREOS-17150
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -13,6 +13,7 @@
 --##        0.1 Versión 
 --##        0.2 Añadir mapeos nuevos y rellenar campo PRIORIDAD en COMPLEMENTO - [HREOS-15855] - Alejandra García
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
+--##        043 Añadir mapeos nuevos de Segmentación Cartera Caixa - [HREOS-17150] - Javier Esbrí
 --##########################################
 --*/
 
@@ -34,7 +35,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15423';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-17150';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -1252,7 +1253,10 @@ DECLARE
         --- Tipo de activo
         T_TIPO_DATA('TIPO_ACTIVO','0001','Vivienda','DD_TPA_TIPO_ACTIVO','02','0'),
         T_TIPO_DATA('TIPO_ACTIVO','0007','Suelo urbano','DD_TPA_TIPO_ACTIVO','01','0'),
-        T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01','0')
+        T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01','0'),
+        --- Segmentación Cartera Caixa
+        T_TIPO_DATA('SEGMENTACION_CARTERA','02','Cartera alquiler','DD_CBC_CARTERA_BC','03','0'),
+        T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

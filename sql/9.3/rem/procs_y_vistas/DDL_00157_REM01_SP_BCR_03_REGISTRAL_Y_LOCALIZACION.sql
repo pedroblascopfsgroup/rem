@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220111
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220301
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16321
+--## INCIDENCIA_LINK=HREOS-17150
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,6 +20,7 @@
 --##	      0.8 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855
 --##	      0.9 Se modifica la población para cruzar por el código, que es el código INE - HREOS-16321
 --##	      0.10 Correcciones - HREOS-16321
+--##	      0.11 Añadir campo idufir - HREOS-17150 - Javier Esbrí
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -122,6 +123,7 @@ BEGIN
                   , APR.NOMBRE_REGISTRO_PROPIEDAD REG_NOMBRE_REGISTRO
                   , APR.NUMERO_REGISTRO_PROPIEDAD REG_NUMERO_REGISTRO
                   , REG.REG_ID
+                  , APR.IDUFIR AS REG_IDUFIR
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -134,6 +136,7 @@ BEGIN
                   UPDATE SET 
                   REG.REG_NOMBRE_REGISTRO = AUX.REG_NOMBRE_REGISTRO
                   , REG.REG_NUMERO_REGISTRO = AUX.REG_NUMERO_REGISTRO
+                  , REG.REG_IDUFIR = AUX.REG_IDUFIR
                   , USUARIOMODIFICAR = ''STOCK_BC''
                   , FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -142,6 +145,7 @@ BEGIN
                      , BIE_DREG_ID
                      , REG_NOMBRE_REGISTRO
                      , REG_NUMERO_REGISTRO
+                     , REG_IDUFIR
                      , USUARIOCREAR
                      , FECHACREAR)
                       VALUES 
@@ -150,6 +154,7 @@ BEGIN
                      , AUX.BIE_DREG_ID
                      , AUX.REG_NOMBRE_REGISTRO
                      , AUX.REG_NUMERO_REGISTRO
+                     , AUX.REG_IDUFIR
                      , ''STOCK_BC''
                      , SYSDATE)';
    

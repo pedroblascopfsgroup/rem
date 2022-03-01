@@ -738,8 +738,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 			var situacionActivo = get('patrimonio.estadoAlquiler');
 			var isDivarian = get('patrimonio.isCarteraCerberusDivarian');
+			var isCaixa = get('isCarteraBankia');	
 
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian){
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian  && !isCaixa){
 				return false;
 			}else{
 				return true;

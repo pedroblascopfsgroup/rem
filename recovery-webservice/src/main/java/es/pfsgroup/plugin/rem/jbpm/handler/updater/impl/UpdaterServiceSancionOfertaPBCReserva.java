@@ -13,9 +13,11 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -43,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 @Component
 public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
@@ -71,6 +74,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
 	
+	@Autowired
+    private UsuarioApi usuarioApi;
+	
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
@@ -82,6 +88,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String OBSERVACIONES = "observaciones";
 
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
@@ -90,7 +97,11 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		boolean quitarArras = false;
 		boolean cambiaEstadoBc = false;
+		boolean anula = false;
+		String observaciones = null;
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
+		
+		
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -104,10 +115,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 
 						if (DDSiNo.NO.equals(valor.getValor())) {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadosExpedienteComercial.ANULADO);
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
-									filtro);
+							anula = true;
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadosExpedienteComercial.ANULADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,filtro);
 							expediente.setEstado(estado);
 							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
@@ -135,16 +145,6 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
 								
 							}
-							if(reservaApi.tieneReservaFirmada(expediente)) {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-								if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
-						        	expediente.setFechaAnulacion(new Date());
-						        }
-							}else {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-								ofertaApi.finalizarOferta(ofertaAceptada);
-							}
-
 							try {
 								ofertaApi.descongelarOfertas(expediente);
 								ofertaApi.finalizarOferta(ofertaAceptada);
@@ -195,24 +195,50 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 							
 						}
 					}
+					if (OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						observaciones = valor.getValor();
+					}
 				}
 				
-				if(quitarArras) {
-					campos.put(TIPO_OPERACION, false);
-					estadoExp = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
-					
-					Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId()));
-					
-					if (reserva != null) {
-						Auditoria.delete(reserva);
-						genericDao.save(Reserva.class, reserva);
+				Activo activoPrincipal = ofertaAceptada.getActivoPrincipal();
+				if(activoPrincipal != null) {
+					if(quitarArras) {
+						campos.put(TIPO_OPERACION, false);
+						estadoExp = DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_APROBADA;
+						
+						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS,  "expediente.id", expediente.getId()));
+						
+						if (reserva != null) {
+							Auditoria.delete(reserva);
+							genericDao.save(Reserva.class, reserva);
+						}			
+						
+					}else if(anula && DDCartera.isCarteraBk(activoPrincipal.getCartera())) {
+						String estadoBcString = null;
+						if(reservaApi.tieneReservaFirmada(expediente)) {
+							estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+							if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
+					        	expediente.setFechaAnulacion(new Date());
+					        }
+						}else {
+							estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+						}
+						
+						Filter filtroEstadoBc = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
+						
+						expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, filtroEstadoBc));
+						expediente.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+						expediente.setDetalleAnulacionCntAlquiler(observaciones);
+						Usuario usuario = usuarioApi.getUsuarioLogado();
+						if(usuario != null) {
+							expediente.setPeticionarioAnulacion(usuario.getUsername());
+						}
+						genericDao.save(ExpedienteComercial.class, expediente);
+					} else if(!anula && DDCartera.isCarteraBk(activoPrincipal.getCartera())){
+						estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
+						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
-					
-					
-				}else if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())){
-					estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
-					estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 				}
 				
 				if (estadoExp != null){

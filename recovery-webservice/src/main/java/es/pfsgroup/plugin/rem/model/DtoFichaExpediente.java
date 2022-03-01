@@ -158,6 +158,11 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean finalizadoCierreEconomico;
 	
+	private Boolean esActivoHayaHome;
+	private Boolean tieneTramiteComercial;
+	
+	private String subestadoExpediente;
+	private String codigoSubestado;
 	private String codigoEstadoBc;
 	
 	private Integer estadoPbcCn;
@@ -813,6 +818,39 @@ public class DtoFichaExpediente extends WebDto {
 		this.finalizadoCierreEconomico = finalizadoCierreEconomico;
 	}
 
+	public Boolean getEsActivoHayaHome() {
+		return esActivoHayaHome;
+	}
+
+	public void setEsActivoHayaHome(Boolean esActivoHayaHome) {
+		this.esActivoHayaHome = esActivoHayaHome;
+	}
+
+	public Boolean getTieneTramiteComercial() {
+		return tieneTramiteComercial;
+	}
+
+	public void setTieneTramiteComercial(Boolean tieneTramiteComercial) {
+		this.tieneTramiteComercial = tieneTramiteComercial;
+	}
+
+	public String getSubestadoExpediente() {
+		return subestadoExpediente;
+	}
+
+	public void setSubestadoExpediente(String subestadoExpediente) {
+		this.subestadoExpediente = subestadoExpediente;
+	}
+
+	public String getCodigoSubestado() {
+		return codigoSubestado;
+	}
+
+	public void setCodigoSubestado(String codigoSubestado) {
+		this.codigoSubestado = codigoSubestado;
+	}
+	
+	
 	public String getCodigoEstadoBc() {
 		return codigoEstadoBc;
 	}

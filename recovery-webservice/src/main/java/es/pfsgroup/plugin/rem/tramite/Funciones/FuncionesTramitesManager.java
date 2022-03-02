@@ -103,7 +103,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		tareasBloqueo.addAll(this.devolverTareasBloqueoScoring());
 
 		for (TareaExterna tareaExterna : tareasActivas) {
-			if(!codigoTarea.contentEquals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+			if(!codigoTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
 				codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
 			}
 		}

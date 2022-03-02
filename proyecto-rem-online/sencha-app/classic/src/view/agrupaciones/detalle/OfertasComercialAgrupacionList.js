@@ -1,9 +1,9 @@
 Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'ofertascomercialagrupacionlist',
+	topBar: true,
     bind: {
         store: '{storeOfertasAgrupacion}',
-        topBar: '{agrupacionficha.esEditable}',
 		editOnSelect: '{agrupacionficha.esEditable}'
     },
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
@@ -16,6 +16,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     	boxready: function(){
     		me = this;    		
 			me.calcularMostrarBotonClonarExpediente();
+			me.evaluarEdicion();
     	}
     },
     
@@ -300,6 +301,12 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					}
 				}
 				
+			} 
+			
+			if (agrupacion.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && agrupacion.get('perimetroMacc')){
+				me.fireEvent("errorToast", HreRem.i18n("msg.oferta.haya.home"));
+				me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+				return false;
 			} 
 		}
 		
@@ -608,7 +615,19 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 											|| me.lookupController().getViewModel().data.agrupacionficha.data.codSubcartera === CONST.SUBCARTERA['DIVARIAN'])*/
 										);
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
-	}
+	},
+	
+	evaluarEdicion: function() {
+
+		var me = this;
+		var agr = me.lookupController().getViewModel().get('agrupacionficha');
+		me.setTopBar(agr.get('esEditable'));
+
+		if(agr.get('esHayaHome')=="true"){ 
+			me.setTopBar(false);
+		}
+		
+   }
    	
 });
 

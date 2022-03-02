@@ -19,7 +19,8 @@
 --##		0.7 REMVIP-4622 - Ocultación alquilado
 --##		0.8 HREOS-9509 - Ocultacion Adecuacion DD_ADA 05
 --##		0.9 REMVIP-6642 - Ocultacion Adecuacion DD_ADA 06
---##    0.10 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
+--##		0.10 HREOS-14935 - Añadir motivo ocultacion Reserva Alquiler
+--##   		0.11 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
 --##    0.11 REMVIP-11055 - Se añade el motivo de ocultación "Oferta aprobada" para ofertas migradas
 --##    0.12 REMVIP-11055 - Se borra el motivo "Oferta aprobada" si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''. Está ocultando inclusive si la oferta se anula
 --##########################################

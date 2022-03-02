@@ -8891,6 +8891,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}); 
 		
 		return tabData;
-	}
+	},
+
+    onSelectDiscrepanciasLocalizacion : function(combo, value) {
+		var me = this;
+		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
+		if(value.get('codigo') === 'false'){
+			textObservacionesLoc.setValue('');
+		}
+    }
 });
 

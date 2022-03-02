@@ -5,23 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
 import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
@@ -177,9 +162,9 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
    	private Date fechaRespuestaCES;
 
-    @Column(name = "OFR_ORIGEN")
-    private String origen;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ORIGEN")
+	private DDSistemaOrigen origen;
 
     @Column(name = "OFR_FECHA_ALTA")
     private Date fechaAlta;
@@ -359,6 +344,72 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_RDC_ID")
     private DDResponsableDocumentacionCliente respDocCliente;
 	
+	@Column(name = "OFR_HAYA_HOME_ID")
+    private Long idOfertaHayaHome;
+	
+	@Column(name = "OFR_ORIGEN_OFERTA")
+    private String codOrigenOferta;
+	
+	@Column(name = "OFR_MESES_CARENCIA")
+    private Double mesesCarencia;
+	
+	@Column(name = "OFR_CONTRATO_RESERVA")
+    private Boolean tieneContratoReserva;
+	
+	@Column(name = "OFR_MOTIVO_CONGELACION")
+    private String motivoCongelacion;
+	
+	@Column(name = "OFR_IBI")
+    private Boolean tieneIBI;
+	
+	@Column(name = "OFR_IMPORTE_IBI")
+    private Double importeIBI;
+	
+	@Column(name = "OFR_OTRAS_TASAS")
+    private Boolean tieneOtrasTasas;
+	
+	@Column(name = "OFR_IMPORTE_OTRAS_TASAS")
+    private Double importeOtrasTasas;
+	
+	@Column(name = "OFR_CCPP")
+    private Boolean tieneCCPP;
+	
+	@Column(name = "OFR_IMPORTE_CCPP")
+    private Double importeCCPP;
+	
+	@Column(name = "OFR_PORCENTAJE_1_ANYO")
+    private Double bonificacionAnyo1;
+	
+	@Column(name = "OFR_PORCENTAJE_2_ANYO")
+    private Double bonificacionAnyo2;
+	
+	@Column(name = "OFR_PORCENTAJE_3_ANYO")
+    private Double bonificacionAnyo3;
+	
+	@Column(name = "OFR_PORCENTAJE_4_ANYO")
+    private Double bonificacionAnyo4;
+	
+	@Column(name = "OFR_MESES_CARENCIA_CTRAOFR")
+    private Double mesesCarenciaContraoferta;
+
+	@Column(name = "OFR_PORCENTAJE_1_ANYO_CTRAOFR")
+    private Double bonificacionAnyo1Contraoferta;
+	
+	@Column(name = "OFR_PORCENTAJE_2_ANYO_CTRAOFR")
+    private Double bonificacionAnyo2Contraoferta;
+	
+	@Column(name = "OFR_PORCENTAJE_3_ANYO_CTRAOFR")
+    private Double bonificacionAnyo3Contraoferta;
+	
+	@Column(name = "OFR_PORCENTAJE_4_ANYO_CTRAOFR")
+    private Double bonificacionAnyo4Contraoferta;
+	
+	@Column(name = "OFR_SALESFORCE_COD")
+    private String codOfertaSalesforce;
+	
+	@Column(name = "OFR_SALESFORCE_ID")
+	private String idOfertaSalesforce;
+	
 	@Column(name = "OFR_FECHA_APR_GARANTIAS_APORTADAS")
     private Date fechaAprobacionGarantiasAportadas;
 	
@@ -419,7 +470,11 @@ public class Oferta implements Serializable, Auditable {
 
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private OfertaCaixa ofertaCaixa;   
+    private OfertaCaixa ofertaCaixa;
+
+	@Transient
+	private Boolean replicateBC;
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -793,11 +848,11 @@ public class Oferta implements Serializable, Auditable {
 		this.usuarioBaja = usuarioBaja;
 	}
 
-	public String getOrigen() {
+	public DDSistemaOrigen getOrigen() {
 		return origen;
 	}
 
-	public void setOrigen(String origen) {
+	public void setOrigen(DDSistemaOrigen origen) {
 		this.origen = origen;
 	}
 
@@ -1289,4 +1344,188 @@ public class Oferta implements Serializable, Auditable {
 		this.titularesConfirmadosSINo = titularesConfirmados;
 	}
 	
+	public Long getIdOfertaHayaHome() {
+		return idOfertaHayaHome;
+	}
+
+	public void setIdOfertaHayaHome(Long idOfertaHayaHome) {
+		this.idOfertaHayaHome = idOfertaHayaHome;
+	}
+
+	public String getCodOrigenOferta() {
+		return codOrigenOferta;
+	}
+
+	public void setCodOrigenOferta(String codOrigenOferta) {
+		this.codOrigenOferta = codOrigenOferta;
+	}
+
+	public Double getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(Double mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public Boolean getTieneContratoReserva() {
+		return tieneContratoReserva;
+	}
+
+	public void setTieneContratoReserva(Boolean tieneContratoReserva) {
+		this.tieneContratoReserva = tieneContratoReserva;
+	}
+
+	public String getMotivoCongelacion() {
+		return motivoCongelacion;
+	}
+
+	public void setMotivoCongelacion(String motivoCongelacion) {
+		this.motivoCongelacion = motivoCongelacion;
+	}
+
+	public Boolean getTieneIBI() {
+		return tieneIBI;
+	}
+
+	public void setTieneIBI(Boolean tieneIBI) {
+		this.tieneIBI = tieneIBI;
+	}
+
+	public Double getImporteIBI() {
+		return importeIBI;
+	}
+
+	public void setImporteIBI(Double importeIBI) {
+		this.importeIBI = importeIBI;
+	}
+
+	public Boolean getTieneOtrasTasas() {
+		return tieneOtrasTasas;
+	}
+
+	public void setTieneOtrasTasas(Boolean tieneOtrasTasas) {
+		this.tieneOtrasTasas = tieneOtrasTasas;
+	}
+
+	public Double getImporteOtrasTasas() {
+		return importeOtrasTasas;
+	}
+
+	public void setImporteOtrasTasas(Double importeOtrasTasas) {
+		this.importeOtrasTasas = importeOtrasTasas;
+	}
+
+	public Boolean getTieneCCPP() {
+		return tieneCCPP;
+	}
+
+	public void setTieneCCPP(Boolean tieneCCPP) {
+		this.tieneCCPP = tieneCCPP;
+	}
+
+	public Double getImporteCCPP() {
+		return importeCCPP;
+	}
+
+	public void setImporteCCPP(Double importeCCPP) {
+		this.importeCCPP = importeCCPP;
+	}
+
+	public Double getBonificacionAnyo1() {
+		return bonificacionAnyo1;
+	}
+
+	public void setBonificacionAnyo1(Double bonificacionAnyo1) {
+		this.bonificacionAnyo1 = bonificacionAnyo1;
+	}
+
+	public Double getBonificacionAnyo2() {
+		return bonificacionAnyo2;
+	}
+
+	public void setBonificacionAnyo2(Double bonificacionAnyo2) {
+		this.bonificacionAnyo2 = bonificacionAnyo2;
+	}
+
+	public Double getBonificacionAnyo3() {
+		return bonificacionAnyo3;
+	}
+
+	public void setBonificacionAnyo3(Double bonificacionAnyo3) {
+		this.bonificacionAnyo3 = bonificacionAnyo3;
+	}
+
+	public Double getBonificacionAnyo4() {
+		return bonificacionAnyo4;
+	}
+
+	public void setBonificacionAnyo4(Double bonificacionAnyo4) {
+		this.bonificacionAnyo4 = bonificacionAnyo4;
+	}
+
+	public Double getMesesCarenciaContraoferta() {
+		return mesesCarenciaContraoferta;
+	}
+
+	public void setMesesCarenciaContraoferta(Double mesesCarenciaContraoferta) {
+		this.mesesCarenciaContraoferta = mesesCarenciaContraoferta;
+	}
+
+	public Double getBonificacionAnyo1Contraoferta() {
+		return bonificacionAnyo1Contraoferta;
+	}
+
+	public void setBonificacionAnyo1Contraoferta(Double bonificacionAnyo1Contraoferta) {
+		this.bonificacionAnyo1Contraoferta = bonificacionAnyo1Contraoferta;
+	}
+
+	public Double getBonificacionAnyo2Contraoferta() {
+		return bonificacionAnyo2Contraoferta;
+	}
+
+	public void setBonificacionAnyo2Contraoferta(Double bonificacionAnyo2Contraoferta) {
+		this.bonificacionAnyo2Contraoferta = bonificacionAnyo2Contraoferta;
+	}
+
+	public Double getBonificacionAnyo3Contraoferta() {
+		return bonificacionAnyo3Contraoferta;
+	}
+
+	public void setBonificacionAnyo3Contraoferta(Double bonificacionAnyo3Contraoferta) {
+		this.bonificacionAnyo3Contraoferta = bonificacionAnyo3Contraoferta;
+	}
+
+	public Double getBonificacionAnyo4Contraoferta() {
+		return bonificacionAnyo4Contraoferta;
+	}
+
+	public void setBonificacionAnyo4Contraoferta(Double bonificacionAnyo4Contraoferta) {
+		this.bonificacionAnyo4Contraoferta = bonificacionAnyo4Contraoferta;
+	}
+	
+	public String getCodOfertaSalesforce() {
+		return codOfertaSalesforce;
+	}
+
+	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
+		this.codOfertaSalesforce = codOfertaSalesforce;
+	}
+	
+	public String getIdOfertaSalesforce() {
+		return idOfertaSalesforce;
+	}
+
+	public void setIdOfertaSalesforce(String idOfertaSalesforce) {
+		this.idOfertaSalesforce = idOfertaSalesforce;
+	}
+	
+
+	public Boolean getReplicateBC() {
+		return Boolean.TRUE.equals(replicateBC);
+	}
+
+	public void setReplicateBC(Boolean replicateBC) {
+		this.replicateBC = replicateBC;
+	}
 }

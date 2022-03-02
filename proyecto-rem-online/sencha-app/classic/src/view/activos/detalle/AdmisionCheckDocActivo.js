@@ -343,6 +343,9 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								            align: 'center',
 								            cls: 'grid-no-seleccionable-col',
 								            tdCls: 'grid-no-seleccionable-td',
+								            bind: {
+							            		hidden: '{!isCarteraBankia}'
+							            	},
 								            editor: {
 								        		xtype: 'combobox',
 								        		editable: false,
@@ -381,6 +384,9 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								            align: 'center',
 								            cls: 'grid-no-seleccionable-col',
 								            tdCls: 'grid-no-seleccionable-td',
+								            bind: {
+							            		hidden: '{!isCarteraBankia}'
+							            	},
 								            editor: {
 								        		xtype: 'combobox',
 								        		editable: false,

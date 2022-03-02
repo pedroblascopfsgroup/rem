@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,18 +99,6 @@ import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.perfilAdministracion.dao.PerfilAdministracionDao;
 
 
@@ -1624,25 +1613,31 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				cartera = agrupacion.getActivoPrincipal().getCartera();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					cartera= agrupacionActivo.getActivo().getCartera();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						cartera= agrupacionActivo.getActivo().getCartera();
+				}
 			}
 			DDSubcartera subcartera = null;
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				subcartera = agrupacion.getActivoPrincipal().getSubcartera();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					subcartera= agrupacionActivo.getActivo().getSubcartera();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						subcartera= agrupacionActivo.getActivo().getSubcartera();
+				}
 			}
 			ActivoPropietario actPro = null;
 			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 				actPro = agrupacion.getActivoPrincipal().getPropietarioPrincipal();
 			}else {
-				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
-				if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
-					actPro= agrupacionActivo.getActivo().getPropietarioPrincipal();
+				if(!agrupacion.getActivos().isEmpty()) {
+					ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(0);
+					if (!Checks.esNulo(agrupacionActivo) && !Checks.esNulo(agrupacionActivo.getActivo()))
+						actPro= agrupacionActivo.getActivo().getPropietarioPrincipal();
+				}
 			}
 			cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);		
 		}
@@ -1765,6 +1760,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		if(dto.getFechaEtiqueta() != null) {
 			activoAdmisionDocumento.setFechaEtiqueta(parser.parse(dto.getFechaEtiqueta()));
+		}
+		if(dto.getCalificacionEnergetica() != null) {
+			activoAdmisionDocumento.setTipoCalificacionEnergetica(genericDao.get(DDTipoCalificacionEnergetica.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCalificacionEnergetica())));
 		}
 		
 		if("SI".equalsIgnoreCase(dto.getAplica())) {

@@ -1487,6 +1487,16 @@ public interface ActivoApi {
 
 	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
 	
+	boolean esActivoHayaHome(Long idActivo);
+
+	boolean esActivoAlquiler(Long idActivo);
+
+	Activo activoByIdAgrupacion(Long idAgrupacion);
+
+	boolean isActivoConReservaAlquiler(Activo activo);
+
+	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	
     Page findTasaciones(DtoFiltroTasaciones dto);
 
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);

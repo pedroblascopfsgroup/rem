@@ -9685,6 +9685,100 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public boolean esActivoHayaHomeToModel(Activo activo, ActivoAgrupacion agrupacion) {
+		boolean esMacc = false;
+		boolean esActivoAlquiler = false;	
+		boolean es1to1 = false;
+		
+		Activo activoFinal = null;
+		if (!Checks.esNulo(agrupacion)) {
+			if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+				activoFinal = agrupacion.getActivoPrincipal();
+			} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()) {
+				activoFinal = agrupacion.getActivos().get(0).getActivo();
+			}
+		}
+		if (!Checks.esNulo(activo)) activoFinal = activo;
+		
+		if (!Checks.esNulo(activoFinal)) {
+			esMacc = !Checks.esNulo(activoFinal.getPerimetroMacc()) && activoFinal.getPerimetroMacc() == 1;
+			esActivoAlquiler = !Checks.esNulo(activoFinal.getActivoPublicacion()) 
+					&& !Checks.esNulo(activoFinal.getActivoPublicacion().getTipoComercializacion())
+					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
+		}		
+		
+		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
+
+		return esActivoHayaHome;
+	}
+	
+	@Override
+	public boolean esActivoHayaHome(Long idActivo) {
+		boolean esMacc = false;
+		boolean esActivoAlquiler = false;	
+		boolean es1to1 = false;
+		
+		Activo activo = get(idActivo);
+		
+		if (!Checks.esNulo(activo)) {
+			esMacc = !Checks.esNulo(activo.getPerimetroMacc()) && activo.getPerimetroMacc() == 1;
+			esActivoAlquiler = esActivoAlquiler(idActivo);
+			es1to1 = !Checks.esNulo(activo.getSubcartera().getCodigo()) && DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activo.getSubcartera().getCodigo());
+		}
+		
+		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
+
+		return esActivoHayaHome;
+	}
+	
+	@Override
+	public boolean esActivoAlquiler(Long idActivo) {
+		boolean esActivoAlquiler = false;
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);	
+		ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);	
+		
+		if (!Checks.esNulo(actPublicacion) && !Checks.esNulo(actPublicacion.getTipoComercializacion()) && 
+				(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())
+				|| DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(actPublicacion.getTipoComercializacion().getCodigo()))) {
+			esActivoAlquiler = true;
+		}
+		
+		return esActivoAlquiler;
+	}
+	
+	@Override
+	public Activo activoByIdAgrupacion(Long idAgrupacion) {
+		ActivoAgrupacion agr = activoAgrupacionApi.get(idAgrupacion);
+		Activo activo = null;
+		if(!Checks.esNulo(agr.getActivoPrincipal())) {
+			activo = agr.getActivoPrincipal();
+		} else if (!Checks.esNulo(agr.getActivos()) && agr.getActivos().size() > 0){
+			activo = agr.getActivos().get(0).getActivo();
+		}
+		return activo;
+	}
+	
+	@Override
+	public boolean isActivoConReservaAlquiler(Activo activo) {
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta activoOferta : activo.getOfertas()) {
+				if(activoOferta.getPrimaryKey().getOferta().getExpedienteComercial() != null) {
+					if (activoOferta.getPrimaryKey().getOferta().getExpedienteComercial().getReservadoAlquiler() != null) {
+						if (activoOferta.getPrimaryKey().getOferta().getExpedienteComercial().getReservadoAlquiler()){
+							return true;
+						}
+					}
+				}
+				
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	public Page findTasaciones(DtoFiltroTasaciones dto) {
 		return activoDao.findTasaciones(dto);
 	}

@@ -27,6 +27,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -146,6 +147,10 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="NOMBRE_CONYUGE_URSUS")
     private String nombreConyugeURSUS;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TOC_ID")
+    private DDTipoOcupacion tipoOcupacion;
     
     @Column(name="COM_FECHA_NACIOCONST")
     private Date fechaNacimientoConstitucion;
@@ -423,6 +428,14 @@ public class Comprador implements Serializable, Auditable {
 		this.nombreConyugeURSUS = nombreConyugeURSUS;
 	}
 
+	public DDTipoOcupacion getTipoOcupacion() {
+		return tipoOcupacion;
+	}
+
+	public void setTipoOcupacion(DDTipoOcupacion tipoOcupacion) {
+		this.tipoOcupacion = tipoOcupacion;
+	}
+	
 	public Date getFechaNacimientoConstitucion() {
 		return fechaNacimientoConstitucion;
 	}

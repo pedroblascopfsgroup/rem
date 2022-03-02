@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220301
+--## FECHA_CREACION=20220302
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17266
@@ -45,12 +45,13 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         --DD_RETORNO_CAIXA DD_TEXT_MENSAJE_CAIXA  SITUACION  DD_EGA_CODIGO  DD_EAH_CODIGO  DD_EAP_CODIGO
-	T_TIPO_DATA('PAGADA'   ,'Pagada'                     ,'PAGADA'                ,'05','03','07'),
-	T_TIPO_DATA('ENTREGADA','Aceptada.  Pdte pago'       ,'ACEPTADA PAGO'         ,'04','03','07'),
-	T_TIPO_DATA('ENTREGADA','Incidenica pdte corrección.','ALERTA PAGO'           ,'04','03','07'),
-	T_TIPO_DATA('ENTREGADA','No contabilizada'           ,'INC.REGISTRO'          ,'08','01','04'),
-	T_TIPO_DATA('ENTREGADA','Pdte aceptacion'            ,'PENDIENTE'             ,'04','03','07'),
-	T_TIPO_DATA('ENTREGADA','Aprobación directa'         ,'APROBACION DIRECTA'    ,'04','03','07')
+	T_TIPO_DATA('PAGADA'   ,'Pagada'                     ,'PAGADA'                    ,'05','03','07'),
+	T_TIPO_DATA('ENTREGADA','Aceptada.  Pdte pago'       ,'ACEPTADA PAGO'             ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Incidenica pdte corrección.','ALERTA PAGO'               ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','No contabilizada'           ,'INC.REGISTRO'              ,'03','03','01'),
+	T_TIPO_DATA('ENTREGADA','Pdte aceptacion'            ,'PENDIENTE'                 ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Aprobación directa'         ,'APROBACION DIRECTA'        ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Denegada por duplicada'     ,'DENEGADA POR DUPLICADA'    ,'08','01','04')
 
 
     ); 

@@ -13791,7 +13791,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ActivoTramite tramiteVenta = null;
 		ActivoTramite tramiteAlquiler = null;
 		ActivoTramite tramiteAlquilerNoComercial = null;
-		Long idTramite = null;
+		ActivoTramite tramite = null;
+		
 		if (expedienteComercial != null && expedienteComercial.getTrabajo() != null) {
 			tramiteVenta = tramiteDao.getTramiteComercialVigenteByTrabajoT017(expedienteComercial.getTrabajo().getId());
 			tramiteAlquiler = tramiteDao.getTramiteComercialVigenteByTrabajoT015(expedienteComercial.getTrabajo().getId());
@@ -13799,18 +13800,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		if (tramiteVenta != null) {
-			idTramite = tramiteVenta.getId();
+			tramite = tramiteVenta;
 		} else if(tramiteAlquiler != null) {
-			idTramite = tramiteAlquiler.getId();
+			tramite = tramiteAlquiler;
 		} else if (tramiteAlquilerNoComercial != null) {
-			idTramite = tramiteAlquilerNoComercial.getId();
+			tramite = tramiteAlquilerNoComercial;
 		}
 		
-		if(idTramite != null) {
+		if(tramite != null) {
 			dto.setUsuarioLogado(usuarioLogado.getUsername());
 			tramiteDao.creaTareas(dto);
 			TareaNotificacion tarNot = null;
-			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(idTramite);
+			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			for (TareaExterna tarea : tareasActivas) {
 				if (dto.getCodigoTarea().equals(tarea.getTareaProcedimiento().getCodigo())) {
 					tareaNueva = tarea;
@@ -13819,9 +13820,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", tarNot.getId()));
 						if(Checks.esNulo(tac)) {
 							tac = new TareaActivo();
-							tac.setActivo(tramiteAlquilerNoComercial.getActivo());
+							tac.setActivo(tramite.getActivo());
 							tac.setId(tarNot.getId());
-							tac.setTramite(tramiteAlquilerNoComercial);
+							tac.setTramite(tramite);
 							tac.setAuditoria(Auditoria.getNewInstance());
 						}
 							tac.setUsuario(usuarioLogado);

@@ -230,7 +230,9 @@ func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
+rem_mirror|func-rem-hayaHome
 rem_mirror|func-rem-jupiter
+rem_mirror|rem-legalReo
 rem_mirror|func-rem-jaguar
 func-rem-modeloHydra|func-rem-preparacionHYDRA
 func-rem-preparacionHYDRA|func-rem-comercialHydra
@@ -258,3 +260,4 @@ rem_mirror|func-rem-PEP2022
 func-rem-cargaAutomaticaPromociones|R-Persica
 func-rem-mejorasGestionFotos|R-Persica
 func-rem-reincorporacionEstadoTitulo|R-Persica
+func-rem-mejorasGastosCXB|func-rem-PEP2022

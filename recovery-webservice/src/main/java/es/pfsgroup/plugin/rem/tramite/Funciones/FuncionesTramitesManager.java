@@ -142,12 +142,12 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		tareasBloqueo.addAll(this.devolverTareasBloqueoScoring());
 
 		for (TareaExterna tareaExterna : tareasActivas) {
-			if(codigoTarea != tareaExterna.getTareaProcedimiento().getCodigo()) {
+			if(!codigoTarea.contentEquals(tareaExterna.getTareaProcedimiento().getCodigo())) {
 				codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
 			}
 		}
-			
-		if(CollectionUtils.containsAny(tareasActivas, tareasBloqueo)) {
+
+		if(CollectionUtils.containsAny(codigoTareasActivas, tareasBloqueo)) {
 			tieneMasUnaTareaBloqueoActiva = true;
 		} 
 		

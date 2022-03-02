@@ -2216,7 +2216,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
 		ActivoTramite activoTramite = null;
-		if(!activoManager.esActivoHayaHome(activo.getId()))
+		if(!activoManager.esActivoHayaHome(activo, null))
 			activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -2285,7 +2285,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			
 			//Creacion del tramite
-			if(!activoManager.esActivoHayaHome(activo.getId()))
+			if(!activoManager.esActivoHayaHome(activo, null))
 				trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

@@ -36,7 +36,6 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'APR_AUX_ACT_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
     
     /* -- ARRAY CON NUEVAS COLUMNAS */
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
@@ -97,6 +96,7 @@ BEGIN
 
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Columnas añadidas correctamente');
 	
 
 

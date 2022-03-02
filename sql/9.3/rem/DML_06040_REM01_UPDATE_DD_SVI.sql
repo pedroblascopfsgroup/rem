@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20220223
+--## FECHA_CREACION=20220302
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-17091
@@ -53,9 +53,9 @@ DECLARE
       T_TIPO_DATA('05',        '06',         'Z004',       'ZM05',           'Z25'),
       T_TIPO_DATA('05',        '07',         'Z005',       'Z005',           'Z37'),
       T_TIPO_DATA('05',        '08',         'Z004',       'ZM05',           'Z22'),
-      T_TIPO_DATA('05',        '09',         'Z004',       'ZM05',           'Z30'),
+      T_TIPO_DATA('05',        '09',         'Z004',       'ZM05',           'Z23'),
       T_TIPO_DATA('05',        '10',         'Z004',       'ZM05',           'Z19'),
-      T_TIPO_DATA('05',        '11',         'Z004',       'ZM05',           'Z30'),
+      T_TIPO_DATA('05',        '11',         'Z004',       'ZM05',           'Z23'),
       T_TIPO_DATA('05',        '12',         'Z004',       'ZM05',           'Z40'),
       T_TIPO_DATA('05',        '13',         'Z004',       'ZM05',           'Z40'),
       T_TIPO_DATA('05',        '14',         'Z004',       'ZM05',           'Z34'),

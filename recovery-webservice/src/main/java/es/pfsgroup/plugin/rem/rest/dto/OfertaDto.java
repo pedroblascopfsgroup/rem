@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Dicci
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
@@ -31,16 +32,18 @@ public class OfertaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	
-	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idOfertaWebcom;
+	private Long idOfertaHayaHome;
 	private Long idOfertaRem;
+	@NotNull(groups = { Insert.class, Update.class })
+	private String entidadOrigen;
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
 	@Lista(clase = ClienteComercial.class, message = "El idClienteRem no existe", groups = { Insert.class,
 			Update.class },foreingField="idClienteRem")
 	private Long idClienteRem;
+	private Long idClienteRemRepresentante;
+	private Long idClienteContacto;
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
 	private Double importe;
@@ -73,8 +76,9 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
-	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo DDRespuestaOfertante no existe", groups = { Update.class },foreingField="codigo")
-	@Size(max=20,groups = { Update.class })
+	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo DDRespuestaOfertante no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
 	private String aceptacionContraoferta;
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
@@ -110,6 +114,29 @@ public class OfertaDto implements Serializable {
 	private Boolean docResponsabilidadPrescriptor;
 	private String porcentajeDescuento;
 	private String justificacionOferta;
+	private String codOrigenOferta;
+	private Double mesesCarencia;
+	private Boolean tieneContratoReserva;
+	private String motivoCongelacion;
+	private Boolean tieneIBI;
+	private Double importeIBI; 
+	private Boolean tieneOtrasTasas;
+	private Double importeOtrasTasas;
+	private Boolean tieneCCPP;
+	private Double importeCCPP;
+	private Double bonificacionAnyo1;
+	private Double bonificacionAnyo2;
+	private Double bonificacionAnyo3;
+	private Double bonificacionAnyo4;
+	private Double mesesCarenciaContraoferta;
+	private Double bonificacionAnyo1Contraoferta;
+	private Double bonificacionAnyo2Contraoferta;
+	private Double bonificacionAnyo3Contraoferta;
+	private Double bonificacionAnyo4Contraoferta;
+	private String codEstadoExpediente;
+	private String codSubestadoExpediente;
+	private String codOfertaSalesforce;
+	private String idOfertaSalesforce;
 	private Date fechaAcepGdpr;
 	@Diccionary(clase = DDVinculoCaixa.class, message = "El vinculoCaixa no existe")
 	private String vinculoCaixa;	
@@ -160,6 +187,18 @@ public class OfertaDto implements Serializable {
 	public void setIdOfertaRem(Long idOfertaRem) {
 		this.idOfertaRem = idOfertaRem;
 	}
+	public Long getIdOfertaHayaHome() {
+		return idOfertaHayaHome;
+	}
+	public void setIdOfertaHayaHome(Long idOfertaHayaHome) {
+		this.idOfertaHayaHome = idOfertaHayaHome;
+	}
+	public String getEntidadOrigen() {
+		return entidadOrigen;
+	}
+	public void setEntidadOrigen(String entidadOrigen) {
+		this.entidadOrigen = entidadOrigen;
+	}
 	public Double getImporteContraoferta() {
 		return importeContraoferta;
 	}
@@ -177,6 +216,18 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdClienteRem(Long idClienteRem) {
 		this.idClienteRem = idClienteRem;
+	}
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
 	}
 	public Long getIdActivoHaya() {
 		return idActivoHaya;
@@ -365,7 +416,6 @@ public class OfertaDto implements Serializable {
 	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
 		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
 	}
-
 	public String getNumeroBulkAdvisoryNote() {
 		return numeroBulkAdvisoryNote;
 	}
@@ -438,6 +488,144 @@ public class OfertaDto implements Serializable {
 	}
 	public void setJustificacionOferta(String justificacionOferta) {
 		this.justificacionOferta = justificacionOferta;
+	}
+	public String getCodOrigenOferta() {
+		return codOrigenOferta;
+	}
+	public void setCodOrigenOferta(String codOrigenOferta) {
+		this.codOrigenOferta = codOrigenOferta;
+	}
+	public Double getMesesCarencia() {
+		return mesesCarencia;
+	}
+	public void setMesesCarencia(Double mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+	public Boolean getTieneContratoReserva() {
+		return tieneContratoReserva;
+	}
+	public void setTieneContratoReserva(Boolean tieneContratoReserva) {
+		this.tieneContratoReserva = tieneContratoReserva;
+	}
+	public String getMotivoCongelacion() {
+		return motivoCongelacion;
+	}
+	public void setMotivoCongelacion(String motivoCongelacion) {
+		this.motivoCongelacion = motivoCongelacion;
+	}
+	public Boolean getTieneIBI() {
+		return tieneIBI;
+	}
+	public void setTieneIBI(Boolean tieneIBI) {
+		this.tieneIBI = tieneIBI;
+	}
+	public Double getImporteIBI() {
+		return importeIBI;
+	}
+	public void setImporteIBI(Double importeIBI) {
+		this.importeIBI = importeIBI;
+	}
+	public Boolean getTieneOtrasTasas() {
+		return tieneOtrasTasas;
+	}
+	public void setTieneOtrasTasas(Boolean tieneOtrasTasas) {
+		this.tieneOtrasTasas = tieneOtrasTasas;
+	}
+	public Double getImporteOtrasTasas() {
+		return importeOtrasTasas;
+	}
+	public void setImporteOtrasTasas(Double importeOtrasTasas) {
+		this.importeOtrasTasas = importeOtrasTasas;
+	}
+	public Boolean getTieneCCPP() {
+		return tieneCCPP;
+	}
+	public void setTieneCCPP(Boolean tieneCCPP) {
+		this.tieneCCPP = tieneCCPP;
+	}
+	public Double getImporteCCPP() {
+		return importeCCPP;
+	}
+	public void setImporteCCPP(Double importeCCPP) {
+		this.importeCCPP = importeCCPP;
+	}
+	public Double getBonificacionAnyo1() {
+		return bonificacionAnyo1;
+	}
+	public void setBonificacionAnyo1(Double bonificacionAnyo1) {
+		this.bonificacionAnyo1 = bonificacionAnyo1;
+	}
+	public Double getBonificacionAnyo2() {
+		return bonificacionAnyo2;
+	}
+	public void setBonificacionAnyo2(Double bonificacionAnyo2) {
+		this.bonificacionAnyo2 = bonificacionAnyo2;
+	}
+	public Double getBonificacionAnyo3() {
+		return bonificacionAnyo3;
+	}
+	public void setBonificacionAnyo3(Double bonificacionAnyo3) {
+		this.bonificacionAnyo3 = bonificacionAnyo3;
+	}
+	public Double getBonificacionAnyo4() {
+		return bonificacionAnyo4;
+	}
+	public void setBonificacionAnyo4(Double bonificacionAnyo4) {
+		this.bonificacionAnyo4 = bonificacionAnyo4;
+	}
+	public Double getMesesCarenciaContraoferta() {
+		return mesesCarenciaContraoferta;
+	}
+	public void setMesesCarenciaContraoferta(Double mesesCarenciaContraoferta) {
+		this.mesesCarenciaContraoferta = mesesCarenciaContraoferta;
+	}
+	public Double getBonificacionAnyo1Contraoferta() {
+		return bonificacionAnyo1Contraoferta;
+	}
+	public void setBonificacionAnyo1Contraoferta(Double bonificacionAnyo1Contraoferta) {
+		this.bonificacionAnyo1Contraoferta = bonificacionAnyo1Contraoferta;
+	}
+	public Double getBonificacionAnyo2Contraoferta() {
+		return bonificacionAnyo2Contraoferta;
+	}
+	public void setBonificacionAnyo2Contraoferta(Double bonificacionAnyo2Contraoferta) {
+		this.bonificacionAnyo2Contraoferta = bonificacionAnyo2Contraoferta;
+	}
+	public Double getBonificacionAnyo3Contraoferta() {
+		return bonificacionAnyo3Contraoferta;
+	}
+	public void setBonificacionAnyo3Contraoferta(Double bonificacionAnyo3Contraoferta) {
+		this.bonificacionAnyo3Contraoferta = bonificacionAnyo3Contraoferta;
+	}
+	public Double getBonificacionAnyo4Contraoferta() {
+		return bonificacionAnyo4Contraoferta;
+	}
+	public void setBonificacionAnyo4Contraoferta(Double bonificacionAnyo4Contraoferta) {
+		this.bonificacionAnyo4Contraoferta = bonificacionAnyo4Contraoferta;
+	}
+	public String getCodEstadoExpediente() {
+		return codEstadoExpediente;
+	}
+	public void setCodEstadoExpediente(String estadoOferta) {
+		this.codEstadoExpediente = estadoOferta;
+	}
+	public String getcodSubestadoExpediente() {
+		return codSubestadoExpediente;
+	}
+	public void setcodSubestadoExpediente(String codSubestadoExpediente) {
+		this.codSubestadoExpediente = codSubestadoExpediente;
+	}
+	public String getCodOfertaSalesforce() {
+		return codOfertaSalesforce;
+	}
+	public void setCodOfertaSalesforce(String codOfertaSalesforce) {
+		this.codOfertaSalesforce = codOfertaSalesforce;
+	}
+	public String getIdOfertaSalesforce() {
+		return idOfertaSalesforce;
+	}
+	public void setIdOfertaSalesforce(String idOfertaSalesforce) {
+		this.idOfertaSalesforce = idOfertaSalesforce;
 	}
 	public Date getFechaAcepGdpr() {
 		return fechaAcepGdpr;

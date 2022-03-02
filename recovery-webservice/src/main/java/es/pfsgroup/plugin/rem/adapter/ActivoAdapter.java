@@ -134,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -4485,7 +4486,10 @@ public class ActivoAdapter {
 			
 			Oferta oferta = new Oferta();
 			oferta.setVentaDirecta(dto.getVentaDirecta());
-			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			
+			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+			if (sistemaOrigen != null)
+				oferta.setOrigen(sistemaOrigen);
 			
 			oferta.setNumOferta(numOferta);
 			if (!Checks.esNulo(dto.getImporteOferta())) {

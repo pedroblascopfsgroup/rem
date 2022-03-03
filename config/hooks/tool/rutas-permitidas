@@ -236,6 +236,7 @@ func-rem-comercialHydra-HREOS-14553|func-rem-comercialHydra
 rem_mirror|func-rem-boardingOfertasCFV
 rem_mirror|func-rem-unicajaLBK
 func-rem-unicajaLBK|func-rem-boardingOfertasCFV
+rem_mirror|func-rem-hayaHome
 rem_mirror|func-rem-jupiter
 rem_mirror|rem-legalReo
 rem_mirror|func-rem-jaguar

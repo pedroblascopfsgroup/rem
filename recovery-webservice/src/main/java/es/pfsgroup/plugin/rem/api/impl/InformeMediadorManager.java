@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.InformeTestigosOpcionales;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
@@ -1679,6 +1680,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				? informe.getSalidaHumosOtrasCaracteristicas() ? ddSi : ddNo : null);
 		informeEntity.setAptoUsoBruto(!Checks.esNulo(informe.getAptoUsoEnBruto()) 
 				? informe.getAptoUsoEnBruto() ? ddSi : ddNo : null);
+		if (!Checks.esNulo(informe.getCodAccesibilidad())) {
+			DDActivoAccesibilidad aac = genericDao.get(DDActivoAccesibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAccesibilidad()));
+			informeEntity.setAccesibilidad(aac);
+		}
 		
 		//codAccesibilidad no tiene diccionario
 	

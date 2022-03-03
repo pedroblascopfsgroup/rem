@@ -82,9 +82,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -629,6 +632,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
 						DDEstadosExpedienteComercial.EN_TRAMITACION);
 		nuevoExpediente.setEstado(estadoExpediente);
+		
+		String subestado = DDSubestadosExpedienteComercial.ENVIADO;
+		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
+			subestado = DDSubestadosExpedienteComercial.NO_ENVIADO;
+		}
+		
+		DDSubestadosExpedienteComercial subestadoExpediente = (DDSubestadosExpedienteComercial) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestado);
+		nuevoExpediente.setSubestadoExpediente(subestadoExpediente);
+		
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);
 
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
@@ -1019,6 +1032,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getTipoPersona())) {
 				compradorBusqueda.setTipoPersona(cliente.getTipoPersona());
 			}
+			
+			if (!Checks.esNulo(cliente.getTipoOcupacion())) {
+				compradorBusqueda.setTipoOcupacion(cliente.getTipoOcupacion());
+			}
 
 			// CHECKS GDPR
 			if (!Checks.esNulo(cliente.getCesionDatos())) {
@@ -1060,6 +1077,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setLocalidadRepresentante(cliente.getMunicipioRepresentante());
 			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
+			compradorExpedienteNuevo.setNombreRepresentante(cliente.getNombreRepresentante());
+			compradorExpedienteNuevo.setApellidosRepresentante(cliente.getApellidosRepresentante());
+			compradorExpedienteNuevo.setTelefono1Representante(cliente.getTelefonoRepresentante());
+			compradorExpedienteNuevo.setEmailRepresentante(cliente.getEmailRepresentante());
+			compradorExpedienteNuevo.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
+			compradorExpedienteNuevo.setNombreContacto(cliente.getNombreContacto());
+			compradorExpedienteNuevo.setApellidosContacto(cliente.getApellidosContacto());
+			compradorExpedienteNuevo.setTipoDocumentoContacto(cliente.getTipoDocumentoContacto());
+			compradorExpedienteNuevo.setDocumentoContacto(cliente.getDocumentoContacto());
+			compradorExpedienteNuevo.setTelefonoContacto(cliente.getTelefonoContacto());
+			compradorExpedienteNuevo.setEmailContacto(cliente.getEmailContacto());
+			compradorExpedienteNuevo.setIdClienteRemRepresentante(cliente.getIdClienteRemRepresentante());
+			compradorExpedienteNuevo.setIdClienteContacto(cliente.getIdClienteContacto());
 			compradorExpedienteNuevo.setFechaNacimientoRepresentante(cliente.getFechaNacimientoRep());
 			compradorExpedienteNuevo.setPaisNacimientoRepresentante(cliente.getPaisNacimientoRep());
 			compradorExpedienteNuevo.setProvinciaNacimientoRep(cliente.getProvinciaNacimientoRep());
@@ -2185,7 +2215,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Transactional(readOnly = false)
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
-		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+		ActivoTramite activoTramite = null;
+		if(!activoManager.esActivoHayaHome(activo.getId()))
+			activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);
@@ -2253,7 +2285,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			
 			//Creacion del tramite
-			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+			if(!activoManager.esActivoHayaHome(activo.getId()))
+				trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

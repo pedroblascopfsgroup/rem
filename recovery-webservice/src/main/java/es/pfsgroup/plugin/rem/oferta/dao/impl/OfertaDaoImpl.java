@@ -120,6 +120,38 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 		return HibernateQueryUtils.list(this, hql);
 	}
+	
+	@Override
+	public Oferta getOfertaByIdOfertaHayaHomeOrNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem) {
+
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (idOfertaHayaHome != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idOfertaHayaHome", idOfertaHayaHome);
+		if (numOfertaRem != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numOferta", numOfertaRem);
+
+		return HibernateQueryUtils.uniqueResult(this, hql);
+	}
+	
+	@Override
+	public Oferta getOfertaByIdOfertaHayaHome(Long idOfertaHayaHome) {
+
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (idOfertaHayaHome != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idOfertaHayaHome", idOfertaHayaHome);
+
+		return HibernateQueryUtils.uniqueResult(this, hql);
+	}
+	
+	@Override
+	public Oferta getOfertaByNumOfertaRem(Long numOfertaRem) {
+
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		if (numOfertaRem != null)
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numOferta", numOfertaRem);
+
+		return HibernateQueryUtils.uniqueResult(this, hql);
+	}
 
 	@Override
 	public BigDecimal getImporteCalculo(Long idOferta, String tipoComision, Long idActivo, Long idProveedor) {

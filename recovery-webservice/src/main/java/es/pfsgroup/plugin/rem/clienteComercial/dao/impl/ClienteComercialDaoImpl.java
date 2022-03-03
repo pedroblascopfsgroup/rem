@@ -34,6 +34,15 @@ public class ClienteComercialDaoImpl extends AbstractEntityDao<ClienteComercial,
 		return HibernateQueryUtils.list(this, hql);
 	}
 	
+	@Override
+	public List<ClienteComercial> getListaClientesByDocumento(String documento) {
+		
+		HQLBuilder hql = new HQLBuilder("from ClienteComercial clc");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "clc.documento",documento);
+		hql.orderBy("clc.auditoria.fechaCrear", HQLBuilder.ORDER_DESC);
+		
+		return HibernateQueryUtils.list(this, hql);
+	}	
 
     @Override
     public void deleteTmpClienteByDocumento(String documento) {

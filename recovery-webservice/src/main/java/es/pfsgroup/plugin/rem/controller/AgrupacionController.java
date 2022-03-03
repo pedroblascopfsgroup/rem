@@ -504,7 +504,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 				for (int i = 0; i < listaFotos.size(); i++) {
 
-					if (listaFotos.get(i).getTipoFoto() != null && listaFotos.get(i).getTipoFoto().getCodigo().equals(tipoFoto)) {
+					if (listaFotos.get(i).getTipoFoto() == null || (listaFotos.get(i).getTipoFoto() != null && listaFotos.get(i).getTipoFoto().getCodigo().equals(tipoFoto))) {
 						
 						try {
 	

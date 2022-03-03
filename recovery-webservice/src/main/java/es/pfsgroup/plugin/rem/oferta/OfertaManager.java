@@ -938,14 +938,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		/*if (!Checks.esNulo(ofertaDto.getOrigenLeadProveedor())) {
-			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
-					"codigo", ofertaDto.getOrigenLeadProveedor()));
-			if (Checks.esNulo(origenComprador)) {
-				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
-			}
-		}*/
-		
 		if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(sistemaOrigen.getCodigo()) && ofertaDto.getCodOfertaSalesforce() == null) {
 			errorsList.put("codOfertaSalesforce", RestApi.REST_MSG_MISSING_REQUIRED);
 		}
@@ -1644,7 +1636,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
-			
 			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
 				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
 			}
@@ -1668,7 +1659,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getFechaCreacionOpSf() )) {
 				oferta.setFechaCreacionOpSf(ofertaDto.getFechaCreacionOpSf());				
 			}
-			
 			if ((!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()) 
 					&& !DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))

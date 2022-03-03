@@ -1788,57 +1788,53 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS);
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
 					
-					if (DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codSubcartera)	|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codSubcartera)) {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
-					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
-						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-						Double umbralAskingPrice=200000.0;
-						String codComiteHaya = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_HAYA_APPLE : DDComiteSancion.CODIGO_HAYA_REMAINING;
-						String codComiteCes = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
-						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
-						
-						if(Checks.esNulo(agrupacion)) {
-							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);
-							} 
-						}else {
-							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes);
-							} 
-						}				
+					switch (Integer.valueOf(codSubcartera)) {
+						case 151: // DIVARIAN ARROW INMB
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
+							break;
 							
-					}else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
-						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-						Double umbralAskingPrice=200000.0;
-						String codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
-						String codComiteJaguar = DDComiteSancion.CODIGO_JAGUAR;
-						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
-						
-						if(Checks.esNulo(agrupacion)) {
-							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteJaguar);
-							} 
-						}else {
-							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteJaguar);
-							} 
-						}				
+						case 137: // AGORA FINANCIERO
+						case 135: // AGORA INMOBILIARIO
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
+							break;
 							
-					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
+						case 152: // DIVARIAN REMAINING INMB
+						case 138: // APPLE INMOBILIARIO
+						case 70: // JAGUAR
+							ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+							Double umbralAskingPrice = 200000.0;
+							String codComiteHaya = null;
+							String codComite = null;
+							if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_APPLE;
+								codComite = DDComiteSancion.CODIGO_CES_APPLE;
+							} else if (DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_REMAINING;
+								codComite = DDComiteSancion.CODIGO_CES_REMAINING;
+							} else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+								codComite = DDComiteSancion.CODIGO_JAGUAR;
+							}
+							Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+							if(Checks.esNulo(agrupacion)) {
+								if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+									filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+								} else {
+									filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComite);
+								} 
+							} else {
+								Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+								if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+									filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+								} else {
+									filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComite);
+								} 
+							}
+							break;
 							
-					}else {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+						default:
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+							break;
 					}				
 					
 				} else {

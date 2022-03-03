@@ -1254,6 +1254,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setCodigoPostal(titularAdicional.getCodPostal());
 					}
 
+					if (!Checks.esNulo(titularAdicional.getTipoOcupacion())) {
+						compradorBusquedaAdicional.setTipoOcupacion(titularAdicional.getTipoOcupacion());
+					}
+
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
 					}

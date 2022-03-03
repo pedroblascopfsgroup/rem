@@ -19,6 +19,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1864,10 +1869,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						titAdi.setAceptacionOferta(diccionarioSiNo);
 					}
 				}
-				
+
 
 				
 				titAdi = this.updateTitularesAdicionalesBC(titDto, titAdi, oferta);
+
+				if (!Checks.esNulo(titDto.getCodOcupacion()) && titAdi.getTipoPersona() != null
+						&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(titAdi.getTipoPersona().getCodigo())) {
+					DDTipoOcupacion tipoOcupacion = genericDao.get(DDTipoOcupacion.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodOcupacion()));
+					if (!Checks.esNulo(tipoOcupacion)) {
+						titAdi.setTipoOcupacion(tipoOcupacion);
+					}
+				}
 
 				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);

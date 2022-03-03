@@ -164,13 +164,24 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         
         genericDao.save(HistoricoTareaPbc.class, htp);
         genericDao.save(OfertaCaixa.class, ofrCaixa);
-            
-        if(ofrCaixa.getOferta() != null  
-        		&& (DDTipoOferta.isTipoAlquiler(ofrCaixa.getOferta().getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(ofrCaixa.getOferta().getTipoOferta()))
-        		&& dto.getPuedeAvanzar() != null && dto.getPuedeAvanzar()){
-            dto.setRiesgoOperacion(rop.getCodigo());
-        	adapter.save(createRequestAccionCalculoRiesgo(dto));
+
+         
+        if(ofrCaixa.getOferta() != null) {
+        	Oferta oferta = ofrCaixa.getOferta();
+        	if(DDTipoOferta.isTipoAlquiler(oferta.getTipoOferta()) || DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())){
+        		if(dto.getPuedeAvanzar() != null && dto.getPuedeAvanzar()) {
+        			dto.setRiesgoOperacion(rop.getCodigo());
+        			adapter.save(createRequestAccionCalculoRiesgo(dto));
+        		}
+        	}else if(DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+        		ExpedienteComercial eco = oferta.getExpedienteComercial();
+        		if(eco != null) {
+        			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER)));
+        			genericDao.save(ExpedienteComercial.class, eco);
+        		}
+        	}
         }
+      
         
     }
 

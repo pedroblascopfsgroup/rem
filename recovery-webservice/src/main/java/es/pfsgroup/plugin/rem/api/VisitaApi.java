@@ -92,7 +92,7 @@ public interface VisitaApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<Map<String, Object>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto,JSONObject jsonFields) throws Exception;
+	public Map<String, ArrayList<Map<String, Object>>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
 	
 	
 	/**
@@ -134,7 +134,7 @@ public interface VisitaApi {
 
 	public void llamarServicioContactos(Visita visita, JSONObject jsonFields) throws Exception;
 
-	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> errorList, VisitaDto visita);
+	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> errorList, VisitaDto visita, JSONObject jsonFields, Visita vis) throws Exception;
 
     void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception;
 }

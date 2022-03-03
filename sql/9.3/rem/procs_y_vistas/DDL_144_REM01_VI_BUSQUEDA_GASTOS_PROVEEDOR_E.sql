@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Alejandra García
---## FECHA_CREACION=20211122
+--## FECHA_CREACION=20220225
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16463
@@ -80,6 +80,8 @@ BEGIN
         VI.DD_EGA_DESCRIPCION,
         VI.DD_TPE_DESCRIPCION,
         VI.DD_TPE_CODIGO,
+		VI.DD_DEG_DESCRIPCION,
+        VI.DD_DEG_CODIGO,
         VI.GDE_IMPORTE_TOTAL,
         VI.GDE_FECHA_PAGO,
         VI.GDE_FECHA_TOPE_PAGO,

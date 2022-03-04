@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220301
+--## FECHA_CREACION=20220304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17150
@@ -27,7 +27,7 @@
 --##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
 --##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
 --##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
---##	      0.18 Numero inmueble y segmentación cartera Caixa [HREOS-17150] - Javier Esbri
+--##	      0.18 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -114,8 +114,8 @@ BEGIN
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   CASE
-                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
-                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
+                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
+                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
                      ELSE NULL
                   END AS DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -137,7 +137,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_CODIGO = eqv2.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''BANCO_ORIGEN''  AND eqv3.DD_CODIGO_CAIXA = aux.BANCO_ORIGEN AND EQV3.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SPG_SOCIEDAD_PAGO_ANTERIOR spg ON spg.DD_SPG_CODIGO = eqv3.DD_CODIGO_REM  
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv4 ON eqv4.DD_NOMBRE_CAIXA = ''CLASE_USO''  AND eqv4.DD_CODIGO_CAIXA = aux.CLASE_USO AND EQV4.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv4 ON eqv4.DD_NOMBRE_CAIXA = ''CLASE_USO_REGISTRAL''  AND eqv4.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND EQV4.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO sac_uso ON sac_uso.DD_SAC_CODIGO = eqv4.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''SUBTIPO_VIVIENDA''  AND eqv8.DD_CODIGO_CAIXA = aux.SUBTIPO_VIVIENDA AND EQV8.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO sac_viv ON sac_viv.DD_SAC_CODIGO = eqv8.DD_CODIGO_REM
@@ -147,7 +147,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO AND eqv11.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND eqv11.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON ACT.DD_SAC_ID = SAC.DD_SAC_ID AND TPA.DD_TPA_ID = SAC.DD_TPA_ID AND SAC.BORRADO = 0
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'

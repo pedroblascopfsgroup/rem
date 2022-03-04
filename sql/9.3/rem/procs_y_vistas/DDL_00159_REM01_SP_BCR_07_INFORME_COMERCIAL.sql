@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Danie Algaba
---## FECHA_CREACION=20211015
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17329
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Se quita los filtrados - HREOS-15634
+--##        0.3 Se añaden nuevos campos a la ICO (ICO_ANO_REHABILITACION y ICO_ANO_CONSTRUCCION) - HREOS-17329 - Javier Esbrí
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -48,10 +49,11 @@ BEGIN
                USING (
                   SELECT
                   ICO.ICO_ID
-                  , COALESCE(ICO.ICO_ANO_REHABILITACION, TO_NUMBER(APR.ANYO_ULTIMA_REFORMA)) ANYO_ULTIMA_REFORMA
+                  , NVL(TO_NUMBER(APR.ANYO_ULTIMA_REFORMA), ICO.ICO_ANO_REHABILITACION) ICO_ANO_REHABILITACION
                   , ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                   , ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE  
                   , ACT.ACT_ID
+                  , NVL(TO_NUMBER(APR.ANYO_CONSTRUCCION),ICO.ICO_ANO_CONSTRUCCION) AS ICO_ANO_CONSTRUCCION
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
@@ -61,7 +63,8 @@ BEGIN
                ON (ICO.ICO_ID = AUX.ICO_ID)
                   WHEN MATCHED THEN
                   UPDATE SET 
-                  ICO.ICO_ANO_REHABILITACION = AUX.ANYO_ULTIMA_REFORMA
+                  ICO.ICO_ANO_REHABILITACION = AUX.ICO_ANO_REHABILITACION
+                  , ICO.ICO_ANO_CONSTRUCCION = AUX.ICO_ANO_CONSTRUCCION
                   , ICO.USUARIOMODIFICAR = ''STOCK_BC''
                   , ICO.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -69,12 +72,14 @@ BEGIN
                   (ICO_ID
                   , ACT_ID
                   , ICO_ANO_REHABILITACION
+                  , ICO_ANO_CONSTRUCCION
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
                   ('|| V_ESQUEMA ||'.S_ACT_ICO_INFO_COMERCIAL.nextval
                   , AUX.ACT_ID
-                  , AUX.ANYO_ULTIMA_REFORMA
+                  , AUX.ICO_ANO_REHABILITACION
+                  , AUX.ICO_ANO_CONSTRUCCION
                   , ''STOCK_BC''
                   , SYSDATE)';
       

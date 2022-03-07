@@ -3515,12 +3515,19 @@
 	T017_InstruccionesReservaValidacion: function() {		
 		var me = this;
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var codigoSubartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
 
 		var comboResultado = me.down('[name=comboResultado]');
 		var motivoAplazamiento = me.down('[name=motivoAplazamiento]');		
 		var tipoArras = me.down('[name=tipoArras]');
 		var fechaEnvio = me.down('[name=fechaEnvio]');
 		var comboQuitar = me.down('[name=comboQuitar]');
+		
+		if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubartera 
+			|| CONST.SUBCARTERA['DIVARIANREMAINING'] == codigoSubartera){
+			me.bloquearCampo(tipoArras);
+			tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
+		}
 		
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.habilitarCampo(comboResultado);

@@ -865,7 +865,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 					&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
 				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
-						DDTiposArras.CONFIRMATORIAS);
+						DDTiposArras.PENITENCIALES);
 			if (tipoArras != null) {
 				if (Checks.esNulo(expedienteComercial.getReserva())) {
 					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);

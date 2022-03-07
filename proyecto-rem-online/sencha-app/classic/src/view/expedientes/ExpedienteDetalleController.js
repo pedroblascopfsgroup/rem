@@ -1465,9 +1465,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var subcarteraCodigo = me.getViewModel().get('expediente.subcarteraCodigo');
 		var tipoCalculo = me.lookupReference('tipoCalculo');
+		var importeReserva = me.lookupReference('importeReserva');
+		var porcentajeReserva = me.lookupReference('porcentajeReserva');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
-		if(!esCarteraGaleonOZeus && value==1){
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
+			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
+			tipoCalculo.setDisabled(true);	
+			tipoCalculo.allowBlank = false;
+			porcentajeReserva.setValue('5');
+			porcentajeReserva.setDisabled(true);	
+			importeReserva.setDisabled(true);	
+		} else if(!esCarteraGaleonOZeus && value==1){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;
 		}else{

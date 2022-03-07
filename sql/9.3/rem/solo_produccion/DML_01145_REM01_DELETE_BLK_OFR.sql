@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan José Sanjuan
---## FECHA_CREACION=20220307
+--## FECHA_CREACION=20220308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11276
@@ -91,7 +91,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                                       JOIN '|| V_ESQUEMA ||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAR.TAR_ID 
                                                       JOIN '|| V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
                                                 WHERE BLK_NUM_BULK_AN = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''') T2
-                              ON (T1.BLK_ID = T2.BLK_ID)
+                              ON (T1.BLK_ID = T2.BLK_ID AND T1.OFR_ID = T2.OFR_ID)
                               WHEN MATCHED THEN
                                     UPDATE SET 
                                     T1.USUARIOBORRAR = '''||V_USER||''',

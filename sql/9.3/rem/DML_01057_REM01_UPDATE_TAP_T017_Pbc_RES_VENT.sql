@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20220301
+--## FECHA_CREACION=20220307
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17318
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	T_TIPO_DATA('T017_PBCVenta' ,'valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDSiNo.SI  ? checkBankia()  ? checkEstadoBC() ? checkFechaContabilizacionArras() ? actualizarOfertaBoarding() : ''''El expediente tiene arras y no tiene fecha de contabilizaci&oacute;n de arras.'''' : ''''No se puede avanzar porque est&aacute; pendiente de BC'''' : actualizarOfertaBoarding() : null'),
-   		T_TIPO_DATA('T017_PBCReserva' ,'checkBankia()  ? (valores[''''T017_PBCReserva''''][''''comboRespuesta''''] == DDSiNo.NO  && checkEstadoBC()) ? null : ''''No se puede avanzar porque est&aacute; pendiente de BC'''' : null')
+   		T_TIPO_DATA('T017_PBCReserva' ,'checkBankia()  ? (valores[''''T017_PBCReserva''''][''''comboRespuesta''''] == DDSiNo.SI  && checkEstadoBC()) ? null : ''''No se puede avanzar porque est&aacute; pendiente de BC'''' : null')
 
     	);
     V_TMP_TIPO_DATA T_TIPO_DATA;

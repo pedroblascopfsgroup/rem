@@ -730,9 +730,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto, JSONObject jsonFields)
+	public Map<String, ArrayList<Map<String, Object>>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto, JSONObject jsonFields)
 			throws Exception {
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Map<String, ArrayList<Map<String, Object>>> listaRespuesta = new HashMap<String, ArrayList<Map<String, Object>>>();
+		ArrayList<Map<String, Object>> listaProcesadas = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> listaCompleta = new ArrayList<Map<String, Object>>();
 		VisitaDto visitaDto = null;
 		Map<String, Object> map = null;
 		HashMap<String, String> errorsList = null;
@@ -742,44 +744,53 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			errorsList = new HashMap<String, String>();
 			map = new HashMap<String, Object>();
 			visitaDto = listaVisitaDto.get(i);
-			
-			visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-			if (Checks.esNulo(visita)) {
-				errorsList = this.saveVisita(visitaDto);
-			} 
-			else {
-				errorsList = this.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
-			}
-
-			boolean checkErrores = checkErroresControladosVisitas(errorsList);
-			if (checkErrores) {
-				if (visita == null || visita.getId() == null) {
-					visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-				}
-				if (visita != null) {
-					map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
-					map.put("idVisitaRem", visita.getNumVisitaRem());
-					if(errorsList.get("idCliente") != null) {
-						map.put("idCliente", errorsList.get("idCliente"));
-					}
-					if(errorsList.get("idResponsable") != null) {
-						map.put("idResponsable", errorsList.get("idResponsable"));
-					}
+			try {
+				visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
+				if (Checks.esNulo(visita)) {
+					errorsList = this.saveVisita(visitaDto);
 				} else {
-					map.put("idVisitaWebcom", "");
-					map.put("idVisitaRem", "");
+					errorsList = this.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
 				}
 
-				map.put("success", true);
-			} else {
+				boolean checkErrores = checkErroresControladosVisitas(errorsList);
+				if (checkErrores) {
+					if (visita == null || visita.getId() == null) {
+						visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
+					}
+					if (visita != null) {
+						map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
+						map.put("idVisitaRem", visita.getNumVisitaRem());
+						if (errorsList.get("idCliente") != null) {
+							map.put("idCliente", errorsList.get("idCliente"));
+						}
+						if (errorsList.get("idResponsable") != null) {
+							map.put("idResponsable", errorsList.get("idResponsable"));
+						}
+					} else {
+						map.put("idVisitaWebcom", "");
+						map.put("idVisitaRem", "");
+					}
+
+					map.put("success", true);
+				} else {
+					map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
+					map.put("idVisitaRem", visitaDto.getIdVisitaRem());
+					map.put("success", false);
+					map.put("invalidFields", errorsList);
+				}
+				listaProcesadas.add(map);
+				listaCompleta.add(map);
+			}catch(Exception e){
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 				map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
+				listaCompleta.add(map);
 			}
-			listaRespuesta.add(map);
 
 		}
+		listaRespuesta.put("listaProcesadas", listaProcesadas);
+		listaRespuesta.put("listaCompleta", listaCompleta);
 		return listaRespuesta;
 	}
 
@@ -839,7 +850,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 	
 	@Override
-	public void checkReplicarClienteProveedor(ArrayList<Map<String,Object>> errorList, VisitaDto visita) {
+	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> errorList, VisitaDto visita, JSONObject jsonFields, Visita vis) throws Exception {
 		for(Map<String, Object> map : errorList) {
 			if(map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom() != null
 					&& visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())){
@@ -862,6 +873,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 					interlocutorCaixaService.callReplicateClientSyncVisitas(apiResp.getId(), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE, true);
 				}
+				llamarServicioContactos(vis, jsonFields);
 			}
 
 		}
@@ -870,13 +882,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	@Override
 	public void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception {
 
-		Visita visita = null;
-
 		for (VisitaDto dto: listaVisitaDto) {
-			visita = this.getVisitaByIdVisitaWebcom(dto.getIdVisitaWebcom());
+			Visita visita = null;
+			try{
+				visita = this.getVisitaByIdVisitaWebcom(dto.getIdVisitaWebcom());
+			}catch(Exception e){
+			}
 			if(visita != null && esVisitaCaixaEnviar(visita)){
-				checkReplicarClienteProveedor(listaRespuesta, dto);
-				llamarServicioContactos(visita, jsonFields);
+				checkReplicarClienteProveedor(listaRespuesta, dto, jsonFields, visita);
 			}
 		}
 

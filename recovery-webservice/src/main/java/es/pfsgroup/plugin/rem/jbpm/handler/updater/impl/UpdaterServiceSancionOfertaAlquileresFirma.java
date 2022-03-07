@@ -243,9 +243,10 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			ofertaApi.finalizarOferta(oferta);
 			
 		}
-//		if(fechaOfertaModificada) {
-//			genericDao.save(Oferta.class, oferta);
-//		}
+		
+		if(fechaOfertaModificada) {
+			genericDao.save(Oferta.class, oferta);
+		}
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(modificadoEstadoBC) {

@@ -24,6 +24,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -738,8 +739,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoProveedorContacto personaContacto = genericDao.get(ActivoProveedorContacto.class, personaID);
 
 		if(!Checks.esNulo(personaContacto)) {
-			personaContacto.getAuditoria().setBorrado(true);
-			genericDao.save(ActivoProveedorContacto.class, personaContacto);
+			genericDao.deleteById(ActivoProveedorContacto.class, personaContacto.getId());
 			return true;
 		} else {
 			return false;

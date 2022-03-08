@@ -332,8 +332,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										name: 'buscadorNifTitularCartaPagoField',
 										bind: {
 											value: '{gasto.buscadorNifTitularCartaPago}',
-												allowBlank: '{!esPropietarioLivingCenter}',
-												hidden: '{!esPropietarioLivingCenter}'
+											allowBlank: '{!esPropietarioLivingCenter}',
+											hidden: '{!esPropietarioLivingCenter}'
 										},
 										triggers: {
 

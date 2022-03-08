@@ -408,16 +408,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		},
 		
 		esPropietarioLivingCenter : function(get){
-			var me = this;
-			var gasto = me.getData().gasto;
-			if (Ext.isEmpty(gasto)) {
+			var me = this,
+			gasto = me.getData().gasto,
+			nifPropietario = gasto.get('nifPropietario'),
+			tipoGastoCodigo = gasto.get('tipoGastoCodigo'),
+			anyoDevengoEspecial = gasto.get('fechaDevengoEspecial');
+			
+			if (Ext.isEmpty(gasto) || Ext.isEmpty(anyoDevengoEspecial)) {
 				return false;
 			} 
-			var nifPropietario = gasto.get('nifPropietario');
-			var tipoGastoCodigo = gasto.get('tipoGastoCodigo');
-			var anyoEmision = gasto.get('fechaEmision').getFullYear();
 
-			if((nifPropietario == 'A58032244') && (tipoGastoCodigo == '01' || tipoGastoCodigo == '02') && (anyoEmision >= '2022')){
+			if((nifPropietario == 'A58032244') && (tipoGastoCodigo == '01' || tipoGastoCodigo == '02') && (anyoDevengoEspecial.getFullYear() >= '2022')){
 				return true;
 			}
 			

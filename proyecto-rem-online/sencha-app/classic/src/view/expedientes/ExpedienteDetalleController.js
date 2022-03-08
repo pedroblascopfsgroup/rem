@@ -1463,11 +1463,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoSolicitaReserva: function(combo, value){
-		var me= this;
+		var me= this; 
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
 		var tipoCalculo = me.lookupReference('tipoCalculo');
+		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
+	
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
-		if(!esCarteraGaleonOZeus && value==1){
+		if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;
 		}else{

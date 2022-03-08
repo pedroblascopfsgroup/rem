@@ -158,7 +158,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
                 xtype: 'fieldsettable',
 				defaultType: 'textfieldbase',
 				colspan: 3,
-				hidden: '{!esOfertaVenta}',
+				bind:{
+					hidden: '{!esOfertaVenta}'
+				},
 				title: HreRem.i18n('title.hitos.arras'),
 				items: [
 					{
@@ -223,7 +225,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
                 xtype: 'fieldsettable',
 				defaultType: 'textfieldbase',
 				colspan: 3,
-				hidden: '{!esOfertaVenta}',
+				bind:{
+					hidden: '{!esOfertaVenta}'
+				},
 				title: HreRem.i18n('title.pbc.cumplimiento.normativo'),
 				items: [
 					{
@@ -248,7 +252,9 @@ Ext.define('HreRem.view.expedientes.PbcExpediente', {
                 xtype: 'fieldsettable',
 				defaultType: 'textfieldbase',
 				colspan: 3,
-				hidden: '{!esOfertaVenta}',
+				bind:{
+					hidden: '{!esOfertaVenta}'
+				},
 				title: HreRem.i18n('title.pbc.arras'),
 				items: [
 					{

@@ -466,7 +466,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_PENDIENTE));
 
-                expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                if(dto.getFechaReal() == null){
+                    expediente.setFechaDevolucionEntregas(new Date());
+                }else{
+                    expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                }
 
                 reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setDevolucionReserva(devolucionReserva);
@@ -502,7 +506,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
                         genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_PENDIENTE));
 
-                expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                if(dto.getFechaReal() == null){
+                    expediente.setFechaDevolucionEntregas(new Date());
+                }else{
+                    expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                }
 
                 reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setDevolucionReserva(devolucionReserva);

@@ -72,7 +72,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBTIPOS_ACTIVO: {
-		OBRA_NUEVA: '23'
+		OBRA_NUEVA: '23',
+		GARAJE: '24'
 	},
 
 	TIPOS_EXPEDIENTE_COMERCIAL: {

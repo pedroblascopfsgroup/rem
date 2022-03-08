@@ -71,9 +71,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
@@ -238,6 +240,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		for(WebFileItem webFileItem : webFileItemList) {
 			Long idAgrupacion = Long.parseLong(webFileItem.getParameter("idEntidad"));
 			ActivoAgrupacion agrupacion = this.get(idAgrupacion);
+			SUELOS suelos = Boolean.valueOf(webFileItem.getParameter("suelos")) ? SUELOS.SI : SUELOS.NO;
+			PLANO plano = Boolean.valueOf(webFileItem.getParameter("plano")) ? PLANO.SI : PLANO.NO;
 			if(agrupacion != null) {
 				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
 				ActivoFoto activoFoto = null;
@@ -251,9 +255,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							
 							if (descripcionFoto != null ) {
 								fileReponse = gestorDocumentalFotos.upload(webFileItem.getFileItem().getFile(),webFileItem.getFileItem().getFileName(),
-									PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden);
+										PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden, suelos, plano);
 							}
-		
 						}
 						activoFoto = new ActivoFoto(fileReponse.getData());
 		
@@ -267,7 +270,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					activoFoto.setNombre(webFileItem.getFileItem().getFileName());
 					activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
 					activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
-					activoFoto.setPrincipal(true);		
+					activoFoto.setPrincipal(true);
+					activoFoto.setSuelos(suelos == SUELOS.SI ? true : false);
+					activoFoto.setPlano(plano == PLANO.SI ? true : false);
 					activoFoto.setFechaDocumento(new Date());
 					Auditoria.save(activoFoto);
 					agrupacion.getFotos().add(activoFoto);
@@ -360,8 +365,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				if (orden == null && agrupacionId != null) {
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
 				}
-				
 				activoFoto.setOrden(orden);
+				
+				if (fileItem.getMetadata().containsKey("plano") 
+						&& fileItem.getMetadata().get("plano") != null) {
+					if (fileItem.getMetadata().get("plano").equals("1")) {
+						activoFoto.setPlano(true);
+					} else {
+						activoFoto.setPlano(false);
+					}
+				}
+				
+				if (fileItem.getMetadata().containsKey("suelos") 
+						&& fileItem.getMetadata().get("suelos") != null) {
+					if (fileItem.getMetadata().get("suelos").equals("1")) {
+						activoFoto.setSuelos(true);
+					} else {
+						activoFoto.setSuelos(false);
+					}
+				}
+				
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
@@ -528,8 +551,25 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				if (orden == null && agrupacionId != null) {
 					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
 				}
-				
 				activoFoto.setOrden(orden);
+				
+				if (fileItem.getMetadata().containsKey("plano") 
+						&& fileItem.getMetadata().get("plano") != null) {
+					if (fileItem.getMetadata().get("plano").equals("1")) {
+						activoFoto.setPlano(true);
+					} else {
+						activoFoto.setPlano(false);
+					}
+				}
+				
+				if (fileItem.getMetadata().containsKey("suelos") 
+						&& fileItem.getMetadata().get("suelos") != null) {
+					if (fileItem.getMetadata().get("suelos").equals("1")) {
+						activoFoto.setSuelos(true);
+					} else {
+						activoFoto.setSuelos(false);
+					}
+				}
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {

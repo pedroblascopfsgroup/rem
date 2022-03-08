@@ -208,6 +208,7 @@ func-rem-cierreOficinas|R-Ambersweet
 rem_mirror|func-rem-contrasteDeListas
 func-rem-reglasComercialización|R-Ambersweet
 rem_mirror|func-rem-modeloHydra
+rem_mirror|func-rem-informeMediador
 rem_mirror|func-rem-fenix
 func-rem-modeloHydra|func-rem-comercialHydra
 func-rem-confirmacionTitulares|func-rem-comercialHydra
@@ -253,6 +254,8 @@ rem_mirror|func-rem-comercialHydra-Incidencias
 func-rem-comercialHydra-Incidencias|R-Salustiana
 func-rem-hydra-accionesNoComercial|R-Salustiana
 rem_mirror|func-rem-tasadorasTitulizada
+func-rem-comisionamiento-F3 | R-Kumquat
+func-rem-informeMediador | R-Kumquat
 func-rem-cargaAutomaticaPromociones|R-Persica
 func-rem-mejorasGestionFotos|R-Persica
 func-rem-reincorporacionEstadoTitulo|R-Persica

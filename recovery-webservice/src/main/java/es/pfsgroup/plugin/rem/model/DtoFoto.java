@@ -37,6 +37,8 @@ public class DtoFoto extends WebDto {
 	private Boolean principal;
 	private Boolean interiorExterior;
 	private String numeroActivo;
+	private Boolean suelos;
+	private Boolean plano;
 	private String codigoTipoFoto;
 	
 	
@@ -190,11 +192,28 @@ public class DtoFoto extends WebDto {
 		this.codigoSubtipoActivo = codigoSubtipoActivo;
 	}
 
+	public Boolean getSuelos() {
+		return suelos;
+	}
 
+
+	public void setSuelos(Boolean suelos) {
+		this.suelos = suelos;
+	}
+
+
+	public Boolean getPlano() {
+		return plano;
+	}
+
+
+	public void setPlano(Boolean plano) {
+		this.plano = plano;
+	}
+	
 	public String getCodigoTipoFoto() {
 		return codigoTipoFoto;
 	}
-
 
 	public void setCodigoTipoFoto(String codigoTipoFoto) {
 		this.codigoTipoFoto = codigoTipoFoto;

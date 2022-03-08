@@ -2,6 +2,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'valorespreciosactivo',    
     scrollable	: 'y',
+    refreshAfterSave : true,
     
     listeners: {
     	boxready: function() {
@@ -640,7 +641,67 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							 }
 							 
 							]
-					}				
+					},
+					// Valores Económicos
+					{
+						xtype:'fieldsettable',
+						title:HreRem.i18n('title.valores.economicos'),
+						defaultType: 'textfieldbase',
+						colspan: 3,
+						items :
+							[
+							 	// Venta
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.min.venta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoMinVenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.max.venta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoMaxVenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.venta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoVenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								},
+				                // Alquiler
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.min.renta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoMinRenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.max.renta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoMaxRenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.info.comercial.valor.renta'),
+									width:		280,
+									bind:		'{valoraciones.valorEstimadoVenta}',
+									renderer: function(value) {
+		   				        		return Ext.util.Format.currency(value);
+		   				        	}
+								}
+						]
+					}
 				]
             },
             {
@@ -721,7 +782,18 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							}
 						}
 				]
-            }
+            },
+            
+            //Testigos Opcionales
+			{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('title.info.comercial.testigos.mercado'),
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{xtype: "testigosopcionalesgrid", reference: "testigosopcionalesgrid"}
+					]
+			}
         ];
         
 		me.addPlugin({ptype: 'lazyitems', items: items });

@@ -740,7 +740,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		            }
 				}
 			}
-				
+			
+			btn.up('tabpanel').mask();
+			form= btn.up('tabpanel').getActiveTab().getForm();
 			var url =  $AC.getRemoteUrl('activo/updateFotosById');
 			var params={"id":form.findField("id").getValue()};
 			if(form.findField("nombre")!=null){
@@ -764,7 +766,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			if(form.findField("fechaDocumento")!=null){
 				params['fechaDocumento']= form.findField("fechaDocumento").getValue();
 			}
-			
+			if(form.findField("suelos")!=null){
+				params['suelos']= form.findField("suelos").getValue();
+			}
+			if(form.findField("plano")!=null){
+				params['plano']= form.findField("plano").getValue();
+			}
+					
 			if(!tienePrincipal){
 		       Ext.Ajax.request({
 				     url: url,

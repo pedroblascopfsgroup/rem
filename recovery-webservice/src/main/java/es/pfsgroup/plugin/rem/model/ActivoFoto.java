@@ -139,6 +139,9 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	@Column(name = "FOT_GDF_THUMBNAIL")
 	private String urlThumbnail;
+	
+	@Column(name = "FOT_SUELOS")
+	private Boolean suelos;
 
 	public Long getRemoteId() {
 		return remoteId;
@@ -328,6 +331,14 @@ public class ActivoFoto implements Serializable, Auditable {
 
 	public void setDescripcionFoto(DDDescripcionFotoActivo descripcionFoto) {
 		this.descripcionFoto = descripcionFoto;
+	}
+
+	public Boolean getSuelos() {
+		return suelos;
+	}
+
+	public void setSuelos(Boolean suelos) {
+		this.suelos = suelos;
 	}
 
 }

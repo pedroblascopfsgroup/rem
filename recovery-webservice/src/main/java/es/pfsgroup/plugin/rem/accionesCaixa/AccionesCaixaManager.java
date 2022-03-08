@@ -157,7 +157,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         ofrCaixa.setRiesgoOperacion(rop);
         
         HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
-        htp.setFechaSancion(new Date());
         if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
         	htp.setFechaComunicacionRiesgo(new Date());
         }

@@ -161,7 +161,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha inicio.", e);
 				}
-				fechaFirma = valor.getValor();
 			}
 			if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
@@ -171,50 +170,48 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha fin.", e);
 				}
-				fechaFirma = valor.getValor();
 			}
 
 		}
 		if(!anular) {
-			if(!Checks.esNulo(expedienteComercial.getFechaInicioAlquiler())) {
-				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
-				
-				Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
-				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-				
-				for(ActivoOferta activoOferta : activosOferta){
-					activo = activoOferta.getPrimaryKey().getActivo();
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-					if(!Checks.esNulo(activoPatrimonio)){
+			List<ActivoOferta> activosOferta = oferta.getActivosOferta();
+			
+			Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
+			DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
+			
+			for(ActivoOferta activoOferta : activosOferta){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+				if(!Checks.esNulo(activoPatrimonio)){
+					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				} else{
+					activoPatrimonio = new ActivoPatrimonio();
+					activoPatrimonio.setActivo(activo);
+					if (!Checks.esNulo(tipoEstadoAlquiler)){
 						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-					} else{
-						activoPatrimonio = new ActivoPatrimonio();
-						activoPatrimonio.setActivo(activo);
-						if (!Checks.esNulo(tipoEstadoAlquiler)){
-							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-						}
 					}
-					if (!Checks.esNulo(situacionComercial)) {
-						activo.setSituacionComercial(situacionComercial);
-					}
-					
-					if (!Checks.esNulo(activo.getSituacionPosesoria())) {
-						activo.getSituacionPosesoria().setOcupado(1);
-						if(!Checks.esNulo(tipoTituloActivoTPA)) {
-							activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
-						}
-						activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
-					}
-					if(sitpos!=null && usu!=null) {			
-						HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
-						genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
-					}
-					
-					activoDao.validateAgrupacion(expedienteComercial.getId());
-					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}
+				if (!Checks.esNulo(situacionComercial)) {
+					activo.setSituacionComercial(situacionComercial);
+				}
+				
+				if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+					activo.getSituacionPosesoria().setOcupado(1);
+					if(!Checks.esNulo(tipoTituloActivoTPA)) {
+						activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+					}
+					activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+				}
+				if(sitpos!=null && usu!=null) {			
+					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+				}
+				
+				activoDao.validateAgrupacion(expedienteComercial.getId());
+				genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 			}
+
 			
 			activoDao.saveOrUpdate(activo);
 			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);

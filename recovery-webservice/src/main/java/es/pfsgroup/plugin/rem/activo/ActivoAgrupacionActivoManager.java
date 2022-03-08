@@ -183,7 +183,8 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		for(VGridOfertasActivosAgrupacionIncAnuladas oferta : lista) {
 			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta())
 					&& !DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodigoEstadoOferta())
-					&& !DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodigoEstadoOferta()))
+					&& !DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodigoEstadoOferta())
+					&& !DDEstadoOferta.CODIGO_CADUCADA.equals(oferta.getCodigoEstadoOferta()))
 				return true;
 		}
 		

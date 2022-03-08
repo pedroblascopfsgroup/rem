@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220201
+--## FECHA_CREACION=20220304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17018
+--## INCIDENCIA_LINK=HREOS-17341
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INSERTAMOS SUBTIPO GASTO
@@ -15,6 +15,7 @@
 --##        0.2 Cambio de cógidos porque se pisaban las descripciones debido al HREOS-16512 - [HREOS-16953] - Alejandra García
 --##        0.3 Añadir subtipos de promociones y cambiar todos los códigos de los subtipos nuevos del PEP - [HREOS-17018] - Alejandra García
 --##        0.3 Añadir update - [HREOS-17087] - Alejandra García
+--##        0.5 Añadir nuevos subtipos: Nuevas PEPs A INCLUIR DIC 21 - [HREOS-17341] - Alejandra García
 --#########################################
 --*/
 
@@ -119,7 +120,20 @@ DECLARE
       T_TIPO_DATA('233','Publicidad','24'),
       T_TIPO_DATA('234','Otros gastos no activables','24'),
       T_TIPO_DATA('235','Avales','24'),
-      T_TIPO_DATA('236','Contingencias generales','25')
+      T_TIPO_DATA('236','Contingencias generales','25'),
+      --Nuevas PEPs A INCLUIR DIC 21
+      --Los códigos de 239 al 246 se están utilizando en otro desarrollo
+      T_TIPO_DATA('247','Otros Informes Mantenimiento Alquiler','14'),
+      T_TIPO_DATA('248','Honorarios Gestión Alquileres Prorrata 0%','13'),
+      T_TIPO_DATA('249','Honorarios Gestión Alquileres Prorrata 100%','13'),
+      T_TIPO_DATA('250','Comisión cumplimiento objetivos Prorrata 0%','13'),
+      T_TIPO_DATA('251','Comisión cumplimiento objetivos Prorrata 100%','13'),
+      T_TIPO_DATA('252','Comisión cumplimiento objetivos Alquiler Prorrata 0%','13'),
+      T_TIPO_DATA('253','Comisión cumplimiento objetivos Alquiler Prorrata 100%','13'),
+      T_TIPO_DATA('254','Burofax Reocupados','18'),
+      T_TIPO_DATA('255','Notas Simples Negocio','18')
+
+
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

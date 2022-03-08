@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +22,9 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseUsoCatastral;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenDatosCatastrales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoMoneda;
 
 
 
@@ -96,7 +100,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 	
 	@Column(name = "CAT_OBSERVACIONES")
 	private String observaciones;
-	
 
 	@Column(name = "CAT_RESULTADO")
 	private String resultadoSiNO;
@@ -107,6 +110,23 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_FECHA_ALTERACION")
 	private Date fechaAlteracion;
 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ODC_ID")
+	private DDOrigenDatosCatastrales origenDatosCatastrales;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CUC_ID")
+	private DDClaseUsoCatastral claseUsoCatastral;
+	
+	@Column(name = "CAT_VIGENTE")
+	private Boolean catastroVigente;
+	
+	@Column(name = "CAT_VALOR_CATASTRAL")
+	private Double valorCatastral;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MON_ID")
+	private DDTipoMoneda tipoMoneda;
 	
 	@Version   
 	private Long version;
@@ -114,10 +134,6 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -293,11 +309,45 @@ public class ActivoCatastro implements Serializable, Auditable {
 	public void setFechaAlteracion(Date fechaAlteracion) {
 		this.fechaAlteracion = fechaAlteracion;
 	}
-	
-	
-	
-	
 
+	public Boolean getCatastroVigente() {
+		return catastroVigente;
+	}
 
+	public void setCatastroVigente(Boolean catastroVigente) {
+		this.catastroVigente = catastroVigente;
+	}
+
+	public Double getValorCatastral() {
+		return valorCatastral;
+	}
+
+	public void setValorCatastral(Double valorCatastral) {
+		this.valorCatastral = valorCatastral;
+	}
+
+	public DDOrigenDatosCatastrales getOrigenDatosCatastrales() {
+		return origenDatosCatastrales;
+	}
+
+	public void setOrigenDatosCatastrales(DDOrigenDatosCatastrales origenDatosCatastrales) {
+		this.origenDatosCatastrales = origenDatosCatastrales;
+	}
+
+	public DDClaseUsoCatastral getClaseUsoCatastral() {
+		return claseUsoCatastral;
+	}
+
+	public void setClaseUsoCatastral(DDClaseUsoCatastral claseUsoCatastral) {
+		this.claseUsoCatastral = claseUsoCatastral;
+	}
+
+	public DDTipoMoneda getTipoMoneda() {
+		return tipoMoneda;
+	}
+
+	public void setTipoMoneda(DDTipoMoneda tipoMoneda) {
+		this.tipoMoneda = tipoMoneda;
+	}
 
 }

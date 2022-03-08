@@ -37,6 +37,12 @@ public class DtoActivoCatastro extends WebDto {
 	private Date fechaSolicitud901;
 	private String resultadoSiNO;
 	private Date fechaAlteracion;
+	private String origenDatosCatastrales;
+	private String claseUsoCatastral;
+	private Boolean catastroVigente;
+	private Double valorCatastral;
+	private String tipoMoneda;
+	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -164,6 +170,35 @@ public class DtoActivoCatastro extends WebDto {
 	public void setFechaAlteracion(Date fechaAlteracion) {
 		this.fechaAlteracion = fechaAlteracion;
 	}
-	
+	public String getOrigenDatosCatastrales() {
+		return origenDatosCatastrales;
+	}
+	public void setOrigenDatosCatastrales(String origenDatosCatastrales) {
+		this.origenDatosCatastrales = origenDatosCatastrales;
+	}
+	public String getClaseUsoCatastral() {
+		return claseUsoCatastral;
+	}
+	public void setClaseUsoCatastral(String claseUsoCatastral) {
+		this.claseUsoCatastral = claseUsoCatastral;
+	}
+	public Boolean getCatastroVigente() {
+		return catastroVigente;
+	}
+	public void setCatastroVigente(Boolean catastroVigente) {
+		this.catastroVigente = catastroVigente;
+	}
+	public Double getValorCatastral() {
+		return valorCatastral;
+	}
+	public void setValorCatastral(Double valorCatastral) {
+		this.valorCatastral = valorCatastral;
+	}
+	public String getTipoMoneda() {
+		return tipoMoneda;
+	}
+	public void setTipoMoneda(String tipoMoneda) {
+		this.tipoMoneda = tipoMoneda;
+	}
 	
 }

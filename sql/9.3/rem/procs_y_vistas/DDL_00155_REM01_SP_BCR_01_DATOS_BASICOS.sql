@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17150
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -27,6 +27,7 @@
 --##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
 --##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
 --##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
+--##	      0.18 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -113,8 +114,8 @@ BEGIN
                   COALESCE(STA_OR.DD_STA_ID, STA.DD_STA_ID) AS DD_STA_ID,
                   prp.DD_PRP_ID as DD_PRP_ID,
                   CASE
-                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
-                     WHEN AUX.CLASE_USO=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
+                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''S'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''01'')
+                     WHEN AUX.CLASE_USO_REGISTRAL=''0001'' AND AUX.VIVIENDA_HABITUAL=''N'' THEN (SELECT DD_TUD_ID FROM '|| V_ESQUEMA ||'.DD_TUD_TIPO_USO_DESTINO WHERE DD_TUD_CODIGO=''06'')
                      ELSE NULL
                   END AS DD_TUD_ID,
                   tcr.DD_TCR_ID as DD_TCR_ID,
@@ -136,7 +137,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA scr ON scr.DD_SCR_CODIGO = eqv2.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''BANCO_ORIGEN''  AND eqv3.DD_CODIGO_CAIXA = aux.BANCO_ORIGEN AND EQV3.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SPG_SOCIEDAD_PAGO_ANTERIOR spg ON spg.DD_SPG_CODIGO = eqv3.DD_CODIGO_REM  
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv4 ON eqv4.DD_NOMBRE_CAIXA = ''CLASE_USO''  AND eqv4.DD_CODIGO_CAIXA = aux.CLASE_USO AND EQV4.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv4 ON eqv4.DD_NOMBRE_CAIXA = ''CLASE_USO_REGISTRAL''  AND eqv4.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND EQV4.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO sac_uso ON sac_uso.DD_SAC_CODIGO = eqv4.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''SUBTIPO_VIVIENDA''  AND eqv8.DD_CODIGO_CAIXA = aux.SUBTIPO_VIVIENDA AND EQV8.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO sac_viv ON sac_viv.DD_SAC_CODIGO = eqv8.DD_CODIGO_REM
@@ -146,7 +147,7 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_PRP_PROCEDENCIA_PRODUCTO prp ON prp.DD_PRP_CODIGO = eqv5.DD_CODIGO_REM     
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv7 ON eqv7.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_VENTA''  AND eqv7.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_VENTA AND EQV7.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr ON tcr.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM
-                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO AND eqv11.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_ACTIVO'' AND eqv11.DD_CODIGO_CAIXA = aux.CLASE_USO_REGISTRAL AND eqv11.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_CODIGO = eqv11.DD_CODIGO_REM
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_SAC_SUBTIPO_ACTIVO SAC ON ACT.DD_SAC_ID = SAC.DD_SAC_ID AND TPA.DD_TPA_ID = SAC.DD_TPA_ID AND SAC.BORRADO = 0
                   WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
@@ -325,7 +326,9 @@ BEGIN
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
                ctc.DD_CTC_ID as DD_CTC_ID,
-               CAIXA.CBX_ID
+               CAIXA.CBX_ID,
+               aux.NUM_INMUEBLE_ANTERIOR as CBX_NUMERO_INMUEBLE_ANTERIOR,
+               cbc.dd_cbc_id
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -337,8 +340,10 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr1 ON tcr1.DD_TCR_CODIGO = eqv7.DD_CODIGO_REM   
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv8 ON eqv8.DD_NOMBRE_CAIXA = ''CANAL_DISTRIBUCION_ALQUILER''  AND eqv8.DD_CODIGO_CAIXA = aux.CANAL_DISTRIBUCION_ALQ AND eqv8.BORRADO=0
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr2 ON tcr2.DD_TCR_CODIGO = eqv8.DD_CODIGO_REM                 
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv1.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM    
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv9 ON eqv9.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv9.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv9.DD_CODIGO_REM    
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv10 ON eqv10.DD_NOMBRE_CAIXA = ''SEGMENTACION_CARTERA''  AND eqv10.DD_CODIGO_CAIXA = aux.SEGMENTACION_CARTERA
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC cbc ON cbc.DD_CBC_CODIGO = eqv10.DD_CODIGO_REM 
                LEFT JOIN (SELECT MOT.ACT_ID, LISTAGG(MOT.MOT_NECESIDAD_ARRAS, '', '') WITHIN GROUP (ORDER BY MOT.MOT_NECESIDAD_ARRAS) MOT_NECESIDAD_ARRAS FROM '|| V_ESQUEMA ||'.TMP_MOTIVOS_NECESIDAD_ARRAS MOT GROUP BY MOT.ACT_ID) MOT_NEC_ARRAS ON MOT_NEC_ARRAS.ACT_ID = ACT2.ACT_ID 
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
@@ -364,7 +369,9 @@ BEGIN
                               ,act1.FECHA_EAT_EST_TECNICO=us.FECHA_EAT_EST_TECNICO
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
-                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                         
+                              ,act1.DD_CTC_ID = us.DD_CTC_ID       
+                              ,act1.CBX_NUMERO_INMUEBLE_ANTERIOR = us.CBX_NUMERO_INMUEBLE_ANTERIOR   
+                              ,act1.dd_cbc_id = us.dd_cbc_id                                                                                                               
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -391,7 +398,9 @@ BEGIN
                                           FECHA_EAT_EST_TECNICO,
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
-                                          DD_CTC_ID,                                                                        
+                                          DD_CTC_ID,   
+                                          CBX_NUMERO_INMUEBLE_ANTERIOR,                                                                     
+                                          dd_cbc_id,
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -418,6 +427,8 @@ BEGIN
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,
                                           us.DD_CTC_ID,
+                                          us.CBX_NUMERO_INMUEBLE_ANTERIOR,
+                                          us.dd_cbc_id,
                                           ''STOCK_BC'',
                                           sysdate)';
 

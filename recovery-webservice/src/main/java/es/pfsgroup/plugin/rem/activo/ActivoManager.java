@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
@@ -4090,6 +4091,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getFechaFinConcurrencia() != null) {
 					dto.setFechaFinConcurrencia(actCaixa.getFechaFinConcurrencia());
 				}
+				if (actCaixa.getSegmentacionCartera() != null) {
+					dto.setSegmentacionCarteraCodigo(actCaixa.getSegmentacionCartera().getCodigo());
+					dto.setSegmentacionCarteraDescripcion(actCaixa.getSegmentacionCartera().getDescripcion());
+				}
 			}
 		}
 
@@ -4227,6 +4232,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(dto.getCanalPublicacionVentaCodigo() != null){
 					DDTipoComercializar canalDistVent = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dto.getCanalPublicacionVentaCodigo());
 					activoCaixa.setCanalDistribucionVenta(canalDistVent);
+				}
+				if (dto.getSegmentacionCarteraCodigo() != null) {
+					DDCarteraBc segmentacionCartera = (DDCarteraBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDCarteraBc.class, dto.getSegmentacionCarteraCodigo());
+					activoCaixa.setSegmentacionCartera(segmentacionCartera);
 				}
 				
 				genericDao.update(ActivoCaixa.class, activoCaixa);
@@ -4393,6 +4402,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if(!Checks.esNulo(cargaDto.getFechaPresentacionRpCarta())) {
 				cargaSeleccionada.setFechaPresentacionRpCarta(cargaDto.getFechaPresentacionRpCarta());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIndicadorPreferente())) {
+				cargaSeleccionada.setIndicadorPreferente(cargaDto.getIndicadorPreferente());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEjecutada())) {
+				cargaSeleccionada.setIdentificadorCargaEjecutada(cargaDto.getIdentificadorCargaEjecutada());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIgualdadRango())) {
+				cargaSeleccionada.setIgualdadRango(cargaDto.getIgualdadRango());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaIndefinida())) {
+				cargaSeleccionada.setIdentificadorCargaIndefinida(cargaDto.getIdentificadorCargaIndefinida());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEconomica())) {
+				cargaSeleccionada.setIdentificadorCargaEconomica(cargaDto.getIdentificadorCargaEconomica());
 			}
 
 		} catch (IllegalAccessException e) {

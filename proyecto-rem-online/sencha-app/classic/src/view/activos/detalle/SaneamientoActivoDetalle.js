@@ -684,7 +684,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 											        margin : '0 0 10 0',
 													layout : {
 														type: 'table',
-								         				columns: 3
+								         				columns: 2
 								        			},
 													defaultType : 'textfieldbase',
 													title : HreRem.i18n("title.limitaciones.vendedor"),
@@ -766,6 +766,11 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 													xtype :'fieldset',
 											        height : 260,
 											        margin : '0 10 10 10',
+											        colspan : 1,
+													layout : {
+														type: 'table',
+								         				columns: 2
+								        			},
 													defaultType : 'textfieldbase',
 													title : HreRem.i18n("title.limitaciones.comprador"),
 													items : [
@@ -808,7 +813,43 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 																store : '{comboSiNoRem}',
 							            						value : '{saneamiento.noTitularOtraVivienda}'
 							            					}
-														}]
+														},
+														{ 
+												        	xtype: 'comboboxfieldbase',							        	
+												        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
+												        	bind: {
+					            									store: '{comboSiNoBoolean}',
+					            									value: '{saneamiento.compradorAcojeAyuda}',
+					            									hidden: '{!isCarteraBankia}'
+					            								  }
+												        },
+												        { 
+															xtype: 'currencyfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
+							                				bind: {
+								                					value:'{saneamiento.importeAyudaFinanciacion}',
+								                					hidden: '{!isCarteraBankia}'
+							                					  }
+										                },
+												        { 
+										                	xtype: 'datefieldbase',     
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
+													 		bind: {
+													 				value:'{saneamiento.fechaVencimientoAvalSeguro}',
+													 				hidden: '{!isCarteraBankia}'
+													 			},								 		
+													 		maxValue : null
+														},
+														{ 
+										                	xtype: 'datefieldbase',     
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
+													 		bind: {
+													 				value:'{saneamiento.fechaDevolucionAyuda}',
+													 				hidden: '{!isCarteraBankia}'
+													 			},								 		
+													 		maxValue : null
+														}
+													]
 												},
 												{
 										        	xtype:'fieldset',

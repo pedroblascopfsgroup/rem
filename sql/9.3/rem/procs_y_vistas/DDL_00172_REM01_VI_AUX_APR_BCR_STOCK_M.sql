@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210929
+--## FECHA_CREACION=20220225
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-15423
+--## INCIDENCIA_LINK=HREOS-17147
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

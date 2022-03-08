@@ -124,8 +124,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDIncidenciaCee;
 import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
 import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionCee;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
@@ -914,6 +916,31 @@ public class ActivoAdapter {
 					if (!Checks.esNulo(activoCarga.getFechaPresentacionRpCarta())) {
 						beanUtilNotNull.copyProperty(cargaDto, "fechaPresentacionRpCarta",
 								activoCarga.getFechaPresentacionRpCarta());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIndicadorPreferente())) {
+						beanUtilNotNull.copyProperty(cargaDto, "indicadorPreferente",
+								activoCarga.getIndicadorPreferente());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEjecutada())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEjecutada",
+								activoCarga.getIdentificadorCargaEjecutada());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIgualdadRango())) {
+						beanUtilNotNull.copyProperty(cargaDto, "igualdadRango",
+								activoCarga.getIgualdadRango());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaIndefinida())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaIndefinida",
+								activoCarga.getIdentificadorCargaIndefinida());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEconomica())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEconomica",
+								activoCarga.getIdentificadorCargaEconomica());
 					}
 
 
@@ -2920,6 +2947,8 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setEmision(null);
 				activoAdmisionDocumento.setRegistro(null);
 				activoAdmisionDocumento.setTipoListaEmisiones(null);
+				activoAdmisionDocumento.setMotivoExoneracionCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
 
 			} else {
 
@@ -2970,10 +2999,15 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "aplica",
 					BooleanUtils.toBoolean(dtoAdmisionDocumento.getAplica()));
 
-			if (dtoAdmisionDocumento.getEstadoDocumento() != null) {
+			if (!Checks.esNulo(dtoAdmisionDocumento.getEstadoDocumento())) {
 				DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDEstadoDocumento.class, dtoAdmisionDocumento.getEstadoDocumento());
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
+				if (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(dtoAdmisionDocumento.getEstadoDocumento()) || 
+						!Checks.esNulo(dtoAdmisionDocumento.getFechaObtencion())) {
+					dtoAdmisionDocumento.setIncidenciaCee(null);
+					activoAdmisionDocumento.setIncidenciaCee(null);
+				}
 			}
 			
 			if (dtoAdmisionDocumento.getTipoCalificacionCodigo() != null) {
@@ -2995,6 +3029,20 @@ public class ActivoAdapter {
 				DDListaEmisiones emision = (DDListaEmisiones) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDListaEmisiones.class, dtoAdmisionDocumento.getLetraEmisiones());
 				activoAdmisionDocumento.setTipoListaEmisiones(emision);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getMotivoExoneracionCee())) {
+				DDMotivoExoneracionCee motivoExoneracionCee = (DDMotivoExoneracionCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDMotivoExoneracionCee.class, dtoAdmisionDocumento.getMotivoExoneracionCee());
+				activoAdmisionDocumento.setMotivoExoneracionCee(motivoExoneracionCee);
+				dtoAdmisionDocumento.setIncidenciaCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getIncidenciaCee())) {
+				DDIncidenciaCee incidenciaCee = (DDIncidenciaCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDIncidenciaCee.class, dtoAdmisionDocumento.getIncidenciaCee());
+				activoAdmisionDocumento.setIncidenciaCee(incidenciaCee);
 			}
 
 		} catch (IllegalAccessException e) {

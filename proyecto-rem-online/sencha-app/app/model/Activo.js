@@ -1392,6 +1392,9 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name:'discrepanciasLocalizacionObservaciones'
+            },
+            {
+            	name: 'numeroInmuebleAnterior'
             }
     ],
     

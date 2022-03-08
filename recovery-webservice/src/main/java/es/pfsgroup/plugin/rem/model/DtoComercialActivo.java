@@ -54,9 +54,10 @@ public class DtoComercialActivo extends DtoTabActivo{
     private Date fechaFinConcurrencia;    
     private String tipoTransmisionDescripcion;
     private String tipoTransmisionCodigo;
-
 	private String campanyaVenta;
 	private String campanyaAlquiler;
+	private String segmentacionCarteraCodigo;
+	private String segmentacionCarteraDescripcion;
 
 
 	public String getId() {
@@ -450,5 +451,22 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
 		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
-	}	
+	}
+
+	public String getSegmentacionCarteraCodigo() {
+		return segmentacionCarteraCodigo;
+	}
+
+	public void setSegmentacionCarteraCodigo(String segmentacionCarteraCodigo) {
+		this.segmentacionCarteraCodigo = segmentacionCarteraCodigo;
+	}
+
+	public String getSegmentacionCarteraDescripcion() {
+		return segmentacionCarteraDescripcion;
+	}
+
+	public void setSegmentacionCarteraDescripcion(String segmentacionCarteraDescripcion) {
+		this.segmentacionCarteraDescripcion = segmentacionCarteraDescripcion;
+	}
+	
 }

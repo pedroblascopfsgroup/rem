@@ -125,6 +125,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_ACCION
+                      , 1 RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -246,6 +247,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_GASTO
+                      , 1 RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0

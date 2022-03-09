@@ -1474,7 +1474,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 											]
 									}
 							]
-			            },
+			            }
             	]
 			},
 // Otra Información de interes

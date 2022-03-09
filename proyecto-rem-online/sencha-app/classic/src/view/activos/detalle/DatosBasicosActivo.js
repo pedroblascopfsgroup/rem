@@ -491,7 +491,63 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		hidden: '{!activo.isCarteraBankia}'
 				                	},
 				                	maxLength: 20
-				                }
+				                },
+						        {
+						        	xtype: 'comboboxfieldbasedd',
+						        	fieldLabel: HreRem.i18n('fieldlabel.activo.anejo.garaje'),
+						        	reference: 'anejoGarajeCodRef',
+						        	listeners: {
+						        		change: 'onChangeComboAnejoGaraje'
+						        	},
+						        	bind: {
+						        		store: '{comboSinSino}',
+						        		value: '{activo.anejoGarajeCodigo}',
+						        		rawValue: '{activo.anejoGarajeDescripcion}',
+						        		readOnly: '{isEditableAnejo}'
+						        	},
+						        	displayField: 'descripcion',
+						    		valueField: 'codigo'
+						        },
+						        {
+									xtype:'numberfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activo.identificador.plaza.parking'),
+									reference: 'identificadorPlazaParkingRef',
+									bind:{
+										value: '{activo.identificadorPlazaParking}',
+										readOnly: '{isEditableIdentificador}',
+										hidden: '{isVisbleIndicadorPlazaParking}'
+									},
+									maskRe: /^\d*$/, 
+				                	maxLength: 3
+	                            },
+						        {
+						        	xtype: 'comboboxfieldbasedd',
+						        	fieldLabel: HreRem.i18n('fieldlabel.activo.anejo.trastero'),
+						        	reference: 'anejoTrasteroCodRef',
+						        	listeners: {
+						        		change: 'onChangeComboAnejoTrastero'
+						        	},
+						        	bind: {
+						        		store: '{comboSinSino}',
+						        		value: '{activo.anejoTrasteroCodigo}',
+						        		rawValue: '{activo.anejoTrasteroDescripcion}',
+						        		readOnly: '{isEditableAnejo}'
+						        	},
+						        	displayField: 'descripcion',
+						    		valueField: 'codigo'
+						        },
+						        {
+									xtype:'numberfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activo.identificador.trastero'),
+									reference: 'identificadorTrasteroRef',
+									bind:{
+										value: '{activo.identificadorTrastero}',
+										readOnly: '{isEditableIdentificador}',
+										hidden: '{isVisbleIndicadorTrastero}'
+									},
+									maskRe: /^\d*$/, 
+				                	maxLength: 3
+	                            }
 				               
 				            ]
 						}

@@ -3,9 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,11 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,10 +33,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOcupacional;
 import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
@@ -57,7 +50,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 
 /**
  * Modelo que gestiona la informacion comercial de los activos
@@ -476,6 +468,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_AAC_ID")
 	private DDActivoAccesibilidad accesibilidad;
+	
+	@Column(name="ICO_IDEF_PLAZA_PARKING")
+	private Long identificadorPlazaParking;
+	
+	@Column(name="ICO_IDEF_TRASTERO")
+	private Long identificadorTrastero;
 
 	public Long getId() {
 		return id;
@@ -1363,6 +1361,22 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setLocalidadRegistro(Localidad localidadRegistro) {
 		this.localidadRegistro = localidadRegistro;
+	}
+
+	public Long getIdentificadorPlazaParking() {
+		return identificadorPlazaParking;
+	}
+
+	public void setIdentificadorPlazaParking(Long identificadorPlazaParking) {
+		this.identificadorPlazaParking = identificadorPlazaParking;
+	}
+
+	public Long getIdentificadorTrastero() {
+		return identificadorTrastero;
+	}
+
+	public void setIdentificadorTrastero(Long identificadorTrastero) {
+		this.identificadorTrastero = identificadorTrastero;
 	}
 	
 }

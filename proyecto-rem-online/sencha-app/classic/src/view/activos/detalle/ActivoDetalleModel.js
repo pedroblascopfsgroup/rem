@@ -2031,6 +2031,78 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	return true;
 	    	}
 	    	return false;
+	    },
+	    
+	    isVisbleIndicadorPlazaParking: function(get){
+	    	var me = this;
+	    	var anejoGarajeCodRef = me.get('activo.anejoGarajeCodigo');
+
+			if (anejoGarajeCodRef == '01') {
+				return false;
+			} else {
+				return true
+			}
+	    },
+	    
+	    isVisbleIndicadorTrastero: function(get){
+	    	var me = this;
+	    	var anejoTrasteroCodRef = me.get('activo.anejoTrasteroCodigo');
+
+			if (anejoTrasteroCodRef == '01') {
+				return false;
+			} else {
+				return true;
+			}
+	    },
+	    
+	    isEditableAnejo: function(get){
+	    	var me = this;
+	    	var editable = false;
+	    	var claseActivo = get('activo.claseActivoCodigo');
+			var isCarteraBankia = get('activo.isCarteraBankia');
+			var situacionComercialCodigo = get('activo.situacionComercialCodigo');
+			var aplicaComercializar = get('activo.aplicaComercializar');
+			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+			
+	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
+	    			&& tieneFuncion) {
+	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
+	    			return false;
+	    		}
+	    	}else if(claseActivo =='01'){
+	    		if (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion){
+	    			return false;
+	    		}
+			}else{
+				editable = tieneFuncion;
+			}
+	    },
+	    
+	    isEditableIdentificador: function(get){
+	    	var me = this;
+	    	var editable = false;
+			var claseActivo = get('activo.claseActivoCodigo');
+			var isCarteraBankia = get('activo.isCarteraBankia');
+			var situacionComercialCodigo = get('activo.situacionComercialCodigo');
+			var aplicaComercializar = get('activo.aplicaComercializar');
+			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+
+	    	if (isCarteraBankia) {
+	    		return true;
+	    	}else if (($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
+	    			&& tieneFuncion) {
+	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
+	    			return false;
+	    		}
+	    	}else if(claseActivo =='01'){
+	    		if(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion){
+	    			return false;
+	    		}
+			}else{
+				editable = tieneFuncion;
+			}
 	    }
 	 },
     

@@ -1395,6 +1395,24 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name: 'numeroInmuebleAnterior'
+            },
+       	 	{ 
+            	name: 'anejoGarajeCodigo' 
+            },
+            {
+            	name: 'anejoGarajeDescripcion'
+            },
+            {
+            	name: 'anejoTrasteroCodigo'
+            },
+            {
+            	name: 'anejoTrasteroDescripcion'
+            },
+            {
+            	name: 'identificadorPlazaParking'
+            },
+            {
+            	name: 'identificadorTrastero'
             }
     ],
     

@@ -3020,5 +3020,54 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
         var me = this;
         me.getView().fireEvent('abrirDetalleActivoPreciosTasacion', record);
 
-    }
+    },
+
+	buscarTitularCartaPago: function(field, e){
+		
+		var me= this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchPropietarioNif');
+		var nifTitularCartaPago= field.getValue();
+		var data;
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {nifPropietario : nifTitularCartaPago},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorNifTitularCartaPago = field.up('formBase').down('[name=buscadorNifTitularCartaPagoField]'),
+		    		nombreTitularCartaPagoCampo = field.up('formBase').down('[name=nombreTitularCartaPago]');
+		    		
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+		    		    var nombreTitularCartaPago = data.data.nombre;
+
+		    		    if(!Ext.isEmpty(buscadorNifTitularCartaPago)) {
+		    		    	buscadorNifTitularCartaPago.setValue(nifTitularCartaPago);
+		    		    	
+		    		    }
+		    		    if(!Ext.isEmpty(nombreTitularCartaPagoCampo)) {
+		    		    	nombreTitularCartaPagoCampo.setValue(nombreTitularCartaPago);
+
+			    		}
+			    	} else {
+			    		if(!Ext.isEmpty(nombreTitularCartaPagoCampo)) {
+			    			nombreTitularCartaPagoCampo.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.titular.carta.pago"));
+			    		buscadorNifTitularCartaPago.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.titular.carta.pago"));	
+		    		    
+			    	}
+		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}
+		    		     
+		  });
+		
+	}
 });

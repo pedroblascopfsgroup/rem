@@ -267,7 +267,21 @@ Ext.define('HreRem.model.GastoProveedor', {
     	},
     	{
     		name:'claveFactura'
-    	}
+    	},
+    	{
+    		name: 'nifTitularCartaPago'
+   		},
+   		{
+   			name: 'nombreTitularCartaPago'
+   		},
+   		{
+   			name: 'buscadorNifTitularCartaPago'
+   		},
+		{
+			name : 'fechaDevengoEspecial',
+			type : 'date',
+			dateFormat: 'c'
+		}
    		
     ],
     

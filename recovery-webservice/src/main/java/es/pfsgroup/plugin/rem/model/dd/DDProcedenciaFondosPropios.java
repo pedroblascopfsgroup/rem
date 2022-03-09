@@ -43,9 +43,6 @@ public class DDProcedenciaFondosPropios implements Auditable {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDProcedenciaFondosPropiosGenerator")
 	@SequenceGenerator(name = "DDProcedenciaFondosPropiosGenerator", sequenceName = "S_DD_PFP_PROC_FONDOS_PROPIOS")
 	private Long id;
-    
-	@Column(name = "DD_PFP_CODIGO_PBC")   
-	private String codigoPbc;
 	
 	@Column(name = "DD_PFP_CODIGO_BC")   
 	private String codigoBc;
@@ -104,14 +101,6 @@ public class DDProcedenciaFondosPropios implements Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public String getCodigoPbc() {
-		return codigoPbc;
-	}
-
-	public void setCodigoPbc(String codigoPbc) {
-		this.codigoPbc = codigoPbc;
 	}
 
 	public String getCodigoBc() {

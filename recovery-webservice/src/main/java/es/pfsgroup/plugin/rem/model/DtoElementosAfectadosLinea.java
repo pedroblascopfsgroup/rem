@@ -44,6 +44,35 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private Double importeTotalSujetoLinea;
 	 
+	 private String carteraBcCodigo;
+	 
+	 private String carteraBc;
+	 
+	 private String tipoTransmisionCodigo;
+	 
+	 private String tipoTransmision;
+	 
+	 private String grupo;
+	 
+	 private String tipo;
+	 
+	 private String subtipo;
+	 
+	 private String primeraPosesion;
+	 
+	 private String subpartidaEdifCodigo;
+	 
+	 private String subpartidaEdif;
+	 
+	 private String elementoPep;
+	 
+	 private String promocionCodigo;
+	 
+	 private String promocion;
+	 
+	 private String situacionComercialCodigo;
+	 
+	 private String situacionComercial;
 
 	public Long getId() {
 		return id;
@@ -165,7 +194,124 @@ public class DtoElementosAfectadosLinea extends WebDto {
 		this.importeTotalSujetoLinea = importeTotalSujetoLinea;
 	}
 
-	
-	
+	public String getCarteraBcCodigo() {
+		return carteraBcCodigo;
+	}
 
+	public void setCarteraBcCodigo(String carteraBcCodigo) {
+		this.carteraBcCodigo = carteraBcCodigo;
+	}
+
+	public String getCarteraBc() {
+		return carteraBc;
+	}
+
+	public void setCarteraBc(String carteraBc) {
+		this.carteraBc = carteraBc;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(String tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getSubtipo() {
+		return subtipo;
+	}
+
+	public void setSubtipo(String subtipo) {
+		this.subtipo = subtipo;
+	}
+
+	public String getPrimeraPosesion() {
+		return primeraPosesion;
+	}
+
+	public void setPrimeraPosesion(String primeraPosesion) {
+		this.primeraPosesion = primeraPosesion;
+	}
+
+	public String getSubpartidaEdifCodigo() {
+		return subpartidaEdifCodigo;
+	}
+
+	public void setSubpartidaEdifCodigo(String subpartidaEdifCodigo) {
+		this.subpartidaEdifCodigo = subpartidaEdifCodigo;
+	}
+
+	public String getSubpartidaEdif() {
+		return subpartidaEdif;
+	}
+
+	public void setSubpartidaEdif(String subpartidaEdif) {
+		this.subpartidaEdif = subpartidaEdif;
+	}
+
+	public String getElementoPep() {
+		return elementoPep;
+	}
+
+	public void setElementoPep(String elementoPep) {
+		this.elementoPep = elementoPep;
+	}
+
+	public String getPromocionCodigo() {
+		return promocionCodigo;
+	}
+
+	public void setPromocionCodigo(String promocionCodigo) {
+		this.promocionCodigo = promocionCodigo;
+	}
+
+	public String getPromocion() {
+		return promocion;
+	}
+
+	public void setPromocion(String promocion) {
+		this.promocion = promocion;
+	}
+
+	public String getSituacionComercialCodigo() {
+		return situacionComercialCodigo;
+	}
+
+	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
+		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+
+	public String getSituacionComercial() {
+		return situacionComercial;
+	}
+
+	public void setSituacionComercial(String situacionComercial) {
+		this.situacionComercial = situacionComercial;
+	}
+	
 }

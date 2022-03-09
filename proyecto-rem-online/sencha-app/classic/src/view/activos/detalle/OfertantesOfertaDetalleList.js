@@ -39,6 +39,10 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 			            bind: {
 			            	store: '{comboTipoDocumento}'
 			            },
+			            validator: function(value){
+		            		var me = this;
+		            		return me.lookupController().validateTipoDocumento(value);
+		            	},
 			            reference: 'cbTipoDocumento'
 			        }
 		        },

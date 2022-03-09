@@ -34,9 +34,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoPatrimonioContrato implements Serializable, Auditable {
 
-	/**
-	 * 
-	 */
+	public static final String DCA_EST_CONTRATO_ALQ = "Alquilada";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

@@ -55,6 +55,14 @@ public class ValorTareaBC implements Serializable, Auditable {
 		private String observacionesDesbloqueado;
 		private String comboResultado;
 	}
+
+	static class BloqueoScoring {
+		private String motivoBloqueado;
+		private String motivoDesbloqueado;
+		private String observacionesBloqueado;
+		private String observacionesDesbloqueado;
+		private String comboResultado;
+	}
 	
 	static class ElevarSancion {
 		private String observacionesBC;
@@ -137,14 +145,16 @@ public class ValorTareaBC implements Serializable, Auditable {
 	public static final List<String> getCampoByTarea(String codTarea){
 		List<String> listaCampos = new ArrayList<String>();
 		Field[] campos = null;
-		if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codTarea)) {
-			campos =  BloqueoScreening.class.getDeclaredFields();
-		} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codTarea)) {
+		if(ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCREENING.equals(codTarea)
+			|| ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCREENING.equals(codTarea)
+			|| ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codTarea)) {
 			campos =  BloqueoScreening.class.getDeclaredFields();
 		} else if(ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_ELEVAR_SANCION.equals(codTarea)) {
 			campos =  ElevarSancion.class.getDeclaredFields();
-		} else if (ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCREENING.equals(codTarea)) {
-			campos =  BloqueoScreening.class.getDeclaredFields();
+		} else if (ComercialUserAssigantionService.CODIGO_T017_BLOQUEOSCORING.equals(codTarea)
+				|| ComercialUserAssigantionService.TramiteAlquilerT015.CODIGO_T015_BLOQUEOSCORING.equals(codTarea)
+				|| ComercialUserAssigantionService.TramiteAlquilerNoComercialT018.CODIGO_T018_BLOQUEOSCORING.equals(codTarea)) {
+			campos =  BloqueoScoring.class.getDeclaredFields();
 		}
 		
 		if(campos !=null) {

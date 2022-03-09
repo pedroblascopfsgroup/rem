@@ -17,7 +17,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
@@ -40,9 +39,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
     
 	@Autowired
 	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
+
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresSancionBc.class);
     
@@ -77,12 +74,7 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		}
 
 		if (aprueba) {
-			
-			if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-				estadoExp = DDEstadosExpedienteComercial.PTE_PBC;
-			}else {
-				estadoExp =  DDEstadosExpedienteComercial.PTE_ENVIO;
-			}
+			estadoExp = DDEstadosExpedienteComercial.PTE_PBC;
 			estadoBc =  DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 		} else{
@@ -102,7 +94,6 @@ public class UpdaterServiceSancionOfertaAlquileresSancionBc implements UpdaterSe
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
-				
 		genericDao.save(HistoricoSancionesBc.class, historico);
 	}
 

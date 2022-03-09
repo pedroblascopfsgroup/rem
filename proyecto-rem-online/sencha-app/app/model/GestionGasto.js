@@ -173,7 +173,23 @@ Ext.define('HreRem.model.GestionGasto', {
    		},
    		{
 			name : 'motivoRechazoGestionGasto'
-		}
+		},
+		{
+			name : 'gestionGastoClientePagador'
+		},
+		{
+   			name: 'fechaEnvioPropietario',
+   			type:'date',
+    		dateFormat: 'c'
+   		},
+   		{
+			name : 'gestionGastoClienteInformador'
+		},
+   		{
+   			name: 'fechaEnvioInformativa',
+   			type:'date',
+    		dateFormat: 'c'
+   		}
     ],
     
 	proxy: {

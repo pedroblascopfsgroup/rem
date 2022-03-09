@@ -71,6 +71,51 @@ Ext.define('HreRem.model.GastoActivo', {
             {
             	name: 'importeProporcinalSujeto',
             	type: 'number'
+            },
+            {
+            	name:'carteraBcCodigo'
+            },
+            {
+            	name:'carteraBc'
+            },
+            {
+            	name:'tipoTransmisionCodigo'
+            },
+            {
+            	name:'tipoTransmision'
+            },
+            {
+            	name:'grupo'
+            },
+            {
+            	name:'tipo'
+            },
+            {
+            	name:'subtipo'
+            },
+            {
+            	name:'primeraPosesion'
+            },
+            {
+            	name:'subpartidaEdifCodigo'
+            },
+            {
+            	name:'subpartidaEdif'
+            },
+            {
+            	name:'elementoPep'
+            },
+            {
+            	name:'promocionCodigo'
+            },
+            {
+            	name:'promocion'
+            },
+            {
+            	name:'situacionComercialCodigo'
+            },
+            {
+            	name:'situacionComercial'
             }
             
     ],

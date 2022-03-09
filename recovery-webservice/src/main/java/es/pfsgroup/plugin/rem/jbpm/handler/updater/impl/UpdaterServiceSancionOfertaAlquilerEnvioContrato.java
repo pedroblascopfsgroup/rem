@@ -31,16 +31,10 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
     private GenericABMDao genericDao;
 
     @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
-    
-    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
 	@Autowired
 	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerEnvioContrato.class);
     
@@ -67,11 +61,8 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if (DDSiNo.SI.equals(valor.getValor())) {					
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					if(expedienteComercial.getEstadoBc() != null && !DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equalsIgnoreCase(expedienteComercial.getEstadoBc().getCodigo())) {
-						estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO));
-						estadoBcModificado = true;
-
-					}
+					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO));
+					estadoBcModificado = true;
 				}else if (DDSiNo.NO.equals(valor.getValor())) {				
 					estadoExp = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_ENVIO));
 					estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_PTE_SANCION_PATRIMONIO));

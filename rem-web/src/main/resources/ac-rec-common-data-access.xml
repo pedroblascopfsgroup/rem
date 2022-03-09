@@ -174,6 +174,7 @@
            <value>es.pfsgroup.plugin.rem.model.dd.DDResultadoScoring</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAlquiler</value>
            <value>es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler</value>
+           <value>es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion</value>
     </list>
     </property>
     </bean>

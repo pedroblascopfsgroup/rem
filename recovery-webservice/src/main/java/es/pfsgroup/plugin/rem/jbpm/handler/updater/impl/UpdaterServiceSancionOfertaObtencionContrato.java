@@ -19,6 +19,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -32,11 +33,13 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -46,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -114,6 +118,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		String estadoArras = null;
 		try {
 			if (ofertaAceptada != null) {
+				Activo activo = ofertaAceptada.getActivoPrincipal();
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 				Integer diasVencimiento = expediente.getCondicionante().getPlazoFirmaReserva();
 	
@@ -182,7 +187,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
-					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);		
+					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras, ofertaAceptada);		
 					
 				}else if(ofertaAceptada.getActivoPrincipal() != null && DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())){
 					estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_VENTAS;
@@ -277,6 +282,31 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
+				
+
+				
+				if (DDCartera.isCarteraBk(activo.getCartera())){
+					
+					Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+					Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
+					Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+					HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+					
+					if (historico != null) {
+						historico.setActiva(false);
+						
+						genericDao.save(HistoricoTareaPbc.class, historico);
+					}
+					
+					Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
+					DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+					
+					HistoricoTareaPbc htp = new HistoricoTareaPbc();
+					htp.setOferta(ofertaAceptada);
+					htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+					
+					genericDao.save(HistoricoTareaPbc.class, htp);
+				}
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

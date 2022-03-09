@@ -34,7 +34,6 @@ public class ClienteDto implements Serializable{
 	
 
 	private Long idClienteWebcom;
-	@NotNull(groups = { Update.class })
 	private Long idClienteRem;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String razonSocial;
@@ -42,12 +41,10 @@ public class ClienteDto implements Serializable{
 	private String nombre;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String apellidos;
-	@NotNull(groups = { Insert.class })
 	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoDocumento;
-	@NotNull(groups = { Insert.class })
 	@Size(max=14)
 	private String documento;
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -256,6 +253,7 @@ public class ClienteDto implements Serializable{
 	private String codProvinciaNacimiento;
 	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
 	private String codProvinciaNacimientoRepresentante;
+	private String idClienteBC;
 	
 	
 		
@@ -735,5 +733,13 @@ public class ClienteDto implements Serializable{
 	}
 	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
 		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
+	}
+
+	public String getIdClienteBC() {
+		return idClienteBC;
+	}
+
+	public void setIdClienteBC(String idClienteBC) {
+		this.idClienteBC = idClienteBC;
 	}
 }

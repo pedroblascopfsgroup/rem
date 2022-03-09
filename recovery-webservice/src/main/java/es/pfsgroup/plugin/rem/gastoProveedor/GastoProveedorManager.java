@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -106,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
+import es.pfsgroup.plugin.rem.model.HistoricoEnvioPedidos;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
@@ -336,6 +336,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<String> codigosSubtipoGasto = new ArrayList<String>(Arrays.asList(subtiposGasto));
 		Boolean filtroGastosB = false;
 		if (!Checks.esNulo(gasto)) {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 
 			dto.setVisibleSuplidos(false);
 			dto.setIdGasto(gasto.getId());
@@ -600,6 +603,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setSubrogado(gasto.getSubrogado());
 			
 			dto.setClaveFactura(gasto.getClaveFactura());
+			
+			if (!Checks.esNulo(gasto.getTitularCartaPago())) {
+				dto.setNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setBuscadorNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setNombreTitularCartaPago(gasto.getTitularCartaPago().getNombre());
+			}
+			
+			if (contabilidadGasto != null) {
+				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
+			}
 		}
 
 		return dto;
@@ -960,6 +973,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.getCodigoProveedorRem(), dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
 
 			actualizaSuplidosAsync.start();
+		}
+		
+		if (!Checks.esNulo(dto.getBuscadorNifTitularCartaPago())) {
+			Filter filtroNifTitularCartaPago = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifTitularCartaPago());
+			ActivoPropietario propietarioTitularCartaPago = genericDao.get(ActivoPropietario.class, filtroNifTitularCartaPago);
+			gastoProveedor.setTitularCartaPago(propietarioTitularCartaPago);
 		}
 
 		return true;
@@ -2311,7 +2330,46 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if (gastoGestion.getMotivoRechazoGestionGasto() != null) {
 					dtoGestion.setMotivoRechazoGestionGasto(gastoGestion.getMotivoRechazoGestionGasto());
-				}	
+				}
+				
+				if (DDCartera.isCarteraBk(gasto.getPropietario().getCartera())) {
+					if (gastoGestion.getGestionGastoClientePagador() != null) {
+						Filter filtroClienteComprador= genericDao.createFilter(FilterType.EQUALS, "id", gastoGestion.getGestionGastoClientePagador().getId());
+						ActivoPropietario propietarioClienteComprador = genericDao.get(ActivoPropietario.class, filtroClienteComprador);
+						
+						if (propietarioClienteComprador != null) {
+							dtoGestion.setGestionGastoClientePagador(propietarioClienteComprador.getNombre());
+						}
+						
+						if (ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(propietarioClienteComprador.getDocIdentificativo())) {
+							if (gastoGestion.getFechaEnvioPropietario() != null) {
+								dtoGestion.setFechaEnvioPropietario(gastoGestion.getFechaEnvioPropietario());
+							}
+						} else if (ActivoPropietario.NIF_PROPIETARIO_CAIXABANK.equals(propietarioClienteComprador.getDocIdentificativo())) {
+							List<HistoricoEnvioPedidos> listaEnvioPedidos = getHistoricoEnvioPedidosByIdGasto(gasto.getId());
+							
+							if (listaEnvioPedidos != null) {
+								for (HistoricoEnvioPedidos historicoEnvioPedidos : listaEnvioPedidos) {
+									dtoGestion.setFechaEnvioPropietario(historicoEnvioPedidos.getFechaEnvioPropietario());
+									break;
+								}
+							}
+						}
+					}
+					
+					if (gastoGestion.getGestionGastoClienteInformador() != null) {
+						Filter filtroClienteInformador = genericDao.createFilter(FilterType.EQUALS, "id", gastoGestion.getGestionGastoClienteInformador().getId());
+						ActivoPropietario propietarioClienteInformador = genericDao.get(ActivoPropietario.class, filtroClienteInformador);
+						
+						if (propietarioClienteInformador != null) {
+							dtoGestion.setGestionGastoClienteInformador(propietarioClienteInformador.getNombre());
+						}
+						
+						if (gastoGestion.getFechaEnvioInformativa() != null) {
+							dtoGestion.setFechaEnvioInformativa(gastoGestion.getFechaEnvioInformativa());
+						}
+					}	
+				}
 			}
 		}
 
@@ -4343,5 +4401,22 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		genericDao.update(GastoTasacionActivo.class, gta);
 
 		return true;
+	}
+	
+	public List<HistoricoEnvioPedidos> getHistoricoEnvioPedidosByIdGasto(Long idGasto){
+		
+		List<HistoricoEnvioPedidos> listaEnvioPedidos = new ArrayList<HistoricoEnvioPedidos>();
+		
+		Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		List<HistoricoEnvioPedidos> listaHistoricoEnvioPedidos = genericDao.getListOrdered(HistoricoEnvioPedidos.class, order, filtroGasto, filtroBorrado);
+		
+		for (HistoricoEnvioPedidos historicoEnvioPedidos : listaHistoricoEnvioPedidos) {
+			if (historicoEnvioPedidos.getGastoProveedor() != null && historicoEnvioPedidos.getFechaEnvioPropietario() != null) {
+				listaEnvioPedidos.add(historicoEnvioPedidos);
+			}
+		}
+		return listaEnvioPedidos;
 	}
 }

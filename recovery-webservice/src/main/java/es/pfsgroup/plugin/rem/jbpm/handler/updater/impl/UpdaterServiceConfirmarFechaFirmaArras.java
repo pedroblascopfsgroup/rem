@@ -140,7 +140,7 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 					}
 				}
 				
-				expedienteComercialApi.createOrUpdateUltimaPropuesta(eco.getId(), dto);
+				expedienteComercialApi.createOrUpdateUltimaPropuesta(eco.getId(), dto, ofertaAceptada);
 				
 				eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));
 	

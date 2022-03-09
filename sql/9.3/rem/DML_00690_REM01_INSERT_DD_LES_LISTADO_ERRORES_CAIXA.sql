@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211104
+--## FECHA_CREACION=20220302
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16085
+--## INCIDENCIA_LINK=HREOS-17266
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insert en tabla DD_LES_LISTADO_ERRORES_CAIXA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16085] - Alejandra García
+--##        0.2 Añadir resgistros y campo SITUACION - [HREOS-17266] - Alejandra García
 --##########################################
 --*/
 
@@ -37,14 +38,20 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_LES_LISTADO_ERRORES_CAIXA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-16085';
+	V_USUARIO VARCHAR2(32 CHAR) := 'HREOS-17266';
 
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('PAGADA','PAGADA','05','03','07'),
-	T_TIPO_DATA('ENTREGADA','ENTREGADA', '04','03','07')
+        --DD_RETORNO_CAIXA DD_TEXT_MENSAJE_CAIXA  SITUACION  DD_EGA_CODIGO  DD_EAH_CODIGO  DD_EAP_CODIGO
+	T_TIPO_DATA('PAGADA'   ,'Pagada'                     ,'PAGADA'                    ,'05','03','07'),
+	T_TIPO_DATA('ENTREGADA','Aceptada.  Pdte pago'       ,'ACEPTADA PAGO'             ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Incidenica pdte corrección.','ALERTA PAGO'               ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','No contabilizada'           ,'INC.REGISTRO'              ,'03','03','01'),
+	T_TIPO_DATA('ENTREGADA','Pdte aceptacion'            ,'PENDIENTE'                 ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Aprobación directa'         ,'APROBACION DIRECTA'        ,'04','03','07'),
+	T_TIPO_DATA('ENTREGADA','Denegada por duplicada'     ,'DENEGADA POR DUPLICADA'    ,'08','01','04')
 
 
     ); 
@@ -61,7 +68,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_RETORNO_CAIXA = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_RETORNO_CAIXA = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND SITUACION = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS > 0 THEN				
@@ -69,11 +76,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                     'SET DD_TEXT_MENSAJE_CAIXA = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
-					', DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''') '||
-					', DD_EAH_ID = (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
-					', DD_EAP_ID = (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') '||
+					', DD_EGA_ID = (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
+					', DD_EAH_ID = (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') '||
+					', DD_EAP_ID = (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(6))||''') '||
 					', USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_RETORNO_CAIXA = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_RETORNO_CAIXA = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND SITUACION = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
@@ -82,8 +89,25 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
   
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-                      DD_LES_ID, DD_LES_CODIGO, DD_RETORNO_CAIXA, DD_TEXT_MENSAJE_CAIXA, DD_EGA_ID, DD_EAH_ID, DD_EAP_ID ,USUARIOCREAR, FECHACREAR) VALUES
-                      (S_'||V_TEXT_TABLA||'.NEXTVAL,  SYS_GUID(),'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''', (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''),(SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''),(SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||'''),'''||V_USUARIO||''',SYSDATE)';
+                        DD_LES_ID
+                      , DD_LES_CODIGO
+                      , DD_RETORNO_CAIXA
+                      , SITUACION
+                      , DD_TEXT_MENSAJE_CAIXA
+                      , DD_EGA_ID, DD_EAH_ID
+                      , DD_EAP_ID 
+                      , USUARIOCREAR
+                      , FECHACREAR) VALUES
+                    (    S_'||V_TEXT_TABLA||'.NEXTVAL
+                      ,  SYS_GUID()
+                      ,  '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+                      ,  '''||TRIM(V_TMP_TIPO_DATA(3))||'''
+                      ,  '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                      ,  (SELECT DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''')
+                      ,  (SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''')
+                      ,  (SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(6))||''')
+                      ,  '''||V_USUARIO||'''
+                      ,  SYSDATE)';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

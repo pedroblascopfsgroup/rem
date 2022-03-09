@@ -1,9 +1,18 @@
 package es.pfsgroup.plugin.rem.clienteComercial;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.*;
@@ -19,6 +28,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -27,11 +37,23 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Lista;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
+import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import net.sf.json.JSONObject;
 
@@ -85,22 +107,33 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	}
 
 	@Override
-	public ClienteComercial getClienteComercialByIdClienteWebcom(Long idClienteWebcom) {
+	public ClienteComercial getClienteComercialByIdClienteWebcomOrIdClienteRem(ClienteDto clienteDto) {
 		ClienteComercial cliente = null;
 		List<ClienteComercial> lista = null;
-		ClienteDto clienteDto = null;
 
 		try {
-
-			if (Checks.esNulo(idClienteWebcom)) {
-				throw new Exception("El parámetro idClienteWebcom es obligatorio.");
-
-			} else {
-
-				clienteDto = new ClienteDto();
-				clienteDto.setIdClienteWebcom(idClienteWebcom);
-
+			if (clienteDto.getIdClienteWebcom() != null || clienteDto.getIdClienteRem() != null) {
 				lista = clienteComercialDao.getListaClientes(clienteDto);
+				if (!Checks.esNulo(lista) && lista.size() > 0) {
+					cliente = lista.get(0);
+				}
+			}
+
+		} catch (Exception ex) {
+			logger.error("Error clientecomercialmanager ",ex);
+		}
+
+		return cliente;
+	}
+	
+	@Override
+	public ClienteComercial getClienteComercialByDocumento(String documento) {
+		ClienteComercial cliente = null;
+		List<ClienteComercial> lista = null;
+
+		try {
+			if (documento != null) {
+				lista = clienteComercialDao.getListaClientesByDocumento(documento);
 				if (!Checks.esNulo(lista) && lista.size() > 0) {
 					cliente = lista.get(0);
 				}
@@ -187,13 +220,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	
 	@Override
-	public void saveClienteComercial(ClienteDto clienteDto)  throws Exception{
+	public ClienteComercial saveClienteComercial(ClienteDto clienteDto)  throws Exception{
 		ClienteComercial cliente = null; 
 		ClienteGDPR clienteGDPR = null; //HREOS-4937
 		cliente = new ClienteComercial();			
 		beanUtilNotNull.copyProperties(cliente, clienteDto);
-		cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());					
+		cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());
 
+		if(cliente.getIdClienteBC() == null && clienteDto.getIdClienteBC() != null){
+			cliente.setIdClienteBC(clienteDto.getIdClienteBC());
+		}
 		if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));
@@ -363,6 +399,98 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostal());
 		}
 		
+		if (!Checks.esNulo(clienteDto.getCodOcupacion()) && cliente.getTipoPersona() != null 
+				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
+			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodOcupacion()));
+			if (!Checks.esNulo(tipoOcupacion)) {
+				cliente.setTipoOcupacion(tipoOcupacion);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
+			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		}
+	   
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
+			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante2())) {
+			cliente.setTelefonoRepresentante2(clienteDto.getTelefonoRepresentante2());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante3())) {
+			cliente.setTelefonoRepresentante3(clienteDto.getTelefonoRepresentante3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
+			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante2())) {
+			cliente.setEmailRepresentante2(clienteDto.getEmailRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante3())) {
+			cliente.setEmailRepresentante3(clienteDto.getEmailRepresentante3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
+			cliente.setNombreContacto(clienteDto.getNombreContacto());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosContacto())) {
+			cliente.setApellidosContacto(clienteDto.getApellidosContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumentoContacto())) {
+			DDTipoDocumento tipoDocumentoContacto = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoContacto()));
+			if (!Checks.esNulo(tipoDocumentoContacto)) {
+				cliente.setTipoDocumentoContacto(tipoDocumentoContacto);
+			}
+		}
+
+		if (!Checks.esNulo(clienteDto.getDocumentoContacto())) {
+			cliente.setDocumentoContacto(clienteDto.getDocumentoContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto())) {
+			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto2())) {
+			cliente.setTelefonoContacto2(clienteDto.getTelefonoContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto3())) {
+			cliente.setTelefonoContacto3(clienteDto.getTelefonoContacto3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
+			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto2())) {
+			cliente.setEmailContacto2(clienteDto.getEmailContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto3())) {
+			cliente.setEmailContacto3(clienteDto.getEmailContacto3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {
+			cliente.setIdClienteRemRepresentante(clienteDto.getIdClienteRemRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getIdClienteContacto())) {
+			cliente.setIdClienteContacto(clienteDto.getIdClienteContacto());
+		}
 		if (!Checks.esNulo(clienteDto.getCodPaisNacimiento())) {
 			cliente.setPaisNacimiento(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimiento())));
 		}
@@ -453,9 +581,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		genericDao.save(ClienteGDPR.class, clienteGDPR);
 
-		//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), OfertaApi.CLIENTE_HAYA);
-
-
+		return cliente;
 	}
 
 	@Override
@@ -472,7 +598,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		}
 
 		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
-			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			if(clienteDto.getIdClienteWebcom() != null) {
+				cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			}
+		}
+		if (((JSONObject) jsonFields).containsKey("idClienteBC")) {
+			cliente.setIdClienteBC(clienteDto.getIdClienteBC());
 		}
 		if (((JSONObject) jsonFields).containsKey("razonSocial")) {
 			cliente.setRazonSocial(clienteDto.getRazonSocial());
@@ -531,8 +662,17 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (((JSONObject) jsonFields).containsKey("telefono2")) {
 			cliente.setTelefono2(clienteDto.getTelefono2());
 		}
+		if (((JSONObject) jsonFields).containsKey("telefono3")) {
+			cliente.setTelefono3(clienteDto.getTelefono3());
+		}
 		if (((JSONObject) jsonFields).containsKey("email")) {
 			cliente.setEmail(clienteDto.getEmail());
+		}
+		if (((JSONObject) jsonFields).containsKey("email2")) {
+			cliente.setEmail2(clienteDto.getEmail2());
+		}
+		if (((JSONObject) jsonFields).containsKey("email3")) {
+			cliente.setEmail3(clienteDto.getEmail3());
 		}
 		if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
@@ -716,6 +856,98 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
 		}
 		
+		if (!Checks.esNulo(clienteDto.getCodOcupacion()) && cliente.getTipoPersona() != null 
+				&& DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(cliente.getTipoPersona().getCodigo())) {
+			DDTipoOcupacion tipoOcupacion = (DDTipoOcupacion) genericDao.get(DDTipoOcupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodOcupacion()));
+			if (!Checks.esNulo(tipoOcupacion)) {
+				cliente.setTipoOcupacion(tipoOcupacion);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
+			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		}
+	   
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
+			cliente.setTelefonoRepresentante(clienteDto.getTelefonoRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante2())) {
+			cliente.setTelefonoRepresentante2(clienteDto.getTelefonoRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante3())) {
+			cliente.setTelefonoRepresentante3(clienteDto.getTelefonoRepresentante3());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante())) {
+			cliente.setEmailRepresentante(clienteDto.getEmailRepresentante());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante2())) {
+			cliente.setEmailRepresentante2(clienteDto.getEmailRepresentante2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailRepresentante3())) {
+			cliente.setEmailRepresentante3(clienteDto.getEmailRepresentante3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getNombreContacto())) {
+			cliente.setNombreContacto(clienteDto.getNombreContacto());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getApellidosContacto())) {
+			cliente.setApellidosContacto(clienteDto.getApellidosContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumentoContacto())) {
+			DDTipoDocumento tipoDocumentoContacto = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoContacto()));
+			if (!Checks.esNulo(tipoDocumentoContacto)) {
+				cliente.setTipoDocumentoContacto(tipoDocumentoContacto);
+			}
+		}
+
+		if (!Checks.esNulo(clienteDto.getDocumentoContacto())) {
+			cliente.setDocumentoContacto(clienteDto.getDocumentoContacto());
+		}
+	    
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto())) {
+			cliente.setTelefonoContacto(clienteDto.getTelefonoContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto2())) {
+			cliente.setTelefonoContacto2(clienteDto.getTelefonoContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getTelefonoContacto3())) {
+			cliente.setTelefonoContacto3(clienteDto.getTelefonoContacto3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto())) {
+			cliente.setEmailContacto(clienteDto.getEmailContacto());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto2())) {
+			cliente.setEmailContacto2(clienteDto.getEmailContacto2());
+		}
+
+		if (!Checks.esNulo(clienteDto.getEmailContacto3())) {
+			cliente.setEmailContacto3(clienteDto.getEmailContacto3());
+		}
+
+		if (!Checks.esNulo(clienteDto.getIdClienteRemRepresentante())) {
+			cliente.setIdClienteRemRepresentante(clienteDto.getIdClienteRemRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getIdClienteContacto())) {
+			cliente.setIdClienteContacto(clienteDto.getIdClienteContacto());
+		}
 		if (!Checks.esNulo(clienteDto.getCodPaisNacimiento())) {
 			cliente.setPaisNacimiento(genericDao.get(DDPaises.class,genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisNacimiento())));
 		}
@@ -961,11 +1193,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			HashMap<String, String> errorsList = null;
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			ClienteDto clienteDto = listaClienteDto.get(i);
-			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
+			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcomOrIdClienteRem(clienteDto);
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
+				errorsList.putAll(validatePersonaFisicaOJuridica(clienteDto));
 				if (errorsList.size() == 0) {
-					this.saveClienteComercial(clienteDto);
+					cliente = this.saveClienteComercial(clienteDto);
 				}
 
 			} else {
@@ -976,17 +1209,20 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			}
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
-				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
+				
+				if (cliente.getIdClienteWebcom() != null)
+					map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
+
 				if (replicarCliente){
 					map.put("replicateToBC",Boolean.TRUE);
 					map.put("idClienteForBC",cliente.getId());
 				}
 				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
-				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
+				if (clienteDto.getIdClienteWebcom() != null)
+					map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 				map.put("idClienteRem", clienteDto.getIdClienteRem());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
@@ -1028,6 +1264,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		}
 		return listaRespuesta;
+	}
+	
+	private HashMap<String, String> validatePersonaFisicaOJuridica(ClienteDto clienteDto) {
+		
+		HashMap<String, String> error = new HashMap<String, String>();
+		
+		if (clienteDto.getCodTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(clienteDto.getCodTipoPersona())) {
+			if(clienteDto.getNombre() == null || clienteDto.getNombre().isEmpty())
+				error.put("nombre", RestApi.REST_MSG_MISSING_REQUIRED);
+			
+			if(clienteDto.getApellidos() == null || clienteDto.getApellidos().isEmpty())
+				error.put("apellidos", RestApi.REST_MSG_MISSING_REQUIRED);
+			
+		} else if (clienteDto.getCodTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona()) 
+				&& (clienteDto.getRazonSocial() == null || clienteDto.getRazonSocial().isEmpty())) {
+			error.put("razonSocial", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
+		
+		return error;
+		
 	}
 
 }

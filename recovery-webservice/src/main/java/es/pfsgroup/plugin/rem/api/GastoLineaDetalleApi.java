@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
 import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
@@ -86,5 +87,7 @@ public interface GastoLineaDetalleApi {
 	List<Activo> devolverActivoDePromocionesDeLineasDeGasto(Long idLineaDetalleGasto);
 
     boolean asignarTasacionesGastos(Long idGasto, Long[] tasaciones);
+
+	boolean activoPatrimonioContratoAlquilada(ActivoPatrimonioContrato activoContrato);
 }
 

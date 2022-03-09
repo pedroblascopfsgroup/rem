@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -47,9 +48,11 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterService {
@@ -308,6 +311,17 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			if(!aplicaSuperior && !Checks.esNulo(comite)) {
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
+			}
+		
+			if (DDCartera.isCarteraBk(activo.getCartera()) && DDEquipoGestion.CODIGO_MAYORISTA.equals(activo.getEquipoGestion().getCodigo())){
+				Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBCCN);
+				DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+				
+				HistoricoTareaPbc htp = new HistoricoTareaPbc();
+				htp.setOferta(ofertaAceptada);
+				htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+				
+				genericDao.save(HistoricoTareaPbc.class, htp);
 			}
 		}	
 		

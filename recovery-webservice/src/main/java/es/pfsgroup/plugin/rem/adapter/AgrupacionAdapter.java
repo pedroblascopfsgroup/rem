@@ -131,6 +131,32 @@ import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.thread.AnyadirQuitarActivoAgrObREMAsync;
@@ -862,7 +888,8 @@ public class AgrupacionAdapter {
 								Boolean.TRUE.equals(periAGA.getCheckGestorComercial()));
 						}
 					}
-
+					
+					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal) && !Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
 
 				}else{
 					 if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -876,6 +903,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", activoCero.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", activoCero.getActivoPublicacion().getTipoComercializacion().getCodigo());
 					}
+					 dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getPerimetroMacc()) && activoCero.getPerimetroMacc() == 1);
 				}
 				
 				VCambioActivoPrecioPublicacionAgrupaciones vistaCambio = genericDao.get(VCambioActivoPrecioPublicacionAgrupaciones.class,
@@ -905,6 +933,7 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHomeToModel(null, agrupacion));
 			}
 			
 			
@@ -1769,7 +1798,7 @@ public class AgrupacionAdapter {
 													genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 													DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
-											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
+											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 										} else {
 											ofertaActivo.getPrimaryKey().getOferta()
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1945,7 +1974,7 @@ public class AgrupacionAdapter {
 												&& (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 												oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 														DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
-												ofertaApi.llamadaPbc(oferta);
+												ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 											} else {
 												DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 														.dameValorDiccionarioByCod(DDEstadoOferta.class,
@@ -1990,7 +2019,7 @@ public class AgrupacionAdapter {
 										|| !ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())) {
 									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 											DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
-									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
+									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 								} else {
 									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 											.dameValorDiccionarioByCod(DDEstadoOferta.class,
@@ -2887,10 +2916,17 @@ public class AgrupacionAdapter {
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
-			if(TIPO_AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| TIPO_AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| TIPO_AGRUPACION_RESTRINGIDA_OBREM.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-				oferta.setOrigen(OfertaApi.ORIGEN_REM);
+
+			DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+			if (sistemaOrigen != null)
+				oferta.setOrigen(sistemaOrigen);
+			
+			oferta.setOfertaExpress(false);
+			
+			if (Checks.esNulo(dto.getVentaDirecta())){
+				oferta.setVentaDirecta(false);
+			} else {				
+				oferta.setVentaDirecta(dto.getVentaDirecta());
 			}
 
 			oferta.setNumOferta(numOferta);
@@ -2902,15 +2938,18 @@ public class AgrupacionAdapter {
 				}catch(NumberFormatException ne){
 					logger.warn("Formato numero incorrecto");
 					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
-				}
-				
-			   
+				}		   
 			}
 			oferta.setEstadoOferta(estadoOferta);
 			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
+			
+			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
+
+			oferta.setActivosOferta(listaActOfr);
+			oferta.setCliente(clienteComercial);
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 		
@@ -2931,10 +2970,6 @@ public class AgrupacionAdapter {
 			
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
-			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
-
-			oferta.setActivosOferta(listaActOfr);
-			oferta.setCliente(clienteComercial);
 			ActivoProveedor prescriptor = (ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor());
 			if (prescriptor != null && prescriptor.getIdPersonaHaya() == null){
 				MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
@@ -2942,13 +2977,7 @@ public class AgrupacionAdapter {
 				genericDao.save(ActivoProveedor.class,prescriptor);
 			}
 			oferta.setPrescriptor(prescriptor);
-			oferta.setOrigen("REM");
-			oferta.setOfertaExpress(false);
-			if (Checks.esNulo(dto.getVentaDirecta())){
-				oferta.setVentaDirecta(false);
-			} else {				
-				oferta.setVentaDirecta(dto.getVentaDirecta());				
-			}
+			
 			if(!Checks.esNulo(dto.getIdUvem())){
 				oferta.setIdUvem(dto.getIdUvem());
 			}
@@ -3121,7 +3150,7 @@ public class AgrupacionAdapter {
 				}
 
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
-					ofertaApi.llamadaPbc(oferta);
+					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
 			}
@@ -5311,7 +5340,16 @@ public class AgrupacionAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("error en agrupacionAdapter", e);
 		}
-		DDCartera carteraActivoAux = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal().getCartera() : agrupacion.getActivos().get(0).getActivo().getCartera();
+		DDCartera carteraActivoAux = null;
+		
+		if(agrupacion.getActivoPrincipal() != null) {
+			carteraActivoAux = agrupacion.getActivoPrincipal().getCartera();
+		}else {
+			if(!agrupacion.getActivos().isEmpty()) {
+				carteraActivoAux = agrupacion.getActivos().get(0).getActivo().getCartera();
+			}
+		}
+		
 		if (DDCartera.isCarteraBk(carteraActivoAux) && 
 				(DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion()) || DDTipoAgrupacion.isRestringidaAlquiler(agrupacion.getTipoAgrupacion())
 				|| DDTipoAgrupacion.isRestringidaObrem(agrupacion.getTipoAgrupacion()))) {

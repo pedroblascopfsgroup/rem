@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211104
+--## FECHA_CREACION=20220301
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16085
+--## INCIDENCIA_LINK=HREOS-17266
 --## PRODUCTO=NO
 --##
 --## Finalidad: Crear diccionario DD_LES_LISTADO_ERRORES_CAIXA           
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-16085] - Alejandra García
+--##        0.2 Añadir campo SITUACION - [HREOS-17266] - Alejandra García
 --##########################################
 --*/
 
@@ -56,6 +57,7 @@ BEGIN
 			DD_LES_ID 				NUMBER(16,0) NOT NULL , 
 			DD_LES_CODIGO 			VARCHAR2(32 BYTE) NOT NULL , 
 			DD_RETORNO_CAIXA 		VARCHAR2(50 CHAR) NOT NULL , 
+			SITUACION 				VARCHAR2(50 CHAR) NOT NULL , 
 			DD_TEXT_MENSAJE_CAIXA 	VARCHAR2(300 CHAR) NOT NULL , 
 			DD_EGA_ID 				NUMBER(16,0), 
 			DD_EAH_ID 				NUMBER(16,0), 

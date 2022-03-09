@@ -1709,7 +1709,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
 			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
-			var isBankia = ('isCarteraBankia');
+			var isBankia = get('isCarteraBankia');
 			
 			if (perteneceAgrupacionRestringida || !tieneFuncion || isBankia){
 				return true;

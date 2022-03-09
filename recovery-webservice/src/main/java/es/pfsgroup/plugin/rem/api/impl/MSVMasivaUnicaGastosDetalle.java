@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -43,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoCargaMasivaUnicaGastos;
@@ -55,10 +55,12 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -66,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 
@@ -411,6 +414,40 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 									 
 								  
 								   gastoLineaDetalleEntidad.setParticipacionGasto(participacionPorActivo.doubleValue());
+								   if (activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getId() != null) {
+									   Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacionActivo.getActivo().getId());
+									   ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+									   if (patrimonioContrato != null) {
+										   if (gastoLineaDetalleApi.activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+											   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_ALQUILER);
+											   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+											   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+										   } else {
+											   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+											   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+											   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+										   }
+									   } else {
+											Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+											DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+											gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+									   }
+									   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null && activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo() != null) {
+										   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
+										   DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+										   if (tipoTransmision != null) {
+											   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+										   }
+									   }
+									   if (activoAgrupacionActivo.getActivo().getSituacionComercial() != null && activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo() != null
+												  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo())) {
+											   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+											   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+											   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+									   } else {
+											   gastoLineaDetalleEntidad.setSituacionComercial(null);
+									   }
+								   }
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 								}
 								
@@ -427,6 +464,40 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setEntidad(activo.getId());
 						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
+						if (activo != null && activo.getId() != null) {
+							Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+							ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+							   if (patrimonioContrato != null) {
+								   if (gastoLineaDetalleApi.activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+									   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_ALQUILER);
+									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   } else {
+									   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   }
+							   } else {
+									Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+									DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   }
+							   if (activo.getTipoTransmision() != null && activo.getTipoTransmision().getCodigo() != null) {
+								   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
+								   DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+								   if (tipoTransmision != null) {
+									   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+								   }
+							   }
+							   if (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo() != null
+										  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+									   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+									   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+									   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+							   } else {
+									   gastoLineaDetalleEntidad.setSituacionComercial(null);
+							   }
+						   }
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 						
 					}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.equals(entidadGasto.getCodigo())) {
@@ -466,7 +537,6 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setEntidad(Long.parseLong(exc.dameCelda(fila, COL_ID_ELEMENTO)));
 						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
-						
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 						
 					}

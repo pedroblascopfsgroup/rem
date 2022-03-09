@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
@@ -45,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
@@ -95,6 +97,11 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
+				
+
+				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null 
+						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
+						
 				DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
 				
@@ -126,8 +133,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
-							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
-									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 								
@@ -257,6 +263,18 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				if (DDCartera.isCarteraBk(activo.getCartera())){
+					Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							reserva ? DDTipoTareaPbc.CODIGO_PBCARRAS : DDTipoTareaPbc.CODIGO_PBC);
+					DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+					
+					HistoricoTareaPbc htp = new HistoricoTareaPbc();
+					htp.setOferta(ofertaAceptada);
+					htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+					
+					genericDao.save(HistoricoTareaPbc.class, htp);
+				}
 
 				
 				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);

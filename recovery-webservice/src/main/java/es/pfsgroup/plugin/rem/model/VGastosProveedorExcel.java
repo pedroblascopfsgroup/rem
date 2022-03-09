@@ -78,6 +78,12 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name = "DD_EGA_CODIGO")
 	private String estadoGastoCodigo;
 	
+	@Column(name = "DD_DEG_DESCRIPCION")
+	private String destinatarioDescripcion;
+	
+	@Column(name = "DD_DEG_CODIGO")
+	private String destinatarioCodigo;
+	
 	@Column(name = "DD_EGA_DESCRIPCION")
 	private String estadoGastoDescripcion;
 	
@@ -395,6 +401,22 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
 		this.estadoGastoDescripcion = estadoGastoDescripcion;
+	}
+
+	public String getDestinatarioDescripcion() {
+		return destinatarioDescripcion;
+	}
+
+	public void setDestinatarioDescripcion(String destinatarioDescripcion) {
+		this.destinatarioDescripcion = destinatarioDescripcion;
+	}
+
+	public String getDestinatarioCodigo() {
+		return destinatarioCodigo;
+	}
+
+	public void setDestinatarioCodigo(String destinatarioCodigo) {
+		this.destinatarioCodigo = destinatarioCodigo;
 	}
 
 	public Long getNumGastoGestoria() {

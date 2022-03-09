@@ -99,6 +99,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
 	private static final String FECHA_FIRMA = "fechaFirma";
 	private static final String COMBO_RESULTADO= "comboResultado";
+	private static final String FECHA_INICIO = "fechaInicio";
+	private static final String FECHA_FIN = "fechaFin";
 	
 	private static final String CODIGO_T015_FIRMA = "T015_Firma";
 	private static final String CODIGO_T015_AGENDAR_FIRMA = "T015_AgendarFechaFirma";
@@ -109,6 +111,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		boolean anular = false;
 		boolean modificadoEstadoBC = false;
 		String fechaFirma = null;
+		boolean fechaOfertaModificada = false;
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
@@ -140,7 +143,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			
 			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
-					expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+					expedienteComercial.setFechaFirmaContrato(ft.parse(valor.getValor()));
 					expedienteComercial.setFechaVenta(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha anulación.", e);
@@ -150,48 +153,65 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(DDSinSiNo.cambioStringtoBooleano(valor.getValor())) && !DDSinSiNo.cambioStringtoBooleano(valor.getValor())) {
 				anular = true;
 			}
+			if(FECHA_INICIO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+					oferta.setFechaInicioContrato(ft.parse(valor.getValor()));
+					fechaOfertaModificada = true;
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha inicio.", e);
+				}
+			}
+			if(FECHA_FIN.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					expedienteComercial.setFechaFinAlquiler(ft.parse(valor.getValor()));
+					oferta.setFechaFinContrato(ft.parse(valor.getValor()));
+					fechaOfertaModificada = true;
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha fin.", e);
+				}
+			}
 
 		}
 		if(!anular) {
-			if(!Checks.esNulo(expedienteComercial.getFechaInicioAlquiler())) {
-				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
-				
-				Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
-				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
-				
-				for(ActivoOferta activoOferta : activosOferta){
-					activo = activoOferta.getPrimaryKey().getActivo();
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-					if(!Checks.esNulo(activoPatrimonio)){
+			List<ActivoOferta> activosOferta = oferta.getActivosOferta();
+			
+			Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
+			DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
+			
+			for(ActivoOferta activoOferta : activosOferta){
+				activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+				if(!Checks.esNulo(activoPatrimonio)){
+					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				} else{
+					activoPatrimonio = new ActivoPatrimonio();
+					activoPatrimonio.setActivo(activo);
+					if (!Checks.esNulo(tipoEstadoAlquiler)){
 						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-					} else{
-						activoPatrimonio = new ActivoPatrimonio();
-						activoPatrimonio.setActivo(activo);
-						if (!Checks.esNulo(tipoEstadoAlquiler)){
-							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-						}
 					}
-					if (!Checks.esNulo(situacionComercial)) {
-						activo.setSituacionComercial(situacionComercial);
-					}
-					
-					if (!Checks.esNulo(activo.getSituacionPosesoria())) {
-						activo.getSituacionPosesoria().setOcupado(1);
-						if(!Checks.esNulo(tipoTituloActivoTPA)) {
-							activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
-						}
-						activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
-					}
-					if(sitpos!=null && usu!=null) {			
-						HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
-						genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
-					}
-					
-					activoDao.validateAgrupacion(expedienteComercial.getId());
-					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}
+				if (!Checks.esNulo(situacionComercial)) {
+					activo.setSituacionComercial(situacionComercial);
+				}
+				
+				if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+					activo.getSituacionPosesoria().setOcupado(1);
+					if(!Checks.esNulo(tipoTituloActivoTPA)) {
+						activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+					}
+					activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+				}
+				if(sitpos!=null && usu!=null) {			
+					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,sitpos,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+				}
+				
+				activoDao.validateAgrupacion(expedienteComercial.getId());
+				genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 			}
+
 			
 			activoDao.saveOrUpdate(activo);
 			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
@@ -221,6 +241,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			
 		}
 		
+		if(fechaOfertaModificada) {
+			genericDao.save(Oferta.class, oferta);
+		}
 		expedienteComercialApi.update(expedienteComercial,false);
 		
 		if(modificadoEstadoBC) {

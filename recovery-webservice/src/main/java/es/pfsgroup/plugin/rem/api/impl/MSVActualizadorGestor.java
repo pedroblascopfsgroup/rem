@@ -124,6 +124,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 						infoComercial.setMediadorInforme(apiPrimario);
 						infoComercial.setActivo(activo);
 						infoComercial.setAuditoria(Auditoria.getNewInstance());
+						activo.setInfoComercial(infoComercial);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
@@ -159,6 +160,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setActivo(activo);
 						infoComercial.setAuditoria(Auditoria.getNewInstance());
+						activo.setInfoComercial(infoComercial);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
@@ -189,6 +191,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 						infoComercial.setMediadorEspejo(apiEspejo);
 						infoComercial.setActivo(activo);
 						infoComercial.setAuditoria(Auditoria.getNewInstance());
+						activo.setInfoComercial(infoComercial);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
@@ -224,6 +227,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setActivo(activo);
 						infoComercial.setAuditoria(Auditoria.getNewInstance());
+						activo.setInfoComercial(infoComercial);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();

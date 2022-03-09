@@ -1285,6 +1285,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
 		}
 		
+		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		
 		return activoDto;
 	}
 	

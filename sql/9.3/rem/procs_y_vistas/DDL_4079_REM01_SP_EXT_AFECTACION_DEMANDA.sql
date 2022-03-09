@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Maria Presencia
---## FECHA_CREACION=20181123
+--## AUTOR=SANTI MONZÓ
+--## FECHA_CREACION=20211011
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=HREOS-4529
+--## INCIDENCIA_LINK=HREOS-15477
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_AFECTACION_DEMANDA
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1-Maria Presencia-Versión inicial (20180924) (HREOS-4529)
+--##        0.2 SANTI MONZÓ HREOS-15477 Añadir PRAGMA AUTONOMOUS_TRANSACTION;
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -43,6 +44,7 @@ AS
 	V_TABLA_ACTIVO VARCHAR2(30 CHAR) := 'ACT_ACTIVO';	
 	HLP_REGISTRO_EJEC VARCHAR2(1024 CHAR) := '';
 
+	PRAGMA AUTONOMOUS_TRANSACTION;
 
 BEGIN
 

@@ -398,11 +398,18 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoTecnicoDescripcion;
 	private String tieneGestionDndCodigo;
 	private String tieneGestionDndDescripcion;
+	
+	private Boolean esHayaHome;
+	
 
 	private String codComunidadAutonoma;
 	private String comunidadDescripcion;
+	
 	private String numeroInmuebleAnterior;
-
+	
+	private Boolean discrepanciasLocalizacion;
+	private String discrepanciasLocalizacionObservaciones;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2987,6 +2994,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.tieneGestionDndDescripcion = tieneGestionDndDescripcion;
 	}
 
+	public Boolean getEsHayaHome() {
+		return esHayaHome;
+	}
+
+	public void setEsHayaHome(Boolean esHayaHome) {
+		this.esHayaHome = esHayaHome;
+	}
+
 
 	public String getDescuentoPublicadoAlquiler() {
 		return descuentoPublicadoAlquiler;
@@ -3026,6 +3041,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
 		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
+	}
+				
+	public Boolean getDiscrepanciasLocalizacion() {
+		return discrepanciasLocalizacion;
+	}
+
+	public void setDiscrepanciasLocalizacion(Boolean discrepanciasLocalizacion) {
+		this.discrepanciasLocalizacion = discrepanciasLocalizacion;
+	}
+
+	public String getDiscrepanciasLocalizacionObservaciones() {
+		return discrepanciasLocalizacionObservaciones;
+	}
+
+	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
+		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
 	}
 	
 }

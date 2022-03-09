@@ -586,6 +586,12 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_GESTION_DND")
     private DDSinSiNo tieneGestionDnd;
     
+    @Column(name = "ACT_DISCREPANCIAS_LOC")
+    private Boolean discrepanciasLocalizacion;
+    
+    @Column(name = "ACT_OBSERVACIONES_DISC_LOC")
+    private String discrepanciasLocalizacionObservaciones;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2220,6 +2226,22 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTieneGestionDnd(DDSinSiNo tieneGestionDnd) {
 		this.tieneGestionDnd = tieneGestionDnd;
+	}
+
+	public Boolean getDiscrepanciasLocalizacion() {
+		return discrepanciasLocalizacion;
+	}
+
+	public void setDiscrepanciasLocalizacion(Boolean discrepanciasLocalizacion) {
+		this.discrepanciasLocalizacion = discrepanciasLocalizacion;
+	}
+
+	public String getDiscrepanciasLocalizacionObservaciones() {
+		return discrepanciasLocalizacionObservaciones;
+	}
+
+	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
+		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
 	}
 	
 }

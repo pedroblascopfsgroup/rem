@@ -19,7 +19,10 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
+ * Modelo que gestiona el diccionario de carteras Bc
+ * 
  * @author Javier Esbri
+ *
  */
 @Entity
 @Table(name = "DD_CBC_CARTERA_BC", schema = "${entity.schema}")
@@ -27,9 +30,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDCarteraBc implements Auditable, Dictionary {
 	
-	public static final String CODIGO_VENTA = "01";
-	public static final String CODIGO_ALQUILER = "03";
-	
+    public static final String CODIGO_VENTA = "01";
+    public static final String CODIGO_ALQUILER = "03";
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -46,7 +49,6 @@ public class DDCarteraBc implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_CBC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
 
 	@Version   
 	private Long version;
@@ -121,5 +123,4 @@ public class DDCarteraBc implements Auditable, Dictionary {
 		
 		return isDestinoComercialVenta;
 	}
-	
 }

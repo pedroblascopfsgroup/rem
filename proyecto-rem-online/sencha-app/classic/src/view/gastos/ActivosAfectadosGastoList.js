@@ -32,6 +32,9 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				if (columnas[i].dataIndex == 'participacion') {
 					participacion = columnas[i];
 				}
+				if (columnas[i].dataIndex == 'primeraPosesion') {
+					primeraPosesion = columnas[i];
+				}
 			}
 
 			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
@@ -267,6 +270,94 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			            	return "<span "+style+ ">"+msg+"</span>"
 		            	}
 		            }
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.cartera.bc'),
+					dataIndex : 'carteraBc',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.tipo.transmision'),
+					dataIndex : 'tipoTransmision',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.primera.posesion'),
+					dataIndex : 'primeraPosesion',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	},
+    				editor: {
+    					xtype: 'combobox',
+    					bind: {
+    						store: '{comboSiNoRem}'
+    					},
+    					displayField: 'descripcion',
+    					valueField: 'codigo'
+    				}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
+					dataIndex : 'subpartidaEdif',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.grupo'),
+					dataIndex : 'grupo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.tipo'),
+					dataIndex : 'tipo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.subitpo'),
+					dataIndex : 'subtipo',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	} 
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.elemento.pep'),
+					dataIndex : 'elementoPep',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.codigo.promocion'),
+					dataIndex : 'promocion',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
+				},
+				{
+					text : HreRem.i18n('header.activos.afectados.situacion.comercial'),
+					dataIndex : 'situacionComercial',
+					flex : 1,
+					bind:	{
+						hidden:'{!esPropietarioCaixa}' 
+                	}
 				}
 		];
 		 me.dockedItems = [
@@ -388,9 +479,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
             params: {
             	id: data.id,
             	participacion:data.participacion,
-            	referenciaCatastral: data.referenciaCatastral
+            	referenciaCatastral: data.referenciaCatastral,
+            	primeraPosesion:data.primeraPosesion
             },  	
 			success: function(a, operation, c){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				me.up('gastodetalle').down('contabilidadgasto').funcionRecargar();

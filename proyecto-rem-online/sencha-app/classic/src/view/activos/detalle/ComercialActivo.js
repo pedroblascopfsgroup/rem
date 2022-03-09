@@ -540,7 +540,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		var activo = me.lookupController().getViewModel().get('activo');
 		
 		var noContieneTipoAlquiler = false;
-		
+
 		 
 		if (activo.get('incluyeDestinoComercialAlquiler')) {
 			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
@@ -548,13 +548,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				noContieneTipoAlquiler = true;
 			}
 		}
-		
-		
+
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
 			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO') || noContieneTipoAlquiler) {
 			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(false);
-		}
-		else{
+		}else if(activo.get('tipoComercializacionCodigo') == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && activo.get('perimetroMacc')==1
+				&& (CONST.SUBCARTERA['DIVARIANARROW'] == activo.get('subcarteraCodigo') || CONST.SUBCARTERA['DIVARIANREMAINING'] == activo.get('subcarteraCodigo'))){
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(false);
+		}else{
 			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(true);
 		}		
    }

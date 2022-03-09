@@ -1798,7 +1798,7 @@ public class AgrupacionAdapter {
 													genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 													DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
-											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
+											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 										} else {
 											ofertaActivo.getPrimaryKey().getOferta()
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1974,7 +1974,7 @@ public class AgrupacionAdapter {
 												&& (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 												oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 														DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
-												ofertaApi.llamadaPbc(oferta);
+												ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 											} else {
 												DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 														.dameValorDiccionarioByCod(DDEstadoOferta.class,
@@ -2019,7 +2019,7 @@ public class AgrupacionAdapter {
 										|| !ofertaActivo.getPrimaryKey().getOferta().getCheckDocumentacion())) {
 									ofertaActivo.getPrimaryKey().getOferta().setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 											DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
-									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta());
+									ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 								} else {
 									DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 											.dameValorDiccionarioByCod(DDEstadoOferta.class,
@@ -3150,7 +3150,7 @@ public class AgrupacionAdapter {
 				}
 
 				if (DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codigoEstado)) {
-					ofertaApi.llamadaPbc(oferta);
+					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
 			}

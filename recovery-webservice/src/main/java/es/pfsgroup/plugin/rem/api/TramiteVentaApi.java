@@ -26,8 +26,6 @@ public interface TramiteVentaApi {
 
 	boolean checkFechaContabilizacionArras(TareaExterna tareaExterna);
 
-	boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco);
-
 	DtoDocPostVenta getDatosDocPostventa(Long idExpediente);
 
 }

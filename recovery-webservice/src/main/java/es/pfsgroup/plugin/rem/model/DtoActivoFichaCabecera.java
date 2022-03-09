@@ -3042,6 +3042,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.comunidadDescripcion = comunidadDescripcion;
 	}
 
+	public String getNumeroInmuebleAnterior() {
+		return numeroInmuebleAnterior;
+	}
+
+	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
+		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
+	}
+				
 	public Boolean getDiscrepanciasLocalizacion() {
 		return discrepanciasLocalizacion;
 	}
@@ -3056,14 +3064,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
 		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
-	}
-	
-	public String getNumeroInmuebleAnterior() {
-		return numeroInmuebleAnterior;
-	}
-
-	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
-		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
 	}
 
 	public String getAnejoGarajeCodigo() {

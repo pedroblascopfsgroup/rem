@@ -87,6 +87,9 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 	@Column(name = "DD_STG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	
+	@Column(name = "DD_STG_GPV_PRO_BC")   
+	private boolean gastoEnCaixa;
+	
 	@Transient
 	private String tipoGastoCodigo;
 	    
@@ -164,7 +167,12 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	public boolean isGastoEnCaixa() {
+		return gastoEnCaixa;
+	}
+
+	public void setGastoEnCaixa(boolean gastoEnCaixa) {
+		this.gastoEnCaixa = gastoEnCaixa;
+	}
+	
 }
-
-
-

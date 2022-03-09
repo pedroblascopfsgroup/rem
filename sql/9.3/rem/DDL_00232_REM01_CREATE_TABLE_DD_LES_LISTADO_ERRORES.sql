@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211029
+--## FECHA_CREACION=20211216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16116
@@ -62,7 +62,7 @@ DECLARE
                       DD_LES_ID         		NUMBER(16)          NOT NULL,
                       DD_LES_CODIGO            	VARCHAR2(32 BYTE)   NOT NULL,
                       DD_RETORNO_SAPBC        	VARCHAR2(50 CHAR)   NOT NULL,
-                      DD_TEXT_MENSAJE_SAP	  	VARCHAR2(300 CHAR)  NOT NULL,
+                      DD_TEXT_MENSAJE_SAP	  	VARCHAR2(300 CHAR)  ,
                       DD_EGA_ID			NUMBER(16),
                       DD_EAH_ID			NUMBER(16),
                       DD_EAP_ID			NUMBER(16),

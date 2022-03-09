@@ -128,7 +128,7 @@ public class UpdaterServiceAgendarFechaArras implements UpdaterService {
 				}
 				
 				dtoArras.setValidacionBC(estadoArras);
-				expedienteComercialApi.createOrUpdateUltimaPropuestaEnviada(dto.getId(), dtoArras);		
+				expedienteComercialApi.createOrUpdateUltimaPropuestaEnviada(dto.getId(), dtoArras, ofertaAceptada);		
 				
 				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExp)));
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBc)));				

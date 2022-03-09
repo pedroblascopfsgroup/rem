@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSocioComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -167,6 +168,11 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String codProvinciaNacimiento;
 	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
 	private String codProvinciaNacimientoRepresentante;
+
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoOcupacion.class, message = "El codOcupacion no existe", groups = { Insert.class,
+			Update.class })
+	private String codOcupacion;
 	
 	
 	public String getCodTipoDocumento() {
@@ -522,5 +528,13 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	}
 	public void setAceptacionOfertaTSecundario(Boolean aceptacionOfertaTSecundario) {
 		this.aceptacionOfertaTSecundario = aceptacionOfertaTSecundario;
+	}
+
+	public String getCodOcupacion() {
+		return codOcupacion;
+	}
+
+	public void setCodOcupacion(String codOcupacion) {
+		this.codOcupacion = codOcupacion;
 	}
 }

@@ -94,6 +94,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String USUARIO_REST_BC_DEFAULT = "COMM_CBK";
 	
 	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
+	public static final String CODIGO_T017_BLOQUEOSCORING = "T017_BloqueoScoring";
 	
 	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
 	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
@@ -110,6 +111,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
 		public static final String CODIGO_T015_DEFINICION_OFERTA = "T015_DefinicionOferta";
 		public static final String CODIGO_T015_BLOQUEOSCREENING = "T015_BloqueoScreening";
+		public static final String CODIGO_T015_BLOQUEOSCORING = "T015_BloqueoScoring";
 	}
 	
 	public class TramiteAlquilerNoComercialT018{
@@ -119,6 +121,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
 		public static final String CODIGO_T018_BLOQUEOSCREENING = "T018_BloqueoScreening";
 		public static final String CODIGO_T018_PBC_ALQUILER = "T018_PbcAlquiler";
+		public static final String CODIGO_T018_BLOQUEOSCORING = "T018_BloqueoScoring";
 	}
 	
 	private static final Integer CODIGO_SI = 1;

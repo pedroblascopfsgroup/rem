@@ -33,6 +33,7 @@ public class DDRiesgoOperacion implements Auditable, Dictionary {
 	public static final String CODIGO_ROP_ALTO = "01";
 	public static final String CODIGO_ROP_MEDIO = "02";
 	public static final String CODIGO_ROP_BAJO = "03";
+	public static final String CODIGO_ROP_NO_APLICA = "04";
 	public static final String CODIGO_ROP_ALTO_C4C = "HIGH";
 	public static final String CODIGO_ROP_MEDIO_C4C = "MEDIUM";
 	public static final String CODIGO_ROP_BAJO_C4C = "LOW";

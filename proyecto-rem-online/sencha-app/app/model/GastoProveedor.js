@@ -276,7 +276,12 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'buscadorNifTitularCartaPago'
-   		}
+   		},
+		{
+			name : 'fechaDevengoEspecial',
+			type : 'date',
+			dateFormat: 'c'
+		}
    		
     ],
     

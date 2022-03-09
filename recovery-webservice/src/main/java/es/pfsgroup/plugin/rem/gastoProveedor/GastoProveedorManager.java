@@ -336,6 +336,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<String> codigosSubtipoGasto = new ArrayList<String>(Arrays.asList(subtiposGasto));
 		Boolean filtroGastosB = false;
 		if (!Checks.esNulo(gasto)) {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 
 			dto.setVisibleSuplidos(false);
 			dto.setIdGasto(gasto.getId());
@@ -604,6 +607,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
 				dto.setBuscadorNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
 				dto.setNombreTitularCartaPago(gasto.getTitularCartaPago().getNombre());
+			}
+			
+			if (contabilidadGasto != null) {
+				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 			}
 		}
 

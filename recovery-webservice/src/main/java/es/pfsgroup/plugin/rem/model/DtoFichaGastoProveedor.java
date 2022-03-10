@@ -91,6 +91,10 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private Boolean subrogado;
 	private String carteraPropietarioCodigo;
 	private String claveFactura;
+	private String nifTitularCartaPago;
+	private String nombreTitularCartaPago;
+	private String buscadorNifTitularCartaPago;
+	private Date fechaDevengoEspecial;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -514,6 +518,30 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setClaveFactura(String claveFactura) {
 		this.claveFactura = claveFactura;
+	}
+	public String getNifTitularCartaPago() {
+		return nifTitularCartaPago;
+	}
+	public void setNifTitularCartaPago(String nifTitularCartaPago) {
+		this.nifTitularCartaPago = nifTitularCartaPago;
+	}
+	public String getNombreTitularCartaPago() {
+		return nombreTitularCartaPago;
+	}
+	public void setNombreTitularCartaPago(String nombreTitularCartaPago) {
+		this.nombreTitularCartaPago = nombreTitularCartaPago;
+	}
+	public String getBuscadorNifTitularCartaPago() {
+		return buscadorNifTitularCartaPago;
+	}
+	public void setBuscadorNifTitularCartaPago(String buscadorNifTitularCartaPago) {
+		this.buscadorNifTitularCartaPago = buscadorNifTitularCartaPago;
+	}
+	public Date getFechaDevengoEspecial() {
+		return fechaDevengoEspecial;
+	}
+	public void setFechaDevengoEspecial(Date fechaDevengoEspecial) {
+		this.fechaDevengoEspecial = fechaDevengoEspecial;
 	}
 	
 }

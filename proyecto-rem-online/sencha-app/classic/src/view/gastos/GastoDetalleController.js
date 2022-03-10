@@ -1838,7 +1838,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(tabSeleccionada.xtype=='datosgeneralesgasto' && $AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS') && (
 				CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 				(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 	    		return true;
     	}
     	
@@ -1846,7 +1846,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     			(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto && gestoria) || /*CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
 	    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
 	    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) 
-	    		|| (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+	    		|| (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
     			
     			return true;
     	}
@@ -1854,21 +1854,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	if(tabSeleccionada.xtype=='activosafectadosgasto' && $AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS') && (
     			CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
     			(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 	    		return true;
     	}
     	
     	if(tabSeleccionada.xtype=='contabilidadgasto' && $AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS') && (
     			CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
     			(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
     			return true;
     	}
     	
     	if(tabSeleccionada.xtype=='gestiongasto' && $AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS') && (
     			CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['ANULADO']!=estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO'] != estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] != estadoGasto) 
     			&& (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']!=estadoGasto || (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado)) 
-    			&& (CONST.ESTADOS_GASTO['SUBSANADO']!=estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado))){ 
+    			&& (CONST.ESTADOS_GASTO['SUBSANADO']!=estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) || (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){ 
     	
     			return true;
     	}
@@ -3020,5 +3020,54 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
         var me = this;
         me.getView().fireEvent('abrirDetalleActivoPreciosTasacion', record);
 
-    }
+    },
+
+	buscarTitularCartaPago: function(field, e){
+		
+		var me= this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/searchPropietarioNif');
+		var nifTitularCartaPago= field.getValue();
+		var data;
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {nifPropietario : nifTitularCartaPago},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorNifTitularCartaPago = field.up('formBase').down('[name=buscadorNifTitularCartaPagoField]'),
+		    		nombreTitularCartaPagoCampo = field.up('formBase').down('[name=nombreTitularCartaPago]');
+		    		
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+		    		    var nombreTitularCartaPago = data.data.nombre;
+
+		    		    if(!Ext.isEmpty(buscadorNifTitularCartaPago)) {
+		    		    	buscadorNifTitularCartaPago.setValue(nifTitularCartaPago);
+		    		    	
+		    		    }
+		    		    if(!Ext.isEmpty(nombreTitularCartaPagoCampo)) {
+		    		    	nombreTitularCartaPagoCampo.setValue(nombreTitularCartaPago);
+
+			    		}
+			    	} else {
+			    		if(!Ext.isEmpty(nombreTitularCartaPagoCampo)) {
+			    			nombreTitularCartaPagoCampo.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.titular.carta.pago"));
+			    		buscadorNifTitularCartaPago.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.titular.carta.pago"));	
+		    		    
+			    	}
+		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}
+		    		     
+		  });
+		
+	}
 });

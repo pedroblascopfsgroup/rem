@@ -59,7 +59,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		}
 		resultado = replicateClientSuccess;
 				
-		if(!resultado){
+		if(resultado == null || !resultado){
 			return error != null ? error :CaixaBcRestClient.ERROR_REPLICACION_BC;
 		}
 

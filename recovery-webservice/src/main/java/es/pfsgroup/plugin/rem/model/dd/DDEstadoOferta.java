@@ -112,5 +112,21 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isCaducada(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_CADUCADA.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isRechazada(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_RECHAZADA.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

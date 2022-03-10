@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 
 
 /**

@@ -3426,6 +3426,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T017_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3438,10 +3439,48 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreening');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	},
+	
+	T017_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T017_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo'); 
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
@@ -3465,6 +3504,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T015_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3477,10 +3517,50 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreeningAlquiler');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+		
+	
+		
+	},
+	
+	T015_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T015_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
@@ -3756,10 +3836,14 @@
 		var comboRespuesta = me.down('[name=comboResultado]');
 		var fechaFirma = me.down('[name=fechaFirma]');
 		var lugarFirma = me.down('[name=lugarFirma]');
+		var fechaInicio = me.down('[name=fechaInicio]');
+		var fechaFin = me.down('[name=fechaFin]');
 
 		
 		me.deshabilitarCampo(fechaFirma);
 		me.deshabilitarCampo(lugarFirma);
+		me.campoObligatorio(fechaInicio);
+		me.campoObligatorio(fechaFin);
 		comboRespuesta.addListener('change', function(combo) {
 			if(CONST.COMBO_SIN_SINO['SI'] === comboRespuesta.getValue()){
 				me.habilitarCampo(fechaFirma);
@@ -3950,6 +4034,7 @@
 		var me = this;
 		
 		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T018_BLOQUEOSCREENING'];
 		var motivoBloqueado = me.down('[name=motivoBloqueado]');
 		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
 		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
@@ -3962,10 +4047,47 @@
 		observacionesDesbloqueado.setReadOnly(true);
 		comboResultado.setReadOnly(true);
 		
-		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueoScreeningAlquilerNoComercial');
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
 		Ext.Ajax.request({
 			url: url,
-			params: {idTarea : idTarea},
+			params: {idTarea : idTarea, codTarea: codTarea},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	
+		    	if(!Ext.isEmpty(dto)){
+		    		motivoBloqueado.setValue(dto.motivoBloqueado);
+		    		motivoDesbloqueado.setValue(dto.motivoDesbloqueado);
+		    		observacionesBloqueado.setValue(dto.observacionesBloqueado);
+		    		observacionesDesbloqueado.setValue(dto.observacionesDesbloqueado);
+		    		comboResultado.setValue(dto.comboResultado);
+		    		
+		    	}
+		    }
+		});
+	},
+	
+	T018_BloqueoScoringValidacion: function(){
+		var me = this;
+		
+		var idTarea = me.idTarea;
+		var codTarea = CONST.CODIGO_BLOQUEO['T018_BLOQUEOSCORING'];
+		var motivoBloqueado = me.down('[name=motivoBloqueado]');
+		var motivoDesbloqueado = me.down('[name=motivoDesbloqueado]');
+		var observacionesBloqueado = me.down('[name=observacionesBloqueado]');
+		var observacionesDesbloqueado = me.down('[name=observacionesDesbloqueado]');
+		var comboResultado = me.down('[name=comboResultado]');
+		
+		motivoBloqueado.setReadOnly(true);
+		motivoDesbloqueado.setReadOnly(true);
+		observacionesBloqueado.setReadOnly(true);
+		observacionesDesbloqueado.setReadOnly(true);
+		comboResultado.setReadOnly(true);
+		
+		var url =  $AC.getRemoteUrl('expedientecomercial/getValoresTareaBloqueo');
+		Ext.Ajax.request({
+			url: url,
+			params: {idTarea : idTarea, codTarea: codTarea},
 		    success: function(response, opts) {
 		    	var data = Ext.decode(response.responseText);
 		    	var dto = data.data;
@@ -4023,6 +4145,57 @@
 		}
 	},
 	
+	T015_DatosPBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T015_CalculoRiesgoValidacion: function(){
+    	var me = this; 
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/usuarioTieneFuncionAvanzarPBC'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+			    	me.campoObligatorio(comboRiesgo);
+			    	me.desbloquearCampo(comboRiesgo);
+    				comboRiesgo.allowBlank = false;
+		    	}else{
+		    		me.bloquearCampo(comboRiesgo);
+			    	comboRiesgo.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+    
+    T015_PBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/tieneExpedienteRiesgo'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+					me.campoObligatorio(comboResultado);
+					me.desbloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;    		
+		    	}else{
+		    		me.bloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+	
 	T018_AgendarYFirmarValidacion: function(){
 		var me = this;
 		var comboIrClRod = me.down('[name=comboIrClRod]');
@@ -4072,6 +4245,52 @@
 		
 		me.down('[name=ncontratoPrinex]').validate();
     },
+
+    
+	T018_DatosPBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/tieneExpedienteRiesgo'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+					me.campoObligatorio(comboResultado);
+					me.desbloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;    		
+		    	}else{
+		    		me.bloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+    
+    T018_CalculoRiesgoValidacion: function(){
+    	var me = this; 
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/usuarioTieneFuncionAvanzarPBC'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+			    	me.campoObligatorio(comboRiesgo);
+			    	me.desbloquearCampo(comboRiesgo);
+    				comboRiesgo.allowBlank = false;
+		    	}else{
+		    		me.bloquearCampo(comboRiesgo);
+			    	comboRiesgo.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+    
     T017_FirmaPropietarioValidacion: function() {
         var me = this;
 
@@ -4097,7 +4316,43 @@
             }
         })
     },
+    
+	T018_DatosPBCValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	me.campoObligatorio(comboResultado);
+    	comboResultado.allowBlank = false;
+    },
+    
+    T018_CalculoRiesgoValidacion: function(){
+    	var me = this; 
+    	var comboRiesgo = me.down('[name=comboRiesgo]');
+    	me.campoObligatorio(comboRiesgo);
+    	comboRiesgo.allowBlank = false;
+    },
 	
+    T018_PbcAlquilerValidacion: function(){
+    	var me = this; 
+    	var comboResultado = me.down('[name=comboResultado]');
+    	var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+    	Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/tieneExpedienteRiesgo'),
+			params: {idExpediente : idExp},
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var dto = data.data;
+		    	if(!Ext.isEmpty(dto) && dto === "true"){
+					me.campoObligatorio(comboResultado);
+					me.desbloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;    		
+		    	}else{
+		    		me.bloquearCampo(comboResultado);
+			    	comboResultado.allowBlank = false;  
+		    	}
+		    }
+		});
+    },
+    
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

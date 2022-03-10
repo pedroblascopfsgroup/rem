@@ -715,22 +715,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (Checks.esNulo(cliente)) {
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
-				Activo activo = getActivoByWS(ofertaDto, sistemaOrigen);
 				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
 					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
-				}else if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
-					if(!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumento().getCodigo())
-						&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumento().getCodigo())
-						&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumento().getCodigo())) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
-					}
-
-					if(cliente.getTipoDocumentoRepresentante() != null
-							&& (!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
-							&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
-							&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null))) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
-					}
 				}
 			}
 		}

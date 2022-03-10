@@ -73,6 +73,51 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "IMPORTE_PROPORCIONAL_SUJETO")
 	private Double importeProporcinalSujeto;
+	
+	@Column(name = "TIPOCOMERC_COD")
+	private String carteraBcCodigo;
+	
+	@Column(name = "TIPOCOMERC_DESC")
+	private String carteraBc;
+	
+	@Column(name = "TIPOTRANS_COD")
+	private String tipoTransmisionCodigo;
+	
+	@Column(name = "TIPOTRANS_DESC")
+	private String tipoTransmision;
+	
+	@Column(name = "GRUPO")
+	private String grupo;
+	
+	@Column(name = "TIPO")
+	private String tipo;
+	
+	@Column(name = "SUBTIPO")
+	private String subtipo;
+	
+	@Column(name = "PRIM_TOMA_POSESION")
+	private String primeraPosesion;
+	
+	@Column(name = "SUBPARTEDIF_COD")
+	private String subpartidaEdifCodigo;
+	
+	@Column(name = "SUBPARTEDIF_DESC")
+	private String subpartidaEdif;
+	
+	@Column(name = "ELEMENTO_PEP")
+	private String elementoPep;
+	
+	@Column(name = "PROMOCION_COD")
+	private String promocionCodigo;
+	
+	@Column(name = "PROMOCION_DESC")
+	private String promocion;
+	
+	@Column(name = "SITUACIONCOMER_COD")
+	private String situacionComercialCodigo;
+	
+	@Column(name = "SITUACIONCOMER_DESC")
+	private String situacionComercial;
 
 	public Long getId() {
 		return id;
@@ -208,6 +253,126 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setImporteProporcinalSujeto(Double importeProporcinalSujeto) {
 		this.importeProporcinalSujeto = importeProporcinalSujeto;
+	}
+	
+	public String getCarteraBcCodigo() {
+		return carteraBcCodigo;
+	}
+
+	public void setCarteraBcCodigo(String carteraBcCodigo) {
+		this.carteraBcCodigo = carteraBcCodigo;
+	}
+
+	public String getCarteraBc() {
+		return carteraBc;
+	}
+
+	public void setCarteraBc(String carteraBc) {
+		this.carteraBc = carteraBc;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(String tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getSubtipo() {
+		return subtipo;
+	}
+
+	public void setSubtipo(String subtipo) {
+		this.subtipo = subtipo;
+	}
+
+	public String getPrimeraPosesion() {
+		return primeraPosesion;
+	}
+
+	public void setPrimeraPosesion(String primeraPosesion) {
+		this.primeraPosesion = primeraPosesion;
+	}
+
+	public String getSubpartidaEdifCodigo() {
+		return subpartidaEdifCodigo;
+	}
+
+	public void setSubpartidaEdifCodigo(String subpartidaEdifCodigo) {
+		this.subpartidaEdifCodigo = subpartidaEdifCodigo;
+	}
+
+	public String getSubpartidaEdif() {
+		return subpartidaEdif;
+	}
+
+	public void setSubpartidaEdif(String subpartidaEdif) {
+		this.subpartidaEdif = subpartidaEdif;
+	}
+
+	public String getElementoPep() {
+		return elementoPep;
+	}
+
+	public void setElementoPep(String elementoPep) {
+		this.elementoPep = elementoPep;
+	}
+
+	public String getPromocionCodigo() {
+		return promocionCodigo;
+	}
+
+	public void setPromocionCodigo(String promocionCodigo) {
+		this.promocionCodigo = promocionCodigo;
+	}
+
+	public String getPromocion() {
+		return promocion;
+	}
+
+	public void setPromocion(String promocion) {
+		this.promocion = promocion;
+	}
+
+	public String getSituacionComercialCodigo() {
+		return situacionComercialCodigo;
+	}
+
+	public void setSituacionComercialCodigo(String situacionComercialCodigo) {
+		this.situacionComercialCodigo = situacionComercialCodigo;
+	}
+
+	public String getSituacionComercial() {
+		return situacionComercial;
+	}
+
+	public void setSituacionComercial(String situacionComercial) {
+		this.situacionComercial = situacionComercial;
 	}
 
 }

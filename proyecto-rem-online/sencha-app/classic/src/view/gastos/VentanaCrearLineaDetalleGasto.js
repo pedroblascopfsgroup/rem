@@ -154,7 +154,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 						    				displayField: 'descripcion',
 											valueField: 'codigo',
 						    				bind: {
-						    					store: '{comboSubtiposGasto}'
+						    					store: '{comboSubtiposGastoFiltered}'
 						    				},
 						    				listeners:{
 						    					change: 'onChangeSubtipoGasto'

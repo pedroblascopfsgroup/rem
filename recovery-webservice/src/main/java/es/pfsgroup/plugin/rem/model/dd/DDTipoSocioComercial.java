@@ -21,6 +21,12 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoSocioComercial implements Auditable, Dictionary {
+
+	public static final String CODIGO_PRESCRIPTOR = "ZPRE";
+	public static final String CODIGO_API = "ZAPI";
+	public static final String CODIGO_NOTARIA = "ZNOT";
+	public static final String CODIGO_GEST_FORMALIZACION = "ZGES";
+	public static final String CODIGO_GARANTE = "ZGAR";
 	
 	private static final long serialVersionUID = 1L;
 

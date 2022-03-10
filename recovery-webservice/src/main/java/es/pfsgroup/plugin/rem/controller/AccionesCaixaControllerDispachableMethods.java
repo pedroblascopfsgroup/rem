@@ -770,6 +770,48 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(AccionesCaixaController.ACCION_BLOQUEO_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoScreening>() {
+            @Override
+            public Class<DtoScreening> getArgumentType() {
+                return DtoScreening.class;
+            }
+
+            @Override
+            public Boolean execute(DtoScreening dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionBloqueoScoring(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(AccionesCaixaController.ACCION_DESBLOQUEO_SCORING, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoScreening>() {
+            @Override
+            public Class<DtoScreening> getArgumentType() {
+                return DtoScreening.class;
+            }
+
+            @Override
+            public Boolean execute(DtoScreening dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDesbloqueoScoring(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

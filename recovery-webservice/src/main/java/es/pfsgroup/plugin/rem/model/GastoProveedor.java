@@ -29,14 +29,11 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -212,6 +209,10 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="CLAVE_FACTURA")
 	private String claveFactura;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_ID_TITULAR_CARTA")
+	private ActivoPropietario titularCartaPago;
 	
 	@Version   
 	private Long version;
@@ -598,6 +599,14 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setClaveFactura(String claveFactura) {
 		this.claveFactura = claveFactura;
+	}
+
+	public ActivoPropietario getTitularCartaPago() {
+		return titularCartaPago;
+	}
+
+	public void setTitularCartaPago(ActivoPropietario titularCartaPago) {
+		this.titularCartaPago = titularCartaPago;
 	}
 	
 }

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -18,10 +20,12 @@ import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterService {
@@ -50,20 +54,15 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 	@Override
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {
 
-		boolean estadoBcModificado = false;
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Boolean haPasadoScoringBC = tramiteAlquilerApi.haPasadoScoringBC(tramite.getId());
 		String comboResultado = null;
-		String respuestaComprador = null;
 	
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			for(TareaExternaValor valor :  valores){
 				if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					comboResultado = valor.getValor();
-				}
-				if(COMBO_RESPUESTA_COMPRADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					respuestaComprador = valor.getValor();
 				}
 			}
 
@@ -72,12 +71,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				String estadoCodigo = null;
 				String estadoBcCodigo = null;
 				if(!haPasadoScoringBC && acepta) {
-					if(tramiteAlquilerApi.isOfertaContraOfertaMayor10K(tareaExternaActual)) {
-						estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
-					}else {
-						estadoCodigo = DDEstadosExpedienteComercial.PTE_ENVIO;
-					}
-					
+					estadoCodigo = DDEstadosExpedienteComercial.PTE_PBC;
 					estadoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO;
 				}else if(haPasadoScoringBC && acepta){
 					estadoCodigo = DDEstadosExpedienteComercial.PTE_SANCION_COMITE;
@@ -94,7 +88,6 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 				if(estadoBcCodigo != null) {
 					DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcCodigo));
 					expediente.setEstadoBc(estadoBc);
-					estadoBcModificado = true;
 				}
 				
 				if(estadoCodigo != null) {
@@ -102,10 +95,27 @@ public class UpdaterServiceSolicitarGarantiasAdicionales implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expediente, respuestaComprador));
-				}
 			}
+				
+			Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaAceptada.getId());
+			Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
+			Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+			HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
+			
+			if (historico != null) {
+				historico.setActiva(false);
+				
+				genericDao.save(HistoricoTareaPbc.class, historico);
+			}
+			
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
+			DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+			
+			HistoricoTareaPbc htp = new HistoricoTareaPbc();
+			htp.setOferta(ofertaAceptada);
+			htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+			
+			genericDao.save(HistoricoTareaPbc.class, htp);
 
 		}
 	}

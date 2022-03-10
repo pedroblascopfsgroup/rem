@@ -126,7 +126,7 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
 					}
-					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras);
+					expedienteComercialApi.createOrUpdateUltimaPropuesta(expediente.getId(), dtoArras, ofertaAceptada);
 				}else {
 					if(reserva != null) {
 						reserva.setFechaEnvio(fechaEnvio);

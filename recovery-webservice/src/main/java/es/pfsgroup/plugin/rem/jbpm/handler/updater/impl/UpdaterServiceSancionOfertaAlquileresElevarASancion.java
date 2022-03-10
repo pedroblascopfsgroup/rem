@@ -76,6 +76,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		String peticionario = null;
 		DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 		dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
+		String fechaSancion = null;
 		boolean aprobado = true;
 		
 		for(TareaExternaValor valor :  valores){
@@ -85,12 +86,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 			
 			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				try {
-					if(!Checks.esNulo(expedienteComercial))
-						expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
-				} catch (ParseException e) {
-					logger.error("Error insertando Fecha Sancion Comite.", e);
-				}
+				fechaSancion = valor.getValor();
 			}
 			
 			if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -137,6 +133,16 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 		}
 		
+		if(fechaSancion != null) {
+			try {
+				expedienteComercial.setFechaSancion(ft.parse(fechaSancion));
+			} catch (ParseException e) {
+				logger.error("Error insertando Fecha Sancion.", e);
+			}
+		}else {
+			expedienteComercial.setFechaSancion(new Date());
+		}
+		
 		expedienteComercial.setOferta(oferta);
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expedienteComercial.getOferta(), expedienteComercial.getEstado());
 
@@ -144,7 +150,6 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		
 		if(aprobado) {
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
-
 		}else {
 			dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 		}

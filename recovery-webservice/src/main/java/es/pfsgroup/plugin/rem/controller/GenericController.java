@@ -37,12 +37,14 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -52,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
@@ -90,6 +93,9 @@ public class GenericController extends ParadiseJsonController{
 
 	@Autowired
 	private AccionesCaixaController accionesCaixaController;
+	
+	@Autowired
+    public AccionesCaixaApi accionesCaixaApi;
 	
 
 	
@@ -916,6 +922,33 @@ public class GenericController extends ParadiseJsonController{
 		List <DDTiposImpuesto> lista = genericApi.getTipoImpuestoFiltered(esBankia);
 		return createModelAndViewJson(new ModelMap("data", lista));	
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoGastoFiltered(codCartera, codigoTipoGasto)));	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "generic/avanzaTareaDatosPbc")
+	public void avanzaTareaDatosPbc(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		
+		AvanzarDatosPBCDto jsonData = null;
+        ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+        JSONObject jsonFields = null;
+        
+		try {
+			jsonData = (AvanzarDatosPBCDto) request.getRequestData(AvanzarDatosPBCDto.class);
+			model.put("success", genericApi.avanzaDatosPbc(jsonData));
+			accionesCaixaApi.sendReplicarOfertaAccion(jsonData.getIdExpediente());
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se han obtenido fotos para este activo/Agrupacion");
+			model.put("success", false);
+		}finally {
+			restApi.sendResponse(response, model, request);
+	
+		}	
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void idPersonaHayaSinCartera(RestRequestWrapper request, ModelMap model, HttpServletResponse response,
@@ -925,6 +958,5 @@ public class GenericController extends ParadiseJsonController{
 
 		restApi.sendResponse(response, model, request);
 	}
-
  }
 

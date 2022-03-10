@@ -8,32 +8,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
-import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
-import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
-import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
-import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
-import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
-import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
-import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
-import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -445,5 +419,7 @@ public interface GastoProveedorApi {
     List<VTasacionesGastos> getListTasacionesGasto(Long idGasto);
 
     boolean deleteGastoTasacion(Long id);
+
+	List<HistoricoEnvioPedidos> getHistoricoEnvioPedidosByIdGasto(Long idGasto);
 }
 

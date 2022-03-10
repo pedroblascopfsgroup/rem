@@ -530,9 +530,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.findOne")
 	public Trabajo findOne(Long id) {
-
-		return trabajoDao.get(id);
-
+		try {
+			return trabajoDao.get(id);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

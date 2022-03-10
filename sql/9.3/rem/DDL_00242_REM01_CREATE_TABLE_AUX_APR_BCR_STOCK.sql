@@ -492,11 +492,26 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_SOBRE_RASANTE IS '' Superficie sobre rasante''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_BAJO_RASANTE IS '' Superficie bajo rasante''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_APARACAMIENTOS IS '' Número de aparcamientos. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IDEN_PL_PARKING IS '' Identificador plaza parking.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IDEN_TRASTERO IS '' Identificador trastero.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_REG_CONSTRUIDA IS '' Superficie Registral Construida.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_REG_SOLAR IS '' Superficie Registral Solar.''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_ASCENSOR IS '' Marca de si tiene ascensor. PDaremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_TRASTERO IS '' Marca de si tiene trastero. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INMUEBLE_VACACIONAL IS '' Marca de si es un inmueble vacacional.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EQUIPAMIENTO_015001 IS '' Marca de si tiene parking''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.BALCON IS '' Balcón''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CALEFACCION IS '' Calefacción.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COCINA_EQUIPADA IS '' Cocina Equipada.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_CONSERVACION IS '' Estado conservación.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.JARDIN IS '' Jardín.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.USO_JARDIN IS '' Uso Jardín.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PISCINA IS '' Piscina.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SALIDA_HUMOS IS '' Salida De Humos.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TERRAZA IS '' Terraza.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIPO_VIVIENDA_INF IS '' Tipo vivienda.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIPOLOGIA_EDIFICIO IS '' Tipología Edificio.''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_VENTA IS '' Importe Clase de condición Precio de venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_VENTA_NEGOCIABLE IS '' Flag precio venta negociable''';

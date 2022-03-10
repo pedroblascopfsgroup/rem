@@ -1101,20 +1101,4 @@ public class OfertasController {
 		model.put(RESPONSE_SUCCESS_KEY, true);
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario, ModelMap model) {
-		try {
-			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto, dtoBancario));
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-			logger.error("Error en ofertasController", e);
-		}
-		return createModelAndViewJson(model);
-	}
-
-	
 }

@@ -1254,6 +1254,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorBusquedaAdicional.setCodigoPostal(titularAdicional.getCodPostal());
 					}
 
+					if (!Checks.esNulo(titularAdicional.getTipoOcupacion())) {
+						compradorBusquedaAdicional.setTipoOcupacion(titularAdicional.getTipoOcupacion());
+					}
+
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
 					}
@@ -2091,9 +2095,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				for (ActivoOferta activoOferta : ofertasActivo) {
 					Oferta ofr = activoOferta.getPrimaryKey().getOferta();
 					// Si existe oferta de venta lanzar error
-					if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getTipoOferta())
-							&& DDTipoOferta.CODIGO_VENTA.equals(ofr.getTipoOferta().getCodigo())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())) {
+					if (!Checks.esNulo(ofr) && DDTipoOferta.isTipoVenta(ofr.getTipoOferta()) && !DDEstadoOferta.isCaducada(ofr.getEstadoOferta())
+							&& !DDEstadoOferta.isRechazada(ofr.getEstadoOferta())) {
 
 						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
 					}

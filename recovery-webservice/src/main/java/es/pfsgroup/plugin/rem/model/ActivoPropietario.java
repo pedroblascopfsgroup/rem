@@ -43,6 +43,7 @@ public class ActivoPropietario implements Serializable, Auditable {
 	public static final String CODIGO_GIVP_II ="74";
 	public static final String CODIGO_FONDOS_TITULIZACION ="5";
 	public static final String NIF_PROPIETARIO_LIVINGCENTER ="A58032244";
+	public static final String NIF_PROPIETARIO_CAIXABANK ="A08663619";
 
 	/**
 	 * 

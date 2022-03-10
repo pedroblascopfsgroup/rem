@@ -46,7 +46,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="-1"/>
-    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="-1"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="200"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -828,11 +828,18 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkEstadoBC(tareaExterna);
             }
-			
+            def avanzaScoring (String comboReqAnalisisTec) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaScoring(tareaExterna, comboReqAnalisisTec);
+            }	
 			def esTitulizada = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esTitulizada(tareaExterna);
 			}
+			def tieneCampoClasificacionRelleno = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesManager.tieneCampoClasificacionRelleno(tareaExterna);
+            }
            
   			 ]]></value>
   		</list>
@@ -857,6 +864,7 @@
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion</value>
         </list>
     </property>
    </bean>

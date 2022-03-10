@@ -75,7 +75,7 @@ public class InterlocutorCaixaService {
     }
 
     public boolean esClienteInvolucradoBC(ClienteComercial clienteComercial) {
-    return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
+        return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
     }
 
     public void callReplicateClientAsync(final Comprador comprador, final Oferta oferta){
@@ -138,6 +138,18 @@ public class InterlocutorCaixaService {
                 }
             });
             thread.start();
+    }
+
+    public void callReplicateClientSync(final Long id, final String tipoId, final String dataSourceCode){
+        hibernateUtils.flushSession();
+
+        caixaBcRestClient.callReplicateClient(id, tipoId, dataSourceCode);
+    }
+
+    public void callReplicateClientSyncVisitas(final Long id, final String tipoId, final String dataSourceCode, final Boolean vieneVisita){
+        hibernateUtils.flushSession();
+
+        caixaBcRestClient.callReplicateClientVisita(id, tipoId, dataSourceCode, vieneVisita);
     }
 
     public String getIdPersonaHayaCaixaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){

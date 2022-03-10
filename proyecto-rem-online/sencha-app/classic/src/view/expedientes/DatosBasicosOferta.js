@@ -948,7 +948,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					            return !allowEdit;
 							},
 							rowdblclick: function(grid, record){
-								var allowCopy = record.get("campoCodigo") == '08';
+								var cod = context.record.get("campoCodigo");
+								var allowCopy = cod == '08' || cod == '09';
 								if (allowCopy){
 									var elem = document.createElement('textarea');
 								    elem.value = record.get("texto");

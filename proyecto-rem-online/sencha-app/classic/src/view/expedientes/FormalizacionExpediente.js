@@ -626,7 +626,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							var me = this, seleccionados = btn.up('grid').getSelection(), gridStore = btn.up('grid').getStore();
 
 							if (Ext.isArray(seleccionados) && seleccionados.length != 0) {
-								if (!Ext.isEmpty(me.selection .get('motivoAplazamiento'))) {
+								if (!Ext.isEmpty(me.selection.get('motivoAplazamiento')) || !Ext.isEmpty(me.selection.get('motivoAnulacionBc'))) {
 									Ext.Msg.show({
 										title : HreRem.i18n("title.ventana.eliminar.posicionamiento"),
 										message : HreRem.i18n("text.ventana.eliminar.posicionamiento"),

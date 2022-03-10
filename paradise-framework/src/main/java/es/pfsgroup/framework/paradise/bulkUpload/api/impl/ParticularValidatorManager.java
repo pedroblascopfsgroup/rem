@@ -8220,7 +8220,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(numCliente) || !StringUtils.isNumeric(numCliente)) {
 			return false;
 		}
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "FROM OFR_OFERTAS OFR "
 				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
@@ -8228,6 +8228,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE DD_CRA_CODIGO = '03' "
 				+ "AND OFR.CLC_ID = "+numCliente+" "
 				+ "AND OFR.BORRADO = 0");
+
+		if("0".equals(resultado)){
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "FROM VIS_VISITAS VIS "
+					+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = VIS.ACT_ID "
+					+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+					+ "WHERE DD_CRA_CODIGO = '03' "
+					+ "AND VIS.CLC_ID = "+numCliente+" "
+					+ "AND VIS.BORRADO = 0");
+		}
+
 		return !"0".equals(resultado);
 	}
 

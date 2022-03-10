@@ -45,6 +45,7 @@ import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -66,6 +67,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -87,8 +89,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
+import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.DatosPBCDto;
+import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -259,6 +264,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	private RestApi restApi;
 	
 	private static final String ADD_PROVEEDORES_HOMOLOGABLES = "ADD_PROVEEDORES_HOMOLOGABLES";
+	@Autowired
+    public AgendaAdapter agendaAdapter;
 
 	@Autowired
 	private InterlocutorGenericService interlocutorGenericService;
@@ -2143,6 +2150,46 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return genericDao.getList(DDTiposImpuesto.class, filtro1,filtro2);
 		}
 		 
+	}
+	
+	@Override
+	public List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto) {
+		
+		List<DDSubtipoGasto> listaSubtipos = new ArrayList<DDSubtipoGasto>();
+
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", codigoTipoGasto);
+		Filter filterNoEsEnCaixa = genericDao.createFilter(FilterType.EQUALS, "gastoEnCaixa", false);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if (!Checks.esNulo(codigoTipoGasto) && !Checks.esNulo(codCartera)) {
+			if (filterTipo != null && filterNoEsEnCaixa != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+			} else {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado, filterNoEsEnCaixa);
+			}
+		} else if (!Checks.esNulo(codigoTipoGasto) && Checks.esNulo(codCartera)) {
+			listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+		}
+	
+		return listaSubtipos;	
+	}
+	
+	@Override
+	public Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception {
+		return agendaAdapter.save(calcularMapDatosPbc(dto));
+	}
+
+	private Map<String, String[]> calcularMapDatosPbc(AvanzarDatosPBCDto dto) {
+		Map<String,String[]> map = new HashMap<String,String[]>();
+		
+	    String[] idTarea = {dto.getIdTarea().toString()};
+	    String[] comboResultado = {dto.getComboResultado()};
+	
+	    map.put("idTarea", idTarea);
+	    map.put("comboResultado", comboResultado);
+	    
+	    return map;
 	}
 
 }

@@ -14,7 +14,7 @@ public interface AccionesCaixaApi {
 
     Boolean accionRechazoAvanzaRE(DtoAccionRechazoCaixa dto) throws Exception;
 
-    void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto);
+    void accionResultadoRiesgo(DtoAccionResultadoRiesgoCaixa dto) throws Exception;
 
     void accionArrasAprobadas(DtoOnlyExpedienteYOfertaCaixa dto);
 

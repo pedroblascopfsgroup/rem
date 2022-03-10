@@ -92,7 +92,12 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				: visita.getPrescriptor().getCodigoProveedorRem().toString();
 		visitMaker = (visita == null || visita.getProveedorVisita() == null) ? null
 				: visita.getProveedorVisita().getCodigoProveedorRem().toString(); 
-		offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
+		if(oferta.getPrescriptor() != null) {
+			offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
+		}else {
+			offerPrescriber = null;
+		}
+		
 		
 		String codLeadOrigin = calculaLeadOrigin(oferta);
 		

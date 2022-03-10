@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -50,6 +51,7 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
     	private static final String MOTIVO_ANULACION = "motivoAnulacion";
     	private static final String NUM_EXPEDIENTE_EXT = "numExpediente";
     	private static final String RATING_HAYA = "ratingHaya";
+    	private static final String COMBO_REQ_ANALISIS_TECNICO = "comboReqAnalisisTec";
     }
 
 	private static final String CODIGO_T018_SCORING = "T018_Scoring";
@@ -62,22 +64,18 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 		String estadoEcoCodigo = null;
 		String estadoEcoBcCodigo = null;
 		DtoExpedienteScoring dto = new DtoExpedienteScoring();
+		boolean aprobado = false;
+		boolean analisisTecnico = false;
 		
 		try {
 			for(TareaExternaValor valor :  valores){
 				
 				if(CamposScoringNoComercial.COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if(DDResultadoScoring.RESULTADO_APROBADO.equals(valor.getValor())) {
-						 estadoEcoCodigo =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
-						 estadoEcoBcCodigo = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
-					}else {
-						estadoEcoCodigo =  DDEstadosExpedienteComercial.PTE_SCORING;
-						estadoEcoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_A_REVISAR_POR_BC;
+						aprobado = true;
 					}
-					
 					dto.setEstadoEscoring(valor.getValor());
 				}
-			
 				
 				if(CamposScoringNoComercial.FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setFechaResolucion(ft.parse(valor.getValor()));
@@ -93,9 +91,28 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 				if(CamposScoringNoComercial.RATING_HAYA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					dto.setCodigoRating(valor.getValor());
 				}
+				
+				if(CamposScoringNoComercial.COMBO_REQ_ANALISIS_TECNICO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(DDSiNo.SI.equals(valor.getValor())) {
+						analisisTecnico = true;
+					}
+				}
 			}
 			
-	
+			
+			if(aprobado) {
+				if(analisisTecnico) {
+					estadoEcoCodigo = DDEstadosExpedienteComercial.PTE_ANALISIS_TECNICO;
+					estadoEcoBcCodigo = DDEstadoExpedienteBc.PTE_ANALISIS_TECNICO;
+				}else {
+					estadoEcoCodigo = DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION;
+					estadoEcoBcCodigo = DDEstadoExpedienteBc.PTE_SANCION_BC;
+				}
+			}else {
+				estadoEcoCodigo =  DDEstadosExpedienteComercial.PTE_SCORING;
+				estadoEcoBcCodigo = DDEstadoExpedienteBc.CODIGO_SCORING_A_REVISAR_POR_BC;
+			}
+			
 			expedienteComercial.getCondicionante().setScoringBc(true);
 			this.updateScoring(dto, expedienteComercial);
 			

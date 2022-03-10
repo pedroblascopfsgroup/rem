@@ -263,6 +263,14 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
  	        extraParams: {idJunta: '{junta.id}'}
      	 },
      	 groupField: 'descripcionTipo'
+	},
+	
+	comboSubtipoGastoFiltered: {
+		model: 'HreRem.model.ComboBase',
+		proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
+		}
 	}
 
   }

@@ -138,66 +138,6 @@ BEGIN
       EXECUTE IMMEDIATE V_SENTENCIA;
 
 
- V_SENTENCIA := '
-        INSERT INTO '||V_ESQUEMA||'.'||V_TABLA2||' (
-          ACT_PTA_ID
-          ,ACT_ID
-          ,DD_ADA_ID
-          ,CHECK_HPM
-          ,VERSION
-          ,USUARIOCREAR
-          ,FECHACREAR
-          ,BORRADO
-          ,DD_ADA_ID_ANTERIOR
-          ,DD_EAL_ID
-          ,DD_TPI_ID
-          ,CHECK_SUBROGADO
-          ,PTA_RENTA_ANTIGUA
-          ,DD_CDU_ID
-          ,PTA_TRAMITE_ALQ_SOCIAL
-          ,ACUERDO_PAGO
-          ,MOROSO
-          ,ACTIVO_PROMO_ESTRATEG
-        )
-        SELECT 
-          '||V_ESQUEMA||'.S_'||V_TABLA2||'.NEXTVAL                       AS ACT_PTA_ID  
-          ,ACT2.ACT_ID							                      AS ACT_ID  
-          ,PTA.DD_ADA_ID                                  AS DD_ADA_ID
-          ,PTA.CHECK_HPM                                  AS CHECK_HPM
-          ,0                                                             AS VERSION
-          ,'''||V_USUARIO||'''                                           AS USUARIOCREAR                          
-          ,SYSDATE                                                       AS FECHACREAR                          
-          ,PTA.BORRADO                                                   AS BORRADO
-         ,PTA.DD_ADA_ID_ANTERIOR                                        AS DD_ADA_ID_ANTERIOR
-          ,PTA.DD_EAL_ID                                  AS DD_EAL_ID
-          ,PTA.DD_TPI_ID                                  AS DD_TPI_ID
-          ,PTA.CHECK_SUBROGADO                            AS CHECK_SUBROGADO
-          ,PTA.PTA_RENTA_ANTIGUA                          AS PTA_RENTA_ANTIGUA
-          ,PTA.DD_CDU_ID                                  AS DD_CDU_ID
-          ,PTA.PTA_TRAMITE_ALQ_SOCIAL                     AS PTA_TRAMITE_ALQ_SOCIAL
-          ,PTA.ACUERDO_PAGO                               AS ACUERDO_PAGO
-          ,PTA.MOROSO                                     AS MOROSO
-          ,PTA.ACTIVO_PROMO_ESTRATEG                      AS ACTIVO_PROMO_ESTRATEG
-
-
-
-
-			FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
-			JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
-			JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
-			JOIN '||V_ESQUEMA||'.'||V_TABLA2||' PTA ON PTA.ACT_ID = ACT.ACT_ID
-      '
-      ;
-      EXECUTE IMMEDIATE V_SENTENCIA;
-      
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA2||' cargada. '||SQL%ROWCOUNT||' Filas.');
-
-      COMMIT;
-      
-      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA2||''',''1''); END;';
-      EXECUTE IMMEDIATE V_SENTENCIA;
-
-
      V_SENTENCIA := '
         INSERT INTO '||V_ESQUEMA||'.'||V_TABLA3||' (
           HIST_PTA_ID

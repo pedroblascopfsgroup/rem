@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220214
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220310
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17147
+--## INCIDENCIA_LINK=HREOS-17348
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -25,6 +25,7 @@
 --##        0.12  HREOS-XXXXX -  Alejandra García - Cambiar longitud al campo MOT_NECESIDAD_ARRAS
 --##        0.13  HREOS-16321 -  Daniel Algaba - Añadimos flag de oferta viva
 --##        0.14  HREOS-17147 -  Alejandra García - Añadir nuevos campos para mejora del proceso stock
+--##        0.15  HREOS-17348 -  Daniel Algaba - Añadir nuevos campos informe comercial
 --##########################################
 --*/
 
@@ -196,7 +197,6 @@ BEGIN
         PUBLICABLE_PORT_API_ALQUI   VARCHAR2(1 CHAR),
         NECESIDAD_ARRAS             VARCHAR2(2 CHAR),
         MOT_NECESIDAD_ARRAS         VARCHAR2(40 CHAR),
-        RENUNCIA_EXENSION           VARCHAR2(1 CHAR),
         CARTERA_VENTA_ACTIVOS       VARCHAR2(4 CHAR),
         CARTERA_VENTA_CREDITOS      VARCHAR2(4 CHAR),       
         CAT_COMERCIALIZACION        VARCHAR2(2 CHAR),
@@ -210,6 +210,7 @@ BEGIN
         TXT_COMERCIAL_ENG_2         VARCHAR2(3000 CHAR),
         FEC_PUBLI_SERVICER_APIS     VARCHAR2(8 CHAR),
         FEC_PUBLI_PORT_INVERSOR     VARCHAR2(8 CHAR),
+        RENUNCIA_EXENSION           VARCHAR2(1 CHAR),
 
         ANYO_CONCESION              VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
@@ -250,11 +251,26 @@ BEGIN
         SUP_SOBRE_RASANTE           VARCHAR2(10 CHAR),
         SUP_BAJO_RASANTE            VARCHAR2(10 CHAR),
         NUM_APARACAMIENTOS          VARCHAR2(10 CHAR),
+        IDEN_PL_PARKING             VARCHAR2(3 CHAR),
+        IDEN_TRASTERO               VARCHAR2(3 CHAR),
+        SUP_REG_CONSTRUIDA          VARCHAR2(12 CHAR),
+        SUP_REG_SOLAR               VARCHAR2(12 CHAR),
 
         TIENE_ASCENSOR              VARCHAR2(1 CHAR),
         TIENE_TRASTERO              VARCHAR2(1 CHAR),
         INMUEBLE_VACACIONAL         VARCHAR2(6 CHAR),
         EQUIPAMIENTO_015001         VARCHAR2(6 CHAR),
+        BALCON                      VARCHAR2(6 CHAR),
+        CALEFACCION                 VARCHAR2(6 CHAR),
+        COCINA_EQUIPADA             VARCHAR2(6 CHAR),
+        EST_CONSERVACION            VARCHAR2(6 CHAR),
+        JARDIN                      VARCHAR2(6 CHAR),
+        USO_JARDIN                  VARCHAR2(6 CHAR),
+        PISCINA                     VARCHAR2(6 CHAR),
+        SALIDA_HUMOS                VARCHAR2(6 CHAR),
+        TERRAZA                     VARCHAR2(6 CHAR),
+        TIPO_VIVIENDA_INF           VARCHAR2(6 CHAR),
+        TIPOLOGIA_EDIFICIO          VARCHAR2(6 CHAR),
 
         IMP_PRECIO_VENTA            VARCHAR2(10 CHAR),
         PRECIO_VENTA_NEGOCIABLE     VARCHAR2(1 CHAR),

@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220217
+--## FECHA_CREACION=20220218
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17208
@@ -67,6 +67,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_ACCION
+                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO ORDER BY ETG.DD_SCM_ID DESC NULLS LAST) RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -104,7 +105,7 @@ BEGIN
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
-                    AND NVL(ETG.DD_SCM_ID, 0) = NVL(GEN.DD_SCM_ID, 0)
+                    AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                 SELECT
@@ -124,6 +125,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_ACCION
+                      , 1 RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_LFACT_SIN_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -156,7 +158,7 @@ BEGIN
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
-              ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND T1.ID_ACTIVO_ESPECIAL = T2.ID_ACTIVO_ESPECIAL )
+              ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN = 1)
               WHEN MATCHED THEN UPDATE SET
                   T1.COD_GRUPO_GASTO = T2.COD_GRUPO_GASTO
                 , T1.COD_TIPO_ACCION = T2.COD_TIPO_ACCION
@@ -187,6 +189,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_GASTO
+                      , ROW_NUMBER() OVER(PARTITION BY GPV.GPV_NUM_GASTO_HAYA, AUX.ID_ACTIVO_ESPECIAL, AUX.LINEA_GASTO ORDER BY ETG.DD_SCM_ID DESC NULLS LAST) RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -224,7 +227,7 @@ BEGIN
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
-                    AND NVL(ETG.DD_SCM_ID, 0) = NVL(GEN.DD_SCM_ID, 0)
+                    AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
                 UNION
                  SELECT
@@ -244,6 +247,7 @@ BEGIN
                           WHEN NVL(GLD.GLD_IMPORTE_TOTAL, 0) > 0 THEN ETG.COSBAC_POS
                           ELSE ETG.COSBAC_NEG
                         END AS COD_SUBTIPO_GASTO
+                      , 1 RN
                 FROM '|| V_ESQUEMA ||'.APR_AUX_I_RU_FACT_PROV AUX
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
@@ -276,7 +280,7 @@ BEGIN
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
-              ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND T1.ID_ACTIVO_ESPECIAL = T2.ID_ACTIVO_ESPECIAL)
+              ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN =1)
               WHEN MATCHED THEN UPDATE SET
                   T1.COD_GRUPO_GASTO = T2.COD_GRUPO_GASTO
                 , T1.COD_TIPO_CONCEPTO_GASTO = T2.COD_TIPO_CONCEPTO_GASTO

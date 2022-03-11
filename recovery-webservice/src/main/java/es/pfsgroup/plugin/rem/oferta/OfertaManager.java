@@ -822,7 +822,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(titDto)) {
 					DDTipoDocumento tpd = genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento()));
-					Activo activo = activoApi.getByNumActivo(ofertaDto.getIdActivoHaya());
+					Activo activo = getActivoByWS(ofertaDto, sistemaOrigen);
 					if (Checks.esNulo(tpd)) {
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
 					}else if(activo != null

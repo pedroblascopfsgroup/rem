@@ -528,7 +528,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if(iap != null) {
@@ -541,7 +541,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		InfoAdicionalPersona iapRep = null;
 
 		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
-		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+		iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
 		cliente.setInfoAdicionalPersonaRep(iapRep);
 
 		if(iapRep != null) {
@@ -991,7 +991,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -1015,7 +1015,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 			String idPersonaHayaRte = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumentoRepresentante());
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 		}
 

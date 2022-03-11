@@ -845,7 +845,7 @@ public interface OfertaApi {
 	
 	String getClienteByidExpedienteGD(Long idExpediente);
 
-	public void llamadaPbc(Oferta oferta);
+	public void llamadaPbc(Oferta oferta, String codAccion);
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 }

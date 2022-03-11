@@ -10,6 +10,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import net.sf.json.JSONArray;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +102,11 @@ public class VisitasController {
 	public void saveOrUpdateVisita(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		
 		VisitaRequestDto jsonData = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Map<String, ArrayList<Map<String, Object>>> listaRespuesta = null;
+		ArrayList<Map<String, Object>> listaProcesadas = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> listaCompleta = new ArrayList<Map<String, Object>>();
+		JSONObject listaProcesadasDto = new JSONObject();
+		JSONObject listaNoProcesadasDto = new JSONObject();
 		JSONObject jsonFields = null;
 		
 		try {
@@ -112,8 +119,24 @@ public class VisitasController {
 			} 
 			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
+
+				if(listaRespuesta != null) {
+					listaProcesadas = listaRespuesta.get("listaProcesadas");
+					listaCompleta = listaRespuesta.get("listaCompleta");
+
+					try {
+						visitaApi.callLlamadasVisitas(listaProcesadas, listaVisitaDto, jsonFields);
+					} catch (HttpClientException e) {
+						if (e.getResponseCode() != 200) {
+							e.printStackTrace();
+							throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
+						}
+					}
+
+				}
+
 				model.put("id", jsonFields.get("id"));
-				model.put("data", listaRespuesta);
+				model.put("data", listaCompleta);
 				model.put("error", "null");
 			}
 			
@@ -123,8 +146,10 @@ public class VisitasController {
 			if (jsonFields != null) {
 				model.put("id", jsonFields.get("id"));
 			}
-			model.put("data", listaRespuesta);
-			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("data", listaCompleta);
+			if (e.getClass() != HttpClientException.class){
+				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			}
 		}
 
 		restApi.sendResponse(response, model,request);

@@ -65,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		'fotoswebactivo' : {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
-		
+
 		'fotostecnicasactivo' : {
 			updateOrdenFotos : 'updateOrdenFotosInterno'
 		},
@@ -7305,16 +7305,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 			if (noSubsanado && (newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
-			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] 
+			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['NULO']
 			&& newValue !=  CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'])) {
 
 				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
 				if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
-					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']); 
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']);
 				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['NULO']){
-					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['NULO']); 
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['NULO']);
 				}else if(codigoAnterior != null && codigoAnterior == CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']){
-					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']); 
+					combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION']);
 				}
 				return;
 			};
@@ -7353,7 +7353,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(false);
 				fechas['fechaInscripcion'].allowBlank = false;
 				break;
-				
+
 			case CONST.DD_ESP_ESTADO_PRESENTACION['NULO'] :
 				fechas['fechaPresentacionRegistro'].setDisabled(true);
 				fechas['fechaPresentacionRegistro'].setValue();
@@ -7362,7 +7362,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(true);
 				fechas['fechaInscripcion'].setValue();
 				break;
-				
+
 			case CONST.DD_ESP_ESTADO_PRESENTACION['IMPOSIBLE_INSCRIPCION'] :
 				fechas['fechaPresentacionRegistro'].setDisabled(false);
 				fechas['fechaPresentacionRegistro'].setValue();
@@ -7372,7 +7372,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(true);
 				fechas['fechaInscripcion'].setValue();
 				break;
-				
+
 			case CONST.DD_ESP_ESTADO_PRESENTACION['INMATRICULADOS'] :
 				fechas['fechaPresentacionRegistro'].setDisabled(true);
 				fechas['fechaPresentacionRegistro'].setValue();
@@ -7381,7 +7381,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechas['fechaInscripcion'].setDisabled(true);
 				fechas['fechaInscripcion'].setValue();
 				break;
-				
+
 			case CONST.DD_ESP_ESTADO_PRESENTACION['DESCONOCIDO'] :
 				fechas['fechaPresentacionRegistro'].setDisabled(true)
 				fechas['fechaPresentacionRegistro'].setValue();
@@ -7393,7 +7393,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 
 		me.usuarioLogadoPuedeEditar();
-	},	
+	},
 	checkDateInterval : function(obj) {
 		if (!obj.readOnly && !obj.disabled) {
 			var me = this;
@@ -8866,13 +8866,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
     },
-    
+
     onSelectDiscrepanciasLocalizacion : function(combo, value) {
 		var me = this;
 		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
 		if(value.get('codigo') === 'false'){
 			textObservacionesLoc.setValue('');
 		}
+    },
+
+    validateTipoDocumento : function(value){
+    	var me = this;
+
+    	if (!Ext.isEmpty(me.lookupReference('cbTipoDocumento').value) && me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
+    		&& me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')) {
+
+    		return 'Error! Tipo de documento incorrecto para caixabank';
+    	}else{
+    		return true;
+    	}
     }
+
 });
 

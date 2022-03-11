@@ -4296,11 +4296,11 @@ public class ActivoAdapter {
 				}
 				
 				if (dto.getNombreRazonSocialRte() != null) {
-					clienteComercial.setNombre(dto.getNombreRazonSocialRte());
+					clienteComercial.setNombreRepresentante(dto.getNombreRazonSocialRte());
 				}
 				
 				if (dto.getApellidosRte() != null) {
-					clienteComercial.setApellidos(dto.getApellidosRte());
+					clienteComercial.setApellidosRepresentante(dto.getApellidosRte());
 				}
 				
 				if (dto.getPaisNacimientoRepresentanteCodigo() != null) {

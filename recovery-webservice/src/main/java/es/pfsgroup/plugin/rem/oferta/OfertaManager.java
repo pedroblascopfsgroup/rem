@@ -822,15 +822,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(titDto)) {
 					DDTipoDocumento tpd = genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento()));
-					Activo activo = getActivoByWS(ofertaDto, sistemaOrigen);
 					if (Checks.esNulo(tpd)) {
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
-					}else if(activo != null
-							&& DDCartera.isCarteraBk(activo.getCartera())
-							&& (!DD_TDI_CODIGO_NIF.equals(tpd.getCodigo())
-									&& !DD_TDI_CODIGO_DNI.equals(tpd.getCodigo())
-									&& !DD_TDI_CODIGO_NIE.equals(tpd.getCodigo()))) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
 					}
 				}
 			}

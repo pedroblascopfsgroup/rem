@@ -7805,11 +7805,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(),tareaExterna);
+		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(), tareaExterna);
 	}
 	
 	@Override
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna) {
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo, TareaExterna tareaExterna) {
 
 		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			return null;
@@ -7826,22 +7826,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
-		Boolean esContraoferta = false;
 
 		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
-		
-		if (!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getValores())) {
-			List<TareaExternaValor> valoresTarea = tareaExterna.getValores();
-			for (TareaExternaValor valor : valoresTarea) {
-				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
-					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA)
-					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{
-					esContraoferta = true;
-					break;
-				}
-			}
-		}
 
 		if(solicitaReserva) {
 			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
@@ -7868,10 +7855,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
 					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
-					||(CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo)
-					&& esContraoferta )) {
+					|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)) {
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7880,9 +7864,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
-					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo)
-					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo)
-					&& esContraoferta )
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);

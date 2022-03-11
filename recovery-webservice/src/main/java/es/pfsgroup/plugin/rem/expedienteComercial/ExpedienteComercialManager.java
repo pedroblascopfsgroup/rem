@@ -5710,7 +5710,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					String nuevoIdPersonaHayaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixa(oferta, oferta.getActivoPrincipal(), dto.getNumDocumento(), null);
 					String nuevoIdPersonaHaya = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(dto.getNumDocumento());
 
-					iapComprador = interlocutorCaixaService.getIapCaixaOrDefault(iapComprador, nuevoIdPersonaHayaCaixa, nuevoIdPersonaHaya);
+					iapComprador = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(nuevoIdPersonaHayaCaixa, nuevoIdPersonaHaya);
 					comprador.setInfoAdicionalPersona(iapComprador);
 				}
 				iapComprador.setVinculoCaixa(vinculoCaixa);
@@ -14344,7 +14344,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setIdPersonaHaya(idPersonaHaya != null ? Long.parseLong(idPersonaHaya) : null);
 		}
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(comprador.getInfoAdicionalPersona(),comprador.getIdPersonaHayaCaixa(),comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(comprador.getIdPersonaHayaCaixa(),comprador.getIdPersonaHaya() != null ? comprador.getIdPersonaHaya().toString() : null);
 		comprador.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -14363,7 +14363,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,null,compradorExpediente.getDocumentoRepresentante(), null));
 			}
 
-			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefault(compradorExpediente.getInfoAdicionalRepresentante(),compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
+			InfoAdicionalPersona iapRepresentante = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(compradorExpediente.getIdPersonaHayaCaixaRepresentante(),compradorExpediente.getIdPersonaHayaRepresentante() != null ? compradorExpediente.getIdPersonaHayaRepresentante().toString() : null);
 			compradorExpediente.setInfoAdicionalRepresentante(iapRepresentante);
 
 			if (iapRepresentante != null){

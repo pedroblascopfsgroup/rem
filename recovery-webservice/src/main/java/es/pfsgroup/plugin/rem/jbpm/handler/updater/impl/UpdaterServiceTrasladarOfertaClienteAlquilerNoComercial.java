@@ -13,15 +13,16 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
 
 @Component
 public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements UpdaterService {
@@ -31,17 +32,10 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-	@Autowired
-	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private TramiteAlquilerApi tramiteAlquilerApi;
-	
+  
     protected static final Log logger = LogFactory.getLog(UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial.class);
     
 	private static final String COMBO_RESULTADO = "comboResultado";
-	private static final String COMBO_IRCLROD = "comboIrClRod";
 	private static final String FECHA_RESOLUCION = "fechaResolucion";
 
 	private static final String CODIGO_T018_TRASLADAR_OFERTA_CLIENTE = "T018_TrasladarOfertaCliente";
@@ -52,35 +46,49 @@ public class UpdaterServiceTrasladarOfertaClienteAlquilerNoComercial implements 
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		
-		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
-		DDEstadoExpedienteBc estadoExpedienteBc = null;
-		String fechaResolucion = null;
+		String estadoExpedienteComercial = null;
+		String estadoExpedienteBc = null;
 
 		for(TareaExternaValor valor :  valores){
 			
 			if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				if(DDSiNo.SI.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_AGENDAR));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_AGENDAR));
+					estadoExpedienteComercial =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
+					estadoExpedienteBc = DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
+
 				}else {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_REVISAR_CONDICIONES_BC));
-					estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC));
+					estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_REVISAR_CONDICIONES_BC;
+					estadoExpedienteBc = DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC;
 				}
 				
-				expedienteComercial.setEstado(estadoExpedienteComercial);
-				expedienteComercial.setEstadoBc(estadoExpedienteBc);
+				expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteComercial)));
+				expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoExpedienteBc)));
 
-			}
-			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				fechaResolucion = valor.getValor();
 			}
 		}
 
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaResolucion));
+		Filter filterOferta =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", expedienteComercial.getOferta().getId());
+		Filter filterTipoPbc =  genericDao.createFilter(FilterType.EQUALS, "tipoTareaPbc.codigo", DDTipoTareaPbc.CODIGO_PBC);
+		Filter filterActiva =  genericDao.createFilter(FilterType.EQUALS, "activa", true);
+		HistoricoTareaPbc historico = genericDao.get(HistoricoTareaPbc.class, filterOferta, filterTipoPbc, filterActiva);
 
+		if (historico != null) {
+			historico.setActiva(false);
+
+			genericDao.save(HistoricoTareaPbc.class, historico);
+		}
+
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTareaPbc.CODIGO_PBC);
+		DDTipoTareaPbc tpb = genericDao.get(DDTipoTareaPbc.class, filtroTipo);
+
+		HistoricoTareaPbc htp = new HistoricoTareaPbc();
+		htp.setOferta(expedienteComercial.getOferta());
+		htp.setTipoTareaPbc(!Checks.esNulo(tpb) ? tpb : null);
+
+		genericDao.save(HistoricoTareaPbc.class, htp);
+
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
 	}
 
 	public String[] getCodigoTarea() {

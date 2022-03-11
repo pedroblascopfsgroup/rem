@@ -832,7 +832,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									value : '{condiciones.tipoGrupoImpuestoCodAlq}'
 								},
 								displayField : 'descripcion',
-								valueField : 'codigo'
+								valueField : 'codigo',
+								listeners : {
+									change : 'onCambioGrupoImpuesto'
+								}
 							}
 						]
 					},

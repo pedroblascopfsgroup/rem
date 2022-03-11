@@ -1,11 +1,11 @@
 --/*
 --#########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220214
+--## FECHA_CREACION=20220311
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## ARTEFACTO=batch
---## INCIDENCIA_LINK=HREOS-15592
+--## INCIDENCIA_LINK=HREOS-17293
 --## PRODUCTO=NO
 --## 
 --## Finalidad:
@@ -37,7 +37,7 @@ DECLARE
     V_TABLA_AUX_MIG VARCHAR2 (30 CHAR) := 'AUX_SEGUIR_MIGRACION';
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-16329';
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-17293';
     V_COUNT NUMBER(16):= 0;
 
   CURSOR RECALCULAR_RATING IS 
@@ -69,6 +69,18 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
             SELECT ACT.ACT_ID
             FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO AUX
             JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_NUV)
+            '
+  )
+  ;
+
+   EXECUTE IMMEDIATE ('
+        UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
+            SET DD_SCM_ID = NULL
+            WHERE ACT_ID IN (
+
+            SELECT ACT.ACT_ID
+            FROM '||V_ESQUEMA||'.AUX_ACT_TRASPASO_ACTIVO AUX
+            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT)
             '
   )
   ;

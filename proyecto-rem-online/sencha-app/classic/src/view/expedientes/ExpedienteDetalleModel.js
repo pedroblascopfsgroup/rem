@@ -449,7 +449,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 		 	mostrarBotonLanzarPBC: function(get){
 
-         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && esCarteraBankia(get) ;
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && get('esCarteraBankia');
 
          	},
 

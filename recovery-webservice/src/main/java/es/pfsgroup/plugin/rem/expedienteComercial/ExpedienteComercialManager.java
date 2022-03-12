@@ -5701,6 +5701,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					vinculoCaixa = genericDao.get(DDVinculoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getVinculoCaixaCodigo()));
 			}
 
+			if (documentoModificado){
+				comprador.setIdPersonaHaya(null);
+				comprador.setIdPersonaHayaCaixa(null);
+			}
+
+			if (documentoRteModificado){
+				compradorExpediente.setIdPersonaHayaCaixaRepresentante(null);
+				compradorExpediente.setIdPersonaHaya(null);
+			}
+
 			assignIAPCompradorRepresentante(compradorExpediente,expedienteComercial.getId(),comprador,expedienteComercial.getOferta(), documentoRteModificado);
 
 			InfoAdicionalPersona iapComprador = comprador.getInfoAdicionalPersona();

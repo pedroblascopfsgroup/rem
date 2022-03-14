@@ -471,6 +471,9 @@ public class Oferta implements Serializable, Auditable {
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private OfertaCaixa ofertaCaixa;
+    
+    @Column(name = "OFR_CONCURRENCIA")
+	private Boolean concurrencia;
 
 	@Transient
 	private Boolean replicateBC;
@@ -1527,5 +1530,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setReplicateBC(Boolean replicateBC) {
 		this.replicateBC = replicateBC;
+	}
+
+	public Boolean getConcurrencia() {
+		return concurrencia;
+	}
+
+	public void setConcurrencia(Boolean concurrencia) {
+		this.concurrencia = concurrencia;
 	}
 }

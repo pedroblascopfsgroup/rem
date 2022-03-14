@@ -410,10 +410,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
 			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getNombre()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())) {
+			cliente.setNombreRepresentante(clienteDto.getNombre());
+			cliente.setNombre(null);
 		}
 		
 		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
 			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getApellidos()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidos());
+			cliente.setApellidos(null);
 		}
 	   
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
@@ -868,10 +874,18 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
 			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getNombre()) && (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())
+				|| (!Checks.esNulo(cliente.getTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())))) {
+			cliente.setNombreRepresentante(clienteDto.getNombre());
+			cliente.setNombre(null);
 		}
 		
 		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
 			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getApellidos()) && (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())
+				|| (!Checks.esNulo(cliente.getTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())))) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidos());
+			cliente.setApellidos(null);
 		}
 	   
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {

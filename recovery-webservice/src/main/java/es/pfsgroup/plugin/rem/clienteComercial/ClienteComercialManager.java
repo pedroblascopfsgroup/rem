@@ -410,10 +410,16 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
 			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getNombre()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())) {
+			cliente.setNombreRepresentante(clienteDto.getNombre());
+			cliente.setNombre(null);
 		}
 		
 		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
 			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getApellidos()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidos());
+			cliente.setApellidos(null);
 		}
 	   
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
@@ -528,7 +534,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if(iap != null) {
@@ -540,9 +546,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		InfoAdicionalPersona iapRep = null;
 
-		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
-		iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
-		cliente.setInfoAdicionalPersonaRep(iapRep);
+		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+			cliente.setInfoAdicionalPersonaRep(iapRep);
+		}
 
 		if(iapRep != null) {
 			if(clienteDto.getEsPRPRepresentante() != null) {
@@ -867,10 +874,18 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		
 		if (!Checks.esNulo(clienteDto.getNombreRepresentante())) {
 			cliente.setNombreRepresentante(clienteDto.getNombreRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getNombre()) && (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())
+				|| (!Checks.esNulo(cliente.getTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())))) {
+			cliente.setNombreRepresentante(clienteDto.getNombre());
+			cliente.setNombre(null);
 		}
 		
 		if (!Checks.esNulo(clienteDto.getApellidosRepresentante())) {
 			cliente.setApellidosRepresentante(clienteDto.getApellidosRepresentante());
+		} else if (!Checks.esNulo(clienteDto.getApellidos()) && (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(clienteDto.getCodTipoPersona())
+				|| (!Checks.esNulo(cliente.getTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())))) {
+			cliente.setApellidosRepresentante(clienteDto.getApellidos());
+			cliente.setApellidos(null);
 		}
 	   
 		if (!Checks.esNulo(clienteDto.getTelefonoRepresentante())) {
@@ -991,7 +1006,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
 
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
 
 		if (iap != null){
@@ -1013,9 +1028,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente.setInfoAdicionalPersonaRep(null);
 			}
 
-			String idPersonaHayaRte = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteDto.getDocumentoRepresentante());
+			String idPersonaHayaRte = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante());
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(), idPersonaHayaRte);
 			cliente.setInfoAdicionalPersonaRep(iapRep);
 		}
 

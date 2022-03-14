@@ -958,7 +958,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 				compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
-				compradorBusqueda.setIdPersonaHayaCaixa(cliente.getInfoAdicionalPersona() != null ? cliente.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 			}
 			if (!Checks.esNulo(cliente.getTipoPersona())
 					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
@@ -994,7 +993,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getEmail())) {
 				compradorBusqueda.setEmail(cliente.getEmail());
 			}
-			
+
+			compradorBusqueda.setIdPersonaHayaCaixa(cliente.getIdPersonaHayaCaixa());
 			compradorBusqueda.setFechaNacimientoConstitucion(cliente.getFechaNacimiento());
 			compradorBusqueda.setDireccion(cliente.getDireccion());
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
@@ -1808,16 +1808,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 							Double umbralAskingPrice = 200000.0;
 							String codComiteHaya = null;
-							String codComite = null;
+							String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) ? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
 							if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_APPLE;
-								codComite = DDComiteSancion.CODIGO_CES_APPLE;
 							} else if (DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_REMAINING;
-								codComite = DDComiteSancion.CODIGO_CES_REMAINING;
 							} else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
 								codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
-								codComite = DDComiteSancion.CODIGO_JAGUAR;
 							}
 							Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 							if(Checks.esNulo(agrupacion)) {

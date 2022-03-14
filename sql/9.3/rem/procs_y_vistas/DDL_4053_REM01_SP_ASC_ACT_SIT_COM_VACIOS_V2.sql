@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins Pascual
---## FECHA_CREACION=20210607
+--## FECHA_CREACION=20220314
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-9845
+--## INCIDENCIA_LINK=HREOS-17293
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial VACIA de los activos en REM.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - Carles Molins
 --##		0.2 Juan Bautista Alfonso [REMVIP-9845] Modificacion para nuevas vistas V_COND_DISPONIBILIDAD
+--##		0.3 Santi Monzó [HREOS-17293] Modificacion select Alquilado, añadir DD_EAL_CODIGO = ''02''
 --##########################################
 --*/
 
@@ -121,10 +122,12 @@ BEGIN
 										JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID AND OFR.BORRADO = 0
 										JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = AO.OFR_ID AND ECO.BORRADO = 0
 										LEFT JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_CODIGO = '''||SITCOM_ALQUILADO||''' AND SCM.BORRADO = 0 /*Alquilado*/
+										JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID = ACT.ACT_ID AND PTA.BORRADO = 0
 										WHERE DD_TOF_ID = (SELECT DD_TOF_ID FROM '||V_ESQUEMA||'.DD_TOF_TIPOS_OFERTA WHERE DD_TOF_CODIGO = '''||TIPOOFERTA_ALQUILER||''')
 										AND ECO.ECO_FECHA_INICIO_ALQUILER IS NOT NULL
 										AND ECO.ECO_FECHA_FIN_ALQUILER IS NULL
 										AND ACT.DD_TCO_ID = (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = '''||TIPOCOMERCIALIZACION_ALQUILER||''')
+										AND PTA.DD_EAL_ID = (SELECT DD_EAL_ID FROM '||V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO = ''02'')
 										AND ACT.BORRADO = 0
 										AND '||vWHERE||'
 								UNION

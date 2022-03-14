@@ -1239,7 +1239,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							   if (activoCaixa != null) {
 								   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
-								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   if (ddCarteraBc != null) {
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   	   } 
 							   }
 							   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null) {
 								   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
@@ -1305,7 +1307,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						if (activoCaixa != null) {
 							   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 							   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
-							   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   if (ddCarteraBc != null) {
+								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+						   	   }
 						}
 						if (activo.getTipoTransmision() != null) {
 							Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
@@ -2062,7 +2066,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if (activoCaixa != null) {
 						   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 						   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
-						   gldEnt.setCarteraBc(ddCarteraBc);
+						   if (ddCarteraBc != null) {
+							   gldEnt.setCarteraBc(ddCarteraBc);
+					   	   } 
 					}
 					if (activoTrabajo.getActivo().getTipoTransmision() != null) {
 						Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getActivo().getTipoTransmision().getCodigo());

@@ -420,7 +420,9 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 									   if (activoCaixa != null) {
 									   	   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 									   	   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
-									   	   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+									   	   if (ddCarteraBc != null) {
+											   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+									   	   } 
 									   }
 									   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null && activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo() != null) {
 										   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
@@ -460,7 +462,9 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 							if (activoCaixa != null) {
 								   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
-								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   if (ddCarteraBc != null) {
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								}  
 							}
 						   if (activo.getTipoTransmision() != null && activo.getTipoTransmision().getCodigo() != null) {
 							   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());

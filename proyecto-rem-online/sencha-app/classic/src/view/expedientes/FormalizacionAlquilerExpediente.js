@@ -77,7 +77,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
 					fieldLabel : HreRem.i18n('header.fecha.inicio'),
 					bind : {
 						value : '{resolucionalquiler.fechaInicioCnt}'
-					}
+					},
+					readOnly: true
 				},
 				{
 					xtype : 'datefieldbase',
@@ -85,7 +86,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
 					maxValue: null,
 					bind : {
 						value : '{resolucionalquiler.fechaFinCnt}'
-					}
+					},
+					readOnly: true
 				},{
                     xtype : 'gridBaseEditableRow',
                     title : HreRem.i18n('title.posicionamiento'),

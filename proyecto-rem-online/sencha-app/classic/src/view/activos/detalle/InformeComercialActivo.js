@@ -593,26 +593,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										maskRe: /^\d*$/, 
 					                	maxLength: 5	                	
 									},
-									/*{
-										xtype: 'comboboxfieldbasedd',
-							        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
-							        	bind: {
-						            		store: '{comboTipoUbicacion}',
-						            		value: '{infoComercial.ubicacionActivoCodigo}',
-						            		rawValue: '{infoComercial.ubicacionActivoDescripcion}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
-					                },
-									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.distrito'),
-										reference: 'fieldlabelDistrito',
-										bind: '{infoComercial.distrito}'
-					                },
-									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.zona'),
-										bind:		'{infoComercial.zona}'
-					                },*/
 					                { 
 										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
 										reference: 'latitudmediador',

@@ -170,22 +170,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_LONGITUD")
 	private BigDecimal longitud;
 
-	/*@Column(name = "ICO_ZONA")
-	private String zona;
-
-	@Column(name = "ICO_DISTRITO")
-	private String distrito;*/
-
 	@Column(name = "ICO_CODIGO_POSTAL")
 	private String codigoPostal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
-	private Localidad localidadRegistro;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
@@ -397,6 +387,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name="ICO_FECHA_ENVIO_LLAVES_API")
 	private Date envioLlavesApi;
+	
+	@Column(name="ICO_FECHA_RECEP_LLAVES_API")
+	private Date recepcionLlavesApi;
 
 	@Column(name="ICO_NUM_DORMITORIOS")
 	private Long numDormitorios;
@@ -1155,6 +1148,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setEnvioLlavesApi(Date envioLlavesApi) {
 		this.envioLlavesApi = envioLlavesApi;
 	}
+	
+	public Date getRecepcionLlavesApi() {
+		return recepcionLlavesApi;
+	}
+
+	public void setRecepcionLlavesApi(Date recepcionLlavesApi) {
+		this.recepcionLlavesApi = recepcionLlavesApi;
+	}
 
 	public Long getNumDormitorios() {
 		return numDormitorios;
@@ -1379,13 +1380,4 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
 		this.accesibilidad = accesibilidad;
 	}
-	
-	public Localidad getLocalidadRegistro() {
-		return localidadRegistro;
-	}
-
-	public void setLocalidadRegistro(Localidad localidadRegistro) {
-		this.localidadRegistro = localidadRegistro;
-	}
-	
 }

@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacionVisita;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -157,7 +158,14 @@ public class Visita implements Serializable, Auditable {
 
     @Column(name = "VIS_ALTA_OPORTUNIDAD")
 	private Date fechaAltaOportunidad;
+    
+    @Column(name="VIS_BC_ID")
+    private String idVisitaBC;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TCV_ID")
+	private DDTipoComercializacionVisita tipoComVisita;
+    
 	@Version   
 	private Long version;
 
@@ -429,4 +437,19 @@ public class Visita implements Serializable, Auditable {
 		this.fechaAltaOportunidad = fechaAltaOportunidad;
 	}
    
+	public String getIdVisitaBC() {
+		return idVisitaBC;
+	}
+
+	public void setIdVisitaBC(String idVisitaBC) {
+		this.idVisitaBC = idVisitaBC;
+	}
+
+	public DDTipoComercializacionVisita getTipoComVisita() {
+		return tipoComVisita;
+	}
+
+	public void setTipoComVisita(DDTipoComercializacionVisita tipoComVisita) {
+		this.tipoComVisita = tipoComVisita;
+	}
 }

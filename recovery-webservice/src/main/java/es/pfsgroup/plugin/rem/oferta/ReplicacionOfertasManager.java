@@ -1,21 +1,23 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ReplicacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.activo.ActivoAgrupacionManager;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("replicacionOfertasManager")
 public class ReplicacionOfertasManager extends BusinessOperationOverrider<ReplicacionOfertasApi> implements ReplicacionOfertasApi{
+
+    protected static final Log logger = LogFactory.getLog(ReplicacionOfertasManager.class);
 
     @Autowired
     private TareaActivoApi tareaActivoApi;
@@ -26,6 +28,12 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     @Autowired
     private OfertaApi ofertaApi;
 
+    @Autowired
+    private SpPublicacionApi spPublicacionApi;
+
+    @Autowired
+    private LlamadaPBCApi llamadaPBCApi;
+    
     @Override
     public String managerName() {
         return "replicacionOfertasManager";
@@ -47,8 +55,10 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         if(eco != null && tarea != null && success){
             lanzarReplicate = calculaLanzarReplicateByEco(eco, tarea);
+            lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
             if(lanzarReplicate)
                 ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+            	llamadaPBCApi.callPBC(eco, tarea);
         }
     }
 
@@ -67,10 +77,14 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
                 || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
                 || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
-                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado);
+                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado)
+                || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado)
+                || calculaT015CalculoRiesgo(codTarea,codEstado) || calculaT018CalculoRiesgo(codTarea,codEstado)
+                || calculaT015PBCAlquiler(codTarea,codEstado) || calculaT018PBCAlquiler(codTarea,codEstado)
+                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado) || calculaT018TrasladarOfertaCliente(codTarea, codEstado);
     }
 
-    private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
+	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea) &&
                 (DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado) || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
             return true;
@@ -180,5 +194,81 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             return true;
 
         return false;
+    }
+    
+    private boolean calculaT015DatosPBC(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT018DatosPBC(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT015CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    private boolean calculaT018CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT015PBCAlquiler(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_PBC_ALQUILER.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT018PBCAlquiler(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_PBC_ALQUILER.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+
+    private boolean calculaT015SolicitarGarantiasAdicionales(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(codTarea)
+            && (DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_VALORAR_ACUERDO_SIN_GARANTIAS_ADICIONALES.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaT018TrasladarOfertaCliente(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_T018_TRASLADAR_OFERTA_CLIENTE.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE.equals(codEstado)
+                    || DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private void lanzarSPPublicaciones(String idTarea, Boolean success){
+        try {
+            spPublicacionApi.callSpPublicacionAsincrono(Long.parseLong(idTarea), success);
+        }catch (Exception e){
+            logger.error("Error en el servicio de publicaciones");
+            e.printStackTrace();
+        }
     }
 }

@@ -32,6 +32,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase');
+				
 		if(form.isValid()){
 			if (me.comprobarDocumentoIdentidadCliente()) {
 				wizard.codTipoDocumento = form.lookupReference('tipoDocumentoNuevoComprador').getValue();
@@ -43,6 +44,43 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				if(!Ext.isEmpty(wizard.oferta)){
 					idAgrupacion = wizard.oferta.get('idAgrupacion');
 					idActivo = wizard.oferta.get('idActivo');
+				}
+				
+				if(me.getView().up().expediente != null){
+					if(me.getView().up().expediente.data.esBankia){
+			        	if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			        				&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+			        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+			        		return false;
+			        	}
+			        }
+				}else{
+					if(idAgrupacion == null){
+						if(me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}else{
+						if(me.view.up().lookupController().getViewModel().getData().esAgrupacionCaixa){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}
 				}
 				Ext.Ajax.request({
 					url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
@@ -61,6 +99,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    			var pedirDoc = Ext.decode(response.responseText).data;
 		    			var comprador=datos.comprador;
 		    			var destinoComercial= datos.destinoComercial;
+						var esHayaHome= datos.esHayaHome;
 		    			var carteraInternacional = datos.carteraInternacional;
 		    			var slideDatos;
 		    			var success = datos.success;
@@ -144,6 +183,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				slideDatos.getForm().findField('vinculoCaixa').setValue(comprador.vinculoCaixaCodigo);
 		            				slideDatos.getForm().findField('vinculoCaixa').setReadOnly(true);
 		            			}
+								
 	
 		            			if(!Ext.isEmpty(comprador.codigoPais)){
 		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
@@ -215,6 +255,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			}
 		            			
 		        			}
+							if(!Ext.isEmpty(esHayaHome) && esHayaHome == "true"){
+								slideDatos.getForm().findField('tipoOferta').setValue('01');
+	            				slideDatos.getForm().findField('tipoOferta').setReadOnly(true);
+							}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
 		        			wizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2));
 		        			wizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100;
@@ -282,10 +326,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				   }
 				});
-	
+				
 			} else {
 				me.fireEvent('errorToast', HreRem.i18n('msg.numero.documento.comprador.incorrecto'));
 			}
+			
 		}
 	},
 

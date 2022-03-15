@@ -1581,7 +1581,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return null;
     }
     
-    
+    @Override
+    public Activo getActivoMatrizByNumAgrupacion(Long numAgrupacion) {
+
+    	String sql = "SELECT act "
+    			+ "FROM ACT_ACTIVO act "
+    			+ "JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aga.ACT_ID = act.ACT_ID "
+    			+ "JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_ID = aga.AGR_ID "
+    			+ "WHERE aga.AGA_PRINCIPAL = 1 "
+    			+ "AND agr.AGR_NUM_AGRUP_REM  = "+ numAgrupacion;
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((Activo) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult());
+		}
+		return null;
+    }
 
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
@@ -2496,5 +2510,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			}
 		}
 		return r;
+	}
+
+	@Override
+	public String getCodComunidadAutonomaByCodProvincia(String codProvincia) {
+		String codComunidadAutonoma = rawDao.getExecuteSQL("SELECT CCA.DD_CCA_CODIGO " +
+				"FROM REMMASTER.DD_CCA_COMUNIDAD CCA"
+				+ "			INNER JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_CCA_ID = CCA.DD_CCA_ID"
+				+ "			WHERE PRV.DD_PRV_CODIGO = '" + codProvincia + "'"
+				+ "         AND ROWNUM = 1 ");
+
+		return codComunidadAutonoma;
+	}
+
+	@Override
+	public String getDescripcionComunidadAutonomaByCodProvincia(String codProvincia) {
+		String descripcionComunidadAutonoma = rawDao.getExecuteSQL("SELECT CCA.DD_CCA_DESCRIPCION " +
+				"FROM REMMASTER.DD_CCA_COMUNIDAD CCA"
+				+ "			INNER JOIN REMMASTER.DD_PRV_PROVINCIA PRV ON PRV.DD_CCA_ID = CCA.DD_CCA_ID"
+				+ "			WHERE PRV.DD_PRV_CODIGO = '" + codProvincia + "'"
+				+ "         AND ROWNUM = 1 ");
+
+		return descripcionComunidadAutonoma;
 	}
 }

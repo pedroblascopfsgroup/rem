@@ -283,6 +283,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		GAT:'156',
 		EDT:'157',
 		USGAI:'158',
+		ONETOONE:'68',
 		JAGUAR:'70',
 		TITEDT:'162',
 		TITTDA:'163'
@@ -738,7 +739,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		IDENT_BANCO_DE_ESPAÑA: '11',
 		NIF_PAIS_ORIGEN: '13',
 		OTRO: '14',
-		NIF: '15'
+		NIF: '15',
+		NIE: '12'
 	},
 	DD_REGIMEN_MATRIMONIAL:{
 		COD_GANANCIALES:'1',
@@ -758,7 +760,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	DD_ESP_ESTADO_PRESENTACION:{
 		PRESENTACION_EN_REGISTRO:'01',
 		CALIFICADO_NEGATIVAMENTE:'02',
-		INSCRITO:'03'
+		INSCRITO:'03',
+		NULO:'04',
+		INMATRICULADOS:'05',
+		IMPOSIBLE_INSCRIPCION:'06',
+		DESCONOCIDO:'07'
+		
 	},
 	
 	DD_CLASE_OFERTA:{
@@ -1065,5 +1072,13 @@ Ext.define('HreRem.ux.util.Constants', {
 	    CODIGO_RENOVACIONES: 'ZRE',
 	    CODIGO_SUBROGACION_DACION: 'ZSD',
 	    CODIGO_SUBROGACION_EJECUCION: 'ZSE'
+	},
+	CODIGO_BLOQUEO:{
+		T015_BLOQUEOSCORING: 'T015_BloqueoScoring',
+		T017_BLOQUEOSCORING: 'T017_BloqueoScoring',
+		T018_BLOQUEOSCORING: 'T018_BloqueoScoring',
+		T015_BLOQUEOSCREENING: 'T015_BloqueoScreening',
+		T017_BLOQUEOSCREENING: 'T017_BloqueoScreening',
+		T018_BLOQUEOSCREENING: 'T018_BloqueoScreening'
 	}
 });

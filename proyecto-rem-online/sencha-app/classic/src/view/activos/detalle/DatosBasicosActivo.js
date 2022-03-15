@@ -830,16 +830,12 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				        { 
 				        	xtype: 'comboboxfieldbasedd',
 				        	fieldLabel:  HreRem.i18n('fieldlabel.comunidad.autonoma'),
-				        	forceSelection: true,
 				        	readOnly: true,
-				        	bind: {		
+				        	bind: {
 				        		store: '{storeComunidadesAutonomas}',
-			            		value: '{activo.provinciaCodigo}',
-								rawValue: '{activo.provinciaDescripcion}'
-			            	},
-							valueField: 'id',
-							allowBlank: false
-								
+			            		value: '{activo.codComunidadAutonoma}',
+								rawValue: '{activo.comunidadDescripcion}'
+			            	}
 					     },
 				        {
 			                	xtype: 'button',
@@ -948,7 +944,32 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							vtype: 'codigoPostal',
 							maskRe: /^\d*$/, 
 		                	maxLength: 5		                	        	
-						}
+						},
+						{ 
+							xtype: 'comboboxfieldbase',
+							reference:  'discrepanciasLocalizacionRef',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.discrepancias.localizacion'),
+		                	bind:{
+		                		value: '{activo.discrepanciasLocalizacion}',
+								store : '{comboSiNoBoolean}'
+		                	},
+		                	listeners: {
+								select: 'onSelectDiscrepanciasLocalizacion'
+							}
+		                },
+		                {	
+		                	xtype: 'textareafieldbase',
+		                	labelWidth: 200,
+		                	rowspan: 1,
+		                	height: 50,
+		                	labelAlign: 'top',
+		                	reference:  'discrepanciasLocalizacionObservacionesRef',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.discrepancias.localizacion.observaciones'),
+		                	bind:{
+		                		disabled:'{!activo.discrepanciasLocalizacion}',
+		                		value: '{activo.discrepanciasLocalizacionObservaciones}'
+		                	}
+		                }
 					]               
           	},
           	// Perimetros  BBVA-----------------------------------------------

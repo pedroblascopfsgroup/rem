@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.oferta.ReplicacionOfertasManager;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -46,6 +48,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.http.client.HttpSimplePostRequest;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -57,6 +60,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
@@ -136,6 +140,9 @@ public class OfertasController {
 	private ActivoDao activoDao;
 	
 	@Autowired
+	private ActivoManager activoManager;
+	
+	@Autowired
 	private AgendaAdapter agendaAdapter;
 
 	@Autowired
@@ -152,6 +159,12 @@ public class OfertasController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+
+	@Autowired
+	private ParticularValidatorApi particularValidatorApi;
+
+	@Autowired
+	private ReplicacionOfertasManager replicacionOfertasManager;
 	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -510,6 +523,11 @@ public class OfertasController {
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
 			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
 			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
+			if (!Checks.esNulo(idActivo)) {
+				model.put("esHayaHome", activoManager.esActivoHayaHome(idActivo));
+			} else if (!Checks.esNulo(idAgrupacion)) {
+				model.put("esHayaHome", activoManager.esActivoHayaHome(activoManager.activoByIdAgrupacion(idAgrupacion).getId()));
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);
@@ -841,6 +859,10 @@ public class OfertasController {
 						if (resultado) {
 							error = null;
 							errorDesc = null;
+
+						if (particularValidatorApi.esOfertaCaixa(ofrNumOferta)){
+								replicacionOfertasManager.callReplicateOferta(tareaId,Boolean.TRUE);
+							}
 						}						
 						model.put("id", id);
 						model.put("ofrNumOferta", ofrNumOferta);
@@ -1080,20 +1102,4 @@ public class OfertasController {
 		model.put(RESPONSE_SUCCESS_KEY, true);
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario, ModelMap model) {
-		try {
-			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto, dtoBancario));
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-			logger.error("Error en ofertasController", e);
-		}
-		return createModelAndViewJson(model);
-	}
-
-	
 }

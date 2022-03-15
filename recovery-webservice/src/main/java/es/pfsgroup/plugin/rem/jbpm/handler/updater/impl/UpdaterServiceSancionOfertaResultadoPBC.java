@@ -15,9 +15,11 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -49,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 @Component
 public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
@@ -83,6 +86,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
 	
+	@Autowired
+    private UsuarioApi usuarioApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
@@ -98,6 +104,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
     private static final String TIPO_OPERACION = "tipoOperacion";
+    private static final String OBSERVACIONES = "observaciones";
     
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -112,6 +119,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 		DecimalFormat num = new DecimalFormat("###.##");
 		boolean estadoBcModificado = false;
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
+		boolean anulacion = false;
+		String observaciones = null;
 		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -129,27 +138,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroEstado);
 							expediente.setEstado(estado);
+							anulacion = true;
 							
-							if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
-								String estadoBcString = null;
-								if(reservaApi.tieneReservaFirmada(expediente)) {
-									estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-									if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
-							        	expediente.setFechaAnulacion(new Date());
-							        }
-								}else {
-									estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-									ofertaApi.finalizarOferta(ofertaAceptada);
-								}
-								filtroEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
-								DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstado);
-								expediente.setEstadoBc(estadoBc);
-								estadoBcModificado = true;
-							}
+							
 							
 							if(!ofertaApi.checkReserva(ofertaAceptada) || 
 							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
-							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) && !DDCartera.isCarteraBk(activo.getCartera())){
 								recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
 								expediente.setFechaVenta(null);
@@ -161,31 +156,12 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								genericDao.save(ActivoTramite.class, tramite);
 
 								//Rechaza la oferta y descongela el resto
-								ofertaApi.rechazarOferta(ofertaAceptada);
-								ofertaApi.finalizarOferta(ofertaAceptada);
 								try {
-									ofertaApi.descongelarOfertas(expediente);
 									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}
 
-								/*if (DDCartera.isCarteraBk(ofertaAceptada.getActivoPrincipal().getCartera())
-										&& !CODIGO_T017.equals(tramite.getTipoTramite().getCodigo())){									
-									if(!uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
-									// Notificar del rechazo de la oferta a
-									// Bankia.
-										try {
-											uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
-													UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
-										} catch (Exception e) {
-											logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-											throw new UserException(e.getMessage());
-										}
-									}
-									
-								}*/
-								
 							}
 
 							//Motivo anulación
@@ -203,7 +179,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
 							}
-							genericDao.save(ExpedienteComercial.class, expediente);
+							
 						} else {
 							
 							if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
@@ -284,11 +260,40 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 						}
 						
 					}
+					if (OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						observaciones = valor.getValor();
+					}
 				}
 				
 				if (vuelveArras) {	
 					campos.put(TIPO_OPERACION, true);				
 					expedienteComercialApi.createReservaAndCondicionesReagendarArras(expediente, importe, mesesFianza, ofertaAceptada);
+					
+				}else if(anulacion) {
+					if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
+						String estadoBcString = null;
+						if(reservaApi.tieneReservaFirmada(expediente)) {
+							estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+							if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
+					        	expediente.setFechaAnulacion(new Date());
+					        }
+						}else {
+							estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+							ofertaApi.finalizarOferta(ofertaAceptada);
+						}
+						
+						Filter filtroEstadoBc = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
+						DDEstadoExpedienteBc estadoBc = genericDao.get(DDEstadoExpedienteBc.class, filtroEstadoBc);
+						expediente.setEstadoBc(estadoBc);
+						estadoBcModificado = true;
+						expediente.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoAnulacionExpediente.COD_CAIXA_RECHAZADO_PBC)));
+						expediente.setDetalleAnulacionCntAlquiler(observaciones);
+						Usuario usuario = usuarioApi.getUsuarioLogado();
+						if(usuario != null) {
+							expediente.setPeticionarioAnulacion(usuario.getUsername());
+						}
+					}
+					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 				
 				if(estadoBcModificado) {

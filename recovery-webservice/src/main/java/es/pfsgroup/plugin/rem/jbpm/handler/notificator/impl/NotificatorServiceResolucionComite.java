@@ -81,6 +81,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
+	private static final String BUZON_OFR_JAGUAR = "buzonofrjaguar";
 	
 
 	List<String> mailsPara = new ArrayList<String>();
@@ -133,6 +134,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
 			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
 			Usuario buzonOfertaApple = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_OFR_APPLE));
+			Usuario buzonOfertaJaguar = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_OFR_JAGUAR));
 			
 			if(expedienteComercialApi.esApple(valores.get(0).getTareaExterna())){
 				gestor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -166,6 +168,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			}
 			if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				usuarios.add(buzonOfertaApple);
+			}
+			if(!Checks.esNulo(buzonOfertaJaguar) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))) {
+				usuarios.add(buzonOfertaJaguar);
 			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);

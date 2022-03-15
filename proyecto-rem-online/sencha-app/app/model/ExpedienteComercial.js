@@ -318,6 +318,20 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			type: 'boolean'
 			},
 			{
+				name: 'esActivoHayaHome',
+				type: 'boolean'
+			},
+			{
+				name: 'tieneTramiteComercial',
+				type: 'boolean'
+			},
+			{
+    			name: 'subestadoExpediente'
+    		},
+			{
+    			name: 'codigoSubestado'
+			},
+			{
     			name: 'codigoEstadoBc'
     		},
     		{

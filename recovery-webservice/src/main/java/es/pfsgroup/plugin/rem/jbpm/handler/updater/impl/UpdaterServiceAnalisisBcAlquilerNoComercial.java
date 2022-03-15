@@ -91,8 +91,8 @@ public class UpdaterServiceAnalisisBcAlquilerNoComercial implements UpdaterServi
 				estadoBc =  DDEstadoExpedienteBc.PTE_CL_ROD;
 			}
 			if(DDTipoAccionNoComercial.COD_PTE_NEGOCIACION.equals(codigoResultado)) {
-				estadoExpediente =  DDEstadosExpedienteComercial.PTE_PBC_ALQUILER_HRE;
-				estadoBc =  DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE;
+				estadoExpediente = DDEstadosExpedienteComercial.PENDIENTE_GARANTIAS_ADICIONALES;
+				estadoBc = DDEstadoExpedienteBc.PTE_NEGOCIACION;
 			}
 			if(DDTipoAccionNoComercial.COD_PTE_SCORING.equals(codigoResultado)) {
 				estadoExpediente=  DDEstadosExpedienteComercial.PTE_SCORING;

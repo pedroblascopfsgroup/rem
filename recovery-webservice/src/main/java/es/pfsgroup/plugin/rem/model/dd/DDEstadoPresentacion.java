@@ -36,6 +36,10 @@ public class DDEstadoPresentacion implements Auditable, Dictionary {
 	public static final String PRESENTACION_EN_REGISTRO ="01";
 	public static final String CALIFICADO_NEGATIVAMENTE ="02";
 	public static final String INSCRITO ="03";
+	public static final String NULO = "04";
+	public static final String INMATRICULADOS = "05";
+	public static final String IMPOSIBLE_INSCRIPCION = "06";
+	public static final String DESCONOCIDO = "07";
 
 	@Id
 	@Column(name = "DD_ESP_ID")

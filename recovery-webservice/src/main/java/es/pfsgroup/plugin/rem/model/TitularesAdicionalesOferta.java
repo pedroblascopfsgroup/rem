@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 
 
 /**
@@ -233,6 +234,10 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TIA_ACEPTACION_OFERTA")
     private DDSinSiNo aceptacionOferta;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TOC_ID")
+	private DDTipoOcupacion tipoOcupacion;
     
     @Version   
 	private Long version;
@@ -675,5 +680,12 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	public void setAceptacionOferta(DDSinSiNo aceptacionOferta) {
 		this.aceptacionOferta = aceptacionOferta;
 	}
-	
+
+	public DDTipoOcupacion getTipoOcupacion() {
+		return tipoOcupacion;
+	}
+
+	public void setTipoOcupacion(DDTipoOcupacion tipoOcupacion) {
+		this.tipoOcupacion = tipoOcupacion;
+	}
 }

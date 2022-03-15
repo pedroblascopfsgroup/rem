@@ -6,11 +6,15 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     disableValidation: true,
     reference: 'gestionEconomicaExpediente',
     scrollable	: 'y',
+    recordName: 'expedientecomercialgestioneconomica',	
+    recordClass: 'HreRem.model.ExpedienteComercialGestionEconomica',    
+    requires: ['HreRem.model.ExpedienteComercialGestionEconomica'],
     listeners: {
     	show: function () {
     		var me = this;
     		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"));
-    	}
+    	},
+    	boxready:'cargarTabData'
     },
     initComponent: function () {
         var me = this;
@@ -23,6 +27,38 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
+			  {
+				  xtype:'fieldsettable',
+					title: 'Cierre Ecomomico de Fecha Ingreso',
+					items :
+					 [
+						{ 
+							xtype: 'comboboxfieldbase',
+							editable: true,
+							fieldLabel: 'Revisado por Controllers',
+							bind: {
+						        store: '{comboSiNoRem}',
+						        value: '{expedientecomercialgestioneconomica.revisadoPorControllers}'
+						    },
+						    readOnly:  $AU.userIsRol("HAYASUPER") || $AU.userIsRol("PERFGCONTROLLER") ? false : true, 
+						    allowBlank: false,
+						    listeners: { 
+					           change: 'onChangeComboRevisadoControllers' 
+						    }
+				        },
+						{ 
+				            xtype: 'datefieldbase',
+					        fieldLabel:  'Fecha Revisión',
+					        reference: 'fechaRevisionref',
+					        formatter: 'date("d/m/Y")',
+					        bind: {
+					        	value: '{expedientecomercialgestioneconomica.fechaRevision}',
+					        	readOnly: true
+					        },
+					        allowBlank: false
+						}
+					]
+			},
         	{   
 				xtype:'fieldsettable',
 				title: HreRem.i18n('fieldlabel.canal.origen.lead'),
@@ -265,7 +301,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            		change: 'onHaCambiadoImporteCalculo'
 					           		}					           							            
 					            }
-						   },
+						   },	   
 						   {
 						   		text: HreRem.i18n('fieldlabel.honorarios'),
 					            dataIndex: 'honorarios',
@@ -377,6 +413,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
+		me.lookupController().cargarTabData(me);
 		var listadoHonorarios = me.down("[reference=listadohoronarios]");
 		var listaOrigenLead = me.down("[reference=listaOrigenLead]");
 		var listaAuditoriaDesbloqueo = me.down("[reference=listaAuditoriaDesbloqueo]");
@@ -387,6 +424,5 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		listaAuditoriaDesbloqueo.getStore().load();
 		listadoHonorarios.setDisabledAddBtn(!me.edicionHabilitada(me));
 		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"));
-		
     }
 });

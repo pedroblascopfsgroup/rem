@@ -103,6 +103,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	private static final String VALIDACION_TIPO_OPERACION_ABONO = "msg.error.tipo.operacion.abono";
 	
+	private static final String VALIDACION_NIF_TITULAR_CARTA_PAGO = "msg.error.validacion.nif.titular.carta.pago";
+	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
 		return this.updaterStateGastoProveedor(gasto, codigo);
@@ -329,6 +331,23 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					&& Checks.esNulo(gasto.getGastoProveedorAbonado())){
 				error = messageServices.getMessage(VALIDACION_TIPO_OPERACION_ABONO); 
 				return error;
+			}
+			
+			if (gasto != null && contabilidadGasto != null) {
+				Date fechaDevengoEspecial = contabilidadGasto.getFechaDevengoEspecial();
+				Date fechaDevengoEspecialPosterior = null;
+				try {
+					fechaDevengoEspecialPosterior = ft.parse("01/01/2022");
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				if (ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && DDTipoGasto.isTipoGastoImpuestoOrTasa(gasto.getTipoGasto())
+						&& (!Checks.isFechaNula(fechaDevengoEspecial) && fechaDevengoEspecial.after(fechaDevengoEspecialPosterior))) {
+					if (Checks.esNulo(gasto.getTitularCartaPago())) {
+						error = messageServices.getMessage(VALIDACION_NIF_TITULAR_CARTA_PAGO); 
+						return error;
+					}
+				}
 			}
 		}
 		}

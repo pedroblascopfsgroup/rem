@@ -7,12 +7,11 @@
 --## INCIDENCIA_LINK=HREOS-17301
 --## PRODUCTO=NO
 --## 
---## Finalidad: Creación de tablas AUX_INFORME_GASTOS_CAIXA
+--## Finalidad: Creación de tablas AUX_INFORME_RECHAZOS_GASTOS_CAIXA
 --##
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial - [HREOS-17217]- PIER GOTTA
---##        0.2 Añadir campos nuevos - [HREOS-17301]- Alejandra García
+--##        0.1 Versión inicial - [HREOS-17301]- Alejandra García
 --#########################################
 --*/
 
@@ -26,15 +25,15 @@ DECLARE
 
 TABLE_COUNT NUMBER(1,0) := 0;
 V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
-V_TABLA VARCHAR2(40 CHAR) := 'AUX_INFORME_GASTOS_CAIXA';
+V_TABLA VARCHAR2(40 CHAR) := 'AUX_INFORME_RECHAZOS_GASTOS_CAIXA';
 
 BEGIN
 	
 
 
-	/***** AUX_INFORME_GASTOS_CAIXA *****/
+	/***** AUX_INFORME_RECHAZOS_GASTOS_CAIXA *****/
 
-	V_TABLA := 'AUX_INFORME_GASTOS_CAIXA';
+	V_TABLA := 'AUX_INFORME_RECHAZOS_GASTOS_CAIXA';
 	
 	SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA||'';
 
@@ -46,13 +45,15 @@ BEGIN
 	EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
                             ( 
                                  NUM_GASTO                        NUMBER(16,0)
-                               , EJERCICIO                        NUMBER(4)
-                               , ESTADO_GASTO                     VARCHAR2(100 CHAR)
                                , EMISOR	                          VARCHAR2(50 CHAR)
                                , NIF_EMISOR		                  VARCHAR2(20 CHAR)
                                , PROPIETARIO                      VARCHAR2(100 CHAR)
                                , DESTINATARIO_GASTO               VARCHAR2(100 CHAR)
                                , GESTORIA	                      VARCHAR2(250 CHAR)
+                               , EJERCICIO                        NUMBER(4) 
+                               , ESTADO_GASTO                     VARCHAR2(100 CHAR)
+                               , ESTADO_AUTORIZ_HAYA              VARCHAR2(100 CHAR)
+                               , ESTADO_AUTORIZ_PROP              VARCHAR2(100 CHAR)
                                , FECHA_EMISION                    DATE
                                , FECHA_DEVENGO_ESPECIAL           DATE
                                , FECHA_ENVIO_PAGO	              DATE
@@ -73,12 +74,10 @@ BEGIN
                                , SITUACION_ALQUILER               VARCHAR2(10 CHAR)
                                , PARTICIPACION_ACTIVO             NUMBER(16,4)
                                , IMPORTE_LINEA                    NUMBER(16,2)
-                               , GRUPO	                          VARCHAR2(2 CHAR)
-                               , TIPO	                          VARCHAR2(2 CHAR)
-                               , SUBTIPO	                      VARCHAR2(2 CHAR)
-                               , ELEMENTO_PEP	                  VARCHAR2(30 CHAR)
-                               , INTERFAZ_DE_SALIDA_PAGO          VARCHAR2(30 CHAR)
-                               , INTERFAZ_DE_SALIDA_INFORMATIVA   VARCHAR2(30 CHAR)
+                               , MENSAJE_ERROR                    VARCHAR2(500 CHAR)
+                               , RETORNO_RECIBIDO                 VARCHAR2(300 CHAR)
+                               , FECHA_PROCESADO                  DATE
+                               , SISTEMA_CLIENTE                  VARCHAR2(100 CHAR)
                            )';
 
 

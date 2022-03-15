@@ -3112,7 +3112,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
 	    				    				
 	    			inversionSujetoPasivo.reset();
-	    			tributosPropiedad.reset();
 	    			renunciaExencion.reset();
 	    			tipoAplicable.reset();
 	    			tipoAplicable.setDisabled(true);

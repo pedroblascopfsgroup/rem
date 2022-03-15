@@ -997,14 +997,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 		}
 
+		boolean clientecaixaCambioDocumento = false;
+
 		if (documentoModificado){
 			cliente.setInfoAdicionalPersona(null);
 			cliente.setIdPersonaHaya(null);
-			cliente.setIdPersonaHayaCaixa(null);
+			if (cliente.getIdPersonaHayaCaixa() != null){
+				clientecaixaCambioDocumento = true;
+				cliente.setIdPersonaHayaCaixa(null);
+			}
 		}
 
 		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
 			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
+
+		if (clientecaixaCambioDocumento)
+			cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(
+					genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDCartera.CODIGO_CARTERA_BANKIA)),
+					genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubcartera.CODIGO_BAN_CAIXABANK)),
+					cliente.getDocumento()
+					));
 
 		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 		cliente.setInfoAdicionalPersona(iap);
@@ -1020,13 +1032,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		
 		InfoAdicionalPersona iapRep = null;
+		boolean repCaixaCambioDocumento = false;
+
 
 		if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty()){
 
 			if (documentoRteModificado){
-				cliente.setIdPersonaHayaCaixaRepresentante(null);
 				cliente.setInfoAdicionalPersonaRep(null);
+				if (cliente.getIdPersonaHayaCaixaRepresentante() != null){
+					cliente.setIdPersonaHayaCaixaRepresentante(null);
+					repCaixaCambioDocumento = true;
+				}
 			}
+
+
+			if (repCaixaCambioDocumento)
+				cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(
+						genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDCartera.CODIGO_CARTERA_BANKIA)),
+						genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubcartera.CODIGO_BAN_CAIXABANK)),
+						cliente.getDocumentoRepresentante()
+				));
 
 			String idPersonaHayaRte = interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante());
 

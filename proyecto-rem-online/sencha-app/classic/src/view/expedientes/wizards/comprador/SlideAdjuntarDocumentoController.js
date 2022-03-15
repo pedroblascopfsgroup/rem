@@ -717,8 +717,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					window.destroy();
 				},
 				failure : function(record, operation) {
+					var msg =  Ext.decode(operation.getResponse().responseText).msg;
+					if(msg != null){
+						me.fireEvent("errorToast", msg);
+					}
+					else{
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						window.unmask();
+					}
+					window.unmask();
 				}
 
 			});

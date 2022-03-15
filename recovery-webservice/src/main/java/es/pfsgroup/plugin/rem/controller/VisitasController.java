@@ -149,6 +149,8 @@ public class VisitasController {
 			model.put("data", listaCompleta);
 			if (e.getClass() != HttpClientException.class){
 				model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+				String descError = e.getClass().toString();
+				model.put("descError", descError != null ? descError.substring(6) : null);
 			}
 		}
 

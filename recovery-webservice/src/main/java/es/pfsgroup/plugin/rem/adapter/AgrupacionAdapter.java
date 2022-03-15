@@ -343,6 +343,8 @@ public class AgrupacionAdapter {
 	private static final String NO = "No";
 	private static final String MAYORISTA = "Mayorista";
 	private static final String MINORISTA = "Minorista";
+	public static final String ACTIVO_VISIBILIDAD_GESTION_COMERCIAL_AGR_MSG = "La visibilidad gestión comercial de algún activo no permite la creación de ofertas";
+	public static final String ACTIVO_PUBLICACION_AGR_MSG = "El estado de publicación de algún activo no permite la creación de ofertas";
 
 	public static final String SPLIT_VALUE = ";s;";
 	
@@ -1199,8 +1201,18 @@ public class AgrupacionAdapter {
 
 				// existeOfertaAprobadaActivo
 				// El activo tiene ofertas vivas
-				if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+//				if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
+//					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+//				}
+				if(Checks.esNulo(activo.getActivoPublicacion()) || !DDEstadoPublicacionVenta.isPublicadoVenta(activo.getActivoPublicacion().getEstadoPublicacionVenta())) {
+					throw new JsonViewerException(
+							"El activo no se encuentra publicado");
+				}
+				
+				PerimetroActivo perimetro = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+				if(Checks.esNulo(perimetro) || Checks.esNulo(perimetro.getCheckGestorComercial()) || !perimetro.getCheckGestorComercial()) {
+					throw new JsonViewerException(
+							"El activo no se encuentra visible gestion comercial");
 				}
 
 				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER
@@ -2604,6 +2616,15 @@ public class AgrupacionAdapter {
 				if (DDTipoOferta.CODIGO_ALQUILER.equals(dto.getTipoOferta())
 						&& DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)) {
 					throw new JsonViewerException(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+				}
+				
+				if(Checks.esNulo(activo.getActivoPublicacion()) || !DDEstadoPublicacionVenta.isPublicadoVenta(activo.getActivoPublicacion().getEstadoPublicacionVenta())) {
+					throw new JsonViewerException(AgrupacionAdapter.ACTIVO_PUBLICACION_AGR_MSG);
+				}
+				
+				PerimetroActivo perimetro = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+				if(Checks.esNulo(perimetro) || Checks.esNulo(perimetro.getCheckGestorComercial()) || !perimetro.getCheckGestorComercial()) {
+					throw new JsonViewerException(AgrupacionAdapter.ACTIVO_VISIBILIDAD_GESTION_COMERCIAL_AGR_MSG);
 				}
 			}
 		}

@@ -24,6 +24,7 @@
 --##        0.11 Añadir campo DD_SCM_ID para los PEP espejo - [HREOS-17208] - Alejandra García
 --##        0.12 Añadir misma PEP q los IBI (IBI Urbana), todOs los gastos de tipología tasa y el subtipo ICIO y Nuevas PEPs A INCLUIR DIC 21- [HREOS-17341] - Alejandra García
 --##        0.13 Corregir subtipo en los PEP de INCIDENCIA - [HREOS-17155] - Alejandra García
+--##        0.14 Descomentar las PEP rotacionales - [HREOS-17155] - Alejandra García
 --#########################################
 --*/
 
@@ -46,7 +47,7 @@ DECLARE
     TYPE T_TABLA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TABLA IS TABLE OF T_TABLA;
 	
-    M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(															--*******El DD_EAL_CODIGO ya NO se utiliza en la tabla, el array en esa posición está vacío**
+    M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(															--*******El DD_EAL_CODIGO (posición 9) ya NO se utiliza en la tabla, el array en esa posición está vacío**
       --DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    DD_PRO_ID	DD_SCM_CODIGO
 		T_TABLA('185','XXXX-22-2-COM','22','00','2','05','26','01','','','null','','',''),
 		T_TABLA('186','XXXX-22-2-COM','22','00','2','05','27','01','','','null','','',''),
@@ -55,18 +56,18 @@ DECLARE
 		T_TABLA('189','XXXX-22-2-IBI','22','00','7','01','01','01','','','null','','',''),
 		T_TABLA('190','XXXX-22-2-A-IBI','22','00','9','01','01','03','','','null','','',''),
 		T_TABLA('191','XXXX-22-2-LIMP','22','00','13','15','73','01','','','null','','',''),
-		--T_TABLA('478','XXXX-22-2-A-ROT','22','00','30','15','73','03','','','null','','',''),
+		T_TABLA('478','XXXX-22-2-A-ROT','22','00','30','15','73','02','','','null','','',''),
 		T_TABLA('192','XXXX-22-2-A-INC','22','00','31','15','73','03','','','null','','',''),
 		T_TABLA('193','XXXX-22-2-LIMP','22','00','13','15','75','01','','','null','','',''),
-		--T_TABLA('479','XXXX-22-2-A-ROT','22','00','30','15','75','03','','','null','','',''),
+		T_TABLA('479','XXXX-22-2-A-ROT','22','00','30','15','75','02','','','null','','',''),
 		T_TABLA('194','XXXX-22-2-A-INC','22','00','31','15','75','03','','','null','','',''),
 		T_TABLA('195','XXXX-22-2-LIMP','22','00','13','15','74','01','','','null','','',''),
-		--T_TABLA('480','XXXX-22-2-A-ROT','22','00','30','15','74','03','','','null','','',''),
+		T_TABLA('480','XXXX-22-2-A-ROT','22','00','30','15','74','02','','','null','','',''),
 		T_TABLA('196','XXXX-22-2-A-INC','22','00','31','15','74','03','','','null','','',''),
 		T_TABLA('197','XXXX-22-2-REP POST 1','22','00','16','15','84','','','TR1','null','','',''),
 		T_TABLA('198','XXXX-22-2-REP POST 2','22','00','17','15','84','','','TR2','null','','',''),
 		T_TABLA('199','XXXX-22-2-MNT INC','22','00','21','15','78','01','','','null','','',''),
-		--T_TABLA('481','XXXX-22-2-A-ROT','22','00','30','15','78','03','','','null','','',''),
+		T_TABLA('481','XXXX-22-2-A-ROT','22','00','30','15','78','02','','','null','','',''),
 		T_TABLA('200','XXXX-22-2-A-INC','22','00','31','15','78','03','','','null','','',''),
 		T_TABLA('201','XXXX-22-3-REQ-SAN','22','00','23','04','24','','','','null','','',''),
 		T_TABLA('202','XXXX-22-2-MNT CERR','22','00','27','15','70','','','','null','','',''),
@@ -111,7 +112,7 @@ DECLARE
 		T_TABLA('238','XXXX-22-2-A-COM MON','22','00','5','05','183','03','','','null','','',''),
 		T_TABLA('239','XXXX-22-2-MNT DER','22','00','20','15','184','','','','null','','',''),
 		T_TABLA('240','XXXX-22-3-I-MNT INC','22','02','22','15','174','01','','','null','','',''),
-		--T_TABLA('241','XXXX-22-3-A-I-ADC OT','22','02','19','15','174','03','','','null','','',''),
+		T_TABLA('241','XXXX-22-3-A-I-ADC OT','22','02','19','15','174','02','','','null','','',''),
 		T_TABLA('242','XXXX-22-3-A-I-MNTINC','22','02','24','15','174','03','','','null','','',''),
 		T_TABLA('243','XXXX-22-3-REQ DERR','22','00','24','15','189','','','','null','','',''),
 		T_TABLA('244','XXXX-22-3-REQ LIMP','22','00','25','15','190','','','','null','','',''),
@@ -167,13 +168,13 @@ DECLARE
 		T_TABLA('294','XXXX-22-2-A-TP100%','22','02','43','13','182','','','','null','','',''),
 		--Nuevos registros
 		T_TABLA('295','XXXX-22-2-MNT INC','22','00','21','15','186','01','','','null','','',''),
-		--T_TABLA('482','XXXX-22-2-A-ROT','22','00','30','15','186','03','','','null','','',''),
+		T_TABLA('482','XXXX-22-2-A-ROT','22','00','30','15','186','02','','','null','','',''),
 		T_TABLA('296','XXXX-22-2-A-INC','22','00','31','15','186','03','','','null','','',''),
 		T_TABLA('297','XXXX-22-2-MNT INC','22','00','21','15','79','01','','','null','','',''),
-		--T_TABLA('483','XXXX-22-2-A-ROT','22','00','30','15','79','03','','','null','','',''),
+		T_TABLA('483','XXXX-22-2-A-ROT','22','00','30','15','79','02','','','null','','',''),
 		T_TABLA('298','XXXX-22-2-A-INC','22','00','31','15','79','03','','','null','','',''),
 		T_TABLA('299','XXXX-22-2-MNT INC','22','00','21','15','77','01','','','null','','',''),
-		--T_TABLA('484','XXXX-22-2-A-ROT','22','00','30','15','77','03','','','null','','',''),
+		T_TABLA('484','XXXX-22-2-A-ROT','22','00','30','15','77','02','','','null','','',''),
 		T_TABLA('300','XXXX-22-2-A-INC','22','00','31','15','77','03','','','null','','',''),
 		T_TABLA('301','XXXX-22-3-REQ-SAN','22','00','23','04','25','','','','null','','',''),
 		T_TABLA('302','XXXX-22-3-REQ-SAN','22','00','23','04','23','','','','null','','',''),
@@ -360,6 +361,8 @@ DECLARE
 		T_TABLA('475','OX-XXXX-22-2-BFAX_REOCU','22','3','83','18','254','','','','null','','',''),
 		T_TABLA('476','OX-XXXX-22-2-NOTAS_NEG','22','3','84','18','255','','','','null','','','')
 		--T_TABLA('477','OX-XXXX-22-2-INF_INVEND','22','3','85','','','','','','null','','','')
+
+		--Se descomentan las PEP ROTACIONALES, sus códigos van desde el 478 al 484 y el código 241 tambiém es rotacional
 
     ); 
     V_TMP_TABLA T_TABLA;

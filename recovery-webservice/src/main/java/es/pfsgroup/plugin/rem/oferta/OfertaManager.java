@@ -8466,11 +8466,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 	}
-	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String estadoOferta, String codSubestadoExpediente) {
+	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String codEstadoExpediente, String codSubestadoExpediente) {
 
 		HashMap<String, String> error = new HashMap<String, String>();
 
-		if(estadoOferta != null && DDEstadosExpedienteComercial.CONGELADA.equals(estadoOferta)
+		if(codEstadoExpediente != null && DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)
 				&& codSubestadoExpediente != null && (DDSubestadosExpedienteComercial.ACTIVO_NO_DISPONIBLE.equals(codSubestadoExpediente)
 						|| DDSubestadosExpedienteComercial.ACTIVO_OKUPADO.equals(codSubestadoExpediente))) {
 			return error;
@@ -8479,7 +8479,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
 		if (numActivo != null) {
  			Activo activo = activoDao.getActivoByNumActivo(numActivo);
- 			if (activoIndisponible(activo, estadoOferta)) {
+ 			if (activoIndisponible(activo, codEstadoExpediente)) {
  				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
  						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
  				error.put("disponible", "false");
@@ -8494,7 +8494,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(idAgrupacion);
 				if (agaList != null && !agaList.isEmpty()) {
 					for(ActivoAgrupacionActivo aga : agaList) {
-						if (activoIndisponible(aga.getActivo(), estadoOferta)) {
+						if (activoIndisponible(aga.getActivo(), codEstadoExpediente)) {
 			 				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 			 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
 			 				error.put("disponible", "false");
@@ -8508,7 +8508,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		if(activoOfertaList != null && !activoOfertaList.isEmpty()
-				&& !DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta)) {
+				&& !DDEstadosExpedienteComercial.CANCELADA.equals(codEstadoExpediente)) {
 
 			for(ActivoOferta actOfr : activoOfertaList) {
 
@@ -8521,7 +8521,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						&& !DDEstadosExpedienteComercial.BORRADOR.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.CANCELADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.ANULADO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
-						&& !DDEstadosExpedienteComercial.CONGELADA.equals(estadoOferta)) {
+						&& !DDEstadosExpedienteComercial.FINALIZADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
+						&& !DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));
 					error.put("disponible", "false");

@@ -119,7 +119,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
@@ -218,7 +217,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -226,7 +224,6 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -4091,10 +4088,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getFechaFinConcurrencia() != null) {
 					dto.setFechaFinConcurrencia(actCaixa.getFechaFinConcurrencia());
 				}
-				if (actCaixa.getSegmentacionCartera() != null) {
-					dto.setSegmentacionCarteraCodigo(actCaixa.getSegmentacionCartera().getCodigo());
-					dto.setSegmentacionCarteraDescripcion(actCaixa.getSegmentacionCartera().getDescripcion());
-				}
 			}
 		}
 
@@ -4232,10 +4225,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(dto.getCanalPublicacionVentaCodigo() != null){
 					DDTipoComercializar canalDistVent = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dto.getCanalPublicacionVentaCodigo());
 					activoCaixa.setCanalDistribucionVenta(canalDistVent);
-				}
-				if (dto.getSegmentacionCarteraCodigo() != null) {
-					DDCarteraBc segmentacionCartera = (DDCarteraBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDCarteraBc.class, dto.getSegmentacionCarteraCodigo());
-					activoCaixa.setSegmentacionCartera(segmentacionCartera);
 				}
 				
 				genericDao.update(ActivoCaixa.class, activoCaixa);

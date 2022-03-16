@@ -599,6 +599,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		Boolean documentoRteModificado = false;
 		DtoInterlocutorBC oldData = new DtoInterlocutorBC();
 		DtoInterlocutorBC newData = new DtoInterlocutorBC();
+		boolean newRepresentanteImplicadoCaixa = false;
 
 		if (isRelevanteBC){
 			oldData.clienteToDto(cliente);
@@ -661,6 +662,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 		}
 		if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
 			documentoRteModificado = !clienteDto.getDocumentoRepresentante().equals(cliente.getDocumentoRepresentante());
+			if (cliente.getDocumentoRepresentante() == null && cliente.getIdPersonaHayaCaixa() != null)
+				newRepresentanteImplicadoCaixa = true;
+
 			cliente.setDocumentoRepresentante(clienteDto.getDocumentoRepresentante());
 		}
 		if (((JSONObject) jsonFields).containsKey("telefono1")) {
@@ -1046,7 +1050,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 
-			if (repCaixaCambioDocumento)
+			if (repCaixaCambioDocumento || newRepresentanteImplicadoCaixa)
 				cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(
 						genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDCartera.CODIGO_CARTERA_BANKIA)),
 						genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubcartera.CODIGO_BAN_CAIXABANK)),

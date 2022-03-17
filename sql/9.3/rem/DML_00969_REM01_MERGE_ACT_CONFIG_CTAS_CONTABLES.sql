@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220302
+--## FECHA_CREACION=20220317
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17287
@@ -63,7 +63,8 @@ BEGIN
                     WHERE  NOT EXISTS (
                         SELECT 1 
                         FROM '||V_ESQUEMA||'.ACT_CONFIG_CTAS_CONTABLES act3 
-                        WHERE act3.DD_SCR_ID= (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''71''))                
+                        WHERE act3.DD_SCR_ID= (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''71''))
+                        AND act2.PRO_ID=(SELECT PRO.PRO_ID FROM REM01.ACT_PRO_PROPIETARIO PRO WHERE PRO_DOCIDENTIF=''B86053394'' AND PRO.BORRADO = 0)
                         
                         ) us ON (us.CCC_CTAS_ID = act.CCC_CTAS_ID AND us.DD_SCR_CODIGO = ''71'')
                                                 
@@ -100,7 +101,7 @@ BEGIN
                                     us.DD_TIM_ID,
                                     us.DD_CRA_ID,
                                     (SELECT DD_SCR_ID FROM DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''71''),
-                                    us.PRO_ID,
+                                    (SELECT PRO.PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO_DOCIDENTIF=''A16948200''),
                                     us.EJE_ID,
                                     us.CCC_ARRENDAMIENTO,
                                     us.CCC_REFACTURABLE,

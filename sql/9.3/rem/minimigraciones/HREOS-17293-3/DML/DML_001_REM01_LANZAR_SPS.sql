@@ -110,7 +110,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||
         V_COUNT := V_COUNT + 1;
     END LOOP;
      
-    DBMS_OUTPUT.PUT_LINE('  [INFO] Se ha recalculado el rating para '||V_COUNT||' de Cajamar');
+    DBMS_OUTPUT.PUT_LINE('  [INFO] Se ha recalculado el rating para '||V_COUNT||' .');
     CLOSE RECALCULAR_RATING;
      
     COMMIT;

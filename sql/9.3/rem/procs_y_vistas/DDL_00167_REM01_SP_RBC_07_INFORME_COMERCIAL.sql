@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220309
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17366
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -22,6 +22,7 @@
 --##        0.10 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.11 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
 --##        0.12 Se cambia los campos por el nuevo modelo de Informe comercial - [HREOS-17366] - Daniel Algaba
+--##        0.13 Se añaden nuevos campos Infrome comercial - [HREOS-17351] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -78,10 +79,45 @@ BEGIN
                     WHEN ICO.ICO_ANEJO_TRASTERO = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''S''
                     ELSE ''N''
                  END AS TIENE_TRASTERO
+                ,ICO.ICO_IDEF_TRASTERO AS IDEN_TRASTERO
                 ,CASE
                     WHEN ICO.ICO_NUM_GARAJE > 0 THEN ''S''
                     ELSE ''N''
                  END AS EQUIPAMIENTO_015001
+                ,ICO.ICO_IDEF_PLAZA_PARKING AS IDEN_PL_PARKING
+                ,CASE
+                    WHEN ICO.ICO_CALEFACCION = (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''01'') THEN ''01''
+                    WHEN ICO.ICO_CALEFACCION = (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''02'') THEN ''01''
+                    ELSE ''02''
+                END AS CALEFACCION
+                ,CASE
+                    WHEN ICO.ICO_COCINA_AMUEBLADA = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''01''
+                    ELSE ''02''
+                 END AS COCINA_EQUIPADA
+                , eqv.DD_CODIGO_CAIXA as EST_CONSERVACION
+                ,CASE
+                    WHEN ICO.ICO_JARDIN = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'') THEN ''01''
+                    WHEN ICO.ICO_JARDIN = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'') THEN ''01''
+                    ELSE ''02''
+                END AS JARDIN
+                ,CASE
+                    WHEN ICO.ICO_JARDIN = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'') THEN ''01''
+                    WHEN ICO.ICO_JARDIN = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'') THEN ''01''
+                    ELSE ''02''
+                END AS USO_JARDIN
+                ,CASE
+                    WHEN ICO.ICO_PISCINA = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'') THEN ''01''
+                    WHEN ICO.ICO_PISCINA = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'') THEN ''01''
+                    ELSE ''02''
+                END AS PISCINA
+                ,CASE
+                    WHEN ICO.ICO_SALIDA_HUMOS = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''01''
+                    ELSE ''02''
+                END AS SALIDA_HUMOS
+                ,CASE
+                    WHEN ICO.ICO_TERRAZA = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''01''
+                    ELSE ''02''
+                END AS TERRAZA
                 ,  REPLACE(REPLACE(ICO.ICO_INFO_DISTRIBUCION_INTERIOR, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
                 ,  REPLACE(REPLACE(EDIF.EDI_DESCRIPCION, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_2                
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
@@ -91,6 +127,8 @@ BEGIN
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_ESTADO_CONSERVACION ECV ON ECV.DD_ECV_ID = ICO.DD_ECV_ID  
+            LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv ON eqv.DD_NOMBRE_CAIXA = ''EST_CONSERVACION'' AND eqv.DD_CODIGO_REM = ECV.DD_ECV_CODIGO AND eqv.BORRADO=0 
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0
             AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
@@ -106,9 +144,19 @@ BEGIN
                 ,AUX.NUM_TERRAZAS=US.NUM_TERRAZAS
                 ,AUX.NUM_APARACAMIENTOS=US.NUM_APARACAMIENTOS
                 ,AUX.TIENE_TRASTERO=US.TIENE_TRASTERO
+                ,AUX.IDEN_TRASTERO=US.IDEN_TRASTERO
                 ,AUX.EQUIPAMIENTO_015001=US.EQUIPAMIENTO_015001   
+                ,AUX.IDEN_PL_PARKING=US.IDEN_PL_PARKING
+                ,AUX.CALEFACCION=US.CALEFACCION
+                ,AUX.COCINA_EQUIPADA=US.COCINA_EQUIPADA
+                ,AUX.EST_CONSERVACION=US.EST_CONSERVACION
+                ,AUX.JARDIN=US.JARDIN
+                ,AUX.USO_JARDIN=US.USO_JARDIN
+                ,AUX.PISCINA=US.PISCINA
                 ,AUX.TXT_COMERCIAL_CAS_1=US.TXT_COMERCIAL_CAS_1   
                 ,AUX.TXT_COMERCIAL_CAS_2=US.TXT_COMERCIAL_CAS_2   
+                ,AUX.SALIDA_HUMOS=NVL(AUX.SALIDA_HUMOS, US.SALIDA_HUMOS)
+                ,AUX.TERRAZA=US.TERRAZA
             WHEN NOT MATCHED THEN INSERT (
                  NUM_IDENTIFICATIVO
                 ,NUM_INMUEBLE
@@ -121,9 +169,19 @@ BEGIN
                 ,NUM_TERRAZAS
                 ,NUM_APARACAMIENTOS
                 ,TIENE_TRASTERO
+                ,IDEN_TRASTERO
                 ,EQUIPAMIENTO_015001  
+                ,IDEN_PL_PARKING
+                ,CALEFACCION
+                ,COCINA_EQUIPADA
+                ,EST_CONSERVACION
+                ,JARDIN
+                ,USO_JARDIN
+                ,PISCINA
                 ,TXT_COMERCIAL_CAS_1
                 ,TXT_COMERCIAL_CAS_2  
+                ,SALIDA_HUMOS
+                ,TERRAZA
                 )VALUES(
                      US.NUM_IDENTIFICATIVO
                     ,US.NUM_INMUEBLE
@@ -136,9 +194,19 @@ BEGIN
                     ,US.NUM_TERRAZAS
                     ,US.NUM_APARACAMIENTOS
                     ,US.TIENE_TRASTERO
+                    ,US.IDEN_TRASTERO
                     ,US.EQUIPAMIENTO_015001
+                    ,US.IDEN_PL_PARKING
+                    ,US.CALEFACCION
+                    ,US.COCINA_EQUIPADA
+                    ,US.EST_CONSERVACION
+                    ,US.JARDIN
+                    ,US.USO_JARDIN
+                    ,US.PISCINA
                     ,US.TXT_COMERCIAL_CAS_1
                     ,US.TXT_COMERCIAL_CAS_2
+                    ,US.SALIDA_HUMOS
+                    ,US.TERRAZA
                 )
    ';
    EXECUTE IMMEDIATE V_MSQL;

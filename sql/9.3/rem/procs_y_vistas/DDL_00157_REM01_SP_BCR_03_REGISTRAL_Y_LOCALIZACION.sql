@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220304
+--## FECHA_CREACION=20220316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17329
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -22,6 +22,7 @@
 --##	      0.10 Correcciones - HREOS-16321
 --##	      0.11 Añadir campo idufir - HREOS-17150 - Javier Esbrí
 --##	      0.12 Añadir campos nuevos REG_SUPERFICIE_SOBRE_RASANTE y REG_SUPERFICIE_BAJO_RASANTE - HREOS-17329 - Javier Esbrí
+--##	      0.13 Añadir campos nuevos REG_SUPERFICIE_PARCELA - HREOS-17351 - Javier Esbrí
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -127,6 +128,7 @@ BEGIN
                   , APR.IDUFIR AS REG_IDUFIR
                   , NVL(APR.SUP_SOBRE_RASANTE, REG.REG_SUPERFICIE_SOBRE_RASANTE) REG_SUPERFICIE_SOBRE_RASANTE
                   , NVL(APR.SUP_BAJO_RASANTE, REG.REG_SUPERFICIE_BAJO_RASANTE) REG_SUPERFICIE_BAJO_RASANTE
+                  , NVL(APR.SUP_REG_SOLAR, REG.REG_SUPERFICIE_PARCELA) REG_SUPERFICIE_PARCELA
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -142,6 +144,7 @@ BEGIN
                   , REG.REG_IDUFIR = AUX.REG_IDUFIR
                   , REG.REG_SUPERFICIE_SOBRE_RASANTE = AUX.REG_SUPERFICIE_SOBRE_RASANTE
                   , REG.REG_SUPERFICIE_BAJO_RASANTE = AUX.REG_SUPERFICIE_BAJO_RASANTE
+                  , REG.REG_SUPERFICIE_PARCELA = AUX.REG_SUPERFICIE_PARCELA
                   , USUARIOMODIFICAR = ''STOCK_BC''
                   , FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -153,6 +156,7 @@ BEGIN
                      , REG_IDUFIR
                      , REG_SUPERFICIE_SOBRE_RASANTE
                      , REG_SUPERFICIE_BAJO_RASANTE
+                     , REG_SUPERFICIE_PARCELA
                      , USUARIOCREAR
                      , FECHACREAR)
                       VALUES 
@@ -164,6 +168,7 @@ BEGIN
                      , AUX.REG_IDUFIR
                      , AUX.REG_SUPERFICIE_SOBRE_RASANTE
                      , AUX.REG_SUPERFICIE_BAJO_RASANTE
+                     , AUX.REG_SUPERFICIE_PARCELA
                      , ''STOCK_BC''
                      , SYSDATE)';
    

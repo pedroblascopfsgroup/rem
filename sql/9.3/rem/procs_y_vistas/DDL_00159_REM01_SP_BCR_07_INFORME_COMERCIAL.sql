@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Danie Algaba
---## FECHA_CREACION=20220309
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17366
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 Se quita los filtrados - HREOS-15634
 --##        0.3 Se añaden nuevos campos a la ICO (ICO_ANO_REHABILITACION y ICO_ANO_CONSTRUCCION) - HREOS-17329 - Javier Esbrí
 --##        0.4 Se cambia los campos por el nuevo modelo de Informe comercial - HREOS-17366
+--##        0.5 Se añaden nuevos campos Informe comercial - HREOS-17351 - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -58,9 +59,60 @@ BEGIN
                   , APR.NUM_HABITACIONES/100 ICO_NUM_DORMITORIOS
                   , APR.NUM_BANYOS/100 ICO_NUM_BANYOS
                   , CASE WHEN APR.NUM_TERRAZAS > 0 THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') ELSE (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') END ICO_TERRAZA
+                  , CASE 
+                     WHEN TIENE_ASCENSOR IN (''S'',''1'',''01'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN TIENE_ASCENSOR IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_ASCENSOR
+                  , CASE 
+                     WHEN TIENE_TRASTERO IN (''S'',''1'',''01'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN TIENE_TRASTERO IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_ANEJO_TRASTERO
+                  , APR.IDEN_TRASTERO ICO_IDEF_TRASTERO
+                  , CASE 
+                     WHEN EQUIPAMIENTO_015001 IN (''S'',''1'',''01'')THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN EQUIPAMIENTO_015001 IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_ANEJO_GARAJE
+                  , APR.IDEN_PL_PARKING ICO_IDEF_PLAZA_PARKING
+                  , CASE 
+                     WHEN CALEFACCION IN (''S'',''1'',''01'') THEN (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''01'')
+                     WHEN CALEFACCION IN (''N'',''0'',''02'') THEN (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''03'') 
+                     ELSE NULL
+                  END AS ICO_CALEFACCION
+                  , CASE 
+                     WHEN COCINA_EQUIPADA IN (''S'',''1'',''01'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN COCINA_EQUIPADA IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_COCINA_AMUEBLADA
+                  , ECV.DD_ECV_ID as DD_ECV_ID
+                  , CASE 
+                     WHEN JARDIN IN (''S'',''1'',''01'') AND USO_JARDIN = ''01'' THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'')
+                     WHEN JARDIN IN (''S'',''1'',''01'') AND USO_JARDIN = ''02'' THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'')
+                     WHEN JARDIN IN (''N'',''0'',''02'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''01'') 
+                     ELSE NULL
+                  END AS ICO_JARDIN
+                  , CASE 
+                     WHEN PISCINA IN (''S'',''1'',''01'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'')
+                     WHEN PISCINA IN (''N'',''0'',''02'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''01'') 
+                     ELSE NULL
+                  END AS ICO_PISCINA
+                  , CASE 
+                     WHEN SALIDA_HUMOS IN (''S'',''1'',''01'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN SALIDA_HUMOS IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_SALIDA_HUMOS
+                  , CASE 
+                     WHEN TERRAZA IN (''S'',''1'',''01'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
+                     WHEN TERRAZA IN (''N'',''0'',''02'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
+                     ELSE NULL
+                  END AS ICO_TERRAZA
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''EST_CONSERVACION''  AND eqv1.DD_CODIGO_CAIXA = APR.EST_CONSERVACION AND EQV1.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_ESTADO_CONSERVACION ECV ON ECV.DD_ECV_CODIGO = eqv1.DD_CODIGO_REM 
                   WHERE ACT.BORRADO = 0
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                ) AUX
@@ -72,6 +124,16 @@ BEGIN
 				  , ICO.ICO_NUM_DORMITORIOS = NVL(ICO.ICO_NUM_DORMITORIOS, AUX.ICO_NUM_DORMITORIOS)
 				  , ICO.ICO_NUM_BANYOS = NVL(ICO.ICO_NUM_BANYOS, AUX.ICO_NUM_BANYOS)
 				  , ICO.ICO_TERRAZA = NVL(ICO.ICO_TERRAZA, AUX.ICO_TERRAZA)
+              , ICO.ICO_ASCENSOR = NVL(AUX.ICO_ASCENSOR,ICO.ICO_ASCENSOR)
+              , ICO.ICO_ANEJO_TRASTERO = NVL(AUX.ICO_ANEJO_TRASTERO,ICO.ICO_ANEJO_TRASTERO)
+              , ICO.ICO_ANEJO_GARAJE = NVL(AUX.ICO_ANEJO_GARAJE,ICO.ICO_ANEJO_GARAJE)
+              , ICO.ICO_CALEFACCION = NVL(AUX.ICO_CALEFACCION,ICO.ICO_CALEFACCION)
+              , ICO.ICO_COCINA_AMUEBLADA = NVL(AUX.ICO_COCINA_AMUEBLADA,ICO.ICO_COCINA_AMUEBLADA)
+              , ICO.DD_ECV_ID = NVL(AUX.DD_ECV_ID,ICO.DD_ECV_ID)
+              , ICO.ICO_JARDIN = NVL(AUX.ICO_JARDIN,ICO.ICO_JARDIN)
+              , ICO.ICO_PISCINA = NVL(AUX.ICO_PISCINA,ICO.ICO_PISCINA)
+              , ICO.ICO_SALIDA_HUMOS = NVL(AUX.ICO_SALIDA_HUMOS,ICO.ICO_SALIDA_HUMOS)
+              , ICO.ICO_TERRAZA = NVL(AUX.ICO_TERRAZA,ICO.ICO_TERRAZA)
                   , ICO.USUARIOMODIFICAR = ''STOCK_BC''
                   , ICO.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -82,7 +144,17 @@ BEGIN
                   , ICO_ANO_CONSTRUCCION
 				  , ICO_NUM_DORMITORIOS
 				  , ICO_NUM_BANYOS
+              , ICO_ASCENSOR
 				  , ICO_TERRAZA
+              , ICO_ANEJO_TRASTERO
+              , ICO_ANEJO_GARAJE
+              , ICO_CALEFACCION
+              , ICO_COCINA_AMUEBLADA
+              , DD_ECV_ID
+              , ICO_JARDIN
+              , ICO_PISCINA
+              , ICO_SALIDA_HUMOS
+              , ICO_TERRAZA
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -94,6 +166,16 @@ BEGIN
 				  , AUX.ICO_NUM_DORMITORIOS
 			      , AUX.ICO_NUM_BANYOS
 				  , AUX.ICO_TERRAZA
+              , AUX.ICO_ASCENSOR
+              , AUX.ICO_ANEJO_TRASTERO
+              , AUX.ICO_ANEJO_GARAJE
+              , AUX.ICO_CALEFACCION
+              , AUX.ICO_COCINA_AMUEBLADA
+              , AUX.DD_ECV_ID
+              , AUX.ICO_JARDIN
+              , AUX.ICO_PISCINA
+              , AUX.ICO_SALIDA_HUMOS
+              , AUX.ICO_TERRAZA
                   , ''STOCK_BC''
                   , SYSDATE)';
       

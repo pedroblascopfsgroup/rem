@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=2021202
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15855
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -24,6 +24,7 @@
 --##        0.12 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##	      0.13 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855 - Alejandra García
 --##          0.14 Cosas - HREOS-XXXXX
+--##	      0.15 Insertar nuevo campo SUP_REG_SOLAR - HREOS-17351 - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -210,6 +211,7 @@ BEGIN
                         END SUP_TASACION_CONSTRUIDA
                   , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE * 100 SUP_SOBRE_RASANTE
                   , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
+                  , ACT_REG.REG_SUPERFICIE_PARCELA SUP_REG_SOLAR
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG
                   JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL ACT_REG ON BIE_REG.BIE_DREG_ID = ACT_REG.BIE_DREG_ID AND ACT_REG.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0
@@ -233,6 +235,7 @@ BEGIN
                   , APR.SUP_TASACION_CONSTRUIDA = AUX.SUP_TASACION_CONSTRUIDA
                   , APR.SUP_SOBRE_RASANTE = AUX.SUP_SOBRE_RASANTE
                   , APR.SUP_BAJO_RASANTE = AUX.SUP_BAJO_RASANTE
+                  , APR.SUP_REG_SOLAR = AUX.SUP_REG_SOLAR
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
@@ -242,7 +245,8 @@ BEGIN
                   , SUP_REGISTRAL_UTIL
                   , SUP_TASACION_CONSTRUIDA
                   , SUP_SOBRE_RASANTE
-                  , SUP_BAJO_RASANTE)
+                  , SUP_BAJO_RASANTE
+                  , SUP_REG_SOLAR)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
                   , AUX.NUM_INMUEBLE
@@ -251,7 +255,8 @@ BEGIN
                   , AUX.SUP_REGISTRAL_UTIL
                   , AUX.SUP_TASACION_CONSTRUIDA
                   , AUX.SUP_SOBRE_RASANTE
-                  , AUX.SUP_BAJO_RASANTE)';
+                  , AUX.SUP_BAJO_RASANTE
+                  , AUX.SUP_REG_SOLAR)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

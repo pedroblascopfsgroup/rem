@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220304
+--## FECHA_CREACION=20220316
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17150
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -13,7 +13,8 @@
 --##        0.1 Versión 
 --##        0.2 Añadir mapeos nuevos y rellenar campo PRIORIDAD en COMPLEMENTO - [HREOS-15855] - Alejandra García
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
---##        043 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
+--##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
+--##        0.5 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
 --##########################################
 --*/
 
@@ -1256,7 +1257,14 @@ DECLARE
         T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01','0'),
         --- Segmentación Cartera Caixa
         T_TIPO_DATA('SEGMENTACION_CARTERA','02','Cartera alquiler','DD_CBC_CARTERA_BC','03','0'),
-        T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0')
+        T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0'),
+        --- Estado conservación
+        T_TIPO_DATA('EST_CONSERVACION','01','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','02','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
+        T_TIPO_DATA('EST_CONSERVACION','04','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
+        T_TIPO_DATA('EST_CONSERVACION','05','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
+        T_TIPO_DATA('EST_CONSERVACION','07','Actualizar','DD_ECV_ESTADO_CONSERVACION','08','0')
+
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

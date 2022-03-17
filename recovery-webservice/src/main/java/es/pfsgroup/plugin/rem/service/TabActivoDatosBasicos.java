@@ -11,16 +11,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
@@ -55,6 +51,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -87,8 +84,53 @@ import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleAdministracion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibleTecnico;
+import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEscaleraEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoTecnico;
+import es.pfsgroup.plugin.rem.model.dd.DDPlantaEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -200,6 +242,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1283,6 +1328,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		
+		activoDto.setIsConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
 		
 		return activoDto;
 	}

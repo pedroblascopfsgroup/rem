@@ -410,6 +410,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean discrepanciasLocalizacion;
 	private String discrepanciasLocalizacionObservaciones;
 	
+	private Boolean isConcurrencia;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -3049,6 +3051,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
 		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
+	}
+
+	public Boolean getIsConcurrencia() {
+		return isConcurrencia;
+	}
+
+	public void setIsConcurrencia(Boolean isConcurrencia) {
+		this.isConcurrencia = isConcurrencia;
 	}
 	
 }

@@ -339,6 +339,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
     			{
                 	name: 'perimetroMacc',
     	 			type: 'boolean'
+                },
+    			{
+                	name: 'isConcurrencia',
+    	 			type: 'boolean'
                 }
     ],
     

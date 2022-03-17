@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -294,6 +295,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -942,6 +946,8 @@ public class AgrupacionAdapter {
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
+			
+			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);

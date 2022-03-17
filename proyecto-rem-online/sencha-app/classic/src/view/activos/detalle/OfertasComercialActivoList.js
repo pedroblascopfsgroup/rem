@@ -728,6 +728,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		} else if(activo.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		} 
+
+		if (activo.get('isConcurrencia') == true){
+			me.setTopBar(false);
+		}
 		
    },
 

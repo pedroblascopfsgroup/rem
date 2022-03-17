@@ -302,6 +302,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Autowired
 	private ConcurrenciaApi concurrenciaApi;
@@ -957,6 +960,8 @@ public class AgrupacionAdapter {
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
+			
+			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);

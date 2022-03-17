@@ -343,7 +343,11 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
     	 			name: 'enConcurrencia',
     	 			type: 'boolean'
-    			}
+    			},
+    			{
+                	name: 'isConcurrencia',
+    	 			type: 'boolean'
+                }
     ],
     
 	proxy: {

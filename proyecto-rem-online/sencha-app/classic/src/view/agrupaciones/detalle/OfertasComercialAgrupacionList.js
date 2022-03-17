@@ -662,6 +662,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		if(agr.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		}
+
+		if(agr.get('isConcurrencia')==true){
+			me.setTopBar(false);
+		}
 		
    }
    	

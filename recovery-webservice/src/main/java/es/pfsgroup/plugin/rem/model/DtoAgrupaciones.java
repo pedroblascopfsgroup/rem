@@ -92,6 +92,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean esHayaHome;
 	
 	private Boolean enConcurrencia;
+	private Boolean isConcurrencia;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -565,5 +566,12 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEnConcurrencia(Boolean enConcurrencia) {
 		this.enConcurrencia = enConcurrencia;
 	}
+	public Boolean getIsConcurrencia() {
+		return isConcurrencia;
+	}
+	public void setIsConcurrencia(Boolean isConcurrencia) {
+		this.isConcurrencia = isConcurrencia;
+	}
+	
 	
 }

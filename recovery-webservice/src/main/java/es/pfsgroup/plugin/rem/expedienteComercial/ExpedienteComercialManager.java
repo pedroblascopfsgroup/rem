@@ -1950,9 +1950,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
-				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo.getId()));
-
-
+				dto.setEsActivoHayaHome(activoManager.esActivoHayaHome(activo, null));
+				
+				
 				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 				if (!Checks.esNulo(tramitesActivo) && !tramitesActivo.isEmpty()) {
 					dto.setTieneTramiteComercial(true);

@@ -1330,7 +1330,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setBajaContableBBVADescripcion(bajaContableBBVA.getDescripcion());
 		}
 		
-		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		activoDto.setEsHayaHome(activoApi.esActivoHayaHome(activo, null));
 		
 		return activoDto;
 	}

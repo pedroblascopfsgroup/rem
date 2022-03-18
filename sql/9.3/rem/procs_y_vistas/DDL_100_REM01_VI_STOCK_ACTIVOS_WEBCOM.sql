@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20211103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16087
+--## INCIDENCIA_LINK=HREOS-16549
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -39,6 +39,8 @@
 --##		0.22 Versión Lara Pablo -> Arreglo merge
 --##  		0.23 Versión Daniel Algaba -> HREOS-14686 - Poner campos ID_ACTIVO_BC, ID_LOTE_ALQUILER_REM, ES_ACTIVO_PRINCIPAL_LOTE_ALQUILER, ID_LOTE_OBREM_REM, ES_ACTIVO_PRINCIPAL_LOTE_OBREM, CODIGO_PORTAL_PUBLICACION, CODIGO_CANAL_DIST_VENTA y CODIGO_CANAL_DIST_ALQUILER
 --##		0.24 Versión Daniel Algaba -> HREOS-16087 - Quitamos campo duplicado - COD_DIR_COMERCIAL
+--##		0.25 Versión Julián Dolz -> HREOS-16549 - Añadir campo CAT_CORRECTO
+
 --##########################################
 --*/
 
@@ -420,7 +422,8 @@ BEGIN/*Versión 0.18*/
         CAST(COR.COR_IMPORTE_MIN AS NUMBER(16,2))													AS RECOMENDACION_IMPORTE_MIN,
         CAST(REC.DD_REC_CODIGO AS VARCHAR2(5 CHAR))													AS RECOMENDACION_REQUERIDA,
 		CAST(PRO.PRO_DOCIDENTIF AS VARCHAR2(20 CHAR))                                            	AS PRO_DOCIDENTIF,
-        CAST(PRO.PRO_NOMBRE AS VARCHAR2(20 CHAR))                                                   AS PRO_NOMBRE
+        CAST(PRO.PRO_NOMBRE AS VARCHAR2(20 CHAR))                                                   AS PRO_NOMBRE,
+        CAT.CAT_CORRECTO
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID

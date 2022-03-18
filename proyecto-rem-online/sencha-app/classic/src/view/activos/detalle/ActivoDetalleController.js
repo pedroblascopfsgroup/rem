@@ -244,18 +244,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var idActivo = me.getViewModel().get("activo.id");
 		var faseDatosRegistrales = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistrales"]');
 		var faseDatosRegistro = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasedatosregistro"]');
-		var faseCalidadDatDireccion = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasecalidaddatodireccion"]');
-		var faseTresCalidadDato = me.getView().down('[reference="calidaddatopublicacionactivoref"]').down('[reference="fasetrescalidaddato"]');
 		
 		var cod01 = faseDatosRegistrales.codigoGrid;
 		var cod02 = faseDatosRegistro.codigoGrid;
-		var cod03 = faseTresCalidadDato.codigoGrid;
-		var cod04 = faseCalidadDatDireccion.codigoGrid;
 		
 		var storefaseDatosRegistrales;
 		var storefaseDatosRegistro;
-		var storefaseTresCalidadDato;
-		var storefaseCalidadDatDireccion;
 		
 		//DATOS REGISTRALES
 		storefaseDatosRegistrales = Ext.create('Ext.data.Store',{
@@ -297,44 +291,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		);
 		faseDatosRegistro.setStore(storefaseDatosRegistro);
 		faseDatosRegistro.getStore().load();
-		//DATOS FASE 3
-		storefaseTresCalidadDato = Ext.create('Ext.data.Store',{
-			model: 'HreRem.model.CalidadDatoFasesGridModel', 
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
-				extraParams: {id: idActivo} 
-			},
-			autoLoad: false,
-			session: false		
-			}			
-		).load();
-		storefaseTresCalidadDato.filterBy( 
-			function (record, id) {
-				return record.get('codigoGrid') == cod03;
-			}
-		);
-		faseTresCalidadDato.setStore(storefaseTresCalidadDato);
-		faseTresCalidadDato.getStore().load();
-		//DATOS FASE 3 DIRECCION
-		storefaseCalidadDatDireccion = Ext.create('Ext.data.Store',{
-			model: 'HreRem.model.CalidadDatoFasesGridModel', 
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'activo/getCalidadDelDatoFiltered', 
-				extraParams: {id: idActivo} 
-			},
-			autoLoad: false,
-			session: false		
-			}			
-		).load();
-		storefaseCalidadDatDireccion.filterBy( 
-			function (record, id) {
-				return record.get('codigoGrid') == cod04;
-			}
-		);
-		faseCalidadDatDireccion.setStore(storefaseCalidadDatDireccion);
-		faseCalidadDatDireccion.getStore().load();		
+
 	},
 	
 	
@@ -355,7 +312,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	me.lookupReference('toolFieldFase0').setCollapsed(record.data.desplegable0Collapsed);
-				    	me.lookupReference('toolFieldFase1').setCollapsed(record.data.desplegable1Collapsed);
 				    	me.lookupReference('toolFieldFase2').setCollapsed(record.data.desplegable2Collapsed);
 				    	if(Ext.isFunction(form.afterLoad)) {
 				    		form.afterLoad();
@@ -8866,6 +8822,141 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
     },
+    
+    onClickGuardarReferencia: function(btn){
+    	var me = this;
+    	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
+    	var datosCatastro = gridDatosCatastro.getStore().getData().items;
+    	var hayAlgunoMarcado = false;
+    	var window =  btn.up('window');
+    	var arrayReferencias = [];
+    	var params =  {};
+    	for(i = 0; i < datosCatastro.length;i++){
+    		if(datosCatastro[i].data.check === true){
+    			hayAlgunoMarcado = true;
+    			var datCat = datosCatastro[i].data;
+    			var catCorrecto = datCat.catastroCorrecto;
+    			if(Ext.isEmpty(catCorrecto)){
+    				catCorrecto = "";
+    			}
+    			arrayReferencias.push(datCat.refCatastral + "-" + catCorrecto);
+
+    		}
+		}
+    	if(window.modificar){
+    		if(arrayReferencias.length != 1){
+    			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.modificar.referencia"));
+    			return;
+    		}
+    		params = {
+				idActivo : me.getView().idActivo,
+				referenciaAnterior: window.refCatastral,
+				nuevaReferencia: arrayReferencias[0]
+			};
+			url = $AC.getRemoteUrl('catastro/updateCatastro');
+    	}else{
+    		if(!hayAlgunoMarcado){
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.guardar.referencia.sin.referencia"));
+	    		return;
+    		}
+    		url = $AC.getRemoteUrl('catastro/saveCatastro');
+    		params = {
+				idActivo : me.getView().idActivo,
+				arrayReferencias: arrayReferencias
+			};
+    	}
+
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Ajax.request({
+			url : url,
+			method : 'GET',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				window.unmask();
+				window.close();
+				var grid = me.getView();
+				grid.getStore().load();
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				window.unmask();
+			}
+		});
+	},
+
+	buscarReferenciaCatastral: function(textfield){
+		var me = this;
+		if(!textfield.isValid()) return;
+		var guardarReferencia = me.lookupReference('guardarRefCatastralRef');
+		var gridDatosRem = me.lookupReference('informacionCatastroGridRefRem');
+		var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
+		gridDatosRem.mask(HreRem.i18n("msg.mask.loading"));
+		gridDatosCatastro.mask(HreRem.i18n("msg.mask.loading"));
+		url = $AC.getRemoteUrl('catastro/getCatastro');
+		Ext.Ajax.request({
+			url : url,
+			method : 'GET',
+			params : {
+				idActivo : me.getView().idActivo,
+				refCatastral: textfield.getValue()
+			},
+			success : function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				var datosRem = data.datosRem;
+				var datosCat = data.datosCatastro;
+
+				var myStoreRem = new Ext.data.Store({data: datosRem});
+				var myStoreCat = new Ext.data.Store({data: datosCat});
+
+				gridDatosRem.setStore(myStoreRem);
+				gridDatosCatastro.setStore(myStoreCat);
+				guardarReferencia.setDisabled(false);
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			},
+			callback : function(record, operation) {
+				gridDatosRem.unmask();
+				gridDatosCatastro.unmask();
+			}
+		});
+
+	},
+	abrirVentanaEditarCatastro: function(grid, record){
+		var me = this; 
+		Ext.Msg.show({ 
+			title : HreRem.i18n('title.referencia.catastral.editar'),
+			msg : HreRem.i18n('text.referencia.catastral.editar'),
+			buttons : Ext.MessageBox.YESNO,
+			buttonText: {
+		       	yes: 'Modificar referencia catastral',
+		        no: 'Modificar valores de la referencia catastral'
+		    },
+			fn : function(buttonId) {
+				if (buttonId == 'yes') {
+					Ext.create("HreRem.view.activos.detalle.VentanaCrearRefCatastral", {idActivo: me.getView().idActivo, refCatastral: record.getData().refCatastral, parent: grid}).show();
+				}else if(buttonId == 'no'){
+					var data = [
+						idActivoCatastro= record.get('idActivoCatastro'),  
+						refCatastral= record.get('refCatastral'),
+						valorCatastralConst= record.get('valorCatastralConst'),  
+						valorCatastralSuelo= record.get('valorCatastralSuelo'),
+						fechaRevValorCatastral= record.get('fechaRevValorCatastral')
+					]; 
+					Ext.create("HreRem.view.activos.detalle.VentanaEditarDatosCatastrales", {idActivoCatastro: record.get('idActivoCatastro'), datos:data , parent: grid}).show();
+				}
+			}
+		});
+	},
+
+	cargarReferenciaCatastral: function(store){
+		var me = this;
+		if(store.data.length == 1){
+			this.getViewModel().data.activo.refCatastral = store.getData().getAt(0).data.descripcion;
+		}
+    },
+
 
     onSelectDiscrepanciasLocalizacion : function(combo, value) {
 		var me = this;
@@ -8895,6 +8986,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			identificadorTrastero.setHidden(true);
 		}
+    },
+    
+    onClickActualizarReferencia: function(btn) {
+    	var me = this;
+    	var window =  btn.up('window');
+    	var params = {
+    			idActivoCatastro : window.idActivoCatastro,
+    			refCatastral: window.down('[reference="refCatastral"]').getValue(),
+				valorCatastralConst: window.down('[reference="valorConstruccion"]').getValue(),
+				valorCatastralSuelo: window.down('[reference="valorSuelo"]').getValue(),
+				fechaRevValorCatastral: window.down('[reference="fechaRevision"]').getValue()
+			};
+    	window.mask(HreRem.i18n("msg.mask.loading"));
+    	Ext.Ajax.request({
+			url : $AC.getRemoteUrl('catastro/updateReferenciaCatastro'),
+			method : 'GET',
+			params : params,
+			success : function(response, opts) {
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				window.unmask();
+				window.parent.getStore().load();
+				window.close();
+			},
+			failure : function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				window.unmask();
+			}
+		});
     },
 
     validateTipoDocumento : function(value){

@@ -29,6 +29,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDTipoBien;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -588,10 +589,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_DISCREPANCIAS_LOC")
     private Boolean discrepanciasLocalizacion;
-    
+
     @Column(name = "ACT_OBSERVACIONES_DISC_LOC")
     private String discrepanciasLocalizacionObservaciones;
-    
+
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1095,7 +1096,15 @@ public class Activo implements Serializable, Auditable {
   			return null;
   		}
   	}
-  	
+
+  	public String getMunicipioDescripcion() {
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getLocalidad() != null) {
+  			return bien.getLocalizaciones().get(0).getLocalidad().getDescripcion();
+  		} else {
+  			return null;
+  		}
+  	}
+
   	public void setMunicipio(String codigoMunicipio) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getLocalidad().setCodigo(codigoMunicipio);
@@ -1125,6 +1134,15 @@ public class Activo implements Serializable, Auditable {
   		
   	}
   	
+  	public String getProvinciaDescripcion() {
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getProvincia() != null) {
+  			return bien.getLocalizaciones().get(0).getProvincia().getDescripcion();
+  		} else {
+  			return null;
+  		}
+
+  	}
+
   	public void setProvincia(String codProvincia) {
   		if (bien.getLocalizaciones() != null) {
   			bien.getLocalizaciones().get(0).getProvincia().setCodigo(codProvincia);
@@ -2227,6 +2245,14 @@ public class Activo implements Serializable, Auditable {
 	public void setTieneGestionDnd(DDSinSiNo tieneGestionDnd) {
 		this.tieneGestionDnd = tieneGestionDnd;
 	}
+	public DDTipoVia getTipoVia() {
+		DDTipoVia tipoVia = null;
+  		if (bien.getLocalizaciones() != null && bien.getLocalizaciones().get(0).getTipoVia() != null) {
+  			tipoVia =  bien.getLocalizaciones().get(0).getTipoVia();
+  		}
+
+  		return tipoVia;
+  	}
 
 	public Boolean getDiscrepanciasLocalizacion() {
 		return discrepanciasLocalizacion;
@@ -2243,5 +2269,5 @@ public class Activo implements Serializable, Auditable {
 	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
 		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
 	}
-	
+
 }

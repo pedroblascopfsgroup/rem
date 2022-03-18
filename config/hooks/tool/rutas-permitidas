@@ -256,6 +256,7 @@ func-rem-hydra-accionesNoComercial|R-Salustiana
 rem_mirror|func-rem-tasadorasTitulizada
 func-rem-comisionamiento-F3 | R-Kumquat
 func-rem-informeMediador | R-Kumquat
+rem_mirror|func-rem-catastro
 func-rem-PEP2022|func-rem-devengosIBI2022
 func-rem-devengosIBI2022|func-rem-gastosIAE
 func-rem-gastosIAE|func-rem-cambioJerarquiaPrefacturasBBVA
@@ -289,4 +290,5 @@ func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
 func-rem-informeMediador|R-Jaffa
 func-rem-stockHydra-F1.1|R-Jaffa
+func-rem-catastro|R-Jaffa
 rem_mirror|func-rem-stockHydra-F1.1

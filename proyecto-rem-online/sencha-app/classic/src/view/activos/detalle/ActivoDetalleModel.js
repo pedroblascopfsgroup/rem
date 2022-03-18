@@ -13,7 +13,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.TestigosOpcionales'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
+	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
+	'HreRem.model.TestigosOpcionales'],
 
     data: {
     	activo: null,
@@ -4632,6 +4634,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
+		
 		comboSegmentacionCartera: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4639,6 +4642,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'segmentacionCartera'}
 			}
-		}
+		},
+		
+		storeComparativaRefCatastral:{
+			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'catastro/getComparativaReferenciaCatastralGrid', 
+				extraParams: {idActivo: '{activo.id}', refCatastral: '{activo.refCatastral}'} 
+			},
+			autoLoad: false
+		},
+		storeReferenciaCatastral:{
+			model: 'HreRem.model.ReferenciaCatastralGridModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'catastro/getReferenciaCatastralGrid', 
+				extraParams: {idActivo: '{activo.id}'} 
+			},
+			autoLoad: false	
+		},
+       comboReferenciaCatastral: {
+        	 model: 'HreRem.model.ReferenciaCatastralComboModel',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'catastro/getListRefCatastralActivo',
+                extraParams: {idActivo: '{activo.id}'}
+            },
+			autoLoad: true,
+			listeners:{
+				load: 'cargarReferenciaCatastral'
+			}
+			
+        }
 	 }
 });

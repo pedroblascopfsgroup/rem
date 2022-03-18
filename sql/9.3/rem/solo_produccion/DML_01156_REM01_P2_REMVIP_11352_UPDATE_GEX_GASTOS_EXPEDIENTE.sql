@@ -40,12 +40,16 @@ DECLARE
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := ''; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-11352';
     V_COUNT NUMBER(16);
+    V_COUNT_GEX NUMBER(16);
+    V_COUNT_PRESCRIPTOR NUMBER(16);
+    V_COUNT_CUSTODIO NUMBER(16);
+    V_COUNT_ARRAY NUMBER(16);
+    V_COUNT_ARRAY_TOTAL NUMBER(16);
+    
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('BK3509','8194'),
-        T_TIPO_DATA('BK3510','8145'),
         T_TIPO_DATA('BK3511','4445'),
         T_TIPO_DATA('BK3512','6147'),
         T_TIPO_DATA('BK3513','2559'),
@@ -941,13 +945,22 @@ DECLARE
         T_TIPO_DATA('BK7649','6879'),
         T_TIPO_DATA('BK7651','3624'),
         T_TIPO_DATA('BK7652','3632'),
-        T_TIPO_DATA('BK7654','3637')
+        T_TIPO_DATA('BK7654','3637'),
+        T_TIPO_DATA('BK7658','5536'),
+        T_TIPO_DATA('BK7663','6050'),
+        T_TIPO_DATA('BK7664','8955'),
+        T_TIPO_DATA('BK7667','3598')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
+    V_COUNT_GEX := 0;
+    V_COUNT_PRESCRIPTOR := 0;
+    V_COUNT_CUSTODIO := 0;
+    V_COUNT_ARRAY := 0;
+    V_COUNT_ARRAY_TOTAL := 0;
 
     DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN TABLAS GEX_GASTOS_EXPEDIENTE y OFR_OFERTAS');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -962,7 +975,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                         WHERE pve.DD_TPR_ID = 44
                         AND pve.BORRADO = 0
                         AND pve.PVE_COD_API_PROVEEDOR = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-        DBMS_OUTPUT.PUT_LINE('[INFO]: V_MSQL ' || V_MSQL);
         EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
         
         IF V_COUNT = 1 THEN
@@ -1009,11 +1021,12 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND GEX.GEX_PROVEEDOR  = '||PVE_ANTIGUO||'
                                 AND GEX.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO GEX_PROVEEDOR MODIFICADO CORRECTAMENTE');
+                
+                V_COUNT_GEX:=V_COUNT_GEX+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO GEX_PROVEEDOR MODIFICADO CORRECTAMENTE');
+                END IF;
 
-          
-
-           
                 -- Actualiza OFR_OFERTAS PVE_ID_PRESCRIPTOR 
                 DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO EN TABLA OFR_OFERTAS PVE_ID_PRESCRIPTOR '''|| PVE_ANTIGUO ||''' A  '''|| PVE_NUEVO ||'''');
                 V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.OFR_OFERTAS ofr
@@ -1025,7 +1038,12 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND  ofr.PVE_ID_PRESCRIPTOR  = '||PVE_ANTIGUO||'
                                 AND ofr.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_PRESCRIPTOR MODIFICADO CORRECTAMENTE');
+              
+
+                V_COUNT_PRESCRIPTOR:=V_COUNT_PRESCRIPTOR+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_PRESCRIPTOR MODIFICADO CORRECTAMENTE');
+                END IF;
 
             
                 -- Actualiza OFR_OFERTAS PVE_ID_CUSTODIO 
@@ -1039,17 +1057,34 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND ofr.PVE_ID_CUSTODIO  = '||PVE_ANTIGUO||'
                                 AND ofr.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_CUSTODIO MODIFICADO CORRECTAMENTE');
+                
+                V_COUNT_CUSTODIO:=V_COUNT_CUSTODIO+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_CUSTODIO MODIFICADO CORRECTAMENTE');
+                END IF;
+                V_COUNT_ARRAY:=V_COUNT_ARRAY+1;
+    
        ELSE
        	-- Si no existe se actualiza.
           DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE EL REGISTRO CON PVE_COD_API_PROVEEDOR:  '||TRIM(V_TMP_TIPO_DATA(1))||' O '||TRIM(V_TMP_TIPO_DATA(2))||'');
 
        END IF;
+       V_COUNT_ARRAY_TOTAL:=V_COUNT_ARRAY_TOTAL+1;
       END LOOP;
       
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: ACTUALIZADO CORRECTAMENTE ');
-
+    DBMS_OUTPUT.PUT_LINE('[INFO]:####################');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_GEX  '||V_COUNT_GEX);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_PRESCRIPTOR  '||V_COUNT_PRESCRIPTOR);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_CUSTODIO  '||V_COUNT_CUSTODIO);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ARRAY TOTAL V_COUNT_ARRAY_TOTAL  '||V_COUNT_ARRAY_TOTAL||', DE LOS CUALES HA ENTRADO '||V_COUNT_ARRAY||' ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:####################');
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

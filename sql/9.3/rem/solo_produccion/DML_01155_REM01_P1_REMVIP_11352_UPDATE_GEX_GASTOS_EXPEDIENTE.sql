@@ -40,10 +40,369 @@ DECLARE
 	V_TEXT_TABLA VARCHAR2(2400 CHAR) := ''; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_USUARIO VARCHAR2(32 CHAR) := 'REMVIP-11352';
     V_COUNT NUMBER(16);
+    V_COUNT_GEX NUMBER(16);
+    V_COUNT_PRESCRIPTOR NUMBER(16);
+    V_COUNT_CUSTODIO NUMBER(16);
+    V_COUNT_ARRAY NUMBER(16);
+    V_COUNT_ARRAY_TOTAL NUMBER(16);
+    
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        T_TIPO_DATA('BK603','2865'),
+        T_TIPO_DATA('BK1001','2185'),
+        T_TIPO_DATA('BK1002','2566'),
+        T_TIPO_DATA('BK1003','2550'),
+        T_TIPO_DATA('BK1004','2491'),
+        T_TIPO_DATA('BK1005','2503'),
+        T_TIPO_DATA('BK1006','2493'),
+        T_TIPO_DATA('BK1007','2494'),
+        T_TIPO_DATA('BK1008','2531'),
+        T_TIPO_DATA('BK1009','2569'),
+        T_TIPO_DATA('BK1010','2504'),
+        T_TIPO_DATA('BK1011','4094'),
+        T_TIPO_DATA('BK1012','2480'),
+        T_TIPO_DATA('BK1013','2546'),
+        T_TIPO_DATA('BK1014','2530'),
+        T_TIPO_DATA('BK1015','2562'),
+        T_TIPO_DATA('BK1017','2650'),
+        T_TIPO_DATA('BK1018','2598'),
+        T_TIPO_DATA('BK1019','2886'),
+        T_TIPO_DATA('BK1020','2687'),
+        T_TIPO_DATA('BK1021','2624'),
+        T_TIPO_DATA('BK1022','2684'),
+        T_TIPO_DATA('BK1023','2614'),
+        T_TIPO_DATA('BK1024','2672'),
+        T_TIPO_DATA('BK1025','1177'),
+        T_TIPO_DATA('BK1027','2561'),
+        T_TIPO_DATA('BK1028','2668'),
+        T_TIPO_DATA('BK1029','2507'),
+        T_TIPO_DATA('BK1030','2579'),
+        T_TIPO_DATA('BK1032','2906'),
+        T_TIPO_DATA('BK1033','2479'),
+        T_TIPO_DATA('BK1034','2481'),
+        T_TIPO_DATA('BK1035','2544'),
+        T_TIPO_DATA('BK1036','2644'),
+        T_TIPO_DATA('BK1037','2533'),
+        T_TIPO_DATA('BK1038','2645'),
+        T_TIPO_DATA('BK1039','2699'),
+        T_TIPO_DATA('BK1040','2855'),
+        T_TIPO_DATA('BK1041','2597'),
+        T_TIPO_DATA('BK1042','3231'),
+        T_TIPO_DATA('BK1043','2657'),
+        T_TIPO_DATA('BK1044','2577'),
+        T_TIPO_DATA('BK1045','2586'),
+        T_TIPO_DATA('BK1046','3952'),
+        T_TIPO_DATA('BK1047','2426'),
+        T_TIPO_DATA('BK1048','2840'),
+        T_TIPO_DATA('BK1049','2897'),
+        T_TIPO_DATA('BK1050','3300'),
+        T_TIPO_DATA('BK1051','3568'),
+        T_TIPO_DATA('BK1053','779'),
+        T_TIPO_DATA('BK1054','3427'),
+        T_TIPO_DATA('BK1055','881'),
+        T_TIPO_DATA('BK1056','2892'),
+        T_TIPO_DATA('BK1057','2889'),
+        T_TIPO_DATA('BK1058','5944'),
+        T_TIPO_DATA('BK1059','2857'),
+        T_TIPO_DATA('BK1060','2860'),
+        T_TIPO_DATA('BK1061','1662'),
+        T_TIPO_DATA('BK1062','500'),
+        T_TIPO_DATA('BK1063','2871'),
+        T_TIPO_DATA('BK1064','2891'),
+        T_TIPO_DATA('BK1065','2446'),
+        T_TIPO_DATA('BK1066','8336'),
+        T_TIPO_DATA('BK1067','3230'),
+        T_TIPO_DATA('BK1069','1175'),
+        T_TIPO_DATA('BK1071','2864'),
+        T_TIPO_DATA('BK1072','1966'),
+        T_TIPO_DATA('BK1073','3393'),
+        T_TIPO_DATA('BK1074','3432'),
+        T_TIPO_DATA('BK1075','4034'),
+        T_TIPO_DATA('BK1076','2873'),
+        T_TIPO_DATA('BK1077','2905'),
+        T_TIPO_DATA('BK1078','3417'),
+        T_TIPO_DATA('BK1080','3425'),
+        T_TIPO_DATA('BK1082','3191'),
+        T_TIPO_DATA('BK1083','2423'),
+        T_TIPO_DATA('BK1084','3581'),
+        T_TIPO_DATA('BK1085','3380'),
+        T_TIPO_DATA('BK1086','3336'),
+        T_TIPO_DATA('BK1087','966'),
+        T_TIPO_DATA('BK1088','939'),
+        T_TIPO_DATA('BK1092','3303'),
+        T_TIPO_DATA('BK1093','2877'),
+        T_TIPO_DATA('BK1094','3269'),
+        T_TIPO_DATA('BK1095','2884'),
+        T_TIPO_DATA('BK1096','3259'),
+        T_TIPO_DATA('BK1097','246'),
+        T_TIPO_DATA('BK1098','1655'),
+        T_TIPO_DATA('BK1099','1349'),
+        T_TIPO_DATA('BK1100','1367'),
+        T_TIPO_DATA('BK1101','3412'),
+        T_TIPO_DATA('BK1102','8947'),
+        T_TIPO_DATA('BK1103','1333'),
+        T_TIPO_DATA('BK1104','992'),
+        T_TIPO_DATA('BK1105','3226'),
+        T_TIPO_DATA('BK1106','3193'),
+        T_TIPO_DATA('BK1107','1649'),
+        T_TIPO_DATA('BK1108','3283'),
+        T_TIPO_DATA('BK1109','6318'),
+        T_TIPO_DATA('BK1110','3424'),
+        T_TIPO_DATA('BK1113','3367'),
+        T_TIPO_DATA('BK1114','5840'),
+        T_TIPO_DATA('BK1115','2415'),
+        T_TIPO_DATA('BK1116','3400'),
+        T_TIPO_DATA('BK1118','998'),
+        T_TIPO_DATA('BK1119','3284'),
+        T_TIPO_DATA('BK1120','1722'),
+        T_TIPO_DATA('BK1121','3304'),
+        T_TIPO_DATA('BK1122','2900'),
+        T_TIPO_DATA('BK1123','2925'),
+        T_TIPO_DATA('BK1124','1967'),
+        T_TIPO_DATA('BK1125','623'),
+        T_TIPO_DATA('BK1127','1357'),
+        T_TIPO_DATA('BK1128','3440'),
+        T_TIPO_DATA('BK1129','1165'),
+        T_TIPO_DATA('BK1130','3988'),
+        T_TIPO_DATA('BK1131','3865'),
+        T_TIPO_DATA('BK1132','1757'),
+        T_TIPO_DATA('BK1133','1312'),
+        T_TIPO_DATA('BK1134','793'),
+        T_TIPO_DATA('BK1135','1127'),
+        T_TIPO_DATA('BK1136','1872'),
+        T_TIPO_DATA('BK1137','3570'),
+        T_TIPO_DATA('BK1138','3101'),
+        T_TIPO_DATA('BK1139','496'),
+        T_TIPO_DATA('BK1140','2850'),
+        T_TIPO_DATA('BK1141','3194'),
+        T_TIPO_DATA('BK1142','2890'),
+        T_TIPO_DATA('BK1144','3461'),
+        T_TIPO_DATA('BK1145','3254'),
+        T_TIPO_DATA('BK1146','2493'),
+        T_TIPO_DATA('BK1149','3564'),
+        T_TIPO_DATA('BK1150','988'),
+        T_TIPO_DATA('BK1153','2885'),
+        T_TIPO_DATA('BK1154','2502'),
+        T_TIPO_DATA('BK1155','1322'),
+        T_TIPO_DATA('BK1157','3414'),
+        T_TIPO_DATA('BK1159','929'),
+        T_TIPO_DATA('BK1163','1305'),
+        T_TIPO_DATA('BK1165','1356'),
+        T_TIPO_DATA('BK1166','579'),
+        T_TIPO_DATA('BK1169','3231'),
+        T_TIPO_DATA('BK1170','3434'),
+        T_TIPO_DATA('BK1172','2416'),
+        T_TIPO_DATA('BK1173','913'),
+        T_TIPO_DATA('BK1174','2566'),
+        T_TIPO_DATA('BK1175','5241'),
+        T_TIPO_DATA('BK1178','3555'),
+        T_TIPO_DATA('BK1179','1139'),
+        T_TIPO_DATA('BK1181','6095'),
+        T_TIPO_DATA('BK1182','1187'),
+        T_TIPO_DATA('BK1183','1329'),
+        T_TIPO_DATA('BK1185','3182'),
+        T_TIPO_DATA('BK1186','1400'),
+        T_TIPO_DATA('BK1187','631'),
+        T_TIPO_DATA('BK1188','2377'),
+        T_TIPO_DATA('BK1189','3444'),
+        T_TIPO_DATA('BK1190','909'),
+        T_TIPO_DATA('BK1193','689'),
+        T_TIPO_DATA('BK1195','1733'),
+        T_TIPO_DATA('BK1196','5398'),
+        T_TIPO_DATA('BK1197','2687'),
+        T_TIPO_DATA('BK1198','8336'),
+        T_TIPO_DATA('BK1301','500'),
+        T_TIPO_DATA('BK1302','2579'),
+        T_TIPO_DATA('BK1303','2426'),
+        T_TIPO_DATA('BK1304','881'),
+        T_TIPO_DATA('BK1305','6348'),
+        T_TIPO_DATA('BK1306','3424'),
+        T_TIPO_DATA('BK1307','1320'),
+        T_TIPO_DATA('BK1308','3194'),
+        T_TIPO_DATA('BK1311','742'),
+        T_TIPO_DATA('BK1312','4826'),
+        T_TIPO_DATA('BK1313','2855'),
+        T_TIPO_DATA('BK1314','3380'),
+        T_TIPO_DATA('BK1317','7940'),
+        T_TIPO_DATA('BK1318','2399'),
+        T_TIPO_DATA('BK1319','8947'),
+        T_TIPO_DATA('BK1320','2925'),
+        T_TIPO_DATA('BK1321','7617'),
+        T_TIPO_DATA('BK1322','2134'),
+        T_TIPO_DATA('BK1323','3302'),
+        T_TIPO_DATA('BK1324','2897'),
+        T_TIPO_DATA('BK1325','6259'),
+        T_TIPO_DATA('BK1326','7596'),
+        T_TIPO_DATA('BK1327','1716'),
+        T_TIPO_DATA('BK1328','4229'),
+        T_TIPO_DATA('BK1329','8070'),
+        T_TIPO_DATA('BK1330','5794'),
+        T_TIPO_DATA('BK1332','2158'),
+        T_TIPO_DATA('BK1333','7499'),
+        T_TIPO_DATA('BK1335','2892'),
+        T_TIPO_DATA('BK1337','3644'),
+        T_TIPO_DATA('BK1338','2865'),
+        T_TIPO_DATA('BK1339','2799'),
+        T_TIPO_DATA('BK1340','932'),
+        T_TIPO_DATA('BK1341','5870'),
+        T_TIPO_DATA('BK1342','6804'),
+        T_TIPO_DATA('BK1343','7314'),
+        T_TIPO_DATA('BK1344','6935'),
+        T_TIPO_DATA('BK1345','2857'),
+        T_TIPO_DATA('BK1349','6179'),
+        T_TIPO_DATA('BK1350','6085'),
+        T_TIPO_DATA('BK1351','7731'),
+        T_TIPO_DATA('BK1352','1955'),
+        T_TIPO_DATA('BK1353','5106'),
+        T_TIPO_DATA('BK1354','6123'),
+        T_TIPO_DATA('BK1355','3288'),
+        T_TIPO_DATA('BK1357','8266'),
+        T_TIPO_DATA('BK1358','6241'),
+        T_TIPO_DATA('BK1359','7852'),
+        T_TIPO_DATA('BK1360','6064'),
+        T_TIPO_DATA('BK1533','5454'),
+        T_TIPO_DATA('BK1537','5699'),
+        T_TIPO_DATA('BK1539','4139'),
+        T_TIPO_DATA('BK1540','3533'),
+        T_TIPO_DATA('BK1543','5743'),
+        T_TIPO_DATA('BK1566','2479'),
+        T_TIPO_DATA('BK1612','8341'),
+        T_TIPO_DATA('BK1615','8342'),
+        T_TIPO_DATA('BK1616','8343'),
+        T_TIPO_DATA('BK1619','2692'),
+        T_TIPO_DATA('BK1623','4828'),
+        T_TIPO_DATA('BK1697','6379'),
+        T_TIPO_DATA('BK1702','931'),
+        T_TIPO_DATA('BK1703','921'),
+        T_TIPO_DATA('BK1704','979'),
+        T_TIPO_DATA('BK1709','4906'),
+        T_TIPO_DATA('BK1716','7958'),
+        T_TIPO_DATA('BK1720','2650'),
+        T_TIPO_DATA('BK1725','4466'),
+        T_TIPO_DATA('BK1727','3704'),
+        T_TIPO_DATA('BK1728','3114'),
+        T_TIPO_DATA('BK1729','1099'),
+        T_TIPO_DATA('BK1734','8339'),
+        T_TIPO_DATA('BK1735','2900'),
+        T_TIPO_DATA('BK1737','1733'),
+        T_TIPO_DATA('BK1739','1117'),
+        T_TIPO_DATA('BK1741','3396'),
+        T_TIPO_DATA('BK1742','3156'),
+        T_TIPO_DATA('BK1743','1126'),
+        T_TIPO_DATA('BK1744','3279'),
+        T_TIPO_DATA('BK1745','3630'),
+        T_TIPO_DATA('BK1747','6389'),
+        T_TIPO_DATA('BK1750','6095'),
+        T_TIPO_DATA('BK1751','4246'),
+        T_TIPO_DATA('BK1752','1400'),
+        T_TIPO_DATA('BK1753','1180'),
+        T_TIPO_DATA('BK1755','4206'),
+        T_TIPO_DATA('BK1756','2762'),
+        T_TIPO_DATA('BK1757','3705'),
+        T_TIPO_DATA('BK1759','3419'),
+        T_TIPO_DATA('BK1762','3129'),
+        T_TIPO_DATA('BK1763','1322'),
+        T_TIPO_DATA('BK1765','1177'),
+        T_TIPO_DATA('BK1766','1091'),
+        T_TIPO_DATA('BK1768','5768'),
+        T_TIPO_DATA('BK1769','2857'),
+        T_TIPO_DATA('BK1771','2668'),
+        T_TIPO_DATA('BK1773','5465'),
+        T_TIPO_DATA('BK1774','6318'),
+        T_TIPO_DATA('BK1775','3270'),
+        T_TIPO_DATA('BK1776','2625'),
+        T_TIPO_DATA('BK1777','1134'),
+        T_TIPO_DATA('BK1778','5944'),
+        T_TIPO_DATA('BK1779','6083'),
+        T_TIPO_DATA('BK1782','2577'),
+        T_TIPO_DATA('BK1786','3256'),
+        T_TIPO_DATA('BK1787','6186'),
+        T_TIPO_DATA('BK1790','4466'),
+        T_TIPO_DATA('BK1792','1459'),
+        T_TIPO_DATA('BK1795','1311'),
+        T_TIPO_DATA('BK1796','723'),
+        T_TIPO_DATA('BK1799','1356'),
+        T_TIPO_DATA('BK1801','1347'),
+        T_TIPO_DATA('BK1804','1174'),
+        T_TIPO_DATA('BK1807','780'),
+        T_TIPO_DATA('BK1808','6348'),
+        T_TIPO_DATA('BK1810','2526'),
+        T_TIPO_DATA('BK1812','4826'),
+        T_TIPO_DATA('BK1813','4871'),
+        T_TIPO_DATA('BK1815','3718'),
+        T_TIPO_DATA('BK1817','3169'),
+        T_TIPO_DATA('BK1820','862'),
+        T_TIPO_DATA('BK1821','930'),
+        T_TIPO_DATA('BK1824','1410'),
+        T_TIPO_DATA('BK1826','3119'),
+        T_TIPO_DATA('BK1830','3952'),
+        T_TIPO_DATA('BK1835','3245'),
+        T_TIPO_DATA('BK1838','3431'),
+        T_TIPO_DATA('BK1839','3316'),
+        T_TIPO_DATA('BK1841','5719'),
+        T_TIPO_DATA('BK1842','3224'),
+        T_TIPO_DATA('BK1843','2885'),
+        T_TIPO_DATA('BK1845','6350'),
+        T_TIPO_DATA('BK1847','590'),
+        T_TIPO_DATA('BK1848','3702'),
+        T_TIPO_DATA('BK1850','3403'),
+        T_TIPO_DATA('BK1852','5158'),
+        T_TIPO_DATA('BK1859','1098'),
+        T_TIPO_DATA('BK1861','793'),
+        T_TIPO_DATA('BK1864','6840'),
+        T_TIPO_DATA('BK1869','8045'),
+        T_TIPO_DATA('BK1870','4114'),
+        T_TIPO_DATA('BK1871','3384'),
+        T_TIPO_DATA('BK1875','3301'),
+        T_TIPO_DATA('BK1880','964'),
+        T_TIPO_DATA('BK1899','8045'),
+        T_TIPO_DATA('BK1901','3866'),
+        T_TIPO_DATA('BK1909','3178'),
+        T_TIPO_DATA('BK1915','673'),
+        T_TIPO_DATA('BK1916','449'),
+        T_TIPO_DATA('BK1917','2297'),
+        T_TIPO_DATA('BK1918','4870'),
+        T_TIPO_DATA('BK1920','3315'),
+        T_TIPO_DATA('BK1921','3251'),
+        T_TIPO_DATA('BK1924','3302'),
+        T_TIPO_DATA('BK1928','4888'),
+        T_TIPO_DATA('BK1933','5840'),
+        T_TIPO_DATA('BK1936','3322'),
+        T_TIPO_DATA('BK1937','1580'),
+        T_TIPO_DATA('BK1940','1320'),
+        T_TIPO_DATA('BK1944','1319'),
+        T_TIPO_DATA('BK1947','6311'),
+        T_TIPO_DATA('BK1953','2912'),
+        T_TIPO_DATA('BK1956','3370'),
+        T_TIPO_DATA('BK1958','2880'),
+        T_TIPO_DATA('BK1965','719'),
+        T_TIPO_DATA('BK1971','539'),
+        T_TIPO_DATA('BK1974','1917'),
+        T_TIPO_DATA('BK1986','3118'),
+        T_TIPO_DATA('BK1988','3650'),
+        T_TIPO_DATA('BK1989','1081'),
+        T_TIPO_DATA('BK1992','3270'),
+        T_TIPO_DATA('BK1996','3139'),
+        T_TIPO_DATA('BK2200','275'),
+        T_TIPO_DATA('BK2201','4615'),
+        T_TIPO_DATA('BK2202','3115'),
+        T_TIPO_DATA('BK2203','2898'),
+        T_TIPO_DATA('BK2204','2058'),
+        T_TIPO_DATA('BK2205','956'),
+        T_TIPO_DATA('BK2206','6123'),
+        T_TIPO_DATA('BK2207','2718'),
+        T_TIPO_DATA('BK2208','3197'),
+        T_TIPO_DATA('BK2209','1337'),
+        T_TIPO_DATA('BK2210','3607'),
+        T_TIPO_DATA('BK2211','4074'),
+        T_TIPO_DATA('BK2212','2867'),
+        T_TIPO_DATA('BK2213','1195'),
+        T_TIPO_DATA('BK2214','3177'),
+        T_TIPO_DATA('BK2215','1801'),
+        T_TIPO_DATA('BK2216','5811'),
+        T_TIPO_DATA('BK2217','3144'),
         T_TIPO_DATA('BK2218','1321'),
         T_TIPO_DATA('BK2219','6085'),
         T_TIPO_DATA('BK2220','3548'),
@@ -588,13 +947,20 @@ DECLARE
         T_TIPO_DATA('BK3505','4224'),
         T_TIPO_DATA('BK3506','7465'),
         T_TIPO_DATA('BK3507','5814'),
-        T_TIPO_DATA('BK3508','6241')
+        T_TIPO_DATA('BK3508','6241'),
+        T_TIPO_DATA('BK3509','8194'),
+        T_TIPO_DATA('BK3510','8145')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
+    V_COUNT_GEX := 0;
+    V_COUNT_PRESCRIPTOR := 0;
+    V_COUNT_CUSTODIO := 0;
+    V_COUNT_ARRAY := 0;
+    V_COUNT_ARRAY_TOTAL := 0;
 
     DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN TABLAS GEX_GASTOS_EXPEDIENTE y OFR_OFERTAS');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -609,7 +975,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                         WHERE pve.DD_TPR_ID = 44
                         AND pve.BORRADO = 0
                         AND pve.PVE_COD_API_PROVEEDOR = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-        DBMS_OUTPUT.PUT_LINE('[INFO]: V_MSQL ' || V_MSQL);
         EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
         
         IF V_COUNT = 1 THEN
@@ -656,8 +1021,12 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND GEX.GEX_PROVEEDOR  = '||PVE_ANTIGUO||'
                                 AND GEX.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO GEX_PROVEEDOR MODIFICADO CORRECTAMENTE');
-          
+
+                V_COUNT_GEX:=V_COUNT_GEX+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO GEX_PROVEEDOR MODIFICADO CORRECTAMENTE');
+                END IF;
+
 
            
                 -- Actualiza OFR_OFERTAS PVE_ID_PRESCRIPTOR 
@@ -671,8 +1040,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND ofr.PVE_ID_PRESCRIPTOR  = '||PVE_ANTIGUO||'
                                 AND ofr.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_PRESCRIPTOR MODIFICADO CORRECTAMENTE');
 
+                V_COUNT_PRESCRIPTOR:=V_COUNT_PRESCRIPTOR+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_PRESCRIPTOR MODIFICADO CORRECTAMENTE');
+                END IF;
             
                 -- Actualiza OFR_OFERTAS PVE_ID_CUSTODIO 
                 DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO EN TABLA OFR_OFERTAS PVE_ID_CUSTODIO  '''|| PVE_ANTIGUO ||''' A  '''|| PVE_NUEVO ||'''');
@@ -685,16 +1057,34 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                             AND ofr.PVE_ID_CUSTODIO  = '||PVE_ANTIGUO||'
                             AND ofr.BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
-                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_CUSTODIO MODIFICADO CORRECTAMENTE');
+
+                V_COUNT_CUSTODIO:=V_COUNT_CUSTODIO+SQL%ROWCOUNT;
+                IF SQL%ROWCOUNT > 0 THEN	
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO PVE_ID_CUSTODIO MODIFICADO CORRECTAMENTE');
+                END IF;
+                V_COUNT_ARRAY:=V_COUNT_ARRAY+1;
        ELSE
        	-- Si no existe se actualiza.
           DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE EL REGISTRO CON PVE_COD_API_PROVEEDOR:  '||TRIM(V_TMP_TIPO_DATA(1))||' O '||TRIM(V_TMP_TIPO_DATA(2))||'');
 
        END IF;
+
+       V_COUNT_ARRAY_TOTAL:=V_COUNT_ARRAY_TOTAL+1;
       END LOOP;
       
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:####################');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_GEX  '||V_COUNT_GEX);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_PRESCRIPTOR  '||V_COUNT_PRESCRIPTOR);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZADO CORRECTAMENTE V_COUNT_CUSTODIO  '||V_COUNT_CUSTODIO);
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ARRAY TOTAL V_COUNT_ARRAY_TOTAL  '||V_COUNT_ARRAY_TOTAL||', DE LOS CUALES HA ENTRADO '||V_COUNT_ARRAY||' ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:                                                                         ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]:####################');
 
 EXCEPTION
      WHEN OTHERS THEN

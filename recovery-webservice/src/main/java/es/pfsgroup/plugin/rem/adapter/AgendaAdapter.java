@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.procesosJudiciales.model.*;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.model.dd.*;
@@ -34,11 +35,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -1139,7 +1135,12 @@ public class AgendaAdapter {
 					tarAct = listaTareas.get(i);
 					if(!Checks.esNulo(tarAct.getFechaFin()) 
 							&& "T015_ElevarASancion".equals(tarAct.getTareaExterna().getTareaProcedimiento().getCodigo())){
-						return true;
+						List<TareaExternaValor> valores = tarAct.getTareaExterna().getValores();
+						for (TareaExternaValor tev : valores) {
+							if ("resolucionOferta".equals(tev.getNombre()) && DDSiNo.SI.equals(tev.getValor())) {
+								return true;
+							}
+						}
 					}
 				}
 			}

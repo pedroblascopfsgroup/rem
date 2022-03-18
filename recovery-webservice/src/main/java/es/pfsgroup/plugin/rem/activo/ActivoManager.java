@@ -9605,7 +9605,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public boolean esActivoHayaHomeToModel(Activo activo, ActivoAgrupacion agrupacion) {
+	public boolean esActivoHayaHome(Activo activo, ActivoAgrupacion agrupacion) {
 		boolean esMacc = false;
 		boolean esActivoAlquiler = false;	
 		boolean es1to1 = false;
@@ -9628,25 +9628,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
-		
-		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
-
-		return esActivoHayaHome;
-	}
-	
-	@Override
-	public boolean esActivoHayaHome(Long idActivo) {
-		boolean esMacc = false;
-		boolean esActivoAlquiler = false;	
-		boolean es1to1 = false;
-		
-		Activo activo = get(idActivo);
-		
-		if (!Checks.esNulo(activo)) {
-			esMacc = !Checks.esNulo(activo.getPerimetroMacc()) && activo.getPerimetroMacc() == 1;
-			esActivoAlquiler = esActivoAlquiler(idActivo);
-			es1to1 = !Checks.esNulo(activo.getSubcartera().getCodigo()) && DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activo.getSubcartera().getCodigo());
-		}
 		
 		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
 

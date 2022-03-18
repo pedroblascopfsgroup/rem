@@ -4182,7 +4182,7 @@ public class ActivoAdapter {
 			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty() )
 				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
 
-			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
+			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
 			clienteComercial.setInfoAdicionalPersona(iap);
 
@@ -4296,11 +4296,11 @@ public class ActivoAdapter {
 				}
 				
 				if (dto.getNombreRazonSocialRte() != null) {
-					clienteComercial.setNombre(dto.getNombreRazonSocialRte());
+					clienteComercial.setNombreRepresentante(dto.getNombreRazonSocialRte());
 				}
 				
 				if (dto.getApellidosRte() != null) {
-					clienteComercial.setApellidos(dto.getApellidosRte());
+					clienteComercial.setApellidosRepresentante(dto.getApellidosRte());
 				}
 				
 				if (dto.getPaisNacimientoRepresentanteCodigo() != null) {
@@ -4373,7 +4373,7 @@ public class ActivoAdapter {
 					if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 						clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
-					InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
+					InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 
 					clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 

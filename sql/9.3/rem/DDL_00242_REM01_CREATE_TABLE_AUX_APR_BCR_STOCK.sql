@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220214
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220317
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17147
+--## INCIDENCIA_LINK=HREOS-17367
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -25,6 +25,8 @@
 --##        0.12  HREOS-XXXXX -  Alejandra García - Cambiar longitud al campo MOT_NECESIDAD_ARRAS
 --##        0.13  HREOS-16321 -  Daniel Algaba - Añadimos flag de oferta viva
 --##        0.14  HREOS-17147 -  Alejandra García - Añadir nuevos campos para mejora del proceso stock
+--##        0.15  HREOS-17348 -  Daniel Algaba - Añadir nuevos campos informe comercial
+--##        0.16  HREOS-17367 -  Daniel Algaba - Añadir nuevos campos
 --##########################################
 --*/
 
@@ -172,8 +174,16 @@ BEGIN
         ESTADO_TECNICO              VARCHAR2(3 CHAR),
         FEC_ESTADO_TECNICO          VARCHAR2(8 CHAR),
         EST_COMERCIAL_SERVICER      VARCHAR2(3 CHAR),
-        FEC_INICIO_INFORME          VARCHAR2(8 CHAR),
-        FEC_FIN_INFORME             VARCHAR2(8 CHAR),
+        FEC_COMERCIAL_SERVICER      VARCHAR2(8 CHAR),
+        EST_DESA_PROMO_DETALLADO    VARCHAR2(3 CHAR),
+        FEC_DESA_PROMO_DETALLADO    VARCHAR2(8 CHAR),
+        EST_DESA_PROMO_GENERAL      VARCHAR2(3 CHAR),
+        FEC_DESA_PROMO_GENERAL      VARCHAR2(8 CHAR),
+        EST_ENTR_PROD_MANT_VENTA    VARCHAR2(3 CHAR),
+        FEC_ENTR_PROD_MANT_VENTA    VARCHAR2(8 CHAR),
+        EST_ENTR_PROD_MANT_ALQ      VARCHAR2(3 CHAR),
+        FEC_ENTR_PROD_MANT_ALQ      VARCHAR2(8 CHAR),
+
 
         PROMO_CONJUNTA_OB_REM       VARCHAR2(8 CHAR),
         PROMO_CONJUNTA_VENTA        VARCHAR2(8 CHAR),
@@ -210,6 +220,8 @@ BEGIN
         TXT_COMERCIAL_ENG_2         VARCHAR2(3000 CHAR),
         FEC_PUBLI_SERVICER_APIS     VARCHAR2(8 CHAR),
         FEC_PUBLI_PORT_INVERSOR     VARCHAR2(8 CHAR),
+        FEC_INICIO_INFORME          VARCHAR2(8 CHAR),
+        FEC_FIN_INFORME             VARCHAR2(8 CHAR),
 
         ANYO_CONCESION              VARCHAR2(4 CHAR),
         FEC_FIN_CONCESION           VARCHAR2(8 CHAR),
@@ -233,7 +245,7 @@ BEGIN
         FEC_DEVOLUCION_AYUDA        VARCHAR2(8 CHAR),
         SITUACION_CEE               VARCHAR2(2 CHAR),
         MOTIVO_EXONERACION_CEE      VARCHAR2(2 CHAR),
-        INCIDENCIA_CEE              VARCHAR2(10 CHAR),
+        INCIDENCIA_CEE              VARCHAR2(2 CHAR),
         NUMERO_CEE                  VARCHAR2(10 CHAR),
         CODIGO_SST                  VARCHAR2(10 CHAR),
 
@@ -250,11 +262,27 @@ BEGIN
         SUP_SOBRE_RASANTE           VARCHAR2(10 CHAR),
         SUP_BAJO_RASANTE            VARCHAR2(10 CHAR),
         NUM_APARACAMIENTOS          VARCHAR2(10 CHAR),
+        IDEN_PL_PARKING             VARCHAR2(3 CHAR),
+        IDEN_TRASTERO               VARCHAR2(3 CHAR),
+        SUP_REG_CONSTRUIDA          VARCHAR2(12 CHAR),
+        SUP_REG_SOLAR               VARCHAR2(12 CHAR),
 
         TIENE_ASCENSOR              VARCHAR2(1 CHAR),
         TIENE_TRASTERO              VARCHAR2(1 CHAR),
         INMUEBLE_VACACIONAL         VARCHAR2(6 CHAR),
         EQUIPAMIENTO_015001         VARCHAR2(6 CHAR),
+        BALCON                      VARCHAR2(6 CHAR),
+        CALEFACCION                 VARCHAR2(6 CHAR),
+        COCINA_EQUIPADA             VARCHAR2(6 CHAR),
+        EST_CONSERVACION            VARCHAR2(6 CHAR),
+        JARDIN                      VARCHAR2(6 CHAR),
+        USO_JARDIN                  VARCHAR2(6 CHAR),
+        PISCINA                     VARCHAR2(6 CHAR),
+        SALIDA_HUMOS                VARCHAR2(6 CHAR),
+        TERRAZA                     VARCHAR2(6 CHAR),
+        TIPO_VIVIENDA_INF           VARCHAR2(6 CHAR),
+        TIPOLOGIA_EDIFICIO          VARCHAR2(6 CHAR),
+        SEG_INVERSION_PROM          VARCHAR2(6 CHAR),
 
         IMP_PRECIO_VENTA            VARCHAR2(10 CHAR),
         PRECIO_VENTA_NEGOCIABLE     VARCHAR2(1 CHAR),
@@ -398,8 +426,15 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ESTADO_TECNICO IS '' Estado técnico del activo inmobiliario''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ESTADO_TECNICO IS '' Fecha del estado técnico del activo inmobiliario''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_COMERCIAL_SERVICER IS '' Estado comercial Servicer''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_INFORME IS '' Fecha de inicio del informe''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_INFORME IS '' Fecha fin del informe''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_COMERCIAL_SERVICER IS '' Fecha estado comercial Servicer''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_DESA_PROMO_DETALLADO IS '' Estado Desarrollo Promoción detallado''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_DESA_PROMO_DETALLADO IS '' Fecha Desarrollo Promoción detallado''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_DESA_PROMO_GENERAL IS '' Estado Desarrollo Promoción general''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_DESA_PROMO_GENERAL IS '' Fecha Desarrollo Promoción general''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_ENTR_PROD_MANT_VENTA IS '' Estado Entrada producto y mantenimiento venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ENTR_PROD_MANT_VENTA IS '' Fecha Entrada producto y mantenimiento venta''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_ENTR_PROD_MANT_ALQ IS '' Estado Entrada producto y mantenimiento alquiler''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_ENTR_PROD_MANT_ALQ IS '' Fecha Entrada producto y mantenimiento alquiler''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_CONJUNTA_OB_REM IS '' Código de promoción conjunta Ob-rem a la que pertenece el activo inmobiliario''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PROMO_CONJUNTA_VENTA IS '' Código de promoción conjunta venta a la que pertenece el activo inmobiliario''';
@@ -422,7 +457,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PUBLICABLE_PORT_API_ALQUI IS '' Flag Publicable portal API alquiler''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NECESIDAD_ARRAS IS '' Campo que indica si se cumplen o no las condiciones para necesidad de arras. Si es liquidable es que no necesita arras.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.MOT_NECESIDAD_ARRAS IS '' Motivo a informar en el caso de que el campo Liquidez inmueble tenga el valor "Inmueble no líquido"''';
-    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.RENUNCIA_EXENSION IS '' Renuncia exención''';
+    
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CARTERA_VENTA_ACTIVOS IS '' Cartera venta activos''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CARTERA_VENTA_CREDITOS IS '' Cartera venta créditos''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CAT_COMERCIALIZACION IS '' Tipo de comercialización''';
@@ -434,8 +469,11 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_CAS_2 IS '' Texto comercial castellano''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_ENG_1 IS '' Texto comercial inglés''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TXT_COMERCIAL_ENG_2 IS '' Texto comercial inglés''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.RENUNCIA_EXENSION IS '' Renuncia exención''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PUBLI_SERVICER_APIS IS '' Fecha publicación Servicer portal APIS''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_PUBLI_PORT_INVERSOR IS '' Fecha publicación portal inversor''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_INICIO_INFORME IS '' Fecha de inicio del informe''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_INFORME IS '' Fecha fin del informe''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ANYO_CONCESION IS '' Año de concesión''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FEC_FIN_CONCESION IS '' Fecha fin de conceción''';
@@ -476,11 +514,27 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_SOBRE_RASANTE IS '' Superficie sobre rasante''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_BAJO_RASANTE IS '' Superficie bajo rasante''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_APARACAMIENTOS IS '' Número de aparcamientos. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IDEN_PL_PARKING IS '' Identificador plaza parking.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IDEN_TRASTERO IS '' Identificador trastero.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_REG_CONSTRUIDA IS '' Superficie Registral Construida.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SUP_REG_SOLAR IS '' Superficie Registral Solar.''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_ASCENSOR IS '' Marca de si tiene ascensor. PDaremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIENE_TRASTERO IS '' Marca de si tiene trastero. Daremos de baja la de la tasación y pondremos la de HAYA. Indicaremos la procedencia.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INMUEBLE_VACACIONAL IS '' Marca de si es un inmueble vacacional.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EQUIPAMIENTO_015001 IS '' Marca de si tiene parking''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.BALCON IS '' Balcón''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CALEFACCION IS '' Calefacción.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.COCINA_EQUIPADA IS '' Cocina Equipada.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.EST_CONSERVACION IS '' Estado conservación.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.JARDIN IS '' Jardín.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.USO_JARDIN IS '' Uso Jardín.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PISCINA IS '' Piscina.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SALIDA_HUMOS IS '' Salida De Humos.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TERRAZA IS '' Terraza.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIPO_VIVIENDA_INF IS '' Tipo vivienda.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TIPOLOGIA_EDIFICIO IS '' Tipología Edificio.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.SEG_INVERSION_PROM IS '' Segmento inversión promoción.''';
 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IMP_PRECIO_VENTA IS '' Importe Clase de condición Precio de venta''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.PRECIO_VENTA_NEGOCIABLE IS '' Flag precio venta negociable''';

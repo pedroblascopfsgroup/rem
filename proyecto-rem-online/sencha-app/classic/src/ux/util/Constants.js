@@ -287,7 +287,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		ONETOONE:'68',
 		JAGUAR:'70',
 		TITEDT:'162',
-		TITTDA:'163'
+		TITTDA:'163',
+		MARINA: '71'
     },
 
     NOMBRE_SUBCARTERA: {

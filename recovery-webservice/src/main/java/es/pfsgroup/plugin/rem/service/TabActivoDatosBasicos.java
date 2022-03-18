@@ -1286,7 +1286,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
 		}
 		
-		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		activoDto.setEsHayaHome(activoApi.esActivoHayaHome(activo, null));
 		
 		Filter filterActivoInformeComercial = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoInfoComercial activoInfoComercial = genericDao.get(ActivoInfoComercial.class, filterActivoInformeComercial);

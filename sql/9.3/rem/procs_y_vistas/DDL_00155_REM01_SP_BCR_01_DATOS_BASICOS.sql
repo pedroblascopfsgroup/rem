@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220304
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220315
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17150
+--## INCIDENCIA_LINK=HREOS-17155
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -28,6 +28,7 @@
 --##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
 --##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
 --##	      0.18 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
+--##	      0.19 Cálculo del alquiler rotacional y alquiler alquilado para el DD_CBC_ID [HREOS-17155] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -328,7 +329,13 @@ BEGIN
                ctc.DD_CTC_ID as DD_CTC_ID,
                CAIXA.CBX_ID,
                aux.NUM_INMUEBLE_ANTERIOR as CBX_NUMERO_INMUEBLE_ANTERIOR,
-               cbc.dd_cbc_id
+               CASE
+                  WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  
+                     AND DCA.DCA_EST_CONTRATO = ''Alquilada'' THEN (SELECT DD_CBC_ID FROM REM01.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
+                  WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND (DCA.DCA_ID IS NULL OR (DCA.DCA_ID IS NOT NULL OR DCA.DCA_FECHA_FIRMA > SYSDATE OR DCA.DCA_FECHA_FIN_CONTRATO < SYSDATE  
+                     OR DCA.DCA_EST_CONTRATO <> ''Alquilada'')) THEN (SELECT DD_CBC_ID FROM REM01.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''02'')
+                  ELSE cbc.dd_cbc_id
+               END AS DD_CBC_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -344,7 +351,11 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv9.DD_CODIGO_REM    
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv10 ON eqv10.DD_NOMBRE_CAIXA = ''SEGMENTACION_CARTERA''  AND eqv10.DD_CODIGO_CAIXA = aux.SEGMENTACION_CARTERA
                LEFT JOIN '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC cbc ON cbc.DD_CBC_CODIGO = eqv10.DD_CODIGO_REM 
-               LEFT JOIN (SELECT MOT.ACT_ID, LISTAGG(MOT.MOT_NECESIDAD_ARRAS, '', '') WITHIN GROUP (ORDER BY MOT.MOT_NECESIDAD_ARRAS) MOT_NECESIDAD_ARRAS FROM '|| V_ESQUEMA ||'.TMP_MOTIVOS_NECESIDAD_ARRAS MOT GROUP BY MOT.ACT_ID) MOT_NEC_ARRAS ON MOT_NEC_ARRAS.ACT_ID = ACT2.ACT_ID 
+               LEFT JOIN (SELECT MOT.ACT_ID, LISTAGG(MOT.MOT_NECESIDAD_ARRAS, '', '') WITHIN GROUP (ORDER BY MOT.MOT_NECESIDAD_ARRAS) MOT_NECESIDAD_ARRAS FROM '|| V_ESQUEMA ||'.TMP_MOTIVOS_NECESIDAD_ARRAS MOT GROUP BY MOT.ACT_ID) MOT_NEC_ARRAS ON MOT_NEC_ARRAS.ACT_ID = ACT2.ACT_ID               
+               LEFT JOIN '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID = ACT2.ACT_ID
+                     AND PTA.BORRADO = 0
+               LEFT JOIN '|| V_ESQUEMA ||'.ACT_DCA_DATOS_CONTRATO_ALQ DCA ON DCA.ACT_ID=PTA.ACT_ID
+                     AND DCA.BORRADO = 0               
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )

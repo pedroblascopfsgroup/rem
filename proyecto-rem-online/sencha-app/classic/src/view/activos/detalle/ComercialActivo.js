@@ -457,16 +457,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 											value: '{comercial.tipoTransmisionCodigo}',
 											rawValue: '{comercial.tipoTransmisionDescripcion}'
 										}
-									},
-									{
-										xtype:'comboboxfieldbasedd',
-										fieldLabel: HreRem.i18n('fieldlabel.activocaixa.segmentacion.cartera'),
-										bind: {											
-											store: '{comboSegmentacionCartera}',
-											value: '{comercial.segmentacionCarteraCodigo}',
-											rawValue: '{comercial.segmentacionCarteraDescripcion}',
-											readOnly: true
-										}
 									}
 									
 								]

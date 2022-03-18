@@ -119,7 +119,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
@@ -220,7 +219,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -228,7 +226,6 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -4130,10 +4127,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (actCaixa.getFechaFinConcurrencia() != null) {
 					dto.setFechaFinConcurrencia(actCaixa.getFechaFinConcurrencia());
 				}
-				if (actCaixa.getSegmentacionCartera() != null) {
-					dto.setSegmentacionCarteraCodigo(actCaixa.getSegmentacionCartera().getCodigo());
-					dto.setSegmentacionCarteraDescripcion(actCaixa.getSegmentacionCartera().getDescripcion());
-				}
 			}
 		}
 
@@ -4271,10 +4264,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(dto.getCanalPublicacionVentaCodigo() != null){
 					DDTipoComercializar canalDistVent = (DDTipoComercializar) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dto.getCanalPublicacionVentaCodigo());
 					activoCaixa.setCanalDistribucionVenta(canalDistVent);
-				}
-				if (dto.getSegmentacionCarteraCodigo() != null) {
-					DDCarteraBc segmentacionCartera = (DDCarteraBc) utilDiccionarioApi.dameValorDiccionarioByCod(DDCarteraBc.class, dto.getSegmentacionCarteraCodigo());
-					activoCaixa.setSegmentacionCartera(segmentacionCartera);
 				}
 				
 				genericDao.update(ActivoCaixa.class, activoCaixa);
@@ -9714,7 +9703,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean esActivoHayaHomeToModel(Activo activo, ActivoAgrupacion agrupacion) {
+	public boolean esActivoHayaHome(Activo activo, ActivoAgrupacion agrupacion) {
 		boolean esMacc = false;
 		boolean esActivoAlquiler = false;	
 		boolean es1to1 = false;
@@ -9737,25 +9726,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
-		
-		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
-
-		return esActivoHayaHome;
-	}
-	
-	@Override
-	public boolean esActivoHayaHome(Long idActivo) {
-		boolean esMacc = false;
-		boolean esActivoAlquiler = false;	
-		boolean es1to1 = false;
-		
-		Activo activo = get(idActivo);
-		
-		if (!Checks.esNulo(activo)) {
-			esMacc = !Checks.esNulo(activo.getPerimetroMacc()) && activo.getPerimetroMacc() == 1;
-			esActivoAlquiler = esActivoAlquiler(idActivo);
-			es1to1 = !Checks.esNulo(activo.getSubcartera().getCodigo()) && DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activo.getSubcartera().getCodigo());
-		}
 		
 		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
 

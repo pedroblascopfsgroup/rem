@@ -46,6 +46,60 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
 	
+	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
+		boolean bloquear = false;
+		if(activo != null) {
+			if(isActivoEnConcurrencia(activo)) {
+				return true;
+			}else {
+				bloquear = comprobarListaConcurrenciaActivo(activo.getId());
+			}	
+		}
+		
+		return bloquear;
+	}
+	
+	public boolean bloquearEditarOfertasPorConcurrenciaAgrupacion(ActivoAgrupacion agr) {
+		boolean bloquear = false;
+		if(agr != null) {
+			if(isAgrupacionEnConcurrencia(agr)) {
+				return true;
+			}else {
+				bloquear = comprobarListaConcurrenciaAgrupacion(agr.getId());
+			}
+		}
+		return bloquear;
+	}
+	
+	private boolean comprobarListaConcurrenciaActivo(Long id) {
+		List<Concurrencia> concurrenciaList = new ArrayList<Concurrencia>(); 
+				
+		concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
+		
+		for (Concurrencia concurrencia : concurrenciaList) {
+			if(concurrencia.getImporteDeposito() == null) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean comprobarListaConcurrenciaAgrupacion(Long id) {
+		List<Concurrencia> concurrenciaList = new ArrayList<Concurrencia>(); 
+				
+		concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", id));
+		
+		for (Concurrencia concurrencia : concurrenciaList) {
+			if(concurrencia.getImporteDeposito() == null) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
 	@Autowired
 	private OfertaApi ofertaApi;
 	

@@ -26,6 +26,10 @@ public interface ConcurrenciaApi {
 	boolean isAgrupacionEnConcurrencia(ActivoAgrupacion agr);
 
 	boolean tieneAgrupacionOfertasDeConcurrencia(ActivoAgrupacion agr);
+	
+	boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo);
+	
+	boolean bloquearEditarOfertasPorConcurrenciaAgrupacion(ActivoAgrupacion agr); 
 
     boolean isOfertaEnConcurrencia(Oferta ofr);
 	

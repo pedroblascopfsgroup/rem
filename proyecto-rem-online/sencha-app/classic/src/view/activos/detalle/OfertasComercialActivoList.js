@@ -248,9 +248,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '09' && Ext.isEmpty(numAgrupacion);
             
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
+            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
+            	allowEdit = true;
+            }
+            
+			var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
+			if(bloqueoEditarOferta){
+				allowEdit = false;
+			}else{
+				allowEdit = true;
+			}
+			
             this.editOnSelect = allowEdit;
+            
             return allowEdit;
         }); 
       
@@ -728,7 +740,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		} else if(activo.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		} 
-
+		
 		if (activo.get('isConcurrencia') == true){
 			me.setTopBar(false);
 		}

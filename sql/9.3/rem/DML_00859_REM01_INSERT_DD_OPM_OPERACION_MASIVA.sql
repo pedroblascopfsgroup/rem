@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20210831
+--## FECHA_CREACION=20220228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14969
@@ -33,7 +33,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-    T_FUNCION('CFGREC', 'Configuración de recomendación RC/DC','TAB_CONFIG_RECOMENDACION','s*,s*,s*,s*,d,d,s')    ); 
+    T_FUNCION('CFGREC', 'Configuración de recomendación RC/DC','TAB_CONFIG_RECOMENDACION','s*,s,s*,s*,d,d,s')    ); 
     V_TMP_FUNCION T_FUNCION;
     
 BEGIN	

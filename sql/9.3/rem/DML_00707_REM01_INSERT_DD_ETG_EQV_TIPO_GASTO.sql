@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20220315
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17155
+--## INCIDENCIA_LINK=HREOS-17438
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -25,6 +25,7 @@
 --##        0.12 Añadir misma PEP q los IBI (IBI Urbana), todOs los gastos de tipología tasa y el subtipo ICIO y Nuevas PEPs A INCLUIR DIC 21- [HREOS-17341] - Alejandra García
 --##        0.13 Corregir subtipo en los PEP de INCIDENCIA - [HREOS-17155] - Alejandra García
 --##        0.14 Descomentar las PEP rotacionales - [HREOS-17155] - Alejandra García
+--##        0.15 Añadir misma PEP que las comunidades (cuota ordinarioa y extra) a complejo inmobliario para los mismo subtipos - [HREOS-17438] - Alejandra García
 --#########################################
 --*/
 
@@ -359,11 +360,16 @@ DECLARE
 		T_TABLA('473','OX-XXXX-22-2-C_OBJ100%','22','02','72','13','251','','','','null','','',''),
 		T_TABLA('474','OX-XXXX-22-2-A_C_OBJ100%','22','2','74','13','253','','','','null','','',''),
 		T_TABLA('475','OX-XXXX-22-2-BFAX_REOCU','22','3','83','18','254','','','','null','','',''),
-		T_TABLA('476','OX-XXXX-22-2-NOTAS_NEG','22','3','84','18','255','','','','null','','','')
-		--T_TABLA('477','OX-XXXX-22-2-INF_INVEND','22','3','85','','','','','','null','','','')
+		T_TABLA('476','OX-XXXX-22-2-NOTAS_NEG','22','3','84','18','255','','','','null','','',''),
+		--T_TABLA('477','OX-XXXX-22-2-INF_INVEND','22','3','85','','','','','','null','','',''),
 
 		--Se descomentan las PEP ROTACIONALES, sus códigos van desde el 478 al 484 y el código 241 tambiém es rotacional
 
+		--Se duplican las de comunidades de propietarios con subtipo cuota ordinaria y cuota extra y se pone como complejo inmobliario para cuota ordinaria y cuota extra
+		T_TABLA('996','XXXX-22-2-COM','22','00','2','06','28','01','','','null','','',''),
+		T_TABLA('997','XXXX-22-2-COM','22','00','2','06','29','01','','','null','','',''),
+		T_TABLA('998','XXXX-22-2-A-COM','22','00','3','06','28','03','','','null','','',''),
+		T_TABLA('999','XXXX-22-2-A-COM','22','00','3','06','29','03','','','null','','','')
     ); 
     V_TMP_TABLA T_TABLA;
 	

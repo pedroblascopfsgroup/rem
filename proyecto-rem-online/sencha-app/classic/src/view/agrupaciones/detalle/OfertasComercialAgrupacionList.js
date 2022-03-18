@@ -9,7 +9,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
     
    	removeButton: false,
-   	
+   	editable : '{agrupacionficha.bloquearEdicionEstadoOfertas}',
     listeners	: {
     	select: 'onSelectedRow',
     	deselect: 'onDeselectedRow',
@@ -163,6 +163,14 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
 	            	allowEdit = true;
 	            }
+	            
+		        var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
+				if(bloqueoEditarOferta){
+					allowEdit = false;
+				}else{
+					allowEdit = true;
+				}
+	            
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;

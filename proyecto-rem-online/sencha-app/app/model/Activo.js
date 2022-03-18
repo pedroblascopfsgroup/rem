@@ -1396,6 +1396,10 @@ Ext.define('HreRem.model.Activo', {
             {
             	name:'isConcurrencia',
             	type: 'boolean'
+            },
+            {
+            	name:'bloquearEdicionEstadoOfertas',
+            	type: 'boolean'
             }
     ],
     

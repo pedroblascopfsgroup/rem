@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  */
@@ -411,6 +409,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String discrepanciasLocalizacionObservaciones;
 	
 	private Boolean isConcurrencia;
+	private Boolean bloquearEdicionEstadoOfertas;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -3059,6 +3058,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIsConcurrencia(Boolean isConcurrencia) {
 		this.isConcurrencia = isConcurrencia;
+	}
+
+	public Boolean getBloquearEdicionEstadoOfertas() {
+		return bloquearEdicionEstadoOfertas;
+	}
+
+	public void setBloquearEdicionEstadoOfertas(Boolean bloquearEdicionEstadoOfertas) {
+		this.bloquearEdicionEstadoOfertas = bloquearEdicionEstadoOfertas;
 	}
 	
 }

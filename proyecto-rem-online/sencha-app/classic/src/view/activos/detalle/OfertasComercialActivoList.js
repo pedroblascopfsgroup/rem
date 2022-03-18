@@ -250,8 +250,16 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
             if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
             	allowEdit = true;
             }
-
+            
+			var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
+			if(bloqueoEditarOferta){
+				allowEdit = false;
+			}else{
+				allowEdit = true;
+			}
+			
             this.editOnSelect = allowEdit;
+            
             return allowEdit;
         }); 
       
@@ -705,7 +713,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		} else if(activo.get('esHayaHome')=="true"){ 
 			me.setTopBar(false);
 		} 
-
+		
 		if (activo.get('isConcurrencia') == true){
 			me.setTopBar(false);
 		}

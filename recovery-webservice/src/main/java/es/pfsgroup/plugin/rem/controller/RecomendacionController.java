@@ -56,17 +56,8 @@ public class RecomendacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveConfigRecomendacion(DtoConfiguracionRecomendacion dtoConfiguracionRecomendacion, ModelMap model) {
 		try {
-			if((dtoConfiguracionRecomendacion.getPorcentajeDescuento() != null && dtoConfiguracionRecomendacion.getPorcentajeDescuento() < 0D)
-					|| (dtoConfiguracionRecomendacion.getImporteMinimo() != null && dtoConfiguracionRecomendacion.getImporteMinimo() < 0D)) {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put(RESPONSE_ERROR_MESSAGE_KEY, "No se permiten números negativos");
-			} else if(dtoConfiguracionRecomendacion.getPorcentajeDescuento() != null && dtoConfiguracionRecomendacion.getPorcentajeDescuento() > 100) {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-				model.put(RESPONSE_ERROR_MESSAGE_KEY, "Campo porcentaje mayor que 100");
-			} else {
-				boolean success = recomendacionApi.saveConfigRecomendacion(dtoConfiguracionRecomendacion);
-				model.put(RESPONSE_SUCCESS_KEY, success);
-			}
+			boolean success = recomendacionApi.saveConfigRecomendacion(dtoConfiguracionRecomendacion);
+			model.put(RESPONSE_SUCCESS_KEY, success);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			

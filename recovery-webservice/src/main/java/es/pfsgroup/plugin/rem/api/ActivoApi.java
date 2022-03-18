@@ -1495,7 +1495,7 @@ public interface ActivoApi {
 
 	boolean isActivoConReservaAlquiler(Activo activo);
 
-	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	boolean esActivoHayaHome(Activo idActivo, ActivoAgrupacion idAgrupacion);
 	
     Page findTasaciones(DtoFiltroTasaciones dto);
 

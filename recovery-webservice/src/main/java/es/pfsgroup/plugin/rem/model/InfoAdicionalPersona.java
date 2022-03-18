@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -21,14 +22,16 @@ import java.io.Serializable;
 @Table(name = "IAP_INFO_ADC_PERSONA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class InfoAdicionalPersona implements Serializable, Auditable {
+public class InfoAdicionalPersona implements Serializable, Auditable, Comparable<InfoAdicionalPersona> {
 	
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final String USUARIO_BORRAR_DUPLICATE = "DUPLICATE_IAP";
+	public static final String USUARIO_BORRAR_MERGE = "MERGE_IAP";
 
-		
+
 	@Id
     @Column(name = "IAP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "InfoAdicionalPersona")
@@ -97,6 +100,9 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PAI_ID_RPR")
     private DDPaises nacionalidadRprCodigo;
+
+	@Transient
+	private Date ultimaModificacion;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -274,5 +280,23 @@ public class InfoAdicionalPersona implements Serializable, Auditable {
 	public void setNacionalidadRprCodigo(DDPaises nacionalidadRprCodigo) {
 		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
 	}
-	
+
+	@Override
+	public int compareTo(InfoAdicionalPersona infoAdicionalPersona) {
+		if (getUltimaModificacion() == null || infoAdicionalPersona.getUltimaModificacion() == null)
+			return 0;
+		return getUltimaModificacion().compareTo(infoAdicionalPersona.getUltimaModificacion());
+	}
+
+	public Date getUltimaModificacion() {
+		if (getAuditoria() == null){
+			return null;
+		}else {
+			return getAuditoria().getFechaModificar() != null ? getAuditoria().getFechaModificar() : getAuditoria().getFechaCrear();
+		}
+	}
+
+	public void setUltimaModificacion(Date ultimaModificacion) {
+		this.ultimaModificacion = ultimaModificacion;
+	}
 }

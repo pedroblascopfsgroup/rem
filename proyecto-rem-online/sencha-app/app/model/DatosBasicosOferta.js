@@ -239,10 +239,6 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			type: 'boolean'
     		},
     		{
-                name: 'tieneInterlocutoresNoEnviados',
-                type: 'boolean'
-            },
-    		{
     			name:'fechaOfertaPendiente',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {

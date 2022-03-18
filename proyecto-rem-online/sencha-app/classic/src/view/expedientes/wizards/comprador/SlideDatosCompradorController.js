@@ -926,6 +926,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoConyuge.getValue()) && campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
 				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 					&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.conyuge"));
 			return false;
@@ -933,6 +935,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoRte.getValue()) && campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
 				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 					&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 	
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
@@ -941,6 +945,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 		if(expediente.get('esBankia') && !Ext.isEmpty(campoTipoDocumentoComprador.getValue()) && campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI'] 
 				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 					&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.comprador"));

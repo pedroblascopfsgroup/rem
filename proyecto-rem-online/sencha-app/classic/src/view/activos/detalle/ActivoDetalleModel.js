@@ -1043,20 +1043,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			var isSubcarteraApple = get('activo.isSubcarteraApple');
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var title = "";
 			
 			if(isSubcarteraApple){
 				title = HreRem.i18n('title.perimetro.apple');
 			}else if(isSubcarteraDivarian){
 				title = HreRem.i18n('title.perimetro.divarian');
+			}else if(isSubcarteraMarina){
+				title = HreRem.i18n('title.perimetro.marina');
 			}
 			return title;
 		},
 		
 		esEditablePerimetroMacc: function(get){
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			if(isSubcarteraMarina){
+				return false
+			}else{
+				return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			}
 		},
 		
 		esSubcarteraAppleDivarian: function(get){

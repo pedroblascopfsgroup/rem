@@ -344,5 +344,9 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 			}
 		});
 		
+	},
+	
+	reloadInfo: function(btn){
+		btn.up().up().getStore().load();
 	}
 });

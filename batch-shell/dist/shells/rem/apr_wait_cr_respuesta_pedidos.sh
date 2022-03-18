@@ -1,6 +1,6 @@
 #!/bin/bash
  
-fichero=cxb_fact
+fichero=cxb_estadfact
 fecha="_$1"
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then

@@ -3,9 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,11 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -38,10 +32,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOcupacional;
 import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
@@ -57,7 +49,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 
 /**
  * Modelo que gestiona la informacion comercial de los activos
@@ -133,9 +124,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_FECHA_AUTORIZ_HASTA")
 	private Date fechaAutorizacionHasta;
-
-	@Column(name = "ICO_FECHA_RECEP_LLAVES")
-	private Date fechaRecepcionLlaves;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPA_ID")
@@ -388,8 +376,8 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name="ICO_FECHA_ENVIO_LLAVES_API")
 	private Date envioLlavesApi;
 	
-	@Column(name="ICO_FECHA_RECEP_LLAVES_API")
-	private Date recepcionLlavesApi;
+	@Column(name = "ICO_FECHA_RECEP_LLAVES")
+	private Date fechaRecepcionLlaves;
 
 	@Column(name="ICO_NUM_DORMITORIOS")
 	private Long numDormitorios;
@@ -1147,14 +1135,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setEnvioLlavesApi(Date envioLlavesApi) {
 		this.envioLlavesApi = envioLlavesApi;
-	}
-	
-	public Date getRecepcionLlavesApi() {
-		return recepcionLlavesApi;
-	}
-
-	public void setRecepcionLlavesApi(Date recepcionLlavesApi) {
-		this.recepcionLlavesApi = recepcionLlavesApi;
 	}
 
 	public Long getNumDormitorios() {

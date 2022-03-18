@@ -1397,7 +1397,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 								 		xtype: 		'textareafieldbase',
 										bind:		'{infoComercial.descripcionComercial}',
-								 		maxWidth:	1600,
+								 		maxWidth:	2600,
 								 		height: 	120
 								   }				
 								]

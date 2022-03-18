@@ -83,13 +83,13 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID AND GEN.ENT_ID = AUX.ACT_ID
                     AND GEN.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
-                                                                                              WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL THEN 0
+                                                                                              WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL AND EJE.EJE_ANYO > ''2021'' THEN 0
                                                                                               ELSE GPV.DD_TGA_ID
-                                                                                              END
+                                                                                            END
                     AND NVL(ETG.DD_STG_ID, 0) = CASE
-                                                  WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL THEN 0
+                                                  WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL AND EJE.EJE_ANYO > ''2021'' THEN 0
                                                   ELSE GLD.DD_STG_ID 
-                                                  END 
+                                                END
                     AND CASE 
                         WHEN ETG.PRO_ID IS NULL AND PRO.PRO_SOCIEDAD_PAGADORA = ''3148'' AND EJE.EJE_ANYO <= ''2021'' THEN NULL
                         WHEN ETG.PRO_ID IS NULL THEN PRO.PRO_ID

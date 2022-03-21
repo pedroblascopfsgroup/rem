@@ -54,14 +54,17 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertaGridExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDeposito;
@@ -165,6 +168,12 @@ public class OfertasController {
 
 	@Autowired
 	private ReplicacionOfertasManager replicacionOfertasManager;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorSancionOferta;
+
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 	
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
@@ -1101,5 +1110,24 @@ public class OfertasController {
 		
 		model.put(RESPONSE_SUCCESS_KEY, true);
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView enviarMailAprobacionVenta(ModelMap model, Long idOferta) {
+
+		try {
+			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(oferta.getExpedienteComercial().getTrabajo().getId());
+			notificatorSancionOferta.sendNotification(listaTramites.get(0),false, oferta, true, false, null);
+
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 }

@@ -179,6 +179,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String riesgoOperacionBcDescripcion;
 	
+	private Boolean enviarCorreoAprobacion;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -876,5 +878,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
 		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
+	}
+
+	public Boolean getEnviarCorreoAprobacion() {
+		return enviarCorreoAprobacion;
+	}
+
+	public void setEnviarCorreoAprobacion(Boolean enviarCorreoAprobacion) {
+		this.enviarCorreoAprobacion = enviarCorreoAprobacion;
 	}
 }

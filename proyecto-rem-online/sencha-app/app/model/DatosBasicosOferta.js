@@ -318,6 +318,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 			{
 
                 name: 'numeroVaiHavaiSareb'
+            },
+			{
+                name: 'enviarCorreoAprobacion'
             }
     		
     ],

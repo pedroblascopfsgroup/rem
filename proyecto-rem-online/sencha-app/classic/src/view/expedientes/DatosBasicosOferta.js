@@ -881,6 +881,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem.i18n('btn.generar.ficha.comercial'),
 							handler : 'onClickGenerarFichaComercial',
 							margin : '10 10 10 10'
+						}, {
+							xtype : 'button',
+							reference : 'btnGeneraMailAprobacion',
+							bind : {
+								hidden : '{!habilitarBotonGeneraMailAprobacion}'
+							},
+							text : HreRem.i18n('btn.enviar.mail.aprobacion'),
+							handler : 'onClickEnviarMailAprobacionVenta',
+							margin : '10 10 10 10'
 						}]
 
 					
@@ -926,6 +935,19 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
+							},
+							rowdblclick: function(grid, record){
+								var cod = context.record.get("campoCodigo");
+								var allowCopy = cod == '08' || cod == '09';
+								if (allowCopy){
+									var elem = document.createElement('textarea');
+								    elem.value = record.get("texto");
+								    document.body.appendChild(elem);
+								    elem.select();
+								    document.execCommand('copy');
+								    document.body.removeChild(elem);
+									me.fireEvent("infoToast", "Texto copiado correctamente");
+								}
 							}
 						},
 						columns : [{

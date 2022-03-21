@@ -477,11 +477,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 									genericDao.save(ClienteComercial.class,cliente);
 									iap.setIdPersonaHayaCaixa(idPersonaCaixa);
 									genericDao.save(InfoAdicionalPersona.class, iap);
-									errorsList.put("idCliente", cliente.getId().toString());
+									errorsList.put("idCliente", cliente.getIdClienteRem().toString());
 								}
 							}
 						} else {
-							errorsList.put("idCliente", cliente.getId().toString());
+							errorsList.put("idCliente", cliente.getIdClienteRem().toString());
 						}
 						visita.setCliente(cliente);
 					}

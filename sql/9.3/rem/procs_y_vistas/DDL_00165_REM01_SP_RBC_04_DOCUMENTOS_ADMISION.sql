@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20220318
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17151
+--## INCIDENCIA_LINK=HREOS-17414
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,6 +20,7 @@
 --##	      0.8 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.9 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.10 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
+--##        0.10 Nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

@@ -1486,8 +1486,6 @@ public interface ActivoApi {
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
 	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
-	
-	boolean esActivoHayaHome(Long idActivo);
 
 	boolean esActivoAlquiler(Long idActivo);
 

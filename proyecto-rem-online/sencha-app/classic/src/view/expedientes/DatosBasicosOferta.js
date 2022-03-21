@@ -892,6 +892,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem.i18n('btn.generar.ficha.comercial'),
 							handler : 'onClickGenerarFichaComercial',
 							margin : '10 10 10 10'
+						}, {
+							xtype : 'button',
+							reference : 'btnGeneraMailAprobacion',
+							bind : {
+								hidden : '{!habilitarBotonGeneraMailAprobacion}'
+							},
+							text : HreRem.i18n('btn.enviar.mail.aprobacion'),
+							handler : 'onClickEnviarMailAprobacionVenta',
+							margin : '10 10 10 10'
 						}]
 
 					}]

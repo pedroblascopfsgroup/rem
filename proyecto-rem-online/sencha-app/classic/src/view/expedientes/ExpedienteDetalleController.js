@@ -5842,6 +5842,35 @@ comprobarFormatoModificar: function() {
 			importeDeposito.setDisabled(true);
 			importeDeposito.setValue(null);
 		}
+	},
+
+	onClickEnviarMailAprobacionVenta : function(btn) {
+		var me = this;
+		Ext.Msg.confirm(
+			HreRem.i18n("title.enviar.email.de.aprobacion"),
+			HreRem.i18n("msg.enviar.mail.aprobacion.venta"),
+			function(btn) {
+				if (btn == "yes") {
+					var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacionVenta");
+					var parametros = {
+						idOferta : me.getViewModel().get("datosbasicosoferta.idOferta")
+					};
+					me.getView().mask();
+					Ext.Ajax.request({
+						url : url,
+						params : parametros,
+						success : function(response,opts) {
+							if (Ext.decode(response.responseText).success == "false") {
+								me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+								me.getView().unmask();
+							} else if (Ext.decode(response.responseText).success == "true") {
+								me.getView().unmask();
+								me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+							}
+						}
+					});
+				}
+			});
 	}
 	
 });

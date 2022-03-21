@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220228
+--## FECHA_CREACION=20220318
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17151
+--## INCIDENCIA_LINK=HREOS-17414
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,6 +20,7 @@
 --##	      0.8 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.9 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.10 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
+--##        0.10 Nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -138,6 +139,18 @@ BEGIN
                      WHERE ADO.BORRADO = 0
                         AND TPD.DD_TPD_CODIGO IN (''27'', ''121'')
                         AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  ), SST AS (
+                    SELECT 
+                    PVE.PVE_DOCIDENTIF CODIGO_SST
+                    , ACT_TBJ.ACT_ID
+                    , ROW_NUMBER() OVER (PARTITION BY ACT_TBJ.ACT_ID ORDER BY TBJ.TBJ_FECHA_EJECUTADO desc) RN
+                    FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
+                    JOIN '||V_ESQUEMA||'.ACT_TBJ ON TBJ.TBJ_ID = ACT_TBJ.TBJ_ID
+                    JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON TBJ.DD_STR_ID = STR.DD_STR_ID AND STR.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC ON PVC.PVC_ID = TBJ.PVC_ID AND PVC.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PVC.PVE_ID AND PVE.BORRADO = 0
+                    WHERE TBJ.BORRADO = 0
+                    AND STR.DD_STR_CODIGO = ''18''
                   )
                   SELECT DISTINCT 
                      ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
@@ -170,7 +183,7 @@ BEGIN
                         , EQV_MEC.DD_CODIGO_CAIXA MOTIVO_EXONERACION_CEE
                         , EQV_ICE.DD_CODIGO_CAIXA INCIDENCIA_CEE
                         , CEE.DATA_ID_DOCUMENTO NUMERO_CEE
-                        , NULL CODIGO_SST
+                        , CASE WHEN CEE.DD_EDC_CODIGO = ''01'' OR CEE.DATA_ID_DOCUMENTO IS NOT NULL OR CEE.REGISTRO IS NOT NULL THEN SST.CODIGO_SST END CODIGO_SST
                   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
@@ -184,6 +197,7 @@ BEGIN
                   LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_LEM ON EQV_LEM.DD_NOMBRE_CAIXA = ''LISTA_EMISIONES'' AND EQV_LEM.DD_CODIGO_REM = CEE.DD_LEM_CODIGO
                   LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_MEC ON EQV_MEC.DD_NOMBRE_CAIXA = ''MOTIVO_EXONERACION_CEE'' AND EQV_MEC.DD_CODIGO_REM = CEE.DD_MEC_CODIGO
                   LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_ICE ON EQV_ICE.DD_NOMBRE_CAIXA = ''INCIDENCIA_CEE'' AND EQV_ICE.DD_CODIGO_REM = CEE.DD_ICE_CODIGO
+                  LEFT JOIN SST ON SST.ACT_ID = ACT.ACT_ID AND SST.RN = 1
                   WHERE ACT.BORRADO = 0
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1

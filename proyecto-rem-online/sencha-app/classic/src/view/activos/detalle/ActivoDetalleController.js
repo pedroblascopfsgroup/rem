@@ -8813,7 +8813,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(disabled) {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
-    },
+	},
+	
     onClickGuardarReferencia: function(btn){
     	var me = this;
     	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');

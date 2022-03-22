@@ -305,7 +305,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String APRUEBA_COMBO_RESPUESTA = "01";
 	private static final String CONTRAOFERTA_COMBO_RESPUESTA = "03";
 	private static final String COMBO_RESOLUCION = "comboRespuesta";
-	
 	private static final String DD_TDI_CODIGO_NIF= "15";
 	private static final String DD_TDI_CODIGO_DNI= "01";
 	private static final String DD_TDI_CODIGO_NIE= "12";

@@ -254,10 +254,13 @@ func-rem-comercialHydra-Incidencias|R-Salustiana
 func-rem-hydra-accionesNoComercial|R-Salustiana
 rem_mirror|func-rem-tasadorasTitulizada
 rem_mirror|func-rem-catastro
+<<<<<<< HEAD
 func-rem-cargaAutomaticaPromociones|R-Persica
 func-rem-mejorasGestionFotos|R-Persica
 func-rem-reincorporacionEstadoTitulo|R-Persica
 func-rem-catastro|R-Ortanique
+=======
+>>>>>>> func-rem-catastro
 func-rem-PEP2022|func-rem-devengosIBI2022
 func-rem-devengosIBI2022|func-rem-gastosIAE
 func-rem-gastosIAE|func-rem-cambioJerarquiaPrefacturasBBVA

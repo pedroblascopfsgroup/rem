@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.Oferta;
 
 public interface ConcurrenciaApi {
 
@@ -13,5 +14,5 @@ public interface ConcurrenciaApi {
 
 	boolean tieneAgrupacionOfertasDeConcurrencia(ActivoAgrupacion agr);
 
-	
+    boolean isOfertaEnConcurrencia(Oferta ofr);
 }

@@ -91,4 +91,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		
 		return isEnConcurrencia;
 	}
+
+	@Override
+	public boolean isOfertaEnConcurrencia(Oferta ofr){
+
+		if(ofr != null && ofr.getConcurrencia()){
+			return true;
+		}
+
+		return false;
+	}
 }

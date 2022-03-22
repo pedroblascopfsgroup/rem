@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -91,28 +92,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.FuncionesApi;
-import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
-import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
-import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
@@ -467,6 +446,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	ParticularValidatorApi particularValidatorApi;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
@@ -11449,6 +11431,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
 							+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
 				}
+			}
+
+			if (concurrenciaApi.isOfertaEnConcurrencia(expediente.getOferta())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
+						+ "<div class='div-aviso red'> Oferta de concurrencia </div>");
 			}
 		}
 		return avisosFormateados;

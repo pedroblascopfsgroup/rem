@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba 
+--## AUTOR=Javier Esbri
 --## FECHA_CREACION=20220322
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17414
+--## INCIDENCIA_LINK=HREOS-17351
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -88,7 +88,6 @@ BEGIN
                 ,ICO.ICO_IDEF_PLAZA_PARKING AS IDEN_PL_PARKING
                 ,CASE
                     WHEN ICO.ICO_CALEFACCION = (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''01'') THEN ''01''
-                    WHEN ICO.ICO_CALEFACCION = (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''02'') THEN ''01''
                     ELSE ''02''
                 END AS CALEFACCION
                 ,CASE
@@ -107,7 +106,6 @@ BEGIN
                     ELSE ''02''
                 END AS USO_JARDIN
                 ,CASE
-                    WHEN ICO.ICO_PISCINA = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'') THEN ''01''
                     WHEN ICO.ICO_PISCINA = (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'') THEN ''01''
                     ELSE ''02''
                 END AS PISCINA

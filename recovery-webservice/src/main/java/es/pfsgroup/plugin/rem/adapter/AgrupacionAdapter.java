@@ -933,7 +933,7 @@ public class AgrupacionAdapter {
 					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
-				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHomeToModel(null, agrupacion));
+				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
 			}
 			
 			
@@ -2713,7 +2713,7 @@ public class AgrupacionAdapter {
 			if (clienteComercial.getIdPersonaHaya() == null || clienteComercial.getIdPersonaHaya().trim().isEmpty())
 				clienteComercial.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumento()));
 
-			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersona(),clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
+			InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(clienteComercial.getIdPersonaHayaCaixa(),clienteComercial.getIdPersonaHaya());
 
 			clienteComercial.setInfoAdicionalPersona(iap);
 
@@ -2819,11 +2819,11 @@ public class AgrupacionAdapter {
 				}
 				
 				if (dto.getNombreRazonSocialRte() != null) {
-					clienteComercial.setNombre(dto.getNombreRazonSocialRte());
+					clienteComercial.setNombreRepresentante(dto.getNombreRazonSocialRte());
 				}
 				
 				if (dto.getApellidosRte() != null) {
-					clienteComercial.setApellidos(dto.getApellidosRte());
+					clienteComercial.setApellidosRepresentante(dto.getApellidosRte());
 				}
 				
 				if (dto.getPaisNacimientoRepresentanteCodigo() != null) {
@@ -2901,7 +2901,7 @@ public class AgrupacionAdapter {
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
-				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefault(clienteComercial.getInfoAdicionalPersonaRep(),clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
+				InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(clienteComercial.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(clienteComercial.getDocumentoRepresentante()));
 				clienteComercial.setInfoAdicionalPersonaRep(iapRep);
 
 				if (iapRep != null){
@@ -3143,7 +3143,9 @@ public class AgrupacionAdapter {
 					oferta.setOfertaCaixa(ofrCaixa);
 					genericDao.save(Oferta.class,ofertaNueva);
 				}
-
+					
+				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
+				
 				if (dto.getCheckSubasta() != null){
 					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
 					genericDao.save(OfertaCaixa.class,ofrCaixa);
@@ -5519,6 +5521,30 @@ public class AgrupacionAdapter {
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
 	}
-	
 
+
+	private DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(ActivoAgrupacion agrupacion, DDTipoOferta tipoOferta) {
+		List<ActivoAgrupacionActivo> agas = agrupacion.getActivos();
+
+		DDTipoComercializar tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_RETAIL));
+
+		for (ActivoAgrupacionActivo aga : agas) {
+			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId()));
+			if(activoCaixa != null){
+				if(DDTipoOferta.isTipoVenta(tipoOferta)){
+					if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionVenta().getCodigo())){
+						tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
+						break;
+					}
+				} else if(DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)){
+					if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionAlquiler().getCodigo())){
+						tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
+						break;
+					}
+				}
+			}
+		}
+
+		return tipoComercializar;
+	}
 }

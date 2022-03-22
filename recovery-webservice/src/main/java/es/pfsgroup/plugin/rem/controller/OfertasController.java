@@ -522,9 +522,10 @@ public class OfertasController {
 			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
 			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
 			if (!Checks.esNulo(idActivo)) {
-				model.put("esHayaHome", activoManager.esActivoHayaHome(idActivo));
+				Activo activo = activoApi.get(idActivo);
+				model.put("esHayaHome", activoManager.esActivoHayaHome(activo, null));
 			} else if (!Checks.esNulo(idAgrupacion)) {
-				model.put("esHayaHome", activoManager.esActivoHayaHome(activoManager.activoByIdAgrupacion(idAgrupacion).getId()));
+				model.put("esHayaHome", activoManager.esActivoHayaHome(activoManager.activoByIdAgrupacion(idAgrupacion), null));
 			}
 			model.put("success", true);
 		} catch (Exception e) {

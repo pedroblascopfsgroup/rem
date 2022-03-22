@@ -147,7 +147,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 		    		return true;
 	    }
 		return false;
@@ -158,7 +158,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 				(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto && gestoria) || /*CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
 	    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
 	    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) 
-	    		|| (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+	    		|| (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 	    			
 	    			return true;
 	    }
@@ -169,7 +169,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado&& !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 		    		return true;
 	    }
 		return false;
@@ -179,7 +179,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
-		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
+		    	|| (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
 	    			return true;
 	    	}
 		return false;
@@ -188,7 +188,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 	edicionPestanyaGestion: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
 		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS') && (CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['ANULADO']!=estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO'] != estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] != estadoGasto) 
     			&& (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']!=estadoGasto || (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado)) 
-    			&& (CONST.ESTADOS_GASTO['SUBSANADO']!=estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado))){
+    			&& (CONST.ESTADOS_GASTO['SUBSANADO']!=estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) || (CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])))){
     			return true;
     	}
 		return false;

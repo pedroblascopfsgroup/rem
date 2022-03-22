@@ -49,7 +49,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				if(me.getView().up().expediente != null){
 					if(me.getView().up().expediente.data.esBankia){
 			        	if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
-			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 			        				&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 			        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 			        		return false;
@@ -59,7 +61,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 					if(idAgrupacion == null){
 						if(me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')){
 							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
-			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 								return false;
@@ -68,7 +72,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 					}else{
 						if(me.view.up().lookupController().getViewModel().getData().esAgrupacionCaixa){
 							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
-			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
 			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 								return false;

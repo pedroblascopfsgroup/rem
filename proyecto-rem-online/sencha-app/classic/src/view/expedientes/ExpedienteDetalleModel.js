@@ -8,7 +8,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
 				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid', 'HreRem.model.Testigos',
-				'HreRem.model.FechaArrasModel', 'HreRem.model.GastosRepercutidosModel', 'HreRem.model.ActualizacionRentaModel','HreRem.model.SancionesModel'],
+				'HreRem.model.FechaArrasModel', 'HreRem.model.GastosRepercutidosModel', 'HreRem.model.ActualizacionRentaModel','HreRem.model.SancionesModel',
+				'HreRem.model.IntervinientesPBC'],
     
     data: {
     },
@@ -448,9 +449,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 		 	mostrarBotonLanzarPBC: function(get){
 
-             var tieneInterlocutoresNoEnviados = get('datosbasicosoferta.tieneInterlocutoresNoEnviados');
-
-         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && tieneInterlocutoresNoEnviados ;
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && get('esCarteraBankia');
 
          	},
 
@@ -1882,6 +1881,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					diccionario: 'DDSegurosVigentes'
 				}
 			}
-    	}
+    	},
+		
+		storeGridIntervinientes: {
+	    	model: 'HreRem.model.IntervinientesPBC',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getIntervinientesPBC',
+		        extraParams: {numOferta: '{datosbasicosoferta.numOferta}'}
+	    	}
+		}
     }
 });

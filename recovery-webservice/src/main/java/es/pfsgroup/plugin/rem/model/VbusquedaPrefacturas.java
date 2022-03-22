@@ -15,8 +15,11 @@ public class VbusquedaPrefacturas implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "PFA_ID")
+	@Column(name = "ID")
 	private Long id;
+	
+	@Column(name = "PFA_ID")
+	private Long pfa_id;
 	
 	@Column(name = "ALB_ID")
 	private Long albaranId;
@@ -46,7 +49,7 @@ public class VbusquedaPrefacturas implements Serializable{
 	private Long numeroTrabajos;
 	
 	@Column(name = "NUM_GASTOS")
-	private Long numGasto;
+	private String numGasto;
 	
 	@Column(name= "ESTADO_GASTO")
 	private String estadoGasto;
@@ -59,6 +62,12 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "DD_IRE_CODIGO")
 	private String codAreaPeticionaria;
+	
+	@Column(name = "TOTPVP")
+	private Double importaTotalPrefacturas;
+	
+	@Column(name = "CANTPROP")
+	private Boolean cantidadPropietarios;
 
 	public Long getId() {
 		return id;
@@ -66,6 +75,14 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getPfa_id() {
+		return pfa_id;
+	}
+
+	public void setPfa_id(Long pfa_id) {
+		this.pfa_id = pfa_id;
 	}
 
 	public Long getNumPrefactura() {
@@ -139,11 +156,11 @@ public class VbusquedaPrefacturas implements Serializable{
 	public void setEstadoGasto(String estadoGasto) {
 		this.estadoGasto = estadoGasto;
 	}
-	public Long getNumGasto() {
+	public String getNumGasto() {
 		return numGasto;
 	}
 
-	public void setNumGasto(Long numGasto) {
+	public void setNumGasto(String numGasto) {
 		this.numGasto = numGasto;
 	}
 
@@ -177,6 +194,22 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setCodAreaPeticionaria(String codAreaPeticionaria) {
 		this.codAreaPeticionaria = codAreaPeticionaria;
+	}
+
+	public Double getImportaTotalPrefacturas() {
+		return importaTotalPrefacturas;
+	}
+
+	public void setImportaTotalPrefacturas(Double importaTotalPrefacturas) {
+		this.importaTotalPrefacturas = importaTotalPrefacturas;
+	}
+
+	public Boolean getCantidadPropietarios() {
+		return cantidadPropietarios;
+	}
+
+	public void setCantidadPropietarios(Boolean cantidadPropietarios) {
+		this.cantidadPropietarios = cantidadPropietarios;
 	}
 	
 }

@@ -88,6 +88,21 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		            reference: 'areaPeticionaria',
 		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.trabajo.area.peticionaria')
+		        },
+		        {
+		            dataIndex: 'importaTotalPrefacturas',
+		            reference: 'importaTotalPrefacturas',
+		            renderer: Utils.rendererCurrency,
+		            flex: 1,
+		            text: HreRem.i18n('fieldlabel.albaran.importe.total.trabajos.prefactura'),
+		            hidden: true
+		        },
+		        {
+		            dataIndex: 'cantidadPropietarios',
+		            reference: 'cantidadPropietarios',
+		            flex: 1,
+		            text: HreRem.i18n('fieldlabel.albaran.cantidad.propietarios.prefactura'),
+		            hidden: true
 		        }
 		    ];
 		me.dockedItems = [

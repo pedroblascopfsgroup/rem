@@ -31,6 +31,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     @Autowired
     private SpPublicacionApi spPublicacionApi;
 
+    @Autowired
+    private LlamadaPBCApi llamadaPBCApi;
+    
     @Override
     public String managerName() {
         return "replicacionOfertasManager";
@@ -55,6 +58,7 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
             if(lanzarReplicate)
                 ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+            	llamadaPBCApi.callPBC(eco, tarea);
         }
     }
 
@@ -73,10 +77,14 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaResolucionT018RevisionBcCondiciones(codTarea, codEstado) || calculaT017AgendarFechaArras(codTarea, codEstado)
                 || calculaT017ResolucionCES(codTarea, codEstado) || calculaT018PtClRod(codTarea, codEstado)
                 || calculaT015ElevarASancion(codTarea, codEstado) || calculaT015SancionBc(codTarea, codEstado)
-                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado);
+                || calculaT015SancionPatrimonio(codTarea, codEstado) || calculaT015ScoringBc(codTarea, codEstado)
+                || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado)
+                || calculaT015CalculoRiesgo(codTarea,codEstado) || calculaT018CalculoRiesgo(codTarea,codEstado)
+                || calculaT015PBCAlquiler(codTarea,codEstado) || calculaT018PBCAlquiler(codTarea,codEstado)
+                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado) || calculaT018TrasladarOfertaCliente(codTarea, codEstado);
     }
 
-    private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
+	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(codTarea) &&
                 (DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado) || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
             return true;
@@ -187,6 +195,73 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
         return false;
     }
+    
+    private boolean calculaT015DatosPBC(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT018DatosPBC(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_DATOSPBC.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT015CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    private boolean calculaT018CalculoRiesgo(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_CALCULO_RIESGO.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT015PBCAlquiler(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_PBC_ALQUILER.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+    
+    private boolean calculaT018PBCAlquiler(String codTarea, String codEstado) {
+    	if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_PBC_ALQUILER.equals(codTarea) && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+	}
+
+    private boolean calculaT015SolicitarGarantiasAdicionales(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerT015.CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES.equals(codTarea)
+            && (DDEstadoExpedienteBc.CODIGO_SCORING_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_PENDIENTE_GARANTIAS_ADICIONALES_BC.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_VALORAR_ACUERDO_SIN_GARANTIAS_ADICIONALES.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaT018TrasladarOfertaCliente(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_T018_TRASLADAR_OFERTA_CLIENTE.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE.equals(codEstado)
+                    || DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC.equals(codEstado)))
+            return true;
+
+        return false;
+    }
 
     private void lanzarSPPublicaciones(String idTarea, Boolean success){
         try {
@@ -196,5 +271,4 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
             e.printStackTrace();
         }
     }
-
 }

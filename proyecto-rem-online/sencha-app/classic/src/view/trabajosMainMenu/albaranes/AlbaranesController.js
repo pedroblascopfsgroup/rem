@@ -86,6 +86,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
 		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
 		var codAreaPeticionaria = this.lookupReference('areaPeticionariaSearch').value;
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
+		textoContadorPropietarios.setHidden(true);
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var exportarTrabajosPrefacturas = $AU.userHasFunction('EXPORTAR_BUSQUEDA_TRABAJOS_PREFACTURA');
@@ -150,7 +152,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var numPrefactura = this.lookupReference('numPrefacturaSearch').value;
 		var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
 		var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
+		var cantidadPropietarios = grid.selection.data.cantidadPropietarios;
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
 		
+		if (cantidadPropietarios == true) {
+			textoContadorPropietarios.setHidden(false);
+		} else {
+			textoContadorPropietarios.setHidden(true);
+		}
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
                 numPrefactura: record.data.numPrefactura,
@@ -172,13 +181,13 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		} else {
 			me.deselectPrefactura(grid);
 		}
-		
 	},
 	
 	deselectPrefactura: function(grid){
 		var me = this;
 		var gridDetalle = this.lookupReference('detalleAlbaranGrid');
 		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
+		var textoContadorPropietarios = me.lookupReference('textContadorPropietarios');
 
 		this.lookupReference('botonValidarPrefactura').setDisabled(true);
 		this.lookupReference('botonValidarTrabajo').setDisabled(true);
@@ -188,14 +197,15 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		listaTrabajos.data = [];
 		me.calcularTotal(this.lookupReference('albaranGrid'),"albaranGrid",this.lookupReference('albaranGrid').selection);
 		listaTrabajos.getColumns()[8].setDisabled(false);
+		textoContadorPropietarios.setHidden(true);
 	},
 	
 	calcularTotal: function(grid,descripcion,record){
 		var v;
 		if(descripcion == "detalleAlbaranGrid"){
 			var valor = 0;
-			if(record.data.importeTotalDetalle != null && record.data.importeTotalDetalle != 0){
-				valor = record.data.importeTotalDetalle;
+			if(record.data.importaTotalPrefacturas != null && record.data.importaTotalPrefacturas != 0){
+				valor = record.data.importaTotalPrefacturas;
 			}
 			var totalPre = this.lookupReference('totalPrefactura');
 			v = parseFloat(valor).toFixed(2);

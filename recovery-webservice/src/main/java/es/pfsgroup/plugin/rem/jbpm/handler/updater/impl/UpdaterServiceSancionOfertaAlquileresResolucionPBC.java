@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,6 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements UpdaterService {
@@ -109,7 +106,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 								}
 								genericDao.save(Oferta.class, ofertaCongelada);
 								
-								if (pdteDocu) ofertaApi.llamadaPbc(ofertaCongelada);
+								if (pdteDocu) ofertaApi.llamadaPbc(ofertaCongelada, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 							}
 						}
 					}

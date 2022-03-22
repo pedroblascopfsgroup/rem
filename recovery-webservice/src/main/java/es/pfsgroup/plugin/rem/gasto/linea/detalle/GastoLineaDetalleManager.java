@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.gasto.linea.detalle;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,8 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.*;
-import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,24 +27,58 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
+import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
+import es.pfsgroup.plugin.rem.model.ActivoGenerico;
+import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSareb;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
+import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
+import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
+import es.pfsgroup.plugin.rem.model.Prefactura;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
+import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDPromociones;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoLineaDetalleManager")
@@ -1214,6 +1244,40 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							}
 						}
 						sumaTotal = sumaTotal.add(participacion);
+						if (activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getId() != null) {
+							   Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacionActivo.getActivo().getId());
+							   ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+							   if (patrimonioContrato != null) {
+								   if (activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+									   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_ALQUILER);
+									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   } else {
+									   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+									   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+								   }
+							   } else {
+								Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+								DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+								gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   }
+							   if (activoAgrupacionActivo.getActivo().getTipoTransmision() != null) {
+								   Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoAgrupacionActivo.getActivo().getTipoTransmision().getCodigo());
+								   DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+								   if (tipoTransmision != null) {
+									   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+								   }
+							   }
+							   if (activoAgrupacionActivo.getActivo().getSituacionComercial() != null && activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo() != null
+										  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo())) {
+									   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+									   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+									   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+							   } else {
+									   gastoLineaDetalleEntidad.setSituacionComercial(null);
+							   }
+						}
 						newEntidadGastoLineaDetalle.add(gastoLineaDetalleEntidad);
 						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 					}
@@ -1264,6 +1328,40 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						}else {
 							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
 						}
+					}
+					if (activo != null && activo.getId() != null) {
+						Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+						   if (patrimonioContrato != null) {
+							   if (activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+								   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_ALQUILER);
+								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   } else {
+								   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+							   }
+						} else {
+							Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+							DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+							gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+						}
+						if (activo.getTipoTransmision() != null) {
+							Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
+							DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+							if (tipoTransmision != null) {
+							   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+							}
+						}
+						if (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo() != null
+								  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+							   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+							   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+							   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+					   } else {
+							   gastoLineaDetalleEntidad.setSituacionComercial(null);
+					   }
 					}
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
 					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
@@ -1404,6 +1502,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleEntidad.setParticipacionGasto(dto.getParticipacion());
 		gastoLineaDetalleEntidad.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalleEntidad.getAuditoria().setFechaModificar(new Date());
+		
+		
+		if (!Checks.esNulo(dto.getPrimeraPosesion())) {
+			gastoLineaDetalleEntidad.setPrimeraPosesion(dto.getPrimeraPosesion().equals("1") ? true : false);
+		}
 		
 		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 		
@@ -1994,6 +2097,58 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				gldEnt.setEntidad(activoTrabajo.getActivo().getId());
 				gldEnt.setEntidadGasto(entidad);
 				gldEnt.setGastoLineaDetalle(linea);
+				if (activoTrabajo.getActivo().getId() != null) {
+					Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoTrabajo.getActivo().getId());
+					ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+					if (patrimonioContrato != null) {
+						if (activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+						   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_ALQUILER);
+						   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+						   gldEnt.setCarteraBc(ddCarteraBc);
+						} else {
+						   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+						   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+						   gldEnt.setCarteraBc(ddCarteraBc);
+						}
+					} else {
+						Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCarteraBc.CODIGO_VENTA);
+						DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+						gldEnt.setCarteraBc(ddCarteraBc);
+					}
+					if (activoTrabajo.getActivo().getTipoTransmision() != null) {
+						Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getActivo().getTipoTransmision().getCodigo());
+						DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+						if (tipoTransmision != null) {
+						   gldEnt.setTipoTransmision(tipoTransmision);
+						}
+					}
+					
+					if (activoTrabajo.getTrabajo().getTomaPosesion() != null) {
+						gldEnt.setPrimeraPosesion(activoTrabajo.getTrabajo().getTomaPosesion());
+					}
+					if (activoTrabajo.getTrabajo().getCodigoSubpartida() != null) {
+						Filter filtroCodigoSubpartida = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getTrabajo().getCodigoSubpartida());
+						DDSubpartidasEdificacion subpartida = genericDao.get(DDSubpartidasEdificacion.class, filtroCodigoSubpartida);
+						if (subpartida != null) {
+						   gldEnt.setSubpartidasEdificacion(subpartida);
+						}
+					}
+					if (activoTrabajo.getTrabajo().getNombreProyecto() != null) {
+						Filter filtroCodigoProyecto = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getTrabajo().getNombreProyecto());
+						DDPromociones codigoProyecto = genericDao.get(DDPromociones.class, filtroCodigoProyecto);
+						if (codigoProyecto != null) {
+						   gldEnt.setPromocion(codigoProyecto);
+						}
+					}
+					if (activoTrabajo.getActivo().getSituacionComercial() != null && activoTrabajo.getActivo().getSituacionComercial().getCodigo() != null
+							  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activoTrabajo.getActivo().getSituacionComercial().getCodigo())) {
+					   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+					   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+					   gldEnt.setSituacionComercial(ddSituacionComercial);
+				   } else {
+					   gldEnt.setSituacionComercial(null);
+				   }
+				}
 				genericDao.save(GastoLineaDetalleEntidad.class, gldEnt);
 			}
 		}
@@ -2359,6 +2514,22 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}else {
 			vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
 			
+			if (gastoLineaDetalle.getGastoProveedor() != null & gastoLineaDetalle.getGastoProveedor().getCartera() != null
+					&& DDCartera.isCarteraBk(gastoLineaDetalle.getGastoProveedor().getPropietario().getCartera())) {
+				vElementoLineaDetalle.setGrupo(gastoLineaDetalle.getGrupo());
+				vElementoLineaDetalle.setTipo(gastoLineaDetalle.getTipo());
+				vElementoLineaDetalle.setSubtipo(gastoLineaDetalle.getSubtipo());
+				if (gastoLineaDetalle.getPrimeraPosesion() != null) {
+					vElementoLineaDetalle.setPrimeraPosesion(gastoLineaDetalle.getPrimeraPosesion() == true ? "Si" : "No");
+				} else {
+					vElementoLineaDetalle.setPrimeraPosesion("No");
+				}
+				if (gastoLineaDetalle.getSubpartidasEdificacion() != null) {
+					vElementoLineaDetalle.setSubpartidaEdif(gastoLineaDetalle.getSubpartidasEdificacion().getDescripcion());
+					vElementoLineaDetalle.setSubpartidaEdifCodigo(gastoLineaDetalle.getSubpartidasEdificacion().getCodigo());
+				}
+				vElementoLineaDetalle.setElementoPep(gastoLineaDetalle.getElementoPep());
+			}
 		}		
 		vElementoLineaDetalle.setId(null);
 		vElementoLineaDetalle.setParticipacion(100.0);
@@ -2437,6 +2608,20 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public boolean activoPatrimonioContratoAlquilada(ActivoPatrimonioContrato activoContrato) {
+		boolean resultado = false;
+	    Date fecha = new Date();
+		if (activoContrato != null) {
+		    if (ActivoPatrimonioContrato.DCA_EST_CONTRATO_ALQ.equals(activoContrato.getEstadoContrato())
+		    		&& activoContrato.getFechaFirma().before(fecha)
+		    		&& (activoContrato.getFechaFinContrato().after(fecha) || activoContrato.getFechaFinContrato().equals(fecha))) {
+				resultado = true;
+			}
+		}
+		return resultado;
 	}
 
 }

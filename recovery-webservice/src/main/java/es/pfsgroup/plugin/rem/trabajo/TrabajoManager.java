@@ -149,6 +149,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Prefactura;
+import es.pfsgroup.plugin.rem.model.Prefacturas;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -531,9 +532,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.findOne")
 	public Trabajo findOne(Long id) {
-
-		return trabajoDao.get(id);
-
+		try {
+			return trabajoDao.get(id);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -3405,13 +3410,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if(trabajo.getImporteAsegurado() != null) {
 			dtoTrabajo.setImportePrecio(trabajo.getImporteAsegurado());
-		}
+		}		
 		
-		Prefactura prefactura = trabajo.getPrefactura();
+		Filter filtroPrefacturas = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		Prefacturas prefacturas = genericDao.get(Prefacturas.class, filtroPrefacturas);
 		
-		if (prefactura != null && prefactura.getAlbaran() != null) {
-			Albaran albaran = prefactura.getAlbaran();
-
+		if (prefacturas != null && prefacturas.getPrefactura().getAlbaran() != null) {
+			Albaran albaran = prefacturas.getPrefactura().getAlbaran();
+			
 			if (albaran.getNumAlbaran() != null) {
 				dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
 			}

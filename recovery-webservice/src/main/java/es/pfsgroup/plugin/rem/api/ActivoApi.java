@@ -1484,15 +1484,13 @@ public interface ActivoApi {
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
-	boolean esActivoHayaHome(Long idActivo);
-
 	boolean esActivoAlquiler(Long idActivo);
 
 	Activo activoByIdAgrupacion(Long idAgrupacion);
 
 	boolean isActivoConReservaAlquiler(Activo activo);
 
-	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	boolean esActivoHayaHome(Activo idActivo, ActivoAgrupacion idAgrupacion);
 	
     Page findTasaciones(DtoFiltroTasaciones dto);
 

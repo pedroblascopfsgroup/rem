@@ -522,9 +522,10 @@ public class OfertasController {
 			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
 			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
 			if (!Checks.esNulo(idActivo)) {
-				model.put("esHayaHome", activoManager.esActivoHayaHome(idActivo));
+				Activo activo = activoApi.get(idActivo);
+				model.put("esHayaHome", activoManager.esActivoHayaHome(activo, null));
 			} else if (!Checks.esNulo(idAgrupacion)) {
-				model.put("esHayaHome", activoManager.esActivoHayaHome(activoManager.activoByIdAgrupacion(idAgrupacion).getId()));
+				model.put("esHayaHome", activoManager.esActivoHayaHome(activoManager.activoByIdAgrupacion(idAgrupacion), null));
 			}
 			model.put("success", true);
 		} catch (Exception e) {
@@ -1100,20 +1101,4 @@ public class OfertasController {
 		model.put(RESPONSE_SUCCESS_KEY, true);
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario, ModelMap model) {
-		try {
-			model.put(RESPONSE_SUCCESS_KEY, ofertaApi.updateDepositoOferta(idOferta, dto, dtoBancario));
-
-		} catch (Exception e) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-			logger.error("Error en ofertasController", e);
-		}
-		return createModelAndViewJson(model);
-	}
-
-	
 }

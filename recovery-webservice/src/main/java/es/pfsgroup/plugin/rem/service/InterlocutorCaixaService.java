@@ -10,11 +10,11 @@ import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class InterlocutorCaixaService {
     }
 
     public boolean esClienteInvolucradoBC(ClienteComercial clienteComercial) {
-    return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
+        return particularValidatorApi.esClienteEnOfertaCaixa(clienteComercial.getId().toString());
     }
 
     public void callReplicateClientAsync(final Comprador comprador, final Oferta oferta){
@@ -140,6 +140,18 @@ public class InterlocutorCaixaService {
             thread.start();
     }
 
+    public void callReplicateClientSync(final Long id, final String tipoId, final String dataSourceCode){
+        hibernateUtils.flushSession();
+
+        caixaBcRestClient.callReplicateClient(id, tipoId, dataSourceCode);
+    }
+
+    public void callReplicateClientSyncVisitas(final Long id, final String tipoId, final String dataSourceCode, final Boolean vieneVisita){
+        hibernateUtils.flushSession();
+
+        caixaBcRestClient.callReplicateClientVisita(id, tipoId, dataSourceCode, vieneVisita);
+    }
+
     public String getIdPersonaHayaCaixaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){
 
         if (cartera != null && documento != null && DDCartera.CODIGO_CAIXA.equals(cartera.getCodigo())){
@@ -168,7 +180,7 @@ public class InterlocutorCaixaService {
     }
 
 
-    public InfoAdicionalPersona getIapCaixaOrDefault(InfoAdicionalPersona iap, String idPersonaHayaCaixa,String idPersonaHaya) {
+    public InfoAdicionalPersona getIapCaixaOrDefaultAndCleanReferences(String idPersonaHayaCaixa, String idPersonaHaya) {
 
         if (idPersonaHayaCaixa == null && idPersonaHaya == null){
             return null;
@@ -196,11 +208,11 @@ public class InterlocutorCaixaService {
                 return genericDao.save(InfoAdicionalPersona.class, infoAdicionalPersona);
 
             } else {
-                if (iapBusqueda.getIdPersonaHayaCaixa() == null && idPersonaHayaCaixa != null)
+                if (idPersonaHayaCaixa != null)
                     iapBusqueda.setIdPersonaHayaCaixa(idPersonaHayaCaixa);
                 if (iapBusqueda.getEstadoComunicacionC4C() == null )
                     iapBusqueda.setEstadoComunicacionC4C(genericDao.get(DDEstadoComunicacionC4C.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "codigo", DDEstadoComunicacionC4C.C4C_NO_ENVIADO)));
-                if (iapBusqueda.getIdPersonaHaya() == null && idPersonaHaya != null)
+                if (idPersonaHaya != null)
                     iapBusqueda.setIdPersonaHaya(idPersonaHaya);
 
                 return genericDao.save(InfoAdicionalPersona.class, iapBusqueda);
@@ -209,55 +221,148 @@ public class InterlocutorCaixaService {
 
     private InfoAdicionalPersona mergueIaps(InfoAdicionalPersona iap1,InfoAdicionalPersona iap2){
 
-        Date ultimaModificacion1 = iap1.getAuditoria().getFechaModificar() == null ? iap1.getAuditoria().getFechaCrear() : iap1.getAuditoria().getFechaModificar();
-        Date ultimaModificacion2 = iap2.getAuditoria().getFechaModificar() == null ? iap2.getAuditoria().getFechaCrear() : iap2.getAuditoria().getFechaModificar();
+        InfoAdicionalPersona tokeep = null;
+        InfoAdicionalPersona toDelete = null;
 
-        InfoAdicionalPersona older = null;
-        InfoAdicionalPersona newer = null;
-
-        if (ultimaModificacion1.after(ultimaModificacion2)){
-             older = iap2;
-             newer = iap1;
+        if (iap1.getUltimaModificacion().after(iap2.getUltimaModificacion())){
+             tokeep = iap1;
+             toDelete = iap2;
         }else{
-             older = iap1;
-             newer = iap2;
+             tokeep = iap2;
+             toDelete = iap1;
         }
 
-        if (newer.getEstadoComunicacionC4C() != null)
-        older.setEstadoComunicacionC4C(newer.getEstadoComunicacionC4C());
-        if (newer.getAntiguoDeudor() != null)
-        older.setAntiguoDeudor(newer.getAntiguoDeudor());
-        if (newer.getRolInterlocutor() != null)
-        older.setRolInterlocutor(newer.getRolInterlocutor());
-        if (newer.getCnae() != null)
-        older.setCnae(newer.getCnae());
-        if (newer.getCnOcupacional() != null)
-        older.setCnOcupacional(newer.getCnOcupacional());
-        if (newer.getEsUsufructuario() != null)
-        older.setEsUsufructuario(newer.getEsUsufructuario());
-        if (newer.getFormaJuridica() != null)
-        older.setFormaJuridica(newer.getFormaJuridica());
-        if (newer.getIdC4C() != null)
-        older.setIdC4C(newer.getIdC4C());
-        if (newer.getPrp() != null)
-        older.setPrp(newer.getPrp());
-        if (newer.getModificaPBC() != null)
-        older.setModificaPBC(newer.getModificaPBC());
-        if (newer.getOficinaTrabajo() != null)
-        older.setOficinaTrabajo(newer.getOficinaTrabajo());
-        if (newer.getSociedad() != null)
-        older.setSociedad(newer.getSociedad());
-        if (newer.getTipoSocioComercial() != null)
-        older.setTipoSocioComercial(newer.getTipoSocioComercial());
-        if (newer.getVinculoCaixa() != null)
-        older.setVinculoCaixa(newer.getVinculoCaixa());
+        copyIapDataifNull(tokeep,toDelete);
 
-        newer.getAuditoria().setBorrado(Boolean.TRUE);
-        newer.getAuditoria().setUsuarioBorrar("MERGE_IAP");
-        newer.getAuditoria().setFechaBorrar(new Date());
+        removeIap(toDelete,InfoAdicionalPersona.USUARIO_BORRAR_MERGE,tokeep);
 
-        genericDao.save(InfoAdicionalPersona.class, newer);
-        return genericDao.save(InfoAdicionalPersona.class, older);
+        return genericDao.save(InfoAdicionalPersona.class, tokeep);
+    }
+
+    private InfoAdicionalPersona getIapAndDeleteDuplicates(String idPersona,String fieldname){
+
+        List<InfoAdicionalPersona> iaps = genericDao.getList(InfoAdicionalPersona.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, fieldname, idPersona));
+
+        if (iaps != null && iaps.size()>1){
+
+            Collections.sort(iaps,Collections.<InfoAdicionalPersona>reverseOrder());
+
+            for (int i = 1; i < iaps.size(); i++) {
+                InfoAdicionalPersona toDelete = iaps.get(i);
+                copyIapDataifNull(iaps.get(0),iaps.get(i));
+                removeIap(toDelete,InfoAdicionalPersona.USUARIO_BORRAR_DUPLICATE,iaps.get(0));
+            }
+
+            return genericDao.save(InfoAdicionalPersona.class,iaps.get(0));
+
+        }else{
+            return iaps.size() > 0 ? iaps.get(0) : null;
+        }
+    }
+
+    private void copyIapDataifNull(InfoAdicionalPersona toDelete, InfoAdicionalPersona toKeep){
+
+        if (toKeep.getEstadoComunicacionC4C() == null)
+            toKeep.setEstadoComunicacionC4C(toDelete.getEstadoComunicacionC4C());
+        if (toKeep.getAntiguoDeudor() == null)
+            toKeep.setAntiguoDeudor(toDelete.getAntiguoDeudor());
+        if (toKeep.getRolInterlocutor() == null)
+            toKeep.setRolInterlocutor(toDelete.getRolInterlocutor());
+        if (toKeep.getCnae() == null)
+            toKeep.setCnae(toDelete.getCnae());
+        if (toKeep.getCnOcupacional() == null)
+            toKeep.setCnOcupacional(toDelete.getCnOcupacional());
+        if (toKeep.getEsUsufructuario() == null)
+            toKeep.setEsUsufructuario(toDelete.getEsUsufructuario());
+        if (toKeep.getFormaJuridica() == null)
+            toKeep.setFormaJuridica(toDelete.getFormaJuridica());
+        if (toKeep.getIdC4C() == null)
+            toKeep.setIdC4C(toDelete.getIdC4C());
+        if (toKeep.getPrp() == null)
+            toKeep.setPrp(toDelete.getPrp());
+        if (toKeep.getModificaPBC() == null)
+            toKeep.setModificaPBC(toDelete.getModificaPBC());
+        if (toKeep.getOficinaTrabajo() == null)
+            toKeep.setOficinaTrabajo(toDelete.getOficinaTrabajo());
+        if (toKeep.getSociedad() == null)
+            toKeep.setSociedad(toDelete.getSociedad());
+        if (toKeep.getTipoSocioComercial() == null)
+            toKeep.setTipoSocioComercial(toDelete.getTipoSocioComercial());
+        if (toKeep.getVinculoCaixa() == null)
+            toKeep.setVinculoCaixa(toDelete.getVinculoCaixa());
+        if (toKeep.getNacionalidadCodigo() == null)
+            toKeep.setNacionalidadCodigo(toDelete.getNacionalidadCodigo());
+
+    }
+
+    private void removeIap (InfoAdicionalPersona toDelete, String usuarioBorrar, InfoAdicionalPersona toReplace){
+
+        updatedeletdIAPReference(toDelete,toReplace);
+
+        toDelete.getAuditoria().setBorrado(Boolean.TRUE);
+        toDelete.getAuditoria().setUsuarioBorrar(usuarioBorrar);
+        toDelete.getAuditoria().setFechaBorrar(new Date());
+
+        genericDao.save(InfoAdicionalPersona.class, toDelete);
+
+    }
+    
+        public void updatedeletdIAPReference(InfoAdicionalPersona iaopToDelete, InfoAdicionalPersona iapToSet){
+
+            if (iaopToDelete == null || iaopToDelete.getId() == null)
+                return;
+
+            Long idIapToDelete = iaopToDelete.getId();
+
+            for (ClienteComercial clc:
+                    genericDao.getList(ClienteComercial.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersona.id", idIapToDelete))) {
+                clc.setInfoAdicionalPersona(iapToSet);
+
+                genericDao.update(ClienteComercial.class,clc);
+            }
+
+            for (ClienteComercial clienteComercial:
+                    genericDao.getList(ClienteComercial.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersonaRep.id", idIapToDelete))) {
+                clienteComercial.setInfoAdicionalPersonaRep(iapToSet);
+                genericDao.update(ClienteComercial.class,clienteComercial);
+            }
+
+            for (Comprador com:
+                    genericDao.getList(Comprador.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersona.id", idIapToDelete))) {
+                com.setInfoAdicionalPersona(iapToSet);
+                genericDao.update(Comprador.class,com);
+            }
+
+            for (CompradorExpediente cex:
+                    genericDao.getList(CompradorExpediente.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalRepresentante.id", idIapToDelete))) {
+                cex.setInfoAdicionalRepresentante(iapToSet);
+                genericDao.update(CompradorExpediente.class,cex);
+            }
+
+            for (InterlocutorPBCCaixa interlocutor:
+                    genericDao.getList(InterlocutorPBCCaixa.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersona.id", idIapToDelete))) {
+                interlocutor.setInfoAdicionalPersona(iapToSet);
+                genericDao.update(InterlocutorPBCCaixa.class,interlocutor);
+            }
+
+            for (ActivoProveedor proveedor:
+                    genericDao.getList(ActivoProveedor.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersona.id", idIapToDelete))) {
+                proveedor.setInfoAdicionalPersona(iapToSet);
+                genericDao.update(ActivoProveedor.class,proveedor);
+            }
+
+            for (TitularesAdicionalesOferta tit:
+                    genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersona.id", idIapToDelete))) {
+                tit.setInfoAdicionalPersona(iapToSet);
+                genericDao.update(TitularesAdicionalesOferta.class,tit);
+            }
+
+            for (TitularesAdicionalesOferta titRep:
+                    genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS, "infoAdicionalPersonaRep.id", idIapToDelete))) {
+                titRep.setInfoAdicionalPersona(iapToSet);
+                genericDao.update(TitularesAdicionalesOferta.class,titRep);
+            }
+
     }
 
 }

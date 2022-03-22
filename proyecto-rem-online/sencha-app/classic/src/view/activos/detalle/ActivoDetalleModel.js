@@ -2077,13 +2077,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
 	    			&& tieneFuncion) {
 	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
-	    			return false;
+	    			editable = tieneFuncion;
 	    		}
 	    	}else if(claseActivo =='01'){
-	    		if (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
-						 && tieneFuncion){
-	    			return false;
-	    		}
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion);
 			}else{
 				editable = tieneFuncion;
 			}
@@ -2100,16 +2098,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	    	if (isCarteraBankia) {
 	    		return true;
-	    	}else if (($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
-	    			&& tieneFuncion) {
+	    	}else if (($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) && tieneFuncion) {
 	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
-	    			return false;
+	    			editable = tieneFuncion;
 	    		}
 	    	}else if(claseActivo =='01'){
-	    		if(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
-						 && tieneFuncion){
-	    			return false;
-	    		}
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion);
 			}else{
 				editable = tieneFuncion;
 			}

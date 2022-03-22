@@ -449,9 +449,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
 		 	mostrarBotonLanzarPBC: function(get){
 
-             var tieneInterlocutoresNoEnviados = get('datosbasicosoferta.tieneInterlocutoresNoEnviados');
-
-         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && tieneInterlocutoresNoEnviados ;
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && get('esCarteraBankia');
 
          	},
 

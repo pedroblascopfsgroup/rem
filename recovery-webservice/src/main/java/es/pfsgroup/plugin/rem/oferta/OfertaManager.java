@@ -209,7 +209,6 @@ import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
@@ -715,22 +714,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (Checks.esNulo(cliente)) {
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}else {
-				Activo activo = activoApi.getByNumActivo(ofertaDto.getIdActivoHaya());
 				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
 					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
-				}else if(activo != null && DDCartera.isCarteraBk(activo.getCartera())) {
-					if(!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumento().getCodigo())
-						&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumento().getCodigo())
-						&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumento().getCodigo())) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
-					}
-
-					if(cliente.getTipoDocumentoRepresentante() != null
-							&& (!DD_TDI_CODIGO_NIF.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
-							&& !DD_TDI_CODIGO_DNI.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null)
-							&& !DD_TDI_CODIGO_NIE.equals(cliente.getTipoDocumentoRepresentante() != null ? cliente.getTipoDocumentoRepresentante().getCodigo() : null))) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
-					}
 				}
 			}
 		}
@@ -836,15 +821,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(titDto)) {
 					DDTipoDocumento tpd = genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento()));
-					Activo activo = activoApi.getByNumActivo(ofertaDto.getIdActivoHaya());
 					if (Checks.esNulo(tpd)) {
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
-					}else if(activo != null
-							&& DDCartera.isCarteraBk(activo.getCartera())
-							&& (!DD_TDI_CODIGO_NIF.equals(tpd.getCodigo())
-									&& !DD_TDI_CODIGO_DNI.equals(tpd.getCodigo())
-									&& !DD_TDI_CODIGO_NIE.equals(tpd.getCodigo()))) {
-						errorsList.put("codTipoDocumento", REST_DD_TDI_NO_PERMITIDO);
 					}
 				}
 			}
@@ -969,6 +947,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 
 		return errorsList;
+	}
+	
+	private Activo getActivoByWS(OfertaDto dto, DDSistemaOrigen sistemaOrigen) {
+		Activo activo = null;
+		if (!Checks.esNulo(dto.getIdActivoHaya())) {
+			activo = activoApi.getByNumActivo(dto.getIdActivoHaya());
+		} else if (!Checks.esNulo(sistemaOrigen) && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())
+				&& !Checks.esNulo(dto.getOfertaLote()) && dto.getOfertaLote() && !Checks.esNulo(dto.getCodigoAgrupacionComercialRem())) {
+			ActivoAgrupacion agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", dto.getCodigoAgrupacionComercialRem()));
+			if (!Checks.esNulo(agrup.getActivoPrincipal())) {
+				activo = agrup.getActivoPrincipal();
+			} else {
+				activo = agrup.getActivos().get(0).getActivo();
+			}
+		} else if (!Checks.esNulo(dto.getOfertaLote()) && dto.getOfertaLote() && !Checks.esNulo(dto.getActivosLote()) && !dto.getActivosLote().isEmpty()){
+			activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", dto.getActivosLote().get(0).getIdActivoHaya()));
+		}
+		
+		return activo;
 	}
 
 	@Override
@@ -1171,15 +1168,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()),webcomIdNotNull);
 				if (!Checks.esNulo(cliente)) {
 
-					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty())
-					cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumento(), null));
-					if (cliente.getIdPersonaHayaCaixaRepresentante() == null || cliente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-					cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumentoRepresentante(), null));
-					if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty())
-						cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
-
-
-					InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersona(),cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+					calculateIdPersona(cliente,oferta,activo);
+					InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
 
 					if(iap != null) {
 						if(ofertaDto.getVinculoCaixa() != null) {
@@ -1200,7 +1190,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 
 					if (cliente.getDocumentoRepresentante() != null && !cliente.getDocumentoRepresentante().trim().isEmpty())
-						cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefault(cliente.getInfoAdicionalPersonaRep(),cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
+						cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
 
 					String clienteGD = null;
 					
@@ -1611,8 +1601,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if ((!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))
-					&& oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())
-					&& activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
+					&& oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) 
+					&& activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo(), null)) {
 				Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
@@ -1625,9 +1615,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					OfertaCaixa ofertaCaixa = new OfertaCaixa();
 					ofertaCaixa.setOferta(oferta);
 					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
-					if(oferta.getActivoPrincipal() != null && oferta.getTipoOferta() != null) {
-						activoApi.anyadirCanalDistribucionOfertaCaixa(oferta.getActivoPrincipal().getId(), ofertaCaixa, oferta.getTipoOferta().getCodigo());
-					}
 					
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
 				}
@@ -2384,8 +2371,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(oferta.getCliente() != null) {
 				ClienteComercial cliente = oferta.getCliente();
+				if (calculateIdPersona(cliente,oferta,oferta.getActivoPrincipal())){
+					cliente.setInfoAdicionalPersona(interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya()));
+					cliente.setInfoAdicionalPersonaRep(interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante())));
+					genericDao.update(ClienteComercial.class,cliente);
+				}
+
 				InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
-				 
+
 				if (iap != null){
 
 					if(ofertaDto.getVinculoCaixa() != null) {
@@ -2454,8 +2447,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ofertaDao.saveOrUpdate(oferta);
 			}
 
-			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) || (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(ofertaDto.getEntidadOrigen())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))) {
+			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) || 
+					(DDSistemaOrigen.CODIGO_HAYA_HOME.equals(ofertaDto.getEntidadOrigen()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
+					|| DDSistemaOrigen.CODIGO_WEBCOM.equals(ofertaDto.getEntidadOrigen())) {
 				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta(), null, null, ofertaDto.getEntidadOrigen());
 			}
 			this.updateStateDispComercialActivosByOferta(oferta);
@@ -2475,8 +2469,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if ((!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))
-					&& oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())
-					&& activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getId())) {
+					&& oferta.getOrigen() != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo()) 
+					&& activoApi.esActivoHayaHome(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo(), null)) {
 				Thread llamadaAsincrona = new Thread(new EnviarOfertaHayaHomeRem3(oferta.getNumOferta(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
 				llamadaAsincrona.start();
 			}
@@ -2572,8 +2566,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
+		
+		String estadoOfertaToCheck = !Checks.esNulo(estadoOferta) ? estadoOferta : oferta.getEstadoOferta().getCodigo();
 
-		if (!Checks.esNulo(ofertaAcepted)) {
+		if (!Checks.esNulo(ofertaAcepted) && 
+				!(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOfertaToCheck) 
+				|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOfertaToCheck) 
+				|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOfertaToCheck))) {
 			Activo activo = ofertaAcepted.getActivoPrincipal();
 			if (oferta.getAgrupacion() != null) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -7804,11 +7803,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(),tareaExterna);
+		return this.actualizarOfertaBoarding(oferta, tareaExterna.getTareaProcedimiento().getCodigo(), tareaExterna);
 	}
 	
 	@Override
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna) {
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo, TareaExterna tareaExterna) {
 
 		if(!boardingComunicacionApi.modoRestClientBoardingActivado()) {
 			return null;
@@ -7825,22 +7824,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
-		Boolean esContraoferta = false;
 
 		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
-		
-		if (!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getValores())) {
-			List<TareaExternaValor> valoresTarea = tareaExterna.getValores();
-			for (TareaExternaValor valor : valoresTarea) {
-				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
-					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA)
-					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{
-					esContraoferta = true;
-					break;
-				}
-			}
-		}
 
 		if(solicitaReserva) {
 			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
@@ -7867,10 +7853,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
 					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
-					||(CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo)
-					&& esContraoferta )) {
+					|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)) {
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7879,9 +7862,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
-					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo)
-					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo)
-					&& esContraoferta )
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
@@ -8437,7 +8417,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				 return (codSubcartera.equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) 
 							|| codSubcartera.equals(DDSubcartera.CODIGO_CERB_DIVARIAN) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB) || codSubcartera.equals(DDSubcartera.CODIGO_CERB_INMOVILIARIO)
 							|| codSubcartera.equals(DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_ZEUS_INMOBILIARIO) || codSubcartera.equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
-							|| codSubcartera.equals(DDSubcartera.CODIGO_JAGUAR));
+							|| codSubcartera.equals(DDSubcartera.CODIGO_JAGUAR) || codSubcartera.equals(DDSubcartera.CODIGO_MACC_MARINA));
 				 
 		     else if (codCartera.equals(DDCartera.CODIGO_CARTERA_HYT))
 		    	 return (codSubcartera.equals(DDSubcartera.CODIGO_HYT_INMOBILIARIO));
@@ -8486,11 +8466,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 	}
-	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String estadoOferta, String codSubestadoExpediente) {
+	private HashMap<String, String> validateMotivoIndisponibilidad(Long idOferta, Long numActivo, Long numAgrupacion, String codEstadoExpediente, String codSubestadoExpediente) {
 
 		HashMap<String, String> error = new HashMap<String, String>();
 
-		if(estadoOferta != null && DDEstadosExpedienteComercial.CONGELADA.equals(estadoOferta)
+		if(codEstadoExpediente != null && DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)
 				&& codSubestadoExpediente != null && (DDSubestadosExpedienteComercial.ACTIVO_NO_DISPONIBLE.equals(codSubestadoExpediente)
 						|| DDSubestadosExpedienteComercial.ACTIVO_OKUPADO.equals(codSubestadoExpediente))) {
 			return error;
@@ -8499,7 +8479,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoOferta> activoOfertaList = new ArrayList<ActivoOferta>();
 		if (numActivo != null) {
  			Activo activo = activoDao.getActivoByNumActivo(numActivo);
- 			if (activoIndisponible(activo, estadoOferta)) {
+ 			if (activoIndisponible(activo, codEstadoExpediente)) {
  				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
  						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
  				error.put("disponible", "false");
@@ -8514,7 +8494,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(idAgrupacion);
 				if (agaList != null && !agaList.isEmpty()) {
 					for(ActivoAgrupacionActivo aga : agaList) {
-						if (activoIndisponible(aga.getActivo(), estadoOferta)) {
+						if (activoIndisponible(aga.getActivo(), codEstadoExpediente)) {
 			 				DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 			 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_ACTIVO_ALQUILADO_O_VENDIDO));
 			 				error.put("disponible", "false");
@@ -8528,7 +8508,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		if(activoOfertaList != null && !activoOfertaList.isEmpty()
-				&& !DDEstadosExpedienteComercial.CANCELADA.equals(estadoOferta)) {
+				&& !DDEstadosExpedienteComercial.CANCELADA.equals(codEstadoExpediente)) {
 
 			for(ActivoOferta actOfr : activoOfertaList) {
 
@@ -8541,7 +8521,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						&& !DDEstadosExpedienteComercial.BORRADOR.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.CANCELADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.ANULADO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
-						&& !DDEstadosExpedienteComercial.CONGELADA.equals(estadoOferta)) {
+						&& !DDEstadosExpedienteComercial.FINALIZADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
+						&& !DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));
 					error.put("disponible", "false");
@@ -8627,7 +8608,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private boolean ofertaHayaHome(Oferta oferta) {
 
 		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			if (activoApi.esActivoHayaHome(activoOferta.getActivoId())) return true;
+			Activo activo = activoApi.get(activoOferta.getActivoId());
+			if (activoApi.esActivoHayaHome(activo, null)) return true;
 		}
 
 		return false;
@@ -8713,7 +8695,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			tit.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumento()));
 
 		//hola
-		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersona(),tit.getIdPersonaHayaCaixa(),tit.getIdPersonaHaya());
+		InfoAdicionalPersona iap = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(tit.getIdPersonaHayaCaixa(),tit.getIdPersonaHaya());
 
 		tit.setInfoAdicionalPersona(iap);
 
@@ -8745,7 +8727,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (tit.getIdPersonaHayaCaixaRepresentante() == null || tit.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante(), null));
 
-			iapRep = interlocutorCaixaService.getIapCaixaOrDefault(tit.getInfoAdicionalPersonaRep(),tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
+			iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
 
 		}
 
@@ -8887,4 +8869,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return false;
 	}
+
+	private boolean calculateIdPersona(ClienteComercial cliente, Oferta oferta, Activo activo){
+
+		boolean modificado = false;
+
+		if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()){
+			cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumento(), null));
+			modificado = true;
+		}
+		if (cliente.getIdPersonaHayaCaixaRepresentante() == null || cliente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty()){
+			cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(oferta,activo,cliente.getDocumentoRepresentante(), null));
+			modificado = true;
+		}
+		if (cliente.getIdPersonaHaya() == null || cliente.getIdPersonaHaya().trim().isEmpty()){
+			cliente.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumento()));
+			modificado = true;
+		}
+		return modificado;
+	}
+
 }

@@ -42,8 +42,6 @@ DECLARE
 	V_OFR_ID NUMBER(16); -- Vble. que almacena el id de la oferta.
     	V_OFR_ENTIDAD VARCHAR(10 CHAR); -- Vble. que almacena el nombre de la entidad origen.
 	
-	CURSOR AUX_OFR IS SELECT OFR_ID, OFR_ENTIDAD_ORIGEN FROM #ESQUEMA#.AUX_OFR_ENTIDAD_ORIGEN;
-	
 BEGIN
 	
   	--Comprobacion de la tabla

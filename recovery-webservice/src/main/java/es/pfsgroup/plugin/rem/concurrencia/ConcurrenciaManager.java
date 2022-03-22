@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -26,6 +27,9 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	
 	private Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
@@ -56,12 +60,12 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public boolean tieneActivoOfertasDeConcurrencia(Activo activo) {
 		boolean tieneOfertasDeConcurrencia = false;
-		Filter filtroConcurrencia = genericDao.createFilter(FilterType.EQUALS, "concurrencia", true);
-		List<Oferta> ofertasList = genericDao.getList(Oferta.class, filtroConcurrencia);
+		
+		List<Oferta> ofertasList = ofertaApi.getListaOfertasByActivo(activo);
 		
 		for (Oferta oferta : ofertasList) {
 			DDEstadoOferta eof = oferta.getEstadoOferta();
-			if(DDEstadoOferta.isPendiente(eof) || DDEstadoOferta.isPendienteConsentimiento(eof) || DDEstadoOferta.isTramitada(eof)) {
+			if(oferta.getConcurrencia() != null && oferta.getConcurrencia() && DDEstadoOferta.isOfertaActiva(eof)) {
 				tieneOfertasDeConcurrencia = true;
 				break;
 			}

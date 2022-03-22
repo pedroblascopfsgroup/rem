@@ -35,7 +35,7 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 				"join act_ofr aof on aof.act_id = act.act_id \n" + 
 				"join ofr_ofertas ofr on aof.ofr_id = ofr.ofr_id \n" + 
 				"join dd_eof_estados_oferta eof on ofr.dd_eof_id = eof.dd_eof_id 	\n" + 
-				"where eof.dd_eof_codigo in ('01', '04', '08') AND ofr.OFR_CONCURRENCIA = 1 AND agr.agr_id =" + agrId);
+				"where eof.dd_eof_codigo in ('01', '04', '08', '07', '09') AND ofr.OFR_CONCURRENCIA = 1 AND agr.agr_id =" + agrId);
 		
 		return Integer.parseInt(resultados) > 0;
 	}

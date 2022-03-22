@@ -130,7 +130,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
 															cls: 'cabecera-info-field',
 															bind :{ 
-																value: '{expediente.tipoAlquiler}',
+																value: '{expediente.tpoAlquiler}',
 																store: '{comboTipoAlquiler}',
 																hidden: '{esOfertaVenta}'
 															}
@@ -174,6 +174,14 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															fieldLabel: HreRem.i18n('fieldlabel.estado'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.estado}'
+										                },
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.subestado'),
+															cls: 'cabecera-info-field',
+										                	bind :{ 
+																value: '{expediente.subestadoExpediente}',
+																hidden: '{!expediente.esActivoHayaHome}'
+															}
 										                },
 										                { 
 										                	xtype:'datefieldbase',

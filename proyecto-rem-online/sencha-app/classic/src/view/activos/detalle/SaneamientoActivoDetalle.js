@@ -79,6 +79,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							title: HreRem.i18n('title.tramitacion.titulo'),
+							listeners: {
+								afterrender: 'isNotCarteraBankiaSaneamiento'
+							},
 							items :
 								[
 									{ 
@@ -113,30 +116,40 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									},
 									{
 										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.titularidad.activo.inmobiliario'),
+										reference: 'fechaEstadoTitularidadRef',
+										colspan:4,
+								 		bind: {
+								 			value: '{saneamiento.fechaEstadoTitularidadActivoInmobiliario}',
+								 			readOnly: true
+								 		}
+			                       	},
+									{
+										xtype:'datefieldbase',
 								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.registro'),
 								 		bind: {
 								 			value: '{saneamiento.fechaPres1Registro}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference : 'fechaPres1Registro'
 									},
 									{
 										xtype:'datefieldbase',
 								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.auto.adicion'),
 								 		bind: {
 								 			value: '{saneamiento.fechaEnvioAuto}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference: 'fechaEnvioAuto'
 									},
 									{
 										xtype:'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.segunda.presentacion.registro'),
 								 		bind: {
 								 			value: '{saneamiento.fechaPres2Registro}',
-								 			readOnly: '{saneamiento.unidadAlquilable}',
-								 			hidden: true
-								 		}
+								 			readOnly: '{saneamiento.unidadAlquilable}'
+								 		},
+										reference : 'fechaPres2Registro'
 									},
 									{
 										xtype:'datefieldbase',
@@ -154,8 +167,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									 				combo.setValue('03');
 									 			
 									 		}
-								 		}
-								 		
+								 		},
+										reference: 'fechaInscripcionRegRef'								 		
 									},
 									{
 										xtype:'datefieldbase',
@@ -173,6 +186,30 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								 			value: '{saneamiento.fechaNotaSimple}',
 								 			readOnly: '{saneamiento.unidadAlquilable}'
 								 		}
+									},
+									{
+										xtype:'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.plusvalia.comprador'),
+								        bind: {
+							            	store: '{comboSiNoBoolean}',
+							            	value:'{saneamiento.plusvaliaComprador}',
+							            	readOnly: '{saneamiento.unidadAlquilable}'
+							           	},
+							        	listeners: {
+											change: 'onPlusvaliaCompradorChange'
+										}
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.liquidacion.plusvalia'),
+								 		colspan: 3,
+								 		reference: 'fechaLiquidacionPlusvaliaRef',
+								 		bind: {
+								 			value: '{saneamiento.fechaLiquidacionPlusvalia}',
+								 			readOnly: '{saneamiento.unidadAlquilable}',
+								 			disabled: '{!saneamiento.plusvaliaComprador}'
+								 		},
+								 		maxValue : null 
 									},
 									{
 										xtype:'fieldsettable',
@@ -250,14 +287,13 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        		{
 					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
 						            		value: '{saneamiento.tipoTituloAdicional}',
-						            		rawValue: '{saneamiento.tipoTituloAdicionalDescripcion}'					            		
+						            		rawValue: '{saneamiento.tipoTituloAdicionalDescripcion}'
             								}	            			
                         			},
 									{ 
 							        	xtype: 'comboboxfieldbasedd',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
 								 		reference: 'situacionTituloAdicional',
-								 		readOnly: true,
 							        	bind: 
 							        		{
 						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
@@ -273,7 +309,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										reference:'fechaInscripcionRegistroAdicional',
 										readOnly: true,
 								 		bind: {
-								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}'
+								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}',
+								 			readOnly: '{isCarteraBankia}'
 								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
 								 			}
 			                      	},

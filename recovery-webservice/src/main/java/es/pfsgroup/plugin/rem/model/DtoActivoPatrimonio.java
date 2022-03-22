@@ -47,6 +47,10 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Date fechaFinAdecuacion;
 	private Date fechaInicioPerimetroAlquiler;
 	private Date fechaFinPerimetroAlquiler;
+	private Boolean isCarteraTitulizada;
+	private String acuerdoPago;
+	private String moroso;
+	private String activoPromoEstrategico;	
 	
 	public Boolean getChkSubrogado() {
 		return chkSubrogado;
@@ -215,6 +219,30 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setIsCarteraCerberusDivarianOBBVA(Boolean isCarteraCerberusDivarianOBBVA) {
 		this.isCarteraCerberusDivarianOBBVA = isCarteraCerberusDivarianOBBVA;
+	}
+	public Boolean getIsCarteraTitulizada() {
+		return isCarteraTitulizada;
+	}
+	public void setIsCarteraTitulizada(Boolean isCarteraTitulizada) {
+		this.isCarteraTitulizada = isCarteraTitulizada;
+	}
+	public String getAcuerdoPago() {
+		return acuerdoPago;
+	}
+	public void setAcuerdoPago(String acuerdoPago) {
+		this.acuerdoPago = acuerdoPago;
+	}
+	public String getMoroso() {
+		return moroso;
+	}
+	public void setMoroso(String moroso) {
+		this.moroso = moroso;
+	}
+	public String getActivoPromoEstrategico() {
+		return activoPromoEstrategico;
+	}
+	public void setActivoPromoEstrategico(String activoPromoEstrategico) {
+		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
     
 }

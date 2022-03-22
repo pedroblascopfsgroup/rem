@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionActivoDao")
@@ -246,6 +247,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
    	  	HQLBuilder.addFiltroWhereInSiNotNull(hb, "aa.activo.id", activosID);
+   	  	HQLBuilder.addFiltroIsNull(hb, "aa.agrupacion.fechaBaja");
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
    	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
 
@@ -313,5 +315,27 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() == 1;
 		}
 		return false;				
-	}	
+	}
+	
+	@Override
+	public boolean algunActivoAlquilado(List<Long> activosID) {
+
+		HQLBuilder hb = new HQLBuilder(" from Activo aa");
+   	  	HQLBuilder.addFiltroWhereInSiNotNull(hb, "aa.id", activosID);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.situacionComercial.codigo", DDSituacionComercial.CODIGO_ALQUILADO);
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+
+		return (list.size() > 0);
+	}
+	
+	@Override
+	public boolean algunActivoVendido(List<Long> activosID) {
+
+		HQLBuilder hb = new HQLBuilder(" from Activo aa");
+   	  	HQLBuilder.addFiltroWhereInSiNotNull(hb, "aa.id", activosID);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.situacionComercial.codigo", DDSituacionComercial.CODIGO_VENDIDO);
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+
+		return (list.size() > 0);
+	}
 }

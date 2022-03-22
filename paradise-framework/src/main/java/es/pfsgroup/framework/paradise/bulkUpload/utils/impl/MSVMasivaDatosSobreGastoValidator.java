@@ -51,7 +51,8 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private final String ENTIDAD_INCORRECTA = "msg.error.masivo.gastos.exception.entidad.incorrecta";
 	private final String GASTO_REPETIDO = "msg.error.masivo.gastos.exception.gasto.repetido";
 	private final String MENSAJE_CUSTOM = "Estado invalido para el gasto perteneciente a la prefactura: ";
-	
+	private final String ID_PRO_NO_EXISTE = "msg.error.masivo.gastos.id.provision.no.existe";
+	private final String MENSAJE_CUSTOM_PRG = "msg.error.masivo.gastos.estado.incorrecto.provision";
 	
 
 	private final String PAGADO= "05";
@@ -64,6 +65,9 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private final String NOMENGLATURA_ALBARAN_UNO = "Albarán";
 	private final String NOMENGLATURA_ALBARAN_DOS = "Albaran";
 	private final String NOMENGLATURA_ALBARAN_TRES = "A";
+	private final String NOMENCLATURA_PROVISION_UNO = "Pro";
+	private final String NOMENCLATURA_PROVISION_DOS = "Provisión";
+	private final String NOMENCLATURA_PROVISION_TRES = "Provision";
 
 	private final String BORRAR = "X";
 
@@ -119,6 +123,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		mapaErrores.put(messageServices.getMessage(ID_ALB_NO_EXISTE), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(ID_PRE_NO_EXISTE), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(ID_ENTIDAD_NULO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ID_PRO_NO_EXISTE), new ArrayList<Integer>());
 	}
 	
 	private void modificarMapaErrores(int fila, String pfa) {
@@ -127,6 +132,11 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 		mapaErrores.put(MENSAJE_CUSTOM+ pfa,aux);
 	}
 	
+	private void modificarMapaErroresProvision(int fila, String provision) {
+		List<Integer> aux = new ArrayList<Integer>();
+		aux.add(fila);
+		mapaErrores.put(messageServices.getMessage(MENSAJE_CUSTOM_PRG).concat(provision),aux);
+	}
 	
 	private boolean validarFichero(MSVHojaExcel exc) {
 
@@ -144,7 +154,8 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 				List<String> listaEntidades = 
 						Arrays.asList(new String[] { NOMENGLATURA_GASTO_UNO.toLowerCase(), NOMENGLATURA_GASTO_DOS.toLowerCase(), 
 						NOMENGLATURA_PREFACTURA_DOS.toLowerCase(), NOMENGLATURA_PREFACTURA_UNO.toLowerCase(), NOMENGLATURA_ALBARAN_UNO.toLowerCase(), 
-						NOMENGLATURA_ALBARAN_DOS.toLowerCase(), NOMENGLATURA_ALBARAN_TRES.toLowerCase()});
+						NOMENGLATURA_ALBARAN_DOS.toLowerCase(), NOMENGLATURA_ALBARAN_TRES.toLowerCase(), NOMENCLATURA_PROVISION_UNO.toLowerCase(),
+						NOMENCLATURA_PROVISION_DOS.toLowerCase(), NOMENCLATURA_PROVISION_TRES.toLowerCase()});
 				
 				if(!listaEntidades.contains(entidad.toLowerCase())) {
 					mapaErrores.get(messageServices.getMessage(ENTIDAD_INCORRECTA)).add(fila);
@@ -193,6 +204,19 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 									if (!this.esCorrectoEstadoGasto(idEntidad)) {
 										mapaErrores.get(messageServices.getMessage(ESTADO_GASTO_INCORRECTO)).add(fila);
 										esCorrecto = false;
+									}
+								}
+							} else if (NOMENCLATURA_PROVISION_UNO.equalsIgnoreCase(entidad) || NOMENCLATURA_PROVISION_DOS.equalsIgnoreCase(entidad) || NOMENCLATURA_PROVISION_TRES.equalsIgnoreCase(entidad)) {
+								if(!particularValidator.existeProvision(idEntidad)) {
+									mapaErrores.get(messageServices.getMessage(ID_PRO_NO_EXISTE)).add(fila);
+									esCorrecto = false;
+								}else {
+									List<String> gastos = particularValidator.getGastosByNumProvision(idEntidad);
+									for (String gasto : gastos) {
+										if (!this.esCorrectoEstadoGasto(gasto)) {
+											modificarMapaErroresProvision(fila,idEntidad);
+											esCorrecto = false;
+										}
 									}
 								}
 							}

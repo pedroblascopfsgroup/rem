@@ -223,6 +223,22 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'tipoResponsableCodigo'
     		},
     		{
+    			name: 'isEmpleadoCaixa',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'fechaOfertaPendiente',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+				}
+			},
+			{
     			name:'ofertaEspecial',
     			type: 'boolean'
     		},
@@ -239,7 +255,59 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name:'ventaCarteraCfv',
     			type: 'boolean'
-    		}
+    		},
+    		{
+    			name:'opcionACompra',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'valorCompra'
+    		},
+    		{
+    			name:'fechaVencimientoOpcionCompra',
+    			type:'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'clasificacionCodigo'
+    		},
+    		{
+    			name:'checkListDocumentalCompleto',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'checkSubasta',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'numeroContacto'
+    		},
+    		{
+    			name: 'canalDistribucionBc'
+    		},
+    		{
+    			name: 'tipoOfertaAlquilerCodigo'
+    		},
+		    {
+    			name:'numOfertaCaixa'
+    		},
+    		{
+    		    name:'claseContratoCodigo'
+    		},
+            {
+            	name: 'tipologiaVentaCod'
+            },
+            {
+    			name:'riesgoOperacionBcCodigo'
+    		},
+    		{
+    			name:'riesgoOperacionBcDescripcion'
+			},
+			{
+
+                name: 'numeroVaiHavaiSareb'
+            }
+    		
     ],
 
 	proxy: {

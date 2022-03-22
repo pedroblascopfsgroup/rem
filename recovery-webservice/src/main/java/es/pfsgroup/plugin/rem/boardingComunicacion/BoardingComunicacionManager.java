@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.boardingComunicacion;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PenParam;
 import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -39,6 +41,14 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
     private static final String POST_METHOD = "POST";
 	private static final String NULL_STRING = "null";
 	private static final String REST_CLIENT_ACTIVAR_BOARDING = "rest.client.activar.boarding";
+	private static final String REST_CLIENT_ACTIVAR_BLOQUEO_COMPRADORES = "rest.client.activar.bloqueo.compradores";
+	private static final String URL_BLOQUEO_COMPRADORES = "rem3.bloqueo.compradores.cfv";
+	private static final String REM3_URL = "rem3.base.url";
+	
+	private static final String COMPRADOR_BLOQUEADO = "compradorBloqueado";
+	private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String PLANIFICADA_FIRMA = "fechaPropuestaPlanificadaFirma";
+	private static final String FIRMA_RESERVA = "fechaPropuestaFirmaReserva";
 
     @Autowired
     private HttpClientFacade httpClientFacade;
@@ -100,7 +110,7 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
         //tiempo que se tarda en conseguir el token (APROX)
         tokenRequestTimeElapsed = Math.round(TimeUnit.MILLISECONDS.toSeconds(timeEnd - timeStart));
         
-        String token = jwtToken != null ? jwtToken.get("token").toString() : "";
+        String token = jwtToken != null ? jwtToken.get("token") != null ? jwtToken.get("token").toString() : "" : "";
         if (token != null && !token.isEmpty()) {
         	logger.debug("[OBTENCION TOKEN] TOKEN CFV OK");
         } else {
@@ -230,6 +240,178 @@ public class BoardingComunicacionManager extends BusinessOperationOverrider<Boar
 		
 		
 	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ComunicacionBoardingResponse enviarOfertaHayaHome(Long numOferta, ModelMap model) {
+		
+		Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json");
+
+        model.put("numOferta", numOferta);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+		try {
+			json = mapper.writeValueAsString(model);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			json = "{}";
+		}
+	
+		String urlBase = !Checks.esNulo(appProperties.getProperty("rem3.base.url"))
+		        ? appProperties.getProperty("rem3.base.url") : "";
+		String urlEnviarOferta = !Checks.esNulo(appProperties.getProperty("rem3.enviar.oferta.haya.home"))
+		        ? appProperties.getProperty("rem3.enviar.oferta.haya.home") : "";
+		
+		StringBuilder urlEnviarOfertaHayaHome = new StringBuilder();
+		urlEnviarOfertaHayaHome.append(urlBase);
+		urlEnviarOfertaHayaHome.append(urlEnviarOferta);
+
+		JSONObject respuesta = null;
+		String ex = null;		
+    	String mensaje = null;
+    	boolean resultadoOK;
+    	
+        logger.debug("[ENVIAR OFERTA HAYA HOME] BODY: "+json.toString());
+		
+		try{			
+			respuesta = procesarPeticion(this.httpClientFacade, urlEnviarOfertaHayaHome.toString(), POST_METHOD, headers, json, BoardingComunicacionApi.TIMEOUT_2_MINUTOS, "UTF-8");	
+			resultadoOK = true;
+		}catch (HttpClientException e1) {
+			e1.printStackTrace();
+			ex = e1.getMessage();
+			resultadoOK = false;
+		}catch (Exception e) {
+			logger.error("Error al enviar oferta a Haya Home", e);
+			logger.error(e.getMessage());
+			resultadoOK = false;
+		}
+		
+		if (resultadoOK == true) {
+			logger.debug("[ENVIAR OFERTA HAYA HOME] MENSAJE: "+ mensaje);
+			logger.debug("[ENVIAR OFERTA HAYA HOME] RESULTADO: "+ resultadoOK);
+		} else {
+			logger.error("[ENVIAR OFERTA HAYA HOME] BODY: "+json.toString());
+			logger.error("[ENVIAR OFERTA HAYA HOME] MENSAJE: "+ mensaje);
+			logger.error("[ENVIAR OFERTA HAYA HOME] RESULTADO: "+ resultadoOK);
+		}
+		
+				
+		registrarLlamada(urlEnviarOfertaHayaHome.toString(), json.toString(), respuesta != null ? respuesta.toString() : null, ex);
+		return new ComunicacionBoardingResponse(resultadoOK,mensaje);
+	}
+
+	@SuppressWarnings("unchecked")
+	public ComunicacionBoardingResponse enviarBloqueoCompradoresCFV(Oferta oferta, Map<String, Boolean> valores,int segundosTimeout) {
+    		 
+    		String token = obtenerToken(segundosTimeout);
+    		ModelMap model = new ModelMap();
+    		boolean comprador = false, operacion = false, planificada = false, reserva = false;
+    		//el tiempo de peticion es el que queda despues de conseguir el token (APROX), si el tiempo es igual o mayor se asigna 1 segundo 
+    		// para realizar la llamada y resgistrar en la RST error por authenticacion
+    		int timeOut = tokenRequestTimeElapsed >= segundosTimeout ? 1 : segundosTimeout - tokenRequestTimeElapsed;
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", token);
+            
+            model.put("idOferta", oferta.getNumOferta());
+            model.put("idExpediente", oferta.getExpedienteComercial().getNumExpediente());
+            
+            for (Entry<String, Boolean> campos : valores.entrySet()) {
+	            if (COMPRADOR_BLOQUEADO.equals(campos.getKey())) {
+	            	model.put("compradorBloqueado", campos.getValue());
+	            	comprador = true;
+	            }
+	            
+	            if (TIPO_OPERACION.equals(campos.getKey())) {
+	            	model.put("tipoOperacion", campos.getValue() ? "CON_RESERVA" : "SIN_RESERVA");
+	            	operacion = true;
+	            }
+	            
+	            if (PLANIFICADA_FIRMA.equals(campos.getKey())) {
+	            	model.put("fechaPropuestaPlanificadaFirma", campos.getValue());
+	            	planificada = true;
+	            }
+	            
+	            if (FIRMA_RESERVA.equals(campos.getKey())) {
+	            	model.put("fechaPropuestaFirmaReserva", campos.getValue());
+	            	reserva = true;
+	            }
+            }
+            
+            if (!comprador) model.put("compradorBloqueado", null);
+            if (!operacion) model.put("tipoOperacion", null);
+            if (!planificada) model.put("fechaPropuestaPlanificadaFirma", null);
+            if (!reserva) model.put("fechaPropuestaFirmaReserva", null);
+            
+            ObjectMapper mapper = new ObjectMapper();
+            String json;
+			try {
+				json = mapper.writeValueAsString(model);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				json = "{}";
+			}
+			
+	        // Cambiamos las URLs de CFV por las de REM3 por los problemas con el TLS y las versiones de Java. 
+	        // Asi se crea una pasarela para consumir el servicio que pasa por REM3 (REM-API).
+			String urlBase = !Checks.esNulo(appProperties.getProperty(REM3_URL))
+			        ? appProperties.getProperty(REM3_URL) : "";
+			String urlUpdateOferta = !Checks.esNulo(appProperties.getProperty(URL_BLOQUEO_COMPRADORES))
+			        ? appProperties.getProperty(URL_BLOQUEO_COMPRADORES) : "";
+			
+			StringBuilder urlUpdateOfertaBoarding = new StringBuilder();
+			urlUpdateOfertaBoarding.append(urlBase);
+			urlUpdateOfertaBoarding.append(urlUpdateOferta);
+
+			JSONObject respuesta = null;
+			String ex = null;		
+	    	String mensaje = null;
+	    	boolean resultadoOK;
+	    	
+	        logger.debug("[ACTUALIZACION OFERTA] BODY: "+json.toString());
+			
+			try{			
+				respuesta = procesarPeticion(this.httpClientFacade, urlUpdateOfertaBoarding.toString(), POST_METHOD, headers, json, timeOut, "UTF-8");	
+				mensaje = !NULL_STRING.equals(respuesta.getString("mensaje")) ? respuesta.getString("mensaje") : null;
+				int resultado =  respuesta.optInt("resultado",RESULTADO_KO);
+				resultadoOK = resultado == RESULTADO_OK;
+			}catch (HttpClientException e1) {
+				e1.printStackTrace();
+				ex = e1.getMessage();
+				resultadoOK = false;
+			}catch (Exception e) {
+				logger.error("Error al procesar petición para comunicación CFV", e);
+				logger.error(e.getMessage());
+				resultadoOK = false;
+			}
+			
+			if (resultadoOK == true) {
+				logger.debug("[ACTUALIZACION OFERTA] MENSAJE: "+ mensaje);
+				logger.debug("[ACTUALIZACION OFERTA] RESULTADO: "+ resultadoOK);
+			} else {
+				logger.error("[ACTUALIZACION OFERTA] BODY: "+json.toString());
+				logger.error("[ACTUALIZACION OFERTA] MENSAJE: "+ mensaje);
+				logger.error("[ACTUALIZACION OFERTA] RESULTADO: "+ resultadoOK);
+			}
+			
+					
+			registrarLlamada(urlUpdateOfertaBoarding.toString(), json.toString(), respuesta != null ? respuesta.toString() : null, ex);
+			return new ComunicacionBoardingResponse(resultadoOK,mensaje);
+
+    }
+	
+	@Override
+	public boolean modoRestClientBloqueoCompradoresActivado() {
+		Boolean activado = Boolean.valueOf(appProperties.getProperty(REST_CLIENT_ACTIVAR_BLOQUEO_COMPRADORES));
+		if (activado == null) {
+			activado = false;
+		}
+		
+		return activado;
 	}
 
 }

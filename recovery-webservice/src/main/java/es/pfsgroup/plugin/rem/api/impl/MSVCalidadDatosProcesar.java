@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -38,7 +40,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements MSVLiberator {
@@ -70,7 +79,16 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private ActivoDao activoDao;	
+	private ActivoDao activoDao;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String getValidOperation() {
@@ -78,7 +96,8 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 	}
 	
 	@Override
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {					
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
+
 		String username = genericAdapter.getUsuarioLogado().getUsername();
 		String identificador = exc.dameCelda(fila, COL_NUM.COL_NUM_IDENTIFICADOR);
 		String campo = exc.dameCelda(fila, COL_NUM.COL_NUM_CAMPO);
@@ -88,7 +107,7 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 		Filter filtroCampo = genericDao.createFilter(FilterType.EQUALS,"codCampo", campo);
 		
 		CalidadDatosConfig cdc = genericDao.get(CalidadDatosConfig.class, filtroCampo,filtroBorrado);
-		Activo act;
+		Activo act = null;
 		ActivoAdmisionDocumento ado;
 		ActivoAgrupacion agrupacion;
 		ActivoAgrupacionActivo activoAgrupacionActivo;

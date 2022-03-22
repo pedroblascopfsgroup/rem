@@ -5,7 +5,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
 			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto',
 			'HreRem.model.GastoRefacturableGridExistenteStore', 'HreRem.model.BusquedaTrabajoGasto',
-			'HreRem.model.LineaDetalleGastoGridModel'],
+			'HreRem.model.LineaDetalleGastoGridModel', 'HreRem.model.TasacionesGasto'],
 
 	data : {
 		gasto : null,
@@ -372,7 +372,60 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			} else {
 				return false;
 			}
-		}
+		},
+		
+		esPropietarioCaixaAlquiler : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} 
+			var codCarteraPropietario = gasto.get('carteraPropietarioCodigo');
+			var tipoGasto = gasto.get('tipoGastoCodigo');
+
+			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] && tipoGasto ==  CONST.TIPO_GASTO['ALQUILER']){
+				return true;
+			}
+			
+			return false;
+		},
+		
+		esPropietarioCaixa : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} 
+			var codCarteraPropietario = gasto.get('carteraPropietarioCodigo');
+			var nifPropietario = gasto.get('nifPropietario');
+
+			if(codCarteraPropietario == CONST.CARTERA['BANKIA'] 
+				&& (nifPropietario == 'A08663619' || nifPropietario == 'A58032244' || nifPropietario == 'B46644290' || nifPropietario == 'A14010342')){
+				return true;
+			}
+			
+			return false;
+		},
+		
+		esPropietarioLivingCenter : function(get){
+                var me = this,
+                gasto = me.getData().gasto;
+
+                if (!Ext.isEmpty(gasto)) {
+                        var nifPropietario = gasto.get('nifPropietario');
+                        var tipoGastoCodigo = gasto.get('tipoGastoCodigo');
+                        var anyoDevengoEspecial = gasto.get('fechaDevengoEspecial');
+
+                        if (Ext.isEmpty(anyoDevengoEspecial)) {
+                                return false;
+                        }
+
+                        if((nifPropietario == 'A58032244') && (tipoGastoCodigo == '01' || tipoGastoCodigo == '02') && (anyoDevengoEspecial.getFullYear() >= '2022')){
+                                return true;
+                        }
+                }
+                return false;
+        }
 	},
 
 	stores : {
@@ -482,9 +535,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
 				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
+				remoteUrl : 'generic/getTiposImpuestoFiltered',
 				extraParams : {
-					diccionario : 'tiposImpuestos'
+					esBankia : 'false'
 				}
 			},
 			autoLoad: true
@@ -817,6 +870,76 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
-		}
+		},
+		
+		storeRechazosPropietario : {
+			model : 'HreRem.model.RechazosPropietarioGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getRechazosPropietario',				
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
+
+		seleccionTasacionesGasto : {
+			pageSize : $AC.getDefaultPageSize(),
+			model : 'HreRem.model.TasacionesGasto',
+			proxy : {
+				type : 'uxproxy',
+				localUrl : '/tasaciones.json',
+				remoteUrl : 'activo/findTasaciones',
+				actionMethods : {
+					read : 'POST'
+				}
+			},
+			remoteSort : true,
+			remoteFilter : true,
+			listeners : {
+				beforeload : 'paramLoadingTasaciones'
+
+			}
+		},
+
+        storeTasacionesGasto : {
+            pageSize : $AC.getDefaultPageSize(),
+            model : 'HreRem.model.TasacionesGasto',
+            proxy : {
+                type : 'uxproxy',
+                remoteUrl : 'gastosproveedor/getListTasacionesGasto',
+                extraParams : {
+                    idGasto : '{gasto.id}'
+                }
+            }
+        },
+        
+        comboSubtiposGastoFiltered: {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubtipoGastoFiltered',
+				extraParams : {
+					codCartera: '{gasto.carteraPropietarioCodigo}',
+					codigoTipoGasto : '{gasto.tipoGastoCodigo}'
+				}
+			},
+			autoLoad: true
+		},
+    	
+    	comboSubtipoGastoFiltered: {
+    		model: 'HreRem.model.ComboBase',
+    		proxy: {
+    			type: 'uxproxy',
+    			remoteUrl: 'generic/getComboSubtipoGastoFiltered'
+    		}
+    	},
+
+    	comboSiNoRem: {
+            data : [
+                {"codigo":"1", "descripcion":"Si"},
+                {"codigo":"0", "descripcion":"No"}
+            ]
+        }
 	}
 });

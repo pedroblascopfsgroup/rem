@@ -254,7 +254,34 @@ Ext.define('HreRem.model.GastoProveedor', {
     	{
     		name: 'visibleSuplidos',
     		type: 'boolean'
-    	}
+    	},
+    	{
+    		name: 'numeroContratoAlquiler'
+    	},
+    	{
+    		name: 'subrogado',
+    		type: 'boolean'
+    	},
+    	{
+    		name:'carteraPropietarioCodigo'
+    	},
+    	{
+    		name:'claveFactura'
+    	},
+    	{
+    		name: 'nifTitularCartaPago'
+   		},
+   		{
+   			name: 'nombreTitularCartaPago'
+   		},
+   		{
+   			name: 'buscadorNifTitularCartaPago'
+   		},
+		{
+			name : 'fechaDevengoEspecial',
+			type : 'date',
+			dateFormat: 'c'
+		}
    		
     ],
     

@@ -7,7 +7,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
-				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid'],
+				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead', 'HreRem.model.AuditoriaDesbloqueo', 'HreRem.model.ActivoAlquiladosGrid', 'HreRem.model.Testigos',
+				'HreRem.model.FechaArrasModel', 'HreRem.model.GastosRepercutidosModel', 'HreRem.model.ActualizacionRentaModel','HreRem.model.SancionesModel',
+				'HreRem.model.IntervinientesPBC'],
     
     data: {
     },
@@ -16,7 +18,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 
     	 comprobacionCreacionModificacionCompradores: function(get){
     		if(get('esCarteraBankia')){
-				if(get('esExpedienteSinReserva')){
+				if(get('8')){
 				    if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])){
 				        if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
 				            return false;
@@ -171,16 +173,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 esCarteraAppleOrArrowOrRemaining: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo ||
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo &&  (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
+			  CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
 		 },
 
-		 esCarteraAppleOrRemaining: function(get) {
+		 esCarteraAppleOrRemainingOrJaguar: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
-			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
+			  CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo || CONST.SUBCARTERA['JAGUAR'] == subcarteraCodigo) ;
 		 },
 		 
 		 esCarteraAppleOAgora: function(get) {
@@ -378,13 +379,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
 	     	if(!Ext.isEmpty(expediente)){
-		     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
-		     	if(tipoOferta=='Venta'){
+		     	var tipoOferta= expediente.get('tipoExpedienteCodigo');
+		     	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"] == tipoOferta){
 		     		return true;
 		     	}
 	     	}
 	     	//se oculta el bloque por HREOS-4775 por el tercer puntito
-	     	return true;
+	     	return false;
 	     },
 	     
 	     esAlquilerConOpcionCompra: function(get){
@@ -445,6 +446,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				 return false;
 			 }
 		 },
+
+		 	mostrarBotonLanzarPBC: function(get){
+
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) && get('esCarteraBankia');
+
+         	},
+
 		 esOfertaTramitada: function(get){
 			 var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
 			 
@@ -559,6 +567,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return false;
 	     },
+ 		esOfertaVentaEsCaixa: function(get){
+			var me= this;
+			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+	     	if(tipoOferta=='Venta' && carteraCodigo==CONST.CARTERA['BANKIA']){
+	     		return true;
+	     	}
+	     	return false;
+	     },
 	     
 	 	
 	 	mostrarPrescriptorCajamar: function(get){
@@ -578,8 +596,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
 	 		var isRemaining = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
 	 		var isArrow = CONST.SUBCARTERA['DIVARIANARROW'] === me.get('expediente.subcarteraCodigo');
+	 		var isJaguar = CONST.SUBCARTERA['JAGUAR'] === me.get('expediente.subcarteraCodigo');
 	 		
-	 		return isApple == true || isRemaining == true || isArrow == true;	 			
+	 		return isApple == true || isRemaining == true || isArrow == true || isJaguar == true; 			
 	 	},
 	 	
 	 	esComiteHaya: function(get){
@@ -622,6 +641,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}else{
 	     		return false;
 	     	}
+
+		},esCarteraSarebBbvaBankiaCajamarLiberbank: function (get){
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');			
+			
+			if (CONST.CARTERA['BBVA'] == carteraCodigo || CONST.CARTERA['SAREB'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo
+				|| CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo) {
+				return false;
+			}else{
+				return true;
+			}
 		},
 		
 		habilitarBotonValidar: function(get) {
@@ -663,6 +692,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		}
     	},
     	
+    	puedeAnyadirRegistrosPosicionamiento: function(get){
+    		var estadoExpediente = get('expediente.codigoEstado');
+    		var estadosNoAnyadir = [CONST.ESTADOS_EXPEDIENTE['VENDIDO'],CONST.ESTADOS_EXPEDIENTE['FIRMADO']];
+    		var bloqueado = get('esExpedienteBloqueado');
+    		var puedeEditar = false;
+    		
+    		if(!estadosNoAnyadir.includes(estadoExpediente) && !bloqueado) {
+    			puedeEditar = true;
+    		}
+    		
+    		return puedeEditar;
+    	},
+    	esCarteraGaleonOZeusOBk: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo;
+		},
 		readOnlyDatosCfv: function(get) {
 	     	var carteraCodigo = get('expediente.codigoEstado');
 	     	var ofertaEspecial = get('datosbasicosoferta.ofertaEspecial');
@@ -671,10 +716,68 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     }
-	 },
-	 
+	     },
+	     esBankiaAlquiler: function(get){
+			 var me = this;
+			 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			
+			 return isAlquiler && isBK;
+		 },
+		 esAlquilerNoBk: function(get){
+			 var me = this;
+			 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			
+			 return isAlquiler && !isBK;
+		 },
+	     esBankiaAlquilerOAlquilerNoComercial: function(get){
+	    	 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+	    	 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			 
+			 return (isAlquiler || isAlquilerNoComercial) && isBK;
+		 },
+	     esAlquilerNoComercial: function(get){
+			 var me = this;
 
+			 return get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];;
+		 },
+		 esBankiaVenta: function(get){
+	    	 var isVenta = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+			 var isBK = get('expediente.entidadPropietariaCodigo') == CONST.CARTERA['BANKIA'];
+			 
+			 return isVenta && isBK;
+		 },
+        esOfertaVentaOrCarteraCaixa: function(get){
+          var me= this;
+          var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+          var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+          return tipoOferta == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA'] || carteraCodigo == CONST.CARTERA['BANKIA'];
+        },
+        esAlquilerOAlquilerNoComercial: function(get){
+	    	 var isAlquiler = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+	    	 var isAlquilerNoComercial = get('expediente.tipoExpedienteCodigo')  == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER_NO_COMERCIAL"];
+	 
+			 return (isAlquiler || isAlquilerNoComercial);
+		 },
+        getcolSpanforSarebOrDefault: function(get){
+           var me= this;
+           var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+           var numColumnas;
+
+           if (carteraCodigo == CONST.CARTERA['SAREB']){
+            numColumnas = 1;
+           }else{
+            numColumnas = 3
+           }
+
+           return numColumnas;
+        }
+
+	 },
+	
 
     stores: {
     	
@@ -788,6 +891,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadFinanciera'}
 			}   
+    	},
+    	comboEntidadFinancieraFiltro: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getEntidadFinancieraFiltro',
+				extraParams: {idExpediente: '{expediente.id}'}
+			},
+			session: true,
+			autoLoad: true,
+			remoteFilter: false,
+			remoteSort: false   
     	},
     	
     	comboEntidadesAvalistas: {
@@ -1100,8 +1215,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
+				remoteUrl: 'generic/getEstadosOfertaWeb'
 			}
 	    },
 	    
@@ -1120,6 +1234,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosExpediente'}
+			}
+	    },
+
+		comboSubestadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subestadosExpediente'}
 			}
 	    },
 	    
@@ -1478,7 +1601,38 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'tipoResponsable'}
 			}
 	    },
+	    comboEstadoExpedienteBc: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpedienteBc'}
+			}
+	    },
 
+        storeFechaArras: {
+            pageSize: $AC.getDefaultPageSize(),
+            model: 'HreRem.model.FechaArrasModel',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'expedientecomercial/getFechaArras',
+                extraParams: {idExpediente: '{expediente.id}'}
+            }
+        },
+	    comboEmpleadoCaixa: {
+	    	data : [
+	    		{"codigo":"true", "descripcion":"Si"},
+	    		{"codigo":"false", "descripcion":"No"}
+	    		]  
+	    },
+	    comboMotivoRescisionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRescisionArras'}
+			}
+	    },
 		comboRiesgoOperacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -1486,7 +1640,256 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoRiesgoOperacion'}
 			}
-		}
+		},
+		storeClasificacion:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'clasificacionAlquiler'}
+	    	}	  
+		},
+		storeClaseContrato:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'claseContratoAlquiler'}
+	    	}
+		},
 		
+		comboDDSNS: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'siNoNosabe'
+				}
+			}
+		},
+		
+		comboTipoFinanciacionTP: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipoFinanciacion'
+				}
+			}
+		},
+		
+		testigosOferta:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.Testigos',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getTestigos',
+				extraParams: {id: '{datosbasicosoferta.idOferta}'}
+			}
+		},
+		
+		comboDDFuenteTestigos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'fuenteTestigos'}
+			}
+    	},
+
+		comboDDTipoActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposActivo'}
+			}
+    	},
+		
+		storeMotivoRechazoAntiguoDeudor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRechazoAntiguoDeudor'}
+	    	}	  
+		},
+		
+		storeGastosRepercutidos:{
+			model: 'HreRem.model.GastosRepercutidosModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGastosRepercutidosList',
+				extraParams: {idExpediente: '{expediente.id}'}
+	    	}	  
+		},
+		storeActualizacionRenta:{
+			model: 'HreRem.model.ActualizacionRentaModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getActualizacionRenta',
+				extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+	    	autoLoad: true
+		},
+		storeSancionesBk:{
+			model: 'HreRem.model.SancionesModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getSancionesBk',
+				extraParams: {idExpediente: '{expediente.id}'}
+	    	}	  
+		},
+		storeRegimenFianzaCCAA:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'regimenFianzaCCAA'}
+	    	}	  
+		},
+		storeMetodoActualizacionRenta:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'metodoActualizacionRenta'}
+	    	},
+	    	autoLoad: true	  
+		},
+		comboResolucionComite:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'resolucionComite'}
+	    	},
+	    	autoLoad: true	  
+		},
+		comboGrupoImpuesto:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoGrupoImpuesto'}
+	    	},
+	    	autoLoad: true	  
+		},
+		comboCanalDistribucionBc: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializarActivo'}
+			}
+		},
+		comboResultadoHaya: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResultadoScoring'}
+			}
+    	},
+    	comboResultadoPropiedad: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoResultadoCampo'}
+			}
+    	},
+    	comboResultadoRatingScoring: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getResultadoRatingScoring'
+			},
+	    	autoLoad: true
+    	},
+    	comboEntidadBancariaAvalista: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesAvalistas'}
+			}
+    	},
+		storeTipoOfertaAlquiler:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoOfertaAlquiler'}
+	    	}	  
+		},
+    	comboEstadoComunicacionC4C: {
+  	    	model: 'HreRem.model.ComboBase',
+  			proxy: {
+  				type: 'uxproxy',
+  				remoteUrl: 'generic/getDiccionario',
+  				extraParams: {diccionario: 'estadoComunicacionC4C'}
+  			}
+  	    },
+  	  storeTipoGastoRepercutido:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoGastoRepercutido'}
+	    	},
+	    	autoLoad: true
+		},
+	
+		storeMotivoAnulacionCaixa: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'activo/getMotivoAnulacionExpedienteCaixa'
+            },
+	    	autoLoad: true
+        },
+        comboTipologiaVentaBcOfr: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipologiaVentaBc'
+				},
+			autoLoad: true
+			}
+		},
+
+    	comboTipoImpuesto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getTiposImpuestoFiltered',
+				extraParams: {esBankia: '{expediente.esBankia}'}
+			}   
+    	},
+    	
+    	comboAseguradoraProveedor: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboEspecial',
+				extraParams: {
+					diccionario: 'DDSegurosVigentes'
+				}
+			}
+    	},
+		
+		storeGridIntervinientes: {
+	    	model: 'HreRem.model.IntervinientesPBC',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getIntervinientesPBC',
+		        extraParams: {numOferta: '{datosbasicosoferta.numOferta}'}
+	    	}
+		}
     }
 });

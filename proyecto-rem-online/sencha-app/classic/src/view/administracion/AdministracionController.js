@@ -1644,6 +1644,61 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     		}else{
     			btn.setDisabled(true);
     		}
-    	}
+    	},
+    	
+	onChangeChainedCombo: function(combo) {
+		var me = this,
+		chainedCombo = me.lookupReference(combo.chainedReference),
+		carteraSearch = combo.up('gestiongastossearch').down('[name="entidadPropietariaCodigo"]').value;
+		
+		me.getViewModel().notify();
+
+		if(!Ext.isEmpty(chainedCombo.getValue()) && !Ext.isEmpty(carteraSearch)) {
+			chainedCombo.clearValue();
+		}
+		if (!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+		}
+		
+		if (combo.chainedStore == 'comboSubtipoGastoFiltered') {
+			var store=chainedCombo.getStore(); 
+			store.getProxy().setExtraParams({'codCartera':carteraSearch,'codigoTipoGasto':combo.getValue()});
+		}
+		chainedCombo.getStore().removeAll();
+		if(chainedCombo.getXType() != 'comboboxfieldbasedd'){
+			chainedCombo.getStore().load({ 	
+				callback: function(records, operation, success) {
+						if(!Ext.isEmpty(records) && records.length > 0) {
+							if (chainedCombo.selectFirst == true) {
+								chainedCombo.setSelection(1);
+							};
+							chainedCombo.setDisabled(false);
+						} else {
+							chainedCombo.setDisabled(true);
+						}
+				}
+			});
+		}
+
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+	},
+	
+    onChangeCartera: function(){
+    	var me = this,
+    	comboTipoGasto = me.lookupReference('filtroComboTipoGasto'),
+    	comboSubTipoGasto = me.lookupReference('subtipoGastoCodigoRef');
+    	comboTipoGasto.getStore().load();
+    	comboTipoGasto.clearValue();
+    	comboSubTipoGasto.getStore().load();
+    	comboSubTipoGasto.clearValue();
+    	
+    }
 	
 });

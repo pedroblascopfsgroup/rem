@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 
@@ -22,6 +24,9 @@ public class DtoExpedienteScoring extends WebDto {
     private String idSolicitud;
 	private Boolean revision;
 	private String comentarios;
+	private Date fechaResolucion;
+	private String codigoRating;
+	private String numExpedienteExterno;
 	
 	public String getComboEstadoScoring() {
 		return estadoEscoring;
@@ -59,6 +64,36 @@ public class DtoExpedienteScoring extends WebDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getEstadoEscoring() {
+		return estadoEscoring;
+	}
+	public void setEstadoEscoring(String estadoEscoring) {
+		this.estadoEscoring = estadoEscoring;
+	}
+	public String getIdSolicitud() {
+		return idSolicitud;
+	}
+	public void setIdSolicitud(String idSolicitud) {
+		this.idSolicitud = idSolicitud;
+	}
+	public Date getFechaResolucion() {
+		return fechaResolucion;
+	}
+	public void setFechaResolucion(Date fechaResolucion) {
+		this.fechaResolucion = fechaResolucion;
+	}
+	public String getCodigoRating() {
+		return codigoRating;
+	}
+	public void setCodigoRating(String codigoRating) {
+		this.codigoRating = codigoRating;
+	}
+	public String getNumExpedienteExterno() {
+		return numExpedienteExterno;
+	}
+	public void setNumExpedienteExterno(String numExpedienteExterno) {
+		this.numExpedienteExterno = numExpedienteExterno;
 	}
 	
 }

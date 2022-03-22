@@ -59,6 +59,43 @@ public class DtoReserva extends WebDto {
 	
 	private Date fechaAmpliacionArras;
 	
+	private Date fechaPropuestaProrrogaArras;
+	
+	private Date fechaComunicacionCliente;
+	
+	private Date fechaComunicacionClienteRescision;
+	
+	private Date fechaFirmaRescision;
+	
+    private Boolean inscripcionTitulo;
+    
+    private Boolean tanteoDL;
+    
+    private Boolean cargas;
+    
+    private Boolean temasTecnicos;
+    
+    private Boolean posesion;
+    
+    private Boolean temasCatastrales;
+    
+    private Boolean autorizacionVpo;
+    
+    private Date fechaContabilizacionArras;
+	
+    private Boolean inscripcionTituloMotivo;
+    
+    private Boolean tanteoDLMotivo;
+    
+    private Boolean cargasMotivo;
+    
+    private Boolean temasTecnicosMotivo;
+    
+    private Boolean posesionMotivo;
+    
+    private Boolean temasCatastralesMotivo;
+    
+    private Boolean autorizacionVpoMotivo;
 
 	public Double getDepositoReserva() {
 		return depositoReserva;
@@ -235,6 +272,156 @@ public class DtoReserva extends WebDto {
 	public void setFechaAmpliacionArras(Date fechaAmpliacionArras) {
 		this.fechaAmpliacionArras = fechaAmpliacionArras;
 	}
-	
-	
+
+	public Date getFechaPropuestaProrrogaArras() {
+		return fechaPropuestaProrrogaArras;
+	}
+
+	public void setFechaPropuestaProrrogaArras(Date fechaPropuestaProrrogaArras) {
+		this.fechaPropuestaProrrogaArras = fechaPropuestaProrrogaArras;
+	}
+
+	public Date getFechaComunicacionCliente() {
+		return fechaComunicacionCliente;
+	}
+
+	public void setFechaComunicacionCliente(Date fechaComunicacionCliente) {
+		this.fechaComunicacionCliente = fechaComunicacionCliente;
+	}
+
+	public Date getFechaComunicacionClienteRescision() {
+		return fechaComunicacionClienteRescision;
+	}
+
+	public void setFechaComunicacionClienteRescision(Date fechaComunicacionClienteRescision) {
+		this.fechaComunicacionClienteRescision = fechaComunicacionClienteRescision;
+	}
+
+	public Date getFechaFirmaRescision() {
+		return fechaFirmaRescision;
+	}
+
+	public void setFechaFirmaRescision(Date fechaFirmaRescision) {
+		this.fechaFirmaRescision = fechaFirmaRescision;
+	}
+
+	public Boolean getInscripcionTitulo() {
+		return inscripcionTitulo;
+	}
+
+	public void setInscripcionTitulo(Boolean inscripcionTitulo) {
+		this.inscripcionTitulo = inscripcionTitulo;
+	}
+
+	public Boolean getTanteoDL() {
+		return tanteoDL;
+	}
+
+	public void setTanteoDL(Boolean tanteoDL) {
+		this.tanteoDL = tanteoDL;
+	}
+
+	public Boolean getCargas() {
+		return cargas;
+	}
+
+	public void setCargas(Boolean cargas) {
+		this.cargas = cargas;
+	}
+
+	public Boolean getTemasTecnicos() {
+		return temasTecnicos;
+	}
+
+	public void setTemasTecnicos(Boolean temasTecnicos) {
+		this.temasTecnicos = temasTecnicos;
+	}
+
+	public Boolean getPosesion() {
+		return posesion;
+	}
+
+	public void setPosesion(Boolean posesion) {
+		this.posesion = posesion;
+	}
+
+	public Boolean getTemasCatastrales() {
+		return temasCatastrales;
+	}
+
+	public void setTemasCatastrales(Boolean temasCatastrales) {
+		this.temasCatastrales = temasCatastrales;
+	}
+
+	public Boolean getAutorizacionVpo() {
+		return autorizacionVpo;
+	}
+
+	public void setAutorizacionVpo(Boolean autorizacionVpo) {
+		this.autorizacionVpo = autorizacionVpo;
+	}
+
+	public Date getFechaContabilizacionArras() {
+		return fechaContabilizacionArras;
+	}
+
+	public void setFechaContabilizacionArras(Date fechaContabilizacionArras) {
+		this.fechaContabilizacionArras = fechaContabilizacionArras;
+	}
+
+	public Boolean getInscripcionTituloMotivo() {
+		return inscripcionTituloMotivo;
+	}
+
+	public void setInscripcionTituloMotivo(Boolean inscripcionTituloMotivo) {
+		this.inscripcionTituloMotivo = inscripcionTituloMotivo;
+	}
+
+	public Boolean getTanteoDLMotivo() {
+		return tanteoDLMotivo;
+	}
+
+	public void setTanteoDLMotivo(Boolean tanteoDLMotivo) {
+		this.tanteoDLMotivo = tanteoDLMotivo;
+	}
+
+	public Boolean getCargasMotivo() {
+		return cargasMotivo;
+	}
+
+	public void setCargasMotivo(Boolean cargasMotivo) {
+		this.cargasMotivo = cargasMotivo;
+	}
+
+	public Boolean getTemasTecnicosMotivo() {
+		return temasTecnicosMotivo;
+	}
+
+	public void setTemasTecnicosMotivo(Boolean temasTecnicosMotivo) {
+		this.temasTecnicosMotivo = temasTecnicosMotivo;
+	}
+
+	public Boolean getPosesionMotivo() {
+		return posesionMotivo;
+	}
+
+	public void setPosesionMotivo(Boolean posesionMotivo) {
+		this.posesionMotivo = posesionMotivo;
+	}
+
+	public Boolean getTemasCatastralesMotivo() {
+		return temasCatastralesMotivo;
+	}
+
+	public void setTemasCatastralesMotivo(Boolean temasCatastralesMotivo) {
+		this.temasCatastralesMotivo = temasCatastralesMotivo;
+	}
+
+	public Boolean getAutorizacionVpoMotivo() {
+		return autorizacionVpoMotivo;
+	}
+
+	public void setAutorizacionVpoMotivo(Boolean autorizacionVpoMotivo) {
+		this.autorizacionVpoMotivo = autorizacionVpoMotivo;
+	}
 }

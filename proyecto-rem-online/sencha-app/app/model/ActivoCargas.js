@@ -133,6 +133,22 @@ Ext.define('HreRem.model.ActivoCargas', {
     			}
     		},{
     			name: 'cargasPropias'
+    		},
+    		{
+    			name:'fechaSolicitudCarta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaRecepcionCarta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaPresentacionRpCarta',
+    			type:'date',
+    			dateFormat: 'c'
+    				
     		}
     		
     ],

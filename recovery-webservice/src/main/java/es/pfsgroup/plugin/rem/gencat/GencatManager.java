@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
@@ -1687,7 +1688,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 		DtoAviso dtoAviso = new DtoAviso();
 		boolean continuar = true;
-		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
 
 			// Obtener los activos de la agrupación restringida.
 			for(ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
@@ -1854,7 +1857,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setFechaAlta(new Date());
 		nuevaOferta.setTipoOferta(oferta.getTipoOferta());
 		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
-		nuevaOferta.setOrigen(OfertaApi.ORIGEN_REM);
+		
+		DDSistemaOrigen sistemaOrigen = genericDao.get(DDSistemaOrigen.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSistemaOrigen.CODIGO_REM));
+		if (sistemaOrigen != null)
+			nuevaOferta.setOrigen(sistemaOrigen);
+		
 		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());

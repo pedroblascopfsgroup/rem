@@ -16,8 +16,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
-
-			if(tab.ocultarBotonesEdicion) {
+			 if(tab.ocultarBotonesEdicion) {
 				tabPanel.down("[itemId=botoneditar]").setVisible(false);
 			} else {		
             	tabPanel.evaluarBotonesEdicion(tab);
@@ -120,15 +119,15 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    
 	    var ocultarSituacionposesoriaactivo = false;
 	    var tipoTituloCodigo = me.lookupController().getViewModel().get('activo').get('tipoTituloCodigo');
-	    var subtipoClaseActivoCodigo = me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == '02';
+	    var subtipoClaseActivoCodigo = me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == null ? true : me.lookupController().getViewModel().get('activo').get('subtipoClaseActivoCodigo') == '02';
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']) 
-	    			|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))) 
+	    			|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))) 
 	    			&& $AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO'));
 	    }else{
 	    	if (!(($AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO') && !$AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']))
 	    			|| ($AU.userHasFunction('EDITAR_SITU_POSESORIA_ACTIVO') && ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT'])	 
-	    					&& (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))))) {
+	    					&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))))) {
 				ocultarSituacionposesoriaactivo = true;
 	    	}
 	    }
@@ -157,6 +156,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']); 
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'suministrosactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_SUMINISTROS']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informefiscalactivo', ocultarBotonesEdicion:true })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 	    }
 
     	me.addPlugin({ptype: 'lazyitems', items: items});
@@ -169,13 +169,13 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
  		me.getActiveTab().funcionRecargar();
      },
      
-     evaluarBotonesEdicion: function(tab) {    	
+     evaluarBotonesEdicion: function(tab) {
      	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-
+		var userValidAndTramite = false;
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true" && !me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			// Si la pestaña recibida no tiene asignadas funciones de edicion 
@@ -184,6 +184,16 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    	} else {
 	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 	    	} 
+		}
+		userValidAndTramite = (
+				$AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || 
+				$AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+				) &&  me.lookupController().getViewModel().get('activo').get('isActivoEnTramite');
+	
+		if(userValidAndTramite) {
+			editionEnabled();
 		}
     },
     

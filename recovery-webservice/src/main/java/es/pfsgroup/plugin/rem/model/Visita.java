@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacionVisita;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -143,6 +144,15 @@ public class Visita implements Serializable, Auditable {
     private Integer realizaVisitaApiCustodio;*/
     
     
+    @Column(name = "VIS_NUMERO_CONTACTO")
+    private Long numeroContacto;
+    
+    @Column(name="VIS_BC_ID")
+    private String idVisitaBC;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TCV_ID")
+	private DDTipoComercializacionVisita tipoComVisita;
     
 	@Version   
 	private Long version;
@@ -374,5 +384,28 @@ public class Visita implements Serializable, Auditable {
 	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
 		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
 	}
-   
+
+	public Long getNumeroContacto() {
+		return numeroContacto;
+	}
+
+	public void setNumeroContacto(Long numeroContacto) {
+		this.numeroContacto = numeroContacto;
+	}
+
+	public String getIdVisitaBC() {
+		return idVisitaBC;
+	}
+
+	public void setIdVisitaBC(String idVisitaBC) {
+		this.idVisitaBC = idVisitaBC;
+	}
+
+	public DDTipoComercializacionVisita getTipoComVisita() {
+		return tipoComVisita;
+	}
+
+	public void setTipoComVisita(DDTipoComercializacionVisita tipoComVisita) {
+		this.tipoComVisita = tipoComVisita;
+	}
 }

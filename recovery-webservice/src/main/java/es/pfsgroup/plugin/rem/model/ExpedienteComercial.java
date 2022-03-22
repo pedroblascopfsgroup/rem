@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,11 +38,14 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
 
@@ -285,7 +289,60 @@ public class ExpedienteComercial implements Serializable, Auditable {
  	
  	@Column(name="ECO_FECHA_GRAB_VENTA")
  	private Date fechaGrabacionVenta;
+ 	
+ 	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SEC_ID")
+	private DDSubestadosExpedienteComercial subestadoExpediente;  
+ 	
+ 	@Column(name="RESERVADO_ALQUILER")
+	private Boolean reservadoAlquiler;
+	 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EEB_ID")
+	private DDEstadoExpedienteBc estadoBc;   
+    
+    @Column(name="ECO_ESTADO_ARRAS")
+	private Integer estadoPbcArras;
+    
+    @Column(name="ECO_ESTADO_CN")
+	private Integer estadoPbcCn;
+    
+    @Column(name="ECO_FECHA_RESER_DEPOS")
+	private Date fechaReservaDeposito;
+    
+    @Column(name="ECO_FECHA_CONTAB")
+	private Date fechaContabilizacion;
+    
+    @Column(name="ECO_FECHA_FIRMA_CONT")
+   	private Date fechaFirmaContrato;
+    
+    @Column(name="ECO_NUM_PROTOCOLO")
+    private String numeroProtocolo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MRA_ID")
+	private DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud;
+    
+    @Column(name="ECO_MESES_DURACION_CNT_ALQ")
+  	private Long mesesDuracionCntAlquiler;
+      
+    @Column(name="ECO_DETALLE_ANUL_ALQ")
+  	private String detalleAnulacionCntAlquiler;
+
+	@OneToMany(mappedBy = "expedienteComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ECO_ID")
+	private List<InterlocutorExpediente> interlocutoresExpediente;
+    
+    @OneToOne
+    @JoinColumn(name = "ECO_ID_ANTERIOR")
+    private ExpedienteComercial expedienteAnterior;
+
+	@Column(name="NUMERO_VAI_HAVAI_SAREB")
+	private String numeroVaiHavaiSareb;
+    
+    @Column(name = "ECO_EDICION_COMPRADORES_CBX")
+    private String motivoEdicionCompradores;
+    
     @Version   
 	private Long version;
 
@@ -873,5 +930,149 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaGrabacionVenta(Date fechaGrabacionVenta) {
 		this.fechaGrabacionVenta = fechaGrabacionVenta;
+	}
+
+	public DDSubestadosExpedienteComercial getSubestadoExpediente() {
+		return subestadoExpediente;
+	}
+
+	public void setSubestadoExpediente(DDSubestadosExpedienteComercial subestadoExpediente) {
+		this.subestadoExpediente = subestadoExpediente;
+	}
+	
+	public Boolean getReservadoAlquiler() {
+		return reservadoAlquiler;
+	}
+
+	public void setReservadoAlquiler(Boolean reservadoAlquiler) {
+		this.reservadoAlquiler = reservadoAlquiler;
+	}
+
+	public DDEstadoExpedienteBc getEstadoBc() {
+		return estadoBc;
+	}
+
+	public void setEstadoBc(DDEstadoExpedienteBc estadoBc) {
+		this.estadoBc = estadoBc;
+	}
+
+	public Integer getEstadoPbcArras() {
+		return estadoPbcArras;
+	}
+
+	public void setEstadoPbcArras(Integer estadoPbcArras) {
+		this.estadoPbcArras = estadoPbcArras;
+	}
+
+	public Integer getEstadoPbcCn() {
+		return estadoPbcCn;
+	}
+
+	public void setEstadoPbcCn(Integer estadoPbcCn) {
+		this.estadoPbcCn = estadoPbcCn;
+	}
+
+	public Date getFechaContabilizacion() {
+		return fechaContabilizacion;
+	}
+
+	public void setFechaContabilizacion(Date fechaContabilizacion) {
+		this.fechaContabilizacion = fechaContabilizacion;
+	}
+
+	public Date getFechaReservaDeposito() {
+		return fechaReservaDeposito;
+	}
+
+	public void setFechaReservaDeposito(Date fechaReservaDeposito) {
+		this.fechaReservaDeposito = fechaReservaDeposito;
+	}
+
+	public Date getFechaFirmaContrato() {
+		return fechaFirmaContrato;
+	}
+
+	public void setFechaFirmaContrato(Date fechaFirmaContrato) {
+		this.fechaFirmaContrato = fechaFirmaContrato;
+	}
+
+	public String getNumeroProtocolo() {
+		return numeroProtocolo;
+	}
+
+	public void setNumeroProtocolo(String numeroProtocolo) {
+		this.numeroProtocolo = numeroProtocolo;
+	}
+
+	public DDMotivoRechazoAntiguoDeud getMotivoRechazoAntiguoDeud() {
+		return motivoRechazoAntiguoDeud;
+	}
+
+	public void setMotivoRechazoAntiguoDeud(DDMotivoRechazoAntiguoDeud motivoRechazoAntiguoDeud) {
+		this.motivoRechazoAntiguoDeud = motivoRechazoAntiguoDeud;
+	}
+
+	public Long getMesesDuracionCntAlquiler() {
+		return mesesDuracionCntAlquiler;
+	}
+
+	public void setMesesDuracionCntAlquiler(Long mesesDuracionCntAlquiler) {
+		this.mesesDuracionCntAlquiler = mesesDuracionCntAlquiler;
+	}
+
+	public String getDetalleAnulacionCntAlquiler() {
+		return detalleAnulacionCntAlquiler;
+	}
+
+	public void setDetalleAnulacionCntAlquiler(String detalleAnulacionCntAlquiler) {
+		this.detalleAnulacionCntAlquiler = detalleAnulacionCntAlquiler;
+	}
+
+	public ExpedienteComercial getExpedienteAnterior() {
+		return expedienteAnterior;
+	}
+
+	public void setExpedienteAnterior(ExpedienteComercial expedienteAnterior) {
+		this.expedienteAnterior = expedienteAnterior;
+	}
+
+	public List<InterlocutorExpediente> getInterlocutoresExpediente() {
+		return interlocutoresExpediente;
+	}
+
+	public void setInterlocutoresExpediente(List<InterlocutorExpediente> interlocutoresExpediente) {
+		this.interlocutoresExpediente = interlocutoresExpediente;
+	}
+	
+	public BigDecimal getImporteParticipacionTotal() {
+		BigDecimal importe = new BigDecimal(0);
+		
+		List<CompradorExpediente> compradores = this.compradores;
+		if(compradores != null && !compradores.isEmpty()) {
+			for (CompradorExpediente compradorExpediente : compradores) {
+				if(compradorExpediente.getPorcionCompra() != null && !compradorExpediente.getAuditoria().isBorrado()) {
+					importe = importe.add(new BigDecimal(compradorExpediente.getPorcionCompra()));
+				}
+			}
+		}
+		
+		return importe;
+	}
+
+	public String getMotivoEdicionCompradores() {
+		return motivoEdicionCompradores;
+	}
+
+	public void setMotivoEdicionCompradores(String motivoEdicionCompradores) {
+		this.motivoEdicionCompradores = motivoEdicionCompradores;
+	}
+	
+	
+	public String getNumeroVaiHavaiSareb() {
+		return numeroVaiHavaiSareb;
+	}
+
+	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
+		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
 	}
 }

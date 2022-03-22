@@ -24,8 +24,66 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_ResolucionCES" name="avanzaBPM"></transition>
-	</state> <!-- Transicion directa a resolucion CES-->
+		<transition to="T017_DefinicionOfertaDecision" name="avanzaBPM"></transition>
+	</state> 
+	<decision name ="T017_DefinicionOfertaDecision" expression="#{T017_DefinicionOfertaDecision}">
+        <transition to="T017_ResolucionCES" name="noMayorista"></transition>
+		<transition to="T017_PBC_CN" name="mayorista"></transition>
+		<transition to="T017_FirmaPropietario" name="sinFormalizacion"></transition>
+	</decision>
+	
+	<state name="T017_PBC_CN">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_PBC_CNDecision" name="avanzaBPM"></transition>
+	</state> 
+	<decision name ="T017_PBC_CNDecision" expression="#{T017_PBC_CNDecision}">
+        <transition to="T017_ResolucionCES" name="resultadoPositivo"></transition>
+		<transition to="T017_ResolucionExpediente" name="resultadoNegativo"></transition>
+	</decision>
+
+	<state name="T017_FirmaPropietario">
+		<event type="node-enter">
+			<action name="miTarea"
+					class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+					config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+					class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+					config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_FirmaPropietarioDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_FirmaPropietarioDecision" expression="#{T017_FirmaPropietarioDecision}">
+		<transition to="T017_CierreEconomico" name="Si"></transition>
+		<transition to="T017_ResolucionExpediente" name="No"></transition>
+	</decision>
+	
 	<state name="T017_ResolucionCES">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -50,8 +108,8 @@
     <decision name ="T017_ResolucionCESDecision" expression="#{T017_ResolucionCESDecision}">
         <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
         <transition to="forkReservaNo" name="AceptaSinReserva"></transition> 
-        <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
-  		<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition> 
+        <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+  		<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition> 
         <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
@@ -79,8 +137,8 @@
     <decision name ="T017_RespuestaOfertanteCESDecision" expression="#{T017_RespuestaOfertanteCESDecision}">
         <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
         <transition to="forkReservaNo" name="AceptaSinReserva"></transition>
-        <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
- 		<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition>   
+        <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+ 		<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition>   
         <transition to="T017_RatificacionComiteCES" name="Contraoferta"></transition> 
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
@@ -108,10 +166,10 @@
   <decision name ="T017_RatificacionComiteCESDecision" expression="#{T017_RatificacionComiteCESDecision}">
     <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
     <transition to="forkReservaNo" name="AceptaSinReserva"></transition>
-    <transition to="forkReservaSiBbva" name="AceptaConReservaBbva"></transition>
- 	<transition to="forkReservaNoBbva" name="AceptaSinReservaBbva"></transition>  
+    <transition to="T017_PBCReserva" name="AceptaConReservaBbva"></transition>
+ 	<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition>  
     <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
-		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
+	<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
 
     <fork name="forkReservaSi">  
@@ -123,12 +181,6 @@
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork><!--Fork Resolucion CES ACEPTA SIN RESERVA-->
 
-    <fork name="forkReservaSiBbva">  
-        <transition to="T017_PBCReserva" name="reserva"></transition>
-    </fork>
-    <fork name="forkReservaNoBbva">  
-        <transition to="T017_PBCVenta" name="venta"></transition>
-    </fork>
 
     <state name="T017_AdvisoryNote">
 		<event type="node-enter">
@@ -248,6 +300,7 @@
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_ResolucionPROManzanaDecision" expression="#{T017_ResolucionPROManzanaDecision}">
         <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
+        <transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union-->
         <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
 	</decision> <!--Decision Resolucion Pro Manzana Resolucion Expediente / Resolucion Expediente / NODO DE UNION PREGUNTAR A SOLER -->
@@ -275,7 +328,61 @@
 	<decision name ="T017_PBCReservaDecision" expression="#{T017_PBCReservaDecision}">
         <transition to="T017_InstruccionesReserva" name="Aprueba"></transition>
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="ApruebaBC"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
 	</decision> <!--Decision PBCReserva : Resolucion Expediente / InstruccionesReserva -->
+	<state name="T017_AgendarFechaFirmaArras">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_AgendarFechaFirmaArrasDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_AgendarFechaFirmaArrasDecision" expression="#{T017_AgendarFechaFirmaArrasDecision}">
+		<transition to="T017_ConfirmarFechaFirmaArras" name="OK"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
+	</decision> <!--Decision T017_AgendarFechaFirmaArras -->
+	<state name="T017_ConfirmarFechaFirmaArras">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_ConfirmarFechaFirmaArrasDecision" name="avanzaBPM"></transition>
+	</state>	
+	<decision name ="T017_ConfirmarFechaFirmaArrasDecision" expression="#{T017_ConfirmarFechaFirmaArrasDecision}">
+        <transition to="T017_InstruccionesReserva" name="Confirmado"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="noConfirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
+	</decision>
+	
 	<state name="T017_InstruccionesReserva">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -295,8 +402,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_ObtencionContratoReserva" name="avanzaBPM"></transition>
-	</state> <!-- Transicion directa a Obtencion de contrato de reserva-->
+		<transition to="T017_InstruccionesReservaDecision" name="avanzaBPM"></transition>
+	</state> 			
+	<decision name ="T017_InstruccionesReservaDecision" expression="#{T017_InstruccionesReservaDecision}">
+        <transition to="T017_ObtencionContratoReserva" name="noConfirmado"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="Confirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
+	</decision>
+	
 	<state name="T017_ObtencionContratoReserva">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -316,8 +429,16 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_PBCVenta" name="avanzaBPM"></transition>
+		<transition to="T017_ObtencionContratoReservaDecision" name="avanzaBPM"></transition>
 	</state>
+	
+	<decision name ="T017_ObtencionContratoReservaDecision" expression="#{T017_ObtencionContratoReservaDecision}">
+        <transition to="T017_PBCVenta" name="noConfirmado"></transition>
+		<transition to="T017_AgendarFechaFirmaArras" name="Confirmado"></transition>
+		<transition to="T017_PBCVenta" name="KO"></transition>
+	</decision>
+	
+	
 	<state name="T017_PBCVenta">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -341,11 +462,99 @@
 	</state>
 	<decision name ="T017_PBCVentaDecision" expression="#{T017_PBCVentaDecision}">
         <transition to="join1" name="Aprueba"></transition> <!--Nodo de union-->
+		<transition to="T017_PosicionamientoYFirma" name="ApruebaBBVA"></transition>
+		<transition to="T017_AgendarPosicionamiento" name="ApruebaBC"></transition> <!--Nodo de union BC-->
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
+		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
 	</decision> <!--Decision PBCReserva : Resolucion Expediente / InstruccionesReserva -->
     <join name="join1">
         <transition to="T017_PosicionamientoYFirma"></transition>
     </join>
+    
+    <join name="join2">
+        <transition to="T017_AgendarPosicionamiento"></transition>
+    </join>
+    
+    <state name="T017_AgendarPosicionamiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_AgendarPosicionamientoDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_AgendarPosicionamientoDecision" expression="#{T017_AgendarPosicionamientoDecision}">
+        <transition to="T017_ConfirmarFechaEscritura" name="OK"></transition>
+		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+	</decision>
+	
+	<state name="T017_ConfirmarFechaEscritura">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_ConfirmarFechaEscrituraDecision" name="avanzaBPM"></transition>
+	</state>	
+	<decision name ="T017_ConfirmarFechaEscrituraDecision" expression="#{T017_ConfirmarFechaEscrituraDecision}">
+        <transition to="T017_AgendarPosicionamiento" name="noConfirmado"></transition>
+		<transition to="T017_FirmaContrato" name="Confirmado"></transition>
+		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+	</decision>
+	
+	<state name="T017_FirmaContrato">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_FirmaContratoDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_FirmaContratoDecision" expression="#{T017_FirmaContratoDecision}">
+        <transition to="T017_AgendarPosicionamiento" name="KO"></transition>
+		<transition to="T017_DocsPosVenta" name="OK"></transition>
+		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
+	</decision>
+	
     <state name="T017_PosicionamientoYFirma">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -413,6 +622,53 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state> <!-- THE END -->
+	
+	
+		<state name="T017_BloqueoScreening">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T017_BloqueoScoring">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+		
+	
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"

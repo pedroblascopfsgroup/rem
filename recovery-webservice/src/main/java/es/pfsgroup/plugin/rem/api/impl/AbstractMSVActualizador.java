@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -21,6 +22,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
@@ -32,6 +35,9 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.model.Activo;
 
 @Component
 public abstract  class AbstractMSVActualizador implements MSVLiberator {
@@ -47,6 +53,9 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
 	private MSVExcelParser excelParser;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -54,6 +63,8 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final int EXCEL_FILA_DEFECTO = 1;
+	private static final int EXCEL_FILA_CERO = 0;
+	private static final String CONFIG_EXISTENTE = "Ya existe una configuración";
 
 	public abstract String getValidOperation();
 
@@ -84,6 +95,8 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
 		ArrayList<ResultadoProcesarFila> resultados = new ArrayList<ResultadoProcesarFila>();
 		//Map<Long,String> promociones = null;
+		List<Long> numEntidadList = new ArrayList<Long>();
+		boolean isNumAgrupacionList = false;
 		try {
 			ProcesoMasivoContext context = new ProcesoMasivoContext();
 			this.preProcesado(exc, context);
@@ -131,12 +144,28 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 				} catch (Exception e) {
 					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(), e);
-					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
-						try {
-							transactionManager.rollback(transaction);
-						} catch (Exception ex) {
-							logger.error("error rollback proceso masivo");
+					if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_RECOMENDACION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())
+							&& e.getMessage().contains("ConstraintViolationException")) {
+						resultProcesaFila = new ResultadoProcesarFila();
+						resultProcesaFila.setCorrecto(false);
+						resultProcesaFila.setFila(fila);
+						resultProcesaFila.setErrorDesc(CONFIG_EXISTENTE);
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+					} else {
+						if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
+							try {
+								transactionManager.rollback(transaction);
+							} catch (Exception ex) {
+								logger.error("error rollback proceso masivo");
+							}
 						}
+						resultProcesaFila = new ResultadoProcesarFila();
+						resultProcesaFila.setCorrecto(false);
+						resultProcesaFila.setFila(fila);
+						resultProcesaFila.setErrorDesc(e.getMessage());
+						resultados.add(resultProcesaFila);
+						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
 					}
 					resultProcesaFila = new ResultadoProcesarFila();
 					resultProcesaFila.setCorrecto(false);
@@ -144,6 +173,22 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 					resultProcesaFila.setErrorDesc(e.getMessage());
 					resultados.add(resultProcesaFila);
 					processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
+				}
+				if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZACION_CAMPOS_ESPARTAR_CONVIVENCIA_SAREB.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo()) 
+						|| MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo()) 
+						|| MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FECHA_TITULO_Y_POSESION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo()) 
+						|| MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo()) 
+						|| MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+					Long numActivo = Long.parseLong(exc.dameCelda(fila, EXCEL_FILA_CERO));
+					if (numActivo != null) {
+						numEntidadList.add(numActivo);
+					}
+				} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+					Long numAgrupacion = Long.parseLong(exc.dameCelda(fila, EXCEL_FILA_CERO));
+					if (numAgrupacion != null) {
+						numEntidadList.add(numAgrupacion);
+					}
+					isNumAgrupacionList = true;
 				}
 			}
 
@@ -158,6 +203,10 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 			FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
 
 			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
+			
+			if (numEntidadList != null && !numEntidadList.isEmpty()) {
+				activoAdapter.llamadaAltaAsuntosLegalReoAsync(numEntidadList, isNumAgrupacionList);
+			}
 
 		} catch (Exception e) {
 			logger.error("Error procesando fichero", e);

@@ -46,6 +46,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="-1"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAlquilerNoComercial.xml" p:version="200"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -312,6 +313,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);
             }
+            def esMayorista = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.esMayorista(tareaExterna);
+            }
             def checkReserva = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkReserva(tareaExterna);
@@ -328,6 +333,12 @@
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkBankia(tareaExterna);
             }
+
+            def checkBBVA = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.checkBBVA(tareaExterna);
+            }
+
             def checkCajamar = {
             	def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.checkCajamar(tareaExterna);
@@ -344,6 +355,10 @@
             def checkExpedienteFechaChequeLiberbank = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaChequeLiberbank(idTramite);
+            }
+            def checkExpedienteBloqueado = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteBloqueado(idTramite);
             }
             def reservaFirmada = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
@@ -679,14 +694,153 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esBBVA(tareaExterna);
             }
+            def compruebaEstadoNoSolicitadoPendiente = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+	           	return expedienteComercialManager.compruebaEstadoNoSolicitadoPendiente(tareaExterna);
+            }
+            def compruebaEstadoPositivoRealDenegado = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+	           	return expedienteComercialManager.compruebaEstadoPositivoRealDenegado(tareaExterna);
+	        }
             def tipoTratamiento = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.tipoTratamiento(tareaExterna);
+            }          
+            def checkVueltaAtras = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkVueltaAtras(idTramite);
+            }
+            def haPasadoScoring = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.haPasadoScoring(idTramite);
+            }
+            def esDespuesElevar = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.esDespuesElevar(idTramite);
+
+            }
+             def haPasadoScoringBC = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.haPasadoScoringBC(idTramite);
+            }
+             def tipoTratamientoAlquiler = {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+            	return tramiteAlquilerManager.tipoTratamientoAlquiler(idTramite);
+            }
+             def checkAprobadoRechazadoBC = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkAprobadoRechazadoBC(tareaExterna);
+            }
+            def checkAprobadoRechazadoBCPosicionamiento = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkAprobadoRechazadoBCPosicionamiento(tareaExterna);
             }
             def actualizarOfertaBoarding = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.actualizarOfertaBoarding(tareaExterna);
 			}
+			def isOfertaContraOfertaMayor10K = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.isOfertaContraOfertaMayor10K(tareaExterna);
+			}
+			def isMetodoActualizacionRelleno = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.isMetodoActualizacionRelleno(tareaExterna);
+			}
+			def aprobarRevisionBcYCondiciones = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.aprobarRevisionBcYCondiciones(tareaExterna);
+			}
+			def checkAvalCondiciones = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkAvalCondiciones(tareaExterna);
+			}
+			def checkSeguroRentasCondiciones = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkSeguroRentasCondiciones(tareaExterna);
+			}
+			def validarMesesImporteDeposito = {
+				def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.validarMesesImporteDeposito(tareaExterna);
+			}
+			def avanzaAprobarPbcAlquiler = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaAprobarPbcAlquiler(tareaExterna);
+			}
+			def avanzaScoringBC(String codigo) {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaScoringBC(tareaExterna, codigo);
+			}
+
+			def existeExpedienteComercialByNumExpediente(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.existeExpedienteComercialByNumExpediente(tareaExterna, expedienteAnterior);
+            }  
+			            
+            def isExpedienteFirmado(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isExpedienteFirmado(tareaExterna, expedienteAnterior);
+            }  
+             def userHasPermisoParaAvanzarTareas = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.userHasPermisoParaAvanzarTareas(tareaExterna);
+            }
+            
+            def checkExpedienteBloqueadoPorFuncion = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteBloqueadoPorFuncion(idTramite);
+            }
+            def tieneRellenosCamposAnulacion = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesManager.tieneRellenosCamposAnulacion(tareaExterna);
+            }
+            def tieneFechaVencimientoReserva = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.tieneFechaVencimientoReserva(tareaExterna);
+            }
+            def checkArrasEstadoBCIngreso = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkArrasEstadoBCIngreso(tareaExterna);
+            }
+            def tieneReservaPrevia = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.tieneReservaPrevia(tareaExterna);
+            }
+             def checkFechaContabilizacionArras = {
+            	def tramiteVentaManager = ctx.getBean("tramiteVentaManager");
+            	return tramiteVentaManager.checkFechaContabilizacionArras(tareaExterna);
+            }
+            
+             def checkGarantiasNinguna (String expedienteAnterior) {
+            	def tramiteAlquilerManager = ctx.getBean("tramiteAlquilerManager");
+				return tramiteAlquilerManager.checkGarantiasNinguna(tareaExterna, expedienteAnterior);
+            }
+            
+            def existeTareaT018Scoring = {
+				def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.existeTareaT018Scoring(tareaExterna);
+			}
+			 def isExpedienteDelMismoActivo(String expedienteAnterior) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+            	return tramiteAlquilerNoComercialManager.isExpedienteDelMismoActivo(tareaExterna, expedienteAnterior);
+            } 
+            def checkEstadoBC = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkEstadoBC(tareaExterna);
+            }
+            def avanzaScoring (String comboReqAnalisisTec) {
+            	def tramiteAlquilerNoComercialManager = ctx.getBean("tramiteAlquilerNoComercialManager");
+				return tramiteAlquilerNoComercialManager.avanzaScoring(tareaExterna, comboReqAnalisisTec);
+            }	
+			def esTitulizada = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esTitulizada(tareaExterna);
+			}
+			def tieneCampoClasificacionRelleno = {
+            	def funcionesTramitesManager = ctx.getBean("funcionesTramitesManager");
+            	return funcionesTramitesManager.tieneCampoClasificacionRelleno(tareaExterna);
+            }
+           
   			 ]]></value>
   		</list>
   	</property>
@@ -708,6 +862,9 @@
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDSubtipoOfertaAlquiler</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion</value>
         </list>
     </property>
    </bean>

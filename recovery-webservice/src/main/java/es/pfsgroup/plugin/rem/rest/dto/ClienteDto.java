@@ -18,6 +18,9 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -30,15 +33,12 @@ public class ClienteDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 
-	@NotNull(groups = { Insert.class, Update.class })
 	private Long idClienteWebcom;
 	private Long idClienteRem;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String razonSocial;
-	@NotNull(groups = { Insert.class})
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String nombre;
-	@NotNull(groups = { Insert.class})
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String apellidos;
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -57,8 +57,14 @@ public class ClienteDto implements Serializable{
 	private String telefono1;
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String telefono2;
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefono3;
 	@Size(max=50,groups = { Insert.class, Update.class })
 	private String email;
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String email2;
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String email3;
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemPrescriptor no existe", groups = { Insert.class,
 			Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemPrescriptor;
@@ -108,8 +114,7 @@ public class ClienteDto implements Serializable{
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
 	
-	//HREOS-2804
-	//@NotNull(groups = { Insert.class})
+	@NotNull(groups = { Insert.class})
 	@Diccionary(clase = DDTiposPersona.class, message = "El tipoPersona no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoPersona;
@@ -126,6 +131,8 @@ public class ClienteDto implements Serializable{
 	private Boolean cesionDatos;
 	private Boolean comunicacionTerceros;
 	private Boolean transferenciasInternacionales;
+	
+	private Boolean aceptacionOfertaTPrincipal;
 	
 	//REMVIP-3846
 	@Size(max=10,groups = { Insert.class, Update.class })
@@ -163,7 +170,93 @@ public class ClienteDto implements Serializable{
 	@IsNumber(groups = { Insert.class, Update.class }, message="El cp no es valido")
 	private String codigoPostalRepresentante;
 	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoOcupacion.class, message = "El codOcupacion no existe", groups = { Insert.class,
+			Update.class })
+	private String codOcupacion;
 	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String nombreRepresentante;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String apellidosRepresentante;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoRepresentante;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoRepresentante2;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoRepresentante3;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailRepresentante;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailRepresentante2;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailRepresentante3;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String nombreContacto;
+	
+	@Size(max=250,groups = { Insert.class, Update.class })
+	private String apellidosContacto;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDeDocumento.class, message = "El codTipoDocumentoContacto no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoDocumentoContacto;
+	
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String documentoContacto;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoContacto;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoContacto2;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String telefonoContacto3;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailContacto;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailContacto2;
+	
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String emailContacto3;
+	
+	private Long idClienteRemRepresentante;
+	
+	private Long idClienteContacto;
+	
+	
+	
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimiento no existe")
+	private String codPaisNacimiento;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimiento no existe")
+	private String codMunicipioNacimiento;
+	@Diccionary(clase = DDPaises.class, message = "El codPaisNacimientoRepresentante no existe")
+	private String codPaisNacimientoRepresentante;
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioNacimientoRepresentante no existe")
+	private String codMunicipioNacimientoRepresentante;
+	private Date fechaNacimiento;
+	private Date fechaNacimientoRepresentante;	
+	private Boolean esPRP;
+	private Boolean esPRPRepresentante;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimiento no existe")
+	private String codProvinciaNacimiento;
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaNacimientoRepresentante no existe")
+	private String codProvinciaNacimientoRepresentante;
+	private String idClienteBC;
+	
+	
+		
 	public String getCodTipoPersona() {
 		return codTipoPersona;
 	}
@@ -261,11 +354,29 @@ public class ClienteDto implements Serializable{
 	public void setTelefono2(String telefono2) {
 		this.telefono2 = telefono2;
 	}
+	public String getTelefono3() {
+		return telefono3;
+	}
+	public void setTelefono3(String telefono3) {
+		this.telefono3 = telefono3;
+	}
 	public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getEmail2() {
+		return email2;
+	}
+	public void setEmail2(String email2) {
+		this.email2 = email2;
+	}
+	public String getEmail3() {
+		return email3;
+	}
+	public void setEmail3(String email3) {
+		this.email3 = email3;
 	}
 	public Long getIdProveedorRemPrescriptor() {
 		return idProveedorRemPrescriptor;
@@ -428,5 +539,207 @@ public class ClienteDto implements Serializable{
 	}
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+	public String getCodOcupacion() {
+		return codOcupacion;
+	}
+	public void setCodOcupacion(String codOcupacion) {
+		this.codOcupacion = codOcupacion;
+	}
+	public String getNombreRepresentante() {
+		return nombreRepresentante;
+	}
+	public void setNombreRepresentante(String nombreRepresentante) {
+		this.nombreRepresentante = nombreRepresentante;
+	}
+	public String getApellidosRepresentante() {
+		return apellidosRepresentante;
+	}
+	public void setApellidosRepresentante(String apellidosRepresentante) {
+		this.apellidosRepresentante = apellidosRepresentante;
+	}
+	public String getTelefonoRepresentante() {
+		return telefonoRepresentante;
+	}
+	public void setTelefonoRepresentante(String telefonoRepresentante) {
+		this.telefonoRepresentante = telefonoRepresentante;
+	}
+	
+	public String getTelefonoRepresentante2() {
+		return telefonoRepresentante2;
+	}
+	public void setTelefonoRepresentante2(String telefonoRepresentante2) {
+		this.telefonoRepresentante2 = telefonoRepresentante2;
+	}
+	public String getTelefonoRepresentante3() {
+		return telefonoRepresentante3;
+	}
+	public void setTelefonoRepresentante3(String telefonoRepresentante3) {
+		this.telefonoRepresentante3 = telefonoRepresentante3;
+	}
+	public String getEmailRepresentante() {
+		return emailRepresentante;
+	}
+	public void setEmailRepresentante(String emailRepresentante) {
+		this.emailRepresentante = emailRepresentante;
+	}
+	public String getEmailRepresentante2() {
+		return emailRepresentante2;
+	}
+	public void setEmailRepresentante2(String emailRepresentante2) {
+		this.emailRepresentante2 = emailRepresentante2;
+	}
+	public String getEmailRepresentante3() {
+		return emailRepresentante3;
+	}
+	public void setEmailRepresentante3(String emailRepresentante3) {
+		this.emailRepresentante3 = emailRepresentante3;
+	}
+	public String getNombreContacto() {
+		return nombreContacto;
+	}
+	public void setNombreContacto(String nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+	public String getApellidosContacto() {
+		return apellidosContacto;
+	}
+	public void setApellidosContacto(String apellidosContacto) {
+		this.apellidosContacto = apellidosContacto;
+	}
+	public String getCodTipoDocumentoContacto() {
+		return codTipoDocumentoContacto;
+	}
+	public void setCodTipoDocumentoContacto(String codTipoDocumentoContacto) {
+		this.codTipoDocumentoContacto = codTipoDocumentoContacto;
+	}
+	public String getDocumentoContacto() {
+		return documentoContacto;
+	}
+	public void setDocumentoContacto(String documentoContacto) {
+		this.documentoContacto = documentoContacto;
+	}
+	public String getTelefonoContacto() {
+		return telefonoContacto;
+	}
+	public void setTelefonoContacto(String telefonoContacto) {
+		this.telefonoContacto = telefonoContacto;
+	}
+	public String getTelefonoContacto2() {
+		return telefonoContacto2;
+	}
+	public void setTelefonoContacto2(String telefonoContacto2) {
+		this.telefonoContacto2 = telefonoContacto2;
+	}
+	public String getTelefonoContacto3() {
+		return telefonoContacto3;
+	}
+	public void setTelefonoContacto3(String telefonoContacto3) {
+		this.telefonoContacto3 = telefonoContacto3;
+	}
+	public String getEmailContacto() {
+		return emailContacto;
+	}
+	public void setEmailContacto(String emailContacto) {
+		this.emailContacto = emailContacto;
+	}
+	public String getEmailContacto2() {
+		return emailContacto2;
+	}
+	public void setEmailContacto2(String emailContacto2) {
+		this.emailContacto2 = emailContacto2;
+	}
+	public String getEmailContacto3() {
+		return emailContacto3;
+	}
+	public void setEmailContacto3(String emailContacto3) {
+		this.emailContacto3 = emailContacto3;
+	}
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
+	}
+	
+	public String getCodPaisNacimiento() {
+		return codPaisNacimiento;
+	}
+	public void setCodPaisNacimiento(String codPaisNacimiento) {
+		this.codPaisNacimiento = codPaisNacimiento;
+	}
+	public String getCodMunicipioNacimiento() {
+		return codMunicipioNacimiento;
+	}
+	public void setCodMunicipioNacimiento(String codMunicipioNacimiento) {
+		this.codMunicipioNacimiento = codMunicipioNacimiento;
+	}
+	public String getCodPaisNacimientoRepresentante() {
+		return codPaisNacimientoRepresentante;
+	}
+	public void setCodPaisNacimientoRepresentante(String codPaisNacimientoRepresentante) {
+		this.codPaisNacimientoRepresentante = codPaisNacimientoRepresentante;
+	}
+	public String getCodMunicipioNacimientoRepresentante() {
+		return codMunicipioNacimientoRepresentante;
+	}
+	public void setCodMunicipioNacimientoRepresentante(String codMunicipioNacimientoRepresentante) {
+		this.codMunicipioNacimientoRepresentante = codMunicipioNacimientoRepresentante;
+	}
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+	public Boolean getEsPRP() {
+		return esPRP;
+	}
+	public void setEsPRP(Boolean esPRP) {
+		this.esPRP = esPRP;
+	}
+	public Boolean getEsPRPRepresentante() {
+		return esPRPRepresentante;
+	}
+	public void setEsPRPRepresentante(Boolean esPRPRepresentante) {
+		this.esPRPRepresentante = esPRPRepresentante;
+	}
+	public String getCodProvinciaNacimiento() {
+		return codProvinciaNacimiento;
+	}
+	public void setCodProvinciaNacimiento(String codProvinciaNacimiento) {
+		this.codProvinciaNacimiento = codProvinciaNacimiento;
+	}
+	public String getCodProvinciaNacimientoRepresentante() {
+		return codProvinciaNacimientoRepresentante;
+	}
+	public void setCodProvinciaNacimientoRepresentante(String codProvinciaNacimientoRepresentante) {
+		this.codProvinciaNacimientoRepresentante = codProvinciaNacimientoRepresentante;
+	}
+	public Boolean getAceptacionOfertaTPrincipal() {
+		return aceptacionOfertaTPrincipal;
+	}
+	public void setAceptacionOfertaTPrincipal(Boolean aceptacionOfertaTPrincipal) {
+		this.aceptacionOfertaTPrincipal = aceptacionOfertaTPrincipal;
+	}
+
+	public String getIdClienteBC() {
+		return idClienteBC;
+	}
+
+	public void setIdClienteBC(String idClienteBC) {
+		this.idClienteBC = idClienteBC;
 	}
 }

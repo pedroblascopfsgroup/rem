@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210601
+--## AUTOR=Santi Monzó
+--## FECHA_CREACION=20211217
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9856
+--## INCIDENCIA_LINK=HREOS-16597
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para obtener la fecha de posesión de los activos
@@ -14,6 +14,8 @@
 --##        0.1 [REMVIP-7883] Versión inicial (Creación de la vista)
 --##        0.2 [REMVIP-9343] Actualización de condiciones
 --##        0.3 [REMVIP-9856] Juan Bautista Alfonso - Actualizacion condiciones para sareb
+--##	    0.4 [REMVIP-10845] Juan Bautista Alfonso - Nueva logica de calculo fecha toma posesion para caixabank
+--##	    0.5 [HREOS-16597] Santi Monzó - Añadir la subcartera Jaguar
 --#########################################
 --*/
 
@@ -63,34 +65,38 @@ BEGIN
                     WHERE AGA.AGA_PRINCIPAL = 1 AND AGA.BORRADO = 0)
     SELECT DISTINCT ACT.ACT_ID,
         TTA.DD_TTA_CODIGO,
-        CASE TTA.DD_TTA_CODIGO
-            WHEN ''01'' THEN
-                CASE
-                    WHEN BIE_ADJ.BIE_ADJ_ID IS NOT NULL AND BIE_ADJ.BIE_ADJ_LANZAMIENTO_NECES = 1
-                        THEN BIE_ADJ.BIE_ADJ_F_REA_LANZAMIENTO
-                        ELSE BIE_ADJ.BIE_ADJ_F_REA_POSESION
-                            END
-            WHEN ''02'' THEN
-                CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
-                        THEN ADN.FECHA_POSESION
-                        ELSE ADN.ADN_FECHA_TITULO
-                            END
-            WHEN ''05'' THEN
-                CASE ACT_MATRIZ.DD_TTA_CODIGO
-                    WHEN ''01'' THEN
-                        CASE
-                            WHEN ACT_MATRIZ.BIE_ADJ_ID IS NOT NULL AND ACT_MATRIZ.BIE_ADJ_LANZAMIENTO_NECES = 1
-                                THEN ACT_MATRIZ.BIE_ADJ_F_REA_LANZAMIENTO
-                            ELSE ACT_MATRIZ.BIE_ADJ_F_REA_POSESION
-                            END
-                    WHEN ''02'' THEN 
-                        CASE 
-                            WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'') OR CRA.DD_CRA_CODIGO = ''02''
-                                THEN ACT_MATRIZ.FECHA_POSESION
-                            ELSE ACT_MATRIZ.ADN_FECHA_TITULO
-                            END 
-                    END
-                END AS FECHA_POSESION
+        CASE WHEN CRA.DD_CRA_CODIGO !=''03'' THEN
+            CASE TTA.DD_TTA_CODIGO
+                WHEN ''01'' THEN
+                    CASE
+                        WHEN BIE_ADJ.BIE_ADJ_ID IS NOT NULL AND BIE_ADJ.BIE_ADJ_LANZAMIENTO_NECES = 1
+                            THEN BIE_ADJ.BIE_ADJ_F_REA_LANZAMIENTO
+                            ELSE BIE_ADJ.BIE_ADJ_F_REA_POSESION
+                                END
+                WHEN ''02'' THEN
+                    CASE WHEN SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'') OR CRA.DD_CRA_CODIGO = ''02''
+                            THEN ADN.FECHA_POSESION
+                            ELSE ADN.ADN_FECHA_TITULO
+                                END
+                WHEN ''05'' THEN
+                    CASE ACT_MATRIZ.DD_TTA_CODIGO
+                        WHEN ''01'' THEN
+                            CASE
+                                WHEN ACT_MATRIZ.BIE_ADJ_ID IS NOT NULL AND ACT_MATRIZ.BIE_ADJ_LANZAMIENTO_NECES = 1
+                                    THEN ACT_MATRIZ.BIE_ADJ_F_REA_LANZAMIENTO
+                                ELSE ACT_MATRIZ.BIE_ADJ_F_REA_POSESION
+                                END
+                        WHEN ''02'' THEN 
+                            CASE 
+                                WHEN ACT_MATRIZ.DD_SCR_CODIGO IN (''138'',''151'',''152'',''70'') OR CRA.DD_CRA_CODIGO = ''02''
+                                    THEN ACT_MATRIZ.FECHA_POSESION
+                                ELSE ACT_MATRIZ.ADN_FECHA_TITULO
+                                END 
+                        END
+                    END 
+                ELSE
+	                SPS.SPS_FECHA_TOMA_POSESION
+            END AS FECHA_POSESION
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             INNER JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR ON ACT.DD_SCR_ID = SCR.DD_SCR_ID AND SCR.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID=CRA.DD_CRA_ID AND CRA.BORRADO = 0
@@ -99,6 +105,7 @@ BEGIN
             LEFT JOIN '|| V_ESQUEMA ||'.ACT_ADN_ADJNOJUDICIAL ADN  ON ADN.ACT_ID = ACT.ACT_ID AND ADN.BORRADO = 0
             LEFT JOIN AGRUPACION ON ACT.ACT_ID = AGRUPACION.ACT_ID
             LEFT JOIN ACT_MATRIZ ON ACT_MATRIZ.AGR_ID = AGRUPACION.AGR_ID
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID=ACT.ACT_ID AND SPS.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA  ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.DD_TTA_CODIGO IN (''01'',''02'',''05'') AND TTA.BORRADO = 0
             WHERE ACT.BORRADO = 0';
         

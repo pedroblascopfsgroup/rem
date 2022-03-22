@@ -25,13 +25,19 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
+import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 
 /**
@@ -191,9 +197,109 @@ public class CompradorExpediente implements Serializable, Auditable {
     private Integer numUrsusConyuge;
     
     @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
-    private Integer numUrsusConyugeBh;   
+    private Integer numUrsusConyugeBh;
 
+    @Column(name = "CEX_NOMBRE_CONTACTO")
+    private String nombreContacto;
     
+    @Column(name = "CEX_APELLIDOS_CONTACTO")
+    private String apellidosContacto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONTACTO")
+	private DDTipoDocumento tipoDocumentoContacto;
+    
+    @Column(name = "CEX_DOCUMENTO_CONTACTO")
+    private String documentoContacto;
+
+    @Column(name = "CEX_TELEFONO_CONTACTO")
+    private String telefonoContacto;
+    
+    @Column(name = "CEX_EMAIL_CONTACTO")
+    private String emailContacto;
+    
+    @Column(name = "ID_CLIENTE_REM_REPRESENTANTE")
+    private Long idClienteRemRepresentante;
+    
+    @Column(name = "ID_CLIENTE_CONTACTO")
+	private Long idClienteContacto;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECL_ID")
+    private DDEstadoContrasteListas estadoContrasteListas;
+
+    @Column(name="ECO_ECL_FECHA")
+    private Date fechaContrasteListas;
+
+	@Column(name = "CEX_C4C_ID")
+	private Long idC4c;
+	
+    @Column(name="CEX_FECHA_NACIMIENTO_REPR")
+    private Date fechaNacimientoRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CEX_LOC_NAC_REPR")
+    private Localidad localidadNacimientoRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_NAC_REPR_ID")
+    private DDPaises paisNacimientoRepresentante;
+    
+    @Column(name="CEX_USUFRUCTUARIO")
+    private Boolean usufructuario;
+    
+    @ManyToOne
+	@JoinColumn(name = "IAP_REPR_ID")
+	@NotFound(action = NotFoundAction.IGNORE)
+	private InfoAdicionalPersona infoAdicionalRepresentante;
+    
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_ID")
+	private DDInterlocutorOferta interlocutorOferta;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_FIO_REPR_ID")
+	private DDInterlocutorOferta interlocutorOfertaRepresentante;
+	
+	@Column(name = "CEX_SOCIEDAD")
+	private String sociedad;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_VIC_ID")
+	private DDVinculoCaixa vinculoCaixa;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_REPR")
+	private Long idPersonaHayaRepresentante;
+
+	@Column(name = "CEX_PRP")
+	private Boolean prp;
+	
+	@Column(name = "CEX_OFICINA_TRABAJO")
+	private String oficinaTrabajo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_NAC_ID_REP")
+	private DDProvincia provinciaNacimientoRep;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EIC_ID")
+	private DDEstadoInterlocutor estadoInterlocutor;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EIC_REPR_ID")
+	private DDEstadoInterlocutor estadoInterlocutorRepresentante;
+
+	@Column(name = "CEX_ID_PERSONA_HAYA_CAIXA_REPR")
+	private String idPersonaHayaCaixaRepresentante;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_ISO")
+    private DDPaises nacionalidadCodigo;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_ISO_RPR")
+    private DDPaises nacionalidadRprCodigo;
+
 	@Version   
 	private Long version;
 	
@@ -641,6 +747,70 @@ public class CompradorExpediente implements Serializable, Auditable {
 		this.numUrsusConyugeBh = numUrsusConyugeBh;
 	}
 
+	public String getNombreContacto() {
+		return nombreContacto;
+	}
+
+	public void setNombreContacto(String nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+
+	public String getApellidosContacto() {
+		return apellidosContacto;
+	}
+
+	public void setApellidosContacto(String apellidosContacto) {
+		this.apellidosContacto = apellidosContacto;
+	}
+
+	public DDTipoDocumento getTipoDocumentoContacto() {
+		return tipoDocumentoContacto;
+	}
+
+	public void setTipoDocumentoContacto(DDTipoDocumento tipoDocumentoContacto) {
+		this.tipoDocumentoContacto = tipoDocumentoContacto;
+	}
+
+	public String getDocumentoContacto() {
+		return documentoContacto;
+	}
+
+	public void setDocumentoContacto(String documentoContacto) {
+		this.documentoContacto = documentoContacto;
+	}
+
+	public String getTelefonoContacto() {
+		return telefonoContacto;
+	}
+
+	public void setTelefonoContacto(String telefonoContacto) {
+		this.telefonoContacto = telefonoContacto;
+	}
+
+	public String getEmailContacto() {
+		return emailContacto;
+	}
+
+	public void setEmailContacto(String emailContacto) {
+		this.emailContacto = emailContacto;
+	}
+
+	public Long getIdClienteRemRepresentante() {
+		return idClienteRemRepresentante;
+	}
+
+	public void setIdClienteRemRepresentante(Long idClienteRemRepresentante) {
+		this.idClienteRemRepresentante = idClienteRemRepresentante;
+	}
+
+	public Long getIdClienteContacto() {
+		return idClienteContacto;
+	}
+
+	public void setIdClienteContacto(Long idClienteContacto) {
+		this.idClienteContacto = idClienteContacto;
+	}
+
 	@Override
 	public Auditoria getAuditoria() {
 		return this.auditoria;
@@ -649,9 +819,180 @@ public class CompradorExpediente implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-		
 	}
-    
-	
-   
+
+	public DDEstadoContrasteListas getEstadoContrasteListas() {
+		return estadoContrasteListas;
+	}
+
+	public void setEstadoContrasteListas(DDEstadoContrasteListas estadoContrasteListas) {
+		this.estadoContrasteListas = estadoContrasteListas;
+	}
+
+	public Date getFechaContrasteListas() {
+		return fechaContrasteListas;
+	}
+
+	public void setFechaContrasteListas(Date fechaContrasteListas) {
+		this.fechaContrasteListas = fechaContrasteListas;
+	}
+
+	public Long getIdC4c() {
+		return idC4c;
+	}
+
+	public void setIdC4c(Long idC4c) {
+		this.idC4c = idC4c;
+	}
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+	public Localidad getLocalidadNacimientoRepresentante() {
+		return localidadNacimientoRepresentante;
+	}
+
+	public void setLocalidadNacimientoRepresentante(Localidad localidadNacimientoRepresentante) {
+		this.localidadNacimientoRepresentante = localidadNacimientoRepresentante;
+	}
+
+	public DDPaises getPaisNacimientoRepresentante() {
+		return paisNacimientoRepresentante;
+	}
+
+	public void setPaisNacimientoRepresentante(DDPaises paisNacimientoRepresentante) {
+		this.paisNacimientoRepresentante = paisNacimientoRepresentante;
+	}
+
+	public Boolean getUsufructuario() {
+		return usufructuario;
+	}
+
+	public void setUsufructuario(Boolean usufructuario) {
+		this.usufructuario = usufructuario;
+	}
+
+	public InfoAdicionalPersona getInfoAdicionalRepresentante() {
+		return infoAdicionalRepresentante;
+	}
+
+	public void setInfoAdicionalRepresentante(InfoAdicionalPersona infoAdicionalRepresentante) {
+		this.infoAdicionalRepresentante = infoAdicionalRepresentante;
+	}
+
+	public DDInterlocutorOferta getInterlocutorOferta() {
+		return interlocutorOferta;
+	}
+
+	public void setInterlocutorOferta(DDInterlocutorOferta interlocutorOferta) {
+		this.interlocutorOferta = interlocutorOferta;
+	}
+
+	public DDInterlocutorOferta getInterlocutorOfertaRepresentante() {
+		return interlocutorOfertaRepresentante;
+	}
+
+	public void setInterlocutorOfertaRepresentante(DDInterlocutorOferta interlocutorOfertaRepresentante) {
+		this.interlocutorOfertaRepresentante = interlocutorOfertaRepresentante;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public DDVinculoCaixa getVinculoCaixa() {
+		return vinculoCaixa;
+	}
+
+	public void setVinculoCaixa(DDVinculoCaixa vinculoCaixa) {
+		this.vinculoCaixa = vinculoCaixa;
+	}
+
+	public Long getIdPersonaHayaRepresentante() {
+		return idPersonaHayaRepresentante;
+	}
+
+	public void setIdPersonaHayaRepresentante(Long idPersonaHayaRepresentante) {
+		this.idPersonaHayaRepresentante = idPersonaHayaRepresentante;
+	}
+
+	public Boolean getPrp() {
+		return prp;
+	}
+
+	public void setPrp(Boolean prp) {
+		this.prp = prp;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public DDProvincia getProvinciaNacimientoRep() {
+		return provinciaNacimientoRep;
+	}
+
+	public void setProvinciaNacimientoRep(DDProvincia provinciaNacimientoRep) {
+		this.provinciaNacimientoRep = provinciaNacimientoRep;
+	}
+
+	public DDEstadoInterlocutor getEstadoInterlocutor() {
+		return estadoInterlocutor;
+	}
+
+	public void setEstadoInterlocutor(DDEstadoInterlocutor estadoInterlocutor) {
+		this.estadoInterlocutor = estadoInterlocutor;
+	}
+
+
+	public String getIdPersonaHayaCaixaRepresentante() {
+		return idPersonaHayaCaixaRepresentante;
+	}
+
+	public void setIdPersonaHayaCaixaRepresentante(String idPersonaHayaCaixaRepresentante) {
+		this.idPersonaHayaCaixaRepresentante = idPersonaHayaCaixaRepresentante;
+	}
+
+	public DDPaises getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(DDPaises nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public DDPaises getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(DDPaises nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
+	}
+
+	public DDEstadoInterlocutor getEstadoInterlocutorRepresentante() {
+		return estadoInterlocutorRepresentante;
+	}
+
+	public void setEstadoInterlocutorRepresentante(DDEstadoInterlocutor estadoInterlocutorRepresentante) {
+		this.estadoInterlocutorRepresentante = estadoInterlocutorRepresentante;
+	}
+
+	public void setEstadoInterlocutorRepSiTiene(DDEstadoInterlocutor estadoInterlocutorRepresentante) {
+		if (documentoRepresentante != null)
+		this.estadoInterlocutorRepresentante = estadoInterlocutorRepresentante;
+	}
+
 }

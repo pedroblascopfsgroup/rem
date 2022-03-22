@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 
 public class DtoComercialActivo extends DtoTabActivo{
 
@@ -33,6 +32,31 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	private String activoObraNuevaComercializacion;
 	private Date activoObraNuevaComercializacionFecha;
+	private Boolean necesidadIfActivo;
+	private Boolean necesidadArras;
+	private String motivosNecesidadArras;
+	private String estadoComercialVentaCodigo;
+	private String estadoComercialVentaDescripcion;
+	private String estadoComercialAlquilerCodigo;
+	private String estadoComercialAlquilerDescripcion;
+	private Date fechaEstadoComercialVenta;
+	private Date fechaEstadoComercialAlquiler;	
+	private String canalPublicacionVentaCodigo;
+	private String canalPublicacionAlquilerCodigo;
+    private String tributacionPropuestaClienteExentoIvaCod;
+    private String tributacionPropuestaClienteExentoIvaDesc;
+    private String tributacionPropuestaVentaCod;
+    private String tributacionPropuestaVentaDesc;
+	private Boolean carteraConcentrada;
+	private Boolean activoAAMM;
+	private Boolean activoPromocionesEstrategicas;
+    private Date fechaInicioConcurrencia;
+    private Date fechaFinConcurrencia;    
+    private String tipoTransmisionDescripcion;
+    private String tipoTransmisionCodigo;
+
+	private String campanyaVenta;
+	private String campanyaAlquiler;
 
 
 	public String getId() {
@@ -237,4 +261,194 @@ public class DtoComercialActivo extends DtoTabActivo{
 		this.activoObraNuevaComercializacionFecha = activoObraNuevaComercializacionFecha;
 	}
 
+	public Boolean getNecesidadIfActivo() {
+		return necesidadIfActivo;
+	}
+
+	public void setNecesidadIfActivo(Boolean necesidadIfActivo) {
+		this.necesidadIfActivo = necesidadIfActivo;
+	}
+	public Boolean getNecesidadArras() {
+		return necesidadArras;
+	}
+
+	public void setNecesidadArras(Boolean necesidadArras) {
+		this.necesidadArras = necesidadArras;
+	}
+
+	public String getMotivosNecesidadArras() {
+		return motivosNecesidadArras;
+	}
+
+	public void setMotivosNecesidadArras(String motivosNecesidadArras) {
+		this.motivosNecesidadArras = motivosNecesidadArras;
+	}
+	
+	public String getEstadoComercialVentaCodigo() {
+		return estadoComercialVentaCodigo;
+	}
+
+	public void setEstadoComercialVentaCodigo(String estadoComercialVentaCodigo) {
+		this.estadoComercialVentaCodigo = estadoComercialVentaCodigo;
+	}
+
+	public String getEstadoComercialVentaDescripcion() {
+		return estadoComercialVentaDescripcion;
+	}
+
+	public void setEstadoComercialVentaDescripcion(String estadoComercialVentaDescripcion) {
+		this.estadoComercialVentaDescripcion = estadoComercialVentaDescripcion;
+	}
+
+	public String getEstadoComercialAlquilerCodigo() {
+		return estadoComercialAlquilerCodigo;
+	}
+
+	public void setEstadoComercialAlquilerCodigo(String estadoComercialAlquilerCodigo) {
+		this.estadoComercialAlquilerCodigo = estadoComercialAlquilerCodigo;
+	}
+
+	public String getEstadoComercialAlquilerDescripcion() {
+		return estadoComercialAlquilerDescripcion;
+	}
+
+	public void setEstadoComercialAlquilerDescripcion(String estadoComercialAlquilerDescripcion) {
+		this.estadoComercialAlquilerDescripcion = estadoComercialAlquilerDescripcion;
+	}
+
+	public Date getFechaEstadoComercialVenta() {
+		return fechaEstadoComercialVenta;
+	}
+
+	public void setFechaEstadoComercialVenta(Date fechaEstadoComercialVenta) {
+		this.fechaEstadoComercialVenta = fechaEstadoComercialVenta;
+	}
+
+	public Date getFechaEstadoComercialAlquiler() {
+		return fechaEstadoComercialAlquiler;
+	}
+
+	public void setFechaEstadoComercialAlquiler(Date fechaEstadoComercialAlquiler) {
+		this.fechaEstadoComercialAlquiler = fechaEstadoComercialAlquiler;
+	}
+
+	public String getCanalPublicacionVentaCodigo() {
+		return canalPublicacionVentaCodigo;
+	}
+
+	public void setCanalPublicacionVentaCodigo(String canalPublicacionVentaCodigo) {
+		this.canalPublicacionVentaCodigo = canalPublicacionVentaCodigo;
+	}
+
+	public String getCanalPublicacionAlquilerCodigo() {
+		return canalPublicacionAlquilerCodigo;
+	}
+
+	public void setCanalPublicacionAlquilerCodigo(String canalPublicacionAlquilerCodigo) {
+		this.canalPublicacionAlquilerCodigo = canalPublicacionAlquilerCodigo;
+	}
+
+	public String getTributacionPropuestaClienteExentoIvaCod() {
+		return tributacionPropuestaClienteExentoIvaCod;
+	}
+
+	public void setTributacionPropuestaClienteExentoIvaCod(String tributacionPropuestaClienteExentoIvaCod) {
+		this.tributacionPropuestaClienteExentoIvaCod = tributacionPropuestaClienteExentoIvaCod;
+	}
+
+	public String getTributacionPropuestaClienteExentoIvaDesc() {
+		return tributacionPropuestaClienteExentoIvaDesc;
+	}
+
+	public void setTributacionPropuestaClienteExentoIvaDesc(String tributacionPropuestaClienteExentoIvaDesc) {
+		this.tributacionPropuestaClienteExentoIvaDesc = tributacionPropuestaClienteExentoIvaDesc;
+	}
+
+	public String getTributacionPropuestaVentaCod() {
+		return tributacionPropuestaVentaCod;
+	}
+
+	public void setTributacionPropuestaVentaCod(String tributacionPropuestaVentaCod) {
+		this.tributacionPropuestaVentaCod = tributacionPropuestaVentaCod;
+	}
+
+	public String getTributacionPropuestaVentaDesc() {
+		return tributacionPropuestaVentaDesc;
+	}
+
+	public void setTributacionPropuestaVentaDesc(String tributacionPropuestaVentaDesc) {
+		this.tributacionPropuestaVentaDesc = tributacionPropuestaVentaDesc;
+	}
+
+	public Boolean getCarteraConcentrada() {
+		return carteraConcentrada;
+	}
+
+	public void setCarteraConcentrada(Boolean carteraConcentrada) {
+		this.carteraConcentrada = carteraConcentrada;
+	}
+
+	public Boolean getActivoAAMM() {
+		return activoAAMM;
+	}
+
+	public void setActivoAAMM(Boolean activoAAMM) {
+		this.activoAAMM = activoAAMM;
+	}
+
+	public Boolean getActivoPromocionesEstrategicas() {
+		return activoPromocionesEstrategicas;
+	}
+
+	public void setActivoPromocionesEstrategicas(Boolean activoPromocionesEstrategicas) {
+		this.activoPromocionesEstrategicas = activoPromocionesEstrategicas;
+	}
+
+	public Date getFechaInicioConcurrencia() {
+		return fechaInicioConcurrencia;
+	}
+
+	public void setFechaInicioConcurrencia(Date fechaInicioConcurrencia) {
+		this.fechaInicioConcurrencia = fechaInicioConcurrencia;
+	}
+
+	public Date getFechaFinConcurrencia() {
+		return fechaFinConcurrencia;
+	}
+
+	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
+		this.fechaFinConcurrencia = fechaFinConcurrencia;
+	}
+
+	public String getCampanyaVenta() {
+		return campanyaVenta;
+	}
+
+	public void setCampanyaVenta(String campanyaVenta) {
+		this.campanyaVenta = campanyaVenta;
+	}
+
+	public String getCampanyaAlquiler() {
+		return campanyaAlquiler;
+	}
+
+	public void setCampanyaAlquiler(String campanyaAlquiler) {
+		this.campanyaAlquiler = campanyaAlquiler;
+	}
+
+	public String getTipoTransmisionDescripcion() {
+		return tipoTransmisionDescripcion;
+	}
+
+	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
+		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}	
 }

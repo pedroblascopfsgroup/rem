@@ -3,9 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -26,12 +24,10 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,13 +38,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -68,8 +64,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -79,9 +75,10 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
-import es.pfsgroup.plugin.rem.controller.GenericController;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -89,8 +86,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
+import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.DatosPBCDto;
+import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -100,7 +100,6 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -119,7 +118,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -145,17 +146,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
-import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
-import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
-import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
-import es.pfsgroup.plugin.rem.thread.EjecutarEnviarHonorariosUvemAsincrono;
-
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
 import io.jsonwebtoken.JwtBuilder;
@@ -246,12 +244,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired 
 	private ActivoPropietarioDao activoPropietarioDao;
-	
+
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+
 	@Autowired 
 	private PerfilApi perfilApi;
 		
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+    public AgendaAdapter agendaAdapter;
+
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 
 
 
@@ -738,7 +745,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			// del activo
 			if (!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
 				if (DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
-					listaTiposGestor.remove(tipoGestorComercialAlquileres);
+					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+						listaTiposGestor.remove(tipoGestorComercialAlquileres);	
+					}
 					listaTiposGestor.remove(tipoSupervisorComercialAlquileres);
 				}
 				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {
@@ -1008,15 +1017,40 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroMotivoAlquiler = genericDao.createFilter(FilterType.EQUALS, "alquiler", true);
 		Filter filtroMotivoVenta = genericDao.createFilter(FilterType.EQUALS, "venta", true);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		List<DDMotivoRechazoOferta> listaMotivoRechazo = null;
+		List<DDMotivoRechazoOferta> listaTiposFiltered = new ArrayList<DDMotivoRechazoOferta>();
 		
 		if(tipoRechazoOfertaCodigo.equals("A")) {
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+			Activo activo = oferta.getActivoPrincipal();
+
+			if(activo != null && DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo())){
+				Filter filtroVisibleCaixa = genericDao.createFilter(FilterType.EQUALS, "visibleCaixa", true);
+				return genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroVisibleCaixa);
+			} else if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoAlquiler);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}else if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
-				return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter, filtroMotivoVenta);
+				for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+					if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+						listaTiposFiltered.add(motivo);
+					}
+				}
+				return listaTiposFiltered;
 			}
 		}else if (tipoRechazoOfertaCodigo.equals("D")) {
-			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			listaMotivoRechazo = genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
+			for (DDMotivoRechazoOferta motivo : listaMotivoRechazo) {
+				if(!DDMotivoRechazoOferta.CODIGO_PENDIENTE_RECOMENDACION_INTERNA.equals(motivo.getCodigo())) {
+					listaTiposFiltered.add(motivo);
+				}
+			}
+			return listaTiposFiltered;
 		}
 
 		return new ArrayList<DDMotivoRechazoOferta>();
@@ -1367,7 +1401,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}else if(activo.getSubcartera()!=null && (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 							||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo()) ||
 									DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()) 
-								 || DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()))) {
+								 || DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()))
+									|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())) {
 				if(activo.getAdjNoJudicial() != null && activo.getAdjNoJudicial().getFechaPosesion()!=null) {
 					combo.add(tipoTituloNo);
 				}else {
@@ -1932,4 +1967,189 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				
 		return errorsList;
 	}	
+	
+	@Override
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
+
+		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
+		
+		if (DDCartera.CODIGO_CAIXA.equals(cartera)) {
+			Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+			Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
+				listaDDEstadoOferta.add(ddEstadoOferta);
+				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
+					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+				}
+			}
+		} else {
+			listaDDEstadoOferta.addAll(estadosOferta);
+		}
+
+		return listaDDEstadoOferta;
+	}
+
+	@Override
+	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera) {
+		
+		List<DDEstadosCiviles> estadosCiviles = genericDao.getList(DDEstadosCiviles.class);
+		List<DDEstadosCiviles> listaRetorno = new ArrayList<DDEstadosCiviles>();
+		
+		DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS,"codigo", codCartera));
+		
+		for (DDEstadosCiviles ddEstadosCiviles : estadosCiviles) {
+			listaRetorno.add(ddEstadosCiviles);
+			if (!DDCartera.isCarteraBk(cartera) && 
+					(DDEstadosCiviles.COD_SEPARADO_C4C.equals(ddEstadosCiviles.getCodigoC4C()) 
+							|| DDEstadosCiviles.COD_PAREJA_HECHO_C4C.equals(ddEstadosCiviles.getCodigoC4C()))) {
+				listaRetorno.remove(ddEstadosCiviles);
+			}
+		}						
+		return listaRetorno;
+		
+	}
+
+	@Override
+	public List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion) {
+		List<DDTipoOferta> tiposOferta = genericDao.getList(DDTipoOferta.class);
+		Activo activo = null;
+		String codigoCartera = codCartera;
+		
+		if (idAgrupacion != null) {
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+			activo = agrupacion != null ? agrupacion.getActivoPrincipal() : null;
+		} else if (idActivo != null)
+			activo = activoApi.get(idActivo);
+		
+		if (codigoCartera == null || codigoCartera.isEmpty())
+			codigoCartera = activo != null && activo.getCartera() != null ? activo.getCartera().getCodigo() : null;
+		
+		if(!DDCartera.CODIGO_CAIXA.equals(codigoCartera)) {
+			for (DDTipoOferta tipoOferta : tiposOferta) {
+				if (tipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
+					tiposOferta.remove(tipoOferta);
+					break;
+				}
+			}				
+		}else {
+			if (activo != null) {
+				Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, filterTipo);
+
+				if((pac.getAplicaComercializar() == null || pac.getAplicaComercializar() == 0)
+						|| ((activo.getEnTramite() != null && activo.getEnTramite() == 1))
+						|| (pac.getIncluidoEnPerimetro() == null || pac.getIncluidoEnPerimetro() == 0)) {
+					for(int i = tiposOferta.size()-1 ; i >= 0; i--) {
+						if(!DDTipoOferta.CODIGO_ALQUILER_NO_COMERCIAL.equals(tiposOferta.get(i).getCodigo())) {
+							tiposOferta.remove(i);						
+						}
+					}
+				}
+			}
+		}
+		
+		return tiposOferta;
+	}
+
+	@Override
+	public String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera){
+
+		MaestroDePersonas maestroDePersonas = null;
+
+		String idPersonaHayaCaixa = null;
+
+		if (codCartera == null || codSubCartera == null) {
+			maestroDePersonas = new MaestroDePersonas();
+
+			if (documentoProveedor != null)
+				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(documentoProveedor, codProveedorRem != null ? Long.parseLong(codProveedorRem) : null);
+
+		}else {
+			maestroDePersonas = new MaestroDePersonas(
+					gestorDocumentalAdapterApi.getMaestroPersonasByCarteraySubcarterayPropietario(
+							genericDao.get(DDCartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codCartera)),
+							genericDao.get(DDSubcartera.class,genericDao.createFilter(FilterType.EQUALS,"codigo",codSubCartera)),
+							null));
+
+			if (documentoInterlocutor != null)
+				idPersonaHayaCaixa = maestroDePersonas.getIdPersonaHayaByDocumento(documentoInterlocutor);
+
+		}
+		return idPersonaHayaCaixa;
+	}
+
+	@Override
+	public String getIdPersonaHayaSinCartera(String documentoInterlocutor){
+		return interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(documentoInterlocutor);
+	}
+
+	@Override
+	public List<DDEstadoOferta> getEstadosOfertaWeb() {
+		
+		List<DDEstadoOferta> listaDD = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaTiposFiltered = new ArrayList<DDEstadoOferta>();
+	
+		
+		for (DDEstadoOferta estado : listaDD) {
+			if (!DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estado.getCodigo()))
+				listaTiposFiltered.add(estado);
+		}
+
+		return listaTiposFiltered;
+	}
+
+	@Override
+	public List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia) {
+		if(Boolean.valueOf(esBankia)) {
+			Filter filtro = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI);
+			return genericDao.getList(DDTiposImpuesto.class, filtro);
+		}else {
+			Filter filtro1 = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI_CEUTA);
+			Filter filtro2 = genericDao.createFilter(FilterType.NOT_EQUALS,"codigo", DDTiposImpuesto.TIPO_IMPUESTO_IPSI_MELILLA);
+			return genericDao.getList(DDTiposImpuesto.class, filtro1,filtro2);
+		}
+		 
+	}
+	
+	@Override
+	public List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto) {
+		
+		List<DDSubtipoGasto> listaSubtipos = new ArrayList<DDSubtipoGasto>();
+
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", codigoTipoGasto);
+		Filter filterNoEsEnCaixa = genericDao.createFilter(FilterType.EQUALS, "gastoEnCaixa", false);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if (!Checks.esNulo(codigoTipoGasto) && !Checks.esNulo(codCartera)) {
+			if (filterTipo != null && filterNoEsEnCaixa != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera)) {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+			} else {
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado, filterNoEsEnCaixa);
+			}
+		} else if (!Checks.esNulo(codigoTipoGasto) && Checks.esNulo(codCartera)) {
+			listaSubtipos = genericDao.getListOrdered(DDSubtipoGasto.class, order, filterTipo, filtroBorrado);
+		}
+	
+		return listaSubtipos;	
+	}
+	
+	@Override
+	public Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception {
+		return agendaAdapter.save(calcularMapDatosPbc(dto));
+	}
+
+	private Map<String, String[]> calcularMapDatosPbc(AvanzarDatosPBCDto dto) {
+		Map<String,String[]> map = new HashMap<String,String[]>();
+		
+	    String[] idTarea = {dto.getIdTarea().toString()};
+	    String[] comboResultado = {dto.getComboResultado()};
+	
+	    map.put("idTarea", idTarea);
+	    map.put("comboResultado", comboResultado);
+	    
+	    return map;
+	}
+
 }

@@ -14,6 +14,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,26 +59,6 @@ import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
-import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoFoto;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
-import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VGridBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -122,6 +105,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 
 	@Resource
 	private Properties appProperties;
@@ -502,7 +488,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
-	public ModelAndView getFotosAgrupacionById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
+	public ModelAndView getFotosAgrupacionById(Long id, String tipoFoto, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();
@@ -518,35 +504,42 @@ public class AgrupacionController extends ParadiseJsonController {
 
 				for (int i = 0; i < listaFotos.size(); i++) {
 
-					try {
-
-						DtoFoto fotoDto = new DtoFoto();
-
-						if (listaFotos.get(i).getRemoteId() != null) {
-							BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
-						} else {
-							BeanUtils.copyProperty(fotoDto, "path",
-									"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
-						}
-
-						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
+					if (listaFotos.get(i).getTipoFoto() == null || (listaFotos.get(i).getTipoFoto() != null && listaFotos.get(i).getTipoFoto().getCodigo().equals(tipoFoto))) {
 						
-						BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
-						
-						if(listaFotos.get(i).getDescripcionFoto() != null) {
-							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
-							BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
-							if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
-								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
+						try {
+	
+							DtoFoto fotoDto = new DtoFoto();
+	
+							if (listaFotos.get(i).getRemoteId() != null) {
+								BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
+							} else {
+								BeanUtils.copyProperty(fotoDto, "path",
+										"/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
 							}
+	
+							BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
+							
+							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", DDSubtipoActivo.CODIGO_EN_CONSTRUCCION);
+							
+							if(listaFotos.get(i).getDescripcionFoto() != null) {
+								BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
+								BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
+								if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
+									BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
+								}
+							}
+							
+							if(listaFotos.get(i).getActivo() != null && listaFotos.get(i).getActivo().getNumActivo() != null) {
+								BeanUtils.copyProperty(fotoDto, "numeroActivo", listaFotos.get(i).getActivo().getNumActivo());
+							}
+	
+							listaDtoFotos.add(fotoDto);
+	
+						} catch (IllegalAccessException e) {
+							logger.error(e);
+						} catch (InvocationTargetException e) {
+							logger.error(e);
 						}
-
-						listaDtoFotos.add(fotoDto);
-
-					} catch (IllegalAccessException e) {
-						logger.error(e);
-					} catch (InvocationTargetException e) {
-						logger.error(e);
 					}
 
 				}
@@ -646,6 +639,10 @@ public class AgrupacionController extends ParadiseJsonController {
 							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
 						}
 					}
+					
+					if (!Checks.esNulo(listaFotos.get(i).getTipoFoto())) {
+						fotoDto.setCodigoTipoFoto(listaFotos.get(i).getTipoFoto().getCodigo());
+					}
 
 					listaDtoFotos.add(fotoDto);
 
@@ -674,15 +671,15 @@ public class AgrupacionController extends ParadiseJsonController {
 	 */
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
+		WebFileItem webFileItem = new WebFileItem();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFoto(fileItem);
+			String errores = activoAgrupacionApi.uploadFotos(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -697,15 +694,14 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFotoSubdivision(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView uploadFotosSubdivision(HttpServletRequest request, HttpServletResponse response){
 
 		ModelMap model = new ModelMap();
 
 		try {
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = activoAgrupacionApi.uploadFotoSubdivision(fileItem);
+			String errores = activoAgrupacionApi.uploadFotosSubdivision(webFileItemList);
 
 			model.put("errores", errores);
 			model.put("success", errores != null);
@@ -837,9 +833,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
-			boolean success = !Checks.esNulo(adapter.createOfertaAgrupacion(dtoOferta));
-			model.put("success", success);
+			Oferta oferta = adapter.createOfertaAgrupacion(dtoOferta);
+			boolean success = oferta != null;
 
+			model.put("success", success);
 		} catch (JsonViewerException jvex) {
 			model.put("msg", jvex.getMessage());
 			model.put("success", false);
@@ -1184,9 +1181,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView upload(HttpServletRequest request) {
 
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			agrupacionAdjuntos.uploadDocumento(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {

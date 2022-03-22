@@ -168,13 +168,15 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Boolean isGestorEdificaciones(Activo activo, Usuario usuario);
 
 	public void borrarGestorAdicionalEntidad(GestorEntidadDto dto);
-	
+
+	Usuario getUsuarioByTareaCaixa(String codTarea);
+
 	/**
 	 * Obtiene el usuario de grupo que realiza ciertas tareas del trámite comercial Apple
 	 * @param codigoTarea
 	 * @return
 	 */
-	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna);
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, Boolean isActivoJaguar, TareaExterna tareaExterna);
 	
 	public Usuario supervisorTareaApple(String codigoTarea);
 

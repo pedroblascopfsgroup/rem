@@ -78,6 +78,12 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name = "DD_EGA_CODIGO")
 	private String estadoGastoCodigo;
 	
+	@Column(name = "DD_DEG_DESCRIPCION")
+	private String destinatarioDescripcion;
+	
+	@Column(name = "DD_DEG_CODIGO")
+	private String destinatarioCodigo;
+	
 	@Column(name = "DD_EGA_DESCRIPCION")
 	private String estadoGastoDescripcion;
 	
@@ -218,6 +224,24 @@ public class VGastosProveedorExcel implements Serializable {
 	
 	@Column(name="DD_EAP_ID")
 	private String idEstAutProp;
+	
+	@Column(name = "FECHA_CREACION")
+	private Date fechaCrear;
+
+	@Column(name = "PARTICIPACION_GASTO")
+	private Double participacionGasto;
+
+	@Column(name = "GIC_FECHA_DEVENGO_ESPECIAL")
+	private Date fechaDevengoEspecial;
+
+	@Column(name = "GDE_IRPF_TIPO_IMPOSITIVO")
+	private Double irpfTipoImpositivo;
+
+	@Column(name = "GDE_IRPF_CUOTA")
+	private Double irpfCuota;
+	
+	@Column(name = "ID_ACTIVO_CAIXA")
+	private Long idActivoCaixa;
 	
 	
 	@Transient
@@ -377,6 +401,22 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setEstadoGastoDescripcion(String estadoGastoDescripcion) {
 		this.estadoGastoDescripcion = estadoGastoDescripcion;
+	}
+
+	public String getDestinatarioDescripcion() {
+		return destinatarioDescripcion;
+	}
+
+	public void setDestinatarioDescripcion(String destinatarioDescripcion) {
+		this.destinatarioDescripcion = destinatarioDescripcion;
+	}
+
+	public String getDestinatarioCodigo() {
+		return destinatarioCodigo;
+	}
+
+	public void setDestinatarioCodigo(String destinatarioCodigo) {
+		this.destinatarioCodigo = destinatarioCodigo;
 	}
 
 	public Long getNumGastoGestoria() {
@@ -770,6 +810,54 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setIdEstAutProp(String idEstAutProp) {
 		this.idEstAutProp = idEstAutProp;
+	}
+
+	public Date getFechaCrear() {
+		return fechaCrear;
+	}
+
+	public void setFechaCrear(Date fechaCrear) {
+		this.fechaCrear = fechaCrear;
+	}
+
+	public Double getParticipacionGasto() {
+		return participacionGasto;
+	}
+
+	public void setParticipacionGasto(Double participacionGasto) {
+		this.participacionGasto = participacionGasto;
+	}
+
+	public Date getFechaDevengoEspecial() {
+		return fechaDevengoEspecial;
+	}
+
+	public void setFechaDevengoEspecial(Date fechaDevengoEspecial) {
+		this.fechaDevengoEspecial = fechaDevengoEspecial;
+	}
+
+	public Double getIrpfTipoImpositivo() {
+		return irpfTipoImpositivo;
+	}
+
+	public void setIrpfTipoImpositivo(Double irpfTipoImpositivo) {
+		this.irpfTipoImpositivo = irpfTipoImpositivo;
+	}
+
+	public Double getIrpfCuota() {
+		return irpfCuota;
+	}
+
+	public void setIrpfCuota(Double irpfCuota) {
+		this.irpfCuota = irpfCuota;
+	}
+
+	public Long getIdActivoCaixa() {
+		return idActivoCaixa;
+	}
+
+	public void setIdActivoCaixa(Long idActivoCaixa) {
+		this.idActivoCaixa = idActivoCaixa;
 	}
 
 	

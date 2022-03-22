@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
@@ -23,25 +28,31 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("visitaManager")
 public class VisitaManager extends BusinessOperationOverrider<VisitaApi> implements VisitaApi {
 
+	private static final String REM3_URL = "rem3.base.url";
+	private static final String CONTACTOS_ENDPOINT = "rem3.endpoint.comercial.visita"; 
+	
 	protected static final Log logger = LogFactory.getLog(VisitaManager.class);
 
 	@Autowired
@@ -58,6 +69,21 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private HttpClientFacade httpClient;
+	
+	@Resource
+	private Properties appProperties;
+	
+	@Autowired
+	private GenericApi genericApi;
+	
+	@Autowired
+	private InterlocutorCaixaService interlocutorCaixaService;
+	
+	@Autowired
+	private InterlocutorGenericService interlocutorGenericService;
 
 	@Override
 	public String managerName() {
@@ -65,6 +91,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
 
 	@Override
 	public Visita getVisitaById(Long id) {
@@ -251,6 +278,24 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 				if (!Checks.esNulo(cliente)) {
+					InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
+						|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
+						if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
+							Activo activo = (Activo) genericDao.get(Activo.class,
+									genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
+							if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
+								String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
+								cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
+								genericDao.save(ClienteComercial.class,cliente);
+								iap.setIdPersonaHayaCaixa(idPersonaCaixa);
+								genericDao.save(InfoAdicionalPersona.class, iap);
+								errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
+							}
+						}
+					} else {
+						errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
+					}
 					visita.setCliente(cliente);
 				}
 			}
@@ -296,6 +341,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 								visitaDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
+					InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+					visita.setApiResponsable(apiResp);
+					if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
+							|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
+						MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+						apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
+						genericDao.save(ActivoProveedor.class,apiResp);
+						iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+						genericDao.save(InfoAdicionalPersona.class,iap);
+						errorsList.put("idResponsable", visitaDto.getIdProveedorRemResponsable().toString());
+					}else{
+						errorsList.put("idResponsable", visitaDto.getIdProveedorRemResponsable().toString());
+					}
 					visita.setApiResponsable(apiResp);
 				}
 			}
@@ -355,6 +413,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
 			}
 			
+			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
+				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
+			}
+
+			if(!Checks.esNulo(visitaDto.getTipoVisita())) {
+				DDTipoComercializacionVisita tipoVisita = genericDao.get(DDTipoComercializacionVisita.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getTipoVisita()));
+				visita.setTipoComVisita(tipoVisita);
+			}
+			
 			visitaDao.save(visita);
 			
 			//Si Webcom nos envia el idSalesforce despues de crear la visita la asociaremos a su comunicacion de GENCAT
@@ -383,6 +450,24 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 					if (!Checks.esNulo(cliente)) {
+						InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
+						if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
+								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
+							if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
+								Activo activo = (Activo) genericDao.get(Activo.class,
+										genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
+								if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
+									String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
+									cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
+									genericDao.save(ClienteComercial.class,cliente);
+									iap.setIdPersonaHayaCaixa(idPersonaCaixa);
+									genericDao.save(InfoAdicionalPersona.class, iap);
+									errorsList.put("idCliente", cliente.getIdClienteRem().toString());
+								}
+							}
+						} else {
+							errorsList.put("idCliente", cliente.getIdClienteRem().toString());
+						}
 						visita.setCliente(cliente);
 					}
 				}
@@ -450,6 +535,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 									visitaDto.getIdProveedorRemResponsable()));
 					if (!Checks.esNulo(apiResp)) {
+						InfoAdicionalPersona iap = apiResp.getInfoAdicionalPersona();
+						visita.setApiResponsable(apiResp);
+						if ((apiResp != null && apiResp.getIdPersonaHaya() == null)
+								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)){
+							MaestroDePersonas maestroDePersonas = new MaestroDePersonas();
+							apiResp.setIdPersonaHaya(maestroDePersonas.getIdPersonaHayaByDocumentoProveedor(apiResp.getDocIdentificativo(),apiResp.getCodigoProveedorRem()));
+							genericDao.save(ActivoProveedor.class,apiResp);
+							iap.setIdPersonaHayaCaixa(apiResp.getIdPersonaHaya());
+							genericDao.save(InfoAdicionalPersona.class,iap);
+							errorsList.put("idResponsable", visitaDto.getIdProveedorRemResponsable().toString());
+						}else{
+							errorsList.put("idResponsable", visitaDto.getIdProveedorRemResponsable().toString());
+						}
 						visita.setApiResponsable(apiResp);
 					}
 				} else {
@@ -526,6 +624,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			
 			if(!Checks.esNulo(visitaDto.getFechaReasignacionRealizadorOportunidad())) {
 				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
+			}
+			
+			if(!Checks.esNulo(visitaDto.getIdVisitaBC())) {
+				visita.setIdVisitaBC(visitaDto.getIdVisitaBC());
+			}
+
+			if(!Checks.esNulo(visitaDto.getTipoVisita())) {
+				DDTipoComercializacionVisita tipoVisita = genericDao.get(DDTipoComercializacionVisita.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getTipoVisita()));
+				visita.setTipoComVisita(tipoVisita);
 			}
 			
 			visitaDao.saveOrUpdate(visita);
@@ -623,9 +730,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto, JSONObject jsonFields)
+	public Map<String, ArrayList<Map<String, Object>>> saveOrUpdateVisitas(List<VisitaDto> listaVisitaDto, JSONObject jsonFields)
 			throws Exception {
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Map<String, ArrayList<Map<String, Object>>> listaRespuesta = new HashMap<String, ArrayList<Map<String, Object>>>();
+		ArrayList<Map<String, Object>> listaProcesadas = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> listaCompleta = new ArrayList<Map<String, Object>>();
 		VisitaDto visitaDto = null;
 		Map<String, Object> map = null;
 		HashMap<String, String> errorsList = null;
@@ -635,37 +744,53 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			errorsList = new HashMap<String, String>();
 			map = new HashMap<String, Object>();
 			visitaDto = listaVisitaDto.get(i);
-			
-			visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-			if (Checks.esNulo(visita)) {
-				errorsList = this.saveVisita(visitaDto);
-			} 
-			else {
-				errorsList = this.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
-			}
-
-			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				if (visita == null || visita.getId() == null) {
-					visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
-				}
-				if (visita != null) {
-					map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
-					map.put("idVisitaRem", visita.getNumVisitaRem());
+			try {
+				visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
+				if (Checks.esNulo(visita)) {
+					errorsList = this.saveVisita(visitaDto);
 				} else {
-					map.put("idVisitaWebcom", "");
-					map.put("idVisitaRem", "");
+					errorsList = this.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
 				}
 
-				map.put("success", true);
-			} else {
+				boolean checkErrores = checkErroresControladosVisitas(errorsList);
+				if (checkErrores) {
+					if (visita == null || visita.getId() == null) {
+						visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
+					}
+					if (visita != null) {
+						map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
+						map.put("idVisitaRem", visita.getNumVisitaRem());
+						if (errorsList.get("idCliente") != null) {
+							map.put("idCliente", errorsList.get("idCliente"));
+						}
+						if (errorsList.get("idResponsable") != null) {
+							map.put("idResponsable", errorsList.get("idResponsable"));
+						}
+					} else {
+						map.put("idVisitaWebcom", "");
+						map.put("idVisitaRem", "");
+					}
+
+					map.put("success", true);
+				} else {
+					map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
+					map.put("idVisitaRem", visitaDto.getIdVisitaRem());
+					map.put("success", false);
+					map.put("invalidFields", errorsList);
+				}
+				listaProcesadas.add(map);
+				listaCompleta.add(map);
+			}catch(Exception e){
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 				map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
+				listaCompleta.add(map);
 			}
-			listaRespuesta.add(map);
 
 		}
+		listaRespuesta.put("listaProcesadas", listaProcesadas);
+		listaRespuesta.put("listaCompleta", listaCompleta);
 		return listaRespuesta;
 	}
 
@@ -673,5 +798,100 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	public VBusquedaVisitasDetalle getVisitaDetalle(DtoVisitasFilter dtoVisitasFilter) {
 
 		return visitaDao.getVisitaDetalle(dtoVisitasFilter);
+	}
+	
+	@Override
+	public void llamarServicioContactos(Visita visita, JSONObject jsonFields) throws Exception {
+		String urlBase = null;
+		String endpoint = null;
+
+		JSONObject result = null;
+
+		urlBase = appProperties.getProperty(REM3_URL);
+		endpoint = urlBase + appProperties.getProperty(CONTACTOS_ENDPOINT) + "/" + visita.getNumVisitaRem();
+		try {
+			result = httpClient.processRequest(endpoint, "POST", null, "", 30000, "UTF-8");
+		}catch(HttpClientException e){
+			if(e.getResponseCode() != 200){
+				e.printStackTrace();
+				throw new HttpClientException(e.getMessage(), e.getResponseCode(), e);
+			}
+		}
+
+	}
+
+	private boolean esVisitaCaixaEnviar(Visita visita) {
+		if(visita != null
+				&& visita.getPrescriptor() != null
+				&& visita.getPrescriptor().getTipoProveedor() != null 
+				&& visita.getPrescriptor().getTipoProveedor().getCodigo() != null 
+				&& DDTipoProveedor.COD_OFICINA_BANKIA.equals(visita.getPrescriptor().getTipoProveedor().getCodigo())) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean checkErroresControladosVisitas(HashMap<String, String> errorsList) {
+		
+		if(!Checks.esNulo(errorsList) && errorsList.size() == 2
+				&& errorsList.containsKey("idCliente")
+				&& errorsList.containsKey("idResponsable")) {
+			return true;
+		}
+		else if(!Checks.esNulo(errorsList) && errorsList.size() == 1
+				&& (errorsList.containsKey("idCliente")
+				|| errorsList.containsKey("idResponsable"))) {
+			return true;
+		}
+		else if(!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void checkReplicarClienteProveedor(ArrayList<Map<String, Object>> errorList, VisitaDto visita, JSONObject jsonFields, Visita vis) throws Exception {
+		for(Map<String, Object> map : errorList) {
+			if(map.get("idVisitaWebcom") != null && visita.getIdVisitaWebcom() != null
+					&& visita.getIdVisitaWebcom().toString().equals(map.get("idVisitaWebcom").toString())){
+
+				if(map.get("idCliente") != null && visita.getIdClienteRem() != null
+						&& visita.getIdClienteRem().toString().equals(map.get("idCliente"))) {
+
+					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
+							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visita.getIdClienteRem()),
+							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
+
+					interlocutorCaixaService.callReplicateClientSyncVisitas(Long.parseLong(cliente.getId().toString()), CaixaBcRestClient.ID_CLIENTE, CaixaBcRestClient.KEY_FASE_UPDATE, true);
+				}
+				if(map.get("idResponsable") != null && visita.getIdProveedorRemResponsable() != null
+						&& visita.getIdProveedorRemResponsable().toString().equals(map.get("idResponsable"))) {
+
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visita.getIdProveedorRemResponsable()));
+
+					interlocutorCaixaService.callReplicateClientSyncVisitas(apiResp.getId(), CaixaBcRestClient.ID_PROVEEDOR, CaixaBcRestClient.KEY_FASE_UPDATE, true);
+				}
+				llamarServicioContactos(vis, jsonFields);
+			}
+
+		}
+	}
+
+	@Override
+	public void callLlamadasVisitas(ArrayList<Map<String, Object>> listaRespuesta, List<VisitaDto> listaVisitaDto, JSONObject jsonFields) throws Exception {
+
+		for (VisitaDto dto: listaVisitaDto) {
+			Visita visita = null;
+			try{
+				visita = this.getVisitaByIdVisitaWebcom(dto.getIdVisitaWebcom());
+			}catch(Exception e){
+			}
+			if(visita != null && esVisitaCaixaEnviar(visita)){
+				checkReplicarClienteProveedor(listaRespuesta, dto, jsonFields, visita);
+			}
+		}
+
 	}
 }

@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpediente;
+import es.pfsgroup.plugin.rem.model.VGridIntervinientes;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 @Repository("ExpedienteComercialDao")
@@ -180,6 +181,20 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 				.createQuery(hb.toString()).setParameter("numOferta", numOferta)
 				.list();
 
+	}
+	
+	@Override
+	public void flush() {
+		this.getSessionFactory().getCurrentSession().flush();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGridIntervinientes> getIntervinientesByOferta(Long numOferta) {
+
+		HQLBuilder hql = new HQLBuilder("from VGridIntervinientes where numOferta = :numOferta");		
+		return (List<VGridIntervinientes>) this.getSessionFactory().getCurrentSession()
+					.createQuery(hql.toString()).setParameter("numOferta", numOferta).list();
 	}
 	
 }

@@ -392,6 +392,9 @@ public class ExpedienteComercialAdapter {
 	public String uploadDocumento(WebFileItem webFileItem) throws Exception {
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
+		if (expedienteComercial == null) {
+			expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"numExpediente",Long.parseLong(webFileItem.getParameter("idEntidad"))));
+		}
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		List<Long> listaExpComercial = new ArrayList<Long>();
 		
@@ -416,8 +419,9 @@ public class ExpedienteComercialAdapter {
 						DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_FIRMADO_ADVISORY.equals(subtipoDocumento.getCodigo()) ||
 								DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_FIRMADO_PROPIEDAD.equals(subtipoDocumento.getCodigo())) &&
 						DDCartera.CODIGO_CARTERA_CERBERUS.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
-						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
-								DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()))) {
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) 
+								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_JAGUAR.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())  )) {
 					//Comprobamos que tengan lo subtipos de documentos apropiados.
 					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId(), false);
 					//Comprobamos que la oferta pertenezca un Bulk.

@@ -34,6 +34,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				title: HreRem.i18n('title.datos.inscripcion'),				
 				items :
 					[
+		                {
+							fieldLabel: HreRem.i18n('fieldlabel.nombre.registro'),
+		                	bind: {
+		                		value: '{datosRegistrales.nombreRegistro}',
+		                		hidden: '{!isCarteraBankia}',
+                                readOnly: true
+		                	},
+		                	maskRe: /^\d*$/
+		                },
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.provincia.registro'),
@@ -44,7 +53,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		store: '{comboProvincia}',
 			            	    value: '{datosRegistrales.provinciaRegistro}',
 			            	    readOnly: '{datosRegistrales.unidadAlquilable}',
-								rawValue: '{datosRegistrales.provinciaRegistroDescripcion}'
+								rawValue: '{datosRegistrales.provinciaRegistroDescripcion}',
+								hidden: '{isCarteraBankia}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -55,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.finca'),
 		                	bind: {
 		                		value: '{datosRegistrales.numFinca}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
 		                	}
 		                },	
 		                { 
@@ -70,7 +80,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     						listeners: {
 			                	change:  'onHanCambiadoSelect'
 			            	}
-				        }, 
+				        },
+		                { //Campo duplicado para que se vea bien al quitar los campos Caixa
+					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
+					 		bind: {
+					 			value: '{datosRegistrales.libro}',
+					 			readOnly: '{isCarteraBankiayUnidadAlquilable}',
+                                hidden: '{!isCarteraBankia}'
+					 		}
+						},
 						{
 							xtype: 'comboboxfieldbasedd',
 							fieldLabel: HreRem.i18n('fieldlabel.poblacion.registro'),
@@ -81,7 +99,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}',
 			            		readOnly: '{datosRegistrales.unidadAlquilable}',
-								rawValue: '{datosRegistrales.poblacionRegistroDescripcion}'
+								rawValue: '{datosRegistrales.poblacionRegistroDescripcion}',
+		                		hidden: '{isCarteraBankia}'
 			            	}
                       },
 		                { 
@@ -117,7 +136,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 										labelWidth:	200,
 										reference: 'poblacionAnterior',
 						            	bind: {
-						            		store: '{comboMunicipio}',
+						            		store: '{comboMunicipioAnterior}',
 						            		value: '{datosRegistrales.localidadAnteriorCodigo}',
 						            		readOnly: '{datosRegistrales.unidadAlquilable}',
 											rawValue: '{datosRegistrales.localidadAnteriorDescripcion}'
@@ -148,11 +167,21 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
 								]
 				        },
+						{ //Campo duplicado para que se vea bien al quitar los campos Caixa
+							fieldLabel: HreRem.i18n('fieldlabel.folio'),
+							colspan: 2,
+							bind: {
+								value: '{datosRegistrales.folio}',
+								readOnly: '{isCarteraBankiayUnidadAlquilable}',
+                                hidden: '{!isCarteraBankia}'
+							}
+		                },
 		                { 
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
 		                	bind: {
 		                		value: '{datosRegistrales.numRegistro}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}',
+		                		hidden: '{isCarteraBankia}'
 		                	},
 		                	maskRe: /^\d*$/
 		                },
@@ -168,7 +197,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
 		                	bind: {
 		                		value: '{datosRegistrales.tomo}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
 		                	}
                         },
 		                { 
@@ -189,7 +218,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		colspan: 2,
 					 		bind: {
 					 			value: '{datosRegistrales.libro}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{isCarteraBankia}'
 					 		}
 						},
 						{ 
@@ -197,7 +227,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							colspan: 2,
 							bind: {
 								value: '{datosRegistrales.folio}',
-								readOnly: '{datosRegistrales.unidadAlquilable}'
+								readOnly: '{datosRegistrales.unidadAlquilable}',
+                                hidden: '{isCarteraBankia}'
 							}
 		                }
 					]
@@ -212,7 +243,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					
 						{
 				        	xtype:'fieldset',
-				        	height: 200,
+				        	height: 260,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -237,6 +268,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                				bind: '{datosRegistrales.superficieUtil}'
 					                },
 					                { 
+										xtype: 'numberfieldbase',
+										reference: 'superficieParcelaUtil',
+								 		symbol: HreRem.i18n("symbol.m2"),
+										fieldLabel: HreRem.i18n('fieldlabel.superficie.parcela.util'),
+		                				bind: {
+		                					value: '{datosRegistrales.superficieParcelaUtil}',
+		                					hidden: '{!isCarteraBankia}'
+		                					}
+					                },
+					                { 
 					                	xtype: 'numberfieldbase',
 					                	reference: 'superficieElementosComunes',
 								 		symbol: HreRem.i18n("symbol.m2"),
@@ -248,6 +289,20 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.parcela.no.ocupada.edificacion'),
 								 		bind: '{datosRegistrales.superficieParcela}'
+									},
+									{ 
+								 		xtype: 'numberfieldbase',
+								 		reference: 'superficieBajoRasanteRef',
+								 		symbol: HreRem.i18n("symbol.m2"),
+								 		fieldLabel: HreRem.i18n('fieldlabel.superficie.bajo.rasante'),								 		
+								 		bind: '{datosRegistrales.superficieBajoRasante}'
+									},
+									{ 
+								 		xtype: 'numberfieldbase',
+								 		reference: 'superficieSobreRasanteRef',
+								 		symbol: HreRem.i18n("symbol.m2"),
+								 		fieldLabel: HreRem.i18n('fieldlabel.superficie.sobre.rasante'),								 		
+								 		bind: '{datosRegistrales.superficieSobreRasante}'
 									}
 		
 								]
@@ -255,7 +310,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        
 				        {
 				        	xtype:'fieldset',
-				        	height: 200,
+				        	height: 260,
 				        	margin: '0 10 10 0',
 				        	layout: {
 						        type: 'table',
@@ -308,7 +363,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        {
 				        	xtype:'fieldset',
 				        	title: HreRem.i18n('fieldlabel.obra.nueva'),
-				        	height: 200,
+				        	height: 260,
 				        	margin: '0 0 10 0',
 				        	layout: {
 						        type: 'table',
@@ -362,7 +417,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		store: '{storeTituloOrigenActivo}',
 		            		value: '{datosRegistrales.tipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+//		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+		            		readOnly: '{isCarteraBankiayUnidadAlquilable}',
 							rawValue: '{datosRegistrales.tipoTituloDescripcion}'
 		            	},
 		            	listeners: {
@@ -376,7 +432,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		store: '{comboSubtipoTitulo}',
 		            		value: '{datosRegistrales.subtipoTituloCodigo}',
-		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+//		            		readOnly: '{datosRegistrales.unidadAlquilable}',
+		            		readOnly: '{isCarteraBankiayUnidadAlquilable}',
 							rawValue: '{datosRegistrales.subtipoTituloDescripcion}'
 		            	},
 		            	listeners:{
@@ -401,7 +458,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		
 		            		store: '{storeOrigenAnteriorActivo}',
-		            		hidden: '{!mostrarCamposDivarian}',
+		            		hidden: '{!mostrarCamposDivarianAndJaguar}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}',
 							rawValue: '{datosRegistrales.origenAnteriorActivoDescripcion}'
 		            	}
@@ -424,7 +481,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
-				        	hidden: '{!mostrarCamposDivarianandBbva}',
+				        	hidden: '{!mostrarCamposDivarianAndBbvaAndJaguar}',
 				        	value: '{datosRegistrales.fechaTituloAnterior}'
 				        }
 				       
@@ -440,6 +497,33 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        		readOnly:'{!isCarteraBbva}',
 			        		value:'{datosRegistrales.sociedadPagoAnterior}',
 							rawValue:'{datosRegistrales.sociedadPagoAnteriorDescripcion}'
+			        	}
+			        },
+			      //ESTOS COMBOS APARECEN PARA LOS ACTIVOS DE CAIXA
+					{
+			        	xtype: 'comboboxfieldbasedd',
+			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.origen'),
+			        	reference:'sociedadOrigenRef',
+			        	
+			        	bind: {			        		
+			        		store: '{comboSociedadOrigenCaixa}',
+			        		hidden: '{!isCarteraBankia}',
+			        		readOnly: true,
+			        		value:'{datosRegistrales.sociedadOrigenCodigo}',
+							rawValue:'{datosRegistrales.sociedadOrigenDescripcion}'
+			        	}
+			        },
+					{
+			        	xtype: 'comboboxfieldbasedd',
+			        	fieldLabel: HreRem.i18n('fieldlabel.banco.origen'),
+			        	reference:'sociedadOrigenRef',
+			        	
+			        	bind: {			        		
+			        		store: '{comboBancoOrigenCaixa}',
+			        		hidden: '{!isCarteraBankia}',
+			        		readOnly: true,
+			        		value:'{datosRegistrales.bancoOrigenCodigo}',
+							rawValue:'{datosRegistrales.bancoOrigenDescripcion}'
 			        	}
 			        }
 				]},
@@ -524,6 +608,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        },
 					        {   text: 'Tipo propietario', 
 					        	dataIndex: 'tipoPropietario',
+					        	flex:1 
+					        },
+					        {   text: HreRem.i18n('fieldlabel.anyo.concesion'), 
+					        	dataIndex: 'anyoConcesion',
+					        	flex:1 
+					        },
+					        {   text: HreRem.i18n('fiedlabel.fecha.fin.concesion'), 
+					        	dataIndex: 'fechaFinConcesion',
 					        	flex:1 
 					        }	               	        
 					    ],
@@ -723,7 +815,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.auto.adjudicacion'),
 								bind: {
 									value: '{datosRegistrales.fechaAdjudicacion}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{datosRegistrales.unidadAlquilable}',
+									readOnly: '{isCarteraBankia}'
 								}
                                  
 			                },
@@ -733,7 +826,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaDecretoFirme}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{datosRegistrales.unidadAlquilable}',
+									readOnly: '{isCarteraBankia}'
 								}
                                  
 			                },
@@ -752,7 +846,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
-									readOnly: '{isReadOnlyFechaRealizacionPosesion}',
+									readOnly: '{isCarteraBankiaeIsReadOnlyFechaRealizacionPosesion}',
 									disabled: '{isCarteraLiberbank}'
 								}
 			                },
@@ -773,7 +867,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaSenalamientoLanzamiento}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								}
 			                },
 			                {
@@ -782,7 +876,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionLanzamiento}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								}
 			                },
 			                {
@@ -810,7 +904,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion.moratoria'),			                	
 								bind: {
 									value: '{datosRegistrales.fechaResolucionMoratoria}',
-									readOnly: '{datosRegistrales.unidadAlquilable}'
+									readOnly: '{isCarteraBankiayUnidadAlquilable}'
 								},
 								maxValue:null
 								
@@ -834,7 +928,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            		store: '{comboTiposJuzgadoPlaza}',
 				            		value: '{datosRegistrales.tipoJuzgadoCodigo}',
 				            		readOnly: '{datosRegistrales.unidadAlquilable}',
-									rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}'
+									rawValue: '{datosRegistrales.tipoJuzgadoDescripcion}',
+									disabled: '{!datosRegistrales.tipoPlazaCodigo}'
 				            	}
 							},
 			                {
@@ -858,7 +953,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.numero.autos'),
 			                	bind: {
 			                		value: '{datosRegistrales.numAuto}',
-			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
+//			                		readOnly: '{datosRegistrales.unidadAlquilable}'
 			                	}
 			                },
 			                { 
@@ -932,7 +1028,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		reference: 'fechaTitulo',
 						 		bind: {
 						 			value: '{datosRegistrales.fechaTitulo}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+//						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 			readOnly: '{isCarteraBankiayUnidadAlquilable}'
 						 		}
 							},
 							{
@@ -949,7 +1046,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion'),
 						 		bind: {
 						 			value: '{datosRegistrales.valorAdquisicion}',
-						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 			readOnly: '{isCarteraBankiayUnidadAlquilable}'
+//						 			readOnly: '{datosRegistrales.unidadAlquilable}'
 						 		}
 							},
 			                { 
@@ -982,7 +1080,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		bind: {
 						 			value: '{datosRegistrales.fechaPosesion}',
 						 			readOnly: '{isGestorActivosAndSuper}',
-						 			hidden: '{!isSubcarteraCerberus}'
+						 			hidden: '{!isSubcarteraCerberusOrJaguar}'
 						 		}
 
 							},
@@ -1060,6 +1158,51 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     	me.callParent();
 
 	},
+
+	getErrorsExtendedFormBase: function() {
+
+   		var me = this,
+   		errores = [],
+   		error,   		
+   		provinciaRegistro = me.down("[reference=provinciaRegistro]"),
+   		codigoProvinciaDomicilio = me.viewWithModel.getViewModel().get('activo.provinciaCodigo'),
+   		idufir = me.down("[reference=idufir]"),
+   		fechaTitulo = me.down("[reference=fechaTitulo]"),
+   		fechaFirmezaTitulo = me.down("[reference=fechaFirmezaTitulo]"),
+   		fieldsetNoJudicial = me.down("[reference=noJudicial]"),
+   		fieldsetJudicial = me.down("[reference=judicial]"),
+   		fechaFirmezaAutoAdjudicacion = me.down("[reference=fechaFirmezaAutoAdjudicacion]"),
+   		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
+   		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
+
+   		motivoCalNegativa = me.down("[reference=itemselMotivo]");
+   		superficieParcelaUtil = me.down("[reference=superficieParcelaUtil]");
+
+   		if(provinciaRegistro.isVisible() && provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
+   			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
+   			errores.push(error);
+   			provinciaRegistro.markInvalid(error); 
+   		}
+
+   		if(fieldsetNoJudicial.isVisible()){
+	   		if(!Ext.isEmpty(fechaFirmezaTitulo.getValue()) && fechaFirmezaTitulo.getValue() < fechaTitulo.getValue()) {
+	   			error = HreRem.i18n("txt.validacion.fechafirmezatitulo.menor.fechatitulo");
+	   			errores.push(error);
+	   			fechaFirmezaTitulo.markInvalid(error);
+	   		}
+   		}
+
+   		if(fieldsetJudicial.isVisible()){
+   			if(!Ext.isEmpty(fechaFirmezaAutoAdjudicacion.getValue()) &&  fechaAutoAdjudicacion.getValue() > fechaFirmezaAutoAdjudicacion.getValue()) {
+   				error = HreRem.i18n("txt.validacion.fechaAutoAdjudicacion.mayor.fechaFirmezaAutoAdjudicacion");
+	   			errores.push(error);
+	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
+
+   			}
+   		}
+
+   		me.addExternalErrors(errores);
+   },
    
    funcionRecargar: function() {
 		var me = this; 

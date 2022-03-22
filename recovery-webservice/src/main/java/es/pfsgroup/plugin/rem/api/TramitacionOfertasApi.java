@@ -5,17 +5,23 @@ import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.DtoSaveAndReplicateResult;
+
 
 public interface TramitacionOfertasApi {
 
 	String getSubtipoTrabajoByOferta(Oferta oferta);
 
 	boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion,Boolean asincrono) throws JsonViewerException, Exception, Error;
+
+	DtoSaveAndReplicateResult saveOfertaAndCheckIfReplicate(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono) throws JsonViewerException, Exception, Error;
+
 
 	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce,
 			Activo activo) throws Exception;
@@ -31,4 +37,6 @@ public interface TramitacionOfertasApi {
 	String calcularComiteBBVA(Oferta oferta);
 
 	boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error;
+
+	CompradorExpediente setInterlocutorOferta(CompradorExpediente cex, boolean isPrincipal, Oferta oferta);
 }

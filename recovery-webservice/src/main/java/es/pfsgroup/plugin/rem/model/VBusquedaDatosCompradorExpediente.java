@@ -243,8 +243,89 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
 	private String numeroClienteUrsusBhConyuge;
 	
+	@Column(name = "C4C_ID")
+	private String idBC4C;
 	
+	@Column(name = "COM_FECHA_NACIOCONST")
+	private Date fechaNacimientoConstitucion;
 
+	@Column(name = "COD_ESTADO_CONTRASTE")
+	private String codEstadoContraste;
+	
+	@Column(name = "DESC_ESTADO_CONTRASTE")
+	private String descripcionEstadoContraste;
+	
+	
+	@Column(name="COM_FORMA_JURIDICA")
+    private String formaJuridica;
+	
+	@Column(name="CEX_FECHA_NACIMIENTO_REPR")
+    private Date fechaNacimientoRepresentante;
+	
+	@Column(name="DD_LOC_CODIGO_CEX")
+    private String localidadNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_LOC_DESCRIPCION_CEX")
+    private String localidadNacimientoRepresentanteDescripcion;
+	
+	@Column(name="DD_PAI_CODIGO_CEX")
+    private String paisNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_PAI_DESCRIPCION_CEX")
+    private String paisNacimientoRepresentanteDescripcion;
+	
+	@Column(name="CEX_USUFRUCTUARIO")
+    private Integer usufructuario;
+	
+	@Column(name="DD_LOC_CODIGO_COM")
+    private String localidadNacimientoCompradorCodigo;
+	
+	@Column(name="DD_LOC_DESCRIPCION_COM")
+    private String localidadNacimientoCompradorDescripcion;
+	
+	@Column(name="COM_PRP")
+    private Boolean compradorPrp;
+	
+	@Column(name="CEX_PRP")
+    private Boolean representantePrp;
+
+	@Column(name="DD_VIC_CODIGO")
+    private String vinculoCaixaCodigo;
+	
+	@Column(name="DD_PAI_CODIGO_NAC_COM")
+    private String paisNacimientoCompradorCodigo;
+	
+	@Column(name="DD_PAI_DESCRIPCION_NAC_COM")
+    private String paisNacimientoCompradorDescripcion;
+	
+	@Column(name="DD_PRV_CODIGO_NAC_REP")
+    private String provinciaNacimientoRepresentanteCodigo;
+	
+	@Column(name="DD_PRV_DESCRIPCION_NAC_REP")
+    private String provinciaNacimientoRepresentanteDescripcion;
+	
+	@Column(name="DD_PRV_CODIGO_NAC_COM")
+    private String provinciaNacimientoCompradorCodigo;
+	
+	@Column(name="DD_PRV_DESCRIPCION_NAC_COM")
+    private String provinciaNacimientoCompradorDescripcion;
+	
+	@Column(name="CEX_SOCIEDAD")
+    private String sociedad;
+	
+	@Column(name="CEX_OFICINA_TRABAJO")
+    private String oficinaTrabajo;
+	
+	@Column(name="CEX_NACIONALIDAD_PAI")
+    private String nacionalidadCodigo;
+	
+	@Column(name="CEX_NACIONALIDAD_PAI_RPR")
+    private String nacionalidadRprCodigo;
+	
+	@Column(name="ECO_EDICION_COMPRADORES_CBX")
+    private String motivoEdicionCompradores;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -838,6 +919,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
+	
+	public String getCodEstadoContraste() {
+		return codEstadoContraste;
+	}
+
+	public void setCodEstadoContraste(String codEstadoContraste) {
+		this.codEstadoContraste = codEstadoContraste;
+	}
+
+	public String getDescripcionEstadoContraste() {
+		return descripcionEstadoContraste;
+	}
+
+	public void setDescripcionEstadoContraste(String descripcionEstadoContraste) {
+		this.descripcionEstadoContraste = descripcionEstadoContraste;
+	}
 
 	public Long getVcexId() {
 		return vcexId;
@@ -846,4 +943,209 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setCexId(Long vcexId) {
 		this.vcexId = vcexId;
 	}
+
+	public String getIdBC4C() {
+		return idBC4C;
+	}
+
+	public void setIdBC4C(String idBC4C) {
+		this.idBC4C = idBC4C;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public String getFormaJuridica() {
+		return formaJuridica;
+	}
+
+	public void setFormaJuridica(String formaJuridica) {
+		this.formaJuridica = formaJuridica;
+	}
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+	public Integer getUsufructuario() {
+		return usufructuario;
+	}
+
+	public void setUsufructuario(Integer usufructuario) {
+		this.usufructuario = usufructuario;
+	}
+
+	public Boolean getCompradorPrp() {
+		return compradorPrp;
+	}
+
+	public void setCompradorPrp(Boolean compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public String getLocalidadNacimientoRepresentanteCodigo() {
+		return localidadNacimientoRepresentanteCodigo;
+	}
+
+	public void setLocalidadNacimientoRepresentanteCodigo(String localidadNacimientoRepresentanteCodigo) {
+		this.localidadNacimientoRepresentanteCodigo = localidadNacimientoRepresentanteCodigo;
+	}
+
+	public String getLocalidadNacimientoRepresentanteDescripcion() {
+		return localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public void setLocalidadNacimientoRepresentanteDescripcion(String localidadNacimientoRepresentanteDescripcion) {
+		this.localidadNacimientoRepresentanteDescripcion = localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public String getPaisNacimientoRepresentanteCodigo() {
+		return paisNacimientoRepresentanteCodigo;
+	}
+
+	public void setPaisNacimientoRepresentanteCodigo(String paisNacimientoRepresentanteCodigo) {
+		this.paisNacimientoRepresentanteCodigo = paisNacimientoRepresentanteCodigo;
+	}
+
+	public String getPaisNacimientoRepresentanteDescripcion() {
+		return paisNacimientoRepresentanteDescripcion;
+	}
+
+	public void setPaisNacimientoRepresentanteDescripcion(String paisNacimientoRepresentanteDescripcion) {
+		this.paisNacimientoRepresentanteDescripcion = paisNacimientoRepresentanteDescripcion;
+	}
+
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+
+	public Boolean getRepresentantePrp() {
+		return representantePrp;
+	}
+
+	public void setRepresentantePrp(Boolean representantePrp) {
+		this.representantePrp = representantePrp;
+	}
+
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}
+
+	public String getPaisNacimientoCompradorDescripcion() {
+		return paisNacimientoCompradorDescripcion;
+	}
+
+	public void setPaisNacimientoCompradorDescripcion(String paisNacimientoCompradorDescripcion) {
+		this.paisNacimientoCompradorDescripcion = paisNacimientoCompradorDescripcion;
+	}
+
+	public String getProvinciaNacimientoRepresentanteCodigo() {
+		return provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public void setProvinciaNacimientoRepresentanteCodigo(String provinciaNacimientoRepresentanteCodigo) {
+		this.provinciaNacimientoRepresentanteCodigo = provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public String getProvinciaNacimientoRepresentanteDescripcion() {
+		return provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public void setProvinciaNacimientoRepresentanteDescripcion(String provinciaNacimientoRepresentanteDescripcion) {
+		this.provinciaNacimientoRepresentanteDescripcion = provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public String getProvinciaNacimientoCompradorCodigo() {
+		return provinciaNacimientoCompradorCodigo;
+	}
+
+	public void setProvinciaNacimientoCompradorCodigo(String provinciaNacimientoCompradorCodigo) {
+		this.provinciaNacimientoCompradorCodigo = provinciaNacimientoCompradorCodigo;
+	}
+
+	public String getProvinciaNacimientoCompradorDescripcion() {
+		return provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setProvinciaNacimientoCompradorDescripcion(String provinciaNacimientoCompradorDescripcion) {
+		this.provinciaNacimientoCompradorDescripcion = provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setVcexId(Long vcexId) {
+		this.vcexId = vcexId;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public String getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(String nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public String getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
+	}
+
+	public String getMotivoEdicionCompradores() {
+		return motivoEdicionCompradores;
+	}
+
+	public void setMotivoEdicionCompradores(String motivoEdicionCompradores) {
+		this.motivoEdicionCompradores = motivoEdicionCompradores;
+	}	
+	
 }

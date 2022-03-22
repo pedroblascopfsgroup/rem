@@ -8,10 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -25,17 +29,14 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -62,12 +63,6 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -79,6 +74,11 @@ import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import javassist.expr.NewArray;
+
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import javax.annotation.Resource;
 
 @Service("activoAgrupacionManager")
 public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
@@ -122,6 +122,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+
+	@Autowired
+	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -218,58 +224,54 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFoto")
+	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotos")
 	@Transactional(readOnly = false)
-	public String uploadFoto(WebFileItem fileItem) {
+	public String uploadFotos(List<WebFileItem> webFileItemList) {
 
-		Long idAgrupacion = Long.parseLong(fileItem.getParameter("idEntidad"));
-		ActivoAgrupacion agrupacion = this.get(idAgrupacion);
-		if(agrupacion != null) {
-			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
-			ActivoFoto activoFoto = null;
-			FileResponse fileReponse = null;
-			try {
-				if (gestorDocumentalFotos.isActive()) {
-					
-					if (fileItem.getParameter("codigoDescripcionFoto") != null) {
+		for(WebFileItem webFileItem : webFileItemList) {
+			Long idAgrupacion = Long.parseLong(webFileItem.getParameter("idEntidad"));
+			ActivoAgrupacion agrupacion = this.get(idAgrupacion);
+			if(agrupacion != null) {
+				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
+				ActivoFoto activoFoto = null;
+				FileResponse fileReponse = null;
+				try {
+					if (gestorDocumentalFotos.isActive()) {
 						
-						DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto")));
-						
-						if (descripcionFoto != null ) {
-							fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),fileItem.getFileItem().getFileName(),
-								PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden);
+						if (webFileItem.getParameter("codigoDescripcionFoto") != null) {
+							
+							DDDescripcionFotoActivo descripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto")));
+							
+							if (descripcionFoto != null ) {
+								fileReponse = gestorDocumentalFotos.upload(webFileItem.getFileItem().getFile(),webFileItem.getFileItem().getFileName(),
+									PROPIEDAD.AGRUPACION, idAgrupacion, null, descripcionFoto.getDescripcion(), null, null, orden);
+							}
+		
 						}
-	
+						activoFoto = new ActivoFoto(fileReponse.getData());
+		
+					} else {
+						activoFoto = new ActivoFoto(webFileItem.getFileItem());
+						activoFoto.setOrden(orden);
 					}
-					activoFoto = new ActivoFoto(fileReponse.getData());
-	
-				} else {
-					activoFoto = new ActivoFoto(fileItem.getFileItem());
-					activoFoto.setOrden(orden);
+		
+					activoFoto.setAgrupacion(agrupacion);
+					activoFoto.setTamanyo(webFileItem.getFileItem().getLength());
+					activoFoto.setNombre(webFileItem.getFileItem().getFileName());
+					activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+					activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
+					activoFoto.setPrincipal(true);		
+					activoFoto.setFechaDocumento(new Date());
+					Auditoria.save(activoFoto);
+					agrupacion.getFotos().add(activoFoto);
+		
+					activoAgrupacionDao.save(agrupacion);
+				} catch (Exception e) {
+		
 				}
-	
-				activoFoto.setAgrupacion(agrupacion);
-	
-				activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-	
-				activoFoto.setNombre(fileItem.getFileItem().getFileName());
-	
-				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
-				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
-	
-				activoFoto.setPrincipal(true);
-	
-				activoFoto.setFechaDocumento(new Date());
-	
-				Auditoria.save(activoFoto);
-	
-				agrupacion.getFotos().add(activoFoto);
-	
-				activoAgrupacionDao.save(agrupacion);
-			} catch (Exception e) {
-	
 			}
 		}
+		
 		return "success";
 
 	}
@@ -365,88 +367,82 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotoSubdivision")
+	@BusinessOperation(overrides = "activoAgrupacionManager.uploadFotosSubdivision")
 	@Transactional(readOnly = false)
-	public String uploadFotoSubdivision(WebFileItem fileItem) {
+	public String uploadFotosSubdivision(List<WebFileItem> webFileItemList) {
 
-		Long subdivisionId = Long.parseLong(fileItem.getParameter("id"));
-		Long agrupacionId = Long.parseLong(fileItem.getParameter("agrId"));
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
-		TIPO tipo = null;
-		SITUACION situacion;
-		PRINCIPAL principal = null;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-		FileResponse fileReponse = null;
-		ActivoFoto activoFoto = null;
-		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-		orden++;
-		try {
-			//el gestor documental no esta activo en local/inte, para probar negarlo
-			if (gestorDocumentalFotos.isActive()) {
-				
-				if (tipoFoto.getCodigo().equals("01")) {
-					tipo = TIPO.WEB;
-				} else if (tipoFoto.getCodigo().equals("02")) {
-					tipo = TIPO.TECNICA;
-				} else if (tipoFoto.getCodigo().equals("03")) {
-					tipo = TIPO.TESTIGO;
-				}
-				if (Boolean.valueOf(fileItem.getParameter("principal"))) {
-					principal = PRINCIPAL.SI;
-				} else {
-					principal = PRINCIPAL.NO;
-				}
-				if (Boolean.valueOf(fileItem.getParameter("interiorExterior"))) {
-					situacion = SITUACION.INTERIOR;
-				} else {
-					situacion = SITUACION.EXTERIOR;
-				}
-				
-				if (fileItem.getParameter("codigoDescripcionFoto") != null) {
-				
-					fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
-							tipo,principal,situacion, orden);
+		for(WebFileItem webFileItem : webFileItemList) {
+			Long subdivisionId = Long.parseLong(webFileItem.getParameter("id"));
+			Long agrupacionId = Long.parseLong(webFileItem.getParameter("agrId"));
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
+			TIPO tipo = null;
+			SITUACION situacion;
+			PRINCIPAL principal = null;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+			FileResponse fileReponse = null;
+			ActivoFoto activoFoto = null;
+			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
+			orden++;
+			try {
+				//el gestor documental no esta activo en local/inte, para probar negarlo
+				if (gestorDocumentalFotos.isActive()) {
 					
+					if (tipoFoto.getCodigo().equals("01")) {
+						tipo = TIPO.WEB;
+					} else if (tipoFoto.getCodigo().equals("02")) {
+						tipo = TIPO.TECNICA;
+					} else if (tipoFoto.getCodigo().equals("03")) {
+						tipo = TIPO.TESTIGO;
+					}
+					if (Boolean.valueOf(webFileItem.getParameter("principal"))) {
+						principal = PRINCIPAL.SI;
+					} else {
+						principal = PRINCIPAL.NO;
+					}
+					if (Boolean.valueOf(webFileItem.getParameter("interiorExterior"))) {
+						situacion = SITUACION.INTERIOR;
+					} else {
+						situacion = SITUACION.EXTERIOR;
+					}
+					
+					if (webFileItem.getParameter("codigoDescripcionFoto") != null) {
+					
+						fileReponse = gestorDocumentalFotos.uploadSubdivision(webFileItem.getFileItem().getFile(),
+								webFileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
+								genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
+								tipo,principal,situacion, orden);
+						
+					}
+						 
+					activoFoto = new ActivoFoto(fileReponse.getData());
+
+				} else {
+					activoFoto = new ActivoFoto(webFileItem.getFileItem());
+					activoFoto.setOrden(orden);
 				}
-					 
-				activoFoto = new ActivoFoto(fileReponse.getData());
 
-			} else {
-				activoFoto = new ActivoFoto(fileItem.getFileItem());
-				activoFoto.setOrden(orden);
+				activoFoto.setSubdivision(subdivisionId);
+				activoFoto.setAgrupacion(agrupacion);
+				activoFoto.setTamanyo(webFileItem.getFileItem().getLength());
+				activoFoto.setNombre(webFileItem.getFileItem().getFileName());				
+				activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
+				activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
+				activoFoto.setPrincipal(Boolean.valueOf(webFileItem.getParameter("principal")));			
+				activoFoto.setTipoFoto(tipoFoto);			
+				activoFoto.setInteriorExterior(Boolean.valueOf(webFileItem.getParameter("interiorExterior")));
+				activoFoto.setFechaDocumento(new Date());			
+				Auditoria.save(activoFoto);
+				agrupacion.getFotos().add(activoFoto);
+
+				genericDao.save(ActivoAgrupacion.class, agrupacion);
+				
+			} catch (Exception e) {
+				logger.error(e);
 			}
-
-			activoFoto.setSubdivision(subdivisionId);
-
-			activoFoto.setAgrupacion(agrupacion);
-
-			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-
-			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-			
-			activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))));
-
-			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
-			
-			activoFoto.setTipoFoto(tipoFoto);
-			
-			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
-
-			activoFoto.setFechaDocumento(new Date());			
-
-			Auditoria.save(activoFoto);
-
-			agrupacion.getFotos().add(activoFoto);
-
-			genericDao.save(ActivoAgrupacion.class, agrupacion);
-		} catch (Exception e) {
-			logger.error(e);
 		}
+		
 		return "success";
 	}
 
@@ -716,9 +712,16 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							// tiene poner oferta PENDIENTE
 							if (!Checks.esNulo(exp)) {
 								ofertaApi.descongelarOfertas(exp);
+							}else if (DDCartera.isCarteraBk(activo.getActivo().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion())
+									|| !oferta.getCheckDocumentacion())) {
+								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+										DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
+								genericDao.save(Oferta.class, oferta);
+								ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 							} else {
 								oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 										DDEstadoOferta.CODIGO_PENDIENTE)));
+								if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 								genericDao.save(Oferta.class, oferta);
 							}
 							ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -859,7 +862,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacionFiltro() {
-		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);		
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);
 		for(Perfil p : genericAdapter.getUsuarioLogado().getPerfiles()) {
 			if(USUARIO_IT.equals(p.getCodigo()) || GESTOR_COMERCIAL_ALQUILER.equals(p.getCodigo()) || SUPERVISOR_COMERCIAL_ALQUILER.equals(p.getCodigo())) {
 				return  listaDDTipoAgrupacion;
@@ -978,5 +981,102 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	public Long getIdByNumAgrupacion(Long numAgrupacion) {
 	return activoAgrupacionDao.getIdByNumAgrupacion(numAgrupacion);
+	}
+
+	@Override
+	public boolean estaActivoEnAgrupacionRestringidaObRem(Activo activo) {
+
+		if(activo != null){
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+						DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Transactional
+	public boolean anyadirActivoEnAgrupacionRestringidaDesdeObRem(Long idActivo, Long idAgrupacion){
+
+		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+
+		List <ActivoAgrupacionActivo> agaEnObRem = null;
+
+		if(idActivo != null) {
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+							DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						agaEnObRem = aga.getAgrupacion().getActivos();
+						break;
+					}
+				}
+			}
+
+			if(agaEnObRem != null){
+				for(ActivoAgrupacionActivo aga: agaEnObRem){
+					TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+					ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
+					activoAgrupacionActivo.setActivo(aga.getActivo());
+					activoAgrupacionActivo.setAgrupacion(agr);
+					Date today = new Date();
+					activoAgrupacionActivo.setFechaInclusion(today);
+					activoAgrupacionActivo.setPisoPiloto(false);
+					activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+
+					transactionManager.commit(transaction);
+				}
+			}
+
+			return true;
+		}
+		return false;
+	}
+
+	@Transactional
+	public boolean borrarActivoEnAgrupacionRestringidaDesdeObRem(Long idActivo, Long idAgrupacion){
+
+		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+
+		List <ActivoAgrupacionActivo> agaEnObRem = null;
+		if(idActivo != null) {
+			List<ActivoAgrupacionActivo> agaList = genericDao.getList(ActivoAgrupacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+
+			if(agaList != null){
+				for(ActivoAgrupacionActivo aga: agaList){
+					if(aga.getAgrupacion() != null && aga.getAgrupacion().getTipoAgrupacion() != null &&
+							DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_OB_REM.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						agaEnObRem = aga.getAgrupacion().getActivos();
+						break;
+					}
+				}
+			}
+
+			if(agaEnObRem != null){
+				for (ActivoAgrupacionActivo obRem : agaEnObRem) {
+					ActivoAgrupacionActivo obRemBorrar = genericDao.get(ActivoAgrupacionActivo.class, 
+							genericDao.createFilter(FilterType.EQUALS, "activo", obRem.getActivo()), 
+							genericDao.createFilter(FilterType.EQUALS, "agrupacion", agr));
+					
+					Auditoria.delete(obRemBorrar);
+					activoAgrupacionActivoApi.save(obRemBorrar);
+				}
+			}
+
+			return true;
+		}
+		return false;
 	}
 }

@@ -42,6 +42,14 @@ public class DtoGestionGasto extends WebDto {
    	private Date fechaRetenerPago;
    	private String gestorRetenerPago;
    	private String comboMotivoRetenerPago;
+   	private Boolean gestionGastoRepercutido;
+   	private Date fechaGestionGastoRepercusion;
+   	private String motivoRechazoGestionGasto;
+   	private String gestionGastoClientePagador;
+   	private Date fechaEnvioPropietario;
+   	private String gestionGastoClienteInformador;
+   	private Date fechaEnvioInformativa;
+   	
 
 	public Integer getNecesariaAutorizacionPropietario() {
 		return necesariaAutorizacionPropietario;
@@ -174,6 +182,47 @@ public class DtoGestionGasto extends WebDto {
 	public void setComboMotivoRetenerPago(String comboMotivoRetenerPago) {
 		this.comboMotivoRetenerPago = comboMotivoRetenerPago;
 	}
-   	
-   	
+	public Boolean getGestionGastoRepercutido() {
+		return gestionGastoRepercutido;
+	}
+	public void setGestionGastoRepercutido(Boolean gestionGastoRepercutido) {
+		this.gestionGastoRepercutido = gestionGastoRepercutido;
+	}
+	public Date getFechaGestionGastoRepercusion() {
+		return fechaGestionGastoRepercusion;
+	}
+	public void setFechaGestionGastoRepercusion(Date fechaGestionGastoRepercusion) {
+		this.fechaGestionGastoRepercusion = fechaGestionGastoRepercusion;
+	}
+	public String getMotivoRechazoGestionGasto() {
+		return motivoRechazoGestionGasto;
+	}
+	public void setMotivoRechazoGestionGasto(String motivoRechazoGestionGasto) {
+		this.motivoRechazoGestionGasto = motivoRechazoGestionGasto;
+	}
+	public String getGestionGastoClientePagador() {
+		return gestionGastoClientePagador;
+	}
+	public void setGestionGastoClientePagador(String gestionGastoClientePagador) {
+		this.gestionGastoClientePagador = gestionGastoClientePagador;
+	}
+	public Date getFechaEnvioPropietario() {
+		return fechaEnvioPropietario;
+	}
+	public void setFechaEnvioPropietario(Date fechaEnvioPropietario) {
+		this.fechaEnvioPropietario = fechaEnvioPropietario;
+	}
+	public String getGestionGastoClienteInformador() {
+		return gestionGastoClienteInformador;
+	}
+	public void setGestionGastoClienteInformador(String gestionGastoClienteInformador) {
+		this.gestionGastoClienteInformador = gestionGastoClienteInformador;
+	}
+	public Date getFechaEnvioInformativa() {
+		return fechaEnvioInformativa;
+	}
+	public void setFechaEnvioInformativa(Date fechaEnvioInformativa) {
+		this.fechaEnvioInformativa = fechaEnvioInformativa;
+	}
+	
 }

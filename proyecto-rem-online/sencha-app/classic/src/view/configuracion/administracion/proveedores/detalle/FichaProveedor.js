@@ -55,7 +55,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						                	fieldLabel: HreRem.i18n('fieldlabel.proveedores.codigo'),
 						                	bind: '{proveedor.codigo}',
 						                	readOnly: true
-						                },				                
+						                },					                
 						                { 
 						                	xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.nombre'),
@@ -68,7 +68,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 											bind: '{proveedor.fechaAltaProveedor}'
 										},
 									// Fila 1
-										{
+										{ 
+						                	xtype: 'textfieldbase',
+						                	fieldLabel: HreRem.i18n('fieldlabel.proveedores.codigoProveedorUvem'),
+						                	bind: '{proveedor.codProveedorUvem}'
+						                },
+						                {
 											 xtype : 'comboboxfieldbase',
 											 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 											 allowBlank: false,
@@ -210,6 +215,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
 								        	reference: 'numUrsusRef',
 								        	bind: '{proveedor.codProveedorUvem}',
+								        	maskRe: /^\d*$/, 
 								        	listeners:{
 								        		render: function(){
 								        			var me = this;
@@ -223,7 +229,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								        				me.setReadOnly(true);
 								        			}						        			
 								        		}
-								        	}
+								        	},
+								        	hidden: true
 							            
 								        },
 										{

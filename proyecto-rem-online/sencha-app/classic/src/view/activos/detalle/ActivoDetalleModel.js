@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
-	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel'],
+	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa'],
 
     data: {
     	activo: null,
@@ -563,11 +564,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var estadoAlquiler = get('patrimonio.estadoAlquiler');
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			
-	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]) 
-	        	|| (!Ext.isEmpty(codComercializacion) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
+	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"])){
 	        	return true;
-	        } else {
+	          } else if (!Ext.isEmpty(codComercializacion) && 
+	        		(CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] == codComercializacion || CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] == codComercializacion)) {
 	            return false;
+	        } else {
+	        	return true;
 	        }
 		 },
 
@@ -757,9 +760,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true; 
 			}else{
 				return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo
-					|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
-					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo)))
-					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+					&& !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) 
+					|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo))
+					|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			}
 			
 		},
@@ -801,6 +804,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return true;
 			 }
 			 return false;
+		 },
+		 
+		 isCarteraBankia: function(get){
+				 var isCarteraBankia = get('activo.isCarteraBankia');
+				 if(isCarteraBankia){
+					 return true;
+				 }
+				 return false;
 		 },
 		 getTiposOfertasUAs: function (get) {
 			var unidadAlquilable = get('activo.unidadAlquilable');
@@ -929,14 +940,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    },
 	    
-	    esSuperUsuarioAndNoUA: function(get){
+	    esUnRolPreinmueble: function(get){
+	    	var isOneRol = false;
+	    	isOneRol= $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || 
+				$AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) ||
+				$AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+    		return isOneRol;
+	    },
+	    
+		esSuperUsuarioAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {
 	    		UA = get('activo.unidadAlquilable');
 	    	}
     		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
 	    },
-	    
+
 	    esSuperUsuarioCalidadDatoAndNoUA: function(get){
 	    	var UA = false;
 	    	if (get('activo.unidadAlquilable') != undefined) {
@@ -1020,20 +1040,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			var isSubcarteraApple = get('activo.isSubcarteraApple');
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var title = "";
 			
 			if(isSubcarteraApple){
 				title = HreRem.i18n('title.perimetro.apple');
 			}else if(isSubcarteraDivarian){
 				title = HreRem.i18n('title.perimetro.divarian');
+			}else if(isSubcarteraMarina){
+				title = HreRem.i18n('title.perimetro.marina');
 			}
 			return title;
 		},
 		
 		esEditablePerimetroMacc: function(get){
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			if(isSubcarteraMarina){
+				return false
+			}else{
+				return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			}
 		},
 		
 		esSubcarteraAppleDivarian: function(get){
@@ -1532,6 +1560,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+		 isCarteraBankia: function(get){
+		 	var isBankia = get('activo.isCarteraBankia')
+		 	if (isBankia) {
+		 		return true;
+		 	}
+		 	return false;
+		 },
 
 		 mostrarCamposDivarianandBbva: function(get){
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
@@ -1552,9 +1587,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    return false;
 		},
 
-		mostrarCamposDivarian: function(get){
+		mostrarCamposDivarianAndJaguar: function(get){
 	 	 	var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
-		    if(isSubcarteraDivarian){
+	 	 	var isSubcarteraJaguar = get('activo.isSubcarteraJaguar');
+		    if(isSubcarteraDivarian || isSubcarteraJaguar){
 			return true;
 		    }
 		    return false;
@@ -1597,16 +1633,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		isGestorSeguridadOAssetManager:function(get){
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFIL_SEGURIDAD']) 
-				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ('03' === tipoTituloCodigo || '04' === tipoTituloCodigo));
+				|| ($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo
+				                                                          || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo)|| subtipoClaseActivoCodigo === true));
 		},
 		
 		isAssetManager:function(get){
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			
-			return $AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true);
+			return $AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) 
+			&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) 
+			|| subtipoClaseActivoCodigo === true);
 		},
 		
 	    esActivoMacc: function (get) {
@@ -1678,8 +1717,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var tieneFuncion = $AU.userHasFunction('EDITAR_EXCLUIR_VALIDACIONES');
 			var perteneceAgrupacionRestringida = get('activo.pertenceAgrupacionRestringida');
+			var isBankia = get('isCarteraBankia');
 			
-			if (perteneceAgrupacionRestringida || !tieneFuncion){
+			if (perteneceAgrupacionRestringida || !tieneFuncion || isBankia){
 				return true;
 			}			
 			
@@ -1700,10 +1740,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			var isCarteraSareb = get('activo.isCarteraSareb');
 			var tipoTituloCodigo = get('activo.tipoTituloCodigo');
-			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == "02";
+			var subtipoClaseActivoCodigo = get('activo.subtipoClaseActivoCodigo') == null ? true : get('activo.subtipoClaseActivoCodigo') == "02";
 			
 			if(isCarteraSareb != true 
-					&& !($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) && (('03' === tipoTituloCodigo || '04' === tipoTituloCodigo) || subtipoClaseActivoCodigo === true))){
+					&& !($AU.userIsRol(CONST.PERFILES['ASSET_MANAGEMENT']) 
+					&& ((CONST.TIPO_TITULO_ACTIVO['PDV'] === tipoTituloCodigo || CONST.TIPO_TITULO_ACTIVO['COLATERAL'] === tipoTituloCodigo) 
+					|| subtipoClaseActivoCodigo === true))){
 				return false;
 			}
 			return true;
@@ -1730,6 +1772,83 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    return false;
 		},
 		
+		esCarteraSarebBbvaBankiaCajamarLiberbank : function(get){
+			var activo = null;
+			if(get('activo') != null)
+				activo = get('activo').data;
+			
+			if (activo != null || activo != undefined) {
+				var esCarteraSareb = activo.isCarteraSareb;
+				var esCarteraBbva = activo.isCarteraBbva;
+				var esCarteraBankia = activo.isCarteraBankia;
+				var esCarteraCajamar = activo.isCarteraCajamar;
+				var esCarteraLiberbank = activo.isCarteraLiberbank;
+				
+				if (esCarteraSareb == true || esCarteraBbva == true || esCarteraBankia == true || esCarteraCajamar == true || esCarteraLiberbank == true) {
+					return false;
+				}else{
+					return true;
+				}
+			}else{
+				return true;
+			}
+		},
+		
+		getIconClsCondicionantesPortalPublicoVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalPublicoVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPortalPublicoAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalPublicoAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalInversorVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalInversorVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalInversorAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalInversorAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 getIconClsCondicionantesPublicacionPortalApiVenta: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalApiVenta');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+ 		 getIconClsCondicionantesPublicacionPortalApiAlquiler: function(get) {
+	    	var condicion = get('activoCondicionesDisponibilidadCaixa.publicacionPortalApiAlquiler');
+
+	        if(eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+		 
 		editableCheckComercializar: function(get){
 			var principalRestringida = get('activo.activoPrincipalRestringida');
 			var perteneceRestringida = get('activo.perteneceAgrupacionRestringidaVigente');
@@ -1742,6 +1861,80 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return readOnly;
 		},
 		
+		 esSuperUsuarioCaixa: function(get){
+		 	var isBankia = get('activo.isCarteraBankia');
+	    	if (isBankia) {
+	    		if ($AU.userIsRol(CONST.PERFILES["HAYASUPER"])) {
+	    			return false;
+	    		}else{
+	    			return true;	
+	    		}
+	    	}else{
+	    		return false;
+	    	}
+    		return false;
+	    },
+	    esEditableUsuariosCaixa: function(get){
+	    	var me = this;
+	    	var isBankia = get('saneamiento.isCarteraBankia');
+	    	if (!isBankia && ($AU.userIsRol(CONST.PERFILES["GESTOR_ADMISION"]) || $AU.userIsRol(CONST.PERFILES["GESTORIA_ADMISION"])
+	    			|| $AU.userIsRol(CONST.PERFILES["SUPERVISOR_ADMISION"]) || $AU.userIsRol(CONST.PERFILES["HAYASUPER"]))) {
+				return false;
+			} else {
+		    	return true;
+			}
+	    },
+
+		esBankia: function(get) {
+			var carteraCodigo = get('activo.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+		},
+	    
+	    isCarteraBankiayUnidadAlquilable: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+	    	var unidadAlquilable = get('activo.unidadAlquilable');
+
+			if(isBankia || unidadAlquilable){
+				return true;
+			}
+
+			return false;
+		 },
+		    
+	    isCarteraBankiaYesSituacionJudicial: function(get){
+			var me = this;
+
+			var isBankia = get('activo.isCarteraBankia');
+
+			if(get('esSituacionJudicial') || isBankia){
+				return true;
+	    	 } else {
+	    		 return false;
+	    	 }
+		 },
+		    
+	    esUAyIsCarteraBankia: function(get){
+			var me = this;
+			
+			if(get('esUA') == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		
+		isCarteraHyTOrBFA: function(get) {
+	    	var codigoCarteraHyT = get('activo.isCarteraHyT'), codigoCarteraBFA = get('activo.isCarteraBFA');	    	
+	    	return codigoCarteraHyT || codigoCarteraBFA;
+		},
+		
 		tieneGestionDnd: function(get){
 			var tieneGestionDnd = get('activo.tieneGestionDndCodigo');
 			//var tieneGestionDndCombo = this.getView().lookupReference('gestionDndCodigo');
@@ -1751,7 +1944,101 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			} else {
 				return false;
 			}
-		}
+		},
+		mostrarCamposDivarianAndBbvaAndJaguar: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var isSubcarteraJaguar = get('activo.isSubcarteraJaguar');
+		    var isBbva = get('activo.isCarteraBbva');
+		    if(isBbva || isSubcarteraDivarian || isSubcarteraJaguar){
+			return true;
+		    }
+		    return false;		 
+		 },
+		    
+		 esEditableDestinoComercialOresBankia: function(get){
+			var me = this;
+			
+			var destinoComercial = get('!activo.esEditableDestinoComercial');
+			if(destinoComercial == true || get('isCarteraBankia')) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		
+		 tieneGestionDnd: function(get){
+			var tieneGestionDnd = get('activo.tieneGestionDndCodigo');
+			//var tieneGestionDndCombo = this.getView().lookupReference('gestionDndCodigo');
+
+			if (tieneGestionDnd === '01') {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		 
+	    isCarteraBankiayTienePosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var tienePosesion = get('tienePosesion');
+	    	
+	    	if (isBankia || tienePosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiaeIsReadOnlyFechaRealizacionPosesion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var isReadOnlyFechaRealizacionPosesion = get('isReadOnlyFechaRealizacionPosesion');
+	    	
+	    	if (isBankia || isReadOnlyFechaRealizacionPosesion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+	    isCarteraBankiayEditarPorcentajeConstruccion:function(get){
+	    	var me = this;
+	    	var isBankia = get('isCarteraBankia');	    	
+	    	var editarPorcentajeConstruccion = get('editarPorcentajeConstruccion');
+	    	
+	    	if (isBankia || !editarPorcentajeConstruccion){
+	    		return true;
+	    	}
+	    	return false;
+		},
+		
+		esUsuarioTasadorayVpo: function(get){
+			var me = this;
+			var vpo = get('infoAdministrativa.vpo');
+			
+			if ($AU.userIsRol(CONST.PERFILES["TASADORA"]) || !vpo) {
+				return true;
+			}
+			return false;
+		},
+		
+		esUsuarioTasadora: function(get){
+			var me = this;
+			
+			return $AU.userIsRol(CONST.PERFILES["TASADORA"]);
+		},
+		
+		isSubcarteraCerberusOrJaguar: function(get) {
+			var codigoSubcartera = get('activo.subcarteraCodigo');
+	    	var isSareb = get('activo.isCarteraSareb');
+	    	var isJaguar = get('activo.isSubcarteraJaguar');
+	    	if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANARROW'] === codigoSubcartera
+	    		|| CONST.SUBCARTERA['DIVARIANREMAINING'] === codigoSubcartera 
+	    		|| isSareb
+	    		|| isJaguar){
+	    	return true;
+	    	}
+	    	return false;
+	    }
 	 },
     
 	 stores: {
@@ -2702,14 +2989,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			
 		comboEstadoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosOfertas'}
-			},
-			autoLoad: true
-
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosOfertas'}
+				},
+				autoLoad: true
+	
 	    },
 	    comboTipoRechazoOferta: {
 			model: 'HreRem.model.ComboBase',
@@ -3157,7 +3444,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"1", "descripcion":"Si"}
 		    ]
 		},
-		
+		comboSiNoFuerzaPublica: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
+
+		comboSiNoEntradaVoluntariaPosesion: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
+
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.AdjuntosPlusvalias',
@@ -3690,6 +3990,59 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'segmentacionSareb'}
 			}
 		},
+
+		comboPlanta: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'plantaEdificio'}
+				}
+		},
+
+		comboEscalera: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'escaleraEdificio'}
+				}
+		},
+
+		comboEstadoTecnico: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoTecnico'}
+				}
+		},
+
+		comboTipoProcedenciaProducto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoProcedenciaProducto'}
+			}
+		},
+		comboCategoriaComercializacion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'categoriaComercializacion'}
+				}
+		},
+		comboDistritoCodPostal: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getComboTipoDistritoByCodPostal',
+   				extraParams: {codPostal: '{activo.codPostal}'}
+			},
+			autoLoad: true
+		},
 		storeSituacionOcupacional: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.SituacionOcupacionalGridModel',
@@ -3699,6 +4052,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 		   }
 	   },
+
+	   comboMotivoNecesidadArras: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoNecesidadArras'}
+			},
+			autoLoad: true   
+	   },
+	   comboDisponibleAdministrativo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleAdministrativo'}
+			},
+			autoLoad: true   
+	   },	   
+	   comboVinculoCaixa: {
+		   	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'vinculoCaixa'}
+			}
+	   },	   
+
 	   comboDisponibleAdministrativo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3707,6 +4088,104 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'disponibleAdministrativo'}
 			}
 		},
+	   
+	   comboRiesgoOperacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoRiesgoOperacion'}
+			}
+	   },
+
+		comboEstadoComercialVenta: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoComercialVenta'}
+				}
+		},
+
+		comboEstadoComercialAlquiler: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoComercialAlquiler'}
+				}
+		},
+
+		storeDescuentoColectivos: {
+      		 model: 'HreRem.model.DescuentoColectivosGridModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getDescuentoColectivos',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+   		},
+		
+		storePreciosVigentesCaixa: {
+   		 model: 'HreRem.model.PreciosVigentesCaixaGridModel',
+	     proxy: {
+	        type: 'uxproxy',
+	        remoteUrl: 'activo/getPreciosVigentesCaixaById',
+	        extraParams: {id: '{activo.id}'}
+    	 }
+		},
+		
+		comboSociedadOrigenCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'sociedadOrigenCaixa'}
+			}
+		},
+
+		comboDisponibleTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibleTecnico'}
+
+			}
+		},
+		
+		comboBancoOrigenCaixa: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'bancoOrigenCaixa'}
+			}
+		},
+		
+		comboTributPropClienteExentoIva: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionPropClienteExentoIva'}
+			}
+	   },
+	   comboTributacionPropuestaVenta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionPropVenta'}
+			}
+	   },
+	   
+	   comboSiNoBoolean: {
+	    	data : [
+	    		{"codigo":"true", "descripcion":"Si"},
+	    		{"codigo":"false", "descripcion":"No"}
+	    		]  
+	    },
+
 		comboRiesgoOperacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -3728,8 +4207,133 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionPropVenta'}
+			}
+	   },
+
+		comboMotivoTecnico: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivoTecnico'}
 			}
+		},
+		storeTipoFoto :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposFoto'}
+			},
+			autoLoad: true
+    	},
+		comboEstadoDeposito: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoDeposito'}
+			},
+			autoLoad: true
+		},
+		comboMunicipioAnterior: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+			},
+			autoLoad: true
+		},
+		comboMetodoValoracion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'metodoValoracion'}
+			},
+			autoLoad: true
+		},
+		comboDesarrolloPlanteamiento: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'desarrolloPlanteamiento'}
+			},
+			autoLoad: true
+		},
+		comboFaseGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'faseGestion'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollar: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollar'}
+			},
+			autoLoad: true
+		},
+		comboProximidadRespectoNucleoUrbano: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'proximidadRespectoNucleoUrbano'}
+			},
+			autoLoad: true
+		},
+		comboSistemaGestion: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'sistemaGestion'}
+			},
+			autoLoad: true
+		},
+		comboTipoSuelo: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposActivo'}
+			},
+			autoLoad: true
+		},
+		comboProductoDesarrollarPrevisto: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
+			},
+			autoLoad: true
+		},
+		comboTipoDatoUtilizadoInmuebleComparable: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
+			},
+			autoLoad: true
+		},
+		comboTasadoraCaixa: {    		
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tasadoraCaixa'}
+			},
+			autoLoad: true
 		}
 	 }
 });

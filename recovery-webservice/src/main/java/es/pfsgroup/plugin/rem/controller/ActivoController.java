@@ -22,6 +22,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +34,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
@@ -42,16 +45,15 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -87,8 +89,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -133,7 +134,6 @@ import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
@@ -157,19 +157,21 @@ import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
+import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -244,6 +246,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GridObservacionesFactory gridObservacionesFactory;
+
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	@Resource
 	private Properties appProperties;
@@ -1185,6 +1190,10 @@ public class ActivoController extends ParadiseJsonController {
 									}
 								}
 							}
+							
+							if (!Checks.esNulo(aListaActivoFoto.getTipoFoto())) {
+								fotoDto.setCodigoTipoFoto(aListaActivoFoto.getTipoFoto().getCodigo());
+							}
 
 						} catch (IllegalAccessException e) {
 							logger.error("error en activoController", e);
@@ -1501,9 +1510,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request, DtoSubirDocumento dto) {
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			adapter.upload(webFileItem, null);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
@@ -1619,13 +1629,13 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView uploadFotos(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			List<WebFileItem> webFileItemList = uploadAdapter.getWebMultipleFileItem(request);
 
-			String errores = activoApi.uploadFoto(fileItem);
+			String errores = activoApi.uploadFotos(webFileItemList);
 
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
@@ -2187,7 +2197,9 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			//solo son venta directa desde masivo
 			dtoOferta.setVentaDirecta(false);
-			boolean success = !Checks.esNulo(adapter.createOfertaActivo(dtoOferta));
+			Oferta oferta = adapter.createOfertaActivo(dtoOferta);
+			boolean success = oferta != null;
+
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -3052,6 +3064,24 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getMotivoAnulacionExpedienteCaixa(ModelMap model) {
+
+        try {
+            List <DtoMotivoAnulacionExpediente> dto= activoApi.getMotivoAnulacionExpedienteCaixa();
+
+            model.put("data", dto);
+            model.put("success", true);
+
+        } catch (Exception e) {
+            logger.error("Error en ActivoController", e);
+            model.put("success", false);
+        }
+
+        return createModelAndViewJson(model);
+    }
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -3577,10 +3607,11 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadPlusvalia(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+		
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 
-			String errores = activoApi.uploadDocumentoPlusvalia(fileItem, null, null);
+			String errores = activoApi.uploadDocumentoPlusvalia(webFileItem, null, null);
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 
@@ -3968,6 +3999,63 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoOfertante (HttpServletRequest request, HttpServletResponse response) throws UserException,Exception{
+        
+		Long idClienteComercial = null;
+		Long idClienteGCD = null;
+		Long idAdjuntoComprador = Long.parseLong(request.getParameter("idDocumento"));
+		AdjuntoComprador adjuntoComprador = null;
+		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+		
+		if(idAdjuntoComprador != null) {
+			Filter filterAdjuntoComprador = genericDao.createFilter(FilterType.EQUALS, "id", idAdjuntoComprador);
+			adjuntoComprador = genericDao.get(AdjuntoComprador.class, filterAdjuntoComprador);
+		}
+		//ADC_ID_DOCUMENTO_REST
+		if(adjuntoComprador != null) {
+			if (adjuntoComprador.getIdDocRestClient() != null) {
+				dtoAdjunto.setId(idAdjuntoComprador);
+			} else {
+				dtoAdjunto.setId(idAdjuntoComprador);
+			}
+			
+			if(adjuntoComprador.getNombreAdjunto() != null) {
+				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());
+			}
+			
+		}
+		
+		//Id de la entidad
+		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("id")));
+		FileItem fileItem = adapter.download(adjuntoComprador.getIdDocRestClient(), adjuntoComprador.getNombreAdjunto());
+       //	FileItem fileItem = activoApi.getFileItemOfertante(dtoAdjunto, adjuntoComprador);
+       	
+		
+       	try { 
+
+       		if(!Checks.esNulo(fileItem)) {
+	       		ServletOutputStream salida = response.getOutputStream();
+
+	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+	       		response.setHeader("Cache-Control", "max-age=0");
+	       		response.setHeader("Expires", "0");
+	       		response.setHeader("Pragma", "public");
+	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+	       		response.setContentType(fileItem.getContentType());
+
+	       		// Write
+	       		FileUtils.copy(fileItem.getInputStream(), salida);
+	       		salida.flush();
+	       		salida.close();
+       		}
+       		
+       	} catch (Exception e) { 
+       		logger.error(e.getMessage(),e);
+       	}
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListComplementoTituloById(Long id,  ModelMap model) { 
 		
 		try {
@@ -4099,9 +4187,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadFacturaGastoAsociado(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-
+		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			
 			adapter.uploadFactura(webFileItem);
 			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
@@ -4263,7 +4352,25 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadosPresentacionAdicional() {	
+		return createModelAndViewJson(new ModelMap("data", adapter.getEstadosPresentacionAdicional()));
+	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoDistritoByCodPostal(ModelMap model, String codPostal) {
+		
+		try {
+			//model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoSegmento(codSubcartera));
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboTipoDistritoByCodPostal(codPostal));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListHistoricoOcupadoTitulo(Long id, ModelMap model){
@@ -4276,7 +4383,46 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 
 		}
-
 		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDescuentoColectivos(Long id, ModelMap model){
+		try{
+			
+			List<VGridDescuentoColectivos> listSuccess = activoApi.getDescuentoColectivos(id);
+			model.put(RESPONSE_DATA_KEY, listSuccess);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPreciosVigentesCaixaById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
+		model.put(RESPONSE_DATA_KEY, adapter.getPreciosVigentesCaixaById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "precios", ACCION_CODIGO.CODIGO_VER);
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView findTasaciones(DtoFiltroTasaciones dto, ModelMap model) {
+		try {
+			Page page = activoApi.findTasaciones(dto);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
+
+		return new ModelAndView("jsonView", model);
 	}
 }

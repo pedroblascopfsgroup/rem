@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20200114
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220124
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5469
+--## INCIDENCIA_LINK=REMVIP-11055
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,11 @@
 --##		0.3 Sergio B -HREOS-4931- Optimización de tiempos
 --##		0.4 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.5 REMVIP-4622 - Ocultación alquilado
+--##		0.6 HREOS-14935 - Añadir motivo ocultación Reserva Alquiler
+--##		0.6 HREOS-14686 - Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM
+--##      0.7 REMVIP-10864 - Nuevo motivo ocultacion "Oferta aprobada" caixa, si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''
+--##      0.8 REMVIP-11055 - Se añade el motivo de ocultación "Oferta aprobada" para ofertas migradas
+--##      0.9 REMVIP-11055 - Se borra el motivo "Oferta aprobada" si ha pasado las tareas ''T017_ResolucionCES'',''T015_ElevarASancion''. Está ocultando inclusive si la oferta se anula
 --########################################## 
 --*/
 
@@ -47,7 +52,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
 	  vQUERY := ' (SELECT 1
 				   FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
 				   JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-				   JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
+				   JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO IN (''02''/*Restringida*/ ,''17''/*Restringida alquiler*/,''18''/*Restringida OBREM*/)	
 					   AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
 				  WHERE AGA.ACT_ID = ACT.ACT_ID 
 					AND AGA.BORRADO = 0
@@ -154,6 +159,32 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
 									 AND RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'')
 									 AND ECO.DD_EEC_ID <> (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'')
 									 AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+                                     AND EXISTS '||vQUERY||
+                         ' UNION
+                            SELECT DISTINCT ACT.ACT_ID
+                               , 1 OCULTO /*Aprobado*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+									                  JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+                                    JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''18'' AND MTO.BORRADO = 0 /*Aprobado*/
+                                    JOIN '||V_ESQUEMA||'.DD_EEB_ESTADO_EXPEDIENTE_BC EEB ON EEB.DD_EEB_ID = ECO.DD_EEB_ID
+                                    WHERE EEB.DD_EEB_CODIGO NOT IN (''001'',''002'',''022'',''030'',''037'')
+                                    AND EXISTS '||vQUERY||'
+                         UNION
+                          SELECT ACT.ACT_ID
+                               , 1 OCULTO /*Reservado Alquiler*/
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+									JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID
+									JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''20'' AND MTO.BORRADO = 0 /*Reservado*/
+                                   WHERE ACT.BORRADO = 0
+									 AND ECO.RESERVADO_ALQUILER = 1
                                      AND EXISTS '||vQUERY||
                          ' UNION
                           SELECT ACT.ACT_ID

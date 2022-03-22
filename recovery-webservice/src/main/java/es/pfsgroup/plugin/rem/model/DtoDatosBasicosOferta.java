@@ -131,6 +131,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String tipoResponsableCodigo;
 	
+	private Boolean isEmpleadoCaixa;
+
+	private Date fechaOfertaPendiente;
+	
 	private Boolean ofertaEspecial;
 	
 	private Boolean ventaSobrePlano;
@@ -140,7 +144,39 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String riesgoOperacionDescripcion;
 	
 	private Boolean ventaCarteraCfv;
+	
+	private Boolean opcionACompra;
+	
+	private Double valorCompra;
+	
+	private Date fechaVencimientoOpcionCompra;
+	
+	private String clasificacionCodigo;
 
+	private Boolean checkListDocumentalCompleto;
+
+	private Boolean tieneInterlocutoresNoEnviados;
+	
+	private Boolean checkSubasta;
+	
+	private Long numeroContacto;
+	
+	private String canalDistribucionBc;
+	
+	private String tipoOfertaAlquilerCodigo; 
+    
+    private Long numOfertaCaixa;
+
+	private String claseContratoCodigo;
+	
+	private String tipologiaVentaCod;
+
+	private String numeroVaiHavaiSareb;
+	
+	private String riesgoOperacionBcCodigo;
+	
+	private String riesgoOperacionBcDescripcion;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -598,6 +634,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setTipoResponsableCodigo(String tipoResponsableCodigo) {
 		this.tipoResponsableCodigo = tipoResponsableCodigo;
 	}
+
+	public Boolean getIsEmpleadoCaixa() {
+		return isEmpleadoCaixa;
+	}
+
+	public void setIsEmpleadoCaixa(Boolean isEmpleadoCaixa) {
+		this.isEmpleadoCaixa = isEmpleadoCaixa;
+	}
+	
+	public Date getFechaOfertaPendiente() {
+		return fechaOfertaPendiente;
+	}
+
+	public void setFechaOfertaPendiente(Date fechaOfertaPendiente) {
+		this.fechaOfertaPendiente = fechaOfertaPendiente;
+	}
 	
 	public Boolean getOfertaEspecial() {
 		return ofertaEspecial;
@@ -638,5 +690,180 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setVentaCarteraCfv(Boolean ventaCarteraCfv) {
 		this.ventaCarteraCfv = ventaCarteraCfv;
 	}
+
+	public Boolean getOpcionACompra() {
+		return opcionACompra;
+	}
+
+	public void setOpcionACompra(Boolean opcionACompra) {
+		this.opcionACompra = opcionACompra;
+	}
+
+	public Double getValorCompra() {
+		return valorCompra;
+	}
+
+	public void setValorCompra(Double valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
+	public Date getFechaVencimientoOpcionCompra() {
+		return fechaVencimientoOpcionCompra;
+	}
+
+	public void setFechaVencimientoOpcionCompra(Date fechaVencimientoOpcionCompra) {
+		this.fechaVencimientoOpcionCompra = fechaVencimientoOpcionCompra;
+	}
+
+	public String getClasificacionCodigo() {
+		return clasificacionCodigo;
+	}
+
+	public void setClasificacionCodigo(String clasificacionCodigo) {
+		this.clasificacionCodigo = clasificacionCodigo;
+	}
+
+	public Boolean getCheckListDocumentalCompleto() {
+		return checkListDocumentalCompleto;
+	}
+
+	public void setCheckListDocumentalCompleto(Boolean checkListDocumentalCompleto) {
+		this.checkListDocumentalCompleto = checkListDocumentalCompleto;
+	}
+
+	public Boolean getTieneInterlocutoresNoEnviados() {
+		return tieneInterlocutoresNoEnviados;
+	}
+
+	public void setTieneInterlocutoresNoEnviados(Boolean tieneInterlocutoresNoEnviados) {
+		this.tieneInterlocutoresNoEnviados = tieneInterlocutoresNoEnviados;
+	}
+
+	public Boolean getCheckSubasta() {
+		return checkSubasta;
+	}
+
+	public void setCheckSubasta(Boolean checkSubasta) {
+		this.checkSubasta = checkSubasta;
+	}
+
+	public Long getNumeroContacto() {
+		return numeroContacto;
+	}
+
+	public void setNumeroContacto(Long numeroContacto) {
+		this.numeroContacto = numeroContacto;
+	}
+
+	public String getCanalDistribucionBc() {
+		return canalDistribucionBc;
+	}
+
+	public void setCanalDistribucionBc(String canalDistribucionBc) {
+		this.canalDistribucionBc = canalDistribucionBc;
+	}
+
+	public String getTipoOfertaAlquilerCodigo() {
+		return tipoOfertaAlquilerCodigo;
+	}
+
+	public void setTipoOfertaAlquilerCodigo(String tipoOfertaAlquilerCodigo) {
+		this.tipoOfertaAlquilerCodigo = tipoOfertaAlquilerCodigo;
+	}
+
+	public Long getNumOfertaCaixa() {
+		return numOfertaCaixa;
+	}
+
+	public void setNumOfertaCaixa(Long numOfertaCaixa) {
+		this.numOfertaCaixa = numOfertaCaixa;
+	}
+
+	public Boolean getCarteraCerberusApple() {
+		return isCarteraCerberusApple;
+	}
+
+	public void setCarteraCerberusApple(Boolean carteraCerberusApple) {
+		isCarteraCerberusApple = carteraCerberusApple;
+	}
+
+	public Boolean getCarteraLbkVenta() {
+		return isCarteraLbkVenta;
+	}
+
+	public void setCarteraLbkVenta(Boolean carteraLbkVenta) {
+		isCarteraLbkVenta = carteraLbkVenta;
+	}
+
+	public Boolean getLbkOfertaComercialPrincipal() {
+		return isLbkOfertaComercialPrincipal;
+	}
+
+	public void setLbkOfertaComercialPrincipal(Boolean lbkOfertaComercialPrincipal) {
+		isLbkOfertaComercialPrincipal = lbkOfertaComercialPrincipal;
+	}
+
+	public Boolean getAdvisoryNoteEnTareas() {
+		return isAdvisoryNoteEnTareas;
+	}
+
+	public void setAdvisoryNoteEnTareas(Boolean advisoryNoteEnTareas) {
+		isAdvisoryNoteEnTareas = advisoryNoteEnTareas;
+	}
+
+	public Boolean getCarteraCerberusDivarian() {
+		return isCarteraCerberusDivarian;
+	}
+
+	public void setCarteraCerberusDivarian(Boolean carteraCerberusDivarian) {
+		isCarteraCerberusDivarian = carteraCerberusDivarian;
+	}
+
+	public Boolean getEmpleadoCaixa() {
+		return isEmpleadoCaixa;
+	}
+
+	public void setEmpleadoCaixa(Boolean empleadoCaixa) {
+		isEmpleadoCaixa = empleadoCaixa;
+	}
+
+	public String getClaseContratoCodigo() {
+		return claseContratoCodigo;
+	}
+
+	public void setClaseContratoCodigo(String claseContratoCodigo) {
+		this.claseContratoCodigo = claseContratoCodigo;
+	}
+
+	public String getTipologiaVentaCod() {
+		return tipologiaVentaCod;
+	}
+
+	public void setTipologiaVentaCod(String tipologiaVentaCod) {
+		this.tipologiaVentaCod = tipologiaVentaCod;
+	}
+
+	public String getRiesgoOperacionBcCodigo() {
+		return riesgoOperacionBcCodigo;
+	}
+
+	public void setRiesgoOperacionBcCodigo(String riesgoOperacionBcCodigo) {
+		this.riesgoOperacionBcCodigo = riesgoOperacionBcCodigo;
+	}
+
+	public String getRiesgoOperacionBcDescripcion() {
+		return riesgoOperacionBcDescripcion;
+	}
+
+	public void setRiesgoOperacionBcDescripcion(String riesgoOperacionBcDescripcion) {
+		this.riesgoOperacionBcDescripcion = riesgoOperacionBcDescripcion;
+	}
 	
+	public String getNumeroVaiHavaiSareb() {
+		return numeroVaiHavaiSareb;
+	}
+
+	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
+		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
+	}
 }

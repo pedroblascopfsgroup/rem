@@ -117,8 +117,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionPromocionAlquiler}'}, handler: 'onAddClick', scope: this};
-		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton',  handler: 'onDeleteClick', scope: this, disabled: true};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionCaixaOrPromocionAlquiler}'}, handler: 'onAddClick', scope: this}; 
+		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', bind: {hidden: '{esAgrupacionCaixa}'},  handler: 'onDeleteClick', scope: this, disabled: true};
 		
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
@@ -550,7 +550,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	var ua = false;
     	
     	
-    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
+    	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'])
+    			|| (tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])){
     		sePuedeBorrar = true;
     	}else if(me.selection.data.activoPrincipal != 1){
     		sePuedeBorrar = true;

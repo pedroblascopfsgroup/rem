@@ -161,7 +161,35 @@ Ext.define('HreRem.model.GestionGasto', {
 		},
 		{
 			name: 'comboMotivoRetenerPago'
-		}
+		},
+		{
+			name : 'gestionGastoRepercutido',
+			type : 'boolean'
+		},
+		{
+   			name: 'fechaGestionGastoRepercusion',
+   			type:'date',
+    		dateFormat: 'c'
+   		},
+   		{
+			name : 'motivoRechazoGestionGasto'
+		},
+		{
+			name : 'gestionGastoClientePagador'
+		},
+		{
+   			name: 'fechaEnvioPropietario',
+   			type:'date',
+    		dateFormat: 'c'
+   		},
+   		{
+			name : 'gestionGastoClienteInformador'
+		},
+   		{
+   			name: 'fechaEnvioInformativa',
+   			type:'date',
+    		dateFormat: 'c'
+   		}
     ],
     
 	proxy: {

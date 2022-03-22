@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -59,9 +60,13 @@ public class ClienteGDPR implements Serializable, Auditable{
     @Column(name = "NUM_DOCUMENTO")
     private String numDocumento;
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADCOM_ID")
     private AdjuntoComprador adjuntoComprador;
+    
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ADCOM_DOC_IDENT")
+    private AdjuntoComprador adcomIdDocumentoIdentificativo;
     
 
 	  //Se añaden nuevos atributos. HREOS-4851<o
@@ -162,6 +167,14 @@ public class ClienteGDPR implements Serializable, Auditable{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public AdjuntoComprador getAdcomIdDocumentoIdentificativo() {
+		return adcomIdDocumentoIdentificativo;
+	}
+
+	public void setAdcomIdDocumentoIdentificativo(AdjuntoComprador adcomIdDocumentoIdentificativo) {
+		this.adcomIdDocumentoIdentificativo = adcomIdDocumentoIdentificativo;
 	}
 	
 	

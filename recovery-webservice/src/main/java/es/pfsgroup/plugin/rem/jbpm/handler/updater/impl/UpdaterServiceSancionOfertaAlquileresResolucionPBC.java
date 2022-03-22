@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,6 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements UpdaterService {
@@ -59,6 +58,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 		
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
+		boolean pdteDocu = false;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -84,6 +84,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 					//Descongelar Ofertas de activo
 					DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
 					DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
+					DDEstadoOferta pdteDocumentacion = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION));
 					List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
 					if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
 						ActivoOferta activoOferta;
@@ -95,11 +96,17 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 								ExpedienteComercial existeExpedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCongelada.getId()));
 								if(!Checks.esNulo(existeExpedienteComercial)) {
 									ofertaCongelada.setEstadoOferta(tramitada);	
+								}else if(DDCartera.isCarteraBk(activoOferta.getPrimaryKey().getActivo().getCartera()) 
+										&& (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())){
+									ofertaCongelada.setEstadoOferta(pdteDocumentacion);
+									pdteDocu = true;
 								}else {
 									ofertaCongelada.setEstadoOferta(pendiente);
+									if (Checks.esNulo(ofertaCongelada.getFechaOfertaPendiente())) ofertaCongelada.setFechaOfertaPendiente(new Date());
 								}
 								genericDao.save(Oferta.class, ofertaCongelada);
 								
+								if (pdteDocu) ofertaApi.llamadaPbc(ofertaCongelada, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 							}
 						}
 					}

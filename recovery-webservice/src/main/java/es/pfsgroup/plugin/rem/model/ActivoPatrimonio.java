@@ -86,6 +86,15 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@Column(name="PTA_TRAMITE_ALQ_SOCIAL")
 	private Boolean tramiteAlquilerSocial;
 	
+	@Column(name="ACUERDO_PAGO")
+	private Boolean acuerdoPago;
+	
+	@Column(name="MOROSO")
+	private Boolean moroso;
+	
+	@Column(name="ACTIVO_PROMO_ESTRATEG")
+	private Boolean activoPromoEstrategico;
+	
 	@Version
 	private Long version;
 
@@ -194,6 +203,30 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 
 	public void setComboRentaAntigua(String comboRentaAntigua) {
 		this.comboRentaAntigua = comboRentaAntigua;
+	}
+
+	public Boolean getAcuerdopago() {
+		return acuerdoPago;
+	}
+
+	public void setAcuerdoPago(Boolean acuerdoPago) {
+		this.acuerdoPago = acuerdoPago;
+	}
+
+	public Boolean getMoroso() {
+		return moroso;
+	}
+
+	public void setMoroso(Boolean moroso) {
+		this.moroso = moroso;
+	}
+
+	public Boolean getActivoPromoEstrategico() {
+		return activoPromoEstrategico;
+	}
+
+	public void setActivoPromoEstrategico(Boolean activoPromoEstrategico) {
+		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
 	
 	

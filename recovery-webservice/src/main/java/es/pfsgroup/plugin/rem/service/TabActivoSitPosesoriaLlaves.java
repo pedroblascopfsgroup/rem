@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -29,10 +32,10 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
@@ -40,16 +43,26 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
+	
+	private static final String REST_CLIENT_PERMITIR_ENVIO_FENIX = "rest.client.permitir.envio.fenix";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -80,9 +93,21 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Resource
+    private Properties appProperties;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -128,7 +153,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "conTituloCodigo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 				BeanUtils.copyProperty(activoDto, "conTituloDescripcion", activo.getSituacionPosesoria().getConTitulo().getDescripcion());
 				
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
@@ -151,7 +176,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
-						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))
+						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+						||DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo()))
 						||DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) &&
 						activo.getAdjNoJudicial() != null) {
 					if (activo.getAdjNoJudicial().getFechaPosesion() != null) {
@@ -263,13 +289,43 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (activo != null && activo.getId() != null ) {
 			activoDto.setPerteneceActivoREAM(activoDao.perteneceActivoREAM(activo.getId()));
 		}
+		
+		if (activo != null) {
+			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (actCaixa != null) {
+				if (actCaixa.getNecesariaFuerzaPublica() != null) {
+					activoDto.setNecesariaFuerzaPublica(actCaixa.getNecesariaFuerzaPublica() ? "1" : "0");
+				}
+			}
+		}
+			
+		Filter filtroCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroCaixa);
+		
+		if (activoCaixa != null) {
+			if (activoCaixa.getEstadoTecnico() != null) {
+				activoDto.setEstadoTecnicoCodigo(activoCaixa.getEstadoTecnico().getCodigo());
+				activoDto.setEstadoTecnicoDescripcion(activoCaixa.getEstadoTecnico().getDescripcion());
+			}
+			
+			if (activoCaixa.getFechaEstadoTecnico() != null) {
+				activoDto.setFechaEstadoTecnico(activoCaixa.getFechaEstadoTecnico());
+			}
+		}
+		
+		ActivoSituacionPosesoria activoSitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroCaixa);
+		if (activoSitPosesoria != null) {
+				activoDto.setVertical(activoSitPosesoria.getVertical());			
+		}
 	
 		return activoDto;
 		
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) { 
+	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+		
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 	
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
 		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
@@ -464,6 +520,47 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				activo.setServicerActivo(servicerActivo);
 			}
 		}
+		
+		transactionManager.commit(transaction);
+
+		if(activo != null && dto.getPosesionNegociada() != null && "1".equals(dto.getPosesionNegociada()) && Boolean.valueOf(appProperties.getProperty(REST_CLIENT_PERMITIR_ENVIO_FENIX))){
+			Thread llamadaAsincrona = new Thread(new ConvivenciaAlaska(activo.getId(), new ModelMap(), usuarioManager.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
+		}
+
+		if (activo != null) {
+			ActivoCaixa actCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if (actCaixa != null) {
+				if (dto.getNecesariaFuerzaPublica() != null && "0".equals(dto.getNecesariaFuerzaPublica())) {
+					actCaixa.setNecesariaFuerzaPublica(false);					
+				}else if(dto.getNecesariaFuerzaPublica() != null && "1".equals(dto.getNecesariaFuerzaPublica())) {
+					actCaixa.setNecesariaFuerzaPublica(true);
+				}
+				genericDao.save(ActivoCaixa.class, actCaixa);
+			}
+		}
+		
+		Filter filtroCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroCaixa);
+		
+		if (activoCaixa != null) {
+			if (dto.getEstadoTecnicoCodigo() != null) {
+				Filter filtroEstadoTecnico = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getEstadoTecnicoCodigo());
+				DDEstadoTecnicoActivo estadoTecnico = genericDao.get(DDEstadoTecnicoActivo.class, filtroEstadoTecnico);
+				activoCaixa.setEstadoTecnico(estadoTecnico);
+				if (!dto.getEstadoTecnicoDescripcion().isEmpty() || !dto.getEstadoTecnicoDescripcion().equals("")) {
+					activoCaixa.setFechaEstadoTecnico(new Date());
+				} else {
+					activoCaixa.setFechaEstadoTecnico(null);
+				}
+			} else if(activoCaixa.getEstadoTecnico().getDescripcion() != null) {
+				activoCaixa.getFechaEstadoTecnico();
+			} else {
+				activoCaixa.setFechaEstadoTecnico(null);
+			}
+		}
+		
 		return activo;
 	}
 	

@@ -11,11 +11,19 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.capgemini.pfs.procesosJudiciales.model.*;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -27,14 +35,10 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
@@ -87,15 +91,18 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 
@@ -172,6 +179,15 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+
+	@Autowired
+	private AlaskaComunicacionManager alaskaComunicacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -521,17 +537,21 @@ public class AgendaAdapter {
 	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
+		
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
+    	boolean isBankia = DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo()) ? true : false;
 
 		DtoGenericForm dto = new DtoGenericForm();
 		dto.setForm(genericForm);
 		String[] valores = new String[genericForm.getItems().size()];
-
+		
 		for (int i = 0; i < genericForm.getItems().size(); i++) {
+			String valorCampo = null;
 			GenericFormItem gfi = genericForm.getItems().get(i);
 			String nombreCampo = gfi.getNombre();
 			for (Map.Entry<String, String> stringStringEntry : camposFormulario.entrySet()) {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
-					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
 						
 						String[] valoresFecha = valorCampo.replace("/", "-").split("-");
@@ -548,6 +568,28 @@ public class AgendaAdapter {
 					}
 					valores[i] = valorCampo;
 					break;
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("aceptacionContraoferta") && !Checks.esNulo(gfi.getValuesBusinessOperation())
+						&& ("DDResolucionComite".equals(gfi.getValuesBusinessOperation()) || "DDRespuestaOfertante".equals(gfi.getValuesBusinessOperation()))){
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valorCampo)) {
+						if (("T013_RespuestaOfertante".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo()) && isBankia) ||
+							"T017_RespuestaOfertanteCES".equals(tar.getTareaExterna().getTareaProcedimiento().getCodigo())){ 
+							valores[i] = valorCampo;
+							break;
+						} else {
+							throw new Exception("La tarea no permite contraoferta");
+						}
+					} else {
+						valores[i] = valorCampo;
+						break;
+					}			
+				} else if (((Map.Entry) stringStringEntry).getKey().equals("importeContraoferta")) {
+					valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
+					if (((tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T013_RespuestaOfertante") && isBankia && gfi.getNombre().equals("importeOfertante")) ||
+						(tar.getTareaExterna().getTareaProcedimiento().getCodigo().equals("T017_RespuestaOfertanteCES") && gfi.getNombre().equals("importeContraofertaOfertante")))) {	
+						valores[i] = valorCampo;
+						break;
+					}
 				}
 			}
 		}
@@ -810,100 +852,115 @@ public class AgendaAdapter {
 
 	@Transactional(readOnly = false)
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
-		
-		if (idTramite != null) {
-			ActivoTramite tramite = activoTramiteApi.get(idTramite);
-			List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
-			finalizarTramiteYTareas(tramite);
-			Activo activo = tramite.getActivo();
-			
-			
-			DDEstadoOferta ddEstadoOferta;
-			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
-			DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
-			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
-			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
-			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
-			DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER));
-			ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
-			ActivoPatrimonio activoPatrimonio = patrimonioDao.getActivoPatrimonioByActivo(activo.getId());
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
-			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
-			
-			if (!Checks.esNulo(anulado) && !Checks.esNulo(tramite.getTrabajo())) {
-				Trabajo trabajo = tramite.getTrabajo();
-				trabajo.setEstado(anulado);
-				genericDao.save(Trabajo.class, trabajo);
-				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
-				if(! Checks.esNulo(eco)) {
-					eco.setEstado(anuladoExpedienteComercial);
-					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), anuladoExpedienteComercial);
-					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
-					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
-					eco.setFechaAnulacion(new Date());
-					eco.setMotivoAnulacion(motivoRechazoAlquiler);
-					if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
-						eco.setFechaFinAlquiler(new Date());
-					}
-					genericDao.update(ExpedienteComercial.class, eco);
-					    
-	                if(!Checks.esNulo(eco.getOferta())) {
-	                    Oferta oferta = eco.getOferta();
-	                    ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));
-	                    oferta.setEstadoOferta(ddEstadoOferta);
-	                    genericDao.update(Oferta.class, oferta);
-	                }
-	    			
-	    			activo.setSituacionComercial(situacionComercial);
-	    			if (!Checks.esNulo(activoSituacionPosesoria)) {
-	    				activoSituacionPosesoria.setOcupado(0);
-	    				activoSituacionPosesoria.setUsuarioModificarOcupado(usuarioLogado.getUsername());
-	    				activoSituacionPosesoria.setFechaModificarOcupado(new Date());
-	    				activoSituacionPosesoria.setConTitulo(null);
-	    				activoSituacionPosesoria.setUsuarioModificarConTitulo(usuarioLogado.getUsername());
-	    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
-	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
-	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
-	    				
-	    				if(activo!=null && activoSituacionPosesoria!=null && usu!=null) {			
-	    					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
-	    					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
-	    				}
-	    				
-	    			}
-	    			if (!Checks.esNulo(activoPatrimonio)) {
-	    				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
-	    				activoPatrimonio.setTipoInquilino(null);
-	    				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
-	    			}
-	    			genericDao.save(Activo.class, activo);
-	    			if (activoDao.isUnidadAlquilable(activo.getId())) {
-	    				activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
-	    			}
-	                
-					if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
-						ActivoOferta activoOferta;
-						Oferta oferta;
-						for(int i = 0; i<activoOfertas.size(); i++) {
-							activoOferta = activoOfertas.get(i);
-							oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
-							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
-								ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-								if(!Checks.esNulo(expedienteComercial)) {
-									oferta.setEstadoOferta(tramitada);	
-								}else {
-									oferta.setEstadoOferta(pendiente);
+		try {
+			if (idTramite != null) {
+				ActivoTramite tramite = activoTramiteApi.get(idTramite);
+				List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
+				finalizarTramiteYTareas(tramite);
+				Activo activo = tramite.getActivo();
+				boolean estadoOfertaBcMod = false;
+				boolean aprobadoComercial = pasadoTareaResolComite(tramite);
+				
+				DDEstadoOferta ddEstadoOferta;
+				DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+				DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
+				DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
+				DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+				DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA));
+				DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
+				DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER));
+				ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
+				ActivoPatrimonio activoPatrimonio = patrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+				DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
+				
+				if (!Checks.esNulo(anulado) && !Checks.esNulo(tramite.getTrabajo())) {
+					Trabajo trabajo = tramite.getTrabajo();
+					trabajo.setEstado(anulado);
+					genericDao.save(Trabajo.class, trabajo);
+					Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+					ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+					if(! Checks.esNulo(eco)) {
+						eco.setEstado(anuladoExpedienteComercial);
+						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), anuladoExpedienteComercial);
+						Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
+						eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
+						eco.setFechaAnulacion(new Date());
+						eco.setMotivoAnulacion(motivoRechazoAlquiler);
+						if (aprobadoComercial) 
+							estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+						eco.setEstadoBc(estadoExpedienteBc);
+						estadoOfertaBcMod = true;
+						if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
+							eco.setFechaFinAlquiler(new Date());
+						}
+						genericDao.update(ExpedienteComercial.class, eco);
+						    
+		                if(!Checks.esNulo(eco.getOferta())) {
+		                    Oferta oferta = eco.getOferta();
+		                    ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));
+		                    oferta.setEstadoOferta(ddEstadoOferta);
+		                    genericDao.update(Oferta.class, oferta);
+		                }
+		    			
+		    			activo.setSituacionComercial(situacionComercial);
+		    			if (!Checks.esNulo(activoSituacionPosesoria)) {
+		    				activoSituacionPosesoria.setOcupado(0);
+		    				activoSituacionPosesoria.setUsuarioModificarOcupado(usuarioLogado.getUsername());
+		    				activoSituacionPosesoria.setFechaModificarOcupado(new Date());
+		    				activoSituacionPosesoria.setConTitulo(null);
+		    				activoSituacionPosesoria.setUsuarioModificarConTitulo(usuarioLogado.getUsername());
+		    				activoSituacionPosesoria.setFechaModificarConTitulo(new Date());
+		    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+		    				activo.setSituacionPosesoria(activoSituacionPosesoria);
+		    				
+		    				if(activo!=null && activoSituacionPosesoria!=null && usu!=null) {			
+		    					HistoricoOcupadoTitulo histOcupado = new HistoricoOcupadoTitulo(activo,activoSituacionPosesoria,usu,HistoricoOcupadoTitulo.COD_OFERTA_ALQUILER,null);
+		    					genericDao.save(HistoricoOcupadoTitulo.class, histOcupado);					
+		    				}
+		    				
+		    			}
+		    			if (!Checks.esNulo(activoPatrimonio)) {
+		    				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+		    				activoPatrimonio.setTipoInquilino(null);
+		    				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
+		    			}
+		    			
+		    			genericDao.save(Activo.class, activo);
+		    			if (activoDao.isUnidadAlquilable(activo.getId())) {
+		    				activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
+						}
+						
+						if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
+							ActivoOferta activoOferta;
+							Oferta oferta;
+							for(int i = 0; i<activoOfertas.size(); i++) {
+								activoOferta = activoOfertas.get(i);
+								oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
+								if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+									ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+									if(!Checks.esNulo(expedienteComercial)) {
+										oferta.setEstadoOferta(tramitada);	
+									}else {
+										oferta.setEstadoOferta(pendiente);
+										if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
+									}
+									genericDao.save(Oferta.class, oferta);
+									
 								}
-								genericDao.save(Oferta.class, oferta);
-								
 							}
+						}
+		                
+						ofertaApi.descongelarOfertas(eco);
+	
+						if (estadoOfertaBcMod){
+							ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 						}
 					}
 				}
-				
-				
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -914,7 +971,7 @@ public class AgendaAdapter {
 			if (!Checks.estaVacio(tareas)) {
 				for (TareaExterna t : tareas) {
 					if (t != null) {
-						if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())){
+						if(activoTramiteApi.isTramiteAlquiler(tramite.getTipoTramite()) || activoTramiteApi.isTramiteAlquilerNoComercial(tramite.getTipoTramite())){
 							tareaActivoApi.saltoFinAlquileres(t.getId());
 						}else{
 							tareaActivoApi.saltoFin(t.getId());
@@ -1067,5 +1124,39 @@ public class AgendaAdapter {
 			}
 		}
 		return true;
+	}
+	
+	private Boolean pasadoTareaResolComite(ActivoTramite tramite) {
+		TareaActivo tarAct = null;
+		if (tramite != null && ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+			List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+			if(!Checks.esNulo(listaTareas)){
+				for(int i=0; i<listaTareas.size(); i++){
+					tarAct = listaTareas.get(i);
+					if(!Checks.esNulo(tarAct.getFechaFin()) 
+							&& "T015_ElevarASancion".equals(tarAct.getTareaExterna().getTareaProcedimiento().getCodigo())){
+						List<TareaExternaValor> valores = tarAct.getTareaExterna().getValores();
+						for (TareaExternaValor tev : valores) {
+							if ("resolucionOferta".equals(tev.getNombre()) && DDSiNo.SI.equals(tev.getValor())) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public String getIdTareaFormParameterMap(Map<String,String[]> valores) {
+
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if (key.equals("idTarea")){
+				return (String)entry.getValue()[0];
+			}
+		}
+
+		return null;
 	}
 }

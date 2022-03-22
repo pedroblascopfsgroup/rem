@@ -51,7 +51,7 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String ALQUILADO = "15";
 	public static final String EN_DEVOLUCION = "16";
 	public static final String ANULADO_PDTE_DEVOLUCION = "17";
-	public static final String PTE_SCORING = "18";
+	
 	public static final String PTE_SEGURO_RENTAS = "19";
 	public static final String PTE_ELEVAR_SANCION = "20";
 	public static final String ELEVAR_A_SANCION = "21";
@@ -75,6 +75,39 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String CONTRAOFERTA_DENEGADA = "29";
 	public static final String PTE_CONTRASTE_LISTAS = "42";
 	public static final String PDTE_RESPUESTA_OFERTANTE_CES = "43";
+	public static final String PTE_PBC_CN = "44"; 
+	public static final String PTE_PBC_ARRAS = "45"; 
+	public static final String PTE_PBC_VENTAS = "46"; 
+	public static final String PTE_AGENDAR_ARRAS = "47"; 
+	public static final String PTE_AGENDAR_FIRMA = "48"; 
+	public static final String PTE_FIRMA_ARRAS = "49"; 
+	public static final String PENDIENTE_GARANTIAS_ADICIONALES = "50"; 
+	public static final String PTE_AGENDAR = "51"; 
+	public static final String PTE_ENVIO = "52"; 
+	
+	public static final String PTE_SCREENING_Y_ANALISIS_BC = "53";
+	public static final String PTE_CL_ROD = "54";
+	public static final String PTE_ANALISIS_TECNICO = "55";
+	public static final String PTE_NEGOCIACION = "56";
+	public static final String PTE_PBC_ALQUILER_HRE = "57";
+	public static final String PTE_TRASLADAR_OFERTA_AL_CLIENTE = "58";
+	public static final String PTE_REVISAR_CONDICIONES_BC = "59";
+	
+	//Estados Alquiler HayaHome
+	public static final String PENDIENTE_SANCION = "144";
+	public static final String CONGELADA = "145";
+	public static final String DESCARTADA = "146";
+	
+	public static final String PDTE_FIRMA_CONTRATO_RESERVA = "147";
+	public static final String PTE_SCORING = "148";
+	public static final String PDTE_POSICIONAMIENTO_FIRMA = "149";
+	public static final String PDTE_ENVIO_CONTRATO_FIRMA = "150";
+	public static final String PDTE_FIRMA = "151";
+	public static final String PDTE_REGISTRO_FIRMAS_SISTEMA = "152";
+	public static final String FINALIZADA = "153";
+	public static final String CANCELADA = "154";
+	public static final String BORRADOR = "155";
+	
 	
 	public static final String CODIGO_DATOS_ERRONEOS = "999";
 
@@ -167,6 +200,30 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 
 	public void setEstadoAlquiler(Boolean estadoAlquiler) {
 		this.estadoAlquiler = estadoAlquiler;
+	}
+	
+	public static boolean isFirmado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && FIRMADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isVendido(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && VENDIDO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isAlquilado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && ALQUILADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
 	}
 
 }

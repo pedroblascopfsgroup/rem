@@ -102,8 +102,10 @@ import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.GastoSuplido;
+import es.pfsgroup.plugin.rem.model.GastoTasacionActivo;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
+import es.pfsgroup.plugin.rem.model.HistoricoEnvioPedidos;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
@@ -114,7 +116,9 @@ import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
+import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
 import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
+import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -332,6 +336,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<String> codigosSubtipoGasto = new ArrayList<String>(Arrays.asList(subtiposGasto));
 		Boolean filtroGastosB = false;
 		if (!Checks.esNulo(gasto)) {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 
 			dto.setVisibleSuplidos(false);
 			dto.setIdGasto(gasto.getId());
@@ -403,6 +410,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setBuscadorNifPropietario(gasto.getPropietario().getDocIdentificativo());
 				dto.setNombrePropietario(gasto.getPropietario().getNombre());
+				
+				if(gasto.getPropietario().getCartera() != null) {
+					dto.setCarteraPropietarioCodigo(gasto.getPropietario().getCartera().getCodigo());
+				}
 			}
 
 			if (!Checks.esNulo(gasto.getDestinatarioGasto())) {
@@ -576,12 +587,30 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dto.setFacturaPrincipalSuplido(gasto.getNumeroFacturaPrincipal());
 			
+			if (gasto.getNumeroContratoAlquiler() != null) {
+				dto.setNumeroContratoAlquiler(gasto.getNumeroContratoAlquiler());
+			}
+			
 			if (!Checks.esNulo(gasto.getSolicitudPagoUrgente())) {
 				if (gasto.getSolicitudPagoUrgente() == 1) {
 					dto.setSolicitudPagoUrgente(true);
 				} else {
 					dto.setSolicitudPagoUrgente(false);
 				}
+			}
+			
+			dto.setSubrogado(gasto.getSubrogado());
+			
+			dto.setClaveFactura(gasto.getClaveFactura());
+			
+			if (!Checks.esNulo(gasto.getTitularCartaPago())) {
+				dto.setNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setBuscadorNifTitularCartaPago(gasto.getTitularCartaPago().getDocIdentificativo());
+				dto.setNombreTitularCartaPago(gasto.getTitularCartaPago().getNombre());
+			}
+			
+			if (contabilidadGasto != null) {
+				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 			}
 		}
 
@@ -916,12 +945,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
+		if (dto.getNumeroContratoAlquiler() != null) {
+			gastoProveedor.setNumeroContratoAlquiler(dto.getNumeroContratoAlquiler());
+		}
+		
 		if (!Checks.esNulo(dto.getSolicitudPagoUrgente())) {
 			if (dto.getSolicitudPagoUrgente()) {
 				gastoProveedor.setSolicitudPagoUrgente(1);
 			} else {
 				gastoProveedor.setSolicitudPagoUrgente(0);
 			}
+		}
+		
+		if(dto.getSubrogado() != null) {
+			gastoProveedor.setSubrogado(dto.getSubrogado());
+		}
+		
+		if(dto.getClaveFactura() != null) {
+			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
 		
 		genericDao.update(GastoProveedor.class, gastoProveedor);
@@ -931,6 +972,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dto.getCodigoProveedorRem(), dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
 
 			actualizaSuplidosAsync.start();
+		}
+		
+		if (!Checks.esNulo(dto.getBuscadorNifTitularCartaPago())) {
+			Filter filtroNifTitularCartaPago = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifTitularCartaPago());
+			ActivoPropietario propietarioTitularCartaPago = genericDao.get(ActivoPropietario.class, filtroNifTitularCartaPago);
+			gastoProveedor.setTitularCartaPago(propietarioTitularCartaPago);
 		}
 
 		return true;
@@ -2260,6 +2307,61 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(gastoGestion.getMotivoRetencionPago())) {
 					dtoGestion.setComboMotivoRetenerPago(gastoGestion.getMotivoRetencionPago().getCodigo());
 				}
+
+				if (gastoGestion.getGestionGastoRepercutido() != null) {
+					if (DDSinSiNo.CODIGO_SI.equals(gastoGestion.getGestionGastoRepercutido().getCodigo())) {
+						dtoGestion.setGestionGastoRepercutido(true);
+					} else if (DDSinSiNo.CODIGO_NO.equals(gastoGestion.getGestionGastoRepercutido().getCodigo())) {
+						dtoGestion.setGestionGastoRepercutido(false);
+					}
+				}
+				
+				if (gastoGestion.getFechaGestionGastoRepercusion() != null) {
+					dtoGestion.setFechaGestionGastoRepercusion(gastoGestion.getFechaGestionGastoRepercusion());
+				}
+
+				if (gastoGestion.getMotivoRechazoGestionGasto() != null) {
+					dtoGestion.setMotivoRechazoGestionGasto(gastoGestion.getMotivoRechazoGestionGasto());
+				}
+				
+				if (DDCartera.isCarteraBk(gasto.getPropietario().getCartera())) {
+					if (gastoGestion.getGestionGastoClientePagador() != null) {
+						Filter filtroClienteComprador= genericDao.createFilter(FilterType.EQUALS, "id", gastoGestion.getGestionGastoClientePagador().getId());
+						ActivoPropietario propietarioClienteComprador = genericDao.get(ActivoPropietario.class, filtroClienteComprador);
+						
+						if (propietarioClienteComprador != null) {
+							dtoGestion.setGestionGastoClientePagador(propietarioClienteComprador.getNombre());
+						}
+						
+						if (ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(propietarioClienteComprador.getDocIdentificativo())) {
+							if (gastoGestion.getFechaEnvioPropietario() != null) {
+								dtoGestion.setFechaEnvioPropietario(gastoGestion.getFechaEnvioPropietario());
+							}
+						} else if (ActivoPropietario.NIF_PROPIETARIO_CAIXABANK.equals(propietarioClienteComprador.getDocIdentificativo())) {
+							List<HistoricoEnvioPedidos> listaEnvioPedidos = getHistoricoEnvioPedidosByIdGasto(gasto.getId());
+							
+							if (listaEnvioPedidos != null) {
+								for (HistoricoEnvioPedidos historicoEnvioPedidos : listaEnvioPedidos) {
+									dtoGestion.setFechaEnvioPropietario(historicoEnvioPedidos.getFechaEnvioPropietario());
+									break;
+								}
+							}
+						}
+					}
+					
+					if (gastoGestion.getGestionGastoClienteInformador() != null) {
+						Filter filtroClienteInformador = genericDao.createFilter(FilterType.EQUALS, "id", gastoGestion.getGestionGastoClienteInformador().getId());
+						ActivoPropietario propietarioClienteInformador = genericDao.get(ActivoPropietario.class, filtroClienteInformador);
+						
+						if (propietarioClienteInformador != null) {
+							dtoGestion.setGestionGastoClienteInformador(propietarioClienteInformador.getNombre());
+						}
+						
+						if (gastoGestion.getFechaEnvioInformativa() != null) {
+							dtoGestion.setFechaEnvioInformativa(gastoGestion.getFechaEnvioInformativa());
+						}
+					}	
+				}
 			}
 		}
 
@@ -3446,7 +3548,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto) {
+	public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto) throws Exception {
 		List<VGastosRefacturados>  listaVistaGastos = new ArrayList<VGastosRefacturados>();
 		List<String> listaGastosFinales = new ArrayList<String>();
 
@@ -3462,20 +3564,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						&& nifPropietario != null && this.gastoMismoPropietario(nifPropietario, gastoProveedorRefacturable)
 						&& gastoProveedorRefacturable.getPropietario().getCartera() != null) {
 					
-						if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gastoProveedorRefacturable.getPropietario().getCartera().getCodigo())) {
-							
-							String mismosDatosAux = gastoLineaDetalleApi.devolverSubGastoImpuestImpositivo(gastoLineaDetalleApi.devolverLineaBk(gastoProveedorRefacturable));
-							if(mismosDatos == null) {
-								mismosDatos = mismosDatosAux;
-							}	
-							if(!mismosDatos.equals(mismosDatosAux)) {
-								listaGastosFinales.clear();
-								break;
-							}
-						}
+
+
 						listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
-					}	
+					}else {
+						throw new Exception("No se obtiene gasto ya que no coincide o el propietario o tipo del gasto o el gasto a refacturar no tiene linea de detalle");
+					}
 				}
+			}else {
+				throw new Exception("No se obtiene gasto ya que no es refacturable");
 			}
 		}
 		
@@ -4259,15 +4356,59 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return importeCuotaBig.doubleValue();
 	}
 	
-	@Override
+	
 	public Long getIdByNumGasto(Long numGasto) {
-		Long idGasto = null;
-		try {
-			idGasto = Long.parseLong(rawDao.getExecuteSQL("SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = " + numGasto + " AND BORRADO = 0"));
-		} catch (Exception e) {
-				return null;
-		}			
-			return idGasto;
+		Long idGasto = null;			
+		GastoProveedor gastoProv = gastoDao.getGastoPorNumeroGastoHaya(numGasto);
+		if (gastoProv != null) {
+			idGasto = gastoProv.getId();
+		}					
+		return idGasto;
+	}
+
+	@Override
+	public List<VTasacionesGastos> getListTasacionesGasto(Long idGasto) {
+		return idGasto != null ?
+				genericDao.getList(VTasacionesGastos.class, genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto)) : null;
 	}
 	
+	@Override
+	public List<VGridMotivosRechazoGastoCaixa> getMotivosRechazoGasto(Long idGasto) throws Exception {
+		
+		List<VGridMotivosRechazoGastoCaixa> listaMotivosRec = new ArrayList<VGridMotivosRechazoGastoCaixa>();
+		if (idGasto != null) {
+			listaMotivosRec = genericDao.getList(VGridMotivosRechazoGastoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "gastoId", idGasto));
+		}		
+		return listaMotivosRec;
+	}
+
+	@Override
+	@Transactional
+	public boolean deleteGastoTasacion(Long id) {
+
+		GastoTasacionActivo gta = genericDao.get(GastoTasacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		Auditoria.delete(gta);
+
+		genericDao.update(GastoTasacionActivo.class, gta);
+
+		return true;
+	}
+	
+	public List<HistoricoEnvioPedidos> getHistoricoEnvioPedidosByIdGasto(Long idGasto){
+		
+		List<HistoricoEnvioPedidos> listaEnvioPedidos = new ArrayList<HistoricoEnvioPedidos>();
+		
+		Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		List<HistoricoEnvioPedidos> listaHistoricoEnvioPedidos = genericDao.getListOrdered(HistoricoEnvioPedidos.class, order, filtroGasto, filtroBorrado);
+		
+		for (HistoricoEnvioPedidos historicoEnvioPedidos : listaHistoricoEnvioPedidos) {
+			if (historicoEnvioPedidos.getGastoProveedor() != null && historicoEnvioPedidos.getFechaEnvioPropietario() != null) {
+				listaEnvioPedidos.add(historicoEnvioPedidos);
+			}
+		}
+		return listaEnvioPedidos;
+	}
 }

@@ -163,6 +163,65 @@ public class DtoModificarCompradores{
 	
 	private boolean visualizar;
 	
+	private String idBC4C;
+
+	private boolean compradorPrp;
+	
+	private boolean representantePrp;
+	
+	private Date fechaNacimientoConstitucion;
+
+	private String formaJuridica;
+	
+	private Integer usufructuario;
+	
+	private Date fechaNacimientoRepresentante;
+	
+	private String localidadNacimientoRepresentanteCodigo;
+	
+	private String localidadNacimientoRepresentanteDescripcion;
+
+	
+		
+	
+	private String paisNacimientoCompradorDescripcion;
+
+	
+	private String paisNacimientoRepresentanteCodigo;
+	
+	private String paisNacimientoRepresentanteDescripcion;
+	
+	private Date fechaNacimientoComprador;
+	
+	
+	private String vinculoCaixaCodigo;
+	
+	
+	private String paisNacimientoCompradorCodigo;
+
+	private String provinciaNacimientoCompradorCodigo;
+	
+	private String provinciaNacimientoCompradorDescripcion;
+
+	private String provinciaNacimientoRepresentanteCodigo;
+	
+	private String provinciaNacimientoRepresentanteDescripcion;
+	
+	private String localidadNacimientoCompradorCodigo;
+
+	private String localidadNacimientoCompradorDescripcion;
+	
+	private String sociedad;
+
+	private String oficinaTrabajo;
+	
+	private String nacionalidadCodigo;
+	
+	private String nacionalidadRprCodigo;
+	
+	private String motivoEdicionCompradores;
+	
+	private Boolean isExpedienteAprobado;
 	
 	public Long getId() {
 		return id;
@@ -795,6 +854,224 @@ public class DtoModificarCompradores{
 		this.visualizar = visualizar;
 	}
 
-	
+	public String getIdBC4C() {
+		return idBC4C;
+	}
 
+	public void setIdBC4C(String idBC4C) {
+		this.idBC4C = idBC4C;
+	}
+
+
+
+	public String getFormaJuridica() {
+		return formaJuridica;
+	}
+
+	public void setFormaJuridica(String formaJuridica) {
+		this.formaJuridica = formaJuridica;
+	}
+
+	public Integer getUsufructuario() {
+		return usufructuario;
+	}
+
+	public void setUsufructuario(Integer usufructuario) {
+		this.usufructuario = usufructuario;
+	}
+
+	public Date getFechaNacimientoComprador() {
+		return fechaNacimientoComprador;
+	}
+
+	public void setFechaNacimientoComprador(Date fechaNacimientoComprador) {
+		this.fechaNacimientoComprador = fechaNacimientoComprador;
+	}
+
+	public boolean getCompradorPrp() {
+		return compradorPrp;
+	}
+
+	public void setCompradorPrp(boolean compradorPrp) {
+		this.compradorPrp = compradorPrp;
+	}
+
+	public boolean getRepresentantePrp() {
+		return representantePrp;
+	}
+
+	public void setRepresentantePrp(boolean representantePrp) {
+		this.representantePrp = representantePrp;
+	}
+
+	public Date getFechaNacimientoConstitucion() {
+		return fechaNacimientoConstitucion;
+	}
+
+	public void setFechaNacimientoConstitucion(Date fechaNacimientoConstitucion) {
+		this.fechaNacimientoConstitucion = fechaNacimientoConstitucion;
+	}
+
+	public Date getFechaNacimientoRepresentante() {
+		return fechaNacimientoRepresentante;
+	}
+
+	public void setFechaNacimientoRepresentante(Date fechaNacimientoRepresentante) {
+		this.fechaNacimientoRepresentante = fechaNacimientoRepresentante;
+	}
+
+
+
+	public String getPaisNacimientoCompradorDescripcion() {
+		return paisNacimientoCompradorDescripcion;
+	}
+
+	public void setPaisNacimientoCompradorDescripcion(String paisNacimientoCompradorDescripcion) {
+		this.paisNacimientoCompradorDescripcion = paisNacimientoCompradorDescripcion;
+	}
+
+	public String getPaisNacimientoRepresentanteCodigo() {
+		return paisNacimientoRepresentanteCodigo;
+	}
+
+	public void setPaisNacimientoRepresentanteCodigo(String paisNacimientoRepresentanteCodigo) {
+		this.paisNacimientoRepresentanteCodigo = paisNacimientoRepresentanteCodigo;
+	}
+
+	public String getPaisNacimientoRepresentanteDescripcion() {
+		return paisNacimientoRepresentanteDescripcion;
+	}
+
+	public void setPaisNacimientoRepresentanteDescripcion(String paisNacimientoRepresentanteDescripcion) {
+		this.paisNacimientoRepresentanteDescripcion = paisNacimientoRepresentanteDescripcion;
+	}
+
+	public String getProvinciaNacimientoCompradorCodigo() {
+		return provinciaNacimientoCompradorCodigo;
+	}
+
+	public void setProvinciaNacimientoCompradorCodigo(String provinciaNacimientoCompradorCodigo) {
+		this.provinciaNacimientoCompradorCodigo = provinciaNacimientoCompradorCodigo;
+	}
+
+	public String getProvinciaNacimientoCompradorDescripcion() {
+		return provinciaNacimientoCompradorDescripcion;
+	}
+
+	public void setProvinciaNacimientoCompradorDescripcion(String provinciaNacimientoCompradorDescripcion) {
+		this.provinciaNacimientoCompradorDescripcion = provinciaNacimientoCompradorDescripcion;
+	}
+
+	public String getProvinciaNacimientoRepresentanteCodigo() {
+		return provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public void setProvinciaNacimientoRepresentanteCodigo(String provinciaNacimientoRepresentanteCodigo) {
+		this.provinciaNacimientoRepresentanteCodigo = provinciaNacimientoRepresentanteCodigo;
+	}
+
+	public String getProvinciaNacimientoRepresentanteDescripcion() {
+		return provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public void setProvinciaNacimientoRepresentanteDescripcion(String provinciaNacimientoRepresentanteDescripcion) {
+		this.provinciaNacimientoRepresentanteDescripcion = provinciaNacimientoRepresentanteDescripcion;
+	}
+
+	public String getLocalidadNacimientoCompradorCodigo() {
+		return localidadNacimientoCompradorCodigo;
+	}
+
+	public void setLocalidadNacimientoCompradorCodigo(String localidadNacimientoCompradorCodigo) {
+		this.localidadNacimientoCompradorCodigo = localidadNacimientoCompradorCodigo;
+	}
+
+	public String getLocalidadNacimientoCompradorDescripcion() {
+		return localidadNacimientoCompradorDescripcion;
+	}
+
+	public void setLocalidadNacimientoCompradorDescripcion(String localidadNacimientoCompradorDescripcion) {
+		this.localidadNacimientoCompradorDescripcion = localidadNacimientoCompradorDescripcion;
+	}
+
+	public String getVinculoCaixaCodigo() {
+		return vinculoCaixaCodigo;
+	}
+
+	public void setVinculoCaixaCodigo(String vinculoCaixaCodigo) {
+		this.vinculoCaixaCodigo = vinculoCaixaCodigo;
+	}
+
+	public String getPaisNacimientoCompradorCodigo() {
+		return paisNacimientoCompradorCodigo;
+	}
+
+	public void setPaisNacimientoCompradorCodigo(String paisNacimientoCompradorCodigo) {
+		this.paisNacimientoCompradorCodigo = paisNacimientoCompradorCodigo;
+	}	
+	
+	public String getLocalidadNacimientoRepresentanteCodigo() {
+		return localidadNacimientoRepresentanteCodigo;
+	}
+
+	public void setLocalidadNacimientoRepresentanteCodigo(String localidadNacimientoRepresentanteCodigo) {
+		this.localidadNacimientoRepresentanteCodigo = localidadNacimientoRepresentanteCodigo;
+	}
+
+	public String getLocalidadNacimientoRepresentanteDescripcion() {
+		return localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public void setLocalidadNacimientoRepresentanteDescripcion(String localidadNacimientoRepresentanteDescripcion) {
+		this.localidadNacimientoRepresentanteDescripcion = localidadNacimientoRepresentanteDescripcion;
+	}
+
+	public String getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(String sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public String getOficinaTrabajo() {
+		return oficinaTrabajo;
+	}
+
+	public void setOficinaTrabajo(String oficinaTrabajo) {
+		this.oficinaTrabajo = oficinaTrabajo;
+	}
+
+	public String getNacionalidadCodigo() {
+		return nacionalidadCodigo;
+	}
+
+	public void setNacionalidadCodigo(String nacionalidadCodigo) {
+		this.nacionalidadCodigo = nacionalidadCodigo;
+	}
+
+	public String getNacionalidadRprCodigo() {
+		return nacionalidadRprCodigo;
+	}
+
+	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
+		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
+	}
+
+	public String getMotivoEdicionCompradores() {
+		return motivoEdicionCompradores;
+	}
+
+	public void setMotivoEdicionCompradores(String motivoEdicionCompradores) {
+		this.motivoEdicionCompradores = motivoEdicionCompradores;
+	}
+
+	public Boolean getIsExpedienteAprobado() {
+		return isExpedienteAprobado;
+	}
+
+	public void setIsExpedienteAprobado(Boolean isExpedienteAprobado) {
+		this.isExpedienteAprobado = isExpedienteAprobado;
+	}
+	
 }

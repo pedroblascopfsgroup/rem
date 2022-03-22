@@ -67,14 +67,19 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						        } 
 						    },
 						    {
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'comboboxfieldbasedd',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoGasto',
 					        	name: 'tipoGastoCodigo',
 					        	bind: {
 				            		store: '{comboTipoGasto}'
 				            	},
-								publishes: 'value'
+								publishes: 'value',
+								chainedStore: 'comboSubtipoGastoFiltered',
+					        	chainedReference: 'subtipoGastoCodigoRef',
+					        	listeners: {
+									select: 'onChangeChainedCombo'
+								}
 
 							},
 							{
@@ -86,16 +91,18 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 						        name: 'numGastoGestoria'
 						    },
 						    {
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'comboboxfieldbasedd',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+					        	reference: 'subtipoGastoCodigoRef',
 					        	name: 'subtipoGastoCodigo',
 					        	bind: {
-				            		store: '{comboSubtipoGasto}',
-				                    disabled: '{!filtroComboTipoGasto.value}',
+				            		store: '{comboSubtipoGastoFiltered}',
+				                    disabled: '{!filtroComboTipoGasto.value}'
+				                    /*,
 				                    filters: {
 				                        property: 'tipoGastoCodigo',
 				                        value: '{filtroComboTipoGasto.value}'
-				                    }
+				                    }*/
 				            	}
 					        },
     						{
@@ -297,6 +304,9 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 					        	bind: {
 				            		store: '{comboEntidadPropietaria}'
 				            	},
+								listeners : {
+				        			change: 'onChangeCartera'
+				        		},
 				            	publishes: 'value'
 
 							},

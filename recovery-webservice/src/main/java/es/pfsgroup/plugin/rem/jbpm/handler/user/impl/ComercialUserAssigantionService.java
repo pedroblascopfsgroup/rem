@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.user.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -34,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -81,10 +84,51 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_CIERRE_ECONOMICO ="T017_CierreEconomico";
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
+	public static final String CODIGO_T017_AGENDAR_ARRAS = "T017_AgendarFechaFirmaArras";
+	public static final String CODIGO_T017_CONFIRMAR_ARRAS = "T017_ConfirmarFechaFirmaArras";
+	public static final String CODIGO_T017_AGENDAR_FIRMA = "T017_AgendarPosicionamiento";
+	public static final String CODIGO_T017_CONFIRMAR_FIRMA = "T017_ConfirmarFechaEscritura";
+	public static final String CODIGO_T017_FIRMA = "T017_FirmaContrato";
+	public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
+
+	public static final String USUARIO_REST_BC_DEFAULT = "COMM_CBK";
+	
+	public static final String CODIGO_T017_BLOQUEOSCREENING = "T017_BloqueoScreening";
+	public static final String CODIGO_T017_BLOQUEOSCORING = "T017_BloqueoScoring";
+	
+	public static final String CODIGO_T015_VERIFICAR_SCORING = "T015_VerificarScoring";
+	public static final String CODIGO_T015_SCORING_BC = "T015_ScoringBC";
+	public static final String CODIGO_T015_PBC = "T015_PBC";
+	public static final String CODIGO_T015_SOLICITAR_GARANTIAS_ADICIONALES = "T015_SolicitarGarantiasAdicionales";
+	
+	public class TramiteVentaAppleT017{
+		public static final String CODIGO_T017_CONFIRMAR_FECHA_FIRMA_ARRAS = "T017_ConfirmarFechaFirmaArras";
+		public static final String CODIGO_T017_CONFIRMAR_FECHA_ESCRITURA = "T017_ConfirmarFechaEscritura";
+		public static final String CODIGO_T017_PBC_CN = "T017_PBC_CN";
+	}
+	
+	public class TramiteAlquilerT015{
+		public static final String CODIGO_T015_ELEVAR_SANCION = "T015_ElevarASancion";
+		public static final String CODIGO_T015_DEFINICION_OFERTA = "T015_DefinicionOferta";
+		public static final String CODIGO_T015_BLOQUEOSCREENING = "T015_BloqueoScreening";
+		public static final String CODIGO_T015_BLOQUEOSCORING = "T015_BloqueoScoring";
+	}
+	
+	public class TramiteAlquilerNoComercialT018{
+		public static final String CODIGO_T018_SOLICITAR_GARANTIAS_ADICIONALES = "T018_SolicitarGarantiasAdicionales";
+		public static final String CODIGO_T018_SCORING = "T018_Scoring";
+		public static final String CODIGO_T018_DEFINICION_OFERTA = "T015_DefinicionOferta";
+		public static final String CODIGO_T018_ANALISIS_BC = "T018_AnalisisBc";
+		public static final String CODIGO_T018_BLOQUEOSCREENING = "T018_BloqueoScreening";
+		public static final String CODIGO_T018_PBC_ALQUILER = "T018_PbcAlquiler";
+		public static final String CODIGO_T018_BLOQUEOSCORING = "T018_BloqueoScoring";
+	}
 	
 	private static final Integer CODIGO_SI = 1;
 	
 	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";
+	public static final String USERNAME_GRUPO_BC_FOR = "grupobc03";
+	public static final String USERNAME_GRUPO_BOARDING = "gruboarding";
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -125,7 +169,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				 	CODIGO_T017_ADVISORY_NOTE,CODIGO_T017_PBC_RESERVA,CODIGO_T017_PBC_VENTA,CODIGO_T017_RECOMENDACION_CES,
 				 	CODIGO_T017_RESOLUCION_PRO_MANZANA,CODIGO_T017_RESOLUCION_EXPEDIENTE,CODIGO_T017_INSTRUCCIONES_RESERVA,CODIGO_T017_OBTENCION_CONTRATO_RESERVA,
 				 	CODIGO_T017_POSICIONAMIENTO_FIRMA,CODIGO_T017_DOCUMENTOS_POSTVENTA,CODIGO_T017_CIERRE_ECONOMICO, CODIGO_T017_RESOLUCION_DIVARIAN, CODIGO_T017_RESOLUCION_ARROW,
-				 	CODIGO_T017_RATIFICACION_COMITE_CES};
+				 	CODIGO_T017_RATIFICACION_COMITE_CES, CODIGO_T017_AGENDAR_ARRAS, CODIGO_T017_CONFIRMAR_ARRAS, CODIGO_T017_AGENDAR_FIRMA, CODIGO_T017_CONFIRMAR_FIRMA,
+					CODIGO_T017_FIRMA, CODIGO_T017_PBC_CN};
 
 	}
 
@@ -155,6 +200,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
 		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
 		boolean isActivoBBVA = this.isActivoBBVA(tareaActivo);
+		boolean isActivoTitulizada = this.isActivoTitulizada(tareaActivo);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor; 
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
@@ -168,6 +214,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoJaipur = this.isActivoJaipur(tareaActivo);
 		boolean isActivoAgora = this.isActivoAgora(tareaActivo);
 		boolean tieneGBOAR = this.tieneGBOAR(tareaActivo);
+		boolean isActivoJaguar = this.isActivoJaguar(tareaActivo);
+		boolean isActivoBFA = this.isActivoBFA(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -190,7 +238,28 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			
 			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, 
 					isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, 
-					isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus, isActivoJaipur, isActivoEgeo, isActivoAgora,tieneGBOAR).get(codigoTarea);
+					isActivoOmega, esActivoRemaining,isActivoBBVA,tieneReserva,isCerberus, isActivoJaipur, isActivoEgeo, isActivoAgora,tieneGBOAR, isActivoBFA, isActivoTitulizada, isActivoJaguar).get(codigoTarea);
+		}
+
+		if(isActivoBankia && isTareaGetUsuarioCaixa(codigoTarea)){
+			Usuario user = getUsuarioByTareaCaixa(codigoTarea);
+			if(user != null){
+				return user;
+			}
+		}
+		
+		if (isActivoBankia && CODIGO_T017_RESOLUCION_EXPEDIENTE.equals(codigoTarea)) {
+			Filter user = null;
+			expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
+			if ( expediente != null && !expedienteComercialNoAprobado(expediente.getEstado().getCodigo())) {
+				if (tieneReserva && DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+					user = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BC_FOR);
+				} else {
+					user = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_BOARDING);
+				}
+			}
+			
+			if (!Checks.esNulo(user)) return genericDao.get(Usuario.class, user);
 		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_BOARDING.equals(codigoGestor)) {
@@ -238,7 +307,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera))
+						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)
+						|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
 						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
 			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
@@ -260,8 +330,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 					comite = expediente.getComiteSancion();
 				}
 			}
+			
 			if((CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea))
-					&& (isActivoApple || esActivoRemaining) 
+					&& (isActivoApple || esActivoRemaining || isActivoJaguar) 
 					&& (comite != null && (DDComiteSancion.CODIGO_HAYA_APPLE.equals(comite.getCodigo()) || (DDComiteSancion.CODIGO_HAYA_REMAINING.equals(comite.getCodigo()))))){		
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
@@ -271,7 +342,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 					return null;
 				}
 			}else {
-				return gestorActivoApi.usuarioGrupoTareaT017(codigoTarea, isActivoApple, this.isActivoArrow(tareaActivo), this.isActivoRemaining(tareaActivo), tareaExterna);
+				return gestorActivoApi.usuarioGrupoTareaT017(codigoTarea, isActivoApple, this.isActivoArrow(tareaActivo), this.isActivoRemaining(tareaActivo), isActivoJaguar, tareaExterna);
 			}
 		} else {
 			if(codigoGestor != null && !codigoGestor.isEmpty()) {
@@ -301,6 +372,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
+	}
+
+	private Usuario getUsuarioByTareaCaixa(String codigoTarea) {
+		return gestorActivoApi.getUsuarioByTareaCaixa(codigoTarea);
+	}
+
+	private boolean isTareaGetUsuarioCaixa(String codigoTarea) {
+		return CODIGO_T017_PBC_CN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+				|| CODIGO_T017_AGENDAR_ARRAS.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_ARRAS.equals(codigoTarea)
+				|| CODIGO_T017_INSTRUCCIONES_RESERVA.equals(codigoTarea) || CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(codigoTarea) 
+				|| CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)
+				|| CODIGO_T017_AGENDAR_FIRMA.equals(codigoTarea) || CODIGO_T017_CONFIRMAR_FIRMA.equals(codigoTarea);
 	}
 
 	public boolean expedienteTieneReserva(ExpedienteComercial expediente,TareaActivo tareaActivo) {
@@ -337,6 +420,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoEgeo = this.isActivoEgeo(tareaActivo);
 		boolean isActivoJaipur = this.isActivoJaipur(tareaActivo);
 		boolean isActivoAgora = this.isActivoAgora(tareaActivo);
+		boolean isActivoJaguar = this.isActivoJaguar(tareaActivo);
+		boolean isActivoTitulizada = this.isActivoTitulizada(tareaActivo);
+		boolean isBFA = this.isActivoBFA(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -352,7 +438,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		}else {
-			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank, isBankia, isSareb, isRetailActivo(tareaActivo), isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoGiants, isActivoDivarian, isActivoBBVA, isActivoJaipur, isActivoEgeo, isActivoAgora).get(codigoTarea);
+			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank, isBankia, isSareb, isRetailActivo(tareaActivo), isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoGiants, isActivoDivarian, isActivoBBVA, isActivoJaipur, isActivoEgeo, isActivoAgora, isBFA, isActivoTitulizada, isActivoJaguar).get(codigoTarea);
 		}
 
 		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
@@ -600,16 +686,33 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codCarteraActivo) || DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codCarteraActivo) ||
 				DDCartera.CODIGO_CARTERA_SAREB.equals(codCarteraActivo) || (DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCarteraActivo) && 
 				(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcarteraActivo) || DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(codSubcarteraActivo) 
-						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcarteraActivo))); 
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcarteraActivo) || DDSubcartera.CODIGO_JAGUAR.equals(codSubcarteraActivo))); 
+	}
+	
+	private boolean isActivoJaguar(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		String codSubcarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null) : null;
+		
+		return DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCarteraActivo) && DDSubcartera.CODIGO_JAGUAR.equals(codSubcarteraActivo); 
+	}
+	
+	private boolean isActivoBFA(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		return DDCartera.CODIGO_CARTERA_BFA.equals(codCarteraActivo);
 	}
 
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
 	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants, boolean isLiberbank, boolean isHayaLbk, 
 			/*boolean isLiberbankInmobiliaria, boolean isLiberbankTerciaria,*/ boolean isActivoBankia, boolean isActivoSareb, boolean isRetail, boolean isActivoApple, boolean isActivoTango,
 			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoArrow, boolean isActivoOmega,boolean isActivoRemaining, 
-			boolean isActivoBBVA,boolean tieneReserva, boolean isCerberus, boolean isActivoJaipur, boolean isActivoEgeo, boolean isActivoAgora, boolean tieneGBOAR) {
+			boolean isActivoBBVA,boolean tieneReserva, boolean isCerberus, boolean isActivoJaipur, boolean isActivoEgeo, boolean isActivoAgora, boolean tieneGBOAR, boolean isActivoBFA, boolean isActivoTitulizada, boolean isActivoJaguar) {
 		
-HashMap<String,String> mapa = new HashMap<String,String>();
+		HashMap<String,String> mapa = new HashMap<String,String>();
 		
 		if(!isFdv){			
 			if(isGiants){
@@ -625,7 +728,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_FVD_NEGOCIO);
 			if(isGiants){
 				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_GOLDEN_TREE);
-			}else if (isActivoBankia) {
+			}else if (isActivoBankia || isActivoBFA) {
 				mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			}
 			else{
@@ -663,7 +766,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			}
 		}
 		
-		if(isActivoBankia || isActivoSareb) {
+		if(isActivoSareb || isActivoBFA || isActivoTitulizada) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -684,7 +787,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		}
 		
-		if(isActivoApple || isActivoRemaining) {
+		if(isActivoApple || isActivoRemaining || isActivoBankia || isActivoJaguar) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
@@ -699,7 +802,9 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);	
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION); 
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_CONTROLLER); 
@@ -912,7 +1017,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 	
 	private HashMap<String,String> getMapCodigoTipoSupervisor(boolean isFdv, boolean isLiberbank, boolean isBankia, boolean isSareb, boolean isRetail, boolean isActivoApple, boolean isActivoTango, 
 			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoGiants, boolean isActivoDivarian, boolean isActivoBBVA, 
-			boolean isActivoJaipur, boolean isActivoEgeo, boolean isActivoAgora) {
+			boolean isActivoJaipur, boolean isActivoEgeo, boolean isActivoAgora, boolean isBFA, boolean isActivoTitulizada, boolean isActivoJaguar) {
 
 		HashMap<String,String> mapa = new HashMap<String,String>();		
 		
@@ -953,7 +1058,7 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK);
 		}
 		
-		if(isBankia && isRetail) {
+		if(isBFA || isActivoTitulizada) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RATIFICACION_COMITE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
@@ -975,17 +1080,23 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 		}
 		
 		//Asignar supervisor apple
-		if(isActivoApple || isActivoBBVA) {
+		if(isActivoApple || isActivoBBVA || isBankia || isActivoJaguar) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_CN, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_ARRAS, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_ARRAS, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_AGENDAR_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CONFIRMAR_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION); 
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL); 
 			
@@ -1355,5 +1466,24 @@ HashMap<String,String> mapa = new HashMap<String,String>();
 			esFinanciero = true;
 		}
 		return esFinanciero;
+	}
+	
+	private boolean isActivoTitulizada(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		return DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codCarteraActivo);
+	}
+ 	
+	private boolean expedienteComercialNoAprobado(String codigoEstadoExpedienteComercial) {
+		List<String> estadosRestringidos =
+				new ArrayList<String>(Arrays.asList(DDEstadosExpedienteComercial.EN_TRAMITACION
+													,DDEstadosExpedienteComercial.PTE_SANCION
+													,DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES
+													,DDEstadosExpedienteComercial.CONTRAOFERTADO));
+				
+				
+		return Boolean.TRUE.equals(estadosRestringidos.contains(codigoEstadoExpedienteComercial));
 	}
 }

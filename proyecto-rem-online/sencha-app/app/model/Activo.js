@@ -64,6 +64,13 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
+    		{
+    			name: 'isCarteraBFA',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BFA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
     		
     		{
     			name: 'subcarteraCodigo'
@@ -1258,8 +1265,67 @@ Ext.define('HreRem.model.Activo', {
 				name: 'estadoExpIncorrienteDescripcion'
 			},
 			{
+				name: 'procedenciaProductoCodigo'
+			},
+			{
+				name: 'procedenciaProductoDescripcion'
+			},
+			{
+				name: 'direccionDos'
+			},
+			{
+				name: 'categoriaComercializacionCod'
+			},
+			{
+				name: 'categoriaComercializacionDesc'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalCod'
+			},
+			{
+				name: 'tipoDistritoCodigoPostalDesc'
+			},
+			{
+    			name: 'plantaEdificioCodigo'
+    		},
+    		{
+    			name: 'plantaEdificioDescripcion'
+    		},
+			{
+    			name: 'escaleraEdificioCodigo'
+    		},
+    		{
+    			name: 'escaleraEdificioDescripcion'
+    		},
+			{
+				name: 'estadoComercialVentaCodigo' 
+			},
+			{
+				name: 'estadoComercialAlquilerCodigo' 
+			},
+			{
+				name: 'numActivoCaixa'
+			},
+			{
+				name: 'bloque'
+			},
+			{
 				name:'esActivoPrincipalAgrupacionRestringida',
 				type: 'boolean'
+			},
+			{
+				name:'unidadEconomicaCaixa'
+			},
+			{
+				name:'dentroAgrupacionObraNuevaBC',
+				calculate: function(data) {
+    				if (Ext.isEmpty(data.unidadEconomicaCaixa)) {
+    					return true;
+    				} else {
+    					return false;
+    				}
+				},
+				depends: 'unidadEconomicaCaixa'
 			},
 			{
 				name: 'disponibleAdministrativoCodigo'
@@ -1284,7 +1350,56 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'tieneGestionDndDescripcion'
-			}
+			},
+			{
+    			name: 'isSubcarteraJaguar',
+    			calculate: function(data) {
+    				return data.subcarteraCodigo == CONST.SUBCARTERA['JAGUAR'];
+    			},
+    			depends: 'subcarteraCodigo'
+			},
+			{
+    			name: 'isSubcarteraMarina',
+    			calculate: function(data) {
+    				return data.subcarteraCodigo == CONST.SUBCARTERA['MARINA'];
+    			},
+    			depends: 'subcarteraCodigo'
+			},
+    		{
+    			name: 'isCarteraTitulizada',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['TITULIZADA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraTitulizadayBankia',
+    			calculate: function(data) { 
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['TITULIZADA'] 
+							|| data.entidadPropietariaCodigo == CONST.CARTERA['BANKIA']);
+    			},
+    			depends: ['entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'isAppleOrDivarianOrJaguarOrMarina',
+    			calculate: function(data){
+    				return (data.isSubcarteraDivarian || data.isSubcarteraApple || data.isSubcarteraJaguar || data.isSubcarteraMarina);
+    			},
+    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar', 'isSubcarteraMarina']
+    		},
+            {
+                name: 'codComunidadAutonoma'
+            },
+            {
+                name: 'comunidadDescripcion'
+            },
+            {
+            	name:'discrepanciasLocalizacion',
+            	type: 'boolean'
+            },
+            {
+            	name:'discrepanciasLocalizacionObservaciones'
+            }
     ],
     
 	proxy: {

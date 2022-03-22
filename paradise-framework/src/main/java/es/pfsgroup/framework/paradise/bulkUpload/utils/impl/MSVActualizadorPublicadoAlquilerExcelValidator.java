@@ -395,7 +395,7 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 
 		try {
 			for(i = 1; i < this.numFilasHoja; i++) {
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+				if ((particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA))
 					 && !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)))){
 						listFilas.add(i);
 					}

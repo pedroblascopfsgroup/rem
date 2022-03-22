@@ -10,6 +10,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -422,4 +424,20 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<AuxiliarCierreOficinasBankiaMul> getListAprAuxCierreBnK();
 
 	List<Activo> getActivosNoPrincipalesAgrupacion(Long idAgr, Long idActivoPrincipal);
+
+	public Activo getActivoMatrizByNumAgrupacion(Long numAgrupacion);
+	
+	@SuppressWarnings("unchecked")
+	List<ActivoObservacion> getObservacionesActivo(Long idActivo, String[] codTiposObservacion);
+
+	boolean isCarteraCaixa(Long idActivo);
+
+	boolean isCarteraCaixa(Activo activo);
+
+    Page findTasaciones(DtoFiltroTasaciones dto);
+
+	String getCodComunidadAutonomaByCodProvincia(String codProvincia);
+
+	String getDescripcionComunidadAutonomaByCodProvincia(String codProvincia);
+
 }

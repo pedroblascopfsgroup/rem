@@ -13,6 +13,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				fieldsetDocumentoIdentidad.setTitle(HreRem.i18n('title.nuevo.comprador'));
 			}
 		}
+		if(me.esBankia()){
+			me.getViewModel().getStore("storeTipoDocumentoIdentidad").filterBy(function(record){
+				return record.data.codigoC4C != null;
+			});
+		}
+		
 	},
 
 	onClickCancelar: function() {
@@ -26,6 +32,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase');
+				
 		if(form.isValid()){
 			if (me.comprobarDocumentoIdentidadCliente()) {
 				wizard.codTipoDocumento = form.lookupReference('tipoDocumentoNuevoComprador').getValue();
@@ -37,6 +44,43 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 				if(!Ext.isEmpty(wizard.oferta)){
 					idAgrupacion = wizard.oferta.get('idAgrupacion');
 					idActivo = wizard.oferta.get('idActivo');
+				}
+				
+				if(me.getView().up().expediente != null){
+					if(me.getView().up().expediente.data.esBankia){
+			        	if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			        				&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+			        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+			        		return false;
+			        	}
+			        }
+				}else{
+					if(idAgrupacion == null){
+						if(me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}else{
+						if(me.view.up().lookupController().getViewModel().getData().esAgrupacionCaixa){
+							if(!Ext.isEmpty(wizard.codTipoDocumento.valueOf()) && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
+								return false;
+							}
+						}
+					}
 				}
 				Ext.Ajax.request({
 					url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
@@ -55,9 +99,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    			var pedirDoc = Ext.decode(response.responseText).data;
 		    			var comprador=datos.comprador;
 		    			var destinoComercial= datos.destinoComercial;
+						var esHayaHome= datos.esHayaHome;
 		    			var carteraInternacional = datos.carteraInternacional;
 		    			var slideDatos;
-		    			
+		    			var success = datos.success;
+
+		    			if (success === "true") {
+
 		    			if(!Ext.isEmpty(wizard.oferta)){
 		    				
 		    				slideDatos = wizard.down('slidedatosoferta');
@@ -129,9 +177,88 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            			if(!Ext.isEmpty(comprador.email)){
 		            				slideDatos.getForm().findField('email').setValue(comprador.email);
 		            				slideDatos.getForm().findField('email').setReadOnly(true);
+		            				slideDatos.getForm().findField('emailNacimiento').setValue(comprador.email);
 		            			}
+		            			if(!Ext.isEmpty(comprador.vinculoCaixaCodigo)){
+		            				slideDatos.getForm().findField('vinculoCaixa').setValue(comprador.vinculoCaixaCodigo);
+		            				slideDatos.getForm().findField('vinculoCaixa').setReadOnly(true);
+		            			}
+								
 	
+		            			if(!Ext.isEmpty(comprador.codigoPais)){
+		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
+		            			}
+		            		
+		            			if(!Ext.isEmpty(comprador.fechaNacimientoConstitucion)){
+		            				var date = comprador.fechaNacimientoConstitucion.slice(0, 10);
+		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(date);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
+		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);
+		            			}else{
+		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue("28");
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.provinciaCodigo)){
+		            				slideDatos.getForm().findField('provinciaCodigo').setValue(comprador.provinciaCodigo);
+		            			}
+
+		            			if(!Ext.isEmpty(comprador.municipioCodigo) && !Ext.isEmpty(comprador.provinciaCodigo)){
+		            				slideDatos.getForm().findField('municipioCodigo').setValue(comprador.municipioCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.direccion)){
+		            				slideDatos.getForm().findField('direccionTodos').setValue(comprador.direccion);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.prp)){
+		            				slideDatos.getForm().findField('prp').setValue(comprador.prp);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.telefono1)){
+		            				slideDatos.getForm().findField('telefonoNacimiento1').setValue(comprador.telefono1);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.telefono2)){
+		            				slideDatos.getForm().findField('telefonoNacimiento2').setValue(comprador.telefono2);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPostal)){
+		            				slideDatos.getForm().findField('codigoPostalNacimiento').setValue(comprador.codigoPostal);
+		            			}
+
+		            			if(!Ext.isEmpty(comprador.provinciaNacimientoCodigo)){
+		            				slideDatos.getForm().findField('provinciaNacimiento').setValue(comprador.provinciaNacimientoCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.localidadNacimientoCompradorCodigo)){
+		            				slideDatos.getForm().findField('localidadNacimientoCompradorCodigo').setValue(comprador.localidadNacimientoCompradorCodigo);
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPaisRte)){
+		            				slideDatos.getForm().findField('codigoPaisRte').setValue(comprador.codigoPaisRte);
+		            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
+		            				slideDatos.getForm().findField('codigoPaisRte').setValue("28");
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.codigoPais)){
+		            				slideDatos.getForm().findField('codigoPais').setValue(comprador.codigoPais);
+		            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
+		            				slideDatos.getForm().findField('codigoPais').setValue("28");
+		            			}
+		            			
+		            			if(!Ext.isEmpty(comprador.paisNacimientoRepresentanteCodigo)){
+		            				slideDatos.getForm().findField('paisNacimientoRepresentanteCodigo').setValue(comprador.paisNacimientoRepresentanteCodigo);
+		            			}else if(comprador.tipoPersonaCodigo == null || comprador.tipoPersonaCodigo == undefined || comprador.tipoPersonaCodigo.value == "2"){
+		            				slideDatos.getForm().findField('paisNacimientoRepresentanteCodigo').setValue("28");
+		            			}
+		            			
 		        			}
+							if(!Ext.isEmpty(esHayaHome) && esHayaHome == "true"){
+								slideDatos.getForm().findField('tipoOferta').setValue('01');
+	            				slideDatos.getForm().findField('tipoOferta').setReadOnly(true);
+							}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
 		        			wizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2));
 		        			wizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100;
@@ -175,7 +302,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
 		        				   }else{
 		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue("");		
-		        				   }
+		        				   }		            				
 		    				   }
 		    			   }
 		    				wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
@@ -190,15 +317,20 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	 				    }
 		    			me.getView().unmask();
 						wizard.nextSlide();
+
+						}else{
+						    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
 					},
 					failure: function(record, operation) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				   }
 				});
-	
+				
 			} else {
 				me.fireEvent('errorToast', HreRem.i18n('msg.numero.documento.comprador.incorrecto'));
 			}
+			
 		}
 	},
 
@@ -271,6 +403,26 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	},
 	onChangeTipoDocumentoNuevoComprador : function(checkbox, newVal, oldVal){
 		
+	},
+	esBankia: function() {
+		var me = this,
+			vista = me.getView(),
+			esBankia = false,
+			expediente = me.getView().up().expediente,
+			activoDetalle = me.getView().up('[reference="activosdetalle"]');
+		
+		if(me.getView().up().expediente != null && me.getView().up().expediente != undefined) return me.getView().up().expediente.data.esBankia;
+		
+		if(Ext.isEmpty(activoDetalle)){
+			esBankia = me.getView().up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionCaixa");
+		}else{
+			esBankia = activoDetalle.lookupController().getViewModel().get('activo').get('isCarteraBankia');
+		}
+		if (esBankia){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 });

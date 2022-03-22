@@ -2,9 +2,14 @@ package es.pfsgroup.plugin.rem.api;
 
 import org.springframework.ui.ModelMap;
 
+import java.util.Map;
+
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
 
 public interface BoardingComunicacionApi {
+	
+	public final static int TIMEOUT_2_MINUTOS =120;
 	
 	public final static int TIMEOUT_1_MINUTO =60;
 	
@@ -15,5 +20,9 @@ public interface BoardingComunicacionApi {
 	public boolean modoRestClientBoardingActivado();
 
 	public boolean comunicacionBoardingActivada();
+
+	public ComunicacionBoardingResponse enviarBloqueoCompradoresCFV(Oferta oferta, Map<String, Boolean> valores,int segundosTimeout);
+
+	public boolean modoRestClientBloqueoCompradoresActivado();
 
 }

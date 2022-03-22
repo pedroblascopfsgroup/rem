@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=NOELIA LAPERA
---## FECHA_CREACION=20181123
+--## AUTOR=SANTI MONZÓ
+--## FECHA_CREACION=20211011
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=HREOS-4790
+--## INCIDENCIA_LINK=HREOS-15477
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 CARLOS LÓPEZ HREOS-4530 Versión inicial
 --##        0.2 NOELIA LAPERA HREOS-4790 Se update la tabla OKU_DEMANDA_OCUPACION_ILEGAL si los activos y los asuntos ya existen
+--##        0.3 SANTI MONZÓ HREOS-15477 Añadir PRAGMA AUTONOMOUS_TRANSACTION;
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -54,6 +55,9 @@ AS
   nDD_TAO_ID #ESQUEMA#.DD_TAO_OKU_TIPO_ASUNTO.DD_TAO_ID%type;
   nDD_TCO_ID #ESQUEMA#.DD_TCO_OKU_TIPO_ACTUACION.DD_TCO_ID %type; 
   nSeq       NUMBER;
+
+  PRAGMA AUTONOMOUS_TRANSACTION;
+
 BEGIN
 	--v0.1
 	 DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso');

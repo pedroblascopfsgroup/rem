@@ -15,22 +15,24 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.DatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
-import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -48,14 +50,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
-import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
-import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
+import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
+import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
 import net.sf.json.JSONObject;
 
 
@@ -384,4 +388,21 @@ public interface GenericApi {
 	HashMap<String, String> validateCierreOficinaPostRequestData(CierreOficinaBankiaDto cierreOfiDto)
 			throws Exception;
 
+	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
+
+	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera);
+
+	List<DDTipoOferta> getDiccionarioTipoOfertas(String codCartera, Long idActivo, Long idAgrupacion);
+
+	String getIdPersonaHayaSinCartera(String documentoInterlocutor);
+
+	List<DDEstadoOferta> getEstadosOfertaWeb();
+	
+	String getIdPersonaHayaByDocumentoCarteraOrProveedor(String documentoInterlocutor, String documentoProveedor, String codProveedorRem,String codCartera, String codSubCartera);
+	
+	List<DDTiposImpuesto> getTipoImpuestoFiltered(String esBankia);
+
+	List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto);
+
+	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
 }

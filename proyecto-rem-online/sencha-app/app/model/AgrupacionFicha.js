@@ -90,7 +90,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            {
 	            	name: 'isRestringida',
 	            	calculate: function(data) {
-	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'];
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+	            			|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER']
+	            			|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'];
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },
@@ -333,6 +335,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 },
     			{
                 	name: 'sumatorio'
+                },
+    			{
+                	name: 'perimetroMacc',
+    	 			type: 'boolean'
                 }
     ],
     

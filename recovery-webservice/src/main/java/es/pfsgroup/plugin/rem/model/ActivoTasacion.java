@@ -3,9 +3,11 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +25,15 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
+import es.pfsgroup.plugin.rem.model.dd.DDDesarrolloPlanteamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
+import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
+import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 
 
@@ -39,6 +50,14 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 1L;
 
+
+	public DDTasadoraCaixa getTasadoraCaixa() {
+		return tasadoraCaixa;
+	}
+
+	public void setTasadoraCaixa(DDTasadoraCaixa tasadoraCaixa) {
+		this.tasadoraCaixa = tasadoraCaixa;
+	}
 
 	@Id
     @Column(name = "TAS_ID")
@@ -132,8 +151,12 @@ public class ActivoTasacion implements Serializable, Auditable {
 	
 	@Column(name = "TAS_ILOCALIZABLE")
 	private Boolean ilocalizable;
-	
-	
+
+	@OneToOne(mappedBy = "tasacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "TAS_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoTasacionActivo gastoTasacionActivo;
+
 	@Version   
 	private Long version;
 
@@ -145,6 +168,148 @@ public class ActivoTasacion implements Serializable, Auditable {
 	
 	@Column(name = "TAS_ID_EXTERNO_BBVA")
 	private String idExternoBbva;
+	
+	@Column(name = "GASTO_COM_TASACION")
+    private Double gastosComercialesTasacion; 
+	
+	@Column(name = "REF_TASADORA")
+    private String referenciaTasadora; 
+	
+	@Column(name = "PORC_COSTE_DEFECTO")
+	private Boolean porcentajeCosteDefecto;
+	
+	@Column(name = "APROV_PARCELA_SUELO")
+    private Double aprovechamientoParcelaSuelo; 
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_DSP_ID")
+    private DDDesarrolloPlanteamiento desarrolloPlanteamiento; 
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_FSG_ID")
+    private DDFaseGestion faseGestion; 
+    
+	@Column(name = "ACOGIDA_NORMATIVA")
+	private Boolean acogidaNormativa;
+	
+	@Column(name = "NUM_VIVIENDAS")
+    private Long numeroViviendas; 
+	
+	@Column(name = "PORC_AMBITO_VAL")
+    private Double porcentajeAmbitoValorado; 
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_PRD_ID")
+    private DDProductoDesarrollar productoDesarrollar; 
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_PNU_ID")
+    private DDProximidadRespectoNucleoUrbano proximidadRespectoNucleoUrbano; 
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_SGT_ID")
+    private DDSistemaGestion sistemaGestion; 
+    
+	@Column(name = "SUPERFICIE_ADOPTADA")
+    private Double superficieAdoptada; 
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_SAC_ID")
+    private DDSubtipoActivo tipoSuelo; 
+    
+	@Column(name = "VAL_HIPO_EDI_TERM_PROM")
+    private Double valorHipotesisEdificioTerminadoPromocion; 
+	
+	@Column(name = "ADVERTENCIAS")
+	private Boolean advertencias;
+	
+	@Column(name = "APROVECHAMIENTO")
+    private Double aprovechamiento; 
+	
+	@Column(name = "COD_SOCIEDAD_TAS_VAL")
+    private String codigoSociedadTasacionValoracion; 
+	
+	@Column(name = "CONDICIONANTES")
+	private Boolean condicionantes;
+	
+	@Column(name = "COSTE_EST_TER_OBRA")
+    private Double costeEstimadoTerminarObra; 
+	
+	@Column(name = "COSTE_DEST_PROPIO")
+    private Double costeDestinaUsoPropio; 
+	
+    @Column(name = "FEC_ULT_AVANCE_EST")
+    private Date fechaUltimoGradoAvanceEstimado;  
+    
+    @Column(name = "FEC_EST_TER_OBRA")
+    private Date fechaEstimadaTerminarObra; 
+    
+	@Column(name = "FINCA_RUS_EXP_URB")
+	private Boolean fincaRusticaExpectativasUrbanisticas;
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_MTV_ID")
+    private DDMetodoValoracion metodoValoracion; 
+
+	@Column(name = "MET_RES_DIN_MAX_COM")
+    private Long mrdPlazoMaximoFinalizarComercializacion; 
+	
+	@Column(name = "MET_RES_DIN_MAX_CONS")
+    private Long mrdPlazoMaximoFinalizarConstruccion; 
+	
+	@Column(name = "MET_RES_DIN_TAS_ANU")
+    private Double mrdTasaAnualizadaHomogenea; 
+	
+	@Column(name = "MET_RES_DIN_TIPO_ACT")
+    private Double mrdTasaActualizacion; 
+	
+	@Column(name = "MET_RES_EST_MAR_PROM")
+    private Double mreMargenBeneficioPromotor; 
+	
+	@Column(name = "PARALIZACION_URB")
+	private Boolean paralizacionUrbanizacion;
+	
+	@Column(name = "PORC_URB_EJECUTADO")
+    private Double porcentajeUrbanizacionEjecutado;
+	
+	@Column(name = "PORC_AMBITO_VAL_ENT")
+    private Double porcentajeAmbitoValoradoEntero;
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_PRD_ID_PREV")
+    private DDProductoDesarrollar productoDesarrollarPrevisto;
+    
+	@Column(name = "PROYECTO_OBRA")
+	private Boolean proyectoObra;
+	
+	@Column(name = "SUPERFICIE_TERRENO")
+    private Double superficieTerreno;
+	
+	@Column(name = "TAS_ANU_VAR_MERCADO")
+    private Double tasaAnualMedioVariacionPrecioMercado;
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_TDU_ID")
+    private DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable;
+	
+	@Column(name = "VALOR_TERRENO")
+    private Double valorTerreno;
+	
+	@Column(name = "VALOR_TERRENO_AJUS")
+    private Double valorTerrenoAjustado;
+	
+	@Column(name = "VAL_HIPO_EDI_TERM")
+    private Double valorHipotesisEdificioTerminado;
+	
+	@Column(name = "VALOR_HIPOTECARIO")
+    private Double valorHipotecario;
+	
+	@Column(name = "VISITA_ANT_INMUEBLE")
+	private Boolean visitaAnteriorInmueble;
+	
+    @ManyToOne
+    @JoinColumn(name = "DD_TCX_ID")
+    private DDTasadoraCaixa tasadoraCaixa;
 	
 	
 	public Long getId() {
@@ -409,6 +574,362 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	public void setIlocalizable(Boolean ilocalizable) {
 		this.ilocalizable = ilocalizable;
+	}
+
+	public GastoTasacionActivo getGastoTasacionActivo() {
+		return gastoTasacionActivo;
+	}
+
+	public void setGastoTasacionActivo(GastoTasacionActivo gastoTasacionActivo) {
+		this.gastoTasacionActivo = gastoTasacionActivo;
+	}
+	public Double getGastosComercialesTasacion() {
+		return gastosComercialesTasacion;
+	}
+
+	public void setGastosComercialesTasacion(Double gastosComercialesTasacion) {
+		this.gastosComercialesTasacion = gastosComercialesTasacion;
+	}
+
+	public String getReferenciaTasadora() {
+		return referenciaTasadora;
+	}
+
+	public void setReferenciaTasadora(String referenciaTasadora) {
+		this.referenciaTasadora = referenciaTasadora;
+	}
+
+	public Boolean getPorcentajeCosteDefecto() {
+		return porcentajeCosteDefecto;
+	}
+
+	public void setPorcentajeCosteDefecto(Boolean porcentajeCosteDefecto) {
+		this.porcentajeCosteDefecto = porcentajeCosteDefecto;
+	}
+
+	public Double getAprovechamientoParcelaSuelo() {
+		return aprovechamientoParcelaSuelo;
+	}
+
+	public void setAprovechamientoParcelaSuelo(Double aprovechamientoParcelaSuelo) {
+		this.aprovechamientoParcelaSuelo = aprovechamientoParcelaSuelo;
+	}
+
+	public DDDesarrolloPlanteamiento getDesarrolloPlanteamiento() {
+		return desarrolloPlanteamiento;
+	}
+
+	public void setDesarrolloPlanteamiento(DDDesarrolloPlanteamiento desarrolloPlanteamiento) {
+		this.desarrolloPlanteamiento = desarrolloPlanteamiento;
+	}
+
+	public DDFaseGestion getFaseGestion() {
+		return faseGestion;
+	}
+
+	public void setFaseGestion(DDFaseGestion faseGestion) {
+		this.faseGestion = faseGestion;
+	}
+
+	public Boolean getAcogidaNormativa() {
+		return acogidaNormativa;
+	}
+
+	public void setAcogidaNormativa(Boolean acogidaNormativa) {
+		this.acogidaNormativa = acogidaNormativa;
+	}
+
+	public Long getNumeroViviendas() {
+		return numeroViviendas;
+	}
+
+	public void setNumeroViviendas(Long numeroViviendas) {
+		this.numeroViviendas = numeroViviendas;
+	}
+
+	public Double getPorcentajeAmbitoValorado() {
+		return porcentajeAmbitoValorado;
+	}
+
+	public void setPorcentajeAmbitoValorado(Double porcentajeAmbitoValorado) {
+		this.porcentajeAmbitoValorado = porcentajeAmbitoValorado;
+	}
+
+	public DDProductoDesarrollar getProductoDesarrollar() {
+		return productoDesarrollar;
+	}
+
+	public void setProductoDesarrollar(DDProductoDesarrollar productoDesarrollar) {
+		this.productoDesarrollar = productoDesarrollar;
+	}
+
+	public DDProximidadRespectoNucleoUrbano getProximidadRespectoNucleoUrbano() {
+		return proximidadRespectoNucleoUrbano;
+	}
+
+	public void setProximidadRespectoNucleoUrbano(DDProximidadRespectoNucleoUrbano proximidadRespectoNucleoUrbano) {
+		this.proximidadRespectoNucleoUrbano = proximidadRespectoNucleoUrbano;
+	}
+
+	public DDSistemaGestion getSistemaGestion() {
+		return sistemaGestion;
+	}
+
+	public void setSistemaGestion(DDSistemaGestion sistemaGestion) {
+		this.sistemaGestion = sistemaGestion;
+	}
+
+	public Double getSuperficieAdoptada() {
+		return superficieAdoptada;
+	}
+
+	public void setSuperficieAdoptada(Double superficieAdoptada) {
+		this.superficieAdoptada = superficieAdoptada;
+	}
+
+	public DDSubtipoActivo getTipoSuelo() {
+		return tipoSuelo;
+	}
+
+	public void setTipoSuelo(DDSubtipoActivo tipoSuelo) {
+		this.tipoSuelo = tipoSuelo;
+	}
+
+	public Double getValorHipotesisEdificioTerminadoPromocion() {
+		return valorHipotesisEdificioTerminadoPromocion;
+	}
+
+	public void setValorHipotesisEdificioTerminadoPromocion(Double valorHipotesisEdificioTerminadoPromocion) {
+		this.valorHipotesisEdificioTerminadoPromocion = valorHipotesisEdificioTerminadoPromocion;
+	}
+
+	public Boolean getAdvertencias() {
+		return advertencias;
+	}
+
+	public void setAdvertencias(Boolean advertencias) {
+		this.advertencias = advertencias;
+	}
+
+	public Double getAprovechamiento() {
+		return aprovechamiento;
+	}
+
+	public void setAprovechamiento(Double aprovechamiento) {
+		this.aprovechamiento = aprovechamiento;
+	}
+
+	public String getCodigoSociedadTasacionValoracion() {
+		return codigoSociedadTasacionValoracion;
+	}
+
+	public void setCodigoSociedadTasacionValoracion(String codigoSociedadTasacionValoracion) {
+		this.codigoSociedadTasacionValoracion = codigoSociedadTasacionValoracion;
+	}
+
+	public Boolean getCondicionantes() {
+		return condicionantes;
+	}
+
+	public void setCondicionantes(Boolean condicionantes) {
+		this.condicionantes = condicionantes;
+	}
+
+	public Double getCosteEstimadoTerminarObra() {
+		return costeEstimadoTerminarObra;
+	}
+
+	public void setCosteEstimadoTerminarObra(Double costeEstimadoTerminarObra) {
+		this.costeEstimadoTerminarObra = costeEstimadoTerminarObra;
+	}
+
+	public Double getCosteDestinaUsoPropio() {
+		return costeDestinaUsoPropio;
+	}
+
+	public void setCosteDestinaUsoPropio(Double costeDestinaUsoPropio) {
+		this.costeDestinaUsoPropio = costeDestinaUsoPropio;
+	}
+
+	public Date getFechaUltimoGradoAvanceEstimado() {
+		return fechaUltimoGradoAvanceEstimado;
+	}
+
+	public void setFechaUltimoGradoAvanceEstimado(Date fechaUltimoGradoAvanceEstimado) {
+		this.fechaUltimoGradoAvanceEstimado = fechaUltimoGradoAvanceEstimado;
+	}
+
+	public Date getFechaEstimadaTerminarObra() {
+		return fechaEstimadaTerminarObra;
+	}
+
+	public void setFechaEstimadaTerminarObra(Date fechaEstimadaTerminarObra) {
+		this.fechaEstimadaTerminarObra = fechaEstimadaTerminarObra;
+	}
+
+	public Boolean getFincaRusticaExpectativasUrbanisticas() {
+		return fincaRusticaExpectativasUrbanisticas;
+	}
+
+	public void setFincaRusticaExpectativasUrbanisticas(Boolean fincaRusticaExpectativasUrbanisticas) {
+		this.fincaRusticaExpectativasUrbanisticas = fincaRusticaExpectativasUrbanisticas;
+	}
+
+	public DDMetodoValoracion getMetodoValoracion() {
+		return metodoValoracion;
+	}
+
+	public void setMetodoValoracion(DDMetodoValoracion metodoValoracion) {
+		this.metodoValoracion = metodoValoracion;
+	}
+
+	public Long getMrdPlazoMaximoFinalizarComercializacion() {
+		return mrdPlazoMaximoFinalizarComercializacion;
+	}
+
+	public void setMrdPlazoMaximoFinalizarComercializacion(Long mrdPlazoMaximoFinalizarComercializacion) {
+		this.mrdPlazoMaximoFinalizarComercializacion = mrdPlazoMaximoFinalizarComercializacion;
+	}
+
+	public Long getMrdPlazoMaximoFinalizarConstruccion() {
+		return mrdPlazoMaximoFinalizarConstruccion;
+	}
+
+	public void setMrdPlazoMaximoFinalizarConstruccion(Long mrdPlazoMaximoFinalizarConstruccion) {
+		this.mrdPlazoMaximoFinalizarConstruccion = mrdPlazoMaximoFinalizarConstruccion;
+	}
+
+	public Double getMrdTasaAnualizadaHomogenea() {
+		return mrdTasaAnualizadaHomogenea;
+	}
+
+	public void setMrdTasaAnualizadaHomogenea(Double mrdTasaAnualizadaHomogenea) {
+		this.mrdTasaAnualizadaHomogenea = mrdTasaAnualizadaHomogenea;
+	}
+
+	public Double getMrdTasaActualizacion() {
+		return mrdTasaActualizacion;
+	}
+
+	public void setMrdTasaActualizacion(Double mrdTasaActualizacion) {
+		this.mrdTasaActualizacion = mrdTasaActualizacion;
+	}
+
+	public Double getMreMargenBeneficioPromotor() {
+		return mreMargenBeneficioPromotor;
+	}
+
+	public void setMreMargenBeneficioPromotor(Double mreMargenBeneficioPromotor) {
+		this.mreMargenBeneficioPromotor = mreMargenBeneficioPromotor;
+	}
+
+	public Boolean getParalizacionUrbanizacion() {
+		return paralizacionUrbanizacion;
+	}
+
+	public void setParalizacionUrbanizacion(Boolean paralizacionUrbanizacion) {
+		this.paralizacionUrbanizacion = paralizacionUrbanizacion;
+	}
+
+	public Double getPorcentajeUrbanizacionEjecutado() {
+		return porcentajeUrbanizacionEjecutado;
+	}
+
+	public void setPorcentajeUrbanizacionEjecutado(Double porcentajeUrbanizacionEjecutado) {
+		this.porcentajeUrbanizacionEjecutado = porcentajeUrbanizacionEjecutado;
+	}
+
+	public Double getPorcentajeAmbitoValoradoEntero() {
+		return porcentajeAmbitoValoradoEntero;
+	}
+
+	public void setPorcentajeAmbitoValoradoEntero(Double porcentajeAmbitoValoradoEntero) {
+		this.porcentajeAmbitoValoradoEntero = porcentajeAmbitoValoradoEntero;
+	}
+
+	public DDProductoDesarrollar getProductoDesarrollarPrevisto() {
+		return productoDesarrollarPrevisto;
+	}
+
+	public void setProductoDesarrollarPrevisto(DDProductoDesarrollar productoDesarrollarPrevisto) {
+		this.productoDesarrollarPrevisto = productoDesarrollarPrevisto;
+	}
+
+	public Boolean getProyectoObra() {
+		return proyectoObra;
+	}
+
+	public void setProyectoObra(Boolean proyectoObra) {
+		this.proyectoObra = proyectoObra;
+	}
+
+	public Double getSuperficieTerreno() {
+		return superficieTerreno;
+	}
+
+	public void setSuperficieTerreno(Double superficieTerreno) {
+		this.superficieTerreno = superficieTerreno;
+	}
+
+	public Double getTasaAnualMedioVariacionPrecioMercado() {
+		return tasaAnualMedioVariacionPrecioMercado;
+	}
+
+	public void setTasaAnualMedioVariacionPrecioMercado(Double tasaAnualMedioVariacionPrecioMercado) {
+		this.tasaAnualMedioVariacionPrecioMercado = tasaAnualMedioVariacionPrecioMercado;
+	}
+
+	public DDTipoDatoUtilizadoInmuebleComparable getTipoDatoUtilizadoInmuebleComparable() {
+		return tipoDatoUtilizadoInmuebleComparable;
+	}
+
+	public void setTipoDatoUtilizadoInmuebleComparable(
+			DDTipoDatoUtilizadoInmuebleComparable tipoDatoUtilizadoInmuebleComparable) {
+		this.tipoDatoUtilizadoInmuebleComparable = tipoDatoUtilizadoInmuebleComparable;
+	}
+
+	public Double getValorTerreno() {
+		return valorTerreno;
+	}
+
+	public void setValorTerreno(Double valorTerreno) {
+		this.valorTerreno = valorTerreno;
+	}
+
+	public Double getValorTerrenoAjustado() {
+		return valorTerrenoAjustado;
+	}
+
+	public void setValorTerrenoAjustado(Double valorTerrenoAjustado) {
+		this.valorTerrenoAjustado = valorTerrenoAjustado;
+	}
+
+	public Double getValorHipotesisEdificioTerminado() {
+		return valorHipotesisEdificioTerminado;
+	}
+
+	public void setValorHipotesisEdificioTerminado(Double valorHipotesisEdificioTerminado) {
+		this.valorHipotesisEdificioTerminado = valorHipotesisEdificioTerminado;
+	}
+
+	public Double getValorHipotecario() {
+		return valorHipotecario;
+	}
+
+	public void setValorHipotecario(Double valorHipotecario) {
+		this.valorHipotecario = valorHipotecario;
+	}
+
+	public Boolean getVisitaAnteriorInmueble() {
+		return visitaAnteriorInmueble;
+	}
+
+	public void setVisitaAnteriorInmueble(Boolean visitaAnteriorInmueble) {
+		this.visitaAnteriorInmueble = visitaAnteriorInmueble;
+	}
+	
+	public Boolean getIlocalizable() {
+		return ilocalizable;
 	}
 
 }

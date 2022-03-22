@@ -30,6 +30,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoGasto implements Auditable, Dictionary {
 	
 	public static final String CODIGO_SERV_PROF_INDEPENDIENTES = "11";
+	public static final String CODIGO_ALQUILER = "19";
+	public static final String CODIGO_IMPUESTO = "01";
+	public static final String CODIGO_TASA = "02";
 
 	/**
 	 * 
@@ -109,6 +112,22 @@ public class DDTipoGasto implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	
+	public static boolean isTipoGastoAlquiler (DDTipoGasto tipo) {
+		boolean is = false;
+		if(tipo != null && (CODIGO_ALQUILER.equals(tipo.getCodigo()))) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isTipoGastoImpuestoOrTasa (DDTipoGasto tipo) {
+		boolean is = false;
+		if (tipo != null && (CODIGO_IMPUESTO.equals(tipo.getCodigo()) || CODIGO_TASA.equals(tipo.getCodigo()))) {
+			is = true;
+		}
+		return is;
+	}
 }
 
 

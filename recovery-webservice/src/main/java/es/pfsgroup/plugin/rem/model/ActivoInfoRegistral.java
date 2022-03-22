@@ -91,10 +91,10 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	private Float superficieParcela;
 	
 	@Column(name = "REG_SUPERFICIE_BAJO_RASANTE")
-	private Float superficieBajoRasante;
+	private Double superficieBajoRasante; 
 	
 	@Column(name = "REG_SUPERFICIE_SOBRE_RASANTE")
-	private Float superficieSobreRasante;
+	private Double superficieSobreRasante; 
 	
 	@Column(name = "REG_DIV_HOR_INSCRITO")
 	private Integer divHorInscrito;
@@ -113,7 +113,15 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TIENE_ANEJOS_REGISTRALES")
     private DDSinSiNo tieneAnejosRegistrales;
+    
+    @Column(name = "REG_SUPERFICIE_PARCELA_UTIL")
+	private Float superficieParcelaUtil;
 
+	@Column(name = "REG_NOMBRE_REGISTRO")
+	private String regNombreRegistro;
+
+	@Column(name = "REG_NUMERO_REGISTRO")
+	private String regNumRegistro;
 
 	@Version   
 	private Long version;
@@ -219,19 +227,19 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 		this.superficieParcela = superficieParcela;
 	}
 
-	public Float getSuperficieBajoRasante() {
+	public Double getSuperficieBajoRasante() {
 		return superficieBajoRasante;
 	}
 
-	public void setSuperficieBajoRasante(Float superficieBajoRasante) {
+	public void setSuperficieBajoRasante(Double superficieBajoRasante) {
 		this.superficieBajoRasante = superficieBajoRasante;
 	}
 
-	public Float getSuperficieSobreRasante() {
+	public Double getSuperficieSobreRasante() {
 		return superficieSobreRasante;
 	}
 
-	public void setSuperficieSobreRasante(Float superficieSobreRasante) {
+	public void setSuperficieSobreRasante(Double superficieSobreRasante) {
 		this.superficieSobreRasante = superficieSobreRasante;
 	}
 
@@ -292,6 +300,29 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	public void setTieneAnejosRegistrales(DDSinSiNo tieneAnejosRegistrales) {
 		this.tieneAnejosRegistrales = tieneAnejosRegistrales;
-	}	
-	
+	}
+
+	public Float getSuperficieParcelaUtil() {
+		return superficieParcelaUtil;
+	}
+
+	public void setSuperficieParcelaUtil(Float superficieParcelaUtil) {
+		this.superficieParcelaUtil = superficieParcelaUtil;
+	}
+
+	public String getRegNombreRegistro() {
+		return regNombreRegistro;
+	}
+
+	public void setRegNombreRegistro(String regNombreRegistro) {
+		this.regNombreRegistro = regNombreRegistro;
+	}
+
+	public String getRegNumRegistro() {
+		return regNumRegistro;
+	}
+
+	public void setRegNumRegistro(String regNumRegistro) {
+		this.regNumRegistro = regNumRegistro;
+	}
 }

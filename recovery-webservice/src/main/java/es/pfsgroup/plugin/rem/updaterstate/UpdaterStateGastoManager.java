@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -16,11 +20,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
@@ -32,6 +39,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Service("updaterStateGastoManager")
@@ -39,6 +48,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GastoLineaDetalleDao gastoLineaDetalleDao;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -61,6 +73,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
 	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
 	private static final String VALIDACION_SUPLIDOS_VINCULADOS_NULL = "msg.validacion.gasto.suplidos.no.vinculados";
+	private static final String VALIDACION_NUMERO_ALQUILER_ENTIDADES = "msg.error.validacion.numero.contrato.alquiler.caixa.activos";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -82,7 +95,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
-	private String codEstadoProvision = null;
+	private String codEstadoProvision = null;	
+
+	private static final String VALIDACION_FECHA_DEVENGO_ESPECIAL = "msg.error.validacion.fecha.devengo.especial";
+	
+	public static final SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	
+	private static final String VALIDACION_TIPO_OPERACION_ABONO = "msg.error.tipo.operacion.abono";
+	
+	private static final String VALIDACION_NIF_TITULAR_CARTA_PAGO = "msg.error.validacion.nif.titular.carta.pago";
 	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
@@ -178,6 +199,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && 
 				!Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				String codigoCartera = gasto.getPropietario().getCartera().getCodigo();
+
 				String codigoSubcartera = null;
 				
 				if (codigoCartera != null  && gastoListaDetalleList != null && !gastoListaDetalleList.isEmpty() 
@@ -203,37 +225,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 				
 				
-				if (codigoSubcartera == null 
-					|| (!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
+				if  (!DDCartera.isCarteraBk(gasto.getPropietario().getCartera()) && !DDCartera.isBFA(gasto.getPropietario().getCartera()) && 
+						!DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_EGEO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(codigoSubcartera) &&
 						!DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(codigoSubcartera) &&
-						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera))) {
-				
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)) {
-						if(gasto.getGestoria() == null) {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
-									return error;
-								}
-							}
-						}else {
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCppBase() == null  || gastodetalleLinea.getCppBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
-									return error;
-								}
+						!DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(codigoSubcartera)) {
+					//NO VOLVER A METER LAS VALIDACIONES DE BK!!!
+					if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
+								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+								return error;
 							}
 						}
-					}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(codigoCartera)){
-							for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-								if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCccBase().isEmpty()) {
-									error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-									return error;
-								}
-							}
 					}else if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null
@@ -241,7 +247,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 								error = messageServices.getMessage(VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO);
 								return error;
 							}
-						}
+						}					
 					}else{
 						for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase().isEmpty() || gastodetalleLinea.getCccBase().isEmpty()) {
@@ -273,9 +279,77 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					return error;
 					}
 				}
-			
+			}
+		
+			if (gasto.getPropietario() != null && gasto.getPropietario() != null) {
+				DDCartera cartera = gasto.getPropietario().getCartera();
+				if (DDCartera.isCarteraBk(cartera) && DDTipoGasto.isTipoGastoAlquiler(gasto.getTipoGasto())) {
+					Filter filtroEntidad =genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo",  DDEntidadGasto.CODIGO_ACTIVO);
+					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.gastoProveedor.id", gasto.getId());
+					List<GastoLineaDetalleEntidad> entidades = new ArrayList<GastoLineaDetalleEntidad> ();
+					entidades = genericDao.getList(GastoLineaDetalleEntidad.class, filtroEntidad, filtroGasto);
+						
+					if((gasto.getNumeroContratoAlquiler() == null || gasto.getNumeroContratoAlquiler().isEmpty()) && !entidades.isEmpty()) {
+						error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+						return error;
+					}else if(entidades.isEmpty()){
+						boolean noMarcadaSinActivos = true;
+						List<GastoLineaDetalle> lineas = gasto.getGastoLineaDetalleList();
+						if(lineas != null && !lineas.isEmpty()) {
+							for (GastoLineaDetalle gld : lineas) {
+								if(gld.getLineaSinActivos() != null && gld.getLineaSinActivos()) {
+									noMarcadaSinActivos = false;
+									break;
+								}
+							}
+						}
+						if((noMarcadaSinActivos) || (!noMarcadaSinActivos && gasto.getNumeroContratoAlquiler() != null && !gasto.getNumeroContratoAlquiler().isEmpty())) {
+							error = messageServices.getMessage(VALIDACION_NUMERO_ALQUILER_ENTIDADES); 
+							return error;
+						}
+					}
 				}
 			}
+			
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
+			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
+			Date fechaEmisionGastoPosterior = null;
+			try {
+				fechaEmisionGastoPosterior = ft.parse(GastoProveedor.FECHA_EMISION_GASTO_POSTERIOR);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!Checks.esNulo(contabilidadGasto) && ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && Checks.isFechaNula(contabilidadGasto.getFechaDevengoEspecial())
+					&& gasto.getFechaEmision().after(fechaEmisionGastoPosterior)){
+				error = messageServices.getMessage(VALIDACION_FECHA_DEVENGO_ESPECIAL); 
+				return error;
+			}
+			
+			if( DDCartera.isCarteraBk(gasto.getPropietario().getCartera()) && DDTipoOperacionGasto.isAbono(gasto.getTipoOperacion()) 
+					&& Checks.esNulo(gasto.getGastoProveedorAbonado())){
+				error = messageServices.getMessage(VALIDACION_TIPO_OPERACION_ABONO); 
+				return error;
+			}
+			
+			if (gasto != null && contabilidadGasto != null) {
+				Date fechaDevengoEspecial = contabilidadGasto.getFechaDevengoEspecial();
+				Date fechaDevengoEspecialPosterior = null;
+				try {
+					fechaDevengoEspecialPosterior = ft.parse("01/01/2022");
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				if (ActivoPropietario.NIF_PROPIETARIO_LIVINGCENTER.equals(gasto.getPropietario().getDocIdentificativo()) && DDTipoGasto.isTipoGastoImpuestoOrTasa(gasto.getTipoGasto())
+						&& (!Checks.isFechaNula(fechaDevengoEspecial) && fechaDevengoEspecial.after(fechaDevengoEspecialPosterior))) {
+					if (Checks.esNulo(gasto.getTitularCartaPago())) {
+						error = messageServices.getMessage(VALIDACION_NIF_TITULAR_CARTA_PAGO); 
+						return error;
+					}
+				}
+			}
+		}
 		}
 		return error;
 	}

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,31 +15,12 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
-import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
-import es.pfsgroup.plugin.rem.model.DtoOferta;
-import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import net.sf.json.JSONObject;
 
 public interface OfertaApi {
@@ -814,15 +796,54 @@ public interface OfertaApi {
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
 
+	public boolean isIfNecesarioOferta(Oferta oferta);
+	
+	public void rellenarIfNecesario(Oferta oferta);
+
 	List<Oferta> getListOtrasOfertasTramitadasActivo(Long idActivo);
 	
 	public ExpedienteComercial tareaExternaToExpediente(TareaExterna tareaExterna);
 
+	boolean esMayorista(TareaExterna tareaExterna);
+
+    Boolean actualizaEstadoOferta(Long idOferta, String codigoEstado);
+    
+	public void replicateOfertaFlush(Oferta oferta);
+
 	public String actualizarOfertaBoarding(TareaExterna tareaExterna);
 	
-	public String actualizarOfertaBoarding(Oferta oferta, String codigo);
+	public String actualizarOfertaBoarding(Oferta oferta, String codigo,TareaExterna tareaExterna);
 
 	boolean esOfertaValidaCFVByCarteraSubcartera(Oferta oferta);
+
+	 String getIdPersonaHayaByDocumento(Long idExpediente, String cartera,String documento);
+
+	void replicarOferta(Long numOferta);
+
+	void replicateOfertaFlushASYNC(Long numOferta);
+
+	void replicateOfertaFlushDto(Oferta oferta, ReplicarOfertaDto dto);
+
+    void pbcFlush(LlamadaPbcDto dto);
+
+    public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
+
+	boolean updateDepositoOferta(Long idOferta, DtoDeposito dto, DtoDatosBancariosDeposito dtoBancario) throws ParseException;
+
+	/**
+	 * Devuelve una Oferta por idOfertaHayaHome y numOfertaRem.
+	 *
+	 * @param idOfertaHayaHome
+	 *            a consultar
+	 * @param numOfertaRem
+	 *            a consultar
+	 * @return Oferta
+	 */
+	public Oferta getOfertaByIdOfertaHayaHomeNumOfertaRem(Long idOfertaHayaHome, Long numOfertaRem) throws Exception;
 	
-	public void enviarCorreoFichaComercial(List<Long> ids, String reportCode, String scheme, String serverName) throws IOException;
+	String getClienteByidExpedienteGD(Long idExpediente);
+
+	public void llamadaPbc(Oferta oferta, String codAccion);
+
+    boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 }

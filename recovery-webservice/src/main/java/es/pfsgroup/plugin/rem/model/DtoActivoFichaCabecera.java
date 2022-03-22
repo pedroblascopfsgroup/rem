@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  */
@@ -95,6 +97,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoSegmentoDescripcion;
 	private String estadoRegistralCodigo;
 	private String estadoRegistralDescripcion;
+	private String plantaEdificioCodigo;
+	private String plantaEdificioDescripcion;
+	private String escaleraEdificioCodigo;
+	private String escaleraEdificioDescripcion;
 	
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -217,6 +223,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String aprobadoRentaWeb;
 	private String descuentoAprobado;
 	private String descuentoPublicado;
+	private String descuentoAprobadoAlquiler;
+	private String descuentoPublicadoAlquiler;
 	private String valorNetoContable;
 	private String costeAdquisicion;
 	private String valorUltimaTasacion;
@@ -363,19 +371,44 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private String codPromocionBbva;
 	
+	private String procedenciaProductoCodigo;
+	
+	private String procedenciaProductoDescripcion;
+
+	private String direccionDos;
+
+	private String categoriaComercializacionCod;
+	
+	private String categoriaComercializacionDesc;
+	
+	private String tipoDistritoCodigoPostalCod;
+	private String tipoDistritoCodigoPostalDesc;
+	private String numActivoCaixa;
+	
+	private String bloque;
+	
 	private String codSubfasePublicacion;
 	
 	private Boolean esActivoPrincipalAgrupacionRestringida;
 	
+	private String unidadEconomicaCaixa;
 	private String disponibleAdministrativoCodigo;
 	private String disponibleAdministrativoDescripcion;
 	private String disponibleTecnicoCodigo;
 	private String disponibleTecnicoDescripcion;
 	private String motivoTecnicoCodigo;
 	private String motivoTecnicoDescripcion;
-	
 	private String tieneGestionDndCodigo;
 	private String tieneGestionDndDescripcion;
+	
+	private Boolean esHayaHome;
+	
+
+	private String codComunidadAutonoma;
+	private String comunidadDescripcion;
+	
+	private Boolean discrepanciasLocalizacion;
+	private String discrepanciasLocalizacionObservaciones;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1740,6 +1773,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		return enTramite;
 	}
 
+	public void setEnTramite(Integer enTramite) {
+		this.enTramite = enTramite;
+	}
 
 	public Boolean getPertenceAgrupacionProyecto() {
 		return pertenceAgrupacionProyecto;
@@ -1763,10 +1799,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTienePromocion(Boolean tienePromocion) {
 		this.tienePromocion = tienePromocion;
-	}
-
-	public void setEnTramite(Integer enTramite) {
-		this.enTramite = enTramite;
 	}
 
 	public Boolean getTienePosibleInformeMediador() {
@@ -2786,8 +2818,118 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEstadoFisicoActivoDNDDescripcion(String estadoFisicoActivoDNDDescripcion) {
 		this.estadoFisicoActivoDNDDescripcion = estadoFisicoActivoDNDDescripcion;
+	}
+
+	public String getProcedenciaProductoCodigo() {
+		return procedenciaProductoCodigo;
+	}
+
+	public void setProcedenciaProductoCodigo(String procedenciaProductoCodigo) {
+		this.procedenciaProductoCodigo = procedenciaProductoCodigo;
+	}
+
+	public String getProcedenciaProductoDescripcion() {
+		return procedenciaProductoDescripcion;
+	}
+
+	public void setProcedenciaProductoDescripcion(String procedenciaProductoDescripcion) {
+		this.procedenciaProductoDescripcion = procedenciaProductoDescripcion;
+	}
+	public String getDireccionDos() {
+		return direccionDos;
+	}
+
+	public void setDireccionDos(String direccionDos) {
+		this.direccionDos = direccionDos;
+	}
+	public String getCategoriaComercializacionCod() {
+		return categoriaComercializacionCod;
+	}
+
+	public void setCategoriaComercializacionCod(String categoriaComercializacionCod) {
+		this.categoriaComercializacionCod = categoriaComercializacionCod;
+	}
+
+	public String getCategoriaComercializacionDesc() {
+		return categoriaComercializacionDesc;
+	}
+
+	public void setCategoriaComercializacionDesc(String categoriaComercializacionDesc) {
+		this.categoriaComercializacionDesc = categoriaComercializacionDesc;
+	}
+
+	public String getPlantaEdificioCodigo() {
+		return plantaEdificioCodigo;
+	}
+
+	public void setPlantaEdificioCodigo(String plantaEdificioCodigo) {
+		this.plantaEdificioCodigo = plantaEdificioCodigo;
+	}
+
+	public String getPlantaEdificioDescripcion() {
+		return plantaEdificioDescripcion;
+	}
+
+	public void setPlantaEdificioDescripcion(String plantaEdificioDescripcion) {
+		this.plantaEdificioDescripcion = plantaEdificioDescripcion;
+	}
+
+	public String getEscaleraEdificioCodigo() {
+		return escaleraEdificioCodigo;
+	}
+
+	public void setEscaleraEdificioCodigo(String escaleraEdificioCodigo) {
+		this.escaleraEdificioCodigo = escaleraEdificioCodigo;
+	}
+
+	public String getEscaleraEdificioDescripcion() {
+		return escaleraEdificioDescripcion;
+	}
+
+	public void setEscaleraEdificioDescripcion(String escaleraEdificioDescripcion) {
+		this.escaleraEdificioDescripcion = escaleraEdificioDescripcion;
 	}	
 	
+	public String getTipoDistritoCodigoPostalCod() {
+		return tipoDistritoCodigoPostalCod;
+	}
+
+	public void setTipoDistritoCodigoPostalCod(String tipoDistritoCodigoPostalCod) {
+		this.tipoDistritoCodigoPostalCod = tipoDistritoCodigoPostalCod;
+	}
+
+	public String getTipoDistritoCodigoPostalDesc() {
+		return tipoDistritoCodigoPostalDesc;
+	}
+
+	public void setTipoDistritoCodigoPostalDesc(String tipoDistritoCodigoPostalDesc) {
+		this.tipoDistritoCodigoPostalDesc = tipoDistritoCodigoPostalDesc;
+	}
+
+	public String getNumActivoCaixa() {
+		return numActivoCaixa;
+	}
+
+	public void setNumActivoCaixa(String numActivoCaixa) {
+		this.numActivoCaixa = numActivoCaixa;
+	}
+
+	public String getBloque() {
+		return bloque;
+	}
+
+	public void setBloque(String bloque) {
+		this.bloque = bloque;
+	}
+
+	public String getDescuentoAprobadoAlquiler() {
+		return descuentoAprobadoAlquiler;
+	}
+
+	public void setDescuentoAprobadoAlquiler(String descuentoAprobadoAlquiler) {
+		this.descuentoAprobadoAlquiler = descuentoAprobadoAlquiler;
+	}
+
 	public String getDisponibleAdministrativoCodigo() {
 		return disponibleAdministrativoCodigo;
 	}
@@ -2852,5 +2994,61 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.tieneGestionDndDescripcion = tieneGestionDndDescripcion;
 	}
 
+	public Boolean getEsHayaHome() {
+		return esHayaHome;
+	}
 
+	public void setEsHayaHome(Boolean esHayaHome) {
+		this.esHayaHome = esHayaHome;
+	}
+
+
+	public String getDescuentoPublicadoAlquiler() {
+		return descuentoPublicadoAlquiler;
+	}
+
+	public void setDescuentoPublicadoAlquiler(String descuentoPublicadoAlquiler) {
+		this.descuentoPublicadoAlquiler = descuentoPublicadoAlquiler;
+	}
+
+	public String getUnidadEconomicaCaixa() {
+		return unidadEconomicaCaixa;
+	}
+
+	public void setUnidadEconomicaCaixa(String unidadEconomicaCaixa) {
+		this.unidadEconomicaCaixa = unidadEconomicaCaixa;
+	}
+
+	public String getCodComunidadAutonoma() {
+		return codComunidadAutonoma;
+	}
+
+	public void setCodComunidadAutonoma(String codComunidadAutonoma) {
+		this.codComunidadAutonoma = codComunidadAutonoma;
+	}
+
+	public String getComunidadDescripcion() {
+		return comunidadDescripcion;
+	}
+
+	public void setComunidadDescripcion(String comunidadDescripcion) {
+		this.comunidadDescripcion = comunidadDescripcion;
+	}
+
+	public Boolean getDiscrepanciasLocalizacion() {
+		return discrepanciasLocalizacion;
+	}
+
+	public void setDiscrepanciasLocalizacion(Boolean discrepanciasLocalizacion) {
+		this.discrepanciasLocalizacion = discrepanciasLocalizacion;
+	}
+
+	public String getDiscrepanciasLocalizacionObservaciones() {
+		return discrepanciasLocalizacionObservaciones;
+	}
+
+	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
+		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
+	}
+	
 }

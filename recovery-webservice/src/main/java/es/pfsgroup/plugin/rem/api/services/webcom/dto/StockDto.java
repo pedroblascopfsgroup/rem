@@ -83,10 +83,6 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lng;
 	
-	private StringDataType codEstadoConstruccion;
-	
-	private LongDataType terrazas;
-	
 	@WebcomRequired
 	private StringDataType codEstadoPublicacion;
 	
@@ -570,18 +566,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setLng(DoubleDataType lng) {
 		this.lng = lng;
-	}
-	public StringDataType getCodEstadoConstruccion() {
-		return codEstadoConstruccion;
-	}
-	public void setCodEstadoConstruccion(StringDataType codEstadoConstruccion) {
-		this.codEstadoConstruccion = codEstadoConstruccion;
-	}
-	public LongDataType getTerrazas() {
-		return terrazas;
-	}
-	public void setTerrazas(LongDataType terrazas) {
-		this.terrazas = terrazas;
 	}
 	public StringDataType getCodEstadoPublicacion() {
 		return codEstadoPublicacion;

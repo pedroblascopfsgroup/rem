@@ -42,6 +42,8 @@ public class MSVConfiguracionRecomendacionValidator extends MSVExcelValidatorAbs
 	private final String ERROR_RECOMENDACION_INVALID = "msg.error.masivo.recomendacion.invalid";
 	private final String ERROR_NUMBER_INVALID = "msg.error.masivo.number.invalid";
 	
+	private final String CODIGO_CARTERA_ZEUS = "14";
+	
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
@@ -158,8 +160,10 @@ public class MSVConfiguracionRecomendacionValidator extends MSVExcelValidatorAbs
 				}
 				
 				if(subcartera.isEmpty() || subcartera == null || subcartera == "") {	
-					mapaErrores.get(messageServices.getMessage(ERROR_SUBCARTERA_EMPTY)).add(fila);
-					esCorrecto = false;
+					if (!CODIGO_CARTERA_ZEUS.equals(cartera)) {
+						mapaErrores.get(messageServices.getMessage(ERROR_SUBCARTERA_EMPTY)).add(fila);
+						esCorrecto = false;
+					}
 				} else {
 					if(!particularValidator.existeSubCarteraByCod(subcartera)) {
 						mapaErrores.get(messageServices.getMessage(ERROR_SUBCARTERA_INVALID)).add(fila);

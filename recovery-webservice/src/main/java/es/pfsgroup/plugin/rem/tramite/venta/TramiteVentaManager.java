@@ -175,17 +175,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		return true;
 	}
 	
-	@Override
-	public boolean tieneRellenosCamposAnulacion(ExpedienteComercial eco){
-		boolean camposRellenos = false;
 
-		if(eco.getDetalleAnulacionCntAlquiler() != null && eco.getMotivoAnulacion() != null && !Checks.isFechaNula(eco.getFechaAnulacion())) {
-			camposRellenos = true;
-		}
-		
-		return camposRellenos;
-	}
-	
 	@Override
 	public DtoDocPostVenta getDatosDocPostventa(Long idExpediente) {	
 		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);

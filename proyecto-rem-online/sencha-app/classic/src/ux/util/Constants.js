@@ -286,7 +286,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		ONETOONE:'68',
 		JAGUAR:'70',
 		TITEDT:'162',
-		TITTDA:'163'
+		TITTDA:'163',
+		MARINA: '71'
     },
 
     NOMBRE_SUBCARTERA: {
@@ -739,7 +740,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		IDENT_BANCO_DE_ESPAÑA: '11',
 		NIF_PAIS_ORIGEN: '13',
 		OTRO: '14',
-		NIF: '15'
+		NIF: '15',
+		NIE: '12'
 	},
 	DD_REGIMEN_MATRIMONIAL:{
 		COD_GANANCIALES:'1',
@@ -1071,5 +1073,13 @@ Ext.define('HreRem.ux.util.Constants', {
 	    CODIGO_RENOVACIONES: 'ZRE',
 	    CODIGO_SUBROGACION_DACION: 'ZSD',
 	    CODIGO_SUBROGACION_EJECUCION: 'ZSE'
+	},
+	CODIGO_BLOQUEO:{
+		T015_BLOQUEOSCORING: 'T015_BloqueoScoring',
+		T017_BLOQUEOSCORING: 'T017_BloqueoScoring',
+		T018_BLOQUEOSCORING: 'T018_BloqueoScoring',
+		T015_BLOQUEOSCREENING: 'T015_BloqueoScreening',
+		T017_BLOQUEOSCREENING: 'T017_BloqueoScreening',
+		T018_BLOQUEOSCREENING: 'T018_BloqueoScreening'
 	}
 });

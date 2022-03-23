@@ -146,6 +146,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
 	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
 	    								var tipologivaVenta = form.down('field[name=tipologivaVentaCod]');
+	    								var buscaPrescriptores = form.down('field[name=buscadorPrescriptores]');
+	    								var nombrePrescriptor = form.down('field[name=nombrePrescriptor]');
 	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
 	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
 	    										    											    										
@@ -168,6 +170,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									tipologivaVenta.setDisabled(false);
 	    								}else{
 	    									tipologivaVenta.setDisabled(true);
+	    								}
+	    								
+	    								if(CONST.TIPOS_OFERTA['ALQUILER_NO_COMERCIAL'] == value){
+	    									buscaPrescriptores.allowBlank = true;
+	    									nombrePrescriptor.allowBlank = true;
+	    								}else{
+	    									buscaPrescriptores.allowBlank = false;
+	    									nombrePrescriptor.allowBlank = false;
 	    								}
 	    							}
 	    						},

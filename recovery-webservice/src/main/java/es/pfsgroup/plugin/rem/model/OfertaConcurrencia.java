@@ -6,6 +6,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -89,6 +91,39 @@ public class OfertaConcurrencia implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public boolean entraEnTiempoDocumentacion(){
+		if(this.oferta != null && this.oferta.getConcurrencia() != null && this.oferta.getConcurrencia()){
+			Date fechaTopeOferta = sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 72);
+			Date fechaHoy = new Date();
+
+			int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
+
+			return fecha >= 0;
+		}
+		return true;
+	}
+
+	public boolean entraEnTiempoDeposito(){
+		if(this.oferta != null && this.oferta.getConcurrencia() != null && this.oferta.getConcurrencia()){
+			Date fechaTopeOferta = sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 96);
+			Date fechaHoy = new Date();
+
+			int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
+
+			return fecha >= 0;
+		}
+		return true;
+	}
+
+	public Date sumarRestarHorasFecha(Date fecha, int horas){
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.setTime(fecha); // Configuramos la fecha que se recibe
+		calendar.add(Calendar.HOUR, horas);  // numero de horas a añadir, o restar en caso de horas<0
+
+		return calendar.getTime(); // Devuelve el objeto Date con las nuevas horas añadidas
 	}
 
 

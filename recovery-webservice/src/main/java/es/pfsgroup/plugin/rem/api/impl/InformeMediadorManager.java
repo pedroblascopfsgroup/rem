@@ -22,30 +22,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoBanyo;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
-import es.pfsgroup.plugin.rem.model.ActivoCocina;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
-import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
-import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
-import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
-import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSolado;
-import es.pfsgroup.plugin.rem.model.ActivoVivienda;
-import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.InformeTestigosOpcionales;
@@ -68,20 +51,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
-import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
-import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
 import es.pfsgroup.plugin.rem.rest.dto.TestigosOpcionalesDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -96,9 +74,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private RestApi restApi;
-
-	@Autowired
-	private DtoToEntityApi dtoToEntity;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -1476,6 +1451,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,filtroSi);
 		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,filtroNo);
 		
+		if (!Checks.esNulo(informe.getIdInformeMediadorWebcom())) {
+			informeEntity.setIdWebcom(informe.getIdInformeMediadorWebcom());
+		}
 				
 		/*informe.getCodEstadoInforme()
 		 		es para el historico pero no se sabe el diccionario*/

@@ -178,7 +178,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 
 			if(wizard.lookupController().getView().getViewModel().getData().esAgrupacionCaixa){
 				if(!Ext.isEmpty(form.findField('codTipoDocumentoRte').value) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
-     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
      					&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 					
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
@@ -199,7 +201,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 	     				}
 	                 }
                  	if(!Ext.isEmpty(form.findField('codTipoDocumentoRte').value) && form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['DNI']
-                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF'] 
+                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
+                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
+                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
                  				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
                  		
                  		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));

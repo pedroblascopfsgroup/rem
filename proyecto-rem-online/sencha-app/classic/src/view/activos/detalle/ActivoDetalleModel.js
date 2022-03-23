@@ -2249,6 +2249,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	       		 pageSize: $AC.getDefaultPageSize(),
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
+			       			{
+					 			property: 'ordenGanador', 
+				        		direction: 'ASC'
+					 		},
 				 			{
 				        		property: 'fechaCreacion',
 				        		direction: 'DESC'	

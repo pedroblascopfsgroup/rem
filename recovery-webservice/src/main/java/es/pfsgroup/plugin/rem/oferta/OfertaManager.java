@@ -5846,7 +5846,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					GestorEntidad gestorEntidad = gestorActivoApi.getGestorEntidadByActivoYTipo(activoOferta.getPrimaryKey().getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 					if(Checks.estaVacio(listaGestoresActivosOferta)) {
 						listaGestoresActivosOferta.add(gestorEntidad);
-					}else if(gestorEntidad.getUsuario().getId() != listaGestoresActivosOferta.get(0).getUsuario().getId()) {
+					}else if(gestorEntidad != null && gestorEntidad.getUsuario() != null && gestorEntidad.getUsuario().getId() != listaGestoresActivosOferta.get(0).getUsuario().getId()) {
 						return null;
 					}
 				}

@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Puja;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 
 
@@ -133,5 +134,32 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			return false;
 		}		
 		return true;
+	}
+
+	@Override
+	public Oferta getOfertaGanadora(Activo activo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		List<VGridOfertasActivosAgrupacionConcurrencia> ofertasConcurrencia = genericDao.getList(VGridOfertasActivosAgrupacionConcurrencia.class, filtro);
+		Oferta ofertaGanadora = null;
+		if(ofertasConcurrencia != null && !ofertasConcurrencia.isEmpty()) {
+			ofertaGanadora = ofertaApi.getOfertaById(ofertasConcurrencia.get(0).getId());
+		}
+		
+		return ofertaGanadora;
+	}
+	
+	@Override
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo) {
+		return concurrenciaDao.getListOfertasVivasConcurrentes(idActivo);
+	}
+	
+	@Override
+	public boolean isConcurrenciaOfertasEnProgresoActivo(Activo activo) {
+		return this.isActivoEnConcurrencia(activo) || this.tieneActivoOfertasDeConcurrencia(activo);
+	}
+	
+	@Override
+	public boolean isConcurrenciaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion) {
+		return this.isAgrupacionEnConcurrencia(agrupacion) || this.tieneAgrupacionOfertasDeConcurrencia(agrupacion);
 	}
 }

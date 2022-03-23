@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdjuntosAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
@@ -108,6 +109,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Resource
 	private Properties appProperties;
@@ -366,8 +370,12 @@ public class AgrupacionController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
-
-		model.put("data", adapter.getListOfertasAgrupacion(id));
+		if(concurrenciaApi.isConcurrenciaOfertasEnProgresoAgrupacion(adapter.getAgrupacionObjectById(id))){
+			model.put("data", adapter.getListOfertasVivasConcurrenciaAgrupacion(id));
+		}else {
+			model.put("data", adapter.getListOfertasAgrupacion(id));
+		}
+		
 
 		return createModelAndViewJson(model);
 	}

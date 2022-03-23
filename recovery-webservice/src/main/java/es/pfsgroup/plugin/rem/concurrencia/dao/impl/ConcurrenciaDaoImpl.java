@@ -1,18 +1,31 @@
 package es.pfsgroup.plugin.rem.concurrencia.dao.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 
 @Repository("concurrenciaDao")
 public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> implements ConcurrenciaDao{
 		
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public boolean isAgrupacionEnConcurrencia (Long agrId) {
@@ -38,5 +51,35 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 				"where eof.dd_eof_codigo in ('01', '04', '08', '07', '09') AND ofr.OFR_CONCURRENCIA = 1 AND agr.agr_id =" + agrId);
 		
 		return Integer.parseInt(resultados) > 0;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo) {
+
+		String hql = " from VGridOfertasActivosAgrupacionConcurrencia voa2 ";
+		String listaIdsOfertas = "";
+
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+
+			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+
+			for (ActivoOferta activoOferta : listaActivoOfertas) {
+				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString())
+						.concat(",");
+			}
+			listaIdsOfertas = listaIdsOfertas.concat("-1");
+
+			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
+		}
+
+		return (List<VGridOfertasActivosAgrupacionConcurrencia>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+
 	}
 }

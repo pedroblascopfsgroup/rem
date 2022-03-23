@@ -53,7 +53,6 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		return Integer.parseInt(resultados) > 0;
 	}
 	
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo) {
@@ -80,6 +79,16 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 
 		return (List<VGridOfertasActivosAgrupacionConcurrencia>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
+	}
 
+	@Override
+	public boolean isActivoEnConcurrencia(Long idActivo) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_activo act \n" + 
+				"JOIN con_concurrencia cn ON cn.act_id = act.act_id AND cn.borrado = 0 \n" + 
+				"where SYSDATE BETWEEN cn.con_fecha_ini and cn.con_fecha_fin \n" + 
+				"AND act.act_id = " + idActivo);
+		
+		return Integer.parseInt(resultados) > 0;
 	}
 }

@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -296,6 +297,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -1125,6 +1129,9 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+		
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
 					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1443,6 +1450,30 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+
+			Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
+			
+			if (activoAgrupacion != null) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+					if (activoAgrupacionActivo != null) {
+						if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+							return;
+						}
+					}
+				}
+			}
+			
+			if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios

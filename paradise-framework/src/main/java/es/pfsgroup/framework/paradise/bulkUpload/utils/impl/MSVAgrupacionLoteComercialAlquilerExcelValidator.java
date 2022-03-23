@@ -55,6 +55,7 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 	public static final String ERROR_ACTIVO_CANARIAS = "msg.error.masivo.agrupar.activos.agr.canaria.act.canaria";
 	public static final String ACTIVO_DISTINTO_TIPO_ALQUILER = "msg.error.masivo.agrupar.activos.distinto.tipo.alquiler.agrupacion";
 	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
+	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
 	
 	
 	
@@ -132,6 +133,9 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 			
 			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
 			
+			// Activo en periodo de concurrencia
+			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
+			
 			// Activo fuera perímetro HAYA.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO), activosFueraPerimetroRows(exc));
 			
@@ -183,6 +187,7 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
 				) {
 			
 			dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -648,6 +653,24 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 		try {
 			for(i=1; i<this.numFilasHoja;i++){
 				if(particularValidator.esActivoVendido(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

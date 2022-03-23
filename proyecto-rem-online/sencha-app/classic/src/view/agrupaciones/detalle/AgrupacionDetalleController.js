@@ -969,7 +969,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
                     idEntidad: Ext.isEmpty(grid.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(grid.idPrincipal)
                 },
                 success: function (a, operation, c) {																			
-					grid.saveSuccessFn(a, operation, c);
+					grid.saveSuccessFn();
 				},
                 
 				failure: function (a, operation) {

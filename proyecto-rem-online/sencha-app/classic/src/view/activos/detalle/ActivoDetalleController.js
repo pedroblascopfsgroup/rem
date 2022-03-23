@@ -5002,7 +5002,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							esAnulacion : true
 						},
 						success : function(a, operation, c) {
-							grid.saveSuccessFn();
+							grid.saveSuccessFn(a, operation, c);
 						},
 
 						failure : function(a, operation) {

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1473,6 +1474,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,filtroSi);
 		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,filtroNo);
 		
+		if (!Checks.esNulo(informe.getIdInformeMediadorWebcom())) {
+			informeEntity.setIdWebcom(informe.getIdInformeMediadorWebcom());
+		}
 				
 		/*informe.getCodEstadoInforme()
 		 		es para el historico pero no se sabe el diccionario*/

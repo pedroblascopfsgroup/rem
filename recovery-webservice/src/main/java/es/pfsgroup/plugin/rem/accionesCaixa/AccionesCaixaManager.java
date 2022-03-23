@@ -155,13 +155,16 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         OfertaCaixa ofrCaixa = genericDao.get(OfertaCaixa.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", dto.getNumOferta()));
     	DDRiesgoOperacion rop = genericDao.get(DDRiesgoOperacion.class, genericDao.createFilter(FilterType.EQUALS, "codigoC4C", dto.getRiesgoOperacion()));
         ofrCaixa.setRiesgoOperacion(rop);
-        
-        HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
-        if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
-        	htp.setFechaComunicacionRiesgo(new Date());
+
+        if (dto.getCodTipoTarea() != null){
+            HistoricoTareaPbc htp = createHistoricoTareaPbc(ofrCaixa.getOferta(),dto.getCodTipoTarea());
+            if(DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea())) {
+                htp.setFechaComunicacionRiesgo(new Date());
+            }
+            genericDao.save(HistoricoTareaPbc.class, htp);
         }
-        
-        genericDao.save(HistoricoTareaPbc.class, htp);
+
+
         genericDao.save(OfertaCaixa.class, ofrCaixa);
 
          
@@ -191,7 +194,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
                 genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS));
         expediente.setEstadoBc(estadoExpedienteBc);
-        
+
         HistoricoTareaPbc htp = createHistoricoTareaPbc(expediente.getOferta(),DDTipoTareaPbc.CODIGO_PBCARRAS);
         htp.setFechaSancion(new Date());
         htp.setAprobacion(true);
@@ -823,7 +826,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 		
 		return historico;
 	}
-	
+
     public Map<String, String[]> createRequestAccionCalculoRiesgo(DtoAccionResultadoRiesgoCaixa dto) throws ParseException {
         Map<String,String[]> map = new HashMap<String,String[]>();
         

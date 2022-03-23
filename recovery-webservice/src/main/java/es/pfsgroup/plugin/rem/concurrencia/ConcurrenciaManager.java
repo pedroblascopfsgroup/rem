@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 
 
@@ -31,9 +32,20 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Autowired
 	private OfertaApi ofertaApi;
 
-	
-	private Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
+	@Override
+	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
 		List<Concurrencia> concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		Concurrencia concurrencia = null;
+		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
+			concurrencia = concurrenciaList.get(0);
+		}
+		
+		return concurrencia;
+	}
+	
+	@Override
+	public Concurrencia getUltimaConcurrenciaByAgrupacion(ActivoAgrupacion agrupacion) {
+		List<Concurrencia> concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId()));
 		Concurrencia concurrencia = null;
 		if(concurrenciaList != null && !concurrenciaList.isEmpty()) {
 			concurrencia = concurrenciaList.get(0);
@@ -104,5 +116,22 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public boolean createPuja(Concurrencia concurrencia, Oferta oferta, Double importe) {
+		try {
+			Puja puja = new Puja();
+			if(concurrencia != null) {
+				puja.setConcurrencia(concurrencia);	
+			}
+			puja.setOferta(oferta);
+			puja.setImporte(importe);
+			genericDao.save(Puja.class, puja);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}		
+		return true;
 	}
 }

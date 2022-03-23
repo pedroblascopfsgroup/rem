@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -338,7 +340,7 @@ public class OfertasController {
 		List<OfertaDto> listaOfertaDto = null;
 
 		try {
-
+			
 			jsonFields = request.getJsonObject();
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
 			listaOfertaDto = jsonData.getData();

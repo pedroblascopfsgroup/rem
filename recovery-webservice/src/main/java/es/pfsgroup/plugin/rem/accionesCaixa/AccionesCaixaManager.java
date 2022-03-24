@@ -579,8 +579,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setEstadoReserva(estadoReserva);
 
-                eco.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
-
+                if(dto.getFechaReal() == null){
+                    eco.setFechaDevolucionEntregas(new Date());
+                }else{
+                    eco.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                }
                 genericDao.save(Reserva.class, reserva);
             }
             

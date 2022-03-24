@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -168,6 +169,7 @@ import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.LlamadaPbcDto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaCaixa;
+import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertaTestigos;
@@ -480,7 +482,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Resource
     private Properties appProperties;
 
-
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
+	
 	@Override
 	public String managerName() {
 		return "ofertaManager";
@@ -1119,7 +1123,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()));
 				}
 			}
-			if(agrup == null) {
+			if(agrup == null && ofertaDto.getCodigoAgrupacionComercialRem() != null) {
 				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(
 						FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
 			}
@@ -1805,10 +1809,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 			
+			createOfertaConcurrencia(oferta);
+			
 			crearPuja(ofertaDto, oferta, agrup, activo);
 		}
 
 		return errorsList;
+	}
+
+	private void createOfertaConcurrencia(Oferta oferta) {
+		OfertaConcurrencia ofrConcurrencia = new OfertaConcurrencia();
+		ofrConcurrencia.setOferta(oferta);
+		genericDao.save(OfertaConcurrencia.class, ofrConcurrencia);
 	}
 
 	private void crearPuja(OfertaDto ofertaDto, Oferta oferta, ActivoAgrupacion agrup, Activo activo) {
@@ -2146,13 +2158,36 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		
 		if (errorsList.isEmpty()) {
+			
+			//CONCURRENCIA
+			Activo activoConcurrencia = activoDao.getActivoByNumActivo(ofertaDto.getIdActivoHaya());
+			ActivoAgrupacion agrupacionConcurrencia = null;
+			
+			OfertaConcurrencia ofrConcurrencia = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+			
+			if(ofertaDto.getCodigoAgrupacionComercialRem() != null) {
+				agrupacionConcurrencia = genericDao.get(ActivoAgrupacion.class,
+						genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
+			}
+			
+			if(agrupacionConcurrencia != null && (concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia) 
+					|| (!concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia)
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta()) 
+					&& ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()))){
+				errorsList.put("errorDesc", "No se puede tramitar. La agrupación "+agrupacionConcurrencia.getNumAgrupRem()+" sigue en periodo de concurrencia.");
+			}else if(activoConcurrencia != null && (concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia)
+					|| (!concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia)
+					&& ofertaDto.getEnConcurrencia() != null && !ofertaDto.getEnConcurrencia() 
+					&& ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()))){
+				errorsList.put("errorDesc", "No se puede tramitar. El activo "+activoConcurrencia.getNumActivo()+" sigue en periodo de concurrencia.");
+			}
+			
 			boolean modificado = false;
 			boolean eraPdteTitulares = DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo());
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, true);
 				modificado = true;
 			}
-			
 			if (!Checks.esNulo(ofertaDto.getIdClienteRem())) {
 				Filter webcomIdNotNull = genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom");
 				ClienteComercial cliente = genericDao.get(ClienteComercial.class,
@@ -2172,6 +2207,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				clienteComercialDao.save(cliente);
 				modificado = true;
+				
+				//CONCURRENCIA
+				List<Oferta> listOfertasCliente = genericDao.getList(Oferta.class,
+						genericDao.createFilter(FilterType.EQUALS,"cliente.id",cliente.getId())
+						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
+				if(listOfertasCliente != null && !listOfertasCliente.isEmpty()) {
+					for (Oferta ofertaClc : listOfertasCliente) {
+						if(concurrenciaDao.isOfertaEnPlazoEntrega(ofertaClc.getId())) {
+							errorsList.put("errorDesc", "No se puede tramitar. La oferta "+oferta.getNumOferta()+" sigue en plazo de entrega de documentación.");
+							return errorsList;
+						}
+					}
+				}
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getIdOfertaHayaHome())) {

@@ -91,4 +91,20 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		
 		return Integer.parseInt(resultados) > 0;
 	}
+	
+	@Override
+	public boolean isOfertaEnPlazoEntrega(Long idOferta) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(1) FROM OFR_OFERTAS ofr \n" + 
+				"JOIN OFC_OFERTAS_CONCURRENCIA ofc ON ofc.OFR_ID = ofr.OFR_ID \n" + 
+				"WHERE (ofc.OFC_FECHA_DOC IS NULL and ofc.FECHACREAR + 72/24 > SYSDATE \n" + 
+				"or ofc.OFC_FECHA_DEPOSITO IS NULL AND ofc.OFC_FECHA_DOC + 96/24 > SYSDATE) \n" + 
+				"AND ofr.OFR_id ="+idOferta);
+		
+		return Integer.parseInt(resultados) > 0;
+	}
+	
+	
+	
+	
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220316
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17351
+--## INCIDENCIA_LINK=HREOS-17497
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -25,6 +25,7 @@
 --##	      0.13 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855 - Alejandra García
 --##          0.14 Cosas - HREOS-XXXXX
 --##	      0.15 Insertar nuevo campo SUP_REG_SOLAR - HREOS-17351 - Javier Esbri
+--##	      0.16 Añadido SUP_REG_CONSTRUIDA - HREOS-17497 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -212,6 +213,7 @@ BEGIN
                   , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE * 100 SUP_SOBRE_RASANTE
                   , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
                   , ACT_REG.REG_SUPERFICIE_PARCELA * 100 SUP_REG_SOLAR
+                  , BCR.SUP_REG_CONSTRUIDA
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG
                   JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL ACT_REG ON BIE_REG.BIE_DREG_ID = ACT_REG.BIE_DREG_ID AND ACT_REG.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0
@@ -219,6 +221,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
+                  LEFT JOIN '|| V_ESQUEMA ||'.AUX_APR_BRC_STOCK BCR ON BCR.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA
                   WHERE BIE_REG.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
@@ -236,6 +239,7 @@ BEGIN
                   , APR.SUP_SOBRE_RASANTE = AUX.SUP_SOBRE_RASANTE
                   , APR.SUP_BAJO_RASANTE = AUX.SUP_BAJO_RASANTE
                   , APR.SUP_REG_SOLAR = AUX.SUP_REG_SOLAR
+                  , APR.SUP_REG_CONSTRUIDA = AUX.SUP_REG_CONSTRUIDA
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
@@ -246,7 +250,8 @@ BEGIN
                   , SUP_TASACION_CONSTRUIDA
                   , SUP_SOBRE_RASANTE
                   , SUP_BAJO_RASANTE
-                  , SUP_REG_SOLAR)
+                  , SUP_REG_SOLAR
+                  , SUP_REG_CONSTRUIDA)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
                   , AUX.NUM_INMUEBLE
@@ -256,7 +261,8 @@ BEGIN
                   , AUX.SUP_TASACION_CONSTRUIDA
                   , AUX.SUP_SOBRE_RASANTE
                   , AUX.SUP_BAJO_RASANTE
-                  , AUX.SUP_REG_SOLAR)';
+                  , AUX.SUP_REG_SOLAR
+                  , AUX.SUP_REG_CONSTRUIDA)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220322
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17351
+--## INCIDENCIA_LINK=HREOS-17497
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -15,6 +15,7 @@
 --##        0.3 Se añaden nuevos campos a la ICO (ICO_ANO_REHABILITACION y ICO_ANO_CONSTRUCCION) - HREOS-17329 - Javier Esbrí
 --##        0.4 Se cambia los campos por el nuevo modelo de Informe comercial - HREOS-17366
 --##        0.5 Se añaden nuevos campos Informe comercial - HREOS-17351 - Javier Esbri
+--##        0.6 Se añaden el campo de número de aparcaminetos - HREOS-17497 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -56,6 +57,7 @@ BEGIN
                   , ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE  
                   , ACT.ACT_ID
                   , NVL(TO_NUMBER(APR.ANYO_CONSTRUCCION),ICO.ICO_ANO_CONSTRUCCION) AS ICO_ANO_CONSTRUCCION
+                  , APR.NUM_APARACAMIENTOS/100 ICO_NUM_GARAJE
                   , APR.NUM_HABITACIONES/100 ICO_NUM_DORMITORIOS
                   , APR.NUM_BANYOS/100 ICO_NUM_BANYOS
                   , CASE 
@@ -120,6 +122,7 @@ BEGIN
                   UPDATE SET 
                     ICO.ICO_ANO_REHABILITACION = AUX.ICO_ANO_REHABILITACION
                   , ICO.ICO_ANO_CONSTRUCCION = AUX.ICO_ANO_CONSTRUCCION
+                  , ICO.ICO_NUM_GARAJE = NVL(AUX.ICO_NUM_GARAJE,ICO.ICO_NUM_GARAJE)
 				  , ICO.ICO_NUM_DORMITORIOS = NVL(AUX.ICO_NUM_DORMITORIOS,ICO.ICO_NUM_DORMITORIOS)
 				  , ICO.ICO_NUM_BANYOS = NVL(AUX.ICO_NUM_BANYOS,ICO.ICO_NUM_BANYOS)
               , ICO.ICO_ASCENSOR = NVL(AUX.ICO_ASCENSOR,ICO.ICO_ASCENSOR)
@@ -142,6 +145,7 @@ BEGIN
                   , ACT_ID
                   , ICO_ANO_REHABILITACION
                   , ICO_ANO_CONSTRUCCION
+                  , ICO_NUM_GARAJE
 				  , ICO_NUM_DORMITORIOS
 				  , ICO_NUM_BANYOS
               , ICO_ASCENSOR
@@ -163,6 +167,7 @@ BEGIN
                   , AUX.ACT_ID
                   , AUX.ICO_ANO_REHABILITACION
                   , AUX.ICO_ANO_CONSTRUCCION
+                  , AUX.ICO_NUM_GARAJE
 				  , AUX.ICO_NUM_DORMITORIOS
 			      , AUX.ICO_NUM_BANYOS
               , AUX.ICO_ASCENSOR

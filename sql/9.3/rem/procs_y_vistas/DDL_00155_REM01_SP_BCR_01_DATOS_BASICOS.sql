@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220315
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17155
+--## INCIDENCIA_LINK=HREOS-17497
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -29,6 +29,7 @@
 --##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
 --##	      0.18 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
 --##	      0.19 Cálculo del alquiler rotacional y alquiler alquilado para el DD_CBC_ID [HREOS-17155] - Alejandra García
+--##	      0.20 Corección DD_CBC_ID [HREOS-17497] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -331,10 +332,10 @@ BEGIN
                aux.NUM_INMUEBLE_ANTERIOR as CBX_NUMERO_INMUEBLE_ANTERIOR,
                CASE
                   WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  
-                     AND DCA.DCA_EST_CONTRATO = ''Alquilada'' THEN (SELECT DD_CBC_ID FROM REM01.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
+                     AND DCA.DCA_EST_CONTRATO = ''Alquilada'' THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
                   WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND (DCA.DCA_ID IS NULL OR (DCA.DCA_ID IS NOT NULL OR DCA.DCA_FECHA_FIRMA > SYSDATE OR DCA.DCA_FECHA_FIN_CONTRATO < SYSDATE  
-                     OR DCA.DCA_EST_CONTRATO <> ''Alquilada'')) THEN (SELECT DD_CBC_ID FROM REM01.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''02'')
-                  ELSE cbc.dd_cbc_id
+                     OR DCA.DCA_EST_CONTRATO <> ''Alquilada'')) THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''02'')
+                  ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
                END AS DD_CBC_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  

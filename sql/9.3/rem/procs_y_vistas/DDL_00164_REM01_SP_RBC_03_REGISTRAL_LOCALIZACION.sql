@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=2021202
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17497
@@ -24,7 +24,8 @@
 --##        0.12 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##	      0.13 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855 - Alejandra García
 --##          0.14 Cosas - HREOS-XXXXX
---##	      0.15 Añadido SUP_REG_CONSTRUIDA - HREOS-17497 - Alejandra García
+--##	      0.15 Añadido SUP_REG_CONSTRUIDA - HREOS-17497 - Daniel Algaba
+--##	      0.16 Quita NUM_CARTILLA - HREOS-17497 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -219,7 +220,7 @@ BEGIN
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
-                  LEFT JOIN '|| V_ESQUEMA ||'.AUX_APR_BRC_STOCK BCR ON BCR.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA
+                  LEFT JOIN '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK BCR ON BCR.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA
                   WHERE BIE_REG.BORRADO = 0
                   AND CRA.DD_CRA_CODIGO = ''03''
                   AND PAC.PAC_INCLUIDO = 1
@@ -258,48 +259,6 @@ BEGIN
                   , AUX.SUP_SOBRE_RASANTE
                   , AUX.SUP_BAJO_RASANTE
                   , AUX.SUP_REG_CONSTRUIDA)';
-   
-      EXECUTE IMMEDIATE V_MSQL;
-
-      SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);
-
-      SALIDA := SALIDA || '   [INFO] 3 - EXTRACCIÓN A AUX_APR_RBC_STOCK DE LA ACT_CAT_CATASTRO'||CHR(10);
-
-      V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK APR
-                  USING (
-                  SELECT 
-                  ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
-                  , ACT.ACT_NUM_ACTIVO NUM_INMUEBLE
-                  , CAT.CAT_REF_CATASTRAL NUM_CARTILLA
-                  FROM (SELECT AUX_CAT.ACT_ID, AUX_CAT.CAT_REF_CATASTRAL, ROW_NUMBER() OVER (PARTITION BY AUX_CAT.ACT_ID ORDER BY AUX_CAT.CAT_ID DESC) RN 
-                  FROM '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO AUX_CAT 
-                  WHERE AUX_CAT.BORRADO = 0 
-                  AND AUX_CAT.CAT_F_BAJA_CATASTRO IS NULL) CAT
-                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = CAT.ACT_ID AND ACT.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
-                  JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
-                  WHERE CAT.RN = 1
-                  AND CRA.DD_CRA_CODIGO = ''03''
-                  AND PAC.PAC_INCLUIDO = 1
-                  AND ACT.ACT_EN_TRAMITE = 0
-                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                  AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')
-                  ) AUX
-                  ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
-                  WHEN MATCHED THEN
-                  UPDATE SET 
-                  APR.NUM_CARTILLA = AUX.NUM_CARTILLA
-                  WHEN NOT MATCHED THEN
-                  INSERT 
-                  (NUM_IDENTIFICATIVO
-                  , NUM_INMUEBLE
-                  , NUM_CARTILLA)
-                  VALUES 
-                  (AUX.NUM_IDENTIFICATIVO
-                  , AUX.NUM_INMUEBLE
-                  , AUX.NUM_CARTILLA)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

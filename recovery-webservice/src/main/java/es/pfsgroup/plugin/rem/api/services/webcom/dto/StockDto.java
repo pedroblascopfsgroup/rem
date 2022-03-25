@@ -392,9 +392,6 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType disponible;
 	
 	private StringDataType codMotivoIndisponibilidad;
-	private StringDataType nombreGestorComercialAlquiler;
-	private StringDataType telefonoGestorComercialAlquiler;
-	private StringDataType emailGestorComercialAlquiler;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220324
+--## FECHA_CREACION=20220325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17351
+--## INCIDENCIA_LINK=HREOS-17497
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -24,6 +24,7 @@
 --##        0.12 Se cambia los campos por el nuevo modelo de Informe comercial - [HREOS-17366] - Daniel Algaba
 --##        0.13 Se añaden nuevos campos Infrome comercial - [HREOS-17351] - Javier Esbri
 --##        0.14 Nuevos campos sobre informe comercial - [HREOS-17414] - Daniel Algaba
+--##	    0.15 Añadido BALCON, TIPO_VIVIENDA_INF y TIPOLOGIA_EDIFICIO - HREOS-17497 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -118,7 +119,10 @@ BEGIN
                     ELSE ''02''
                 END AS TERRAZA
                 ,  REPLACE(REPLACE(ICO.ICO_INFO_DISTRIBUCION_INTERIOR, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
-                ,  REPLACE(REPLACE(EDIF.EDI_DESCRIPCION, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_2                
+                ,  REPLACE(REPLACE(EDIF.EDI_DESCRIPCION, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_2
+                , BCR.BALCON
+                , BCR.TIPO_VIVIENDA_INF
+                , BCR.TIPOLOGIA_EDIFICIO                
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO EDIF ON EDIF.ICO_ID=ICO.ICO_ID AND EDIF.BORRADO=0    
@@ -127,7 +131,8 @@ BEGIN
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_ESTADO_CONSERVACION ECV ON ECV.DD_ECV_ID = ICO.DD_ECV_ID  
-            LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv ON eqv.DD_NOMBRE_CAIXA = ''EST_CONSERVACION'' AND eqv.DD_CODIGO_REM = ECV.DD_ECV_CODIGO AND eqv.BORRADO=0 
+            LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv ON eqv.DD_NOMBRE_CAIXA = ''EST_CONSERVACION'' AND eqv.DD_CODIGO_REM = ECV.DD_ECV_CODIGO AND eqv.BORRADO=0
+            LEFT JOIN '|| V_ESQUEMA ||'.AUX_APR_BRC_STOCK BCR ON BCR.NUM_IDENTIFICATIVO = ACT.ACT_NUM_ACTIVO_CAIXA 
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0
             AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
@@ -156,6 +161,9 @@ BEGIN
                 ,AUX.TXT_COMERCIAL_CAS_2=US.TXT_COMERCIAL_CAS_2   
                 ,AUX.SALIDA_HUMOS=US.SALIDA_HUMOS
                 ,AUX.TERRAZA=US.TERRAZA
+                ,AUX.BALCON=US.BALCON
+                ,AUX.TIPO_VIVIENDA_INF=US.TIPO_VIVIENDA_INF
+                ,AUX.TIPOLOGIA_EDIFICIO=US.TIPOLOGIA_EDIFICIO
             WHEN NOT MATCHED THEN INSERT (
                  NUM_IDENTIFICATIVO
                 ,NUM_INMUEBLE
@@ -181,6 +189,9 @@ BEGIN
                 ,TXT_COMERCIAL_CAS_2  
                 ,SALIDA_HUMOS
                 ,TERRAZA
+                ,BALCON
+                ,TIPO_VIVIENDA_INF
+                ,TIPOLOGIA_EDIFICIO 
                 )VALUES(
                      US.NUM_IDENTIFICATIVO
                     ,US.NUM_INMUEBLE
@@ -206,6 +217,9 @@ BEGIN
                     ,US.TXT_COMERCIAL_CAS_2
                     ,US.SALIDA_HUMOS
                     ,US.TERRAZA
+                    ,US.BALCON
+                    ,US.TIPO_VIVIENDA_INF
+                    ,US.TIPOLOGIA_EDIFICIO 
                 )
    ';
    EXECUTE IMMEDIATE V_MSQL;

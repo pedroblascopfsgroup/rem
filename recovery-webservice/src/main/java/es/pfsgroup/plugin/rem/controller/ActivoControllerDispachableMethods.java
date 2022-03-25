@@ -87,15 +87,15 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB INFORME COMERCIAL
 		 */
-		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformeComercial>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformacionComercial>() {
 
 			@Override
-			public Class<DtoActivoInformeComercial> getArgumentType() {
-				return DtoActivoInformeComercial.class;
+			public Class<DtoActivoInformacionComercial> getArgumentType() {
+				return DtoActivoInformacionComercial.class;
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoInformeComercial dto, HttpServletRequest request) {
+			public void execute(Long id, DtoActivoInformacionComercial dto, HttpServletRequest request) {
 				if (dto != null ){
 					this.controller.saveActivoInformeComercial(dto, id, new ModelMap(), request);
 				}
@@ -429,6 +429,25 @@ class ActivoControllerDispachableMethods {
 							throw new JsonViewerException(mm.getModel().get("msgError").toString());
 					}
 				}
+			}
+		});
+		
+		/*
+		 * TAB VALORACIONES PRECIOS
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_VALORACIONES_PRECIOS, new DispachableMethod<DtoActivoValoraciones>() {
+
+			@Override
+			public Class<DtoActivoValoraciones> getArgumentType() {
+				return DtoActivoValoraciones.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoValoraciones dto, HttpServletRequest request) {
+				if (dto != null ){
+					this.controller.saveValoresPreciosActivo(dto, id, new ModelMap(), request);
+				}
+				
 			}
 		});
 	}

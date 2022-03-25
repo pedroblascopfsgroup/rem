@@ -52,6 +52,9 @@ public class ActivoEstadosInformeComercialHistorico implements Serializable , Au
     
     @Column(name = "HIC_MOTIVO")
 	private String motivo;
+    
+    @Column(name = "HIC_RESPONSABLE_CAMBIO")
+	private String responsableCambio;
 	
 	@Version   
 	private Long version;
@@ -113,6 +116,14 @@ public class ActivoEstadosInformeComercialHistorico implements Serializable , Au
 
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
+	}
+	
+	public String getResponsableCambio() {
+		return responsableCambio;
+	}
+
+	public void setResponsableCambio(String responsableCambio) {
+		this.responsableCambio = responsableCambio;
 	}
 	
 }

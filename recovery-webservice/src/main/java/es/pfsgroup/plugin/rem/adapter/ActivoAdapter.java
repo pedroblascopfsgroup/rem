@@ -112,9 +112,11 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionSer
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -381,6 +383,15 @@ public class ActivoAdapter {
 				activoFoto.setDescripcionFoto(ddDescripcionFoto);
 				activoFoto.setDescripcion(descripcion);
 			}
+			
+			if(!Checks.esNulo(dtoFoto.getSuelos())) {
+				activoFoto.setSuelos(dtoFoto.getSuelos());
+			}
+			
+			if(!Checks.esNulo(dtoFoto.getPlano())) {
+				activoFoto.setPlano(dtoFoto.getPlano());
+			}
+			
 			if (!Checks.esNulo(dtoFoto.getCodigoTipoFoto())) {
 				Filter codTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getCodigoTipoFoto());
 				DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, codTipo);
@@ -397,11 +408,28 @@ public class ActivoAdapter {
 			if (gestorDocumentalFotos.isActive()) {
 				PRINCIPAL principal = null;
 				SITUACION situacion = null;
+				SUELOS suelos = null;
+				PLANO plano = null;
+
 				if (dtoFoto.getPrincipal() != null) {
 					if (dtoFoto.getPrincipal()) {
 						principal = PRINCIPAL.SI;
 					} else {
 						principal = PRINCIPAL.NO;
+					}
+				}
+				if (dtoFoto.getSuelos() != null) {
+					if (dtoFoto.getSuelos()) {
+						suelos = SUELOS.SI;
+					} else {
+						suelos = SUELOS.NO;
+					}
+				}
+				if (dtoFoto.getPlano() != null) {
+					if (dtoFoto.getPlano()) {
+						plano = PLANO.SI;
+					} else {
+						plano = PLANO.NO;
 					}
 				}
 				if (dtoFoto.getInteriorExterior() != null) {
@@ -412,7 +440,8 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-					tipo, descripcion, principal, situacion, dtoFoto.getOrden());
+					tipo, descripcion, principal, situacion, dtoFoto.getOrden(), suelos, plano);
+
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
@@ -584,6 +613,7 @@ public class ActivoAdapter {
 
 				activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
 			}
+			if ("-999".equals(dtoDistribucion.getNumPlanta())) activoDistribucion.setNumPlanta(null);
 			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
@@ -591,7 +621,7 @@ public class ActivoAdapter {
 				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
 					ActivoVivienda vivTemp = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
 					if(DDTipoInfoComercial.COD_VIVIENDA.equals(activo.getInfoComercial().getTipoInfoComercial().getCodigo()) || vivTemp != null) {					
-						activo.getInfoComercial().getDistribucion().add(distribucionNueva);						
+						//activo.getInfoComercial().getDistribucion().add(distribucionNueva);						
 					}
 				}
 			}			
@@ -1044,6 +1074,12 @@ public class ActivoAdapter {
 						
 					ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
 					if(vivienda != null){				
+						DtoNumPlantas dtoUndefined = new DtoNumPlantas();
+						dtoUndefined.setNumPlanta(-999L);
+						dtoUndefined.setDescripcionPlanta("Sin definir");
+						dtoUndefined.setIdActivo(idActivo);
+						listaPlantas.add(dtoUndefined);
+						
 						DtoNumPlantas dtoSotano = new DtoNumPlantas();
 						dtoSotano.setNumPlanta(-1L);
 						dtoSotano.setDescripcionPlanta("Planta -1");
@@ -1071,14 +1107,15 @@ public class ActivoAdapter {
 		List<DtoDistribucion> listaNoExistentes = new ArrayList<DtoDistribucion>();
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
-			for (int q = 0; q < activo.getInfoComercial().getDistribucion().size(); q++) {
+			/*for (int q = 0; q < activo.getInfoComercial().getDistribucion().size(); q++) {
 				ActivoDistribucion activoDistribucion = activo.getInfoComercial().getDistribucion().get(q);
 				Integer numPlantaDistro = activoDistribucion.getNumPlanta();
 
-				if ((numPlantaDistro + 1) == (numPlanta + 1)) {
+				if ((Checks.esNulo(numPlantaDistro) && numPlanta == -999) || 
+						(!Checks.esNulo(numPlantaDistro) && (numPlantaDistro + 1) == (numPlanta + 1))) {
 					listaDistribucionesExistentes.add(activoDistribucion.getTipoHabitaculo().getCodigo());
 				}
-			}
+			}*/
 
 			List<DDTipoHabitaculo> habitaculos = (List<DDTipoHabitaculo>) utilDiccionarioApi.dameValoresDiccionario(DDTipoHabitaculo.class);
 			for (DDTipoHabitaculo habitaculo : habitaculos) {
@@ -1100,7 +1137,7 @@ public class ActivoAdapter {
 
 		ActivoInfoComercial infoComercial = activo.getInfoComercial();
 
-		if (!Checks.esNulo(infoComercial.getDistribucion())) {
+		/*if (!Checks.esNulo(infoComercial.getDistribucion())) {
 			for (int i = 0; i < infoComercial.getDistribucion().size(); i++) {
 				DtoDistribucion distribucionDto = new DtoDistribucion();
 				try {
@@ -1118,7 +1155,7 @@ public class ActivoAdapter {
 				}
 				listaDtoDistribucion.add(distribucionDto);
 			}
-		}
+		}*/
 
 		return listaDtoDistribucion;
 	}
@@ -2796,6 +2833,7 @@ public class ActivoAdapter {
 		DDEstadoInformeComercial estadoInformeComercial = (DDEstadoInformeComercial) proxyFactory.proxy(UtilDiccionarioApi.class)
 				.dameValorDiccionarioByCod(DDEstadoInformeComercial.class, codigoEstado);
 		estadoInformeComercialHistorico.setEstadoInformeComercial(estadoInformeComercial);
+		estadoInformeComercialHistorico.setResponsableCambio("API");
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
@@ -5189,6 +5227,9 @@ public class ActivoAdapter {
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 		activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+		activoEstadosInformeComercialHistorico.setResponsableCambio(personaLogada);
 		String username = genericAdapter.getUsuarioLogado().getUsername();
 		Date fecha = new Date();
 

@@ -723,7 +723,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				Float salon = null;
 				Integer balcon = null;
 				Integer hall = null;
-				List<ActivoDistribucion> distribucion = vivienda.getInformeComercial().getDistribucion();
+				List<ActivoDistribucion> distribucion = null;//vivienda.getInformeComercial().getDistribucion();
 				if (!Checks.estaVacio(distribucion)) {
 					for (int i = 0; i < distribucion.size(); i++) {
 						ActivoDistribucion dist = distribucion.get(i);
@@ -852,7 +852,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				} else {
 					mapaValores.put("ActivoUbicacion", FileUtilsREM.stringify(null));
 				}
-				mapaValores.put("ActivoDistrito", FileUtilsREM.stringify(vivienda.getInformeComercial().getDistrito()));
+				//mapaValores.put("ActivoDistrito", FileUtilsREM.stringify(vivienda.getInformeComercial().getDistrito()));
 				mapaValores.put("ActivoAntiguedad", FileUtilsREM.stringify(vivienda.getInformeComercial().getAnyoConstruccion()));
 				mapaValores.put("ActivoRehabilitacion", FileUtilsREM.stringify(vivienda.getInformeComercial().getAnyoRehabilitacion()));
 				if (vivienda.getTipoVivienda() != null) {
@@ -884,7 +884,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			}
 
 			// Todo lo relacionado con la tabla INFORMACION COMERCIAL
-			mapaValores.put("ActivoZona", FileUtilsREM.stringify(infoComercial.getZona()));
+			//mapaValores.put("ActivoZona", FileUtilsREM.stringify(infoComercial.getZona()));
 
 			// Todo lo relacionado con la tabla ANEJO
 			ActivoDistribucion activoDistribucion = genericDao.get(ActivoDistribucion.class,

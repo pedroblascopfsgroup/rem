@@ -777,7 +777,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
            }
 
            return numColumnas;
-        }
+        },
+	 	
+	 	habilitarBotonGeneraMailAprobacion: function(get){
+			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
+		 	return tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"] && 
+				get('datosbasicosoferta.enviarCorreoAprobacion') == 'true' && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	 	}
 
 	 },
 	

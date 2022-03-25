@@ -6,327 +6,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     idProperty: 'id',
 
     fields: [    
-     		{
-    			name:'numActivo'
-    		},
-    		{
-    			name:'numActivoRem'
-    		},
-    		{
-    			name:'tipoInfoComercialCodigo'
-    		},
-    		{
-    			name:'tipoActivoCodigo'
-    		},
 			{
-    			name:'tipoActivoDescripcion'
-    		},
-    		{
-    			name: 'isVivienda',
-    			calculate: function(data) { 
-    				return data.tipoInfoComercialCodigo == CONST.TIPOS_INFO_COMERCIAL['VIVIENDA'];
-    			},
-    			depends: 'tipoInfoComercialCodigo'
-    		},
-    		{
-    			name: 'isLocalComercial',
-    			calculate: function(data) { 
-    				return data.tipoInfoComercialCodigo ==  CONST.TIPOS_INFO_COMERCIAL['LOCAL_COMERCIAL'];
-    			},
-    			depends: 'tipoInfoComercialCodigo'
-    			
-    		},
-    		{
-    			name: 'isPlazaAparcamiento',
-    			calculate: function(data) { 
-    				return data.tipoInfoComercialCodigo ==  CONST.TIPOS_INFO_COMERCIAL['PLAZA_APARCAMIENTO'];
-    			},
-    			depends: 'tipoInfoComercialCodigo'
-    			
-    		},
-    		{
-    			name: 'isSuelo',
-    			calculate: function(data) { 
-    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
-    			},
-    			depends: 'tipoActivoCodigo'
-    			
-    		},
-    		{
-    			name:'descripcionComercial'
-    		},
-    		{
-    			name:'activosVinculados'
-    		},
-    		{
-    			name:'anyoConstruccion'
-    		},
-    		{
-    			name:'anyoRehabilitacion'
-    		},
-    		{
-    			name:'anyoRehabilitacionEdificio'
-    		},
-    		{
-    			name:'aptoPublicidad'
-    		},
-    		{
-    			name:'numPlantas'
-    		},
-    		{
-    			name:'ascensor'
-    		},
-    		{
-    			name:'numAscensores'
-    		},
-    		{
-    			name:'reformaFachada'
-    		},
-    		{
-    			name:'reformaEscalera'
-    		},
-    		{
-    			name:'reformaPortal'
-    		},
-    		{
-    			name:'reformaAscensor'
-    		},
-    		{
-    			name:'reformaCubierta'
-    		},
-    		{
-    			name: 'reformaOtrasZonasComunes'
-    		},
-    		{
-    			name: 'entornoComunicaciones'
-    		},
-    		{
-    			name: 'entornoInfraestructuras'
-    		},
-    		{
-    			name:'ediDescripcion'
-    		},
-    		{
-    			name:'numPlantasInter'
-    		},
-    		//Local comercial
-    		{
-    			name:'mtsFachadaPpal'
-    		},
-    		{
-    			name:'mtsFachadaLat'
-    		},
-    		{
-    			name:'mtsLuzLibre'
-    		},
-    		{
-    			name:'mtsAlturaLibre'
-    		},
-    		{
-    			name:'mtsLinealesProf'
-    		},
-    		{
-    			name:'diafano'
-    		},
-    		{
-    			name:'usuIdoneo'
-    		},
-    		{
-    			name:'usuAnterior'
-    		},
-    		{
-    			name:'existeSalidaHumos',
-				type: 'boolean'
-    		},
-    		{
-    			name:'existeSalidaEmergencias',
-				type: 'boolean'
-    		},
-    		{
-    			name:'existeAccesoMinusvalidos',
-				type: 'boolean'
-    		},
-    		{
-    			name:'existeOtrasCaracteristicas',
-				type: 'boolean',
-    			calculate: function(data) { 
-    				return !Ext.isEmpty(data.otrosOtrasCaracteristicas);
-    			},
-    			depends: 'otrosOtrasCaracteristicas'
-    		},
-    		{
-    			name:'otrosOtrasCaracteristicas'
-    		},
-    		{
-    			name:'electricidad'
-    		},
-    		{
-    			name:'agua'
-    		},
-    		{
-    			name:'gas'
-    		},
-    		// -----------
-    		{
-    			name:'destinoCoche'
-    		},
-    		{
-    			name:'destinoMoto'
-    		},
-    		{
-    			name:'destinoDoble'
-    		},
-    		{
-    			name:'ubicacionAparcamientoCodigo'
-    		},
-    		{
-    			name:'tipoCalidadCodigo'
-    		},
-    		{
-    			name:'formaIrregular'
-    		},
-    		{
-    			name:'anchura'
-    		},
-    		{
-    			name:'profundidad'
-    		},
-    		{
-    			name:'ultimaPlanta'
-    		},
-    		{
-    			name:'numPlazasGaraje'
-    		},
-    		{
-    			name:'reformaCarpInt'
-    		},
-    		{
-    			name:'reformaCarpExt'
-    		},
-    		{
-    			name:'reformaCocina'
-    		},
-    		{
-    			name:'reformaBanyo'
-    		},
-    		{
-    			name:'reformaSuelo'
-    		},
-    		{
-    			name:'reformaPintura'
-    		},
-    		{
-    			name:'reformaIntegral'
-    		},
-    		{
-    			name:'reformaOtroDesc'
-    		},
-    		{
-    			name:'reformaOtroDescEdificio'
-    		},
-    		{
-    			name:'reformaPresupuesto'
-    		},
-    		{
-    			name:'distribucionTxt'
-    		},
-    		{
-    			name:'fechaEmisionInforme',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    		},
-    		{
-    			name:'fechaAceptacion',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    		},
-    		{
-    			name:'fechaRechazo',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    		},
-    		{
-    			name:'fechaUltimaVisita',
-    			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    		},
-    		{
-    			name:'ubicacionActivoCodigo'
-    		},
-    		{
-    			name:'ubicacionActivoDescripcion'
-    		},
-    		{
-    			name:'ubicacionAparcamientoCodigo'
-    		},
-    		{
-    			name:'ubicacionAparcamiento'
-    		},
-    		{
-    			name:'estadoConstruccionCodigo'
-    		},
-    		{
-    			name:'estadoConstruccionDescripcion'
-    		},
-    		{
-    			name:'estadoConservacionCodigo'
-    		},
-    		{
-    			name:'estadoConservacionDescripcion'
-    		},
-    		{
-    			name:'estadoConservacionEdificioCodigo'
-    		},
-    		{
-    			name:'estadoConservacionEdificioDescripcion'
-    		},
-    		{
-    			name:'tipoFachadaCodigo'
-    		},
-    		{
-    			name:'tipoFachadaDescripcion'
-    		},
-    		{
-    			name:'tipoViviendaCodigo'
-    		},
-    		{
-    			name:'tipoViviendaDescripcion'
-    		},
-    		{
-    			name:'tipoOrientacionCodigo'
-    		},
-    		{
-    			name:'tipoRentaCodigo'
-    		},
-    		{
     			name:'codigoMediador'
     		},
     		{
@@ -338,448 +18,18 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		{
     			name:'telefonoMediador'
     		},
-    		//Parte de calidades
-    		{
-    			name:'ocio'
+			{
+    			name:'fechaVisita',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
-    		{
-    			name:'hoteles'
-    		},
-    		{
-    			name:'hotelesDesc'
-    		},
-    		{
-    			name:'teatros'
-    		},
-    		{
-    			name:'teatrosDesc'
-    		},
-    		{
-    			name:'salasCine'
-    		},
-    		{
-    			name:'salasCineDesc'
-    		},
-    		{
-    			name:'instDeportivas'
-    		},
-    		{
-    			name:'instDeportivasDesc'
-    		},
-    		{
-    			name:'centrosComerciales'
-    		},
-    		{
-    			name:'centrosComercialesDesc'
-    		},
-    		{
-    			name:'ocioOtros'
-    		},
-    		{
-    			name:'centrosEducativos'
-    		},
-    		{
-    			name:'escuelasInfantiles'
-    		},
-    		{
-    			name:'escuelasInfantilesDesc'
-    		},
-    		{
-    			name:'colegios'
-    		},
-    		{
-    			name:'colegiosDesc'
-    		},
-    		{
-    			name:'institutos'
-    		},
-    		{
-    			name:'institutosDesc'
-    		},
-    		{
-    			name:'universidades'
-    		},
-    		{
-    			name:'universidadesDesc'
-    		},
-    		{
-    			name:'centrosEducativosOtros'
-    		},
-    		{
-    			name:'centrosSanitarios'
-    		},
-    		{
-    			name:'centrosSalud'
-    		},
-    		{
-    			name:'centrosSaludDesc'
-    		},
-    		{
-    			name:'clinicas'
-    		},
-    		{
-    			name:'clinicasDesc'
-    		},
-    		{
-    			name:'hospitales'
-    		},
-    		{
-    			name:'hospitalesDesc'
-    		},
-    		{
-    			name:'centrosSanitariosOtros'
-    		},
-    		{
-    			name:'parkingSuperSufi'
-    		},
-    		{
-    			name:'comunicaciones'
-    		},
-    		{
-    			name:'facilAcceso'
-    		},
-    		{
-    			name:'facilAccesoDesc'
-    		},
-    		{
-    			name:'lineasBus'
-    		},
-    		{
-    			name:'lineasBusDesc'
-    		},
-    		{
-    			name:'metro'
-    		},
-    		{
-    			name:'metroDesc'
-    		},
-    		{
-    			name:'estacionTren'
-    		},
-    		{
-    			name:'estacionTrenDesc'
-    		},
-    		{
-    			name:'comunicacionesOtro'
-    		},
-    	    {
-    			name:'acabadoCarpinteriaCodigo'
-    	    },
-    	    {
-    			name:'puertaEntradaNormal'
-    	    },
-    	    {
-    			name:'puertaEntradaBlindada'
-    	    },
-    	    {
-    			name:'puertaEntradaAcorazada'
-    	    },
-    	    {
-    			name:'puertaPasoMaciza'
-    	    },
-    	    {
-    			name:'puertaPasoHueca'
-    	    },
-    	    {
-    			name:'puertaPasoLacada'
-    	    },
-    	    {
-    	    	name:'armariosEmpotrados'
-    	    },
-    	    {
-    	    	name:'carpinteriaInteriorOtros'
-    	    },
-    	    {
-    			name:'ventanasHierro'
-    	    },
-    	    {
-    	    	name:'ventanasAluAnodizado'
-    	    },
-    	    {
-    	    	name:'ventanasAluLacado'
-    	    },
-    	    {
-    	    	name:'ventanasPVC'
-    	    },
-    	    {
-    	    	name:'ventanasMadera'
-    	    },
-    	    {
-    	    	name:'persianasPlastico'
-    	    },
-    	    {
-    	    	name:'persianasAluminio'
-    	    },
-    	    {
-    	    	name:'ventanasCorrederas'
-    	    },
-    	    {
-    	    	name:'ventanasAbatibles'
-    	    },
-    	    {
-    	    	name:'ventanasOscilobatientes'
-    	    },
-    	    {
-    	    	name:'dobleCristal'
-    	    },
-    	    {
-    	    	name:'dobleCristalEstado'
-    	    },
-    	    {
-    	    	name:'carpinteriaExteriorOtros'
-    	    },
-    	    {
-    	    	name:'humedadPared'
-    	    },
-    	    {
-    	    	name:'humedadTecho'
-    	    },
-    	    {
-    	    	name:'grietaPared'
-    	    },
-    	    {
-    	    	name:'grietaTecho'
-    	    },
-    	    {
-    	    	name:'gotele'
-    	    },
-    	    {
-    	    	name:'plasticaLisa'
-    	    },
-    	    {
-    	    	name:'papelPintado'
-    	    },
-    	    {
-    	    	name:'pinturaLisaTecho'
-    	    },
-    	    {
-    	    	name:'pinturaLisaTechoEstado'
-    	    },
-    	    {
-    	    	name:'molduraEscayola'
-    	    },
-    	    {
-    	    	name:'molduraEscayolaEstado'
-    	    },
-    	    {
-    	    	name:'paramentosOtros'
-    	    },
-    	    {
-    	    	name:'tarimaFlotante'
-    	    },
-    	    {
-    	    	name:'parque'
-    	    },
-    	    {
-    	    	name:'marmol'
-    	    },
-    	    {
-    	    	name:'plaqueta'
-    	    },
-    	    {
-    	    	name:'soladoOtros'
-    	    },
-    	    {
-    	    	name:'amueblada'
-    	    },
-    	    {
-    	    	name:'estadoAmueblada'
-    	    },
-    	    {
-    	    	name:'encimera'
-    	    },
-    	    {
-    	    	name:'encimeraGranito'
-    	    },
-    	    {
-    	    	name:'encimeraMarmol'
-    	    },
-    	    {
-    	    	name:'encimeraOtroMaterial'
-    	    },
-    	    {
-    	    	name:'vitro'
-    	    },
-    	    {
-    	    	name:'lavadora'
-    	    },
-    	    {
-    	    	name:'frigorifico'
-    	    },
-    	    {
-    	    	name:'lavavajillas'
-    	    },
-    	    {
-    	    	name:'microondas'
-    	    },
-    	    {
-    	    	name:'horno'
-    	    },
-    	    {
-    	    	name:'suelosCocina'
-    	    },
-    	    {
-    	    	name:'azulejos'
-    	    },
-    	    {
-    	    	name:'estadoAzulejos'
-    	    },
-    	    {
-    	    	name:'grifosMonomandos'
-    	    },
-    	    {
-    	    	name:'estadoGrifosMonomandos'
-    	    },
-    	    {
-    	    	name:'cocinaOtros'
-    	    },
-    	    {
-    	    	name:'duchaBanyera'
-    	    },
-    	    {
-    	    	name:'ducha'
-    	    },
-    	    {
-    	    	name:'banyera'
-    	    },
-    	    {
-    	    	name:'banyeraHidromasaje'
-    	    },
-    	    {
-    	    	name:'columnaHidromasaje'
-    	    },
-    	    {
-    	    	name:'alicatadoMarmol'
-    	    },
-    	    {
-    	    	name:'alicatadoGranito'
-    	    },
-    	    {
-    	    	name:'alicatadoAzulejo'
-    	    },
-    	    {
-    	    	name:'encimeraBanyo'
-    	    },
-    	    {
-    	    	name:'encimeraBanyoMarmol'
-    	    },
-    	    {
-    	    	name:'encimeraBanyoGranito'
-    	    },
-    	    {
-    	    	name:'encimeraBanyoOtroMaterial'
-    	    },
-    	    {
-    	    	name:'sanitarios'
-    	    },
-    	    {
-    	    	name:'estadoSanitarios'
-    	    },
-    	    {
-    	    	name:'suelosBanyo'
-    	    },
-    	    {
-    	    	name:'grifoMonomando'
-    	    },
-    	    {
-    	    	name:'estadoGrifoMonomando'
-    	    },
-    	    {
-    	    	name:'banyoOtros'
-    	    },
-    	    {
-    	    	name:'electricidadConContador'
-    	    },
-    	    {
-    	    	name:'electricidadBuenEstado'
-    	    },
-    	    {
-    	    	name:'electricidadDefectuosa'
-    	    },
-    	    {
-    	    	name:'aguaConContador'
-    	    },
-    	    {
-    	    	name:'aguaBuenEstado'
-    	    },
-    	    {
-    	    	name:'aguaDefectuosa'
-    	    },
-    	    {
-    	    	name:'aguaCalienteCentral'
-    	    },
-    	    {
-    	    	name:'aguaCalienteGasNat'
-    	    },
-    	    {
-    	    	name:'gasConContador'
-    	    },
-    	    {
-    	    	name:'gasBuenEstado'
-    	    },
-    	    {
-    	    	name:'gasDefectuosa'
-    	    },
-    	    {
-    	    	name:'calefaccionCentral'
-    	    },
-    	    {
-    	    	name:'calefaccionGasNat'
-    	    },
-    	    {
-    	    	name:'calefaccionRadiadorAlu'
-    	    },
-    	    {
-    	    	name:'calefaccionPreinstalacion'
-    	    },
-    	    {
-    	    	name:'airePreinstalacion'
-    	    },
-    	    {
-    	    	name:'aireInstalacion'
-    	    },
-    	    {
-    	    	name:'aireFrioCalor'
-    	    },
-    	    {
-    	    	name:'instalacionOtros'
-    	    },
-    	    {
-    	    	name:'jardines'
-    	    },
-    	    {
-    	    	name:'piscina'
-    	    },
-    	    {
-    	    	name:'padel'
-    	    },
-    	    {
-    	    	name:'tenis'
-    	    },
-    	    {
-    	    	name:'pistaPolideportiva'
-    	    },
-    	    {
-    	    	name:'instalacionesDeportivasOtros'
-    	    },
-    	    {
-    	    	name:'zonaInfantil'
-    	    },
-    	    {
-    	    	name:'conserjeVigilancia'
-    	    },
-    	    {
-    	    	name:'gimnasio'
-    	    },
-    	    {
-    	    	name:'zonaComunOtros'
-    	    },
-    	    {
-    	    	name: 'infoDescripcion'
-    	    },
-    	    {
-    	    	name: 'infoDistribucionInterior'
-    	    },
     	    {
     	    	name: 'nombreMediadorEspejo'
     	    },
@@ -792,18 +42,432 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     		{
     			name:'emailMediadorEspejo'
     		},
-    	    {
-    			name:'subtipoActivoCodigo'
+			{
+    			name:'numActivo'
+    		},{
+    			name:'autorizacionWeb'
+    		},
+     		{
+    			name:'fechaAutorizacionHasta'
+    		},
+     		{
+    			name:'recepcionLlavesApi',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
     		{
-    			name:'subtipoActivoDescripcion'
+    			name:'autorizacionWebEspejo'
     		},
-    	    {
-    			name:'tipoViaCodigo'
+     		{
+    			name:'recepcionLlavesEspejo',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
-    		{
-    			name:'tipoViaDescripcion'
-    		}
+    		
+
+	 { name: 'envioLlavesApi' },
+	 { name: 'recepcionLlavesApi' },
+	 { name: 'autorizacionWeb' },
+	 { name: 'fechaAutorizacionHasta' },
+	 { name: 'recepcionLlavesEspejo' },
+	 { name: 'autorizacionWebEspejo' },
+	 { name: 'codigoProveedor' },
+	 { name: 'nombreProveedor' },
+	 { name: 'tipoActivoCodigo' },
+	 { name: 'subtipoActivoCodigo' },
+	 { name: 'tipoActivoDescripcion' },
+		{
+			name: 'isVivienda',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSuelo',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercial',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isConstruccion',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialOrGaraje',
+			calculate: function(data) { 
+				if(data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] || data.subtipoActivoCodigo == CONST.SUBTIPOS_ACTIVO['GARAJE']){
+					return true;
+				}else{
+					return false;
+				}
+			},
+			depends: ['subtipoActivoCodigo', 'tipoActivoCodigo']
+			
+		},
+		{
+			name: 'isSueloEdificioConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isEdificioConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloComercialConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialEdificio',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaEdificio',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isOtros',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isIndustrialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isIndustrial',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccionOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccionIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+	 { name: 'subtipoActivoDescripcion' },
+	 { name: 'tipoViaCodigo' },
+	 { name: 'tipoViaDescripcion' },
+	 { name: 'nombreVia' },
+	 { name: 'numeroDomicilio' },
+	 { name: 'escalera' },
+	 { name: 'piso' },
+	 { name: 'puerta' },
+	 { name: 'provinciaCodigo' },
+	 { name: 'provinciaDescripcion' },
+	 { name: 'municipioCodigo' },
+	 { name: 'municipioDescripcion' },
+	 { name: 'inferiorMunicipioCodigo' },
+	 { name: 'inferiorMunicipioDescripcion' },
+	 { name: 'codPostal' },
+	 { name: 'latitud' },
+	 { name: 'longitud' },
+	 { name: 'posibleInforme' },
+	 { name: 'motivoNoPosibleInforme' },
+	 { name: 'ubicacionActivoCodigo' },
+	 { name: 'ubicacionActivoDescripcion' },
+	 { name: 'distrito' },
+
+    { name: 'numeroActivo' },
+	 { name: 'descripcionComercial' },
+	 { name: 'fechaEmisionInforme' },
+    
+	//Datos activo
+	 { name: 'regimenInmuebleCod' },
+	 { name: 'regimenInmuebleDesc' },
+	 { name: 'estadoOcupacionalCod' },
+	 { name: 'estadoOcupacionalDesc' },
+	 { name: 'anyoConstruccion' },
+
+	//Caracteristicas del activo
+	 { name: 'visitableCod' },
+	 { name: 'visitableDesc' },
+	 { name: 'ocupadoCod' },
+	 { name: 'ocupadoDesc' },
+	 { name: 'dormitorios' },
+	 { name: 'banyos' },
+	 { name: 'aseos' },
+	 { name: 'salones' },
+	 { name: 'estancias' },
+	 { name: 'plantas' },
+	 { name: 'planta' },
+	 { name: 'ascensorCod' },
+	 { name: 'ascensorDesc' },
+	 { name: 'plazasGaraje' },
+	 { name: 'terrazaCod' },
+	 { name: 'terrazaDesc' },
+	 { name: 'superficieUtil' },
+	 { name: 'superficieTerraza' },
+	 { name: 'patioCod' },
+	 { name: 'patioDesc' },
+	 { name: 'superficiePatio' },
+	 { name: 'rehabilitadoCod' },
+	 { name: 'rehabilitadoDesc' },
+	 { name: 'anyoRehabilitacion' },
+	 { name: 'licenciaObraCod' },
+	 { name: 'licenciaObraDesc' },
+	 { name: 'estadoConservacionCod' },
+	 { name: 'estadoConservacionDesc' },
+	 { name: 'anejoGarajeCod' },
+	 { name: 'anejoGarajeDesc' },
+	 { name: 'anejoTrasteroCod' },
+	 { name: 'anejoTrasteroDesc' },
+	
+	//Caracteristicas ppales del activo
+	 { name: 'orientacion' },
+	 { name: 'extIntCod' },
+	 { name: 'extIntDesc' },
+	 { name: 'cocRatingCod' },
+	 { name: 'cocRatingDesc' },
+	 { name: 'cocAmuebladaCod' },
+	 { name: 'cocAmuebladaDesc' },
+	 { name: 'armEmpotradosCod' },
+	 { name: 'armEmpotradosDesc' },
+	 { name: 'calefaccionCod' },
+	 { name: 'calefaccionDesc' },
+	 { name: 'tipoCalefaccionCod' },
+	 { name: 'tipoCalefaccionDesc' },
+	 { name: 'aireAcondCod' },
+	 { name: 'aireAcondDesc' },
+	
+	//Otras caracteristicas del activo (vivienda)
+	 { name: 'estadoConservacionEdiCod' },
+	 { name: 'estadoConservacionEdiDesc' },
+	 { name: 'plantasEdificio' },
+	 { name: 'puertaAccesoCod' },
+	 { name: 'puertaAccesoDesc' },
+	 { name: 'estadoPuertasIntCod' },
+	 { name: 'estadoPuertasIntDesc' },
+	 { name: 'estadoPersianasCod' },
+	 { name: 'estadoPersianasDesc' },
+	 { name: 'estadoVentanasCod' },
+	 { name: 'estadoVentanasDesc' },
+	 { name: 'estadoPinturaCod' },
+	 { name: 'estadoPinturaDesc' },
+	 { name: 'estadoSoladosCod' },
+	 { name: 'estadoSoladosDesc' },
+	 { name: 'estadoBanyosCod' },
+	 { name: 'estadoBanyosDesc' },
+	 { name: 'admiteMascotaCod' },
+	 { name: 'admiteMascotaDesc' },
+	
+	//Otras caracteristicas del activo (!vivienda)
+	 { name: 'licenciaAperturaCod' },
+	 { name: 'licenciaAperturaDesc' },
+	 { name: 'salidaHumoCod' },
+	 { name: 'salidaHumoDesc' },
+	 { name: 'aptoUsoCod' },
+	 { name: 'aptoUsoDesc' },
+	 { name: 'accesibilidadCod' },
+	 { name: 'accesibilidadDesc' },
+	 { name: 'edificabilidadTecho' },
+	 { name: 'superficieSuelo' },
+	 { name: 'porcUrbEjecutada' },
+	 { name: 'clasificacionCod' },
+	 { name: 'clasificacionDesc' },
+	 { name: 'usoCod' },
+	 { name: 'usoDesc' },
+	 { name: 'metrosFachada' },
+	 { name: 'almacenCod' },
+	 { name: 'almacenDesc' },
+	 { name: 'metrosAlmacen' },
+	 { name: 'supVentaExpoCod' },
+	 { name: 'supVentaExpoDesc' },
+	 { name: 'metrosSupVentaExpo' },
+	 { name: 'entreplantaCod' },
+	 { name: 'entrePlantaDesc' },
+	 { name: 'alturaLibre' },
+	 { name: 'porcEdiEjecutada' },
+	 { name: 'accesibilidadCod' },
+	 { name: 'accesibilidadDesc' },
+	
+	//Equipamientos
+	 { name: 'zonaVerdeCod' },
+	 { name: 'zonaVerdeDesc' },
+	 { name: 'jardinCod' },
+	 { name: 'jardinDesc' },
+	 { name: 'zonaDeportivaCod' },
+	 { name: 'zonaDeportivaDesc' },
+	 { name: 'gimnasioCod' },
+	 { name: 'gimnasioDesc' },
+	 { name: 'piscinaCod' },
+	 { name: 'piscinaDesc' },
+	 { name: 'conserjeCod' },
+	 { name: 'conserjeDesc' },
+	 { name: 'accesoMovReducidaCod' },
+	 { name: 'accesoMovReducidaDesc' },
+	
+	//Comunicaciones y servicios
+	 { name: 'ubicacionCod' },
+	 { name: 'ubicacionDesc' },
+	 { name: 'valUbicacionCod' },
+	 { name: 'valUbicacionDesc' }
     ],
     
 	proxy: {

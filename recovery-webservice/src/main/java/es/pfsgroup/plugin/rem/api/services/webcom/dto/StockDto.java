@@ -83,10 +83,6 @@ public class StockDto implements WebcomRESTDto{
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lng;
 	
-	private StringDataType codEstadoConstruccion;
-	
-	private LongDataType terrazas;
-	
 	@WebcomRequired
 	private StringDataType codEstadoPublicacion;
 	
@@ -156,18 +152,6 @@ public class StockDto implements WebcomRESTDto{
 	
 	@MappedColumn("RENTA_MENSUAL_DATOS_OCU")
 	private DoubleDataType rentaMensualDatosOcupacionales;
-	
-	@MappedColumn("RECIBIDO_IMPORTE_DATOS_ADM")
-	private DoubleDataType recibidoImporteDatosAdministracion;
-	
-	@MappedColumn("IBI_IMPORTE_DATOS_ADM")
-	private DoubleDataType ibiImporteDatosAdministracion;
-	
-	@MappedColumn("DERRAMA_IMPORTE_DATOS_ADM")
-	private DoubleDataType derramaImporteDatosAdministracion;
-	
-	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
-	private StringDataType detalleDerramaDatosAdministracion;
 	
 	private StringDataType anejoTrastero;
 	
@@ -408,6 +392,9 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType disponible;
 	
 	private StringDataType codMotivoIndisponibilidad;
+	private StringDataType nombreGestorComercialAlquiler;
+	private StringDataType telefonoGestorComercialAlquiler;
+	private StringDataType emailGestorComercialAlquiler;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -582,18 +569,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setLng(DoubleDataType lng) {
 		this.lng = lng;
-	}
-	public StringDataType getCodEstadoConstruccion() {
-		return codEstadoConstruccion;
-	}
-	public void setCodEstadoConstruccion(StringDataType codEstadoConstruccion) {
-		this.codEstadoConstruccion = codEstadoConstruccion;
-	}
-	public LongDataType getTerrazas() {
-		return terrazas;
-	}
-	public void setTerrazas(LongDataType terrazas) {
-		this.terrazas = terrazas;
 	}
 	public StringDataType getCodEstadoPublicacion() {
 		return codEstadoPublicacion;
@@ -813,34 +788,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setRentaMensualDatosOcupacionales(
 			DoubleDataType rentaMensualDatosOcupacionales) {
 		this.rentaMensualDatosOcupacionales = rentaMensualDatosOcupacionales;
-	}
-	public DoubleDataType getRecibidoImporteDatosAdministracion() {
-		return recibidoImporteDatosAdministracion;
-	}
-	public void setRecibidoImporteDatosAdministracion(
-			DoubleDataType recibidoImporteDatosAdministracion) {
-		this.recibidoImporteDatosAdministracion = recibidoImporteDatosAdministracion;
-	}
-	public DoubleDataType getIbiImporteDatosAdministracion() {
-		return ibiImporteDatosAdministracion;
-	}
-	public void setIbiImporteDatosAdministracion(
-			DoubleDataType ibiImporteDatosAdministracion) {
-		this.ibiImporteDatosAdministracion = ibiImporteDatosAdministracion;
-	}
-	public DoubleDataType getDerramaImporteDatosAdministracion() {
-		return derramaImporteDatosAdministracion;
-	}
-	public void setDerramaImporteDatosAdministracion(
-			DoubleDataType derramaImporteDatosAdministracion) {
-		this.derramaImporteDatosAdministracion = derramaImporteDatosAdministracion;
-	}
-	public StringDataType getDetalleDerramaDatosAdministracion() {
-		return detalleDerramaDatosAdministracion;
-	}
-	public void setDetalleDerramaDatosAdministracion(
-			StringDataType detalleDerramaDatosAdministracion) {
-		this.detalleDerramaDatosAdministracion = detalleDerramaDatosAdministracion;
 	}
 	public StringDataType getAnejoTrastero() {
 		return anejoTrastero;

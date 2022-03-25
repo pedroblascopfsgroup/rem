@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -200,6 +201,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -1283,6 +1287,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		
+		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
 		
 		return activoDto;
 	}

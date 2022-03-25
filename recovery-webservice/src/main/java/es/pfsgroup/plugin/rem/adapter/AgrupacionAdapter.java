@@ -65,13 +65,13 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -299,7 +299,7 @@ public class AgrupacionAdapter {
 	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
-	private ConcurrenciaDao concurrenciaDao;
+	private ConcurrenciaApi concurrenciaApi;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -940,6 +940,7 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHomeToModel(null, agrupacion));
+				dtoAgrupacion.setEnConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion));
 			}
 			
 			
@@ -1129,7 +1130,7 @@ public class AgrupacionAdapter {
 			}
 		}
 		
-		if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+		if(concurrenciaApi.isActivoEnConcurrencia(activo))
 			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
 		
 		if (activo != null && activo.getNumActivo() != null) {
@@ -1471,7 +1472,7 @@ public class AgrupacionAdapter {
 				}
 			}
 			
-			if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+			if(concurrenciaApi.isActivoEnConcurrencia(activo))
 				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
 			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());

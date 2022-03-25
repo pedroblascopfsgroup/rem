@@ -1392,7 +1392,11 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name:'discrepanciasLocalizacionObservaciones'
-            }
+            },
+            {
+				name: 'enConcurrencia',
+				type: 'boolean'
+			}
     ],
     
 	proxy: {

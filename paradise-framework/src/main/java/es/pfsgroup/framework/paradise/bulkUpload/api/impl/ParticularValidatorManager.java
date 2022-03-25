@@ -9410,5 +9410,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						);
 		return !"0".equals(resultado);
     }
+	
+	@Override
+	public boolean isActivoEnConcurrencia(String numActivo) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_activo act \n" + 
+				"JOIN con_concurrencia cn ON cn.act_id = act.act_id AND cn.borrado = 0 \n" + 
+				"where SYSDATE BETWEEN cn.con_fecha_ini and cn.con_fecha_fin \n" + 
+				"AND act.act_num_activo = " + numActivo);
+		
+		return !"0".equals(resultados);
+	}
 }
 

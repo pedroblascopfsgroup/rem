@@ -44,7 +44,8 @@ public class Concurrencia implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
 
-	@Column(name = "AGR_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_ID")
 	private ActivoAgrupacion agrupacion;
 
 	@Column(name = "CON_IMPORTE_MIN_OFR")

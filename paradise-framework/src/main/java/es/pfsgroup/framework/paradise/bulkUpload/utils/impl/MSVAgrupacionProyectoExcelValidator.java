@@ -53,6 +53,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 	public static final String ACTIVO_AGRUPACION_LOC = "msg.error.masivo.agrupar.activos.proyecto.activos.agrupacion.diferentes.municipios";
 	public static final String ACTIVO_AGRUPACION_PRV = "msg.error.masivo.agrupar.activos.proyecto.activos.agrupacion.diferentes.provincias";
 	public static final String ACTIVO_TIENE_AGRUPACION = "msg.error.masivo.agrupar.activos.proyecto.activo.tiene.agrupacion.proyecto";
+	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
 	public static final class ACTIVOS_NO_MISMA_CARTERA { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.cartera";};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -114,6 +115,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_PROYECTO), agrupacionNoProyecto(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROVINCIA), activeSinProvincia(exc));
@@ -124,6 +126,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 
 			if    (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_PROYECTO)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROVINCIA)).isEmpty()
@@ -484,6 +487,24 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 		}
 		
 		return listaFilasError;
+	}
+	
+	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
 	}
 
 	@Override

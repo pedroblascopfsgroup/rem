@@ -1510,4 +1510,6 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	boolean isActivoEnConcurrencia(String numActivo);
+
 }

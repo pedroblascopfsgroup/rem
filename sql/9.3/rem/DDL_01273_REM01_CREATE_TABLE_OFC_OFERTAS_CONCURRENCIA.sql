@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220315
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20220321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17395
+--## INCIDENCIA_LINK=HREOS-17402
 --## PRODUCTO=NO
---## Finalidad: Creacion tabla PUJ_PUJAS
+--## Finalidad: Creacion diccionario OFC_OFERTAS_CONCURRENCIA
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -19,6 +19,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
+
 
 DECLARE
 
@@ -33,24 +34,25 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TABLA VARCHAR2(2400 CHAR) := 'PUJ_PUJAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla con los datos de concurrencias'; -- Vble. para los comentarios de las tablas
-    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_TABLA VARCHAR2(2400 CHAR) := 'OFC_OFERTAS_CONCURRENCIA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla con los datos de ofertas de concurrencia'; -- Vble. para los comentarios de las tablas
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     /* -- ARRAY CON NUEVAS FOREIGN KEYS */
     TYPE T_FK IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_PUJ_OFR_ID',                   'OFR_ID',             V_ESQUEMA||'.OFR_OFERTAS',                'OFR_ID'),
-        T_FK(   'FK_PUJ_CON_ID',                   'CON_ID',             V_ESQUEMA||'.CON_CONCURRENCIA',           'CON_ID')
+        T_FK(   'FK_OFC_OFR_ID',                        'OFR_ID',             V_ESQUEMA||'.OFR_OFERTAS',                'OFR_ID')
     );
     V_T_FK T_FK;
 
 BEGIN
 
+
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Comprobaciones previas');
+	
 	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -63,10 +65,10 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
-                PUJ_ID          		    NUMBER(16)                  NOT NULL,
+                OFC_ID          		    NUMBER(16)                  NOT NULL,
                 OFR_ID        		        NUMBER(16),
-                CON_ID			            NUMBER(16),	
-                PUJ_IMPORTE        			NUMBER(16,2),
+                OFC_FECHA_DOC               DATE,
+                OFC_FECHA_DEPOSITO          DATE,
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
                 USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
                 FECHACREAR 			        TIMESTAMP (6) 		    NOT NULL ENABLE, 
@@ -86,7 +88,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
             
             -- Creamos primary key
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (PUJ_ID) USING INDEX)';
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (OFC_ID) USING INDEX)';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
@@ -103,15 +105,15 @@ BEGIN
             END IF;
 
             -- Creamos comentario
-            V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla de concurrencias''';
+            V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla de ofertas de concurrencia''';
 		    EXECUTE IMMEDIATE V_MSQL;	
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.PUJ_ID IS ''Id de la tabla''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFC_ID IS ''Id de la tabla''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFR_ID IS ''Id de la oferta''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFR_ID IS ''Id de la oferta asociada''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.CON_ID IS ''Id de la concurrencia''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFC_FECHA_DOC IS ''Fecha de envío de la docuemntación''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.PUJ_IMPORTE IS ''Importe puja''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFC_FECHA_DEPOSITO IS ''Fecha de deposito de la concurrencia''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Versión del registro''';
             EXECUTE IMMEDIATE V_SQL;

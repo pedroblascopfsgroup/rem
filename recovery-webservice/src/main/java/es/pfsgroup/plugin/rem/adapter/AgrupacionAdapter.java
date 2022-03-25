@@ -11,10 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -76,6 +72,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -131,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -142,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -156,12 +155,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.thread.AnyadirQuitarActivoAgrObREMAsync;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -298,7 +301,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ConcurrenciaApi concurrenciaApi;
-
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1131,6 +1136,9 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+		
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
 					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1449,6 +1457,30 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+
+			Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
+			
+			if (activoAgrupacion != null) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+					if (activoAgrupacionActivo != null) {
+						if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+							return;
+						}
+					}
+				}
+			}
+			
+			if(concurrenciaDao.isActivoEnConcurrencia(activo.getId()))
+				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
@@ -5526,6 +5558,16 @@ public class AgrupacionAdapter {
 	public DtoAgrupacionesCreateDelete createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto) throws Exception {		
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
+	}
+	
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
+
+		List<VGridOfertasActivosAgrupacionConcurrencia> ofertasAgrupacion = genericDao.getList(VGridOfertasActivosAgrupacionConcurrencia.class, filtro);
+
+		return ofertasAgrupacion;
+
 	}
 	
 

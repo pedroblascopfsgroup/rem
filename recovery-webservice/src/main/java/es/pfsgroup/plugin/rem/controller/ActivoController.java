@@ -22,8 +22,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +32,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
@@ -73,6 +70,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
@@ -129,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoFiltroTasaciones;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
@@ -164,7 +163,6 @@ import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -249,6 +247,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -1382,7 +1383,11 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", adapter.getListOfertasActivos(id)); 
 		}
 		else {
-			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			if(concurrenciaApi.isConcurrenciaOfertasEnProgresoActivo(activoDao.getActivoById(id))){
+				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id));
+			}else {
+				model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+			}
 		}
 		return createModelAndViewJson(model);
 	}

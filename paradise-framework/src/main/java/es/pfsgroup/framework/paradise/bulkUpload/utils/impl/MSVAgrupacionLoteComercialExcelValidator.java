@@ -59,6 +59,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.agrupacion.no.existe";
 	public static final String AGRUPACION_NO_TIPO_COMERCIAL_VENTA = "msg.error.masivo.agrupar.agrupacion.no.tipo.comercial.venta";
 	public static final String ACTIVO_DISTINTA_SUBCARTERA = "msg.error.masivo.activo.distinta.subcartera";
+	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
 
 	// Validaciones de activo NO utilizadas porque no esta definido como validar en esos casos al incluir en lotes comerciales
 	/*
@@ -130,6 +131,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS), activosConVentaOfertaRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_VENDIDO), activosVendidosRows(exc));
@@ -158,6 +160,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 
 
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
@@ -787,6 +790,24 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 					listaFilas.add(i);
 				}
 					
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);

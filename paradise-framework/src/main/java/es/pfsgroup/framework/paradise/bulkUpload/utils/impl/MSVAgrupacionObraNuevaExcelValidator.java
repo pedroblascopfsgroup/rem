@@ -47,6 +47,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enAgrupacion";
 	public static final String ACTIVO_EN_OTRA_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enOtraAgrupacion";
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
+	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -100,12 +101,14 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() || !mapaErrores
 							.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()) {
@@ -365,7 +368,25 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 		}
 
 		return listaFilas;
-	}	
+	}
+	
+	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 
 	@Override
 	public Integer getNumFilasHoja() {

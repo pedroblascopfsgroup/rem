@@ -1496,6 +1496,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
 				DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class, filtroDDInfComercial);
 				activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+				activoEstadoInfComercialHistorico.setResponsableCambio(personaLogada);
 				activoEstadoInfComercialHistorico.setFecha(new Date());
 				activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);

@@ -10,15 +10,30 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
+import es.pfsgroup.plugin.rem.model.DtoActivoBbvaUic;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.DtoActivoSaneamiento;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 
 @SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
@@ -91,15 +106,15 @@ class ActivoControllerDispachableMethods {
 		/*
 		 * TAB INFORME COMERCIAL
 		 */
-		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformeComercial>() {
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_INFORME_COMERCIAL, new DispachableMethod<DtoActivoInformacionComercial>() {
 
 			@Override
-			public Class<DtoActivoInformeComercial> getArgumentType() {
-				return DtoActivoInformeComercial.class;
+			public Class<DtoActivoInformacionComercial> getArgumentType() {
+				return DtoActivoInformacionComercial.class;
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoInformeComercial dto, HttpServletRequest request) {
+			public void execute(Long id, DtoActivoInformacionComercial dto, HttpServletRequest request) {
 				if (dto != null ){
 					this.controller.saveActivoInformeComercial(dto, id, new ModelMap(), request);
 				}
@@ -462,6 +477,24 @@ class ActivoControllerDispachableMethods {
 						this.controller.createActivoBbvaUic(dto, new ModelMap());
 					}
 				}
+			}
+		});
+		
+		 /* TAB VALORACIONES PRECIOS
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_VALORACIONES_PRECIOS, new DispachableMethod<DtoActivoValoraciones>() {
+
+			@Override
+			public Class<DtoActivoValoraciones> getArgumentType() {
+				return DtoActivoValoraciones.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoValoraciones dto, HttpServletRequest request) {
+				if (dto != null ){
+					this.controller.saveValoresPreciosActivo(dto, id, new ModelMap(), request);
+				}
+				
 			}
 		});
 	}

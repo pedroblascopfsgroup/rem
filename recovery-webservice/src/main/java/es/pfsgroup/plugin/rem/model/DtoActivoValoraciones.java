@@ -61,6 +61,14 @@ public class DtoActivoValoraciones extends WebDto{
     private Boolean precioAlquilerNegociable;    
     private Boolean campanyaPrecioVentaNegociable;
     private Boolean campanyaPrecioAlquilerNegociable;
+    
+  //Valores económicos
+    private Double valorEstimadoVentaICO;
+	private Double valorEstimadoRentaICO;
+	private Double valorEstimadoMinVenta;
+	private Double valorEstimadoMinRenta;
+	private Double valorEstimadoMaxVenta;
+	private Double valorEstimadoMaxRenta;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -275,7 +283,42 @@ public class DtoActivoValoraciones extends WebDto{
 	public void setCampanyaPrecioAlquilerNegociable(Boolean campanyaPrecioAlquilerNegociable) {
 		this.campanyaPrecioAlquilerNegociable = campanyaPrecioAlquilerNegociable;
 	}
-	
+	public Double getValorEstimadoVentaICO() {
+		return valorEstimadoVentaICO;
+	}
+	public void setValorEstimadoVentaICO(Double valorEstimadoVentaICO) {
+		this.valorEstimadoVentaICO = valorEstimadoVentaICO;
+	}
+	public Double getValorEstimadoRentaICO() {
+		return valorEstimadoRentaICO;
+	}
+	public void setValorEstimadoRentaICO(Double valorEstimadoRentaICO) {
+		this.valorEstimadoRentaICO = valorEstimadoRentaICO;
+	}
+	public Double getValorEstimadoMinVenta() {
+		return valorEstimadoMinVenta;
+	}
+	public void setValorEstimadoMinVenta(Double valorEstimadoMinVenta) {
+		this.valorEstimadoMinVenta = valorEstimadoMinVenta;
+	}
+	public Double getValorEstimadoMinRenta() {
+		return valorEstimadoMinRenta;
+	}
+	public void setValorEstimadoMinRenta(Double valorEstimadoMinRenta) {
+		this.valorEstimadoMinRenta = valorEstimadoMinRenta;
+	}
+	public Double getValorEstimadoMaxVenta() {
+		return valorEstimadoMaxVenta;
+	}
+	public void setValorEstimadoMaxVenta(Double valorEstimadoMaxVenta) {
+		this.valorEstimadoMaxVenta = valorEstimadoMaxVenta;
+	}
+	public Double getValorEstimadoMaxRenta() {
+		return valorEstimadoMaxRenta;
+	}
+	public void setValorEstimadoMaxRenta(Double valorEstimadoMaxRenta) {
+		this.valorEstimadoMaxRenta = valorEstimadoMaxRenta;
+	}
 	
 
 }

@@ -137,7 +137,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			}else{
 				$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
 			}
-	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
 	    	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
@@ -148,6 +147,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
 	    	
 	    	if ($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && me.lookupController().getViewModel().get('activo').get('isCarteraLiberbank')) {

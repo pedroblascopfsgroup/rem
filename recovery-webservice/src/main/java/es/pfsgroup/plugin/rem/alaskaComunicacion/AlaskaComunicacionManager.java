@@ -191,11 +191,7 @@ public class AlaskaComunicacionManager extends BusinessOperationOverrider<Alaska
         }else{
         	map.put("finca", null);
         }
-        if(activo.getInfoComercial() != null && activo.getInfoComercial().getLocalidadRegistro() != null){
-        	map.put("localidadRegistro", activo.getInfoComercial().getLocalidadRegistro().getCodigo());
-        }else{
-        	map.put("localidadRegistro", null);
-        }
+        map.put("localidadRegistro", null);
         if(activo.getBien() != null && activo.getBien().getBienEntidad() != null){
         	map.put("tomo", activo.getBien().getBienEntidad().getTomo());
         	map.put("libro", activo.getBien().getBienEntidad().getLibro());

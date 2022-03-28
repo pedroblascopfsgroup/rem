@@ -189,7 +189,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		return expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 	}
 
-	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Oferta oferta,
+	public void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Oferta oferta,
 			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();

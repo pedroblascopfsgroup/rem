@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -57,6 +58,8 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 	
 	public DtoActivoValoraciones getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
+		
+		ActivoInfoComercial activoInfoComercial = activo.getInfoComercial();
 		
 		Calendar fecha = Calendar.getInstance();
 		fecha.set(Calendar.HOUR_OF_DAY, 0);
@@ -229,14 +232,38 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				valoracionesDto.setCampanyaPrecioVentaNegociable(actCaixa.getCampanyaPrecioVentaNegociable());
 			}
 		}
+		
+		//Valores económicos
+		if (!Checks.esNulo(activoInfoComercial.getValorEstimadoVenta())) 
+			valoracionesDto.setValorEstimadoVentaICO(activoInfoComercial.getValorEstimadoVenta().doubleValue());
+		if (!Checks.esNulo(activoInfoComercial.getValorEstimadoRenta())) 
+			valoracionesDto.setValorEstimadoRentaICO(activoInfoComercial.getValorEstimadoRenta().doubleValue());
+		if (!Checks.esNulo(activoInfoComercial.getMinVenta())) 
+			valoracionesDto.setValorEstimadoMinVenta(activoInfoComercial.getMinVenta().doubleValue());
+		if (!Checks.esNulo(activoInfoComercial.getMinRenta())) 
+			valoracionesDto.setValorEstimadoMinRenta(activoInfoComercial.getMinRenta().doubleValue());
+		if (!Checks.esNulo(activoInfoComercial.getMaxVenta())) 
+			valoracionesDto.setValorEstimadoMaxVenta(activoInfoComercial.getMaxVenta().doubleValue());
+		if (!Checks.esNulo(activoInfoComercial.getMaxRenta())) 
+			valoracionesDto.setValorEstimadoMaxRenta(activoInfoComercial.getMaxRenta().doubleValue());
 
 		return valoracionesDto;	
 	}
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+		
+		ActivoInfoComercial actInfoComercial = activo.getInfoComercial();
 
 		DtoActivoValoraciones dto = (DtoActivoValoraciones) webDto;
+		
+		if (Checks.esNulo(activo.getInfoComercial())){
+			actInfoComercial = new ActivoInfoComercial();
+			actInfoComercial.setActivo(activo);					
+			activo.setInfoComercial(actInfoComercial);
+		}else {
+			actInfoComercial = activo.getInfoComercial();
+		}
 				
 		if (dto.getBloqueoPrecio() != null)
 		{
@@ -251,6 +278,25 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				activo.setBloqueoPrecioFechaIni(null);
 				activo.setGestorBloqueoPrecio(null);
 			}
+		}
+		
+		if (!Checks.esNulo(actInfoComercial)) {
+			//Valores económicos
+			if (!Checks.esNulo(dto.getValorEstimadoVentaICO())) 
+				actInfoComercial.setValorEstimadoVenta(dto.getValorEstimadoVentaICO().floatValue());
+			if (!Checks.esNulo(dto.getValorEstimadoRentaICO())) 
+				actInfoComercial.setValorEstimadoRenta(dto.getValorEstimadoRentaICO().floatValue());
+			if (!Checks.esNulo(dto.getValorEstimadoMinVenta())) 
+				actInfoComercial.setMinVenta(dto.getValorEstimadoMinVenta().floatValue());
+			if (!Checks.esNulo(dto.getValorEstimadoMinRenta())) 
+				actInfoComercial.setMinRenta(dto.getValorEstimadoMinRenta().floatValue());
+			if (!Checks.esNulo(dto.getValorEstimadoMaxVenta())) 
+				actInfoComercial.setMaxVenta(dto.getValorEstimadoMaxVenta().floatValue());
+			if (!Checks.esNulo(dto.getValorEstimadoMaxRenta())) 
+				actInfoComercial.setMaxRenta(dto.getValorEstimadoMaxRenta().floatValue());
+			
+			genericDao.save(ActivoInfoComercial.class, actInfoComercial);
+			activoApi.saveOrUpdate(activo);
 		}
 		
 		return activo;

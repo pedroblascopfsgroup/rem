@@ -3,9 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,11 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -32,16 +26,29 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
+import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOcupacional;
+import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingCocina;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
+import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
 
 /**
  * Modelo que gestiona la informacion comercial de los activos
@@ -75,10 +82,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	private DDUbicacionActivo ubicacionActivo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_ECT_ID")
-	private DDEstadoConstruccion estadoConstruccion;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ECV_ID")
 	private DDEstadoConservacion estadoConservacion;
 
@@ -94,65 +97,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "ICO_MEDIADOR_ID")
 	private ActivoProveedor mediadorInforme;
 
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoEdificio edificio;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoInfraestructura infraestructura;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoCarpinteriaInterior carpinteriaInterior;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoCarpinteriaExterior carpinteriaExterior;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoParamentoVertical paramentoVertical;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoSolado solado;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoCocina cocina;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoBanyo banyo;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoInstalacion instalacion;
-
-	@OneToOne(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ICO_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ActivoZonaComun zonaComun;
-	
-	@OneToOne(mappedBy = "informeComercial")
-	private ActivoVivienda vivienda;
-	
-	@OneToOne(mappedBy = "informeComercial")
-	private ActivoLocalComercial localComercial;
-	
-	@OneToOne(mappedBy = "informeComercial")
-	private ActivoPlazaAparcamiento plazaAparcamiento;
-
 	@Column(name = "ICO_DESCRIPCION")
 	private String descripcionComercial;
 
@@ -161,15 +105,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_ANO_REHABILITACION")
 	private Integer anyoRehabilitacion;
-
-	@Column(name = "ICO_APTO_PUBLICIDAD")
-	private Integer aptoPublicidad;
-
-	@Column(name = "ICO_ACTIVOS_VINC")
-	private String activosVinculados;
-
-	@Column(name = "ICO_FECHA_EMISION_INFORME")
-	private Date fechaEmisionInforme;
+	
+	@ManyToOne
+	@JoinColumn(name = "ICO_LIC_OBRA")
+	private DDSinSiNo licenciaObra;
 
 	@Column(name = "ICO_FECHA_ULTIMA_VISITA")
 	private Date fechaUltimaVisita;
@@ -180,33 +119,21 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_FECHA_RECHAZO")
 	private Date fechaRechazo;
 
-	@Column(name = "ICO_CONDICIONES_LEGALES")
-	private String condicionesLegales;
-
-	// Nuevas columnas para Informe Comercial ------------------------------
 	@Column(name = "ICO_AUTORIZACION_WEB")
 	private Boolean autorizacionWeb;
 
 	@Column(name = "ICO_FECHA_AUTORIZ_HASTA")
 	private Date fechaAutorizacionHasta;
 
-	@Column(name = "ICO_FECHA_RECEP_LLAVES")
-	private Date fechaRecepcionLlaves;
-
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPA_ID")
 	private DDTipoActivo tipoActivo;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_SAC_ID")
 	private DDSubtipoActivo subtipoActivo;
 
-	// TODO: Confirmar que hay que quitarlo (Estado Activo)
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_EAC_ID")
-	private DDEstadoActivo estadoActivo;
-
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TVI_ID")
 	private DDTipoVia tipoVia;
 
@@ -231,54 +158,20 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_LONGITUD")
 	private BigDecimal longitud;
 
-	@Column(name = "ICO_ZONA")
-	private String zona;
-
-	@Column(name = "ICO_DISTRITO")
-	private String distrito;
-
 	@Column(name = "ICO_CODIGO_POSTAL")
 	private String codigoPostal;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
-	private Localidad localidadRegistro;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
 	private DDProvincia provincia;
-
-	@Column(name = "ICO_JUSTIFICACION_VENTA")
-	private String justificacionVenta;
-
-	@Column(name = "ICO_JUSTIFICACION_RENTA")
-	private String justificacionRenta;
-
-	@Column(name = "ICO_CUOTACP_ORIENTATIVA")
-	private Float cuotaOrientativaComunidad;
-
-	@Column(name = "ICO_DERRAMACP_ORIENTATIVA")
-	private Double derramaOrientativaComunidad;
-
-	@Column(name = "ICO_FECHA_ESTIMACION_VENTA")
-	private Date fechaEstimacionVenta;
-
-	@Column(name = "ICO_FECHA_ESTIMACION_RENTA")
-	private Date fechaEstimacionRenta;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_UPO_ID")
 	private DDUnidadPoblacional unidadPoblacional;
-
-	@Column(name = "ICO_INFO_DESCRIPCION")
-	private String infoDescripcion;
-
-	@Column(name = "ICO_INFO_DISTRIBUCION_INTERIOR")
-	private String infoDistribucionInterior;
 
 	@Version
 	private Long version;
@@ -290,64 +183,18 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_TVP_ID")
 	private DDTipoVpo regimenProteccion;
 
-	@Column(name = "ICO_VALOR_MAX_VPO")
-	private Float valorMaximoVpo;
-
 	@Column(name = "ICO_VALOR_ESTIMADO_VENTA")
 	private Float valorEstimadoVenta;
 
 	@Column(name = "ICO_VALOR_ESTIMADO_RENTA")
 	private Float valorEstimadoRenta;
 
-	@Column(name = "ICO_OCUPADO")
-	private Integer ocupado;
-	
-	@Column(name="ICO_NUM_TERRAZA_DESCUBIERTA")
-	private Integer numeroTerrazasDescubiertas;
-	
-	@Column(name="ICO_DESC_TERRAZA_DESCUBIERTA")
-	private String descripcionTerrazasDescubiertas;
-	
-	@Column(name="ICO_NUM_TERRAZA_CUBIERTA")
-	private Integer numeroTerrazasCubiertas;
-	
-	@Column(name="ICO_DESC_TERRAZA_CUBIERTA")
-	private String descripcionTerrazasCubiertas;
-	
-	@Column(name="ICO_DESPENSA_OTRAS_DEP")
-	private Integer despensaOtrasDependencias;
-	
-	@Column(name="ICO_LAVADERO_OTRAS_DEP")
-	private Integer lavaderoOtrasDependencias;
-	
-	@Column(name="ICO_AZOTEA_OTRAS_DEP")
-	private Integer azoteaOtrasDependencias;
-	
-	@Column(name="ICO_OTROS_OTRAS_DEP")
-	private String otrosOtrasDependencias;
-	
-	@Column(name="ICO_PRESIDENTE_NOMBRE")
-	private String nombrePresidenteComunidadEdificio;
-	
-	@Column(name="ICO_PRESIDENTE_TELF")
-	private String telefonoPresidenteComunidadEdificio;
-	
-	@Column(name="ICO_ADMINISTRADOR_NOMBRE")
-	private String nombreAdministradorComunidadEdificio;
-	
-	@Column(name="ICO_ADMINISTRADOR_TELF")
-	private String telefonoAdministradorComunidadEdificio;
+	@ManyToOne
+	@JoinColumn(name = "ICO_OCUPADO")
+	private DDSinSiNo ocupado;
 	
 	@Column(name="ICO_WEBCOM_ID")
 	private Long idWebcom;
-	
-	@OneToMany(mappedBy = "infoComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ICO_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<ActivoDistribucion> distribucion;
-	
-	@Column(name = "ICO_EXIS_COM_PROP")
-	private Integer existeComunidadEdificio;
 	
 	@Column(name = "ICO_POSIBLE_HACER_INF")
 	private Integer posibleInforme;
@@ -361,48 +208,262 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ICO_ADMITE_MASCOTAS")
-	private DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas;
+	private DDAdmision admiteMascotas;	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ESO_ID")
+	private DDEstadoOcupacional estadoOcupacional;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_TERRAZA")
+	private DDSinSiNo terraza;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_PATIO")
+	private DDSinSiNo patio;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_ASCENSOR")
+	private DDSinSiNo ascensor;
 	
+	@Column(name="ICO_SUP_UTIL")
+	private Float superficieUtil;
 
-	public Float getCuotaOrientativaComunidad() {
-		return cuotaOrientativaComunidad;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_REHABILITADO")
+	private DDSinSiNo rehabilitado;
 
-	public void setCuotaOrientativaComunidad(Float cuotaOrientativaComunidad) {
-		this.cuotaOrientativaComunidad = cuotaOrientativaComunidad;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_LIC_APERTURA")
+	private DDSinSiNo licenciaApertura;
 
-	public Double getDerramaOrientativaComunidad() {
-		return derramaOrientativaComunidad;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_ANEJO_GARAJE")
+	private DDSinSiNo anejoGaraje;
 
-	public void setDerramaOrientativaComunidad(Double derramaOrientativaComunidad) {
-		this.derramaOrientativaComunidad = derramaOrientativaComunidad;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_ANEJO_TRASTERO")
+	private DDSinSiNo anejoTrastero;
 
-	public Date getFechaEstimacionVenta() {
-		return fechaEstimacionVenta;
-	}
+	@ManyToOne
+	@JoinColumn(name = "DD_RAC_ID")
+	private DDRatingCocina ratingCocina;
 
-	public void setFechaEstimacionVenta(Date fechaEstimacionVenta) {
-		this.fechaEstimacionVenta = fechaEstimacionVenta;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_COCINA_AMUEBLADA")
+	private DDSinSiNo cocinaAmueblada;
 
-	public Date getFechaEstimacionRenta() {
-		return fechaEstimacionRenta;
-	}
+	@ManyToOne
+	@JoinColumn(name = "DD_TCA_ID")
+	private DDTipoCalefaccion tipoCalefaccion;
 
-	public void setFechaEstimacionRenta(Date fechaEstimacionRenta) {
-		this.fechaEstimacionRenta = fechaEstimacionRenta;
-	}
+	@ManyToOne
+	@JoinColumn(name = "DD_TCL_ID")
+	private DDTipoClimatizacion aireAcondicionado;
 
-	public DDUnidadPoblacional getUnidadPoblacional() {
-		return unidadPoblacional;
-	}
+	@ManyToOne
+	@JoinColumn(name = "ICO_ARM_EMPOTRADOS")
+	private DDSinSiNo armariosEmpotrados;
 
-	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
-		this.unidadPoblacional = unidadPoblacional;
-	}
+	@ManyToOne
+	@JoinColumn(name = "DD_EXI_ID")
+	private DDExteriorInterior exteriorInterior;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_ZONAS_VERDES")
+	private DDSinSiNo zonasVerdes;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_CONSERJE")
+	private DDSinSiNo conserje;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_INST_DEPORTIVAS")
+	private DDSinSiNo instalacionesDeportivas;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_ACC_MINUSVALIDO")
+	private DDSinSiNo accesoMinusvalidos;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_JARDIN")
+	private DDDisponibilidad jardin;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_PISCINA")
+	private DDDisponibilidad piscina;
+	
+	@ManyToOne
+	@JoinColumn(name = "ICO_GIMNASIO")
+	private DDDisponibilidad gimnasio;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_ESC_ID")
+	private DDEstadoConservacionEdificio estadoConservacionEdificio;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_TPU_ID")
+	private DDTipoPuerta tipoPuerta;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_PUERTAS_INT")
+	private DDEstadoMobiliario estadoPuertasInteriores;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_VENTANAS")
+	private DDEstadoMobiliario estadoVentanas;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_PERSIANAS")
+	private DDEstadoMobiliario estadoPersianas;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_PINTURA")
+	private DDEstadoMobiliario estadoPintura;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_SOLADOS")
+	private DDEstadoMobiliario estadoSolados;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_BANYOS")
+	private DDEstadoMobiliario estadoBanyos;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_VUB_ID")
+	private DDValoracionUbicacion valoracionUbicacion;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_SALIDA_HUMOS")
+	private DDSinSiNo salidaHumos;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_USO_BRUTO")
+	private DDSinSiNo aptoUsoBruto;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_CLA_ID")
+	private DDClasificacion clasificacion;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_USA_ID")
+	private DDUsoActivo usoActivo;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_ALMACEN")
+	private DDSinSiNo almacen;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_VENTA_EXPO")
+	private DDSinSiNo ventaExposicion;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_ENTREPLANTA")
+	private DDSinSiNo entreplanta;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_USU_MODIFICACION")
+	private Usuario usuarioModificacionInforme;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_USU_INFORME_COMPLETO")
+	private Usuario usuarioInformeCompleto;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_VISITABLE")
+	private DDSinSiNo visitable;
+	
+	@Column(name="ICO_FECHA_ENVIO_LLAVES_API")
+	private Date envioLlavesApi;
+	
+	@Column(name = "ICO_FECHA_RECEP_LLAVES")
+	private Date fechaRecepcionLlaves;
+
+	@Column(name="ICO_NUM_DORMITORIOS")
+	private Long numDormitorios;
+
+	@Column(name="ICO_NUM_BANYOS")
+	private Long numBanyos;
+
+	@Column(name="ICO_NUM_GARAJE")
+	private Long numGaraje;
+
+	@Column(name="ICO_NUM_ASEOS")
+	private Long numAseos;
+
+	@Column(name="ICO_ORIENTACION")
+	private String orientacion;
+
+	@ManyToOne
+	@JoinColumn(name = "ICO_CALEFACCION")
+	private DDTipoClimatizacion calefaccion;
+
+	@Column(name="ICO_SUP_TERRAZA")
+	private Float superficieTerraza;
+
+	@Column(name="ICO_SUP_PATIO")
+	private Float superficiePatio;
+
+	@Column(name="ICO_NUM_PLANTAS_EDI")
+	private Long numPlantasEdificio;
+
+	@Column(name="ICO_EDIFICABILIDAD")
+	private Float edificabilidad;
+
+	@Column(name="ICO_SUP_PARCELA")
+	private Float superficieParcela;
+
+	@Column(name="ICO_URBANIZACION_EJEC")
+	private Float urbanizacionEjecutado;
+
+	@Column(name="ICO_MTRS_FACHADA")
+	private Float metrosFachada;
+
+	@Column(name="ICO_SUP_ALMACEN")
+	private Float superficieAlmacen;
+
+	@Column(name="ICO_SUP_VENTA_EXPO")
+	private Float superficieVentaExposicion;
+
+	@Column(name="ICO_ALTURA_LIBRE")
+	private Float alturaLibre;
+
+	@Column(name="ICO_EDIFICACION_EJEC")
+	private Float edificacionEjecutada;
+
+	@Column(name="ICO_RECEPCION_INFORME")
+	private Date recepcionInforme;
+
+	@Column(name="ICO_FECHA_MODIFICACION")
+	private Date modificacionInforme;
+
+	@Column(name="ICO_FECHA_INFORME_COMPLETO")
+	private Date informeCompleto;
+
+	@Column(name="ICO_VALOR_MIN_VENTA")
+	private Float minVenta;
+
+	@Column(name="ICO_VALOR_MAX_VENTA")
+	private Float maxVenta;
+
+	@Column(name="ICO_VALOR_MAX_RENTA")
+	private Float maxRenta;
+
+	@Column(name="ICO_VALOR_MIN_RENTA")
+	private Float minRenta;
+
+	@Column(name="ICO_NUM_SALONES")
+	private Long numSalones;
+
+	@Column(name="ICO_NUM_ESTANCIAS")
+	private Long numEstancias;
+
+	@Column(name="ICO_NUM_PLANTAS")
+	private Long numPlantas;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_AAC_ID")
+	private DDActivoAccesibilidad accesibilidad;
 
 	public Long getId() {
 		return id;
@@ -441,121 +502,23 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	}
 
 	public void setTipoInfoComercial(DDTipoInfoComercial tipoInfoComercial) {
-		this.tipoInfoComercialAnterior = this.tipoInfoComercial;
 		this.tipoInfoComercial = tipoInfoComercial;
 	}
 
-	public DDEstadoConstruccion getEstadoConstruccion() {
-		return estadoConstruccion;
+	public DDTipoInfoComercial getTipoInfoComercialAnterior() {
+		return tipoInfoComercialAnterior;
 	}
 
-	public void setEstadoConstruccion(DDEstadoConstruccion estadoConstruccion) {
-		this.estadoConstruccion = estadoConstruccion;
+	public void setTipoInfoComercialAnterior(DDTipoInfoComercial tipoInfoComercialAnterior) {
+		this.tipoInfoComercialAnterior = tipoInfoComercialAnterior;
 	}
 
-	public ActivoEdificio getEdificio() {
-		return edificio;
+	public ActivoProveedor getMediadorInforme() {
+		return mediadorInforme;
 	}
 
-	public void setEdificio(ActivoEdificio edificio) {
-		this.edificio = edificio;
-	}
-
-	public ActivoInfraestructura getInfraestructura() {
-		return infraestructura;
-	}
-
-	public void setInfraestructura(ActivoInfraestructura infraestructura) {
-		this.infraestructura = infraestructura;
-	}
-
-	public ActivoCarpinteriaInterior getCarpinteriaInterior() {
-		return carpinteriaInterior;
-	}
-
-	public void setCarpinteriaInterior(ActivoCarpinteriaInterior carpinteriaInterior) {
-		this.carpinteriaInterior = carpinteriaInterior;
-	}
-
-	public ActivoCarpinteriaExterior getCarpinteriaExterior() {
-		return carpinteriaExterior;
-	}
-
-	public void setCarpinteriaExterior(ActivoCarpinteriaExterior carpinteriaExterior) {
-		this.carpinteriaExterior = carpinteriaExterior;
-	}
-
-	public ActivoParamentoVertical getParamentoVertical() {
-		return paramentoVertical;
-	}
-
-	public void setParamentoVertical(ActivoParamentoVertical paramentoVertical) {
-		this.paramentoVertical = paramentoVertical;
-	}
-
-	public ActivoSolado getSolado() {
-		return solado;
-	}
-
-	public void setSolado(ActivoSolado solado) {
-		this.solado = solado;
-	}
-
-	public ActivoCocina getCocina() {
-		return cocina;
-	}
-
-	public void setCocina(ActivoCocina cocina) {
-		this.cocina = cocina;
-	}
-
-	public ActivoBanyo getBanyo() {
-		return banyo;
-	}
-
-	public void setBanyo(ActivoBanyo banyo) {
-		this.banyo = banyo;
-	}
-
-	public ActivoInstalacion getInstalacion() {
-		return instalacion;
-	}
-
-	public void setInstalacion(ActivoInstalacion instalacion) {
-		this.instalacion = instalacion;
-	}
-
-	public ActivoZonaComun getZonaComun() {
-		return zonaComun;
-	}
-
-	public void setZonaComun(ActivoZonaComun zonaComun) {
-		this.zonaComun = zonaComun;
-	}
-
-	
-	public ActivoVivienda getVivienda() {
-		return vivienda;
-	}
-
-	public void setVivienda(ActivoVivienda vivienda) {
-		this.vivienda = vivienda;
-	}
-
-	public ActivoLocalComercial getLocalComercial() {
-		return localComercial;
-	}
-
-	public void setLocalComercial(ActivoLocalComercial localComercial) {
-		this.localComercial = localComercial;
-	}
-
-	public ActivoPlazaAparcamiento getPlazaAparcamiento() {
-		return plazaAparcamiento;
-	}
-
-	public void setPlazaAparcamiento(ActivoPlazaAparcamiento plazaAparcamiento) {
-		this.plazaAparcamiento = plazaAparcamiento;
+	public void setMediadorInforme(ActivoProveedor mediadorInforme) {
+		this.mediadorInforme = mediadorInforme;
 	}
 
 	public String getDescripcionComercial() {
@@ -582,28 +545,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.anyoRehabilitacion = anyoRehabilitacion;
 	}
 
-	public Integer getAptoPublicidad() {
-		return aptoPublicidad;
+	public DDSinSiNo getLicenciaObra() {
+		return licenciaObra;
 	}
 
-	public void setAptoPublicidad(Integer aptoPublicidad) {
-		this.aptoPublicidad = aptoPublicidad;
-	}
-
-	public String getActivosVinculados() {
-		return activosVinculados;
-	}
-
-	public void setActivosVinculados(String activosVinculados) {
-		this.activosVinculados = activosVinculados;
-	}
-
-	public Date getFechaEmisionInforme() {
-		return fechaEmisionInforme;
-	}
-
-	public void setFechaEmisionInforme(Date fechaEmisionInforme) {
-		this.fechaEmisionInforme = fechaEmisionInforme;
+	public void setLicenciaObra(DDSinSiNo licenciaObra) {
+		this.licenciaObra = licenciaObra;
 	}
 
 	public Date getFechaUltimaVisita() {
@@ -612,14 +559,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setFechaUltimaVisita(Date fechaUltimaVisita) {
 		this.fechaUltimaVisita = fechaUltimaVisita;
-	}
-
-	public ActivoProveedor getMediadorInforme() {
-		return mediadorInforme;
-	}
-
-	public void setMediadorInforme(ActivoProveedor mediadorInforme) {
-		this.mediadorInforme = mediadorInforme;
 	}
 
 	public Date getFechaAceptacion() {
@@ -636,14 +575,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setFechaRechazo(Date fechaRechazo) {
 		this.fechaRechazo = fechaRechazo;
-	}
-
-	public String getCondicionesLegales() {
-		return condicionesLegales;
-	}
-
-	public void setCondicionesLegales(String condicionesLegales) {
-		this.condicionesLegales = condicionesLegales;
 	}
 
 	public Boolean getAutorizacionWeb() {
@@ -684,14 +615,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
 		this.subtipoActivo = subtipoActivo;
-	}
-
-	public DDEstadoActivo getEstadoActivo() {
-		return estadoActivo;
-	}
-
-	public void setEstadoActivo(DDEstadoActivo estadoActivo) {
-		this.estadoActivo = estadoActivo;
 	}
 
 	public DDTipoVia getTipoVia() {
@@ -758,22 +681,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.longitud = longitud;
 	}
 
-	public String getZona() {
-		return zona;
-	}
-
-	public void setZona(String zona) {
-		this.zona = zona;
-	}
-
-	public String getDistrito() {
-		return distrito;
-	}
-
-	public void setDistrito(String distrito) {
-		this.distrito = distrito;
-	}
-
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
@@ -798,220 +705,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.provincia = provincia;
 	}
 
-	public String getJustificacionVenta() {
-		return justificacionVenta;
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
 	}
 
-	public void setJustificacionVenta(String justificacionVenta) {
-		this.justificacionVenta = justificacionVenta;
-	}
-
-	public String getJustificacionRenta() {
-		return justificacionRenta;
-	}
-
-	public void setJustificacionRenta(String justificacionRenta) {
-		this.justificacionRenta = justificacionRenta;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-
-	public String getInfoDescripcion() {
-		return infoDescripcion;
-	}
-
-	public void setInfoDescripcion(String infoDescripcion) {
-		this.infoDescripcion = infoDescripcion;
-	}
-
-	public String getInfoDistribucionInterior() {
-		return infoDistribucionInterior;
-	}
-
-	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
-		this.infoDistribucionInterior = infoDistribucionInterior;
-	}
-
-	public DDTipoVpo getRegimenProteccion() {
-		return regimenProteccion;
-	}
-
-	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
-		this.regimenProteccion = regimenProteccion;
-	}
-
-	public Float getValorMaximoVpo() {
-		return valorMaximoVpo;
-	}
-
-	public void setValorMaximoVpo(Float valorMaximoVpo) {
-		this.valorMaximoVpo = valorMaximoVpo;
-	}
-
-	public Integer getOcupado() {
-		return ocupado;
-	}
-
-	public void setOcupado(Integer ocupado) {
-		this.ocupado = ocupado;
-	}
-
-	public Float getValorEstimadoVenta() {
-		return valorEstimadoVenta;
-	}
-
-	public void setValorEstimadoVenta(Float valorEstimadoVenta) {
-		this.valorEstimadoVenta = valorEstimadoVenta;
-	}
-
-	public Float getValorEstimadoRenta() {
-		return valorEstimadoRenta;
-	}
-
-	public void setValorEstimadoRenta(Float valorEstimadoRenta) {
-		this.valorEstimadoRenta = valorEstimadoRenta;
-	}
-
-	public Integer getNumeroTerrazasDescubiertas() {
-		return numeroTerrazasDescubiertas;
-	}
-
-	public void setNumeroTerrazasDescubiertas(Integer numeroTerrazasDescubiertas) {
-		this.numeroTerrazasDescubiertas = numeroTerrazasDescubiertas;
-	}
-
-	public String getDescripcionTerrazasDescubiertas() {
-		return descripcionTerrazasDescubiertas;
-	}
-
-	public void setDescripcionTerrazasDescubiertas(String descripcionTerrazasDescubiertas) {
-		this.descripcionTerrazasDescubiertas = descripcionTerrazasDescubiertas;
-	}
-
-	public Integer getNumeroTerrazasCubiertas() {
-		return numeroTerrazasCubiertas;
-	}
-
-	public void setNumeroTerrazasCubiertas(Integer numeroTerrazasCubiertas) {
-		this.numeroTerrazasCubiertas = numeroTerrazasCubiertas;
-	}
-
-	public String getDescripcionTerrazasCubiertas() {
-		return descripcionTerrazasCubiertas;
-	}
-
-	public void setDescripcionTerrazasCubiertas(String descripcionTerrazasCubiertas) {
-		this.descripcionTerrazasCubiertas = descripcionTerrazasCubiertas;
-	}
-
-	public Integer getDespensaOtrasDependencias() {
-		return despensaOtrasDependencias;
-	}
-
-	public void setDespensaOtrasDependencias(Integer despensaOtrasDependencias) {
-		this.despensaOtrasDependencias = despensaOtrasDependencias;
-	}
-
-	public Integer getLavaderoOtrasDependencias() {
-		return lavaderoOtrasDependencias;
-	}
-
-	public void setLavaderoOtrasDependencias(Integer lavaderoOtrasDependencias) {
-		this.lavaderoOtrasDependencias = lavaderoOtrasDependencias;
-	}
-
-	public Integer getAzoteaOtrasDependencias() {
-		return azoteaOtrasDependencias;
-	}
-
-	public void setAzoteaOtrasDependencias(Integer azoteaOtrasDependencias) {
-		this.azoteaOtrasDependencias = azoteaOtrasDependencias;
-	}
-
-	public String getOtrosOtrasDependencias() {
-		return otrosOtrasDependencias;
-	}
-
-	public void setOtrosOtrasDependencias(String otrosOtrasDependencias) {
-		this.otrosOtrasDependencias = otrosOtrasDependencias;
-	}
-
-	public String getNombrePresidenteComunidadEdificio() {
-		return nombrePresidenteComunidadEdificio;
-	}
-
-	public void setNombrePresidenteComunidadEdificio(String nombrePresidenteComunidadEdificio) {
-		this.nombrePresidenteComunidadEdificio = nombrePresidenteComunidadEdificio;
-	}
-
-	public String getTelefonoPresidenteComunidadEdificio() {
-		return telefonoPresidenteComunidadEdificio;
-	}
-
-	public void setTelefonoPresidenteComunidadEdificio(String telefonoPresidenteComunidadEdificio) {
-		this.telefonoPresidenteComunidadEdificio = telefonoPresidenteComunidadEdificio;
-	}
-
-	public String getNombreAdministradorComunidadEdificio() {
-		return nombreAdministradorComunidadEdificio;
-	}
-
-	public void setNombreAdministradorComunidadEdificio(String nombreAdministradorComunidadEdificio) {
-		this.nombreAdministradorComunidadEdificio = nombreAdministradorComunidadEdificio;
-	}
-
-	public String getTelefonoAdministradorComunidadEdificio() {
-		return telefonoAdministradorComunidadEdificio;
-	}
-
-	public void setTelefonoAdministradorComunidadEdificio(String telefonoAdministradorComunidadEdificio) {
-		this.telefonoAdministradorComunidadEdificio = telefonoAdministradorComunidadEdificio;
-	}
-
-	public Long getIdWebcom() {
-		return idWebcom;
-	}
-
-	public void setIdWebcom(Long idWebcom) {
-		this.idWebcom = idWebcom;
-	}
-
-	public List<ActivoDistribucion> getDistribucion() {
-		return distribucion;
-	}
-
-	public void setDistribucion(List<ActivoDistribucion> distribucion) {
-		this.distribucion = distribucion;
-	}
-
-	public Integer getExisteComunidadEdificio() {
-		return existeComunidadEdificio;
-	}
-
-	public void setExisteComunidadEdificio(Integer existeComunidadEdificio) {
-		this.existeComunidadEdificio = existeComunidadEdificio;
-	}
-
-	public Localidad getLocalidadRegistro() {
-		return localidadRegistro;
-	}
-
-	public void setLocalidadRegistro(Localidad localidadRegistro) {
-		this.localidadRegistro = localidadRegistro;
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
 	}
 
 	public Integer getPosibleInforme() {
@@ -1030,6 +729,62 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
 	}
 
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
+	public DDTipoVpo getRegimenProteccion() {
+		return regimenProteccion;
+	}
+
+	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
+		this.regimenProteccion = regimenProteccion;
+	}
+
+	public Float getValorEstimadoVenta() {
+		return valorEstimadoVenta;
+	}
+
+	public void setValorEstimadoVenta(Float valorEstimadoVenta) {
+		this.valorEstimadoVenta = valorEstimadoVenta;
+	}
+
+	public Float getValorEstimadoRenta() {
+		return valorEstimadoRenta;
+	}
+
+	public void setValorEstimadoRenta(Float valorEstimadoRenta) {
+		this.valorEstimadoRenta = valorEstimadoRenta;
+	}
+
+	public DDSinSiNo getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(DDSinSiNo ocupado) {
+		this.ocupado = ocupado;
+	}
+
+	public Long getIdWebcom() {
+		return idWebcom;
+	}
+
+	public void setIdWebcom(Long idWebcom) {
+		this.idWebcom = idWebcom;
+	}
+
 	public ActivoProveedor getMediadorEspejo() {
 		return mediadorEspejo;
 	}
@@ -1037,22 +792,572 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setMediadorEspejo(ActivoProveedor mediadorEspejo) {
 		this.mediadorEspejo = mediadorEspejo;
 	}
+
+	public DDAdmision getAdmiteMascotas() {
+		return admiteMascotas;
+	}
+
+	public void setAdmiteMascotas(DDAdmision admiteMascotas) {
+		this.admiteMascotas = admiteMascotas;
+	}
+
+	public DDEstadoOcupacional getEstadoOcupacional() {
+		return estadoOcupacional;
+	}
+
+	public void setEstadoOcupacional(DDEstadoOcupacional estadoOcupacional) {
+		this.estadoOcupacional = estadoOcupacional;
+	}
+
+	public DDSinSiNo getTerraza() {
+		return terraza;
+	}
+
+	public void setTerraza(DDSinSiNo terraza) {
+		this.terraza = terraza;
+	}
+
+	public DDSinSiNo getPatio() {
+		return patio;
+	}
+
+	public void setPatio(DDSinSiNo patio) {
+		this.patio = patio;
+	}
+
+	public DDSinSiNo getAscensor() {
+		return ascensor;
+	}
+
+	public void setAscensor(DDSinSiNo ascensor) {
+		this.ascensor = ascensor;
+	}
 	
-	public DDSiniSiNoIndiferente getAdmiteMascotaOtrasCaracteristicas() {
-		return admiteMascotaOtrasCaracteristicas;
+	public Float getSuperficieUtil() {
+		return superficieUtil;
 	}
 
-	public void setAdmiteMascotaOtrasCaracteristicas(DDSiniSiNoIndiferente admiteMascotaOtrasCaracteristicas) {
-		this.admiteMascotaOtrasCaracteristicas = admiteMascotaOtrasCaracteristicas;
+	public void setSuperficieUtil(Float superficieUtil) {
+		this.superficieUtil = superficieUtil;
 	}
 
-	public DDTipoInfoComercial getTipoInfoComercialAnterior() {
-		return tipoInfoComercialAnterior;
+	public DDSinSiNo getRehabilitado() {
+		return rehabilitado;
 	}
 
-	public void setTipoInfoComercialAnterior(DDTipoInfoComercial tipoInfoComercialAnterior) {
-		this.tipoInfoComercialAnterior = tipoInfoComercialAnterior;
+	public void setRehabilitado(DDSinSiNo rehabilitado) {
+		this.rehabilitado = rehabilitado;
+	}
+
+	public DDSinSiNo getLicenciaApertura() {
+		return licenciaApertura;
+	}
+
+	public void setLicenciaApertura(DDSinSiNo licenciaApertura) {
+		this.licenciaApertura = licenciaApertura;
+	}
+
+	public DDSinSiNo getAnejoGaraje() {
+		return anejoGaraje;
+	}
+
+	public void setAnejoGaraje(DDSinSiNo anejoGaraje) {
+		this.anejoGaraje = anejoGaraje;
+	}
+
+	public DDSinSiNo getAnejoTrastero() {
+		return anejoTrastero;
+	}
+
+	public void setAnejoTrastero(DDSinSiNo anejoTrastero) {
+		this.anejoTrastero = anejoTrastero;
+	}
+
+	public DDRatingCocina getRatingCocina() {
+		return ratingCocina;
+	}
+
+	public void setRatingCocina(DDRatingCocina ratingCocina) {
+		this.ratingCocina = ratingCocina;
+	}
+
+	public DDSinSiNo getCocinaAmueblada() {
+		return cocinaAmueblada;
+	}
+
+	public void setCocinaAmueblada(DDSinSiNo cocinaAmueblada) {
+		this.cocinaAmueblada = cocinaAmueblada;
+	}
+
+	public DDTipoCalefaccion getTipoCalefaccion() {
+		return tipoCalefaccion;
+	}
+
+	public void setTipoCalefaccion(DDTipoCalefaccion tipoCalefaccion) {
+		this.tipoCalefaccion = tipoCalefaccion;
+	}
+
+	public DDTipoClimatizacion getAireAcondicionado() {
+		return aireAcondicionado;
+	}
+
+	public void setAireAcondicionado(DDTipoClimatizacion aireAcondicionado) {
+		this.aireAcondicionado = aireAcondicionado;
+	}
+
+	public DDSinSiNo getArmariosEmpotrados() {
+		return armariosEmpotrados;
+	}
+
+	public void setArmariosEmpotrados(DDSinSiNo armariosEmpotrados) {
+		this.armariosEmpotrados = armariosEmpotrados;
+	}
+
+	public DDExteriorInterior getExteriorInterior() {
+		return exteriorInterior;
+	}
+
+	public void setExteriorInterior(DDExteriorInterior exteriorInterior) {
+		this.exteriorInterior = exteriorInterior;
+	}
+
+	public DDSinSiNo getZonasVerdes() {
+		return zonasVerdes;
+	}
+
+	public void setZonasVerdes(DDSinSiNo zonasVerdes) {
+		this.zonasVerdes = zonasVerdes;
+	}
+
+	public DDSinSiNo getConserje() {
+		return conserje;
+	}
+
+	public void setConserje(DDSinSiNo conserje) {
+		this.conserje = conserje;
+	}
+
+	public DDSinSiNo getInstalacionesDeportivas() {
+		return instalacionesDeportivas;
+	}
+
+	public void setInstalacionesDeportivas(DDSinSiNo instalacionesDeportivas) {
+		this.instalacionesDeportivas = instalacionesDeportivas;
+	}
+
+	public DDSinSiNo getAccesoMinusvalidos() {
+		return accesoMinusvalidos;
+	}
+
+	public void setAccesoMinusvalidos(DDSinSiNo accesoMinusvalidos) {
+		this.accesoMinusvalidos = accesoMinusvalidos;
+	}
+
+	public DDDisponibilidad getJardin() {
+		return jardin;
+	}
+
+	public void setJardin(DDDisponibilidad jardin) {
+		this.jardin = jardin;
+	}
+
+	public DDDisponibilidad getPiscina() {
+		return piscina;
+	}
+
+	public void setPiscina(DDDisponibilidad piscina) {
+		this.piscina = piscina;
+	}
+
+	public DDDisponibilidad getGimnasio() {
+		return gimnasio;
+	}
+
+	public void setGimnasio(DDDisponibilidad gimnasio) {
+		this.gimnasio = gimnasio;
+	}
+
+	public DDEstadoConservacionEdificio getEstadoConservacionEdificio() {
+		return estadoConservacionEdificio;
+	}
+
+	public void setEstadoConservacionEdificio(DDEstadoConservacionEdificio estadoConservacionEdificio) {
+		this.estadoConservacionEdificio = estadoConservacionEdificio;
+	}
+
+	public DDTipoPuerta getTipoPuerta() {
+		return tipoPuerta;
+	}
+
+	public void setTipoPuerta(DDTipoPuerta tipoPuerta) {
+		this.tipoPuerta = tipoPuerta;
+	}
+
+	public DDEstadoMobiliario getEstadoPuertasInteriores() {
+		return estadoPuertasInteriores;
+	}
+
+	public void setEstadoPuertasInteriores(DDEstadoMobiliario estadoPuertasInteriores) {
+		this.estadoPuertasInteriores = estadoPuertasInteriores;
+	}
+
+	public DDEstadoMobiliario getEstadoVentanas() {
+		return estadoVentanas;
+	}
+
+	public void setEstadoVentanas(DDEstadoMobiliario estadoVentanas) {
+		this.estadoVentanas = estadoVentanas;
+	}
+
+	public DDEstadoMobiliario getEstadoPersianas() {
+		return estadoPersianas;
+	}
+
+	public void setEstadoPersianas(DDEstadoMobiliario estadoPersianas) {
+		this.estadoPersianas = estadoPersianas;
+	}
+
+	public DDEstadoMobiliario getEstadoPintura() {
+		return estadoPintura;
+	}
+
+	public void setEstadoPintura(DDEstadoMobiliario estadoPintura) {
+		this.estadoPintura = estadoPintura;
+	}
+
+	public DDEstadoMobiliario getEstadoSolados() {
+		return estadoSolados;
+	}
+
+	public void setEstadoSolados(DDEstadoMobiliario estadoSolados) {
+		this.estadoSolados = estadoSolados;
+	}
+
+	public DDEstadoMobiliario getEstadoBanyos() {
+		return estadoBanyos;
+	}
+
+	public void setEstadoBanyos(DDEstadoMobiliario estadoBanyos) {
+		this.estadoBanyos = estadoBanyos;
+	}
+
+	public DDValoracionUbicacion getValoracionUbicacion() {
+		return valoracionUbicacion;
+	}
+
+	public void setValoracionUbicacion(DDValoracionUbicacion valoracionUbicacion) {
+		this.valoracionUbicacion = valoracionUbicacion;
+	}
+
+	public DDSinSiNo getSalidaHumos() {
+		return salidaHumos;
+	}
+
+	public void setSalidaHumos(DDSinSiNo salidaHumos) {
+		this.salidaHumos = salidaHumos;
+	}
+
+	public DDSinSiNo getAptoUsoBruto() {
+		return aptoUsoBruto;
+	}
+
+	public void setAptoUsoBruto(DDSinSiNo aptoUsoBruto) {
+		this.aptoUsoBruto = aptoUsoBruto;
+	}
+
+	public DDClasificacion getClasificacion() {
+		return clasificacion;
+	}
+
+	public void setClasificacion(DDClasificacion clasificacion) {
+		this.clasificacion = clasificacion;
+	}
+
+	public DDUsoActivo getUsoActivo() {
+		return usoActivo;
+	}
+
+	public void setUsoActivo(DDUsoActivo usoActivo) {
+		this.usoActivo = usoActivo;
+	}
+
+	public DDSinSiNo getAlmacen() {
+		return almacen;
+	}
+
+	public void setAlmacen(DDSinSiNo almacen) {
+		this.almacen = almacen;
+	}
+
+	public DDSinSiNo getVentaExposicion() {
+		return ventaExposicion;
+	}
+
+	public void setVentaExposicion(DDSinSiNo ventaExposicion) {
+		this.ventaExposicion = ventaExposicion;
+	}
+
+	public DDSinSiNo getEntreplanta() {
+		return entreplanta;
+	}
+
+	public void setEntreplanta(DDSinSiNo entreplanta) {
+		this.entreplanta = entreplanta;
+	}
+
+	public Usuario getUsuarioModificacionInforme() {
+		return usuarioModificacionInforme;
+	}
+
+	public void setUsuarioModificacionInforme(Usuario usuarioModificacionInforme) {
+		this.usuarioModificacionInforme = usuarioModificacionInforme;
+	}
+
+	public Usuario getUsuarioInformeCompleto() {
+		return usuarioInformeCompleto;
+	}
+
+	public void setUsuarioInformeCompleto(Usuario usuarioInformeCompleto) {
+		this.usuarioInformeCompleto = usuarioInformeCompleto;
+	}
+
+	public DDSinSiNo getVisitable() {
+		return visitable;
+	}
+
+	public void setVisitable(DDSinSiNo visitable) {
+		this.visitable = visitable;
+	}
+
+	public Date getEnvioLlavesApi() {
+		return envioLlavesApi;
+	}
+
+	public void setEnvioLlavesApi(Date envioLlavesApi) {
+		this.envioLlavesApi = envioLlavesApi;
+	}
+
+	public Long getNumDormitorios() {
+		return numDormitorios;
+	}
+
+	public void setNumDormitorios(Long numDormitorios) {
+		this.numDormitorios = numDormitorios;
+	}
+
+	public Long getNumBanyos() {
+		return numBanyos;
+	}
+
+	public void setNumBanyos(Long numBanyos) {
+		this.numBanyos = numBanyos;
+	}
+
+	public Long getNumGaraje() {
+		return numGaraje;
+	}
+
+	public void setNumGaraje(Long numGaraje) {
+		this.numGaraje = numGaraje;
+	}
+
+	public Long getNumAseos() {
+		return numAseos;
+	}
+
+	public void setNumAseos(Long numAseos) {
+		this.numAseos = numAseos;
+	}
+
+	public String getOrientacion() {
+		return orientacion;
+	}
+
+	public void setOrientacion(String orientacion) {
+		this.orientacion = orientacion;
+	}
+
+	public DDTipoClimatizacion getCalefaccion() {
+		return calefaccion;
+	}
+
+	public void setCalefaccion(DDTipoClimatizacion calefaccion) {
+		this.calefaccion = calefaccion;
+	}
+
+	public Float getSuperficieTerraza() {
+		return superficieTerraza;
+	}
+
+	public void setSuperficieTerraza(Float superficieTerraza) {
+		this.superficieTerraza = superficieTerraza;
+	}
+
+	public Float getSuperficiePatio() {
+		return superficiePatio;
+	}
+
+	public void setSuperficiePatio(Float superficiePatio) {
+		this.superficiePatio = superficiePatio;
+	}
+
+	public Long getNumPlantasEdificio() {
+		return numPlantasEdificio;
+	}
+
+	public void setNumPlantasEdificio(Long numPlantasEdificio) {
+		this.numPlantasEdificio = numPlantasEdificio;
+	}
+
+	public Float getEdificabilidad() {
+		return edificabilidad;
+	}
+
+	public void setEdificabilidad(Float edificabilidad) {
+		this.edificabilidad = edificabilidad;
+	}
+
+	public Float getSuperficieParcela() {
+		return superficieParcela;
+	}
+
+	public void setSuperficieParcela(Float superficieParcela) {
+		this.superficieParcela = superficieParcela;
+	}
+
+	public Float getUrbanizacionEjecutado() {
+		return urbanizacionEjecutado;
+	}
+
+	public void setUrbanizacionEjecutado(Float urbanizacionEjecutado) {
+		this.urbanizacionEjecutado = urbanizacionEjecutado;
+	}
+
+	public Float getMetrosFachada() {
+		return metrosFachada;
+	}
+
+	public void setMetrosFachada(Float metrosFachada) {
+		this.metrosFachada = metrosFachada;
+	}
+
+	public Float getSuperficieAlmacen() {
+		return superficieAlmacen;
+	}
+
+	public void setSuperficieAlmacen(Float superficieAlmacen) {
+		this.superficieAlmacen = superficieAlmacen;
+	}
+
+	public Float getSuperficieVentaExposicion() {
+		return superficieVentaExposicion;
+	}
+
+	public void setSuperficieVentaExposicion(Float superficieVentaExposicion) {
+		this.superficieVentaExposicion = superficieVentaExposicion;
+	}
+
+	public Float getAlturaLibre() {
+		return alturaLibre;
+	}
+
+	public void setAlturaLibre(Float alturaLibre) {
+		this.alturaLibre = alturaLibre;
+	}
+
+	public Float getEdificacionEjecutada() {
+		return edificacionEjecutada;
+	}
+
+	public void setEdificacionEjecutada(Float edificacionEjecutada) {
+		this.edificacionEjecutada = edificacionEjecutada;
+	}
+
+	public Date getRecepcionInforme() {
+		return recepcionInforme;
+	}
+
+	public void setRecepcionInforme(Date recepcionInforme) {
+		this.recepcionInforme = recepcionInforme;
+	}
+
+	public Date getModificacionInforme() {
+		return modificacionInforme;
+	}
+
+	public void setModificacionInforme(Date modificacionInforme) {
+		this.modificacionInforme = modificacionInforme;
+	}
+
+	public Date getInformeCompleto() {
+		return informeCompleto;
+	}
+
+	public void setInformeCompleto(Date informeCompleto) {
+		this.informeCompleto = informeCompleto;
+	}
+
+	public Float getMinVenta() {
+		return minVenta;
+	}
+
+	public void setMinVenta(Float minVenta) {
+		this.minVenta = minVenta;
+	}
+
+	public Float getMaxVenta() {
+		return maxVenta;
+	}
+
+	public void setMaxVenta(Float maxVenta) {
+		this.maxVenta = maxVenta;
+	}
+
+	public Float getMaxRenta() {
+		return maxRenta;
+	}
+
+	public void setMaxRenta(Float maxRenta) {
+		this.maxRenta = maxRenta;
+	}
+
+	public Float getMinRenta() {
+		return minRenta;
+	}
+
+	public void setMinRenta(Float minRenta) {
+		this.minRenta = minRenta;
+	}
+
+	public Long getNumSalones() {
+		return numSalones;
+	}
+
+	public void setNumSalones(Long numSalones) {
+		this.numSalones = numSalones;
+	}
+
+	public Long getNumEstancias() {
+		return numEstancias;
+	}
+
+	public void setNumEstancias(Long numEstancias) {
+		this.numEstancias = numEstancias;
+	}
+
+	public Long getNumPlantas() {
+		return numPlantas;
+	}
+
+	public void setNumPlantas(Long numPlantas) {
+		this.numPlantas = numPlantas;
 	}
 	
+	public DDActivoAccesibilidad getAccesibilidad() {
+		return accesibilidad;
+	}
 
+	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
+		this.accesibilidad = accesibilidad;
+	}
 }

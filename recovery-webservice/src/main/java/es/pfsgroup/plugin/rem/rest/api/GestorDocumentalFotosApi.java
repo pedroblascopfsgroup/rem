@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -31,6 +32,15 @@ public interface GestorDocumentalFotosApi {
 	public enum SITUACION {
 		INTERIOR, EXTERIOR
 	}
+	
+	public enum SUELOS {
+		SI, NO
+	}
+
+	public enum PLANO {
+		SI, NO
+	}
+
 
 	/**
 	 * Indica si la conexion con el gestor documental esta activa
@@ -70,14 +80,18 @@ public interface GestorDocumentalFotosApi {
 	 * @param tipo
 	 * @param descripcion
 	 * @param principal
+	 * @param situacion
+	 * @param orden
+	 * @param suelos
+	 * @param plano
 	 * @return
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public FileResponse upload(java.io.File fileToUpload, String name, PROPIEDAD propiedad, Long idRegistro, TIPO tipo,
-			String descripcion, PRINCIPAL principal, SITUACION situacion, Integer orden)
+	public FileResponse upload(File fileToUpload, String name, PROPIEDAD propiedad, Long idRegistro, TIPO tipo,
+			String descripcion, PRINCIPAL principal, SITUACION situacion, Integer orden, SUELOS suelos, PLANO plano)
 			throws IOException, RestClientException, HttpClientException;
 
 	/**
@@ -115,7 +129,7 @@ public interface GestorDocumentalFotosApi {
 	 * @throws Exception
 	 */
 	public FileResponse update(Long idFile, String name, TIPO tipo, String descripcion, PRINCIPAL principal,
-			SITUACION situacion, Integer orden) throws IOException, RestClientException, HttpClientException;
+			SITUACION situacion, Integer orden, SUELOS suelos, PLANO plano) throws IOException, RestClientException, HttpClientException;
 
 	/**
 	 * Actualiza los metadatos de un fichero

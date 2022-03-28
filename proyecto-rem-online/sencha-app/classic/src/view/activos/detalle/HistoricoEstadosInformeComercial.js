@@ -28,6 +28,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', {
 		        	dataIndex: 'motivo',
 		            text: HreRem.i18n('title.publicaciones.condiciones.motivo'),
 		            flex: 1
+		        },
+		        {
+		        	dataIndex: 'responsableCambio',
+		            text: HreRem.i18n('header.responsable.cambio'),
+		            flex: 1
 		        }
 		
 		    ];

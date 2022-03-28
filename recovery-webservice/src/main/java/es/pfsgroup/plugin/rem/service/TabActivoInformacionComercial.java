@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -9,8 +11,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,28 +19,22 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoEdificio;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
@@ -50,7 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOcupacional;
 import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
@@ -60,26 +54,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-
-import javax.annotation.Resource;
 
 @Component
 public class TabActivoInformacionComercial implements TabActivoService {
@@ -88,7 +70,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private GestorActivoApi gestorActivoManager;
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -103,14 +88,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
     Pattern pattern = Pattern
             .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-	
-	private UtilDiccionarioApi diccionarioApi;
-
-	@Autowired
-	private AlaskaComunicacionManager alaskaComunicacionManager;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -158,7 +135,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				
 				if(activoInfoComercial.getMediadorInforme().getAutorizacionWeb() != null){
 					informeComercial.setAutorizacionWeb(activoInfoComercial.getMediadorInforme().getAutorizacionWeb() == 1 ? true : false);
-					//fechaAutorizacionHasta
+					informeComercial.setFechaAutorizacionHasta(activoInfoComercial.getFechaAutorizacionHasta());
 				}else{
 					informeComercial.setAutorizacionWeb(false);
 				}
@@ -202,7 +179,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			
 			// Datos del proveedor tecnico.
-			ActivoProveedor pve = gestorActivoManager.obtenerProveedorTecnico(activo.getId());
+			ActivoProveedor pve = gestorActivoApi.obtenerProveedorTecnico(activo.getId());
 			
 			if (!Checks.esNulo(pve)) {
 				beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", true);
@@ -222,6 +199,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setFechaVisita(activoInfoComercial.getFechaUltimaVisita());
 			if (!Checks.esNulo(activoInfoComercial.getEnvioLlavesApi())) 
 				informeComercial.setEnvioLlavesApi(activoInfoComercial.getEnvioLlavesApi());
+			if (!Checks.esNulo(activoInfoComercial.getFechaRecepcionLlaves())) 
+				informeComercial.setRecepcionLlavesApi(activoInfoComercial.getFechaRecepcionLlaves());
 			
 			//Direccion
 			if (!Checks.esNulo(activoInfoComercial.getSubtipoActivo())) {
@@ -236,6 +215,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInfoComercial.getNombreVia()))
 				informeComercial.setNombreVia(activoInfoComercial.getNombreVia());
+			if (!Checks.esNulo(activoInfoComercial.getNumeroVia()))
+				informeComercial.setNumeroDomicilio(activoInfoComercial.getNumeroVia());
 			if (!Checks.esNulo(activoInfoComercial.getEscalera()))
 				informeComercial.setEscalera(activoInfoComercial.getEscalera());
 			if (!Checks.esNulo(activoInfoComercial.getPlanta()))
@@ -250,19 +231,16 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setMunicipioCodigo(activoInfoComercial.getLocalidad().getCodigo());
 				informeComercial.setMunicipioDescripcion(activoInfoComercial.getLocalidad().getDescripcion());
 			}
-			//informeComercial.setInferiorMunicipioCodigo();
-			//informeComercial.setInferiorMunicipioDescripcion();
+			if (!Checks.esNulo(activoInfoComercial.getUnidadPoblacional())) {
+				informeComercial.setInferiorMunicipioCodigo(activoInfoComercial.getUnidadPoblacional().getCodigo());
+				informeComercial.setInferiorMunicipioDescripcion(activoInfoComercial.getUnidadPoblacional().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getCodigoPostal())) 
 				informeComercial.setCodPostal(activoInfoComercial.getCodigoPostal());
 			if (!Checks.esNulo(activoInfoComercial.getLatitud())) 
 				informeComercial.setLatitud(activoInfoComercial.getLatitud().toString());
 			if (!Checks.esNulo(activoInfoComercial.getLongitud())) 
 				informeComercial.setLongitud(activoInfoComercial.getLongitud().toString());
-			//informeComercial.setPosibleInforme();
-			//informeComercial.setMotivoNoPosibleInforme();
-			//informeComercial.setUbicacionActivoCodigo();
-			//informeComercial.setUbicacionActivoDescripcion();
-			//informeComercial.setDistrito();
 			
 			//Informacion general
 			if (!Checks.esNulo(activoInfoComercial.getRegimenProteccion())) {
@@ -307,6 +285,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setTerrazaCod(activoInfoComercial.getTerraza().getCodigo());
 				informeComercial.setTerrazaDesc(activoInfoComercial.getTerraza().getDescripcion());
 			}
+			if (!Checks.esNulo(activoInfoComercial.getSuperficieUtil()))
+				informeComercial.setSuperficieUtil(activoInfoComercial.getSuperficieUtil().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getSuperficieTerraza())) 
 				informeComercial.setSuperficieTerraza(activoInfoComercial.getSuperficieTerraza().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getPatio())) {
@@ -353,8 +333,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setArmEmpotradosCod(activoInfoComercial.getArmariosEmpotrados().getCodigo());
 				informeComercial.setArmEmpotradosDesc(activoInfoComercial.getArmariosEmpotrados().getDescripcion());
 			}
-			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) 
-				informeComercial.setCalefaccion(activoInfoComercial.getCalefaccion().getDescripcion());
+			if (!Checks.esNulo(activoInfoComercial.getCalefaccion())) {
+				informeComercial.setCalefaccionCod(activoInfoComercial.getCalefaccion().getCodigo());
+				informeComercial.setCalefaccionDesc(activoInfoComercial.getCalefaccion().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getTipoCalefaccion())) {
 				informeComercial.setTipoCalefaccionCod(activoInfoComercial.getTipoCalefaccion().getCodigo());
 				informeComercial.setTipoCalefaccionDesc(activoInfoComercial.getTipoCalefaccion().getDescripcion());
@@ -403,7 +385,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setAdmiteMascotaCod(activoInfoComercial.getAdmiteMascotas().getCodigo());
 				informeComercial.setAdmiteMascotaDesc(activoInfoComercial.getAdmiteMascotas().getDescripcion());
 			}
-
+			if (!Checks.esNulo(activoInfoComercial.getLicenciaObra())) {
+				informeComercial.setLicenciaObraCod(activoInfoComercial.getLicenciaObra().getCodigo());
+				informeComercial.setLicenciaObraDesc(activoInfoComercial.getLicenciaObra().getDescripcion());
+			}
 			if (!Checks.esNulo(activoInfoComercial.getLicenciaApertura())) {
 				informeComercial.setLicenciaAperturaCod(activoInfoComercial.getLicenciaApertura().getCodigo());
 				informeComercial.setLicenciaAperturaDesc(activoInfoComercial.getLicenciaApertura().getDescripcion());
@@ -497,13 +482,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setValUbicacionCod(activoInfoComercial.getValoracionUbicacion().getCodigo());
 				informeComercial.setValUbicacionDesc(activoInfoComercial.getValoracionUbicacion().getDescripcion());
 			}
-
-			//Otra info de interes
-			//informeComercial.setModificadoInforme(activoInfoComercial);
-			//informeComercial.setCompletadoInforme(activoInfoComercial);
-			//informeComercial.setFechaModificadoInforme(activoInfoComercial);
-			//informeComercial.setFechaCompletadoInforme(activoInfoComercial);
-			//informeComercial.setFechaRecepcionInforme(activoInfoComercial);
 		}		
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
@@ -539,9 +517,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 		}
 		
 		if (!Checks.esNulo(actInfoComercial)) {
-
-
-			DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 			
 			if (Checks.esNulo(activo.getInfoComercial())) {
 				activo.setInfoComercial(new ActivoInfoComercial());
@@ -556,6 +531,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInformeDto.getEnvioLlavesApi())) {
 				actInfoComercial.setEnvioLlavesApi(activoInformeDto.getEnvioLlavesApi());
+			}
+			if (!Checks.esNulo(activoInformeDto.getRecepcionLlavesApi())) {
+				actInfoComercial.setFechaRecepcionLlaves(activoInformeDto.getRecepcionLlavesApi());
 			}
 										
 			//Direccion
@@ -623,29 +601,27 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				actInfoComercial.setLongitud(bigDecimalLongitud);
 			}
 			
-			/*if (!Checks.esNulo(activoInformeDto.getInferiorMunicipioCodigo())) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getInferiorMunicipioCodigo());
+			if (!Checks.esNulo(activoInformeDto.getInferiorMunicipioCodigo())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getInferiorMunicipioCodigo());
 				DDUnidadPoblacional unidadPoblacional = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
-				beanUtilNotNull.copyProperty(actInfoComercial, "unidadPoblacional", unidadPoblacional);
+				actInfoComercial.setUnidadPoblacional(unidadPoblacional);
 			}
 
 			if (!Checks.esNulo(activoInformeDto.getUbicacionActivoCodigo())) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getUbicacionActivoCodigo());
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getUbicacionActivoCodigo());
 				DDUbicacionActivo ubicacionActivo = (DDUbicacionActivo) genericDao.get(DDUbicacionActivo.class, filtro);
-				beanUtilNotNull.copyProperty(actInfoComercial, "ubicacionActivo", ubicacionActivo);
-			}*/
+				actInfoComercial.setUbicacionActivo(ubicacionActivo);
+			}
 			
 			//Informe Mediador
-			/*if (!Checks.esNulo(activoInformeDto.getPosibleInforme())){
-				beanUtilNotNull.copyProperty(actInfoComercial, "posibleInforme", activoInformeDto.getPosibleInforme());
-					if (activoInformeDto.getPosibleInforme() == 1){
-						beanUtilNotNull.copyProperty(actInfoComercial, "motivoNoPosibleInforme", " ");
-					} else {
-						if (!Checks.esNulo(activoInformeDto.getMotivoNoPosibleInforme())){
-							beanUtilNotNull.copyProperty(actInfoComercial, "motivoNoPosibleInforme", activoInformeDto.getMotivoNoPosibleInforme());
-						}
-					}
-			}*/
+			if (!Checks.esNulo(activoInformeDto.getPosibleInforme())){
+				actInfoComercial.setPosibleInforme(activoInformeDto.getPosibleInforme());
+				if (activoInformeDto.getPosibleInforme() == 1){
+					actInfoComercial.setMotivoNoPosibleInforme(null);
+				} else if (!Checks.esNulo(activoInformeDto.getMotivoNoPosibleInforme())){
+					actInfoComercial.setMotivoNoPosibleInforme(activoInformeDto.getMotivoNoPosibleInforme());
+				}
+			}
 			
 			//Informacion general
 			if (!Checks.esNulo(activoInformeDto.getRegimenInmuebleCod())) {
@@ -658,6 +634,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			if (!Checks.esNulo(activoInformeDto.getAnyoConstruccion())) 
 				actInfoComercial.setAnyoConstruccion(activoInformeDto.getAnyoConstruccion());
+			if (!Checks.esNulo(activoInformeDto.getLicenciaObraCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getLicenciaObraCod());
+				actInfoComercial.setLicenciaObra(genericDao.get(DDSinSiNo.class, filtro));
+			}
 			
 			//Caracteristicas del activo
 			if (!Checks.esNulo(activoInformeDto.getDormitorios())) 
@@ -705,15 +685,15 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			if (!Checks.esNulo(activoInformeDto.getPlantas())) {
 				actInfoComercial.setNumPlantas(activoInformeDto.getPlantas().longValue());
 			}
-
 			if (!Checks.esNulo(activoInformeDto.getSuperficieTerraza())) {
 				actInfoComercial.setSuperficieTerraza(activoInformeDto.getSuperficieTerraza().floatValue());
 			}
-
 			if (!Checks.esNulo(activoInformeDto.getSuperficiePatio())) {
 				actInfoComercial.setSuperficiePatio(activoInformeDto.getSuperficiePatio().floatValue());
 			}
-
+			if (!Checks.esNulo(activoInformeDto.getSuperficieUtil())) {
+				actInfoComercial.setSuperficieUtil(activoInformeDto.getSuperficieUtil().floatValue());
+			}
 			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionCod());
 				actInfoComercial.setEstadoConservacion(genericDao.get(DDEstadoConservacion.class, filtro));
@@ -747,8 +727,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getArmEmpotradosCod());
 				actInfoComercial.setArmariosEmpotrados(genericDao.get(DDSinSiNo.class, filtro));
 			}
-			if (!Checks.esNulo(activoInformeDto.getCalefaccion())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCalefaccion());
+			if (!Checks.esNulo(activoInformeDto.getCalefaccionCod())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getCalefaccionCod());
 				actInfoComercial.setCalefaccion(genericDao.get(DDTipoClimatizacion.class, filtro));
 			}
 			if (!Checks.esNulo(activoInformeDto.getTipoCalefaccionCod())) {
@@ -903,7 +883,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getValUbicacionCod());
 				actInfoComercial.setValoracionUbicacion(genericDao.get(DDValoracionUbicacion.class, filtro));
 			}
-			/*if(!Checks.esNulo(actInfoComercial.getPosibleInforme())) {
+			if(!Checks.esNulo(actInfoComercial.getPosibleInforme())) {
 				if (actInfoComercial.getPosibleInforme() == 0) {
 					Filter filterEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
 					DDEstadoInformeComercial estadoRechazado = genericDao.get(DDEstadoInformeComercial.class, filterEstado);
@@ -937,11 +917,8 @@ public class TabActivoInformacionComercial implements TabActivoService {
 					String cuerpoCorreo = this.generateCuerpoCorreo(dtoSendNotificator, cuerpo);
 					genericAdapter.sendMail(destinatarios, mailsCC, asunto, cuerpoCorreo);
 				}
-				
-				activo.setValoracion(valoraciones);
-				activo.setInfoComercial(actInfoComercial);
+			}
 			
-			}*/
 			genericDao.save(ActivoInfoComercial.class, actInfoComercial);
 			activoApi.saveOrUpdate(activo);
 			

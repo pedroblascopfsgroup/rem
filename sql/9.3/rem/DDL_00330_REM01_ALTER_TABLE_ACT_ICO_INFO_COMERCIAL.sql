@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20211213
+--## FECHA_CREACION=20220323
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16330
@@ -53,6 +53,8 @@ DECLARE
     T_COL('ADD_CONSTRAINT', 'FK_ICO_REHABILITADO', 'ICO_REHABILITADO','DD_SIN_SINO','DD_SIN_ID','1'),
     T_COL('ADD_COLUMN', 'ICO_LIC_APERTURA', 'NUMBER(16,0)', 'Indicador licencia apertura activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_LIC_APERTURA', 'ICO_LIC_APERTURA','DD_SIN_SINO','DD_SIN_ID','1'), 
+    T_COL('ADD_COLUMN', 'ICO_LIC_OBRA', 'NUMBER(16,0)', 'Indicador licencia obra activo'),
+    T_COL('ADD_CONSTRAINT', 'FK_ICO_LIC_OBRA', 'ICO_LIC_OBRA','DD_SIN_SINO','DD_SIN_ID','1'), 
     T_COL('ADD_COLUMN', 'ICO_ANEJO_GARAJE', 'NUMBER(16,0)', 'Indicador anejo garaje activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_ANEJO_GARAJE', 'ICO_ANEJO_GARAJE','DD_SIN_SINO','DD_SIN_ID','1'),
     T_COL('ADD_COLUMN', 'ICO_ANEJO_TRASTERO', 'NUMBER(16,0)', 'Indicador anejo trastero activo'),
@@ -70,6 +72,7 @@ DECLARE
     T_COL('ADD_CONSTRAINT', 'FK_ICO_DD_TCL_ID', 'DD_TCL_ID','DD_TCL_TIPO_CLIMATIZACION','DD_TCL_ID',''),
     T_COL('ADD_COLUMN', 'ICO_ARM_EMPOTRADOS', 'NUMBER(16,0)', 'Indicador armarios empotrados activo'),
     T_COL('ADD_CONSTRAINT', 'FK_ICO_ARM_EMPOTRADOS', 'ICO_ARM_EMPOTRADOS','DD_SIN_SINO','DD_SIN_ID','1'),
+    T_COL('ADD_COLUMN', 'ICO_SUP_UTIL', 'NUMBER(13,2)', 'Superficie útil activo'),
     T_COL('ADD_COLUMN', 'ICO_SUP_TERRAZA', 'NUMBER(13,2)', 'Superficie terraza activo'),
     T_COL('ADD_COLUMN', 'ICO_SUP_PATIO', 'NUMBER(13,2)', 'Superficie patio activo'),
     T_COL('ADD_COLUMN', 'DD_EXI_ID', 'NUMBER(16,0)', 'Id Tipo exterior/interior'),
@@ -219,6 +222,9 @@ BEGIN
         END IF;
     
     END LOOP;
+
+    V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY ICO_DESCRIPCION VARCHAR2(3000 CHAR)';
+    EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('[FIN]');
     

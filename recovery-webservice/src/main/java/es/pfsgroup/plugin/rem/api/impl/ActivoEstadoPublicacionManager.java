@@ -1739,30 +1739,42 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public List<DtoHistoricoFasesDePublicacion> getHistoricoFasesDePublicacionActivo(Long idActivo) {
 		List<DtoHistoricoFasesDePublicacion> listaDtoHistoricoFasesDePublicacion = new ArrayList<DtoHistoricoFasesDePublicacion>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.DESC, "id");
+		
+		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
+		
+		if(fasePublicacionActivoVigente != null) {
+			listaDtoHistoricoFasesDePublicacion.add(historicoToDto(fasePublicacionActivoVigente));
+		}
+		Order order = new Order(OrderType.DESC, "fechaFin");
 		List<HistoricoFasePublicacionActivo> listaHistoricoFasePublicacionActivo = genericDao.getListOrdered(HistoricoFasePublicacionActivo.class, order, filtro);
 		
 		for (HistoricoFasePublicacionActivo historicoFasePublicacionActivo : listaHistoricoFasePublicacionActivo) {
-			DtoHistoricoFasesDePublicacion dtoHistoricoFasesDePublicacion = new DtoHistoricoFasesDePublicacion();
-			try {
-				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "id", historicoFasePublicacionActivo.getId());
-				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fasePublicacion", historicoFasePublicacionActivo.getFasePublicacion().getDescripcion());
-				if (!Checks.esNulo(historicoFasePublicacionActivo.getSubFasePublicacion())) {
-					beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "subfasePublicacion", historicoFasePublicacionActivo.getSubFasePublicacion().getDescripcion());
-				}
-				if (!Checks.esNulo(historicoFasePublicacionActivo.getUsuario())) {
-					beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "usuario", historicoFasePublicacionActivo.getUsuario().getUsername());
-				}
-				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fechaInicio", historicoFasePublicacionActivo.getFechaInicio());
-				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fechaFin", historicoFasePublicacionActivo.getFechaFin());
-				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "comentario", historicoFasePublicacionActivo.getComentario());
-				
-				listaDtoHistoricoFasesDePublicacion.add(dtoHistoricoFasesDePublicacion);
-			} catch (Exception e) {
-				logger.error("Error en activoManager, getHistoricoFasesDePublicacionActivo()", e);
-			}
+			if (fasePublicacionActivoVigente.getId() != historicoFasePublicacionActivo.getId())
+				listaDtoHistoricoFasesDePublicacion.add(historicoToDto(historicoFasePublicacionActivo));
 		}
 		return listaDtoHistoricoFasesDePublicacion;
+	}
+	
+	private DtoHistoricoFasesDePublicacion historicoToDto(HistoricoFasePublicacionActivo historico) {
+		DtoHistoricoFasesDePublicacion dtoHistoricoFasesDePublicacion = new DtoHistoricoFasesDePublicacion();
+		try {
+			beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "id", historico.getId());
+			beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fasePublicacion", historico.getFasePublicacion().getDescripcion());
+			if (!Checks.esNulo(historico.getSubFasePublicacion())) {
+				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "subfasePublicacion", historico.getSubFasePublicacion().getDescripcion());
+			}
+			if (!Checks.esNulo(historico.getUsuario())) {
+				beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "usuario", historico.getUsuario().getUsername());
+			}
+			beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fechaInicio", historico.getFechaInicio());
+			beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "fechaFin", historico.getFechaFin());
+			beanUtilNotNull.copyProperty(dtoHistoricoFasesDePublicacion, "comentario", historico.getComentario());
+			
+			return dtoHistoricoFasesDePublicacion;
+		} catch (Exception e) {
+			logger.error("Error en activoManager, getHistoricoFasesDePublicacionActivo()", e);
+			return null;
+		}
 	}
 
 	@Override

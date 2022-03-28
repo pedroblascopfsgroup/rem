@@ -22,33 +22,17 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoBanyo;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
-import es.pfsgroup.plugin.rem.model.ActivoCocina;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
-import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
-import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
-import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
-import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSolado;
-import es.pfsgroup.plugin.rem.model.ActivoVivienda;
-import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.InformeTestigosOpcionales;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
@@ -67,20 +51,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
-import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
-import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
 import es.pfsgroup.plugin.rem.rest.dto.TestigosOpcionalesDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -95,9 +74,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private RestApi restApi;
-
-	@Autowired
-	private DtoToEntityApi dtoToEntity;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -1434,11 +1410,13 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		
 		if (!Checks.esNulo(informe.getTestigos()) && !Checks.estaVacio(informe.getTestigos())) {
 			for (TestigosOpcionalesDto testigo : informe.getTestigos()) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble());
-				DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
-				if (!Checks.esNulo(subtipo)) {
-					boolean error = subtipo.getTipoActivo().getCodigo().equals(testigo.getCodTipoActivo()) ? true : false;
-					if (!error) errorsList.put("testigosTipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+				if (testigo.getCodSubtipoInmueble() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble());
+					DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+					if (!Checks.esNulo(subtipo)) {
+						boolean error = subtipo.getTipoActivo().getCodigo().equals(testigo.getCodTipoActivo()) ? true : false;
+						if (!error) errorsList.put("testigosTipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+					}
 				}
 			}
 			
@@ -1473,6 +1451,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,filtroSi);
 		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,filtroNo);
 		
+		if (!Checks.esNulo(informe.getIdInformeMediadorWebcom())) {
+			informeEntity.setIdWebcom(informe.getIdInformeMediadorWebcom());
+		}
 				
 		/*informe.getCodEstadoInforme()
 		 		es para el historico pero no se sabe el diccionario*/
@@ -1481,35 +1462,39 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		informeEntity.setLatitud(BigDecimal.valueOf(informe.getLat()));
 		informeEntity.setLongitud(BigDecimal.valueOf(informe.getLng()));
 		
-		DDTipoActivo tipoAct = genericDao.get(DDTipoActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoActivo()));
+		if (!Checks.esNulo(informe.getCodTipoActivo())) {
+			DDTipoActivo tipoAct = genericDao.get(DDTipoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoActivo()));
+			informeEntity.setTipoActivo(tipoAct);
+		}
+		if (!Checks.esNulo(informe.getCodSubtipoInmueble())) {
+			DDSubtipoActivo subtipoAct = genericDao.get(DDSubtipoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble()));
+			informeEntity.setSubtipoActivo(subtipoAct);
+		}
+		if (!Checks.esNulo(informe.getCodTipoVia())) {
+			DDTipoVia tipoVia = genericDao.get(DDTipoVia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoVia()));
+			informeEntity.setTipoVia(tipoVia);
+		}
 		
-		informeEntity.setTipoActivo(tipoAct);
-		
-		DDSubtipoActivo subtipoAct = genericDao.get(DDSubtipoActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble()));
-		
-		informeEntity.setSubtipoActivo(subtipoAct);
-		
-		DDTipoVia tipoVia = genericDao.get(DDTipoVia.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoVia()));
-		
-		informeEntity.setTipoVia(tipoVia);
 		informeEntity.setNombreVia(informe.getNombreCalle());
 		informeEntity.setNumeroVia(informe.getNumeroCalle());
 		informeEntity.setEscalera(informe.getEscalera());
 		informeEntity.setPlanta(informe.getPlanta());
 		informeEntity.setPuerta(informe.getPuerta());
 		
-		Localidad municipio = genericDao.get(Localidad.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodMunicipio()));
+		if (!Checks.esNulo(informe.getCodMunicipio())) {
+			Localidad municipio = genericDao.get(Localidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodMunicipio()));
+			informeEntity.setLocalidad(municipio);
+		}
+		if (!Checks.esNulo(informe.getCodProvincia())) {
+			DDProvincia prv = genericDao.get(DDProvincia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodProvincia()));
+			informeEntity.setProvincia(prv);
+		}
 		
-		informeEntity.setLocalidad(municipio);
-
-		DDProvincia prv = genericDao.get(DDProvincia.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodProvincia()));
-		
-		informeEntity.setProvincia(prv);
 		informeEntity.setCodigoPostal(informe.getCodigoPostal());
 		
 		//Datos del activo
@@ -1521,10 +1506,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				el tipo comercializacion en informe debe modificar el del activo?*/
 		
 		//Caracteristicas del activo
-		informeEntity.setNumDormitorios(informe.getNumeroDormitorios().longValue());
-		informeEntity.setNumBanyos(informe.getNumeroBanyos().longValue());
-		informeEntity.setNumAseos(informe.getNumeroAseos().longValue());
-		informeEntity.setNumGaraje(informe.getNumeroPlazasGaraje().longValue());		
+		informeEntity.setNumDormitorios(!Checks.esNulo(informe.getNumeroDormitorios())
+				? informe.getNumeroDormitorios().longValue() : null);
+		informeEntity.setNumBanyos(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroBanyos().longValue() : null);
+		informeEntity.setNumAseos(!Checks.esNulo(informe.getNumeroAseos())
+				? informe.getNumeroAseos().longValue() : null);
+		informeEntity.setNumGaraje(!Checks.esNulo(informe.getNumeroPlazasGaraje())
+				? informe.getNumeroPlazasGaraje().longValue() : null);	
 		informeEntity.setTerraza(!Checks.esNulo(informe.getTerraza())
 				? informe.getTerraza() ? ddSi : ddNo : null);
 		informeEntity.setPatio(!Checks.esNulo(informe.getPatio())
@@ -1532,16 +1521,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		informeEntity.setAscensor(!Checks.esNulo(informe.getAscensor())
 				? informe.getAscensor() ? ddSi : ddNo : null);
 		
-		/*informe.getUtilSuperficie en info registral*/
+		informeEntity.setSuperficieUtil(informe.getUtilSuperficie());
 		
 		informeEntity.setRehabilitado(!Checks.esNulo(informe.getRehabilitado())
 				? informe.getRehabilitado() ? ddSi : ddNo : null);
 		informeEntity.setAnyoRehabilitacion(informe.getAnyoRehabilitacion());
 		
-		DDEstadoConservacion ecv = genericDao.get(DDEstadoConservacion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacion()));
+		if (!Checks.esNulo(informe.getCodEstadoConservacion())) {
+			DDEstadoConservacion ecv = genericDao.get(DDEstadoConservacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacion()));
+			informeEntity.setEstadoConservacion(ecv);
+		}
 		
-		informeEntity.setEstadoConservacion(ecv);
 		informeEntity.setAnejoGaraje(!Checks.esNulo(informe.getAnejoGaraje())
 				? informe.getAnejoGaraje() ? ddSi : ddNo : null);
 		informeEntity.setAnejoTrastero(!Checks.esNulo(informe.getAnejoTrastero())
@@ -1552,18 +1543,23 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				? informe.getOcupado() ? ddSi : ddNo : null);
 		informeEntity.setVisitable(!Checks.esNulo(informe.getVisitableFechaVisita())
 				? informe.getVisitableFechaVisita() ? ddSi : ddNo : null);
-		informeEntity.setNumSalones(informe.getNumeroSalones().longValue());
-		informeEntity.setNumEstancias(informe.getNumeroEstancias().longValue());
-		informeEntity.setNumPlantas(informe.getNumeroPlantas().longValue());
+		informeEntity.setNumSalones(!Checks.esNulo(informe.getNumeroSalones())
+				? informe.getNumeroSalones().longValue() : null);
+		informeEntity.setNumEstancias(!Checks.esNulo(informe.getNumeroEstancias())
+				? informe.getNumeroEstancias().longValue() : null);
+		informeEntity.setNumPlantas(!Checks.esNulo(informe.getNumeroPlantas())
+				? informe.getNumeroPlantas().longValue() : null);
 		
 		//Descripcion comercial
 		informeEntity.setDescripcionComercial(informe.getDescripcionComercial());
 		
 		//Caracteristicas ppales activo
-		DDRatingCocina cocina = genericDao.get(DDRatingCocina.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCocinaRating()));
+		if (!Checks.esNulo(informe.getCocinaRating())) {
+			DDRatingCocina cocina = genericDao.get(DDRatingCocina.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCocinaRating()));
+			informeEntity.setRatingCocina(cocina);
+		}
 		
-		informeEntity.setRatingCocina(cocina);
 		informeEntity.setCocinaAmueblada(!Checks.esNulo(informe.getCocinaAmueblada())
 				? informe.getCocinaAmueblada() ? ddSi : ddNo : null);
 		
@@ -1576,81 +1572,97 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		}
 		informeEntity.setOrientacion(orientacion);
 	
-		DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, 
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion()));
-		informeEntity.setCalefaccion(ddClimatizacion);
+		if (!Checks.esNulo(informe.getCodCalefaccion())) {
+			DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion()));
+			informeEntity.setCalefaccion(ddClimatizacion);
+		}
+		if (!Checks.esNulo(informe.getCodTipoCalefaccion())) {
+			DDTipoCalefaccion tca = genericDao.get(DDTipoCalefaccion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoCalefaccion()));
+			informeEntity.setTipoCalefaccion(tca);
+		}
+		if (!Checks.esNulo(informe.getCodAireAcondicionado())) {
+			DDTipoClimatizacion tcl = genericDao.get(DDTipoClimatizacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAireAcondicionado()));
+			informeEntity.setAireAcondicionado(tcl);
+		}
 		
-		DDTipoCalefaccion tca = genericDao.get(DDTipoCalefaccion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoCalefaccion()));
-		
-		informeEntity.setTipoCalefaccion(tca);
-		
-		DDTipoClimatizacion tcl = genericDao.get(DDTipoClimatizacion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAireAcondicionado()));
-		
-		informeEntity.setAireAcondicionado(tcl);
 		informeEntity.setArmariosEmpotrados(!Checks.esNulo(informe.getExistenArmariosEmpotrados())
 				? informe.getExistenArmariosEmpotrados() ? ddSi : ddNo : null);
 		
-		DDExteriorInterior ext = genericDao.get(DDExteriorInterior.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getExteriorInterior()));
-		
-		informeEntity.setExteriorInterior(ext);
+		if (!Checks.esNulo(informe.getExteriorInterior())) {
+			DDExteriorInterior ext = genericDao.get(DDExteriorInterior.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getExteriorInterior()));
+			informeEntity.setExteriorInterior(ext);
+		}
 		
 		//Otras caracteristicas vivienda
-		DDEstadoConservacionEdificio esc = genericDao.get(DDEstadoConservacionEdificio.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacionEdificio()));
+		if (!Checks.esNulo(informe.getCodEstadoConservacionEdificio())) {
+			DDEstadoConservacionEdificio esc = genericDao.get(DDEstadoConservacionEdificio.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacionEdificio()));
+			informeEntity.setEstadoConservacionEdificio(esc);
+		}
 		
-		informeEntity.setEstadoConservacionEdificio(esc);
-		informeEntity.setNumPlantasEdificio(informe.getNumeroPlantasEdificio().longValue());
+		informeEntity.setNumPlantasEdificio(!Checks.esNulo(informe.getNumeroPlantasEdificio())
+				? informe.getNumeroPlantasEdificio().longValue() : null);
 		
-		DDTipoPuerta tpu = genericDao.get(DDTipoPuerta.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoPuertaAcceso()));
-		
-		informeEntity.setTipoPuerta(tpu);
-		
-		DDEstadoMobiliario emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPuertasInteriores()));
-		
-		informeEntity.setEstadoPuertasInteriores(emo);
-		
-		emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoVentanas()));
-		
-		informeEntity.setEstadoVentanas(emo);
-		
-		emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPersianas()));
-		
-		informeEntity.setEstadoPersianas(emo);
-		
-		emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPintura()));
-		
-		informeEntity.setEstadoPintura(emo);
-		
-		emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoSolados()));
-		
-		informeEntity.setEstadoSolados(emo);
-		
-		DDAdmision adm = genericDao.get(DDAdmision.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAdmiteMascota()));
-		
-		informeEntity.setAdmiteMascotas(adm);
-		
-		emo = genericDao.get(DDEstadoMobiliario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoBanyos()));
-		
-		informeEntity.setEstadoBanyos(emo);
+		if (!Checks.esNulo(informe.getCodTipoPuertaAcceso())) {
+			DDTipoPuerta tpu = genericDao.get(DDTipoPuerta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoPuertaAcceso()));
+			informeEntity.setTipoPuerta(tpu);
+		}
+		DDEstadoMobiliario emo = null;
+		if (!Checks.esNulo(informe.getCodEstadoPuertasInteriores())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPuertasInteriores()));
+			informeEntity.setEstadoPuertasInteriores(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoVentanas())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoVentanas()));
+			informeEntity.setEstadoVentanas(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoPersianas())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPersianas()));
+			informeEntity.setEstadoPersianas(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoPintura())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPintura()));
+			informeEntity.setEstadoPintura(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoSolados())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoSolados()));
+			informeEntity.setEstadoSolados(emo);
+		}
+		if (!Checks.esNulo(informe.getCodAdmiteMascota())) {
+			DDAdmision adm = genericDao.get(DDAdmision.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAdmiteMascota()));
+			informeEntity.setAdmiteMascotas(adm);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoBanyos())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoBanyos()));
+			informeEntity.setEstadoBanyos(emo);
+		}
 		
 		//Otras caracteristicas otras tipologias
 		informeEntity.setLicenciaApertura(!Checks.esNulo(informe.getLicenciaApertura()) 
 				? informe.getLicenciaApertura() ? ddSi : ddNo : null);
+		informeEntity.setLicenciaObra(!Checks.esNulo(informe.getLicenciaObra()) 
+				? informe.getLicenciaObra() ? ddSi : ddNo : null);
 		informeEntity.setSalidaHumos(!Checks.esNulo(informe.getSalidaHumosOtrasCaracteristicas()) 
 				? informe.getSalidaHumosOtrasCaracteristicas() ? ddSi : ddNo : null);
 		informeEntity.setAptoUsoBruto(!Checks.esNulo(informe.getAptoUsoEnBruto()) 
 				? informe.getAptoUsoEnBruto() ? ddSi : ddNo : null);
+		if (!Checks.esNulo(informe.getCodAccesibilidad())) {
+			DDActivoAccesibilidad aac = genericDao.get(DDActivoAccesibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAccesibilidad()));
+			informeEntity.setAccesibilidad(aac);
+		}
 		
 		//codAccesibilidad no tiene diccionario
 	
@@ -1658,15 +1670,17 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		informeEntity.setSuperficieParcela(informe.getParcelaSuperficie());
 		informeEntity.setUrbanizacionEjecutado(informe.getPorcentajeUrbanizacionEjecutado());
 		
-		DDClasificacion cla = genericDao.get(DDClasificacion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getClasificacion()));
+		if (!Checks.esNulo(informe.getClasificacion())) {
+			DDClasificacion cla = genericDao.get(DDClasificacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getClasificacion()));
+			informeEntity.setClasificacion(cla);
+		}
+		if (!Checks.esNulo(informe.getCodUso())) {
+			DDUsoActivo usa = genericDao.get(DDUsoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUso()));
+			informeEntity.setUsoActivo(usa);
+		}
 		
-		informeEntity.setClasificacion(cla);
-		
-		DDUsoActivo usa = genericDao.get(DDUsoActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUso()));
-		
-		informeEntity.setUsoActivo(usa);
 		informeEntity.setMetrosFachada(informe.getMetrosLinealesFachadaPrincipal());
 		informeEntity.setAlmacen(!Checks.esNulo(informe.getAlmacen()) 
 				? informe.getAlmacen() ? ddSi : ddNo : null);
@@ -1685,37 +1699,41 @@ public class InformeMediadorManager implements InformeMediadorApi {
 		informeEntity.setConserje(!Checks.esNulo(informe.getExisteConserjeVigilancia())
 				? informe.getExisteConserjeVigilancia() ? ddSi : ddNo : null);
 		
-		DDDisponibilidad dis = genericDao.get(DDDisponibilidad.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getJardin()));
-		
-		informeEntity.setJardin(dis);
-		
-		dis = genericDao.get(DDDisponibilidad.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getPiscina()));
-		
-		informeEntity.setPiscina(dis);
+		DDDisponibilidad dis = null;
+		if (!Checks.esNulo(informe.getJardin())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getJardin()));
+			informeEntity.setJardin(dis);
+		}
+		if (!Checks.esNulo(informe.getPiscina())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getPiscina()));
+			informeEntity.setPiscina(dis);
+		}
 		
 		informeEntity.setInstalacionesDeportivas(!Checks.esNulo(informe.getExistenInstalacionesDeportivas())
 				? informe.getExistenInstalacionesDeportivas() ? ddSi : ddNo : null);
 		
-		dis = genericDao.get(DDDisponibilidad.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getGimnasio()));
-		
-		informeEntity.setGimnasio(dis);
+		if (!Checks.esNulo(informe.getGimnasio())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getGimnasio()));
+			informeEntity.setGimnasio(dis);
+		}
 		
 		informeEntity.setAccesoMinusvalidos(!Checks.esNulo(informe.getAccesoMinusvalidosOtrasCaracteristicas())
 				? informe.getAccesoMinusvalidosOtrasCaracteristicas() ? ddSi : ddNo : null);
 		
 		//Comunicaciones y servicios
-		DDValoracionUbicacion val = genericDao.get(DDValoracionUbicacion.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodValoracionUbicacion()));
-		
-		informeEntity.setValoracionUbicacion(val);
-		
-		DDUbicacionActivo uac = genericDao.get(DDUbicacionActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUbicacion()));
-		
-		informeEntity.setUbicacionActivo(uac);
+		if (!Checks.esNulo(informe.getCodValoracionUbicacion())) {
+			DDValoracionUbicacion val = genericDao.get(DDValoracionUbicacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodValoracionUbicacion()));
+			informeEntity.setValoracionUbicacion(val);
+		}
+		if (!Checks.esNulo(informe.getCodUbicacion())) {
+			DDUbicacionActivo uac = genericDao.get(DDUbicacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUbicacion()));
+			informeEntity.setUbicacionActivo(uac);
+		}
 		
 		//Valoracion
 		informeEntity.setValorEstimadoVenta(informe.getValorEstimadoVenta());

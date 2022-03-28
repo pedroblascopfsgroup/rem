@@ -499,6 +499,7 @@ public class ActivoAdapter {
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
 					tipo, descripcion, principal, situacion, dtoFoto.getOrden(), suelos, plano);
+
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}

@@ -81,6 +81,7 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private Integer plazasGaraje;
 	private String terrazaCod;
 	private String terrazaDesc;
+	private Double superficieUtil;
 	private Double superficieTerraza;
 	private String patioCod;
 	private String patioDesc;
@@ -88,6 +89,8 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String rehabilitadoCod;
 	private String rehabilitadoDesc;
 	private Integer anyoRehabilitacion;
+	private String licenciaObraCod;
+	private String licenciaObraDesc;
 	private String estadoConservacionCod;
 	private String estadoConservacionDesc;
 	private String anejoGarajeCod;
@@ -105,7 +108,8 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String cocAmuebladaDesc;
 	private String armEmpotradosCod;
 	private String armEmpotradosDesc;
-	private String calefaccion;
+	private String calefaccionCod;
+	private String calefaccionDesc;
 	private String tipoCalefaccionCod;
 	private String tipoCalefaccionDesc;
 	private String aireAcondCod;
@@ -394,6 +398,12 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	public void setTerrazaDesc(String terrazaDesc) {
 		this.terrazaDesc = terrazaDesc;
 	}
+	public Double getSuperficieUtil() {
+		return superficieUtil;
+	}
+	public void setSuperficieUtil(Double superficieUtil) {
+		this.superficieUtil = superficieUtil;
+	}
 	public Double getSuperficieTerraza() {
 		return superficieTerraza;
 	}
@@ -435,6 +445,18 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
+	}
+	public String getLicenciaObraCod() {
+		return licenciaObraCod;
+	}
+	public void setLicenciaObraCod(String licenciaObraCod) {
+		this.licenciaObraCod = licenciaObraCod;
+	}
+	public String getLicenciaObraDesc() {
+		return licenciaObraDesc;
+	}
+	public void setLicenciaObraDesc(String licenciaObraDesc) {
+		this.licenciaObraDesc = licenciaObraDesc;
 	}
 	public String getEstadoConservacionCod() {
 		return estadoConservacionCod;
@@ -526,11 +548,17 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	public void setArmEmpotradosDesc(String armEmpotradosDesc) {
 		this.armEmpotradosDesc = armEmpotradosDesc;
 	}
-	public String getCalefaccion() {
-		return calefaccion;
+	public String getCalefaccionCod() {
+		return calefaccionCod;
 	}
-	public void setCalefaccion(String calefaccion) {
-		this.calefaccion = calefaccion;
+	public void setCalefaccionCod(String calefaccionCod) {
+		this.calefaccionCod = calefaccionCod;
+	}
+	public String getCalefaccionDesc() {
+		return calefaccionDesc;
+	}
+	public void setCalefaccionDesc(String calefaccionDesc) {
+		this.calefaccionDesc = calefaccionDesc;
 	}
 	public String getTipoCalefaccionCod() {
 		return tipoCalefaccionCod;

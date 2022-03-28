@@ -19,7 +19,16 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'telefonoMediador'
     		},
 			{
-    			name:'fechaVisita'
+    			name:'fechaVisita',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		},
     	    {
     	    	name: 'nombreMediadorEspejo'
@@ -125,6 +134,183 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 			depends: ['subtipoActivoCodigo', 'tipoActivoCodigo']
 			
 		},
+		{
+			name: 'isSueloEdificioConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isEdificioConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloComercialConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialEdificio',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaEdificio',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isOtros',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercialIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isIndustrialOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isIndustrial',
+			calculate: function(data) { 
+				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL'];
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isComercialIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccionOtros',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isViviendaComercial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccionIndustrial',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL']
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
+		{
+			name: 'isSueloConstruccion',
+			calculate: function(data) { 
+				return (data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'] 
+						|| data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION']);
+			},
+			depends: 'tipoActivoCodigo'
+			
+		},
 	 { name: 'subtipoActivoDescripcion' },
 	 { name: 'tipoViaCodigo' },
 	 { name: 'tipoViaDescripcion' },
@@ -176,6 +362,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'plazasGaraje' },
 	 { name: 'terrazaCod' },
 	 { name: 'terrazaDesc' },
+	 { name: 'superficieUtil' },
 	 { name: 'superficieTerraza' },
 	 { name: 'patioCod' },
 	 { name: 'patioDesc' },
@@ -183,6 +370,8 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'rehabilitadoCod' },
 	 { name: 'rehabilitadoDesc' },
 	 { name: 'anyoRehabilitacion' },
+	 { name: 'licenciaObraCod' },
+	 { name: 'licenciaObraDesc' },
 	 { name: 'estadoConservacionCod' },
 	 { name: 'estadoConservacionDesc' },
 	 { name: 'anejoGarajeCod' },
@@ -200,7 +389,8 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'cocAmuebladaDesc' },
 	 { name: 'armEmpotradosCod' },
 	 { name: 'armEmpotradosDesc' },
-	 { name: 'calefaccion' },
+	 { name: 'calefaccionCod' },
+	 { name: 'calefaccionDesc' },
 	 { name: 'tipoCalefaccionCod' },
 	 { name: 'tipoCalefaccionDesc' },
 	 { name: 'aireAcondCod' },
@@ -277,14 +467,7 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
 	 { name: 'ubicacionCod' },
 	 { name: 'ubicacionDesc' },
 	 { name: 'valUbicacionCod' },
-	 { name: 'valUbicacionDesc' },
-
-	//Otra info de interes
-	 { name: 'modificadoInforme' },
-	 { name: 'completadoInforme' },
-	 { name: 'fechaModificadoInforme' },
-	 { name: 'fechaCompletadoInforme' },
-	 { name: 'fechaRecepcionInforme' }
+	 { name: 'valUbicacionDesc' }
     ],
     
 	proxy: {

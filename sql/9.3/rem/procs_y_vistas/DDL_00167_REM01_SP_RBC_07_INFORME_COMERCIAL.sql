@@ -25,6 +25,8 @@
 --##        0.13 Se añaden nuevos campos Infrome comercial - [HREOS-17351] - Javier Esbri
 --##        0.14 Nuevos campos sobre informe comercial - [HREOS-17414] - Daniel Algaba
 --##	    0.15 Añadido BALCON, TIPO_VIVIENDA_INF y TIPOLOGIA_EDIFICIO - HREOS-17497 - Daniel Algaba
+--##        0.16 Nuevos campos sobre informe comercial - [HREOS-17414] - Daniel Algaba
+--##        0.17 Se cambia los campos por el nuevo modelo de Informe comercial - [HREOS-17366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

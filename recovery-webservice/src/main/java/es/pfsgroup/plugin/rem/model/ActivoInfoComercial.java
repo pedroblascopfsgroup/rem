@@ -106,6 +106,10 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_ANO_REHABILITACION")
 	private Integer anyoRehabilitacion;
+	
+	@ManyToOne
+	@JoinColumn(name = "ICO_LIC_OBRA")
+	private DDSinSiNo licenciaObra;
 
 	@Column(name = "ICO_FECHA_ULTIMA_VISITA")
 	private Date fechaUltimaVisita;
@@ -121,9 +125,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	@Column(name = "ICO_FECHA_AUTORIZ_HASTA")
 	private Date fechaAutorizacionHasta;
-
-	@Column(name = "ICO_FECHA_RECEP_LLAVES")
-	private Date fechaRecepcionLlaves;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPA_ID")
@@ -158,22 +159,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_LONGITUD")
 	private BigDecimal longitud;
 
-	/*@Column(name = "ICO_ZONA")
-	private String zona;
-
-	@Column(name = "ICO_DISTRITO")
-	private String distrito;*/
-
 	@Column(name = "ICO_CODIGO_POSTAL")
 	private String codigoPostal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_LOC_REGISTRO_ID")
-	private Localidad localidadRegistro;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PRV_ID")
@@ -235,6 +226,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "ICO_ASCENSOR")
 	private DDSinSiNo ascensor;
+	
+	@Column(name="ICO_SUP_UTIL")
+	private Float superficieUtil;
 
 	@ManyToOne
 	@JoinColumn(name = "ICO_REHABILITADO")
@@ -382,6 +376,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name="ICO_FECHA_ENVIO_LLAVES_API")
 	private Date envioLlavesApi;
+	
+	@Column(name = "ICO_FECHA_RECEP_LLAVES")
+	private Date fechaRecepcionLlaves;
 
 	@Column(name="ICO_NUM_DORMITORIOS")
 	private Long numDormitorios;
@@ -553,6 +550,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAnyoRehabilitacion(Integer anyoRehabilitacion) {
 		this.anyoRehabilitacion = anyoRehabilitacion;
+	}
+
+	public DDSinSiNo getLicenciaObra() {
+		return licenciaObra;
+	}
+
+	public void setLicenciaObra(DDSinSiNo licenciaObra) {
+		this.licenciaObra = licenciaObra;
 	}
 
 	public Date getFechaUltimaVisita() {
@@ -833,6 +838,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAscensor(DDSinSiNo ascensor) {
 		this.ascensor = ascensor;
+	}
+	
+	public Float getSuperficieUtil() {
+		return superficieUtil;
+	}
+
+	public void setSuperficieUtil(Float superficieUtil) {
+		this.superficieUtil = superficieUtil;
 	}
 
 	public DDSinSiNo getRehabilitado() {
@@ -1353,14 +1366,6 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
 		this.accesibilidad = accesibilidad;
-	}
-	
-	public Localidad getLocalidadRegistro() {
-		return localidadRegistro;
-	}
-
-	public void setLocalidadRegistro(Localidad localidadRegistro) {
-		this.localidadRegistro = localidadRegistro;
 	}
 
 	public Long getIdentificadorPlazaParking() {

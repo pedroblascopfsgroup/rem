@@ -13,6 +13,7 @@ public class DtoTestigosOpcionales {
 	private Float precioMercado;
 	private Float superficie;
 	private String tipoActivo;
+	private String subtipoActivo;
 	private String enlace;
 	private String direccion;
 	private Float lat;
@@ -54,6 +55,12 @@ public class DtoTestigosOpcionales {
 	}
 	public void setTipoActivo(String tipoActivo) {
 		this.tipoActivo = tipoActivo;
+	}
+	public String getSubtipoActivo() {
+		return subtipoActivo;
+	}
+	public void setSubtipoActivo(String subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
 	}
 	public String getEnlace() {
 		return enlace;

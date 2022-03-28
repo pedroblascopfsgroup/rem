@@ -263,7 +263,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					activoFoto.setNombre(webFileItem.getFileItem().getFileName());
 					activoFoto.setDescripcion(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))).getDescripcion());
 					activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("codigoDescripcionFoto"))));
-					activoFoto.setPrincipal(true);
+					activoFoto.setPrincipal(true);		
 					activoFoto.setSuelos(suelos == SUELOS.SI ? true : false);
 					activoFoto.setPlano(plano == PLANO.SI ? true : false);
 					activoFoto.setFechaDocumento(new Date());

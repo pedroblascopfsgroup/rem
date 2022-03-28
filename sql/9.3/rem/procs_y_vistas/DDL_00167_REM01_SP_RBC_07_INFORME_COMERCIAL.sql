@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220309
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17366
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,6 +20,7 @@
 --##	    0.8 Inclusión de campo TXT_COMERCIAL_CAS - HREOS-14838
 --##	    0.9 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.10 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##        0.11 Se cambia los campos por el nuevo modelo de Informe comercial - [HREOS-17366] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -58,56 +59,6 @@ BEGIN
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_APR_RBC_STOCK AUX
 	USING (			
-           WITH DISTRIBUCION
-           AS( 
-                    SELECT
-                         DIS.DIS_CANTIDAD AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                        ,TPH.DD_TPH_CODIGO AS DD_TPH_CODIGO
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0                
-           ), TERRAZAS AS (
-                    SELECT
-                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''15'',''16'')
-                        GROUP BY DIS.ICO_ID
-           ), HABITACIONES AS (
-                    SELECT
-                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''01'')
-                        GROUP BY DIS.ICO_ID
-           ), NUM_BANYOS AS (
-                    SELECT
-                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''02'')
-                        GROUP BY DIS.ICO_ID
-           ), TRASTEROS AS (
-                    SELECT
-                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''12'')
-                        GROUP BY DIS.ICO_ID
-           ), APARCAMIENTOS AS (
-                    SELECT
-                         SUM(DIS.DIS_CANTIDAD) AS DIS_CANTIDAD
-                        ,DIS.ICO_ID AS ICO_ID
-                    FROM '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS
-                    JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO TPH ON TPH.DD_TPH_ID=DIS.DD_TPH_ID AND TPH.BORRADO=0
-                        WHERE DIS.BORRADO=0  AND TPH.DD_TPH_CODIGO IN (''11'')
-                        GROUP BY DIS.ICO_ID
-           )
            SELECT
                  TO_CHAR(ICO.ICO_FECHA_ULTIMA_VISITA,''YYYYMMDD'') AS FEC_VISITA_INMB_SERVICER
                 ,ICO.ICO_ANO_CONSTRUCCION AS ANYO_CONSTRUCCION
@@ -115,19 +66,19 @@ BEGIN
                 ,ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO      
                 ,ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE               
                 ,CASE
-                    WHEN EDIF.EDI_ASCENSOR >0 THEN ''S''
+                    WHEN ICO.ICO_ASCENSOR = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''S''
                     ELSE ''N''
                  END AS TIENE_ASCENSOR                
-                ,DIST1.DIS_CANTIDAD * 100 AS NUM_HABITACIONES
-                ,DIST2.DIS_CANTIDAD * 100 AS NUM_BANYOS
-                ,DIST3.DIS_CANTIDAD * 100 AS NUM_TERRAZAS
-                ,DIST4.DIS_CANTIDAD * 100 AS NUM_APARACAMIENTOS
+                ,ICO.ICO_NUM_DORMITORIOS * 100 AS NUM_HABITACIONES
+                ,ICO.ICO_NUM_BANYOS * 100 AS NUM_BANYOS
+                ,CASE WHEN ICO.ICO_TERRAZA = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')  THEN 1 * 100 ELSE 0 END AS NUM_TERRAZAS
+                ,ICO.ICO_NUM_GARAJE * 100 AS NUM_APARACAMIENTOS
                 ,CASE
-                    WHEN DIST5.DIS_CANTIDAD>0 THEN ''S''
+                    WHEN ICO.ICO_ANEJO_TRASTERO = (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'') THEN ''S''
                     ELSE ''N''
                  END AS TIENE_TRASTERO
                 ,CASE
-                    WHEN DIST4.DIS_CANTIDAD>0 THEN ''S''
+                    WHEN ICO.ICO_NUM_GARAJE > 0 THEN ''S''
                     ELSE ''N''
                  END AS EQUIPAMIENTO_015001
                 ,  REPLACE(REPLACE(ICO.ICO_INFO_DISTRIBUCION_INTERIOR, CHR(10), '' ''), CHR(13), '' '') TXT_COMERCIAL_CAS_1
@@ -135,11 +86,6 @@ BEGIN
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID=ICO.ACT_ID AND ICO.BORRADO=0
             JOIN '|| V_ESQUEMA ||'.ACT_EDI_EDIFICIO EDIF ON EDIF.ICO_ID=ICO.ICO_ID AND EDIF.BORRADO=0    
-            LEFT JOIN HABITACIONES DIST1 ON DIST1.ICO_ID=ICO.ICO_ID
-            LEFT JOIN NUM_BANYOS DIST2 ON DIST2.ICO_ID=ICO.ICO_ID
-            LEFT JOIN TERRAZAS DIST3 ON DIST3.ICO_ID=ICO.ICO_ID 
-            LEFT JOIN TRASTEROS DIST4 ON DIST4.ICO_ID=ICO.ICO_ID
-            LEFT JOIN APARCAMIENTOS DIST5 ON DIST5.ICO_ID=ICO.ICO_ID
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID=ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO=''03''
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID=ACT.ACT_ID AND PAC.PAC_INCLUIDO = 1
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
@@ -147,7 +93,7 @@ BEGIN
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0
             AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-            AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')
+            AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569'',''A80352750'', ''A80514466'')
             ) US ON (US.NUM_INMUEBLE=AUX.NUM_INMUEBLE AND US.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
             WHEN MATCHED THEN UPDATE SET
                  AUX.FEC_VISITA_INMB_SERVICER=US.FEC_VISITA_INMB_SERVICER

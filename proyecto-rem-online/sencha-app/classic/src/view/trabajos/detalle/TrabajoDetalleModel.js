@@ -166,6 +166,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		checkboxMultiActivo.fireEvent('change', null, !deshabilitar, deshabilitar, null);
 	    	}
 	    	return true;
+	    },
+	    booleanReadOnlyCampoIdTarea: function(get){
+	    	var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+	        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	        var estadoTrabajo = get('trabajo.estadoTrabajoCodigo');
+
+	    	if(isSuper || isGestorActivos){
+	    	    if(CONST.ESTADOS_TRABAJO["VALIDADO"] == estadoTrabajo || 
+	            		CONST.ESTADOS_TRABAJO["PDTE_CIERRE"] == estadoTrabajo ||
+	            		CONST.ESTADOS_TRABAJO["CIERRE"] == estadoTrabajo
+	            		){
+	            	return true;
+	            }else {
+	            	return false
+	            }
+	    	} else {
+	    		return true;
+	    	}
+	 	   	
+	 	   	return true; 
 	    }
 	   
     },

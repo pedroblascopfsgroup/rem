@@ -558,6 +558,7 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_OVN_COMERC_FECHA")
 	private Date obraNuevaAEfectosComercializacionFecha;
+    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTA_ID_BBVA")

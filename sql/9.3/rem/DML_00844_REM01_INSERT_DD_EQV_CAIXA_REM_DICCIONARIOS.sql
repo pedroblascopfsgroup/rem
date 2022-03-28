@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220322
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17351
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -15,6 +15,7 @@
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
 --##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
 --##        0.5 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
+--##        0.6 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
 --##########################################
 --*/
 
@@ -193,6 +194,8 @@ DECLARE
         T_TIPO_DATA('ESTADO_TECNICO','E07','Mantenimiento/actuación finalizada/anulada','DD_EAT_EST_TECNICO','E07','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E08','Desarrollo en gestión','DD_EAT_EST_TECNICO','E08','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E09','Desarrollo en tramitación final/finalizado','DD_EAT_EST_TECNICO','E09','0'),
+        T_TIPO_DATA('ESTADO_TECNICO','E10','Promoción En Estudio/Construcción','DD_EAT_EST_TECNICO','E10','0'),
+        T_TIPO_DATA('ESTADO_TECNICO','E11','Promoción Entregada/Estudiada','DD_EAT_EST_TECNICO','E11','0'),
       --Estado de titularidad  
         T_TIPO_DATA('ESTADO_TITULARIDAD','T01','Sin título','DD_ETI_ESTADO_TITULO','04','0'),
         T_TIPO_DATA('ESTADO_TITULARIDAD','T02','Título no inscrito','DD_ETI_ESTADO_TITULO','01','0'),

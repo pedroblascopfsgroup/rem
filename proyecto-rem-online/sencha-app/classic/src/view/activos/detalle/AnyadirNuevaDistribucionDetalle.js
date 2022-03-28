@@ -47,6 +47,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
 								},
 					        	allowBlank: false,
 								displayField: 'descripcionPlanta',
+								value: '-999',
 	    						valueField: 'numPlanta',
 					        	listeners:{
 					        		change: 'onChangeChainedCombo'
@@ -59,7 +60,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaDistribucionDetalle', {
 					        	reference: 'comboTipoHabitaculo',					        	
 					        	flex:	1,
 					        	allowBlank: false,
-					        	disabled: true,
 					        	bind: {
 					        		store: '{storeTipoHabitaculo}'
 					        	},

@@ -19,6 +19,8 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.dto.AuthtokenRequest;
 import es.pfsgroup.plugin.rem.rest.dto.AuthtokenResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileId;
@@ -213,7 +215,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	@Override
 	public FileResponse upload(File fileToUpload, String name, PROPIEDAD propiedad, Long idRegistro, TIPO tipo,
-			String descripcion, PRINCIPAL principal, SITUACION situacion, Integer orden)
+			String descripcion, PRINCIPAL principal, SITUACION situacion, Integer orden, SUELOS suelos, PLANO plano)
 			throws IOException, RestClientException, HttpClientException {
 		FileUpload file = new FileUpload();
 		file.setFile_base64(FileUtilsREM.base64Encode(fileToUpload));
@@ -254,6 +256,20 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 				metadata.put("principal", "0");
 			}
 		}
+		if (suelos != null) {
+			if (suelos.equals(SUELOS.SI)) {
+				metadata.put("suelos", "1");
+			} else if (suelos.equals(SUELOS.NO)) {
+				metadata.put("suelos", "0");
+			}
+		}
+		if (plano != null) {
+			if (plano.equals(PLANO.SI)) {
+				metadata.put("plano", "1");
+			} else if (plano.equals(PLANO.NO)) {
+				metadata.put("plano", "0");
+			}
+		}
 		if (orden != null) {
 			metadata.put("orden", String.valueOf(orden));
 		}
@@ -279,7 +295,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	@Override
 	public FileResponse update(Long idFile, String name, TIPO tipo, String descripcion, PRINCIPAL principal,
-			SITUACION situacion, Integer orden) throws IOException, RestClientException, HttpClientException {
+			SITUACION situacion, Integer orden, SUELOS suelos, PLANO plano) throws IOException, RestClientException, HttpClientException {
 		FileResponse fileReponse = null;
 		if (idFile != null) {
 			FileListResponse aModificar = this.get(idFile);
@@ -317,6 +333,20 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 						metadata.put("interior_exterior", "0");
 					}
 				}
+				if (suelos != null) {
+					if (suelos.equals(SUELOS.SI)) {
+						metadata.put("suelos", "1");
+					} else if (principal.equals(SUELOS.NO)) {
+						metadata.put("suelos", "0");
+					}
+				}
+				if (plano != null) {
+					if (plano.equals(PLANO.SI)) {
+						metadata.put("plano", "1");
+					} else if (plano.equals(PLANO.NO)) {
+						metadata.put("plano", "0");
+					}
+				}
 				if (orden != null) {
 					metadata.put("orden", String.valueOf(orden));
 				}
@@ -330,7 +360,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 	@Override
 	public FileResponse upload(Long idFile, Integer orden)
 			throws IOException, RestClientException, HttpClientException {
-		return this.update(idFile, null, null, null, null, null, orden);
+		return this.update(idFile, null, null, null, null, null, orden, null, null);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.TestigosOpcionales'],
 
     data: {
     	activo: null,
@@ -1040,20 +1040,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var me = this;
 			var isSubcarteraApple = get('activo.isSubcarteraApple');
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var title = "";
 			
 			if(isSubcarteraApple){
 				title = HreRem.i18n('title.perimetro.apple');
 			}else if(isSubcarteraDivarian){
 				title = HreRem.i18n('title.perimetro.divarian');
+			}else if(isSubcarteraMarina){
+				title = HreRem.i18n('title.perimetro.marina');
 			}
 			return title;
 		},
 		
 		esEditablePerimetroMacc: function(get){
+			var isSubcarteraMarina = get('activo.isSubcarteraMarina');
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			if(isSubcarteraMarina){
+				return false
+			}else{
+				return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+			}
 		},
 		
 		esSubcarteraAppleDivarian: function(get){
@@ -2737,7 +2745,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'acabadosCarpinteria'}
 				}
     		},
-    		/*
     		comboTipoComercializacionActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -2745,7 +2752,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tiposComercializacionActivo'}
 				}
-    		},*/
+    		},
     		
     		comboMotivoAplicaComercializarActivo: {
 				model: 'HreRem.model.ComboBase',
@@ -4044,6 +4051,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 		   }
 	   },
+	   testigosOpcionales:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.TestigosOpcionales',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getTestigosOpcionales',
+				extraParams: {id: '{infoComercial.id}'}
+			}
+		},		
 
 	   comboMotivoNecesidadArras: {
 			model: 'HreRem.model.ComboBase',
@@ -4229,6 +4245,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
+		comboAdmision: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'admision'}
+			}
+		},
+			
 		comboMunicipioAnterior: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4237,25 +4262,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
-		comboMetodoValoracion: {    		
+		comboMetodoValoracion: {    
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'metodoValoracion'}
+			extraParams: {diccionario: 'metodoValoracion'}
 			},
 			autoLoad: true
-		},
-		comboDesarrolloPlanteamiento: {    		
+		},		
+		comboClasificacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'clasificacion'}
+			}
+		},
+		comboDesarrolloPlanteamiento: {    	
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',	
 				extraParams: {diccionario: 'desarrolloPlanteamiento'}
 			},
 			autoLoad: true
 		},
-		comboFaseGestion: {    		
+
+		comboDisponibilidad: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'disponibilidad'}
+			}
+		},
+		comboFaseGestion: {   
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4263,8 +4305,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'faseGestion'}
 			},
 			autoLoad: true
+		}, 		
+
+		comboEstadoConservacionEdificio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoConservacionEdificio'}
+			}
 		},
-		comboProductoDesarrollar: {    		
+		comboProductoDesarrollar: {    	
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4272,17 +4323,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'productoDesarrollar'}
 			},
 			autoLoad: true
-		},
-		comboProximidadRespectoNucleoUrbano: {    		
+		},	
+				
+		/*comboEstadoInformeMediador: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoInformeMediador'}
+			}
+		},*/
+		comboProximidadRespectoNucleoUrbano: {    
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',	
 				extraParams: {diccionario: 'proximidadRespectoNucleoUrbano'}
 			},
 			autoLoad: true
+		},	
+				
+		comboEstadoMobiliario: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoMobiliario'}
+			}
 		},
-		comboSistemaGestion: {    		
+		comboEstadoOcupacional: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoOcupacional'}
+			}
+		},
+				
+		comboSistemaGestion: {   
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4290,34 +4368,188 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'sistemaGestion'}
 			},
 			autoLoad: true
+		}, 		
+				
+		comboExteriorInterior: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'exteriorInterior'}
+			}
 		},
-		comboTipoSuelo: {    		
+		comboTipoSuelo: {    	
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',	
+				extraParams: {diccionario: 'subtiposActivo'}
+			},
+			autoLoad: true
+		},
+				
+		comboTipoCalefaccion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoCalefaccion'}
+			}
+		},
+				
+		comboProductoDesarrollarPrevisto: { 
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario', 
+				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
+			},
+			autoLoad: true
+		},  		
+				
+		comboTipoPuerta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoPuerta'}
+			}
+		},
+		comboUsoActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'usoActivo'}
+			}
+		},
+		comboValoracionUbicacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'valoracionUbicacion'}
+			}
+		},
+		comboRatingCocina: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'ratingCocina'}
+			}
+		},
+		comboTipoClimatizacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoClimatizacion'}
+			}
+		},
+		comboCarteraIM: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}
+		},
+		
+		comboSubcarteraIM: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subentidadesPropietarias'}
+			}
+		},
+		comboSubfasePublicacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subfaseDePublicacion'}
+			}
+		},
+		comboRegimenProteccion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposVpo'}
+			}
+		},
+		comboEstadoFisico: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosActivo'}
+				}
+		},
+		comboCalificacionEnergetica: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'calificacionEnergetica'}
+				}
+		},
+		/*comboSubtipoActivoIM: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtiposActivo'}
-			},
-			autoLoad: true
-		},
-		comboProductoDesarrollarPrevisto: {    		
+			}
+		},   		
+		comboTipoActivoIM: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
-			},
-			autoLoad: true
-		},
-		comboTipoDatoUtilizadoInmuebleComparable: {    		
+				extraParams: {diccionario: 'tiposActivo'}
+			}
+		},*/
+		comboEstadoConservacionIM: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosConservacion'}
+			}
+		},
+				
+		comboTipoDatoUtilizadoInmuebleComparable: {   
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario', 	
 				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
 			},
 			autoLoad: true
+		},	
+				
+		comboComunicacionUbicacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'ubicacionActivo'}
+			}
 		},
+		
+		comboActivoAccesibilidad: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'activoAccesibilidad'}
+			},
+			autoLoad: true
+		},
+		
 		comboTasadoraCaixa: {    		
 			model: 'HreRem.model.ComboBase',
 			proxy: {

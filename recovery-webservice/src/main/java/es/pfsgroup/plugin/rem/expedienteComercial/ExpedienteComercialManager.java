@@ -302,6 +302,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
 	private static final String T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 	private static final String T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	private static final String T017_RESOLUCION_CES = "T017_ResolucionCES";
 	
 	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
 	private static final String CODIGO_TRAMITE_T015 = "T015";
@@ -2336,6 +2337,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
+		if(oferta.getFechaCreacionOpSf() != null) {
+			dto.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
+		}
 		
 		if (oferta != null) {
 			dto.setIsEmpleadoCaixa(isEmpleadoCaixa(oferta));
@@ -2373,6 +2377,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if(oferta.getClaseContratoAlquiler() != null){
 			dto.setClaseContratoCodigo(oferta.getClaseContratoAlquiler().getCodigo());
+		}
+		
+		dto.setEnviarCorreoAprobacion(false);
+		if (expediente != null && expediente.getTrabajo() != null) {
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+			
+			Filter filtroT013 = genericDao.createFilter(FilterType.EQUALS, "codigo", T013_RESOLUCION_COMITE);
+			TareaProcedimiento tareaT013 = genericDao.get(TareaProcedimiento.class, filtroT013, filtroBorrado);
+			Filter filtroT017 = genericDao.createFilter(FilterType.EQUALS, "codigo", T017_RESOLUCION_CES);
+			TareaProcedimiento tareaT017 = genericDao.get(TareaProcedimiento.class, filtroT017, filtroBorrado);
+
+			for (ActivoTramite actt : tramitesActivo) {
+				Long tapId = actt.getTipoTramite().getCodigo() == tareaT013.getTipoProcedimiento().getCodigo() ? tareaT013.getId() :
+					actt.getTipoTramite().getCodigo() == tareaT017.getTipoProcedimiento().getCodigo() ? tareaT017.getId() : null;
+				if (!Checks.esNulo(tapId)){
+					List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(), tapId);
+					for (TareaExterna t : tareas) {
+						if (t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()) {
+							dto.setEnviarCorreoAprobacion(true);
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		return dto;
@@ -8641,7 +8670,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		List<GastosExpediente> listaGastos = new ArrayList<GastosExpediente>();
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			GastosExpediente gastoExpediente = new GastosExpediente();
@@ -12602,7 +12631,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		 
 
-		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo,false);
 
 		for (DtoGastoExpediente dtoGastoExpediente : listDtoGastoExpediente) {
 			DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi

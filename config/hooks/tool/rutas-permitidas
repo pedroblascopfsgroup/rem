@@ -301,3 +301,5 @@ func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
 rem_mirror|func-rem-cambioJerarquiaPrefacturasBBVA
 rem_mirror|func-rem-volcadoPagosUrgentesASPRO
+func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
+func-rem-volcadoPagosUrgentesASPRO|R-Ortanique

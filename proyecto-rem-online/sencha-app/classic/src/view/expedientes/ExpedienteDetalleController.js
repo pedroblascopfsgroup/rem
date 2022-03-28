@@ -1467,10 +1467,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
 		var subcarteraCodigo = me.getViewModel().get('expediente.subcarteraCodigo');
 		var tipoCalculo = me.lookupReference('tipoCalculo');
-		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
 		var importeReserva = me.lookupReference('importeReserva');
 		var porcentajeReserva = me.lookupReference('porcentajeReserva');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
+		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+
 		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
 			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
 			tipoCalculo.setDisabled(true);	

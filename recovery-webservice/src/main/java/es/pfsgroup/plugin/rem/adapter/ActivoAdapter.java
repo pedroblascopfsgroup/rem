@@ -1633,7 +1633,7 @@ public class ActivoAdapter {
 		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 	
-	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, boolean devolverPage) {
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, boolean devolverPage) throws Exception {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
 		dto.setGestoria(gestoria != null ? gestoria.getId() : null);

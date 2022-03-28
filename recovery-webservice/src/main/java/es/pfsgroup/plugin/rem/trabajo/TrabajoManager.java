@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssignationService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -213,7 +214,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
-	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
+	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);	
 
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";
 	private static final String OPERACION_ALTA = "Alta";
@@ -6706,14 +6707,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
 		
-		if(trabajo == null || trabajo.getTipoTrabajo() == null || !DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+		if(trabajo == null) {
 			return;
 		}
 		
 		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
-		
+		Usuario buzonPfs = usuarioManager.getByUsername(NotificatorServiceSancionOfertaGenerico.BUZON_PFS);
 		List<String> mailsPara = new ArrayList<String>();
-		//List<String> mailsCC = new ArrayList<String>();
+		List<String> mailsCC = new ArrayList<String>();
 		
 	    String correos = "";
 	   
@@ -6733,11 +6734,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	    		}
 	    	}		    
 	    }
-	    
+	     
 		if(!Checks.esNulo(correos) && !correos.equals("")) {
 			Collections.addAll(mailsPara, correos.split(";"));
 		}
-	   
+		
+		if (!Checks.esNulo(buzonPfs)) {
+			mailsCC.add(buzonPfs.getEmail());
+		}
 		//mailsCC.add(this.getCorreoFrom());
 		
 		String contenido = "";
@@ -6781,7 +6785,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 			  
 		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
-		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
+		genericAdapter.sendMail(mailsPara, mailsCC, titulo, generateCuerpo(dtoSendNotificator, contenido));
 		
 	}
 

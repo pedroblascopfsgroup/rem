@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.DtoTestigosOpcionales;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -1484,7 +1485,7 @@ public interface ActivoApi {
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
-	boolean esActivoHayaHome(Long idActivo);
+	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
 
 	boolean esActivoAlquiler(Long idActivo);
 
@@ -1492,7 +1493,7 @@ public interface ActivoApi {
 
 	boolean isActivoConReservaAlquiler(Activo activo);
 
-	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	boolean esActivoHayaHome(Activo idActivo, ActivoAgrupacion idAgrupacion);
 	
     Page findTasaciones(DtoFiltroTasaciones dto);
 

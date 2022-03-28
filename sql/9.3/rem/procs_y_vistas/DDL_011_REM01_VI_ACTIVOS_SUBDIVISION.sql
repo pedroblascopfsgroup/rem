@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220324
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15634
@@ -62,12 +62,12 @@ COND.COND_PUBL_VENTA, COND.COND_PUBL_ALQUILER
 
   FROM (SELECT SUBD.ID, SUBD.ACT_ID, SUBD.ACT_NUM_ACTIVO, SUBD.BIE_DREG_NUM_FINCA, TPA.DD_TPA_DESCRIPCION, SAC.DD_SAC_DESCRIPCION, SUBD.DD_AIC_DESCRIPCION
           FROM (SELECT   ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, ACT.DD_TPA_ID, ACT.DD_SAC_ID, BIEDREG.BIE_DREG_NUM_FINCA, AIC.DD_AIC_DESCRIPCION,
-                         ORA_HASH (   ACT.DD_TPA_ID
-                                   || ACT.DD_SAC_ID
-                                   || NVL (VIV.VIV_NUM_PLANTAS_INTERIOR, 0)
-                                   || NVL (SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)), 0)
-                                   || NVL (SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)), 0)
-                                  ) ID
+                         ORA_HASH(
+												  act.dd_tpa_id
+			                                   || act.dd_sac_id
+			                                   || NVL (ICO.ICO_NUM_PLANTAS, 0)
+			                                   || NVL (ICO.ICO_NUM_DORMITORIOS, 0)
+											) ID
  
 
                     FROM '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO 
@@ -78,7 +78,7 @@ COND.COND_PUBL_VENTA, COND.COND_PUBL_ALQUILER
                          LEFT JOIN '|| V_ESQUEMA ||'.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
                          LEFT JOIN '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0
                    WHERE ICO.BORRADO = 0
-                GROUP BY ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, ACT.DD_TPA_ID, ACT.DD_SAC_ID, BIEDREG.BIE_DREG_NUM_FINCA, AIC.DD_AIC_DESCRIPCION, NVL (VIV.VIV_NUM_PLANTAS_INTERIOR, 0)) SUBD
+                GROUP BY ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, ACT.DD_TPA_ID, ACT.DD_SAC_ID, BIEDREG.BIE_DREG_NUM_FINCA, AIC.DD_AIC_DESCRIPCION, ICO.ICO_NUM_PLANTAS, ICO.ICO_NUM_DORMITORIOS) SUBD
                JOIN
                DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
                LEFT JOIN DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID

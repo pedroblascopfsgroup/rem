@@ -1465,11 +1465,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this; 
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var subcarteraCodigo = me.getViewModel().get('expediente.subcarteraCodigo');
 		var tipoCalculo = me.lookupReference('tipoCalculo');
 		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
-	
+		var importeReserva = me.lookupReference('importeReserva');
+		var porcentajeReserva = me.lookupReference('porcentajeReserva');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
-		if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
+			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
+			tipoCalculo.setDisabled(true);	
+			tipoCalculo.allowBlank = false;
+			porcentajeReserva.setValue('5');
+			porcentajeReserva.setDisabled(true);	
+			importeReserva.setDisabled(true);	
+		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;
 		}else{
@@ -3101,7 +3110,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    		if(CONST.TIPO_IMPUESTO['ITP'] == value){
 	    				    				
 	    			inversionSujetoPasivo.reset();
-	    			tributosPropiedad.reset();
 	    			renunciaExencion.reset();
 	    			tipoAplicable.reset();
 	    			tipoAplicable.setDisabled(true);
@@ -5842,6 +5850,35 @@ comprobarFormatoModificar: function() {
 			importeDeposito.setDisabled(true);
 			importeDeposito.setValue(null);
 		}
+	},
+
+	onClickEnviarMailAprobacionVenta : function(btn) {
+		var me = this;
+		Ext.Msg.confirm(
+			HreRem.i18n("title.enviar.email.de.aprobacion"),
+			HreRem.i18n("msg.enviar.mail.aprobacion.venta"),
+			function(btn) {
+				if (btn == "yes") {
+					var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacionVenta");
+					var parametros = {
+						idOferta : me.getViewModel().get("datosbasicosoferta.idOferta")
+					};
+					me.getView().mask();
+					Ext.Ajax.request({
+						url : url,
+						params : parametros,
+						success : function(response,opts) {
+							if (Ext.decode(response.responseText).success == "false") {
+								me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+								me.getView().unmask();
+							} else if (Ext.decode(response.responseText).success == "true") {
+								me.getView().unmask();
+								me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+							}
+						}
+					});
+				}
+			});
 	}
 	
 });

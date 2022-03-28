@@ -8,10 +8,10 @@ import java.util.Date;
  * 
  * @author Bender
  */
-public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
+public class DtoActivoInformeComercial {
 	private static final long serialVersionUID = 0L;
 
-	private int autorizacionWeb;
+	/*private int autorizacionWeb;
 	private Date fechaAutorizacionHasta;
 	private Date fechaRecepcionLlaves;
 	private String tipoActivoCodigo;
@@ -454,6 +454,6 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	}
 	public void setAdmiteMascotaCodigo(String admiteMascotaCodigo) {
 		this.admiteMascotaCodigo = admiteMascotaCodigo;
-	}
+	}*/
 	
 }

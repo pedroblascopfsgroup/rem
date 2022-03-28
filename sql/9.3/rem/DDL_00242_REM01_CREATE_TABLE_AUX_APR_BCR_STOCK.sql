@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220325
+--## FECHA_CREACION=20220328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17497
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -28,6 +28,7 @@
 --##        0.15  HREOS-17348 -  Daniel Algaba - Añadir nuevos campos informe comercial
 --##        0.16  HREOS-17367 -  Daniel Algaba - Añadir nuevos campos
 --##        0.17  HREOS-17497 -  Daniel Algaba - Se quita campo NUM_CARTILLA
+--##        0.18  HREOS-17515 -  Daniel Algaba - Se añade campo NUM_CARTILLA
 --##########################################
 --*/
 
@@ -121,6 +122,7 @@ BEGIN
         TOMO                        VARCHAR2(4 CHAR),
         FOLIO                       VARCHAR2(4 CHAR),
         INSCRIPCION                 VARCHAR2(4 CHAR),
+        NUM_CARTILLA                VARCHAR2(40 CHAR),
         ORIGEN_REGULATORIO          VARCHAR2(2 CHAR),
         CLASE_USO_REGISTRAL         VARCHAR2(4 CHAR),
         IDUFIR                      VARCHAR2(20 CHAR),
@@ -372,6 +374,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.TOMO IS '' TOMO''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.FOLIO IS '' FOLIO''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.INSCRIPCION IS '' INSCRIPCION''';  
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.NUM_CARTILLA IS '' Número de cartilla evaluatoria que tiene el flag Activa'''; 
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.ORIGEN_REGULATORIO IS '' Origen regulatorio''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.CLASE_USO_REGISTRAL IS '' Clase uso registral''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TMP_COL(1)||'.IDUFIR IS '' Idufir''';

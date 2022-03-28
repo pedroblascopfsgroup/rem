@@ -109,8 +109,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
 						            allowBlank: true,
 						            maxLength:10,
-						            readOnly: true,
 						            bind: {
+						            	readOnly: '{booleanReadOnlyCampoIdTarea}',
 	    								value: '{trabajo.idTarea}'
 	    							}
         						},

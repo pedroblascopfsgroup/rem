@@ -3786,6 +3786,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								.refresh();
 					}
 				});
+				
+		var storeTextos = me.getViewModel().getData().storeTextosComercialActivo;
+		storeTextos.getProxy().getExtraParams().idOferta = idOferta;
+
+		storeTextos.load({
+					success : function(record) {
+						me.lookupReference('listadoTextosComercialActivo').refresh();
+					}
+				});
 
 		// Cargar el modelo de los detalles de oferta.
 		model.setId(idOferta);

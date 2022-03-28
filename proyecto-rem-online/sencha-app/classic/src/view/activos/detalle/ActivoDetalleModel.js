@@ -4558,6 +4558,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
-		}
+		},
+		storeTextosComercialActivo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.TextosOferta',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'ofertas/getListTextosOfertaByActivoOferta'
+	    	 }
+    	}
 	 }
 });

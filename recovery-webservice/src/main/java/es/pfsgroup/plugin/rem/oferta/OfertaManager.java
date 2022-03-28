@@ -41,6 +41,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -8876,6 +8877,54 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			modificado = true;
 		}
 		return modificado;
+	}
+	
+	@Override
+	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta) {
+
+		List<DtoTextosOferta> textos = new ArrayList<DtoTextosOferta>();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		List<Dictionary> tiposTexto = genericAdapter.getDiccionario("tiposTextoOferta");
+		
+		ArrayList<String> listadoTextos = new ArrayList<String>();
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+
+		if (Checks.esNulo(idOferta)) {
+			return textos;
+		}
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		List<TextosOferta> lista = genericDao.getList(TextosOferta.class, filtro);
+		
+		for (TextosOferta textoOferta : lista) {
+			if (listadoTextos.contains(textoOferta.getTipoTexto().getCodigo())) {
+				DtoTextosOferta texto = new DtoTextosOferta();
+				texto.setId(textoOferta.getId());
+				texto.setCampoDescripcion(textoOferta.getTipoTexto().getDescripcion());
+				texto.setCampoCodigo(textoOferta.getTipoTexto().getCodigo());
+				texto.setTexto(textoOferta.getTexto());
+				texto.setFecha(!Checks.esNulo(textoOferta.getFecha()) ? sdf.format(textoOferta.getFecha()).toString() : "-");
+				textos.add(texto);
+				
+				tiposTexto.remove(textoOferta.getTipoTexto());
+			}
+		}
+		
+		long contador = -1L;
+		for (Dictionary tipoTextoOferta : tiposTexto) {
+			if (listadoTextos.contains(tipoTextoOferta.getCodigo())) {
+				DtoTextosOferta texto = new DtoTextosOferta();
+				texto.setId(contador--);
+				texto.setCampoDescripcion(tipoTextoOferta.getDescripcion());
+				texto.setCampoCodigo(tipoTextoOferta.getCodigo());
+				texto.setFecha("-");
+				textos.add(texto);
+			}
+		}
+
+		return textos;
 	}
 
 	@Override

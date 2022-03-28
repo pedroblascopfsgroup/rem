@@ -5,6 +5,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -75,6 +76,9 @@ public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implement
 					// En caso de que se deniegue se prepara un historico estado rechazado con fecha rechazo y motivo
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+					String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+					activoEstadosInformeComercialHistorico.setResponsableCambio(personaLogada);
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
 					activo.getInfoComercial().setFechaRechazo(new Date());
 					activo.getInfoComercial().setFechaAceptacion(null);
@@ -83,6 +87,9 @@ public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implement
 					// 0.) En caso de que se acepte se prepara un historico estado aceptado con fecha aceptado
 					estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 					activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+					String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+					activoEstadosInformeComercialHistorico.setResponsableCambio(personaLogada);
 					activoEstadosInformeComercialHistorico.setFecha(new Date());
 					activo.getInfoComercial().setFechaAceptacion(new Date());
 					activo.getInfoComercial().setFechaRechazo(null);

@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
 import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
@@ -88,7 +89,10 @@ public class OfertaDto implements Serializable {
 	private Boolean ofertaLote;
 	private Long idAgrupacionComercialWebcom;
 	private Long codigoAgrupacionComercialRem;
-	private String origenLeadProveedor;
+	@Diccionary(clase = DDOrigenComprador.class, message = "El codigo canalOrigenComisionamiento no existe", groups = { Insert.class,
+			Update.class },foreingField="codigo")
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String canalOrigenComisionamiento;
 	private Boolean esOfertaSingular;
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorPrescriptorRemOrigenLead;
@@ -97,6 +101,7 @@ public class OfertaDto implements Serializable {
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
 	private String numeroBulkAdvisoryNote;
+	private Date fechaCreacionOpSf;
 	@Diccionary(clase = DDRespuestaOfertante.class, message = "El codigo recomendacionRC no existe", groups = { Insert.class,
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
@@ -380,11 +385,11 @@ public class OfertaDto implements Serializable {
 	public void setCodigoAgrupacionComercialRem(Long codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
-	public String getOrigenLeadProveedor() {
-		return origenLeadProveedor;
+	public String getCanalOrigenComisionamiento() {
+		return canalOrigenComisionamiento;
 	}
-	public void setOrigenLeadProveedor(String origenLeadProveedor) {
-		this.origenLeadProveedor = origenLeadProveedor;
+	public void setCanalOrigenComisionamiento(String canalOrigenComisionamiento) {
+		this.canalOrigenComisionamiento = canalOrigenComisionamiento;
 	}
 	public Boolean getEsOfertaSingular() {
 		return esOfertaSingular;
@@ -471,6 +476,13 @@ public class OfertaDto implements Serializable {
 	public void setNombreDocumentoGDPR(String nombreDocumentoGDPR) {
 		this.nombreDocumentoGDPR = nombreDocumentoGDPR;
 	}
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+	
 	public Boolean getDocResponsabilidadPrescriptor() {
 		return docResponsabilidadPrescriptor;
 	}

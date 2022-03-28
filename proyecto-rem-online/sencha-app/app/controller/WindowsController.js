@@ -100,7 +100,8 @@ Ext.define('HreRem.controller.WindowsController', {
 	    // Call the submit to begin the file download.
 	    form.submit({
 	        target: '_blank', // Avoids leaving the page. 
-	        params: params
+	        params: params,
+			headers: {'Content-Type':'charset=UTF-8;','accept-charset':'UTF-8'}
 	    });
 	
 	    // Clean-up the form after 100 milliseconds.

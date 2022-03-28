@@ -14,6 +14,7 @@ public class DtoEstadosInformeComercialHistorico {
 	private String estadoInfoComercial;
 	private String motivo;
 	private Date fecha;
+	private String responsableCambio;
 	
 	
 	public Long getId() {
@@ -39,6 +40,12 @@ public class DtoEstadosInformeComercialHistorico {
 	}
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+	public String getResponsableCambio() {
+		return responsableCambio;
+	}
+	public void setResponsableCambio(String responsableCambio) {
+		this.responsableCambio = responsableCambio;
 	}
 	
 }

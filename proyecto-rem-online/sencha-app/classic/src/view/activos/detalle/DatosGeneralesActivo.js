@@ -153,7 +153,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', ocultarBotonesEdicion: ocultarSituacionposesoriaactivo})}, ['TAB_ACTIVO_SITU_POSESORIA']);
-			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
+			//$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']); 
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'suministrosactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_SUMINISTROS']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informefiscalactivo', ocultarBotonesEdicion:true })}, ['TAB_DATOS_BASICOS_ACTIVO']);

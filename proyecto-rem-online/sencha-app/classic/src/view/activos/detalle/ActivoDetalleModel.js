@@ -4590,7 +4590,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				load: 'cargarReferenciaCatastral'
 			}
 
-        }
+        },
 
+		storeTextosComercialActivo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.TextosOferta',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'ofertas/getListTextosOfertaByActivoOferta'
+	    	 }
+    	}
 	 }
 });

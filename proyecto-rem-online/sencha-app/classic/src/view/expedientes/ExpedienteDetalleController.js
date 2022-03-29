@@ -1475,11 +1475,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
 			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
-			tipoCalculo.setDisabled(true);	
-			tipoCalculo.allowBlank = false;
+			tipoCalculo.setDisabled(false);
 			porcentajeReserva.setValue('5');
-			porcentajeReserva.setDisabled(true);	
-			importeReserva.setDisabled(true);	
 		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;

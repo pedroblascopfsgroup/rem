@@ -1539,4 +1539,8 @@ public class Oferta implements Serializable, Auditable {
 	public void setConcurrencia(Boolean concurrencia) {
 		this.concurrencia = concurrencia;
 	}
+
+	public boolean esOfertaAnulada(){
+		return DDEstadoOferta.isRechazada(this.estadoOferta);
+	}
 }

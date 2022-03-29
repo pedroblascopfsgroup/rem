@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.concurrencia;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -12,13 +14,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.Concurrencia;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Puja;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("concurrenciaManager")
@@ -161,5 +158,58 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public boolean isConcurrenciaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion) {
 		return this.isAgrupacionEnConcurrencia(agrupacion) || this.tieneAgrupacionOfertasDeConcurrencia(agrupacion);
+	}
+
+	@Override
+	@Transactional
+	public void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta){
+		Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+		if(act != null){
+			List<ActivoOferta> ofertas = act.getOfertas();
+			HashMap<Long, String> noEntraDocumentacion = new HashMap<Long, String>();
+			HashMap<Long, String> noEntraDeposito = new HashMap<Long, String>();
+
+			if(ofertas != null && !ofertas.isEmpty()) {
+				for(ActivoOferta actOfr: ofertas){
+					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
+							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
+						OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getOferta()));
+						if(ofc != null && (ofc.getFechaDeposito() != null || !ofc.entraEnTiempoDeposito())){
+							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+						}
+						if(ofc != null && (ofc.getFechaDocumentacion() != null || !ofc.entraEnTiempoDocumentacion())){
+							noEntraDocumentacion.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+						}
+						Oferta ofr = actOfr.getPrimaryKey().getOferta();
+						ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+						genericDao.save(Oferta.class, ofr);
+					}
+				}
+			}
+		}
+	}
+
+	private String rellenaMapOfertaCorreos(OfertaConcurrencia ofc) {
+		String correos = null;
+
+		if(ofc.getOferta() != null){
+			if(ofc.getOferta().getCliente() != null && ofc.getOferta().getCliente().getEmail() != null){
+				correos = ofc.getOferta().getCliente().getEmail();
+			}
+
+			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofc.getOferta().getId()));
+
+			if(titularesAdicionales != null && !titularesAdicionales.isEmpty()){
+				for(TitularesAdicionalesOferta tit: titularesAdicionales){
+					if(correos == null){
+						correos = tit.getEmail();
+					}else{
+						correos = correos + "," + tit.getEmail();
+					}
+				}
+			}
+
+		}
+		return correos;
 	}
 }

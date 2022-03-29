@@ -33,4 +33,6 @@ public interface ConcurrenciaApi {
 	boolean isConcurrenciaOfertasEnProgresoActivo(Activo activo);
 
 	boolean isConcurrenciaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion);
+
+    void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta);
 }

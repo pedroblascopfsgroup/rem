@@ -2483,7 +2483,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			if (!Checks.esNulo(expediente.getOferta().getSucursal())) {
+				if(!Checks.esNulo(expediente.getOferta().getSucursal().getCodProveedorUvem())) {			
 				dto.setCodigoSucursal(expediente.getOferta().getSucursal().getCodProveedorUvem().substring(4));
+				}
 				dto.setSucursal(expediente.getOferta().getSucursal().getNombre() + " ("
 						+ expediente.getOferta().getSucursal().getTipoProveedor().getDescripcion() + ")");
 			}

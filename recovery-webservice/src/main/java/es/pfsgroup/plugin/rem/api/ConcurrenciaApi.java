@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ConcurrenciaApi {
 	
@@ -35,4 +36,7 @@ public interface ConcurrenciaApi {
 	boolean isConcurrenciaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion);
 
     void caducaOfertasRelacionadasConcurrencia(Long idActivo, Long idOferta);
+
+	@Transactional
+	void caducaOfertaConcurrencia(Long idActivo, Long idOferta);
 }

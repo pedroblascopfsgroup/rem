@@ -173,20 +173,47 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				for(ActivoOferta actOfr: ofertas){
 					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
 							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
+						Oferta ofr = actOfr.getPrimaryKey().getOferta();
 						OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getOferta()));
 						if(ofc != null && (ofc.getFechaDeposito() != null || !ofc.entraEnTiempoDeposito())){
 							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+
 						}
 						if(ofc != null && (ofc.getFechaDocumentacion() != null || !ofc.entraEnTiempoDocumentacion())){
 							noEntraDocumentacion.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+
 						}
-						Oferta ofr = actOfr.getPrimaryKey().getOferta();
-						ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 						genericDao.save(Oferta.class, ofr);
 					}
 				}
 			}
 		}
+	}
+
+	@Override
+	@Transactional
+	public void caducaOfertaConcurrencia(Long idActivo, Long idOferta){
+		Oferta ofr = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", idOferta));
+		HashMap<Long, String> noEntraDocumentacion = new HashMap<Long, String>();
+		HashMap<Long, String> noEntraDeposito = new HashMap<Long, String>();
+
+		if(ofr != null && !ofr.esOfertaAnulada()){
+			OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
+			if(ofc != null && (ofc.getFechaDeposito() != null || !ofc.entraEnTiempoDeposito())){
+				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofc));
+				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+
+			}
+			if(ofc != null && (ofc.getFechaDocumentacion() != null || !ofc.entraEnTiempoDocumentacion())){
+				noEntraDocumentacion.put(ofr.getId(), rellenaMapOfertaCorreos(ofc));
+				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
+
+			}
+			genericDao.save(Oferta.class, ofr);
+		}
+
 	}
 
 	private String rellenaMapOfertaCorreos(OfertaConcurrencia ofc) {

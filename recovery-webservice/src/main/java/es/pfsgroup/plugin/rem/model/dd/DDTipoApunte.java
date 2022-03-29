@@ -26,6 +26,19 @@ public class DDTipoApunte implements Auditable, Dictionary {
 	
 	public static final String CODIGO_GESTION = "01";
 	public static final String CODIGO_ESTADO_ACTIVO = "02";
+	public static final String CODIGO_VISITA_CLIENTE = "03";
+	public static final String CODIGO_LLAVES_ACCESO = "04";
+	public static final String CODIGO_PTE_INSTRUCCIONES = "05";
+	public static final String CODIGO_PTE_APR_PRESUPUESTO = "06";
+	public static final String CODIGO_PTE_MATERIAL = "07";
+	public static final String CODIGO_PTE_INQUILINO_TERCERO = "08";
+	public static final String CODIGO_FECHA_PREVISTO = "09";
+	public static final String CODIGO_ILOCALIZABLE = "10";
+	public static final String CODIGO_FINALIZADO = "11";
+	public static final String CODIGO_SOLICITUD_INFO = "12";
+	public static final String CODIGO_ENVIADAS_INSTRUCCIONES = "13";
+	public static final String CODIGO_PTO_APROBADO = "14";
+	public static final String CODIGO_GESTION_LLAVES_ACCESO = "15";
 	
 	private static final long serialVersionUID = 1L;
 
@@ -54,6 +67,12 @@ public class DDTipoApunte implements Auditable, Dictionary {
 	
 	@Column(name = "VER_NIVEL_ACTIVO")   
 	private Integer verNivelActivo;
+	
+	@Column(name = "DD_TAT_PROVEEDOR")   
+	private Boolean esProveedor;
+	
+	@Column(name = "DD_TAT_GESTOR")   
+	private Boolean esGestor;
 
 	@Version   
 	private Long version;
@@ -132,4 +151,21 @@ public class DDTipoApunte implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Boolean getEsProveedor() {
+		return esProveedor;
+	}
+
+	public void setEsProveedor(Boolean esProveedor) {
+		this.esProveedor = esProveedor;
+	}
+
+	public Boolean getEsGestor() {
+		return esGestor;
+	}
+
+	public void setEsGestor(Boolean esGestor) {
+		this.esGestor = esGestor;
+	}
+	
 }

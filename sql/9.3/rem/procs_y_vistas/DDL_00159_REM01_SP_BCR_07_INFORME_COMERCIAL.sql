@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220325
+--## FECHA_CREACION=20220329
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17497
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##        0.4 Se cambia los campos por el nuevo modelo de Informe comercial - HREOS-17366
 --##        0.5 Se añaden nuevos campos Informe comercial - HREOS-17351 - Javier Esbri
 --##        0.6 Se añaden el campo de número de aparcaminetos - HREOS-17497 - Daniel Algaba
+--##        0.7 Nuevos mapeos - HREOS-17515 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -77,43 +78,37 @@ BEGIN
                      ELSE NULL
                   END AS ICO_ANEJO_GARAJE
                   , APR.IDEN_PL_PARKING ICO_IDEF_PLAZA_PARKING
-                  , CASE 
-                     WHEN CALEFACCION IN (''S'',''1'',''01'',''SI'',''Si'') THEN (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''01'')
-                     WHEN CALEFACCION IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_TCL_ID FROM '|| V_ESQUEMA ||'.DD_TCL_TIPO_CLIMATIZACION WHERE DD_TCL_CODIGO = ''03'') 
-                     ELSE NULL
-                  END AS ICO_CALEFACCION
-                  , CASE 
-                     WHEN COCINA_EQUIPADA IN (''S'',''1'',''01'',''SI'',''Si'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
-                     WHEN COCINA_EQUIPADA IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
-                     ELSE NULL
-                  END AS ICO_COCINA_AMUEBLADA
+                  , SIN_CALEF.DD_SIN_ID ICO_CALEFACCION
+                  , SIN_COC.DD_SIN_ID ICO_COCINA_AMUEBLADA
                   , ECV.DD_ECV_ID as DD_ECV_ID
                   , CASE 
-                     WHEN JARDIN IN (''S'',''1'',''01'',''SI'',''Si'') AND USO_JARDIN = ''01'' THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'')
-                     WHEN JARDIN IN (''S'',''1'',''01'',''SI'',''Si'') AND USO_JARDIN = ''02'' THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''02'')
-                     WHEN JARDIN IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''01'') 
+                     WHEN DIS_USO_JAR.DD_DIS_ID IS NOT NULL THEN DIS_USO_JAR.DD_DIS_ID
+                     WHEN DIS_JAR.DD_DIS_ID IS NOT NULL THEN DIS_JAR.DD_DIS_ID
+                     WHEN JARDIN = ''002501'' THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'') 
                      ELSE NULL
                   END AS ICO_JARDIN
-                  , CASE 
-                     WHEN PISCINA IN (''S'',''1'',''01'',''SI'',''Si'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''03'')
-                     WHEN PISCINA IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_DIS_ID FROM '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD WHERE DD_DIS_CODIGO = ''01'') 
-                     ELSE NULL
-                  END AS ICO_PISCINA
-                  , CASE 
-                     WHEN SALIDA_HUMOS IN (''S'',''1'',''01'',''SI'',''Si'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
-                     WHEN SALIDA_HUMOS IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
-                     ELSE NULL
-                  END AS ICO_SALIDA_HUMOS
-                  , CASE 
-                     WHEN TERRAZA IN (''S'',''1'',''01'',''SI'',''Si'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''01'')
-                     WHEN TERRAZA IN (''N'',''0'',''02'',''NO'',''No'') THEN (SELECT DD_SIN_ID FROM '|| V_ESQUEMA_M ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02'') 
-                     ELSE NULL
-                  END AS ICO_TERRAZA
+                  , DIS_PISC.DD_DIS_ID ICO_PISCINA
+                  , SIN_HUM.DD_SIN_ID ICO_SALIDA_HUMOS
+                  , SIN_TER.DD_SIN_ID ICO_TERRAZA
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''EST_CONSERVACION''  AND eqv1.DD_CODIGO_CAIXA = APR.EST_CONSERVACION AND EQV1.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_ECV_ESTADO_CONSERVACION ECV ON ECV.DD_ECV_CODIGO = eqv1.DD_CODIGO_REM 
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV2 ON EQV2.DD_NOMBRE_CAIXA = ''CALEFACCION''  AND EQV2.DD_CODIGO_CAIXA = APR.CALEFACCION AND EQV2.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_CALEF ON SIN_CALEF.DD_SIN_CODIGO = EQV2.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV3 ON EQV3.DD_NOMBRE_CAIXA = ''COCINA_EQUIPADA''  AND EQV3.DD_CODIGO_CAIXA = APR.COCINA_EQUIPADA AND EQV3.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_COC ON SIN_COC.DD_SIN_CODIGO = EQV3.DD_CODIGO_REM 
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV4 ON EQV4.DD_NOMBRE_CAIXA = ''JARDIN''  AND EQV4.DD_CODIGO_CAIXA = APR.JARDIN AND EQV4.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD DIS_JAR ON DIS_JAR.DD_DIS_CODIGO = EQV4.DD_CODIGO_REM 
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV5 ON EQV5.DD_NOMBRE_CAIXA = ''USO_JARDIN''  AND EQV5.DD_CODIGO_CAIXA = APR.USO_JARDIN AND EQV5.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD DIS_USO_JAR ON DIS_USO_JAR.DD_DIS_CODIGO = EQV5.DD_CODIGO_REM  
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV6 ON EQV6.DD_NOMBRE_CAIXA = ''PISCINA''  AND EQV6.DD_CODIGO_CAIXA = APR.PISCINA AND EQV6.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_DIS_DISPONIBILIDAD DIS_PISC ON DIS_PISC.DD_DIS_CODIGO = EQV6.DD_CODIGO_REM
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV7 ON EQV7.DD_NOMBRE_CAIXA = ''SALIDA_HUMOS''  AND EQV7.DD_CODIGO_CAIXA = APR.SALIDA_HUMOS AND EQV7.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_HUM ON SIN_HUM.DD_SIN_CODIGO = EQV7.DD_CODIGO_REM  
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV8 ON EQV8.DD_NOMBRE_CAIXA = ''TERRAZA''  AND EQV8.DD_CODIGO_CAIXA = APR.TERRAZA AND EQV8.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_TER ON SIN_TER.DD_SIN_CODIGO = EQV8.DD_CODIGO_REM  
                   WHERE ACT.BORRADO = 0
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                ) AUX

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220328
+--## FECHA_CREACION=20220329
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17515
@@ -16,6 +16,7 @@
 --##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
 --##        0.5 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
 --##        0.6 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.7 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
 --##########################################
 --*/
 
@@ -1262,11 +1263,35 @@ DECLARE
         T_TIPO_DATA('SEGMENTACION_CARTERA','02','Cartera alquiler','DD_CBC_CARTERA_BC','03','0'),
         T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0'),
         --- Estado conservación
-        T_TIPO_DATA('EST_CONSERVACION','01','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
-        T_TIPO_DATA('EST_CONSERVACION','02','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
-        T_TIPO_DATA('EST_CONSERVACION','04','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
-        T_TIPO_DATA('EST_CONSERVACION','05','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0')/*,
-        T_TIPO_DATA('EST_CONSERVACION','07','Actualizar','DD_ECV_ESTADO_CONSERVACION','08','0')*/
+        T_TIPO_DATA('EST_CONSERVACION','001901','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
+        --T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0')
+        --- Balcón
+        --T_TIPO_DATA('BALCON','015201','Sí','BALCON','015201','0'),
+        --T_TIPO_DATA('BALCON','015202','No','BALCON','015202','0'),
+        --- Calefacción
+        T_TIPO_DATA('CALEFACCION','001001','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('CALEFACCION','001001','No','DD_SIN_SINO','02','0'),
+        --- Cocina Equipada
+        T_TIPO_DATA('COCINA_EQUIPADA','070901','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('COCINA_EQUIPADA','070902','No','DD_SIN_SINO','02','0'),
+        --- Jardín
+        T_TIPO_DATA('JARDIN','002502','No','DD_DIS_DISPONIBILIDAD','01','0'),
+        --- Uso Jardín
+        T_TIPO_DATA('USO_JARDIN','009501','Uso Propio','DD_DIS_DISPONIBILIDAD','03','0'),
+        T_TIPO_DATA('USO_JARDIN','009502','Comunitario','DD_DIS_DISPONIBILIDAD','02','0'),
+        --- Piscina
+        T_TIPO_DATA('PISCINA','004201','Sí','DD_DIS_DISPONIBILIDAD','03','0'),
+        T_TIPO_DATA('PISCINA','004202','No','DD_DIS_DISPONIBILIDAD','02','0'),
+        --- Salida de humos
+        T_TIPO_DATA('SALIDA_HUMOS','079401','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('SALIDA_HUMOS','079402','No','DD_SIN_SINO','02','0'),
+        --- Terraza
+        T_TIPO_DATA('TERRAZA','005201','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('TERRAZA','005202','No','DD_SIN_SINO','02','0')
+
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

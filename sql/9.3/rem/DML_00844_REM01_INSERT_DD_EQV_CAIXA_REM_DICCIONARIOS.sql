@@ -1273,7 +1273,7 @@ DECLARE
         --T_TIPO_DATA('BALCON','015202','No','BALCON','015202','0'),
         --- Calefacción
         T_TIPO_DATA('CALEFACCION','001001','Sí','DD_SIN_SINO','01','0'),
-        T_TIPO_DATA('CALEFACCION','001001','No','DD_SIN_SINO','02','0'),
+        T_TIPO_DATA('CALEFACCION','001002','No','DD_SIN_SINO','02','0'),
         --- Cocina Equipada
         T_TIPO_DATA('COCINA_EQUIPADA','070901','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('COCINA_EQUIPADA','070902','No','DD_SIN_SINO','02','0'),

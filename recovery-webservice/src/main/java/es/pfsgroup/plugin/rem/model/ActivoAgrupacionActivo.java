@@ -72,6 +72,9 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	@Column(name = "PISO_PILOTO")
 	private Boolean pisoPiloto = false;
 	
+	@Column(name = "AGA_FECHA_ESCRITURACION")
+	private Date fechaEscrituracion;
+	
 	@Version   
 	private Long version;
 
@@ -161,5 +164,14 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	public void setPisoPiloto(Boolean pisoPiloto) {
 		this.pisoPiloto = pisoPiloto;
 	}
+
+	public Date getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+
+	public void setFechaEscrituracion(Date fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
+	
 	
 }

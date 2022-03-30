@@ -29,6 +29,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
@@ -175,6 +176,10 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_COD_ON_SAREB")
 	private String codigoOnSareb;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_DND_ID")
+    private Long idAgrDnd;
 
 	public Long getId() {
 		return id;
@@ -456,5 +461,26 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setCodigoOnSareb(String codigoOnSareb) {
 		this.codigoOnSareb = codigoOnSareb;
 	}
+
+	public Long getIdAgrDnd() {
+		return idAgrDnd;
+	}
+
+	public void setIdAgrDnd(Long idAgrDnd) {
+		this.idAgrDnd = idAgrDnd;
+	}
+
+	public Boolean getComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+
+	public Boolean getExistePiloto() {
+		return existePiloto;
+	}
+
+	public Boolean getEsVisitable() {
+		return esVisitable;
+	}
+	
 
 }

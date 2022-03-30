@@ -72,6 +72,8 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
 	
+	@Column(name = "ONV_DND_ID")
+	private String idOnvDnd;
 	
 
 	public DDProvincia getProvincia() {

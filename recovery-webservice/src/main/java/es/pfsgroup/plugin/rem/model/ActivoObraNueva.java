@@ -74,7 +74,6 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	
 	@Column(name = "ONV_DND_ID")
 	private String idOnvDnd;
-	
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -124,6 +123,14 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 		this.acreedorPDV = acreedorPDV;
 	}
 
+	public DDSinSiNo getVentaPlano() {
+		return ventaPlano;
+	}
+
+	public void setVentaPlano(DDSinSiNo ventaPlano) {
+		this.ventaPlano = ventaPlano;
+	}
+
 	public List<ActivoSubdivision> getSubdivision() {
 		return subdivision;
 	}
@@ -131,17 +138,17 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public void setSubdivision(List<ActivoSubdivision> subdivision) {
 		this.subdivision = subdivision;
 	}
-	
-	public Integer getIncluidos() {
-		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
+
+	public String getIdOnvDnd() {
+		return idOnvDnd;
+	}
+
+	public void setIdOnvDnd(String idOnvDnd) {
+		this.idOnvDnd = idOnvDnd;
 	}
 	
-	public DDSinSiNo getVentaPlano() {
-		return ventaPlano;
-	}
+
 	
-	public void setVentaPlano(DDSinSiNo ventaPlano) {
-		this.ventaPlano = ventaPlano;
-	}
+	
 
 }

@@ -195,8 +195,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		viewPortWidth = Ext.Element.getViewportWidth(),
 		viewPortHeight = Ext.Element.getViewportHeight();
 		var codigoCartera = me.lookupController().getViewModel().getData().agrupacionficha.getData().codigoCartera;
-		var tieneTipoAlquiler = me.lookupController().getViewModel().getData().agrupacionficha.getData().tieneTipoAlquiler;
-		
+
 		for(var i=0;i<=items.length;i++){
 			if(items[i].getXType()=='fichaagrupacion'){
 				var record= items[i].getBindRecord(),
@@ -223,12 +222,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 			
 		}
-		
+			
 		if (numActivos == null || numActivos == '' || numActivos == '0') {
 			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirOferta.agrupacion.sin.activos.error"));	
-		}else if(tieneTipoAlquiler === "false"){
-			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
-		}else{
+		}else {
 			var parent= me.up('ofertascomercialagrupacion');
 			oferta = Ext.create('HreRem.model.OfertaComercial', {idAgrupacion: idAgrupacion, numAgrupacionRem: numAgrupacionRem});
 			Ext.create('HreRem.view.common.WizardBase',

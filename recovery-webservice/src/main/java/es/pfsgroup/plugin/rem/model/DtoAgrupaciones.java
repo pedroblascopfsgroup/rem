@@ -90,8 +90,6 @@ public class DtoAgrupaciones extends WebDto {
 	
 	private Boolean perimetroMacc;
 	private Boolean esHayaHome;
-	
-	private Boolean tieneTipoAlquiler;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -558,12 +556,6 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setEsHayaHome(Boolean esHayaHome) {
 		this.esHayaHome = esHayaHome;
-	}
-	public Boolean getTieneTipoAlquiler() {
-		return tieneTipoAlquiler;
-	}
-	public void setTieneTipoAlquiler(Boolean tieneTipoAlquiler) {
-		this.tieneTipoAlquiler = tieneTipoAlquiler;
 	}
 	
 	

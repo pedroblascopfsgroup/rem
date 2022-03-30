@@ -78,7 +78,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		readOnly: '{esCarteraGaleonOZeus}'
 								            	},
 								            	listeners: {
-								            		change: 'onHaCambiadoSolicitaReserva'
+								            		select: 'onHaCambiadoSolicitaReserva'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo'
@@ -112,14 +112,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}'
+								            		value: '{condiciones.tipoCalculo}',
+													disabled: '{esCarteraGaleonOZeus}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
 			                						change:  'onHaCambiadoTipoCalculo'
-			            						},
-			            						disabled: true
+			            						}
 									        },
 											{ 
 												xtype: 'numberfieldbase',
@@ -1575,6 +1575,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 		        ]
 			}
 		];
+		var cambiado = false;
 		me.addPlugin({
 			ptype : 'lazyitems',
 			items : items

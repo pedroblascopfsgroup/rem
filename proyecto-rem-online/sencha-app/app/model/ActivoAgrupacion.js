@@ -51,7 +51,11 @@ Ext.define('HreRem.model.ActivoAgrupacion', {
     		},
     		{
     			name:'puerta'
+    		},
+    		{
+    			name:'tieneTipoAlquiler'
     		}
+    		
     		
     ],
     

@@ -915,6 +915,18 @@ public class AgrupacionAdapter {
 				}				
 				// Resolvemos si la agrupación será editable
 				dtoAgrupacion.setEsEditable(true);
+				boolean tieneTipoAlquiler = true;
+				
+				List<ActivoAgrupacionActivo> listAga = agrupacion.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : listAga) {
+					if(activoAgrupacionActivo.getActivo().getTipoAlquiler() == null) {
+						tieneTipoAlquiler = false;
+						break;
+					}
+				}
+				
+				dtoAgrupacion.setTieneTipoAlquiler(tieneTipoAlquiler);
+				
 				if (!Checks.esNulo(agrupacion.getFechaBaja())) {
 					dtoAgrupacion.setEsEditable(false);
 				}

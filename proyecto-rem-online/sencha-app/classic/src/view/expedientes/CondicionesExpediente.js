@@ -1575,7 +1575,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 		        ]
 			}
 		];
-		var cambiado = false;
 		me.addPlugin({
 			ptype : 'lazyitems',
 			items : items

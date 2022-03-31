@@ -40,7 +40,7 @@ public class ConfiguracionDeposito implements Serializable, Auditable {
 	@Id
 	@Column(name = "COD_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ConfiguracionDepositoGenerator")
-	@SequenceGenerator(name = "ConfiguracionDepositoGenerator", sequenceName = "S_ALB_ALBARAN")
+	@SequenceGenerator(name = "ConfiguracionDepositoGenerator", sequenceName = "S_COD_CONFIGURACION_DEPOSITO")
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

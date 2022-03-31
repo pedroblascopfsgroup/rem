@@ -41,7 +41,7 @@ public class CuentasVirtuales implements Serializable, Auditable {
 	@Id
 	@Column(name = "CVC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "CuentasVirtualesGenerator")
-	@SequenceGenerator(name = "CuentasVirtualesGenerator", sequenceName = "S_ALB_ALBARAN")
+	@SequenceGenerator(name = "CuentasVirtualesGenerator", sequenceName = "S_CVC_CUENTAS_VIRTUALES")
 	private Long id;
 	
 	@Column(name = "CVC_CUENTA_VIRTUAL")

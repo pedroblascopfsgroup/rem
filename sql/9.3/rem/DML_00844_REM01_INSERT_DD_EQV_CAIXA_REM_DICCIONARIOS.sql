@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220328
+--## FECHA_CREACION=20220331
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17515
@@ -15,6 +15,7 @@
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
 --##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
 --##        0.5 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.6 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
 --##########################################
 --*/
 
@@ -208,7 +209,17 @@ DECLARE
         T_TIPO_DATA('GRADO_PROPIEDAD','04', 'Concesión administrativa','DD_TGP_TIPO_GRADO_PROPIEDAD','04','0'),
         T_TIPO_DATA('GRADO_PROPIEDAD','05', 'Uso','DD_TGP_TIPO_GRADO_PROPIEDAD','06','0'),
         T_TIPO_DATA('GRADO_PROPIEDAD','06', 'Servidumbre','DD_TGP_TIPO_GRADO_PROPIEDAD','06','0'),
-        T_TIPO_DATA('GRADO_PROPIEDAD','07', 'Otros derechos','DD_TGP_TIPO_GRADO_PROPIEDAD','05','0'),      
+        T_TIPO_DATA('GRADO_PROPIEDAD','07', 'Otros derechos','DD_TGP_TIPO_GRADO_PROPIEDAD','05','0'), 
+        --Indicencia CEE
+        T_TIPO_DATA('INCIDENCIA_CEE','01','Alquilado','DD_ICE_INCIDENCIA_CEE','01','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','02','Falta documentación','DD_ICE_INCIDENCIA_CEE','02','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','03','Inaccesible','DD_ICE_INCIDENCIA_CEE','03','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','04','Invendible','DD_ICE_INCIDENCIA_CEE','04','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','05','No identificable','DD_ICE_INCIDENCIA_CEE','05','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','06','Ocupada','DD_ICE_INCIDENCIA_CEE','06','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','07','Parte indivisa','DD_ICE_INCIDENCIA_CEE','07','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','08','Sin posesión','DD_ICE_INCIDENCIA_CEE','08','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','09','Venta contabilizada','DD_ICE_INCIDENCIA_CEE','09','0'),
       --Lista energía 
         T_TIPO_DATA('LISTA_ENERGIA','01','A','DD_TCE_TIPO_CALIF_ENERGETICA','01','0'),
         T_TIPO_DATA('LISTA_ENERGIA','02','B','DD_TCE_TIPO_CALIF_ENERGETICA','02','0'),
@@ -251,6 +262,12 @@ DECLARE
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','16','Constitución préstamo promotor','DD_MEC_MOTIVO_EXCLU_CAIXA','16','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','17','Inmueble no vvda utilizado como vvda','DD_MEC_MOTIVO_EXCLU_CAIXA','17','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','18','Inmueble es una zona común','DD_MEC_MOTIVO_EXCLU_CAIXA','18','0'),
+        --Motivo de exoneración CEE
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','01','Local en bruto','DD_MEC_MOTIVO_EXONERACION_CEE','01','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','02','Preciosa reformas +25% del total de su envolvente','DD_MEC_MOTIVO_EXONERACION_CEE','02','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','03','Precisa reformas importantes por la totalidad instalaciones térmicas','DD_MEC_MOTIVO_EXONERACION_CEE','03','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','04','Precisa reformas importantes por recomendación cambio tipo combustible','DD_MEC_MOTIVO_EXONERACION_CEE','04','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','05','Nave sin oficina','DD_MEC_MOTIVO_EXONERACION_CEE','05','0'),
       --País
         T_TIPO_DATA('PAIS','AD','Andorra','DD_CIC_CODIGO_ISO_CIRBE_BKP','043','0'),
         T_TIPO_DATA('PAIS','ES','España','DD_CIC_CODIGO_ISO_CIRBE_BKP','011','0'),

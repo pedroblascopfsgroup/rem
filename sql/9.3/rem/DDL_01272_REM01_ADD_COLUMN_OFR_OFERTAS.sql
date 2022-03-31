@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220330
+--## FECHA_CREACION=20220401
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17581
@@ -33,7 +33,7 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
        T_TIPO_DATA('CHECK_FORM_CAJAMAR', 'NUMBER(1,0)', 'Check de formalización cajamar.'),
        T_TIPO_DATA('CHECK_FORZADO_CAJAMAR', 'NUMBER(1,0)', 'Check de forzado cajamar.'),
-       T_TIPO_DATA('USUARIO_FORZADO_CAJAMAR', 'VARCHAR2(50 CHAR)', 'Usuario forzado cajamar.'),
+       T_TIPO_DATA('USUARIO_FORZADO_CAJAMAR', 'NUMBER(16,0)', 'Usuario forzado cajamar.'),
        T_TIPO_DATA('FECHA_FORZADO_CAJAMAR', 'DATE', 'Fecha forzado cajamar.')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

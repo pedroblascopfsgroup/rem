@@ -482,7 +482,7 @@ public class Oferta implements Serializable, Auditable {
     private Boolean checkForzadoCajamar;
     
     @Column(name = "USUARIO_FORZADO_CAJAMAR")
-    private String usuarioForzadoCajamar;
+    private Usuario usuarioForzadoCajamar;
     
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
@@ -1568,11 +1568,11 @@ public class Oferta implements Serializable, Auditable {
 		this.checkForzadoCajamar = checkForzadoCajamar;
 	}
 
-	public String getUsuarioForzadoCajamar() {
+	public Usuario getUsuarioForzadoCajamar() {
 		return usuarioForzadoCajamar;
 	}
 
-	public void setUsuarioForzadoCajamar(String usuarioForzadoCajamar) {
+	public void setUsuarioForzadoCajamar(Usuario usuarioForzadoCajamar) {
 		this.usuarioForzadoCajamar = usuarioForzadoCajamar;
 	}
 

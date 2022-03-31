@@ -48,7 +48,7 @@ public class CuentasVirtuales implements Serializable, Auditable {
 	private String cuentaVirtual;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_SRC_ID")
+	@JoinColumn(name = "DD_SCR_ID")
 	private DDSubcartera subcartera;
 	
 	@Column(name = "CVC_FECHA_INICIO")

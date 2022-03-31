@@ -44,7 +44,7 @@ public class ConfiguracionDeposito implements Serializable, Auditable {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_SRC_ID")
+	@JoinColumn(name = "DD_SCR_ID")
 	private DDSubcartera subcartera;
 
 	@Column(name = "COD_DEPOSITO_NECESARIO")

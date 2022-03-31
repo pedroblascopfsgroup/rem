@@ -13,9 +13,6 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
-
-
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -33,7 +30,7 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
- 
+ 	V_CREAR_FK VARCHAR2(2 CHAR) := 'SI';
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DEP_DEPOSITO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
@@ -46,6 +43,15 @@ DECLARE
 
 		);
     V_T_ALTER T_ALTER;
+    
+    /* -- ARRAY CON NUEVAS FOREIGN KEYS */
+    TYPE T_FK IS TABLE OF VARCHAR2(4000);
+    TYPE T_ARRAY_FK IS TABLE OF T_FK;
+    V_FK T_ARRAY_FK := T_ARRAY_FK(
+                --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
+        T_FK(   'FK_DEP_OFR',                   'OFR_ID',             V_ESQUEMA||'.OFR_OFERTAS',                'OFR_ID')
+    );
+    V_T_FK T_FK;
 
 BEGIN
 	
@@ -76,8 +82,46 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL;
 			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
-		END IF;
+			
+			IF V_CREAR_FK = 'SI' THEN
 
+                -- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
+                FOR I IN V_FK.FIRST .. V_FK.LAST
+                LOOP
+
+                    V_T_FK := V_FK(I);  
+
+                    -- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+                    V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
+                    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+                    IF V_NUM_TABLAS = 0 THEN
+                        --No existe la FK y la creamos
+                        DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
+                        V_MSQL := '
+                            ALTER TABLE '||V_TEXT_TABLA||'
+                            ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
+                            (
+                              '||V_T_FK(2)||'
+                            )
+                            REFERENCES '||V_T_FK(3)||'
+                            (
+                              '||V_T_FK(4)||' 
+                            )
+                            ON DELETE SET NULL ENABLE
+                        ';
+
+                        EXECUTE IMMEDIATE V_MSQL;
+                        --DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
+                        DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
+
+                    END IF;
+
+                END LOOP;
+
+            END IF;			
+			
+		END IF;
+		
 	END LOOP;
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS... OK *************************************************');

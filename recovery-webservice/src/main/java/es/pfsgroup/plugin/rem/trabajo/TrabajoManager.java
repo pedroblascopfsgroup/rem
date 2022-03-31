@@ -165,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.VUsuarioGestorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
@@ -6359,7 +6360,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
 					dto.setIdAgenda(agendaTrabajo.getId());
 					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
-					dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+					if (agendaTrabajo.getGestor().getId() != null) {
+						Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", agendaTrabajo.getGestor().getId());
+						VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+						if (usuarioGestorOrProveedor != null) {
+							if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+								dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+							} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+								dto.setProveedorAgenda(agendaTrabajo.getGestor().getUsername());
+							}
+						}
+					}
+					//dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
 					dto.setFechaAgenda(agendaTrabajo.getFecha());
 					dto.setTipoGestion(agendaTrabajo.getTipoGestion().getCodigo());
 					dto.setObservacionesAgenda(agendaTrabajo.getObservaciones());

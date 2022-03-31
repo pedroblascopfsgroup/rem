@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -405,4 +406,6 @@ public interface GenericApi {
 	List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto);
 
 	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
+
+	List<DDTipoApunte> getTipoApunteByUsuarioLog();
 }

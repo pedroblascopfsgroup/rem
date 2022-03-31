@@ -45,6 +45,20 @@ Ext.define('HreRem.view.trabajos.detalle.AgendaTrabajoGrid', {
 		            flex: 1
 		        },
 		        {
+		            dataIndex: 'proveedorAgenda',
+		            reference: 'proveedorAgenda',
+		            text: HreRem.i18n('header.proveedor'),
+		            editor: 
+		            	{
+							xtype: 'textfield',
+							cls: 'grid-no-seleccionable-field-editor',
+							readOnly: true,
+							value: $AU.getUser().userName
+						},
+					
+		            flex: 1
+		        },
+		        {
 		            dataIndex: 'fechaAgenda',
 		            text: HreRem.i18n('fieldlabel.fecha'),
 		            editor: {

@@ -82,8 +82,8 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirAgendaTrabajo', {
 								model: 'HreRem.model.ComboBase',
 								proxy: {
 									type: 'uxproxy',
-									remoteUrl: 'generic/getDiccionario',
-									extraParams: {diccionario: 'tipoApunte'}
+									remoteUrl: 'generic/getTipoApunteByUsuarioLog'/*,
+									extraParams: {diccionario: 'tipoApunte'}*/
 								},
 								autoLoad: true
 							}),

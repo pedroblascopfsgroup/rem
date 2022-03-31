@@ -110,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VUsuarioGestorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -135,6 +136,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -2150,6 +2152,35 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	    map.put("comboResultado", comboResultado);
 	    
 	    return map;
+	}
+	
+	@Override
+	public List<DDTipoApunte> getTipoApunteByUsuarioLog() {
+		
+		List<DDTipoApunte> listaTiposFiltered = new ArrayList<DDTipoApunte>();
+		List<DDTipoApunte> listaDD = genericDao.getList(DDTipoApunte.class);
+		Usuario usuario = adapter.getUsuarioLogado();
+
+		Filter filterNoEsGestor = genericDao.createFilter(FilterType.EQUALS, "esGestor", false);
+		Filter filterNoEsProveedor = genericDao.createFilter(FilterType.EQUALS, "esProveedor", false);
+		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		
+		if (usuario.getId() != null) {
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", usuario.getId());
+			VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+			if (usuarioGestorOrProveedor != null) {
+				if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+					listaTiposFiltered = genericDao.getListOrdered(DDTipoApunte.class, order, filterNoEsProveedor, filterBorrado);
+				} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+					listaTiposFiltered = genericDao.getListOrdered(DDTipoApunte.class, order, filterNoEsGestor, filterBorrado);
+				}
+			} else {
+				listaTiposFiltered = listaDD;
+			}
+		}
+
+		return listaTiposFiltered;
 	}
 
 }

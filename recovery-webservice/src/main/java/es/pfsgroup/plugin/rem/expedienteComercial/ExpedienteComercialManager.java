@@ -15397,4 +15397,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return compradorExpediente;
 	}
 
+
+	@Override
+	@Transactional()
+	public void calculoFormalizacionCajamar(Oferta oferta) {
+		Filter filtroPrescriptor=  genericDao.createFilter(FilterType.EQUALS, "proveedor.id", oferta.getPrescriptor().getId());
+		Filter filtroBorrado =  genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		CPFProveedor pveFormalizacion = genericDao.get(CPFProveedor.class, filtroPrescriptor, filtroBorrado);
+		
+		boolean importeCorrecto = !Checks.esNulo(oferta.getImporteOferta()) ? oferta.getImporteOferta() > 500000 ? false : true : false;
+		boolean activosPermitidos = !Checks.esNulo(oferta.getActivosOferta()) ? oferta.getActivosOferta().size() > 3 ? false : true : true;
+		boolean prescriptorConfigurado = !Checks.esNulo(pveFormalizacion) ? true : false;
+		
+		oferta.setCheckFormCajamar(false);
+		
+		if (importeCorrecto && activosPermitidos && prescriptorConfigurado)
+			oferta.setCheckFormCajamar(true);
+			
+		genericDao.save(Oferta.class, oferta);
+	}
 }

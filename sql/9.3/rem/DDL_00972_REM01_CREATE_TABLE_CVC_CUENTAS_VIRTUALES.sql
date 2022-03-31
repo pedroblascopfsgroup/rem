@@ -64,7 +64,7 @@ BEGIN
             (
                 CVC_ID          		    NUMBER(16)                  NOT NULL,
                 CVC_CUENTA_VIRTUAL        	VARCHAR2(150 CHAR),
-                DD_SRC_ID          			NUMBER(16),
+                DD_SCR_ID          			NUMBER(16),
                 CVC_FECHA_INICIO			DATE,
                 CVC_FECHA_FIN				DATE,
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
@@ -109,7 +109,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.CVC_CUENTA_VIRTUAL IS ''Cuenta virtual''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SRC_ID IS ''Id de la subcartera''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SCR_ID IS ''Id de la subcartera''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.CVC_FECHA_INICIO IS ''Fecha inicio cuenta virtual''';
             EXECUTE IMMEDIATE V_SQL;

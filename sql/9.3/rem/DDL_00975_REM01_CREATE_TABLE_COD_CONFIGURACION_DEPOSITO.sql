@@ -42,7 +42,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_CVC_DD_SCR',                   'DD_SRC_ID',             V_ESQUEMA||'.DD_SRC_SUBCARTERA',                'DD_SRC_ID')
+        T_FK(   'FK_CVC_DD_SCR',                   'DD_SCR_ID',             V_ESQUEMA||'.DD_SCR_SUBCARTERA',                'DD_SCR_ID')
     );
     V_T_FK T_FK;
 
@@ -63,7 +63,7 @@ BEGIN
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
                 COD_ID          		    NUMBER(16)                  NOT NULL,
-                DD_SRC_ID          			NUMBER(16),
+                DD_SCR_ID          			NUMBER(16),
                 COD_DEPOSITO_NECESARIO      NUMBER(1,0),
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
                 USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 

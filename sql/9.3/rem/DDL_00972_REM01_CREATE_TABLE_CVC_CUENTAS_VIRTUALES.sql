@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220330
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16840
@@ -42,7 +42,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_CVC_DD_SCR',                   'DD_SRC_ID',             V_ESQUEMA||'.DD_SRC_SUBCARTERA',                'DD_SRC_ID')
+        T_FK(   'FK_CVC_DD_SCR',                   'DD_SRC_ID',             V_ESQUEMA||'.DD_SCR_SUBCARTERA',                'DD_SRC_ID')
     );
     V_T_FK T_FK;
 

@@ -477,7 +477,10 @@ public class Oferta implements Serializable, Auditable {
 
 	@Transient
 	private Boolean replicateBC;
-
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CVC_ID")
+    private CuentasVirtuales cuentaVirtual;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1538,5 +1541,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setReplicateBC(Boolean replicateBC) {
 		this.replicateBC = replicateBC;
+	}
+
+	public CuentasVirtuales getCuentaVirtual() {
+		return cuentaVirtual;
+	}
+
+	public void setCuentaVirtual(CuentasVirtuales cuentaVirtual) {
+		this.cuentaVirtual = cuentaVirtual;
 	}
 }

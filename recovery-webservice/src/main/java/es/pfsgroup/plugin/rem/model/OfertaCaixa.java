@@ -113,9 +113,6 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@Column(name="OFR_SANC_LANZAMIENTOS")
 	private String sancionComiteLanzamientos;
 	
-	@Column(name="OFR_CUENTA_BANC_VIRTUAL")
-	private String cuentaBancariaVirtual;
-	
 	@Column(name="OFR_CUENTA_BANC_CLIENTE")
 	private String cuentaBancariaCliente;
 	
@@ -337,14 +334,6 @@ public class OfertaCaixa implements Serializable, Auditable {
 
 	public void setSancionComiteLanzamientos(String sancionComiteLanzamientos) {
 		this.sancionComiteLanzamientos = sancionComiteLanzamientos;
-	}
-
-	public String getCuentaBancariaVirtual() {
-		return cuentaBancariaVirtual;
-	}
-
-	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
-		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
 	}
 
 	public String getCuentaBancariaCliente() {

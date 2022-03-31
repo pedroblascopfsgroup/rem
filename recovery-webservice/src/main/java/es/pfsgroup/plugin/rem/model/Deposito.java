@@ -42,8 +42,8 @@ public class Deposito implements Serializable, Auditable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFR_CAIXA_ID")
-    private OfertaCaixa ofertaCaixa;
+    @JoinColumn(name = "OFR_ID")
+    private Oferta oferta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EDP_ID")
@@ -75,13 +75,6 @@ public class Deposito implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public OfertaCaixa getOfertaCaixa() {
-		return ofertaCaixa;
-	}
-
-	public void setOfertaCaixa(OfertaCaixa ofertaCaixa) {
-		this.ofertaCaixa = ofertaCaixa;
-	}
 
 	public DDEstadoDeposito getEstadoDeposito() {
 		return estadoDeposito;
@@ -137,6 +130,14 @@ public class Deposito implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Oferta getOferta() {
+		return oferta;
+	}
+
+	public void setOferta(Oferta oferta) {
+		this.oferta = oferta;
 	}
 
     

@@ -3942,9 +3942,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (ofrCaixa.getCuentaBancariaCliente() != null) {
 						dtoResponse.setCuentaBancariaCliente(ofrCaixa.getCuentaBancariaCliente());
 					}
-					if (ofrCaixa.getCuentaBancariaVirtual() != null) {
-						dtoResponse.setCuentaBancariaVirtual(ofrCaixa.getCuentaBancariaVirtual());
-					}
+					
 					if(ofrCaixa.getNumOfertaCaixa() != null) {
 						dtoResponse.setNumOfertaCaixa(ofrCaixa.getNumOfertaCaixa().toString());						
 					}
@@ -8785,12 +8783,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		Deposito deposito = null;
-		OfertaCaixa ocb = oferta.getOfertaCaixa();
 		
 		if(dto.getId() == null) {
 			deposito = new Deposito();			
 			deposito.setAuditoria(Auditoria.getNewInstance());
-			deposito.setOfertaCaixa(ocb);
+			deposito.setOferta(oferta);
 		}else {
 			deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
 			Auditoria.save(deposito);
@@ -8798,14 +8795,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		this.dtoToDeposito(deposito, dto);
 		genericDao.save(Deposito.class, deposito);
-		
-		if (dtoBancario.getCuentaBancariaCliente() != null) {
-			ocb.setCuentaBancariaCliente(dtoBancario.getCuentaBancariaCliente());
-		}
-		if (dtoBancario.getCuentaBancariaVirtual() != null) {
-			ocb.setCuentaBancariaVirtual(dtoBancario.getCuentaBancariaVirtual());
-		}
-		genericDao.save(OfertaCaixa.class, ocb);
 		
 		return true;
 		

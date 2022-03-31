@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220401
+--## FECHA_CREACION=20220405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17581
@@ -68,10 +68,18 @@ BEGIN
 
       DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2));     
       
+      IF V_TMP_TIPO_DATA(1) = 'USUARIO_FORZADO_CAJAMAR' THEN
+         V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+             ADD CONSTRAINT FK_OFR_USU_CAJAMAR
+             FOREIGN KEY (USUARIO_FORZADO_CAJAMAR) REFERENCES '||V_ESQUEMA_M||'.USU_USUARIOS(USU_ID)';
+             
+      EXECUTE IMMEDIATE V_MSQL;
+
+      END IF;
 
     ELSE
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'Ya Existe. No se hace nada');
-      		
+    		
 		END IF;
 		
 	END LOOP;

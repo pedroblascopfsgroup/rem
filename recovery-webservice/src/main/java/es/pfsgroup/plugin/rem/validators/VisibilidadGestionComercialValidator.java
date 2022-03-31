@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -133,6 +134,8 @@ public class VisibilidadGestionComercialValidator {
 		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroIdActivo);
 		
 		List<String> erroresActivo = new ArrayList<String>();
+		
+		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activoActual.getId());
 
 		if(activoPublicacion != null) {
 			if(DDCartera.isCarteraSareb(activoActual.getCartera())) {
@@ -160,7 +163,9 @@ public class VisibilidadGestionComercialValidator {
 				erroresActivo.add(VALID_ACTIVO_TIPO_COMERCIALIZACION);
 			}else if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())){
 				if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
-					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+					if(!DDSubcartera.isSubCarteraMaccMarina(activoActual.getSubcartera()) || !DDFasePublicacion.isFaseCinco(fasePublicacionActivoVigente.getFasePublicacion()) || !DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion())) {
+						erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+					}
 				}
 			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoPublicacion.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
 			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoPublicacion.getTipoComercializacion()) 
@@ -189,7 +194,6 @@ public class VisibilidadGestionComercialValidator {
 					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
 				}
 				
-				HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activoActual.getId());
 				
 				if(fasePublicacionActivoVigente != null) {
 					if(DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()) 

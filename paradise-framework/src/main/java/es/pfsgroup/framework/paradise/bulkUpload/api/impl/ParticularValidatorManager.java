@@ -9411,5 +9411,52 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						);
 		return !"0".equals(resultado);
     }
+	
+	@Override
+	public Boolean isActivoMaccMarina(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID"
+					+"			AND CRA.BORRADO = 0"
+					+"		JOIN DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID"
+					+"			AND SCR.BORRADO = 0"
+					+"		WHERE CRA.DD_CRA_CODIGO = '07'"
+					+"		AND SCR.DD_SCR_CODIGO = '71' "
+					+"		AND ACT.BORRADO = 0 "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_HFP_HIST_FASES_PUB HFP "
+				+ "		 JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = HFP.ACT_ID"
+				+"			AND ACT.BORRADO = 0"
+				+ "		 JOIN DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID"
+				+"			AND FSP.BORRADO = 0"
+				+ "		 JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID"
+				+"			AND SFP.BORRADO = 0"
+				+ "		 WHERE FSP.DD_FSP_CODIGO = '09'  "
+				+ "		 AND SFP.DD_SFP_CODIGO = '14'  "
+				+ "		 AND HFP.BORRADO = 0"
+				+ "		 AND HFP.HFP_FECHA_FIN IS NULL"
+				+ "		 AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+		return !"0".equals(resultado);
+	}
 }
 

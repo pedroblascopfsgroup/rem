@@ -1509,4 +1509,8 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	Boolean isActivoMaccMarina(String numActivo);
+
+	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);
+
 }

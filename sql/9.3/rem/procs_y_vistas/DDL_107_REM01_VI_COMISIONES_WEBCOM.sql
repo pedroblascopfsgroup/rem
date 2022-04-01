@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210414
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20220328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

@@ -2486,7 +2486,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			if (!Checks.esNulo(expediente.getOferta().getSucursal())) {
+				if(!Checks.esNulo(expediente.getOferta().getSucursal().getCodProveedorUvem())) {			
 				dto.setCodigoSucursal(expediente.getOferta().getSucursal().getCodProveedorUvem().substring(4));
+				}
 				dto.setSucursal(expediente.getOferta().getSucursal().getNombre() + " ("
 						+ expediente.getOferta().getSucursal().getTipoProveedor().getDescripcion() + ")");
 			}
@@ -3913,7 +3915,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 				reserva.setAuditoria(Auditoria.getNewInstance());
 				
-				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && 
+					(DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())
+						|| (DDCartera.isCarteraCerberus(expediente.getOferta().getActivoPrincipal().getCartera()) 
+							&& DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())))) {
 					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 					reserva.setTipoArras(tipoArras);
 				}
@@ -15433,4 +15439,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return compradorExpediente;
 	}
 
+	
 }

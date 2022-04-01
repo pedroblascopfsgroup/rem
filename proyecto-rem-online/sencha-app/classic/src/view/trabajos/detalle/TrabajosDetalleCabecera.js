@@ -167,6 +167,38 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 																value:'{trabajo.responsableTrabajo}'
 															}
 															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.refacturacion.trabajo'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.refacturacionTrabajoDescripcion}'
+															}
+															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.calculo.margen.trabajo'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.tipoCalculoMargenDescripcion}'
+															}
+															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.porcentaje.margen'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.porcentajeMargen}'
+															}
+															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.importe.margen'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.importeMargen}'
+															}
+															
 									                   	}
 									                  
 											]

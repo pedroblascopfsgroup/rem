@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200826
+--## AUTOR= Lara Pablo 
+--## FECHA_CREACION=20211226
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-7935
+--## INCIDENCIA_LINK=HREOS-16798
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,9 +12,9 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
+--## 		0.3 Lara Pablo - - HREOS-16798 - Recuperar catastro
 --##########################################
 --*/
-
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -130,8 +130,12 @@ BEGIN
       		LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BIE_DAT.DD_LOC_ID
       		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
 			LEFT JOIN '||V_ESQUEMA||'.ACT_EDI_EDIFICIO EDI ON EDI.ICO_ID = ICO.ICO_ID
-      		LEFT JOIN (SELECT CAT.ACT_ID, LISTAGG(CAT.CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY ACT_ID) AS CAT_REF_CATASTRAL FROM '||V_ESQUEMA||'.ACT_CAT_CATASTRO CAT
-				GROUP BY CAT.ACT_ID) CATASTRO ON CATASTRO.ACT_ID = ACT.ACT_ID
+      		LEFT JOIN (SELECT SELECTCATASTRO.ACT_ID, LISTAGG(SELECTCATASTRO.CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY ACT_ID) AS CAT_REF_CATASTRAL 
+                FROM (SELECT 
+                     cat.act_id AS ACT_ID, (CASE WHEN CAT.CAT_CATASTRO IS NOT NULL THEN CATAS.CAT_REF_CATASTRAL ELSE CAT.CAT_REF_CATASTRAL END) AS CAT_REF_CATASTRAL
+                    FROM '||V_ESQUEMA||'.act_cat_catastro CAT
+                    left join '||V_ESQUEMA||'.cat_catastro catas on cat.cat_catastro = catas.cat_id) SELECTCATASTRO
+                GROUP BY SELECTCATASTRO.ACT_ID) CATASTRO ON CATASTRO.ACT_ID = ACT.ACT_ID
       		LEFT JOIN '||V_ESQUEMA||'.DD_ECT_ESTADO_CONSTRUCCION ECT ON ECT.DD_ECT_ID = ICO.DD_ECT_ID
       		LEFT JOIN '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL REG_INFO ON REG_INFO.ACT_ID = ACT.ACT_ID
       		LEFT JOIN '||V_ESQUEMA||'.V_PIVOT_PRECIOS_ACTIVOS V ON V.ACT_ID = ACT.ACT_ID

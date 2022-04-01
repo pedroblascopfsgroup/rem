@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200909
+--## AUTOR= Lara Pablo 
+--## FECHA_CREACION=20211226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7935
+--## INCIDENCIA_LINK=HREOS-16798
 --## PRODUCTO=NO
 --## Finalidad:
 --##           
@@ -20,6 +20,7 @@
 --##		0.8 REMVIP-7161 - Añadido campo Equipo de gestión
 --##		0.9 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.10 Juan Bautista Alfonso -- REMVIP-7935 - Añadido alias para el campo de fecha posesion FPA.FECHA_POSESION
+--##		0.3 Lara Pablo - - HREOS-16798 - Recuperación del catastro
 --##########################################
 --*/
 
@@ -186,8 +187,12 @@ BEGIN
         LEFT JOIN REM01.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID
         LEFT JOIN REM01.DD_MTO_MOTIVOS_OCULTACION MTOA ON MTOA.DD_MTO_ID = APU.DD_MTO_A_ID
         LEFT JOIN REM01.DD_MTO_MOTIVOS_OCULTACION MTOV ON MTOV.DD_MTO_ID = APU.DD_MTO_V_ID
-		LEFT JOIN (SELECT CAT.ACT_ID, LISTAGG(CAT.CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY ACT_ID) AS CAT_REF_CATASTRAL FROM ' || V_ESQUEMA || '.ACT_CAT_CATASTRO CAT
-		GROUP BY CAT.ACT_ID) CATASTRO ON CATASTRO.ACT_ID = ACT.ACT_ID
+		LEFT JOIN (SELECT SELECTCATASTRO.ACT_ID, LISTAGG(SELECTCATASTRO.CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY ACT_ID) AS CAT_REF_CATASTRAL 
+	    FROM (SELECT 
+	         cat.act_id AS ACT_ID, (CASE WHEN CAT.CAT_CATASTRO IS NOT NULL THEN CATAS.CAT_REF_CATASTRAL ELSE CAT.CAT_REF_CATASTRAL END) AS CAT_REF_CATASTRAL
+	        FROM ' || V_ESQUEMA || '.act_cat_catastro CAT
+	        left join ' || V_ESQUEMA || '.cat_catastro catas on cat.cat_catastro = catas.cat_id) SELECTCATASTRO
+	    GROUP BY SELECTCATASTRO.ACT_ID) CATASTRO ON CATASTRO.ACT_ID = ACT.ACT_ID
 		LEFT JOIN (SELECT GAC.ACT_ID, USU.USU_USERNAME
                    FROM ' || V_ESQUEMA_MASTER || '.USU_USUARIOS USU
                    INNER JOIN ' || V_ESQUEMA || '.GEE_GESTOR_ENTIDAD GEE ON GEE.USU_ID = USU.USU_ID AND GEE.BORRADO = 0

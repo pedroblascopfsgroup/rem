@@ -48,7 +48,7 @@ public class ConfiguracionDeposito implements Serializable, Auditable {
 	private DDSubcartera subcartera;
 
 	@Column(name = "COD_DEPOSITO_NECESARIO")
-	private String depositoNecesario;
+	private Boolean depositoNecesario;
 	
 	@Version
 	private Long version;
@@ -72,11 +72,11 @@ public class ConfiguracionDeposito implements Serializable, Auditable {
 		this.subcartera = subcartera;
 	}
 
-	public String getDepositoNecesario() {
+	public Boolean getDepositoNecesario() {
 		return depositoNecesario;
 	}
 
-	public void setDepositoNecesario(String depositoNecesario) {
+	public void setDepositoNecesario(Boolean depositoNecesario) {
 		this.depositoNecesario = depositoNecesario;
 	}
 

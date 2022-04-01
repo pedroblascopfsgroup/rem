@@ -3,15 +3,11 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -21,7 +17,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.pfsgroup.commons.utils.Checks;
 
 
 @Entity
@@ -30,9 +25,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoDeposito implements Auditable, Dictionary {
 	
-
-	
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_INGRESADO = "ING";
 
 	@Id
 	@Column(name = "DD_EDP_ID")
@@ -102,6 +97,14 @@ public class DDEstadoDeposito implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public static boolean isIngresado(DDEstadoDeposito dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_INGRESADO.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
 	}
 
 }

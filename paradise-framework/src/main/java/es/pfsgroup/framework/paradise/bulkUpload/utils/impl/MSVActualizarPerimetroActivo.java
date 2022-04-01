@@ -1259,7 +1259,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 								}
 							}else if(!particularValidator.isActivoPublicadoDependiendoSuTipoComercializacion(activo)) {
 								if(particularValidator.isActivoDestinoComercialSoloAlquiler(activo)) {
-									if(!particularValidator.isActivoMaccMarina(activo) || !particularValidator.isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(activo) ) {
+									if(!particularValidator.isPerimetroMacc(activo) || !particularValidator.isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(activo) ) {
 										listaErroresParaMarcar.add(messageServices.getMessage(VALID_ACTIVO_ESTADO_PUBLICACION));
 										pararComprobaciones = true;
 									}
@@ -1297,7 +1297,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 									if(activoCerberus) {
 										listaCodSubfase.add("28");
 										if(!particularValidator.validacionSubfasePublicacion(activo, listaCodSubfase)) {
-											if (!particularValidator.isActivoMaccMarina(activo) || !particularValidator.isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(activo)){
+											if (!particularValidator.isPerimetroMacc(activo) || !particularValidator.isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(activo)){
 												listaErroresParaMarcar.add(messageServices.getMessage(VALID_SUBFASE_PUBLICACION));
 											}
 										}

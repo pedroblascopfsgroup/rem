@@ -1513,4 +1513,6 @@ public interface ParticularValidatorApi {
 
 	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);
 
+	Boolean isPerimetroMacc(String numActivo);
+
 }

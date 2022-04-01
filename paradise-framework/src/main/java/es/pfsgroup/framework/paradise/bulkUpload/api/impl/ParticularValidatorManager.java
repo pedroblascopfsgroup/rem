@@ -9458,5 +9458,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 AND ACT.ACT_NUM_ACTIVO = :numActivo ");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isPerimetroMacc(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.BORRADO = 0"
+					+"		AND ACT.ACT_PERIMETRO_MACC = 1 "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
+	}
 }
 

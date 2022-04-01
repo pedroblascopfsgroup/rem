@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -947,4 +948,6 @@ public interface TrabajoApi {
 	 * @return 
 	 */
 	public Page getBusquedaTrabajosGrid(DtoTrabajoGridFilter dto, Usuario usuarioLogado);
+
+	void enviarCorreoAgendaTrabajo(AgendaTrabajo agenda, Trabajo trabajo, DtoAgendaTrabajo dtoAgendaTrabajo, Boolean proveedor, Boolean gestor);
 }

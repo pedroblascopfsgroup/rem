@@ -2944,8 +2944,8 @@ public class ActivoAdapter {
 				DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDEstadoDocumento.class, dtoAdmisionDocumento.getEstadoDocumento());
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
-				if (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equals(dtoAdmisionDocumento.getEstadoDocumento()) || 
-						!Checks.esNulo(dtoAdmisionDocumento.getFechaObtencion())) {
+				if (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equalsIgnoreCase(estadoDocumento.getCodigo()) 
+						|| !Checks.isFechaNula(dtoAdmisionDocumento.getFechaObtencion())) {
 					dtoAdmisionDocumento.setIncidenciaCee(null);
 					activoAdmisionDocumento.setIncidenciaCee(null);
 				}

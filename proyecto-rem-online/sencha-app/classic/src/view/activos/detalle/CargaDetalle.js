@@ -355,62 +355,57 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 								items :
 										[
 											{
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'checkboxfieldbase',
 									        	reference: 'indicadorPreferente',
 									        	name: 'indicadorPreferente',
 									        	editable: false,
 									        	readOnly: true,
 												fieldLabel: HreRem.i18n('header.indicador.preferente'),
 									        	bind: {
-													store: '{comboSiNoBoolean}',
 								            		value: '{carga.indicadorPreferente}'
 								            	}
 									        },
 									        {
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'checkboxfieldbase',
 									        	reference: 'identificadorCargaEjecutada',
 									        	name: 'identificadorCargaEjecutada',
 									        	editable: false,
 									        	readOnly: true,
 												fieldLabel: HreRem.i18n('header.identificador.carga.ejecutada'),
 									        	bind: {
-													store: '{comboSiNoBoolean}',
 								            		value: '{carga.identificadorCargaEjecutada}'
 								            	}
 									        },
 									        {
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'checkboxfieldbase',
 									        	reference: 'igualdadRango',
 									        	name: 'igualdadRango',
 									        	editable: false,
 									        	readOnly: true,
 												fieldLabel: HreRem.i18n('header.igualdad.rango'),
 									        	bind: {
-													store: '{comboSiNoBoolean}',
 								            		value: '{carga.igualdadRango}'
 								            	}
 									        },
 									        {
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'checkboxfieldbase',
 									        	reference: 'identificadorCargaIndefinida',
 									        	name: 'identificadorCargaIndefinida',
 									        	editable: false,
 									        	readOnly: true,
 												fieldLabel: HreRem.i18n('header.identificador.carga.idefinida'),
 									        	bind: {
-													store: '{comboSiNoBoolean}',
 								            		value: '{carga.identificadorCargaIndefinida}'
 								            	}
 									        },
 									        {
-									        	xtype: 'comboboxfieldbase',
+									        	xtype: 'checkboxfieldbase',
 									        	reference: 'identificadorCargaEconomica',
 									        	name: 'identificadorCargaEconomica',
 									        	editable: false,
 									        	readOnly: true,
 												fieldLabel: HreRem.i18n('header.identificador.carga.economica'),
 									        	bind: {
-													store: '{comboSiNoBoolean}',
 								            		value: '{carga.identificadorCargaEconomica}'
 								            	}
 									        }

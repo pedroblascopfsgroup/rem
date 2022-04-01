@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Urbán
---## FECHA_CREACION=20201202
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20211130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11156
+--## INCIDENCIA_LINK=HREOS-16560
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --## V1: Daniel Algaba creación vista          
@@ -14,6 +14,7 @@
 --##		0.2 Añadimos el booleano validar albarán para saber cuando tenemos posibilidad de hacerlo
 --##		0.3 Cogemos el año del trabajo para poder filtrarlo
 --##		0.4 Añadimos el id del trabajo par facilitar abrirlo desde JS
+--## 		0.5 Javier Esbri - Añadir nuevo modelo de prefacturas (PTG_PREFACTURAS)
 --##########################################
 --*/
 
@@ -87,10 +88,11 @@ BEGIN
 		FROM ' || V_ESQUEMA || '.ALB_ALBARAN ALB
 		LEFT JOIN ' || V_ESQUEMA || '.DD_ESA_ESTADO_ALBARAN ESTALB ON ALB.DD_ESA_ID = ESTALB.DD_ESA_ID AND ESTALB.BORRADO = 0
 		JOIN ' || V_ESQUEMA || '.PFA_PREFACTURA PFA ON ALB.ALB_ID = PFA.ALB_ID AND ALB.BORRADO = 0
+		JOIN ' || V_ESQUEMA ||'.PTG_PREFACTURAS PTG ON PFA.PFA_ID = PTG.PFA_ID AND PTG.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EPF_ESTADO_PREFACTURA EPF ON EPF.DD_EPF_ID = PFA.DD_EPF_ID AND EPF.BORRADO = 0
 		JOIN ' || V_ESQUEMA || '.ACT_PVE_PROVEEDOR PVE ON PFA.PVE_ID = PVE.PVE_ID AND PVE.BORRADO = 0
-		JOIN ' || V_ESQUEMA || '.ACT_PRO_PROPIETARIO PRO ON PFA.PRO_ID = PRO.PRO_ID AND PRO.BORRADO = 0
-		JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON PFA.PFA_ID = TBJ.PFA_ID AND TBJ.BORRADO = 0
+		JOIN ' || V_ESQUEMA || '.ACT_PRO_PROPIETARIO PRO ON PTG.PRO_ID = PRO.PRO_ID AND PRO.BORRADO = 0
+		JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON PTG.TBJ_ID = TBJ.TBJ_ID AND TBJ.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_IRE_IDENTIFICADOR_REAM IRE ON IRE.DD_IRE_ID = TBJ.DD_IRE_ID AND IRE.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TTR_TIPO_TRABAJO TTR ON TBJ.DD_TTR_ID = TTR.DD_TTR_ID AND TTR.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EST_ESTADO_TRABAJO EST ON TBJ.DD_EST_ID = EST.DD_EST_ID AND EST.BORRADO = 0

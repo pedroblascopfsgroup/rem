@@ -39,6 +39,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
@@ -7938,9 +7939,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Boolean obtencionReservaFinalizada = false;
 		Boolean solicitaReserva = checkReserva(oferta);
+		Boolean esContraoferta = false;
 
 		Filter filtroTbj = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", expedienteComercial.getTrabajo().getId());
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTbj);
+		
+		if (!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getValores())) {
+			List<TareaExternaValor> valoresTarea = tareaExterna.getValores();
+			for (TareaExternaValor valor : valoresTarea) {
+				if(COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())
+					&& (valor.getValor().equals(APRUEBA_COMBO_RESPUESTA)
+					|| valor.getValor().equals(CONTRAOFERTA_COMBO_RESPUESTA)))	{
+					esContraoferta = true;
+					break;
+				}
+			}
+		}
 
 		if(solicitaReserva) {
 			if(tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
@@ -7967,7 +7981,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
 					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)) {
+					||(CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
+					|| CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigo)
+					|| CODIGO_T017_RESOLUCION_ARROW.equals(codigo)
+					|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)
+					&& esContraoferta )) {
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7976,6 +7994,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
+					|| (CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo)
+					|| CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(codigo)
+					&& esContraoferta )
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
@@ -9020,6 +9041,54 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			modificado = true;
 		}
 		return modificado;
+	}
+	
+	@Override
+	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta) {
+
+		List<DtoTextosOferta> textos = new ArrayList<DtoTextosOferta>();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		List<Dictionary> tiposTexto = genericAdapter.getDiccionario("tiposTextoOferta");
+		
+		ArrayList<String> listadoTextos = new ArrayList<String>();
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
+		listadoTextos.add(DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
+
+		if (Checks.esNulo(idOferta)) {
+			return textos;
+		}
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		List<TextosOferta> lista = genericDao.getList(TextosOferta.class, filtro);
+		
+		for (TextosOferta textoOferta : lista) {
+			if (listadoTextos.contains(textoOferta.getTipoTexto().getCodigo())) {
+				DtoTextosOferta texto = new DtoTextosOferta();
+				texto.setId(textoOferta.getId());
+				texto.setCampoDescripcion(textoOferta.getTipoTexto().getDescripcion());
+				texto.setCampoCodigo(textoOferta.getTipoTexto().getCodigo());
+				texto.setTexto(textoOferta.getTexto());
+				texto.setFecha(!Checks.esNulo(textoOferta.getFecha()) ? sdf.format(textoOferta.getFecha()).toString() : "-");
+				textos.add(texto);
+				
+				tiposTexto.remove(textoOferta.getTipoTexto());
+			}
+		}
+		
+		long contador = -1L;
+		for (Dictionary tipoTextoOferta : tiposTexto) {
+			if (listadoTextos.contains(tipoTextoOferta.getCodigo())) {
+				DtoTextosOferta texto = new DtoTextosOferta();
+				texto.setId(contador--);
+				texto.setCampoDescripcion(tipoTextoOferta.getDescripcion());
+				texto.setCampoCodigo(tipoTextoOferta.getCodigo());
+				texto.setFecha("-");
+				textos.add(texto);
+			}
+		}
+
+		return textos;
 	}
 
 	@Override

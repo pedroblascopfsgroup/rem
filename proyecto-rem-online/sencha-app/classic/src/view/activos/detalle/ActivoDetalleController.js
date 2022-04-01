@@ -3742,6 +3742,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								.refresh();
 					}
 				});
+				
+		var storeTextos = me.getViewModel().getData().storeTextosComercialActivo;
+		storeTextos.getProxy().getExtraParams().idOferta = idOferta;
+
+		storeTextos.load({
+					success : function(record) {
+						me.lookupReference('listadoTextosComercialActivo').refresh();
+					}
+				});
 
 		// Cargar el modelo de los detalles de oferta.
 		model.setId(idOferta);
@@ -8821,8 +8830,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(disabled) {
     		fechaLiquidacionPlusvaliaRef.setValue(null);
     	}
-    },
-    
+	},
+	
     onClickGuardarReferencia: function(btn){
     	var me = this;
     	var gridDatosCatastro = me.lookupReference('informacionCatastroGridRefCat');
@@ -8957,13 +8966,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
     },
 
-
     onSelectDiscrepanciasLocalizacion : function(combo, value) {
 		var me = this;
 		var textObservacionesLoc = me.lookupReference('discrepanciasLocalizacionObservacionesRef');
 		if(value.get('codigo') === 'false'){
 			textObservacionesLoc.setValue('');
-		}
+    	}
     },
     
     onChangeComboAnejoGaraje: function(combo){

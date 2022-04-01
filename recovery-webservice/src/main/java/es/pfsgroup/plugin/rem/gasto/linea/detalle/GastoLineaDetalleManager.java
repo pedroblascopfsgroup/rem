@@ -1312,6 +1312,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				 			
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
+
+					List<ActivoCatastro> activosCatastro = activo.getCatastro();
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = activosCatastro.get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
+					}
 					if (activo != null && activo.getId() != null) {
 						Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 						ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
@@ -1322,16 +1332,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 								   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 						   	   }
 							}
-					
-						List<ActivoCatastro> activosCatastro = activo.getCatastro();
-						if (!Checks.estaVacio(activosCatastro)) {						
-							ActivoCatastro activoCatastro = activosCatastro.get(0);
-							if(activoCatastro.getCatastro() != null) {
-								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
-							}else {
-								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
-							}
-						}
 						if (activo.getTipoTransmision() != null) {
 							Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
 							DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
@@ -1347,7 +1347,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					   } else {
 							   gastoLineaDetalleEntidad.setSituacionComercial(null);
 					   }
-					}	
+					}
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
 					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
 					Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", gastoLineaDetalle.getSubtipoGasto().getCodigo());

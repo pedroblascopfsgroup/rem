@@ -22,7 +22,7 @@
         <intercept-url pattern="/email/attachment*" access="ROLE_USER" />
         <intercept-url pattern="/adjunto/email*" filters="none" />
         <intercept-url pattern="/**" access="ROLE_USER" />
-        <logout/>
+        <logout invalidate-session="true" logout-success-url="/js/logout_adfs.jsp"/>
         <anonymous/>
     </http>
     

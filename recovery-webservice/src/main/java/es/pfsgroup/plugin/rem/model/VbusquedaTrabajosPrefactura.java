@@ -60,6 +60,9 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 	@Column(name = "CHECK_TBJ")
 	private Boolean checkIncluirTrabajo;
 	
+	@Column(name = "PRO_NOMBRE")
+	private String nombrePropietario;
+	
 	public Long getId() {
 		return id;
 	}
@@ -178,6 +181,14 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 
 	public void setEstadoTrabajoCodigo(String estadoTrabajoCodigo) {
 		this.estadoTrabajoCodigo = estadoTrabajoCodigo;
+	}
+
+	public String getNombrePropietario() {
+		return nombrePropietario;
+	}
+
+	public void setNombrePropietario(String nombrePropietario) {
+		this.nombrePropietario = nombrePropietario;
 	}	
 	
 }

@@ -91,7 +91,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_RESERVA_HAYA = "reservashaya";
-	private static final String BUZON_PFS = "buzonpfs";
+	public static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_FDV = "buzonfdv";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String BUZON_FOR_APPLE = "buzonforapple";

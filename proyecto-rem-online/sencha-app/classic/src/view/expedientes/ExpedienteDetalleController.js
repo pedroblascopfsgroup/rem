@@ -1461,24 +1461,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}*/
 		
 	},
-	
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this; 
 		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
 		var subcarteraCodigo = me.getViewModel().get('expediente.subcarteraCodigo');
 		var tipoCalculo = me.lookupReference('tipoCalculo');
-		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
 		var importeReserva = me.lookupReference('importeReserva');
 		var porcentajeReserva = me.lookupReference('porcentajeReserva');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
-		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
+		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
+		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value.data.codigo==1){ 
 			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
-			tipoCalculo.setDisabled(true);	
-			tipoCalculo.allowBlank = false;
+			tipoCalculo.setDisabled(false);
 			porcentajeReserva.setValue('5');
-			porcentajeReserva.setDisabled(true);	
-			importeReserva.setDisabled(true);	
-		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
+		} else if(!esCarteraGaleonOZeus && value.data.codigo==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;
 		}else{
@@ -1486,6 +1484,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			tipoCalculo.setValue(null);
 			tipoCalculo.allowBlank = true;
 		}
+		
 	},
 	
 	onClickBotonCerrarComprador: function(btn){

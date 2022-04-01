@@ -13,7 +13,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.TestigosOpcionales'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid', 'HreRem.model.TestigosOpcionales',
+	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel'],
 
     data: {
     	activo: null,
@@ -4059,7 +4060,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getTestigosOpcionales',
 				extraParams: {id: '{infoComercial.id}'}
 			}
-		},		
+		},
 
 	   comboMotivoNecesidadArras: {
 			model: 'HreRem.model.ComboBase',
@@ -4253,7 +4254,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'admision'}
 			}
 		},
-			
+
 		comboMunicipioAnterior: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4262,7 +4263,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
-		comboMetodoValoracion: {    
+		comboMetodoValoracion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4270,7 +4271,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			extraParams: {diccionario: 'metodoValoracion'}
 			},
 			autoLoad: true
-		},		
+		},
 		comboClasificacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4279,11 +4280,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'clasificacion'}
 			}
 		},
-		comboDesarrolloPlanteamiento: {    	
+		comboDesarrolloPlanteamiento: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',	
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'desarrolloPlanteamiento'}
 			},
 			autoLoad: true
@@ -4297,7 +4298,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'disponibilidad'}
 			}
 		},
-		comboFaseGestion: {   
+		comboFaseGestion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4305,7 +4306,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'faseGestion'}
 			},
 			autoLoad: true
-		}, 		
+		},
 
 		comboEstadoConservacionEdificio: {
 			model: 'HreRem.model.ComboBase',
@@ -4315,7 +4316,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadoConservacionEdificio'}
 			}
 		},
-		comboProductoDesarrollar: {    	
+		comboProductoDesarrollar: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4323,8 +4324,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'productoDesarrollar'}
 			},
 			autoLoad: true
-		},	
-				
+		},
+
 		/*comboEstadoInformeMediador: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4333,16 +4334,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadoInformeMediador'}
 			}
 		},*/
-		comboProximidadRespectoNucleoUrbano: {    
+		comboProximidadRespectoNucleoUrbano: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',	
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'proximidadRespectoNucleoUrbano'}
 			},
 			autoLoad: true
-		},	
-				
+		},
+
 		comboEstadoMobiliario: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4359,8 +4360,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadoOcupacional'}
 			}
 		},
-				
-		comboSistemaGestion: {   
+
+		comboSistemaGestion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4368,8 +4369,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'sistemaGestion'}
 			},
 			autoLoad: true
-		}, 		
-				
+		},
+
 		comboExteriorInterior: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4378,16 +4379,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'exteriorInterior'}
 			}
 		},
-		comboTipoSuelo: {    	
+		comboTipoSuelo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',	
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtiposActivo'}
 			},
 			autoLoad: true
 		},
-				
+
 		comboTipoCalefaccion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4396,17 +4397,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoCalefaccion'}
 			}
 		},
-				
-		comboProductoDesarrollarPrevisto: { 
+
+		comboProductoDesarrollarPrevisto: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario', 
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'productoDesarrollarPrevisto'}
 			},
 			autoLoad: true
-		},  		
-				
+		},
+
 		comboTipoPuerta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4455,7 +4456,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'entidadesPropietarias'}
 			}
 		},
-		
+
 		comboSubcarteraIM: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4503,7 +4504,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'subtiposActivo'}
 			}
-		},   		
+		},
 		comboTipoActivoIM: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4520,17 +4521,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadosConservacion'}
 			}
 		},
-				
-		comboTipoDatoUtilizadoInmuebleComparable: {   
+
+		comboTipoDatoUtilizadoInmuebleComparable: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario', 	
+				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoDatoUtilizadoInmuebleComparable'}
 			},
 			autoLoad: true
-		},	
-				
+		},
+
 		comboComunicacionUbicacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4539,7 +4540,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'ubicacionActivo'}
 			}
 		},
-		
+
 		comboActivoAccesibilidad: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4549,8 +4550,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
-		
-		comboTasadoraCaixa: {    		
+
+		comboTasadoraCaixa: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -4558,7 +4559,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
-		},				
+		},			
+		
 		storeActivoBbvaUic : {
 			model : 'HreRem.model.ActivoBbvaUicGridModel',
 			proxy : {
@@ -4568,6 +4570,47 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					id : '{activo.id}'
 				}
 			}
-		}
+		},
+		
+		storeComparativaRefCatastral:{
+			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'catastro/getComparativaReferenciaCatastralGrid',
+				extraParams: {idActivo: '{activo.id}', refCatastral: '{activo.refCatastral}'}
+			},
+			autoLoad: false
+		},
+		storeReferenciaCatastral:{
+			model: 'HreRem.model.ReferenciaCatastralGridModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'catastro/getReferenciaCatastralGrid',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: false
+		},
+       comboReferenciaCatastral: {
+        	 model: 'HreRem.model.ReferenciaCatastralComboModel',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'catastro/getListRefCatastralActivo',
+                extraParams: {idActivo: '{activo.id}'}
+            },
+			autoLoad: true,
+			listeners:{
+				load: 'cargarReferenciaCatastral'
+			}
+
+        },
+
+		storeTextosComercialActivo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.TextosOferta',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'ofertas/getListTextosOfertaByActivoOferta'
+	    	 }
+    	}
 	 }
 });

@@ -177,9 +177,12 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         		}
         	}else if(DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
         		ExpedienteComercial eco = oferta.getExpedienteComercial();
-        		if(eco != null) {
-        			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER)));
-        			genericDao.save(ExpedienteComercial.class, eco);
+        		if(eco != null
+                    && dto.getIdTarea() != null
+                    && dto.getCodTipoTarea() != null
+                    && (DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea()))) {
+                        eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER)));
+                        genericDao.save(ExpedienteComercial.class, eco);
         		}
         	}
         }
@@ -579,8 +582,11 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 reserva.setEstadoDevolucion(estadoDevolucion);
                 reserva.setEstadoReserva(estadoReserva);
 
-                eco.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
-
+                if(dto.getFechaReal() == null){
+                    eco.setFechaDevolucionEntregas(new Date());
+                }else{
+                    eco.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
+                }
                 genericDao.save(Reserva.class, reserva);
             }
             

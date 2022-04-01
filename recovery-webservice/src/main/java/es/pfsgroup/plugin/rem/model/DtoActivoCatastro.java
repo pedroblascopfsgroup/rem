@@ -42,6 +42,10 @@ public class DtoActivoCatastro extends WebDto {
 	private Boolean catastroVigente;
 	private Double valorCatastral;
 	private String tipoMoneda;
+	private String descripcion;
+	private String id;
+	private String correcto;
+	private String codigo;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -199,6 +203,31 @@ public class DtoActivoCatastro extends WebDto {
 	}
 	public void setTipoMoneda(String tipoMoneda) {
 		this.tipoMoneda = tipoMoneda;
+	}
+	public String getDescripcion() {
+		return descripcion;
+	}
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getCorrecto() {
+		return correcto;
+	}
+	public void setCorrecto(String correcto) {
+		this.correcto = correcto;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }

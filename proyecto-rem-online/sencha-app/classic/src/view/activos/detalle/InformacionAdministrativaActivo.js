@@ -24,6 +24,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 
         var me = this;
         me.setTitle(HreRem.i18n('title.informacion.administrativa'));
+        var idActivo = me.lookupController().getViewModel().get('activo').get('id');
         var items= [
         
          {
@@ -410,306 +411,310 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					}
            		]
          },
+         {
+     		xtype:'catastroGrid',
+     		idActivo: idActivo
+     	},
         
-       	 	{
-				title:HreRem.i18n('title.catastro'),
-			    xtype: 'gridBaseEditableRow',
-			    idPrincipal: 'activo.id',
-			    topBar: true,
-				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeCatastro}'
-				},
-				features: [{
-		            id: 'summary',
-		            ftype: 'summary',
-		            hideGroupedHeader: true,
-		            enableGroupingMenu: false,
-		            dock: 'bottom'
-				}],
-
-				secFunToEdit: 'EDITAR_INFO_ADMINISTRATIVA_ACTIVO',
-				
-				secButtons: {
-					secFunPermToEnable : 'EDITAR_INFO_ADMINISTRATIVA_ACTIVO'
-				},
-
-				columns: [
-				    {   
-						text: HreRem.i18n('fieldlabel.referencia.catastral'),
-			        	dataIndex: 'refCatastral',
-			        	flex: 2
-			        },
-			        {
-						text: HreRem.i18n('fieldlabel.poligono'),
-			        	dataIndex: 'poligono',
-			        	editor: {
-			        		xtype:'textfield',
-			        		listeners : {
-			                    change : function (field, newValue, oldValue, eOpts) {
-		                    	    var grid = field.up('grid');
-		                    		var parcelaValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=parcela]').value;
-		                    		var refCatastralValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]').value;
-		                    		if (refCatastralValue)
-		                    		{
-		                    			field.allowBlank = true;
-		                    			field.clearInvalid();
-		                    		}
-		                    		else
-		                    		{
-		                    			field.allowBlank = false;
-		                    		}
-		                    		
-	                    			if (newValue && parcelaValue)
-	                    			{
-	                    				//Poner el refCatastral allowBlank a true porque ahora que tenemos parcela y pol�gono es opcional
-	                    				var refCatastralRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]');
-	                    				refCatastralRef.allowBlank = true;
-	                    				refCatastralRef.validateValue(refCatastralRef.getValue());
-	                    				//VALIDATE en vez de clearInvalid para pasar el allowBlank a efectivo sin que se deje de tener en cuenta el enforceMaxLength
-	                    			}
-
-		                        }
-			        		},
-			        	    flex: 1
-			            }
-			        },	
-					{
-			            text: HreRem.i18n('fieldlabel.parcela'),
-			            dataIndex: 'parcela',
-			        	editor: {
-			        		xtype:'textfield',
-			        		listeners : {
-			                    change : function (field, newValue, oldValue, eOpts) {
-			                    	    var grid = field.up('grid');
-			                    		var poligonoValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=poligono]').value;
-			                    		var refCatastralValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]').value;
-			                    		if (refCatastralValue)
-			                    		{
-			                    			field.allowBlank = true;
-			                    			field.clearInvalid();
-			                    		}
-			                    		else
-			                    		{
-			                    			field.allowBlank = false;
-			                    		}
-			                    		
-		                    			if (newValue && poligonoValue)
-		                    			{
-		                    				//Poner el refCatastral allowBlank a true porque ahora que tenemos parcela y pol�gono es opcional
-		                    				var refCatastralRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]');
-		                    				refCatastralRef.allowBlank = true;
-		                    				refCatastralRef.validateValue(refCatastralRef.getValue());
-		                    				//VALIDATE en vez de clearInvalid para pasar el allowBlank a efectivo sin que se deje de tener en cuenta el enforceMaxLength
-		                    			}
-		                        }
-			                    }
-			            },
-			        	flex: 1
-			        },
-			        {   
-			        	text: HreRem.i18n('fieldlabel.titular.catastral'),
-			        	dataIndex: 'titularCatastral',
-			        	editor: {xtype:'textfield'},
-			        	flex: 1
-			        },
-			        
-			        {   text: HreRem.i18n('fieldlabel.superficie.construida'),
-			        	dataIndex: 'superficieConstruida',
-			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1,
-			        	summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
-			            }
-			        },
-			        {   text: HreRem.i18n('fieldlabel.superficie.util'),
-			        	dataIndex: 'superficieUtil',
-			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1,
-			        	summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
-			            }
-			        },
-			        {   text: HreRem.i18n('fieldlabel.superficie.repercusion.elementos.comunes'), 
-			        	dataIndex: 'superficieReperComun',
-			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1,
-			        	summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
-			            }
-			        },
-			        {   text: HreRem.i18n('fieldlabel.superficie.parcela'), 
-			        	dataIndex: 'superficieParcela',
-			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1,
-			        	summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
-			            }
-			        },
-			        {   text: HreRem.i18n('fieldlabel.superficie.suelo'),
-			        	dataIndex: 'superficieSuelo',
-			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1,
-			        	summaryType: 'sum',
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
-			            }
-			        },
-			        {   text: HreRem.i18n('fieldlabel.valor.catastral.construccion'),
-			        	dataIndex: 'valorCatastralConst',
-			        	renderer: function(value) {
-			        		return Ext.util.Format.currency(value);
-			        	},
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1
-			        },
-			        {   text: HreRem.i18n('fieldlabel.valor.catastral.suelo'),
-			        	dataIndex: 'valorCatastralSuelo',
-			        	renderer: function(value) {
-			        		return Ext.util.Format.currency(value);
-			        	},
-			        	editor: {
-			        		xtype:'numberfield', 
-			        		hideTrigger: true,
-			        		keyNavEnable: false,
-			        		mouseWheelEnable: false},
-			        	flex: 1
-			        },
-			        {   text: HreRem.i18n('fieldlabel.fecha.revision.valor.catastral'),
-			        	dataIndex: 'fechaRevValorCatastral',
-			        	formatter: 'date("d/m/Y")',
-			        	/*format: 'M d, Y',
-			        	format: 'Y',*/
-			        	editor: {
-		                    xtype: 'datefield'
-		                },
-		                flex: 1 
-			        },
-			        {   text: HreRem.i18n('fieldlabel.fecha.alta.catastro'),
-			        	dataIndex: 'fechaAltaCatastro',
-			        	formatter: 'date("d/m/Y")',
-			        	/*format: 'M d, Y',
-			        	format: 'Y',*/
-			        	editor: {
-		                    xtype: 'datefield'
-		                },
-		                flex: 1 
-			        },
-			        {   text: HreRem.i18n('fieldlabel.fecha.baja.catastro'),
-			        	dataIndex: 'fechaBajaCatastro',
-			        	formatter: 'date("d/m/Y")',
-			        	/*format: 'M d, Y',
-			        	format: 'Y',*/
-			        	editor: {
-		                    xtype: 'datefield'
-		                },
-		                flex: 1 
-			        },
-			        {   
-			        	text: HreRem.i18n('fieldlabel.observaciones'),
-			        	dataIndex: 'observaciones',
-			        	editor: {
-			        		xtype:'textarea',
-			        		maxLength : 400
-			        	},
-			        	flex: 1
-			        },
-			        {
-			        	text: HreRem.i18n('fieldlabel.resultadoSiNO'),
-			        	dataIndex: 'resultadoSiNO', 
-			        	renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-				            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
-				            var descripcion;
-				        	if(!Ext.isEmpty(foundedRecord)) {
-				        		descripcion = foundedRecord.getData().descripcion;
-				        	}
-				            return descripcion;
-				        },
-			        	editor: {
-			        		xtype:'combobox',
-			        		   labelWidth: '25%',
-					            width: '15%',
-				        	
-			        		bind: {
-			            		store: '{comboSiNoRem}',
-			            		value: '{infoAdministrativa.resultadoSiNO}'
-			            	},
-			            	displayField: 'descripcion',
-							valueField: 'codigo',
-			            	allowBlank: false
-			        	},
-			        	
-			        	
-			        	flex: 1
-			        
-			        	       
-			        },
-			        {   
-			        	text: HreRem.i18n('fieldlabel.fechaSoliciud901'),
-			        	dataIndex: 'fechaSolicitud901',
-			        	formatter: 'date("d/m/Y")',
-			        	
-			        	editor: {
-			        		xtype:'datefield'
-			        	},
-			        	flex: 1
-			        },
-			        {   
-			        	text: HreRem.i18n('fieldlabel.alteracion.catastral'),
-			        	dataIndex: 'fechaAlteracion',
-			        	formatter: 'date("d/m/Y")',
-			        	
-			        	editor: {
-			        		xtype:'datefield'
-			        	},
-			        	flex: 1
-			        }
-			       	        
-			    ],
-			    dockedItems : [
-			        {
-			            xtype: 'pagingtoolbar',
-			            dock: 'bottom',
-			            displayInfo: true,
-			            bind: {
-			                store: '{storeCatastro}'
-			            }
-			        }
-			    ]
-			},
+//       	 	{
+//				title:HreRem.i18n('title.catastro'),
+//			    xtype: 'gridBaseEditableRow',
+//			    idPrincipal: 'activo.id',
+//			    topBar: true,
+//				cls	: 'panel-base shadow-panel',
+//				bind: {
+//					store: '{storeCatastro}'
+//				},
+//				features: [{
+//		            id: 'summary',
+//		            ftype: 'summary',
+//		            hideGroupedHeader: true,
+//		            enableGroupingMenu: false,
+//		            dock: 'bottom'
+//				}],
+//
+//				secFunToEdit: 'EDITAR_INFO_ADMINISTRATIVA_ACTIVO',
+//				
+//				secButtons: {
+//					secFunPermToEnable : 'EDITAR_INFO_ADMINISTRATIVA_ACTIVO'
+//				},
+//
+//				columns: [
+//				    {   
+//						text: HreRem.i18n('fieldlabel.referencia.catastral'),
+//			        	dataIndex: 'refCatastral',
+//			        	flex: 2
+//			        },
+//			        {
+//						text: HreRem.i18n('fieldlabel.poligono'),
+//			        	dataIndex: 'poligono',
+//			        	editor: {
+//			        		xtype:'textfield',
+//			        		listeners : {
+//			                    change : function (field, newValue, oldValue, eOpts) {
+//		                    	    var grid = field.up('grid');
+//		                    		var parcelaValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=parcela]').value;
+//		                    		var refCatastralValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]').value;
+//		                    		if (refCatastralValue)
+//		                    		{
+//		                    			field.allowBlank = true;
+//		                    			field.clearInvalid();
+//		                    		}
+//		                    		else
+//		                    		{
+//		                    			field.allowBlank = false;
+//		                    		}
+//		                    		
+//	                    			if (newValue && parcelaValue)
+//	                    			{
+//	                    				//Poner el refCatastral allowBlank a true porque ahora que tenemos parcela y pol�gono es opcional
+//	                    				var refCatastralRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]');
+//	                    				refCatastralRef.allowBlank = true;
+//	                    				refCatastralRef.validateValue(refCatastralRef.getValue());
+//	                    				//VALIDATE en vez de clearInvalid para pasar el allowBlank a efectivo sin que se deje de tener en cuenta el enforceMaxLength
+//	                    			}
+//
+//		                        }
+//			        		},
+//			        	    flex: 1
+//			            }
+//			        },	
+//					{
+//			            text: HreRem.i18n('fieldlabel.parcela'),
+//			            dataIndex: 'parcela',
+//			        	editor: {
+//			        		xtype:'textfield',
+//			        		listeners : {
+//			                    change : function (field, newValue, oldValue, eOpts) {
+//			                    	    var grid = field.up('grid');
+//			                    		var poligonoValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=poligono]').value;
+//			                    		var refCatastralValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]').value;
+//			                    		if (refCatastralValue)
+//			                    		{
+//			                    			field.allowBlank = true;
+//			                    			field.clearInvalid();
+//			                    		}
+//			                    		else
+//			                    		{
+//			                    			field.allowBlank = false;
+//			                    		}
+//			                    		
+//		                    			if (newValue && poligonoValue)
+//		                    			{
+//		                    				//Poner el refCatastral allowBlank a true porque ahora que tenemos parcela y pol�gono es opcional
+//		                    				var refCatastralRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=refCatastral]');
+//		                    				refCatastralRef.allowBlank = true;
+//		                    				refCatastralRef.validateValue(refCatastralRef.getValue());
+//		                    				//VALIDATE en vez de clearInvalid para pasar el allowBlank a efectivo sin que se deje de tener en cuenta el enforceMaxLength
+//		                    			}
+//		                        }
+//			                    }
+//			            },
+//			        	flex: 1
+//			        },
+//			        {   
+//			        	text: HreRem.i18n('fieldlabel.titular.catastral'),
+//			        	dataIndex: 'titularCatastral',
+//			        	editor: {xtype:'textfield'},
+//			        	flex: 1
+//			        },
+//			        
+//			        {   text: HreRem.i18n('fieldlabel.superficie.construida'),
+//			        	dataIndex: 'superficieConstruida',
+//			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1,
+//			        	summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
+//			            }
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.superficie.util'),
+//			        	dataIndex: 'superficieUtil',
+//			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1,
+//			        	summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
+//			            }
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.superficie.repercusion.elementos.comunes'), 
+//			        	dataIndex: 'superficieReperComun',
+//			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1,
+//			        	summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
+//			            }
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.superficie.parcela'), 
+//			        	dataIndex: 'superficieParcela',
+//			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1,
+//			        	summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
+//			            }
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.superficie.suelo'),
+//			        	dataIndex: 'superficieSuelo',
+//			        	renderer: Ext.util.Format.numberRenderer('0,000.00'),
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1,
+//			        	summaryType: 'sum',
+//			            summaryRenderer: function(value, summaryData, dataIndex) {
+//			            	return "<span>"+Ext.util.Format.number(value, '0,000.00')+"</span>"
+//			            }
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.valor.catastral.construccion'),
+//			        	dataIndex: 'valorCatastralConst',
+//			        	renderer: function(value) {
+//			        		return Ext.util.Format.currency(value);
+//			        	},
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.valor.catastral.suelo'),
+//			        	dataIndex: 'valorCatastralSuelo',
+//			        	renderer: function(value) {
+//			        		return Ext.util.Format.currency(value);
+//			        	},
+//			        	editor: {
+//			        		xtype:'numberfield', 
+//			        		hideTrigger: true,
+//			        		keyNavEnable: false,
+//			        		mouseWheelEnable: false},
+//			        	flex: 1
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.fecha.revision.valor.catastral'),
+//			        	dataIndex: 'fechaRevValorCatastral',
+//			        	formatter: 'date("d/m/Y")',
+//			        	/*format: 'M d, Y',
+//			        	format: 'Y',*/
+//			        	editor: {
+//		                    xtype: 'datefield'
+//		                },
+//		                flex: 1 
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.fecha.alta.catastro'),
+//			        	dataIndex: 'fechaAltaCatastro',
+//			        	formatter: 'date("d/m/Y")',
+//			        	/*format: 'M d, Y',
+//			        	format: 'Y',*/
+//			        	editor: {
+//		                    xtype: 'datefield'
+//		                },
+//		                flex: 1 
+//			        },
+//			        {   text: HreRem.i18n('fieldlabel.fecha.baja.catastro'),
+//			        	dataIndex: 'fechaBajaCatastro',
+//			        	formatter: 'date("d/m/Y")',
+//			        	/*format: 'M d, Y',
+//			        	format: 'Y',*/
+//			        	editor: {
+//		                    xtype: 'datefield'
+//		                },
+//		                flex: 1 
+//			        },
+//			        {   
+//			        	text: HreRem.i18n('fieldlabel.observaciones'),
+//			        	dataIndex: 'observaciones',
+//			        	editor: {
+//			        		xtype:'textarea',
+//			        		maxLength : 400
+//			        	},
+//			        	flex: 1
+//			        },
+//			        {
+//			        	text: HreRem.i18n('fieldlabel.resultadoSiNO'),
+//			        	dataIndex: 'resultadoSiNO', 
+//			        	renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+//				            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
+//				            var descripcion;
+//				        	if(!Ext.isEmpty(foundedRecord)) {
+//				        		descripcion = foundedRecord.getData().descripcion;
+//				        	}
+//				            return descripcion;
+//				        },
+//			        	editor: {
+//			        		xtype:'combobox',
+//			        		   labelWidth: '25%',
+//					            width: '15%',
+//				        	
+//			        		bind: {
+//			            		store: '{comboSiNoRem}',
+//			            		value: '{infoAdministrativa.resultadoSiNO}'
+//			            	},
+//			            	displayField: 'descripcion',
+//							valueField: 'codigo',
+//			            	allowBlank: false
+//			        	},
+//			        	
+//			        	
+//			        	flex: 1
+//			        
+//			        	       
+//			        },
+//			        {   
+//			        	text: HreRem.i18n('fieldlabel.fechaSoliciud901'),
+//			        	dataIndex: 'fechaSolicitud901',
+//			        	formatter: 'date("d/m/Y")',
+//			        	
+//			        	editor: {
+//			        		xtype:'datefield'
+//			        	},
+//			        	flex: 1
+//			        },
+//			        {   
+//			        	text: HreRem.i18n('fieldlabel.alteracion.catastral'),
+//			        	dataIndex: 'fechaAlteracion',
+//			        	formatter: 'date("d/m/Y")',
+//			        	
+//			        	editor: {
+//			        		xtype:'datefield'
+//			        	},
+//			        	flex: 1
+//			        }
+//			       	        
+//			    ],
+//			    dockedItems : [
+//			        {
+//			            xtype: 'pagingtoolbar',
+//			            dock: 'bottom',
+//			            displayInfo: true,
+//			            bind: {
+//			                store: '{storeCatastro}'
+//			            }
+//			        }
+//			    ]
+//			},
 			
            {
         	   xtype:'fieldset',

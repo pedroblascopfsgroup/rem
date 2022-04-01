@@ -381,7 +381,7 @@ Ext.define('HreRem.view.ViewportController', {
         Ext.Ajax.request({
 	        url : urlLogout,
 	        success : function(response) {
-	        		window.location = $AC.getWebPath() + 'js/plugin/rem/index.jsp?logout';
+	        		window.location = $AC.getWebPath() + 'js/logout_adfs.jsp';
 	        }
         });
     }

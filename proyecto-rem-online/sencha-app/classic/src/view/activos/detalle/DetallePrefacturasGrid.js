@@ -31,6 +31,12 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 					hidden:true
 				},
 				{
+					dataIndex: 'nombrePropietario', 
+					reference: 'nombrePropietario',
+					flex: 1,
+					text: HreRem.i18n('fieldlabel.albaran.propietario')
+				},
+				{
 					dataIndex: 'numTrabajo',
 					reference: 'numTrabajo',
 					flex: 1,

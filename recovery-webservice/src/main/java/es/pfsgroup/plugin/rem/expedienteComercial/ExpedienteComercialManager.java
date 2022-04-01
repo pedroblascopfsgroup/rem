@@ -1492,6 +1492,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDClaseContratoAlquiler claseContrato = genericDao.get(DDClaseContratoAlquiler.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getClaseContratoCodigo()));
 			oferta.setClaseContratoAlquiler(claseContrato);
 		}
+
+		
+		if (!Checks.esNulo(dto.getCheckForzadoCajamar())) {
+			oferta.setCheckForzadoCajamar(dto.getCheckForzadoCajamar());
+			oferta.setFechaForzadoCajamar(new Date());
+			oferta.setUsuarioForzadoCajamar(genericAdapter.getUsuarioLogado());
+			
+		}
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
@@ -2403,7 +2411,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
-
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+			if (!Checks.esNulo(oferta.getCheckFormCajamar())) {
+				dto.setCheckFormCajamar("No");
+				if (oferta.getCheckFormCajamar())
+					dto.setCheckFormCajamar("Si");		
+			}
+			
+			if (!Checks.esNulo(oferta.getCheckForzadoCajamar())) {
+				dto.setCheckForzadoCajamar(oferta.getCheckForzadoCajamar());
+				
+				if (!Checks.esNulo(oferta.getUsuarioForzadoCajamar()) && !Checks.esNulo(oferta.getUsuarioForzadoCajamar().getApellidoNombre())) 
+					dto.setUsuarioForzadoCajamar(oferta.getUsuarioForzadoCajamar().getApellidoNombre());
+				
+				if (!Checks.esNulo(oferta.getFechaForzadoCajamar())) 
+					dto.setFechaForzadoCajamar(oferta.getFechaForzadoCajamar());
+			}
+		
+			dto.setModificarFormalizacionCajamar(true);
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado()) 
+					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
+				dto.setModificarFormalizacionCajamar(false);						
+			}	
+		}
 		return dto;
 	}
 

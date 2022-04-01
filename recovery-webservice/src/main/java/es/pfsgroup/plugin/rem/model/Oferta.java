@@ -481,7 +481,8 @@ public class Oferta implements Serializable, Auditable {
     @Column(name = "CHECK_FORZADO_CAJAMAR")
     private Boolean checkForzadoCajamar;
     
-    @Column(name = "USUARIO_FORZADO_CAJAMAR")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USUARIO_FORZADO_CAJAMAR")
     private Usuario usuarioForzadoCajamar;
     
     @Column(name="FECHA_FORZADO_CAJAMAR")

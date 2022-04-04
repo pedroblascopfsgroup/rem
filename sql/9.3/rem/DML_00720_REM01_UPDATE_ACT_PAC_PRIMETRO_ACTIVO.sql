@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Alejandra garcía
+--## AUTOR=Alejandra García
 --## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
@@ -60,6 +60,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND TCO.BORRADO = 0
                             JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
                                 AND EPA.BORRADO = 0
+                            JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+                                AND EPV.BORRADO = 0
                             JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID
                                 AND FSP.BORRADO = 0
                             JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID
@@ -71,9 +73,12 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                             WHERE HFP.BORRADO = 0
                             AND FSP.DD_FSP_CODIGO = ''09''  
                             AND SFP.DD_SFP_CODIGO = ''14''  
-                            AND TCO.DD_TCO_CODIGO = ''03''
                             AND SINO.DD_SIN_CODIGO = ''02''
-                            AND DD_EPA_CODIGO <> ''03''
+                            AND (
+                                (TCO.DD_TCO_CODIGO = ''03'' AND EPA.DD_EPA_CODIGO <> ''03'')
+                                 OR (TCO.DD_TCO_CODIGO = ''01'' AND EPV.DD_EPV_CODIGO <> ''03'')
+                                 OR (TCO.DD_TCO_CODIGO = ''02'' AND EPV.DD_EPV_CODIGO <> ''03'' AND EPA.DD_EPA_CODIGO <> ''03'')
+                            )
                             AND HFP.HFP_FECHA_FIN IS NULL
                             AND ACT.ACT_PERIMETRO_MACC = 1
                             AND NOT EXISTS ( SELECT
@@ -109,6 +114,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       , FSP.DD_FSP_CODIGO
                                       , SFP.DD_SFP_CODIGO  
                                       , TCO.DD_TCO_CODIGO
+                                      , EPA.DD_EPA_CODIGO
+                                      , EPV.DD_EPV_CODIGO
                                       , SINO.DD_SIN_CODIGO
                                   FROM '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP 
                                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HFP.ACT_ID
@@ -119,6 +126,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       AND TCO.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
                                       AND EPA.BORRADO = 0
+                                  JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+                                      AND EPV.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID
                                       AND FSP.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID
@@ -136,7 +145,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   WHERE HFP.BORRADO = 0
                                   AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
                                   AND AGR.AGR_FECHA_BAJA IS NULL
-                                  AND DD_EPA_CODIGO <> ''03''
+                                  AND DD_TCO_CODIGO <> ''04''
                                   AND HFP.HFP_FECHA_FIN IS NULL
                                   AND ACT.ACT_PERIMETRO_MACC = 1
                               ), CUMPLE_CONDICION AS (
@@ -145,7 +154,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   FROM PRINCIPAL PRIN
                                   WHERE PRIN.DD_FSP_CODIGO = ''09''  
                                   AND PRIN.DD_SFP_CODIGO = ''14''  
-                                  AND PRIN.DD_TCO_CODIGO = ''03''
+                                  AND (
+                                        (PRIN.DD_TCO_CODIGO = ''03'' AND PRIN.DD_EPA_CODIGO <> ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''01'' AND PRIN.DD_EPV_CODIGO <> ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''02'' AND PRIN.DD_EPV_CODIGO <> ''03'' AND PRIN.DD_EPA_CODIGO <> ''03'')
+                                      )
                                   AND PRIN.DD_SIN_CODIGO = ''02''
                               ), NO_CUMPLE_CONDICION AS (
                                   SELECT DISTINCT
@@ -153,7 +166,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   FROM PRINCIPAL PRIN
                                   WHERE PRIN.DD_FSP_CODIGO <> ''09''  
                                   OR PRIN.DD_SFP_CODIGO <> ''14''  
-                                  OR PRIN.DD_TCO_CODIGO <> ''03''
+                                  OR (
+                                        (PRIN.DD_TCO_CODIGO = ''03'' AND PRIN.DD_EPA_CODIGO = ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''01'' AND PRIN.DD_EPV_CODIGO = ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''02'' AND (PRIN.DD_EPV_CODIGO = ''03'' OR PRIN.DD_EPA_CODIGO = ''03''))
+                                      )
                                   OR PRIN.DD_SIN_CODIGO <> ''02''
                               )
                               SELECT
@@ -189,6 +206,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       , FSP.DD_FSP_CODIGO
                                       , SFP.DD_SFP_CODIGO  
                                       , TCO.DD_TCO_CODIGO
+                                      , EPA.DD_EPA_CODIGO
+                                      , EPV.DD_EPV_CODIGO
                                       , SINO.DD_SIN_CODIGO
                                   FROM '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP 
                                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HFP.ACT_ID
@@ -199,6 +218,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       AND TCO.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
                                       AND EPA.BORRADO = 0
+                                  JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+                                      AND EPV.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID
                                       AND FSP.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID
@@ -216,7 +237,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   WHERE HFP.BORRADO = 0
                                   AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
                                   AND AGR.AGR_FECHA_BAJA IS NULL
-                                  AND DD_EPA_CODIGO <> ''03''
+                                  AND DD_TCO_CODIGO <> ''04''
                                   AND HFP.HFP_FECHA_FIN IS NULL
                                   AND ACT.ACT_PERIMETRO_MACC = 1
                               ), NO_CUMPLE_CONDICION AS (
@@ -225,7 +246,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   FROM PRINCIPAL PRIN
                                   WHERE PRIN.DD_FSP_CODIGO <> ''09''  
                                   OR PRIN.DD_SFP_CODIGO <> ''14''  
-                                  OR PRIN.DD_TCO_CODIGO <> ''03''
+                                  OR (
+                                        (PRIN.DD_TCO_CODIGO = ''03'' AND PRIN.DD_EPA_CODIGO = ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''01'' AND PRIN.DD_EPV_CODIGO = ''03'')
+                                        OR (PRIN.DD_TCO_CODIGO = ''02'' AND (PRIN.DD_EPV_CODIGO = ''03'' OR PRIN.DD_EPA_CODIGO = ''03''))
+                                      )
                                   OR PRIN.DD_SIN_CODIGO <> ''02''
                               )
                               SELECT

@@ -31,11 +31,11 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
@@ -73,7 +73,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubpartidasEdificacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
@@ -1234,6 +1233,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 						gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
 						gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
+						List<ActivoCatastro> activosCatastro = activoAgrupacionActivo.getActivo().getCatastro();
+						if (!Checks.estaVacio(activosCatastro)) {						
+							ActivoCatastro activoCatastro = activosCatastro.get(0);
+							if(activoCatastro.getCatastro() != null) {
+								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+							}else {
+								gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
+							}
+						}
 						sumaTotal = sumaTotal.add(participacion);
 						if (activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getId() != null) {
 							   Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacionActivo.getActivo().getId());
@@ -1311,6 +1319,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				 			
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
+
+					List<ActivoCatastro> activosCatastro = activo.getCatastro();
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = activosCatastro.get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoLineaDetalleEntidad.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
+					}
 					if (activo != null && activo.getId() != null) {
 						Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 						ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
@@ -1345,6 +1363,34 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							   gastoLineaDetalleEntidad.setSituacionComercial(null);
 					   }
 					}
+					
+					Filter filtroPatrimonioActivoContrato = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtroPatrimonioActivoContrato);
+					String codigoCarteraBc = DDCarteraBc.CODIGO_VENTA;
+					if (patrimonioContrato != null &&  activoPatrimonioContratoAlquilada(patrimonioContrato)) {
+						codigoCarteraBc = DDCarteraBc.CODIGO_ALQUILER;
+					}
+					   
+					Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCarteraBc);
+					DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+					gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
+					   
+					if (activo.getTipoTransmision() != null) {
+						Filter filtroTipoTransmision = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getTipoTransmision().getCodigo());
+						DDTipoTransmision tipoTransmision = genericDao.get(DDTipoTransmision.class, filtroTipoTransmision);
+						if (tipoTransmision != null) {
+						   gastoLineaDetalleEntidad.setTipoTransmision(tipoTransmision);
+						}
+					}
+					if (activo.getSituacionComercial() != null && activo.getSituacionComercial().getCodigo() != null
+							  &&  DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+						   Filter filtroSituacionComercial= genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
+						   DDSituacionComercial ddSituacionComercial = genericDao.get(DDSituacionComercial.class, filtroSituacionComercial);
+						   gastoLineaDetalleEntidad.setSituacionComercial(ddSituacionComercial);
+				   } else {
+						   gastoLineaDetalleEntidad.setSituacionComercial(null);
+				   }
+					
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
 					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
 					Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", gastoLineaDetalle.getSubtipoGasto().getCodigo());
@@ -1367,6 +1413,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						}
 					}
 					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
+					
 				}else {
 					gastoLineaDetalleEntidad.setEntidad(Long.parseLong(dto.getIdElemento()));
 				}

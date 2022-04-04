@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra garcía
---## FECHA_CREACION=20220330
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17577
@@ -50,7 +50,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
                       USING (
                             SELECT 
-                                HFP.ACT_ID
+                                ACT.ACT_ID
                             FROM '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP 
                             JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = HFP.ACT_ID
                                 AND ACT.BORRADO = 0
@@ -66,10 +66,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                 AND SFP.BORRADO = 0
                             JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
                                 AND PAC.BORRADO = 0
-                            JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-                                AND CRA.BORRADO = 0
-                            JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
-                                AND SCR.BORRADO = 0
                             LEFT JOIN '||V_ESQUEMA_M||'.DD_SIN_SINO SINO ON SINO.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES
                                 AND SINO.BORRADO = 0
                             WHERE HFP.BORRADO = 0
@@ -78,9 +74,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                             AND TCO.DD_TCO_CODIGO = ''03''
                             AND SINO.DD_SIN_CODIGO = ''02''
                             AND DD_EPA_CODIGO <> ''03''
-                            AND CRA.DD_CRA_CODIGO = ''07''
-                            AND SCR.DD_SCR_CODIGO = ''71''
                             AND HFP.HFP_FECHA_FIN IS NULL
+                            AND ACT.ACT_PERIMETRO_MACC = 1
                             AND NOT EXISTS ( SELECT
                                                 1
                                             FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
@@ -89,7 +84,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                             JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
                                                 AND TAG.BORRADO = 0
                                             WHERE AGA.ACT_ID = ACT.ACT_ID
-                                            AND TAG.DD_TAG_CODIGO = ''02''
+                                            AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
+                                            AND AGR.AGR_FECHA_BAJA IS NULL
                                             )
                       ) T2 ON (T1.ACT_ID = T2.ACT_ID)
                       WHEN MATCHED THEN UPDATE SET
@@ -135,18 +131,14 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       AND AGR.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
                                       AND TAG.BORRADO = 0
-                                  JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-                                      AND CRA.BORRADO = 0
-                                  JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
-                                      AND SCR.BORRADO = 0
                                   LEFT JOIN '||V_ESQUEMA_M||'.DD_SIN_SINO SINO ON SINO.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES
                                       AND SINO.BORRADO = 0
                                   WHERE HFP.BORRADO = 0
-                                  AND TAG.DD_TAG_CODIGO = ''02''
+                                  AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
+                                  AND AGR.AGR_FECHA_BAJA IS NULL
                                   AND DD_EPA_CODIGO <> ''03''
-                                  AND CRA.DD_CRA_CODIGO = ''07''
-                                  AND SCR.DD_SCR_CODIGO = ''71''
                                   AND HFP.HFP_FECHA_FIN IS NULL
+                                  AND ACT.ACT_PERIMETRO_MACC = 1
                               ), CUMPLE_CONDICION AS (
                                   SELECT DISTINCT
                                       PRIN.AGR_ID
@@ -219,18 +211,14 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                       AND AGR.BORRADO = 0
                                   JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
                                       AND TAG.BORRADO = 0
-                                  JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-                                      AND CRA.BORRADO = 0
-                                  JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
-                                      AND SCR.BORRADO = 0
                                   LEFT JOIN '||V_ESQUEMA_M||'.DD_SIN_SINO SINO ON SINO.DD_SIN_ID = PAC.PAC_EXCLUIR_VALIDACIONES
                                       AND SINO.BORRADO = 0
                                   WHERE HFP.BORRADO = 0
-                                  AND TAG.DD_TAG_CODIGO = ''02''
+                                  AND TAG.DD_TAG_CODIGO IN (''02'',''17'',''18'')
+                                  AND AGR.AGR_FECHA_BAJA IS NULL
                                   AND DD_EPA_CODIGO <> ''03''
-                                  AND CRA.DD_CRA_CODIGO = ''07''
-                                  AND SCR.DD_SCR_CODIGO = ''71''
                                   AND HFP.HFP_FECHA_FIN IS NULL
+                                  AND ACT.ACT_PERIMETRO_MACC = 1
                               ), NO_CUMPLE_CONDICION AS (
                                   SELECT DISTINCT
                                       PRIN.AGR_ID
@@ -245,7 +233,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                                   , AGA.ACT_ID 
                               FROM NO_CUMPLE_CONDICION NO_CUMPLE
                               JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = NO_CUMPLE.AGR_ID
-                                  AND AGA.BORRADO = 0                              
+                                  AND AGA.BORRADO = 0                         
                       ) T2 ON (T1.ACT_ID = T2.ACT_ID)
                       WHEN MATCHED THEN UPDATE SET
                           T1.PAC_CHECK_GESTION_COMERCIAL = 0

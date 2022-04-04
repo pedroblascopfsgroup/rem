@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,6 @@ import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
-import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
@@ -129,6 +123,14 @@ public class UpdaterServiceConfirmarFechaFirmaArras implements UpdaterService {
 						Auditoria.delete(reserva);
 						genericDao.save(Reserva.class, reserva);
 					}
+
+					CondicionanteExpediente condicionanteExpediente = eco.getCondicionante();
+					condicionanteExpediente.setSolicitaReserva(0);
+					condicionanteExpediente.setTipoCalculoReserva(null);
+					condicionanteExpediente.setPorcentajeReserva(null);
+					condicionanteExpediente.setPlazoFirmaReserva(null);
+					condicionanteExpediente.setImporteReserva(null);
+					genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
 				}else {
 					if(DDMotivosEstadoBC.CODIGO_APROBADA_BC.equals(dto.getValidacionBC())) {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_FIRMA_ARRAS;

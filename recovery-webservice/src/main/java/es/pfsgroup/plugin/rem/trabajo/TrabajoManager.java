@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssignationService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -149,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Prefactura;
+import es.pfsgroup.plugin.rem.model.Prefacturas;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -212,7 +214,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
-	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
+	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);	
 
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";
 	private static final String OPERACION_ALTA = "Alta";
@@ -500,10 +502,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public Object getTrabajoById(Long id, String pestana) {
 
-		Trabajo trabajo = findOne(id);
 		Object dto = null;
 
 		try {
+			
+			Trabajo trabajo = findOne(id);
 
 			if (PESTANA_FICHA.equals(pestana)) {
 				dto = trabajoToDtoFichaTrabajo(trabajo);
@@ -3408,13 +3411,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if(trabajo.getImporteAsegurado() != null) {
 			dtoTrabajo.setImportePrecio(trabajo.getImporteAsegurado());
-		}
+		}		
 		
-		Prefactura prefactura = trabajo.getPrefactura();
+		Filter filtroPrefacturas = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		Prefacturas prefacturas = genericDao.get(Prefacturas.class, filtroPrefacturas);
 		
-		if (prefactura != null && prefactura.getAlbaran() != null) {
-			Albaran albaran = prefactura.getAlbaran();
-
+		if (prefacturas != null && prefacturas.getPrefactura().getAlbaran() != null) {
+			Albaran albaran = prefacturas.getPrefactura().getAlbaran();
+			
 			if (albaran.getNumAlbaran() != null) {
 				dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
 			}
@@ -3467,6 +3471,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if(trabajo.getIdentificadorReam() != null) {
 			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
+		}
+		
+		if(trabajo.getRefacturacionTrabajo() != null) {
+			dtoTrabajo.setRefacturacionTrabajoDescripcion(trabajo.getRefacturacionTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getCalculoMargenTrabajo() != null) {
+			dtoTrabajo.setTipoCalculoMargenDescripcion(trabajo.getCalculoMargenTrabajo().getDescripcion());
+		}
+		
+		if(trabajo.getPorcentajeMargen() != null) {
+			dtoTrabajo.setPorcentajeMargen(trabajo.getPorcentajeMargen());
+		}
+		
+		if(trabajo.getImporteMargen() != null) {
+			dtoTrabajo.setImporteMargen(trabajo.getImporteMargen());
 		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
@@ -6687,14 +6707,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
 		
-		if(trabajo == null || trabajo.getTipoTrabajo() == null || !DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+		if(trabajo == null) {
 			return;
 		}
 		
 		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
-		
+		Usuario buzonPfs = usuarioManager.getByUsername(NotificatorServiceSancionOfertaGenerico.BUZON_PFS);
 		List<String> mailsPara = new ArrayList<String>();
-		//List<String> mailsCC = new ArrayList<String>();
+		List<String> mailsCC = new ArrayList<String>();
 		
 	    String correos = "";
 	   
@@ -6714,11 +6734,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	    		}
 	    	}		    
 	    }
-	    
+	     
 		if(!Checks.esNulo(correos) && !correos.equals("")) {
 			Collections.addAll(mailsPara, correos.split(";"));
 		}
-	   
+		
+		if (!Checks.esNulo(buzonPfs)) {
+			mailsCC.add(buzonPfs.getEmail());
+		}
 		//mailsCC.add(this.getCorreoFrom());
 		
 		String contenido = "";
@@ -6762,7 +6785,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 			  
 		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
-		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
+		genericAdapter.sendMail(mailsPara, mailsCC, titulo, generateCuerpo(dtoSendNotificator, contenido));
 		
 	}
 

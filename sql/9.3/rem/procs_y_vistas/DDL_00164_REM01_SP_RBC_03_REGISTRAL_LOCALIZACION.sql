@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220325
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17497
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -27,6 +27,7 @@
 --##	      0.15 Insertar nuevo campo SUP_REG_SOLAR - HREOS-17351 - Javier Esbri
 --##	      0.16 Añadido SUP_REG_CONSTRUIDA - HREOS-17497 - Daniel Algaba
 --##	      0.17 Quita NUM_CARTILLA - HREOS-17497 - Daniel Algaba
+--##	      0.18 Añadimos REG_SUPERFICIE_CONSTRUIDA - HREOS-17614 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -214,7 +215,7 @@ BEGIN
                   , ACT_REG.REG_SUPERFICIE_SOBRE_RASANTE * 100 SUP_SOBRE_RASANTE
                   , ACT_REG.REG_SUPERFICIE_BAJO_RASANTE * 100 SUP_BAJO_RASANTE
                   , ACT_REG.REG_SUPERFICIE_PARCELA * 100 SUP_REG_SOLAR
-                  , BCR.SUP_REG_CONSTRUIDA
+                  , ACT_REG.REG_SUPERFICIE_CONSTRUIDA * 100 SUP_REG_CONSTRUIDA
                   FROM '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_REG
                   JOIN '|| V_ESQUEMA ||'.ACT_REG_INFO_REGISTRAL ACT_REG ON BIE_REG.BIE_DREG_ID = ACT_REG.BIE_DREG_ID AND ACT_REG.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_REG.ACT_ID AND ACT.BORRADO = 0

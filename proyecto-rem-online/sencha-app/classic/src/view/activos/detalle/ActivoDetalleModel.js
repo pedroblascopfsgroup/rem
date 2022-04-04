@@ -2096,9 +2096,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var aplicaComercializar = get('activo.aplicaComercializar');
 			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
 
-	    	if (isCarteraBankia) {
-	    		return true;
-	    	}else if (($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) && tieneFuncion) {
+	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& tieneFuncion) {
 	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
 	    			editable = tieneFuncion;
 	    		}

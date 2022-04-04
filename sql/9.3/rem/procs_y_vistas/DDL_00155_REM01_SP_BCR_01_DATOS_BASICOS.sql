@@ -159,7 +159,7 @@ BEGIN
                                        
                                  ) us ON (us.act_id = act.act_id)
                                  when matched then update set
-                                    act.DD_TPA_ID = NVL(us.DD_TPA_ID,act.DD_TPA_ID, us.TPA_NULL)
+                                    act.DD_TPA_ID = COALESCE(us.DD_TPA_ID,act.DD_TPA_ID, us.TPA_NULL)
                                     ,act.DD_SAC_ID = us.DD_SAC_ID
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)

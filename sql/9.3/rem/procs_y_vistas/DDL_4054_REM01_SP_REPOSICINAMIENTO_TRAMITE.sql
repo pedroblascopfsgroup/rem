@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20210302
+--## FECHA_CREACION=20220309
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 REMVIP-11103 - Juan José Sanjuan - Actualizar asignaciones de usuarios
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -302,6 +303,25 @@ BEGIN
         WHERE T1.SUP_ID IS NULL AND T1.TAP_ID = (SELECT TAP_ID FROM REM01.TAP_TAREA_PROCEDIMIENTO TAP WHERE TAP.TAP_CODIGO = (''T013_ResultadoPBC''))';
       V_UPDATE := V_UPDATE + SQL%ROWCOUNT;
       PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Supervisor formalización). '||V_UPDATE||' Filas.';
+
+      V_UPDATE := 0;
+      EXECUTE IMMEDIATE 'MERGE INTO REM01.MIG2_TRAMITES_OFERTAS_REP T1
+        USING (
+            SELECT DISTINCT MIG.OFR_ID, GEE.USU_ID, TGE.DD_TGE_CODIGO
+            FROM REM01.MIG2_TRAMITES_OFERTAS_REP MIG
+            JOIN REM01.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG.TAP_ID AND TAP.TAP_CODIGO IN (''T013_DefinicionOferta'',''T017_DefinicionOferta'')
+            JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = MIG.OFR_ID
+            JOIN REM01.GCO_GESTOR_ADD_ECO GCO ON GCO.ECO_ID = ECO.ECO_ID
+            JOIN REM01.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GCO.GEE_ID
+            JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_ID = MIG.ACT_ID AND ACT.BORRADO = 0
+            JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+            JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ''HAYAGBOINM''
+            WHERE CRA.DD_CRA_CODIGO IN (''01'', ''07'')) T2
+        ON (T1.OFR_ID = T2.OFR_ID)
+        WHEN MATCHED THEN UPDATE SET
+            T1.USU_ID = T2.USU_ID';
+      V_UPDATE := SQL%ROWCOUNT;
+      PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' actualizada (Gestor Comercial Backoffice Inmobiliario). '||V_UPDATE||' Filas.';
 
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE MIG2_TRAMITES_OFERTAS_REP (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --

@@ -15,6 +15,7 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -249,10 +250,9 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			genericDao.update(ActivoAdjudicacionNoJudicial.class, activoAdjNoJudicial);
 		}
 		
-		NMBBien bien = activo.getBien();
-		if(bien != null && usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
-			Filter filtroBien  = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
-			NMBAdjudicacionBien adjudicacionBien = genericDao.get(NMBAdjudicacionBien.class, filtroBien);
+		if(!Checks.esNulo(activo.getAdjJudicial()) && !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien()) 
+			&& usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
+			NMBAdjudicacionBien adjudicacionBien = activo.getAdjJudicial().getAdjudicacionBien();
 			
 			if(adjudicacionBien != null) {
 				if(esBorrar(exc.dameCelda(fila, FECHA_POSESION))) {

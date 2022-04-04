@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2049,7 +2050,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) {
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) throws Exception {
+		sanitizarDescripciones(dto);
 		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
 		List<String> subcarteras = new ArrayList<String>();
 		
@@ -2081,7 +2083,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(dto.getNumAgrupacion() != null) 
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and vgrid.id = aga.activo.id) ");			
 		if(dto.getRefCatastral() != null) 
-			hb.appendWhere(" exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) ");
+			hb.appendWhere(" exists (select 1 from ActivoCatastro cat where upper(cat.catastro.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) ");
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						
@@ -2154,6 +2156,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codPromocionBbva", dto.getCodPromocionBbva());
 
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
+	}
+
+	private void sanitizarDescripciones(DtoActivoGridFilter dto) throws Exception {
+		if(!Checks.esNulo(dto.getLocalidadAvanzadaDescripcion()) &&
+			!Charset.forName("ISO8859-2").newEncoder().canEncode(dto.getLocalidadAvanzadaDescripcion()))
+			dto.setLocalidadAvanzadaDescripcion(new String(dto.getLocalidadAvanzadaDescripcion().getBytes(), "UTF-8"));
+		if(!Checks.esNulo(dto.getNombreVia()) &&
+				!Charset.forName("ISO8859-2").newEncoder().canEncode(dto.getNombreVia()))
+			dto.setLocalidadAvanzadaDescripcion(new String(dto.getNombreVia().getBytes(), "UTF-8"));
+		if(!Checks.esNulo(dto.getLocalidadDescripcion()) &&
+				!Charset.forName("ISO8859-2").newEncoder().canEncode(dto.getLocalidadDescripcion()))
+			dto.setLocalidadAvanzadaDescripcion(new String(dto.getLocalidadDescripcion().getBytes(), "UTF-8"));
+		if(!Checks.esNulo(dto.getLocalidadRegistroDescripcion()) &&
+				!Charset.forName("ISO8859-2").newEncoder().canEncode(dto.getLocalidadRegistroDescripcion()))
+			dto.setLocalidadAvanzadaDescripcion(new String(dto.getLocalidadRegistroDescripcion().getBytes(), "UTF-8"));
 	}
 
 	@Override

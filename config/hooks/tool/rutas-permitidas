@@ -262,6 +262,11 @@ rem_mirror|func-rem-comercialHydra-Incidencias
 func-rem-comercialHydra-Incidencias|R-Salustiana
 func-rem-hydra-accionesNoComercial|R-Salustiana
 rem_mirror|func-rem-tasadorasTitulizada
+rem_mirror|func-rem-catastro
+func-rem-cargaAutomaticaPromociones|R-Persica
+func-rem-mejorasGestionFotos|R-Persica
+func-rem-reincorporacionEstadoTitulo|R-Persica
+func-rem-catastro|R-Ortanique
 func-rem-comisionamiento-F3|R-Kumquat
 func-rem-informeMediador|R-Kumquat
 func-rem-comisionamiento-F3 | R-Kumquat
@@ -296,3 +301,7 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+rem_mirror|func-rem-cambioJerarquiaPrefacturasBBVA
+rem_mirror|func-rem-volcadoPagosUrgentesASPRO
+func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
+func-rem-volcadoPagosUrgentesASPRO|R-Ortanique

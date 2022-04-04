@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220215
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17167
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -62,7 +62,7 @@ BEGIN
         NUM_CARTILLA_EVALUATORIA        VARCHAR2(40 CHAR),
         ORIGEN_DATOS_CATASTRALES        VARCHAR2(2 CHAR),
         CLASE_USO_CATASTRAL             VARCHAR2(2 CHAR),
-        VIGENTE                         NUMBER(1,0),
+        VIGENTE                         VARCHAR2(1 CHAR),
         VALOR_CATASTRAL                 VARCHAR2(15 CHAR),
         VALOR_CONSTRUCCION              VARCHAR2(15 CHAR),
         VALOR_SUELO                     VARCHAR2(15 CHAR),

@@ -551,7 +551,7 @@
 	</state>
 	<decision name ="T017_FirmaContratoDecision" expression="#{T017_FirmaContratoDecision}">
         <transition to="T017_AgendarPosicionamiento" name="KO"></transition>
-		<transition to="T017_DocsPosVenta" name="OK"></transition>
+		<transition to="forkFirmado" name="OK"></transition>
 		<transition to="T017_PBCReserva" name="ReagendarArras"></transition>
 	</decision>
 	

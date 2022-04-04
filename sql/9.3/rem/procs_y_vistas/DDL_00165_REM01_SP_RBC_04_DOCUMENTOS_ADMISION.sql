@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220318
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17414
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,7 +20,8 @@
 --##	      0.8 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.9 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.10 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
---##        0.10 Nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
+--##        0.11 Nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
+--##        0.12 Corrección Registro y cambios SST - [HREOS-17515] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -177,13 +178,13 @@ BEGIN
                         , CASE WHEN EQV_MEC.DD_CODIGO_CAIXA IS NOT NULL THEN ''04''
                            WHEN CEE.DD_EDC_CODIGO = ''01'' THEN ''01''
                            WHEN CEE.DATA_ID_DOCUMENTO IS NOT NULL THEN ''02''
-                           WHEN CEE.REGISTRO IS NOT NULL THEN ''03''
                            WHEN EQV_ICE.DD_CODIGO_CAIXA IS NOT NULL THEN ''05''
+                           WHEN CEE.REGISTRO IS NOT NULL THEN ''03''
                            END SITUACION_CEE
                         , EQV_MEC.DD_CODIGO_CAIXA MOTIVO_EXONERACION_CEE
                         , EQV_ICE.DD_CODIGO_CAIXA INCIDENCIA_CEE
                         , CEE.DATA_ID_DOCUMENTO NUMERO_CEE
-                        , CASE WHEN CEE.DD_EDC_CODIGO = ''01'' OR CEE.DATA_ID_DOCUMENTO IS NOT NULL OR CEE.REGISTRO IS NOT NULL THEN SST.CODIGO_SST END CODIGO_SST
+                        , SST.CODIGO_SST CODIGO_SST
                   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0

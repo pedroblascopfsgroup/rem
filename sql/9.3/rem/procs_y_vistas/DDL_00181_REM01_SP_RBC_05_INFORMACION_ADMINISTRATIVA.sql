@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220321
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17414
+--## INCIDENCIA_LINK=HREOS-17611
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
 --##        0.2 Comentamos los nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
+--##        0.3 Quitar campos VPO F1.1 - [HREOS-17611] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -53,10 +54,10 @@ BEGIN
            SELECT
             ACT.ACT_NUM_ACTIVO_CAIXA AS NUM_IDENTIFICATIVO
             , ACT.ACT_NUM_ACTIVO AS NUM_INMUEBLE  
-            , NULL /*CASE WHEN ADM.COMPRADOR_ACOJE_AYUDA = 1 THEN ''S'' ELSE ''N'' END*/ IND_COMPRADOR_ACOGE_AYUDA
-            , NULL /*ADM.IMPORTE_AYUDA_FINANCIACION*100*/ IMP_AYUDA_FINANCIACION
-            , NULL /*TO_CHAR(ADM.FECHA_VENCIMIENTO_AVAL_SEGURO,''YYYYMMDD'')*/ FEC_VENCIMIENTO_SEGURO
-            , NULL /*TO_CHAR(ADM.FECHA_DEVOLUCION_AYUDA,''YYYYMMDD'')*/ FEC_DEVOLUCION_AYUDA
+            , NULL IND_COMPRADOR_ACOGE_AYUDA
+            , NULL IMP_AYUDA_FINANCIACION
+            , NULL FEC_VENCIMIENTO_SEGURO
+            , NULL FEC_DEVOLUCION_AYUDA
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             JOIN '|| V_ESQUEMA ||'.ACT_ADM_INF_ADMINISTRATIVA ADM ON ACT.ACT_ID = ADM.ACT_ID AND ADM.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO = ''03''

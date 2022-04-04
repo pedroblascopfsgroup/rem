@@ -729,6 +729,24 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 																value : '{saneamiento.obligatorioSolDevAyuda}'
 															}
 												        },
+												        { 
+										                	xtype: 'datefieldbase',     
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
+													 		bind: {
+													 				value:'{saneamiento.fechaVencimientoAvalSeguro}',
+													 				hidden: '{!isCarteraBankia}'
+													 			},								 		
+													 		maxValue : null
+														},
+														{ 
+										                	xtype: 'datefieldbase',     
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
+													 		bind: {
+													 				value:'{saneamiento.fechaDevolucionAyuda}',
+													 				hidden: '{!isCarteraBankia}'
+													 			},								 		
+													 		maxValue : null
+														},
 												        {
 												        	xtype : 'comboboxfieldbase',
 												            fieldLabel : HreRem.i18n('fieldlabel.libertad.cesion'),
@@ -760,7 +778,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 																store : '{comboSiNoRem}',
 							            						value : '{saneamiento.venderPersonaJuridica}'
 															}
-														}]
+														}
+													]
 												},
 												{
 													xtype :'fieldset',
@@ -813,41 +832,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 																store : '{comboSiNoRem}',
 							            						value : '{saneamiento.noTitularOtraVivienda}'
 							            					}
-														},
-														{ 
-												        	xtype: 'comboboxfieldbase',							        	
-												        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
-												        	bind: {
-					            									store: '{comboSiNoBoolean}',
-					            									value: '{saneamiento.compradorAcojeAyuda}',
-					            									hidden: '{!isCarteraBankia}'
-					            								  }
-												        },
-												        { 
-															xtype: 'currencyfieldbase',
-															fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
-							                				bind: {
-								                					value:'{saneamiento.importeAyudaFinanciacion}',
-								                					hidden: '{!isCarteraBankia}'
-							                					  }
-										                },
-												        { 
-										                	xtype: 'datefieldbase',     
-													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
-													 		bind: {
-													 				value:'{saneamiento.fechaVencimientoAvalSeguro}',
-													 				hidden: '{!isCarteraBankia}'
-													 			},								 		
-													 		maxValue : null
-														},
-														{ 
-										                	xtype: 'datefieldbase',     
-													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
-													 		bind: {
-													 				value:'{saneamiento.fechaDevolucionAyuda}',
-													 				hidden: '{!isCarteraBankia}'
-													 			},								 		
-													 		maxValue : null
 														}
 													]
 												},
@@ -886,7 +870,24 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												 				value:'{saneamiento.fechaRecepcionRespuestaOrganismo}'
 												 			},
 												 		    maxValue : null
-												        }
+												        },
+														{ 
+												        	xtype: 'comboboxfieldbase',							        	
+												        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
+												        	bind: {
+					            									store: '{comboSiNoBoolean}',
+					            									value: '{saneamiento.compradorAcojeAyuda}',
+					            									hidden: '{!isCarteraBankia}'
+					            								  }
+												        },
+												        { 
+															xtype: 'currencyfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
+							                				bind: {
+								                					value:'{saneamiento.importeAyudaFinanciacion}',
+								                					hidden: '{!isCarteraBankia}'
+							                					  }
+										                }
 												   ]
 											  }]
 								         }]

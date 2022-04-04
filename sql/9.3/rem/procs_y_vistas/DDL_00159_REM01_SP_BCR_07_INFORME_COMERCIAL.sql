@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17515
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##        0.5 Se añaden nuevos campos Informe comercial - HREOS-17351 - Javier Esbri
 --##        0.6 Se añaden el campo de número de aparcaminetos - HREOS-17497 - Daniel Algaba
 --##        0.7 Nuevos mapeos - HREOS-17515 - Daniel Algaba
+--##        0.7 Añadimos ICO_BALCON - HREOS-17614 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -90,6 +91,7 @@ BEGIN
                   , DIS_PISC.DD_DIS_ID ICO_PISCINA
                   , SIN_HUM.DD_SIN_ID ICO_SALIDA_HUMOS
                   , SIN_TER.DD_SIN_ID ICO_TERRAZA
+                  , SIN_BAL.DD_SIN_ID ICO_BALCON
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   LEFT JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
@@ -109,6 +111,8 @@ BEGIN
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_HUM ON SIN_HUM.DD_SIN_CODIGO = EQV7.DD_CODIGO_REM  
                   LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV8 ON EQV8.DD_NOMBRE_CAIXA = ''TERRAZA''  AND EQV8.DD_CODIGO_CAIXA = APR.TERRAZA AND EQV8.BORRADO=0
                   LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_TER ON SIN_TER.DD_SIN_CODIGO = EQV8.DD_CODIGO_REM  
+                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM EQV9 ON EQV9.DD_NOMBRE_CAIXA = ''BALCON''  AND EQV9.DD_CODIGO_CAIXA = APR.BALCON AND EQV9.BORRADO=0
+                  LEFT JOIN '|| V_ESQUEMA_M ||'.DD_SIN_SINO SIN_BAL ON SIN_BAL.DD_SIN_CODIGO = EQV9.DD_CODIGO_REM  
                   WHERE ACT.BORRADO = 0
                   AND APR.FLAG_EN_REM = '|| FLAG_EN_REM||'
                ) AUX
@@ -132,6 +136,7 @@ BEGIN
                   , ICO.ICO_PISCINA = NVL(AUX.ICO_PISCINA,ICO.ICO_PISCINA)
                   , ICO.ICO_SALIDA_HUMOS = NVL(AUX.ICO_SALIDA_HUMOS,ICO.ICO_SALIDA_HUMOS)
                   , ICO.ICO_TERRAZA = NVL(AUX.ICO_TERRAZA,ICO.ICO_TERRAZA)
+                  , ICO.ICO_BALCON = NVL(AUX.ICO_BALCON,ICO.ICO_BALCON)
                   , ICO.USUARIOMODIFICAR = ''STOCK_BC''
                   , ICO.FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -155,6 +160,7 @@ BEGIN
                   , ICO_PISCINA
                   , ICO_SALIDA_HUMOS
                   , ICO_TERRAZA
+                  , ICO_BALCON
                   , USUARIOCREAR
                   , FECHACREAR)
                   VALUES 
@@ -177,6 +183,7 @@ BEGIN
                   , AUX.ICO_PISCINA
                   , AUX.ICO_SALIDA_HUMOS
                   , AUX.ICO_TERRAZA
+                  , AUX.ICO_BALCON
                   , ''STOCK_BC''
                   , SYSDATE)';
       

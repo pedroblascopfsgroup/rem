@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220329
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17515
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -31,6 +31,7 @@
 --##	      0.19 Cálculo del alquiler rotacional y alquiler alquilado para el DD_CBC_ID [HREOS-17155] - Alejandra García
 --##	      0.20 Corección DD_CBC_ID [HREOS-17497] - Daniel Algaba
 --##	      0.21 Corección DD_TPA por si no viniese o no hubiesa Clase uso registral [HREOS-17515] - Daniel Algaba
+--##	      0.22 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -338,7 +339,9 @@ BEGIN
                   WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND (DCA.DCA_ID IS NULL OR (DCA.DCA_ID IS NOT NULL OR DCA.DCA_FECHA_FIRMA > SYSDATE OR DCA.DCA_FECHA_FIN_CONTRATO < SYSDATE  
                      OR DCA.DCA_EST_CONTRATO <> ''Alquilada'')) THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''02'')
                   ELSE (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''01'')
-               END AS DD_CBC_ID
+               END AS DD_CBC_ID,
+               TVC.DD_TVC_ID DD_TVC_ID,
+               TEC.DD_TEC_ID DD_TEC_ID
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -358,7 +361,11 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID = ACT2.ACT_ID
                      AND PTA.BORRADO = 0
                LEFT JOIN '|| V_ESQUEMA ||'.ACT_DCA_DATOS_CONTRATO_ALQ DCA ON DCA.ACT_ID=PTA.ACT_ID
-                     AND DCA.BORRADO = 0               
+                     AND DCA.BORRADO = 0
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_VIVIENDA_INF''  AND eqv11.DD_CODIGO_CAIXA = aux.TIPO_VIVIENDA_INF
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_TVC_TIPO_VIVIENDA_CAIXA TVC ON TVC.DD_TVC_CODIGO = eqv11.DD_CODIGO_REM 
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv12 ON eqv12.DD_NOMBRE_CAIXA = ''TIPOLOGIA_EDIFICIO''  AND eqv12.DD_CODIGO_CAIXA = aux.TIPOLOGIA_EDIFICIO
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_TEC_TIPO_EDIFICIO_CAIXA TEC ON TEC.DD_TEC_CODIGO = eqv12.DD_CODIGO_REM                
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )
@@ -385,7 +392,9 @@ BEGIN
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
                               ,act1.DD_CTC_ID = us.DD_CTC_ID       
                               ,act1.CBX_NUMERO_INMUEBLE_ANTERIOR = us.CBX_NUMERO_INMUEBLE_ANTERIOR   
-                              ,act1.dd_cbc_id = us.dd_cbc_id                                                                                                               
+                              ,act1.dd_cbc_id = us.dd_cbc_id
+                              ,act1.DD_TVC_ID = NVL(US.DD_TVC_ID,act1.DD_TVC_ID)
+                              ,act1.DD_TEC_ID = NVL(US.DD_TEC_ID,act1.DD_TEC_ID)                                                                                                               
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -415,6 +424,8 @@ BEGIN
                                           DD_CTC_ID,   
                                           CBX_NUMERO_INMUEBLE_ANTERIOR,                                                                     
                                           dd_cbc_id,
+                                          DD_TVC_ID,
+                                          DD_TEC_ID,
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -443,6 +454,8 @@ BEGIN
                                           us.DD_CTC_ID,
                                           us.CBX_NUMERO_INMUEBLE_ANTERIOR,
                                           us.dd_cbc_id,
+                                          us.DD_TVC_ID,
+                                          us.DD_TEC_ID,
                                           ''STOCK_BC'',
                                           sysdate)';
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17515
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -19,6 +19,7 @@
 --##        0.7 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
 --##        0.8 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
 --##        0.9 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
+--##        0.10 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
 --##########################################
 --*/
 
@@ -40,7 +41,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-17150';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-17614';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -1287,8 +1288,8 @@ DECLARE
         T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
         --T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0')
         --- Balcón
-        --T_TIPO_DATA('BALCON','015201','Sí','BALCON','015201','0'),
-        --T_TIPO_DATA('BALCON','015202','No','BALCON','015202','0'),
+        T_TIPO_DATA('BALCON','015201','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('BALCON','015202','No','DD_SIN_SINO','02','0'),
         --- Calefacción
         T_TIPO_DATA('CALEFACCION','001001','Sí','DD_TCL_TIPO_CLIMATIZACION','01','0'),
         T_TIPO_DATA('CALEFACCION','001002','No','DD_TCL_TIPO_CLIMATIZACION','03','0'),
@@ -1308,8 +1309,38 @@ DECLARE
         T_TIPO_DATA('SALIDA_HUMOS','079402','No','DD_SIN_SINO','02','0'),
         --- Terraza
         T_TIPO_DATA('TERRAZA','005201','Sí','DD_SIN_SINO','01','0'),
-        T_TIPO_DATA('TERRAZA','005202','No','DD_SIN_SINO','02','0')
-
+        T_TIPO_DATA('TERRAZA','005202','No','DD_SIN_SINO','02','0'),
+        --- Tipo vivienda
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005801','Casa aislada','DD_TVC_TIPO_VIVIENDA_CAIXA','005801','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005802','Casa adosada','DD_TVC_TIPO_VIVIENDA_CAIXA','005802','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005803','Casa pareada','DD_TVC_TIPO_VIVIENDA_CAIXA','005803','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005804','Piso','DD_TVC_TIPO_VIVIENDA_CAIXA','005804','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005805','Estudio','DD_TVC_TIPO_VIVIENDA_CAIXA','005805','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005806','Dúplex','DD_TVC_TIPO_VIVIENDA_CAIXA','005806','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005807','Tríplex','DD_TVC_TIPO_VIVIENDA_CAIXA','005807','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005808','Apartamento','DD_TVC_TIPO_VIVIENDA_CAIXA','005808','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005809','Loft','DD_TVC_TIPO_VIVIENDA_CAIXA','005809','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005810','Ático','DD_TVC_TIPO_VIVIENDA_CAIXA','005810','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005811','Planta baja','DD_TVC_TIPO_VIVIENDA_CAIXA','005811','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005812','Villa','DD_TVC_TIPO_VIVIENDA_CAIXA','005812','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005813','Comercial','DD_TVC_TIPO_VIVIENDA_CAIXA','005813','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005814','Industrial','DD_TVC_TIPO_VIVIENDA_CAIXA','005814','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005815','Almacén','DD_TVC_TIPO_VIVIENDA_CAIXA','005815','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005816','Entremedianeras','DD_TVC_TIPO_VIVIENDA_CAIXA','005816','0'),
+        --- Tipología edificio
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076401','Edificio Residencial (Incluido vivienda unifamiliar) ','DD_TEC_TIPO_EDIFICIO_CAIXA','076401','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076402','Edificio Terciario   ','DD_TEC_TIPO_EDIFICIO_CAIXA','076402','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076403','Edificio Comercial (Centro Comercial o Galería Comercial)','DD_TEC_TIPO_EDIFICIO_CAIXA','076403','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076404','Edificio Industrial','DD_TEC_TIPO_EDIFICIO_CAIXA','076404','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076405','Edificio Dotacional Hotelero ','DD_TEC_TIPO_EDIFICIO_CAIXA','076405','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076406','Edificio Dotacional Deportivo','DD_TEC_TIPO_EDIFICIO_CAIXA','076406','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076407','Edificio Dotacional Asistencial ','DD_TEC_TIPO_EDIFICIO_CAIXA','076407','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076408','Edificio Dotacional Sanitario   ','DD_TEC_TIPO_EDIFICIO_CAIXA','076408','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076409','Edificio Dotacional Religioso','DD_TEC_TIPO_EDIFICIO_CAIXA','076409','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076410','Edificio Dotacional Educativo','DD_TEC_TIPO_EDIFICIO_CAIXA','076410','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076411','Edificio Dotacional Lúdico','DD_TEC_TIPO_EDIFICIO_CAIXA','076411','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076412','Edificio de Aparcamientos ','DD_TEC_TIPO_EDIFICIO_CAIXA','076412','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076413','Otros','DD_TEC_TIPO_EDIFICIO_CAIXA','076413','0')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

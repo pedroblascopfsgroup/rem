@@ -252,6 +252,24 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 															value: '{infoAdministrativa.obligatorioSolDevAyuda}'
 														  }
 								                },
+										        { 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
+											 		bind: {
+											 				value:'{infoAdministrativa.fechaVencimientoAvalSeguro}',
+											 				hidden: '{!isCarteraBankia}'
+											 			},								 		
+											 		maxValue : null
+												},
+												{ 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
+											 		bind: {
+											 				value:'{infoAdministrativa.fechaDevolucionAyuda}',
+											 				hidden: '{!isCarteraBankia}'
+											 			},								 		
+											 		maxValue : null
+												},
 								                { 
 								                	xtype: 'comboboxfieldbase',
 								                	fieldLabel: HreRem.i18n('fieldlabel.libertad.cesion'), // Libertad de cesi�n (NUEVO CAMPO)
@@ -285,8 +303,6 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									value: '{infoAdministrativa.venderPersonaJuridica}'
 			            								  }
 												}
-							
-					
 											]
 							        },
 							        
@@ -342,43 +358,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.noTitularOtraVivienda}'
 			            								  }
-												},
-												{ 
-										        	xtype: 'comboboxfieldbase',							        	
-										        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
-										        	bind: {
-			            									store: '{comboSiNoBoolean}',
-			            									value: '{infoAdministrativa.compradorAcojeAyuda}',
-			            									hidden: '{!isCarteraBankia}'
-			            								  }
-										        },
-										        { 
-													xtype: 'currencyfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
-					                				bind: {
-					                						value: '{infoAdministrativa.importeAyudaFinanciacion}',
-					                						hidden: '{!isCarteraBankia}'
-					                					  }
-								                },
-										        { 
-								                	xtype: 'datefieldbase',     
-											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
-											 		bind: {
-											 				value:'{infoAdministrativa.fechaVencimientoAvalSeguro}',
-											 				hidden: '{!isCarteraBankia}'
-											 			},								 		
-											 		maxValue : null
-												},
-												{ 
-								                	xtype: 'datefieldbase',     
-											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
-											 		bind: {
-											 				value:'{infoAdministrativa.fechaDevolucionAyuda}',
-											 				hidden: '{!isCarteraBankia}'
-											 			},								 		
-											 		maxValue : null
-												}
-												
+												}									
 											]
 							        },
 						
@@ -423,7 +403,24 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
 											 			},
 											 		   maxValue : $AC.getCurrentDate()
-										        }
+										        },
+												{ 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
+										        	bind: {
+			            									store: '{comboSiNoBoolean}',
+			            									value: '{infoAdministrativa.compradorAcojeAyuda}',
+			            									hidden: '{!isCarteraBankia}'
+			            								  }
+										        },
+										        { 
+													xtype: 'currencyfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
+					                				bind: {
+					                						value: '{infoAdministrativa.importeAyudaFinanciacion}',
+					                						hidden: '{!isCarteraBankia}'
+					                					  }
+								                }
 											]
 							        },
 							        

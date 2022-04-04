@@ -382,8 +382,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					} else {
 						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
 							Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
-							if (activo == null || gasto.getCartera() == null || activo.getSubcartera() == null
-									|| gasto.getTipoGasto() == null) {
+							if(activo == null || gasto.getCartera()==null || activo.getSubcartera()==null || gasto.getTipoGasto()==null) {
+								dto.setSubcartera(activo.getSubcartera().getCodigo());
 								dto.setVisibleSuplidos(false);
 								break;
 							}
@@ -1400,7 +1400,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (importeBrutoLbk != null && importeBrutoLbk.getImporteBrutoLbk() != null) {
 				dto.setImporteBrutoLbk(importeBrutoLbk.getImporteBrutoLbk());
 			}
-
+			if (!Checks.esNulo(detalleGasto.getPagoUrgente())) {
+				dto.setPagoUrgente(detalleGasto.getPagoUrgente());
+			}		
 		}
 
 		return dto;
@@ -1599,6 +1601,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoLineaDetalleApi.actualizarDiariosLbk(gasto.getId());
 				}
 
+				if (dto.getPagoUrgente() != null) {
+					detalleGasto.setPagoUrgente(dto.getPagoUrgente());
+				}
+
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
 
@@ -1707,18 +1713,22 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					GastoLineaDetalleEntidad gastoProveedorActivo = new GastoLineaDetalleEntidad();
 					gastoProveedorActivo.setEntidad(activo.getId());
 					gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
-
-					if (!Checks.estaVacio(activosCatastro)) {
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+					
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = act.getCatastro().get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
 					}
-
-					if (!Checks.estaVacio(gasto.getGastoLineaDetalleList())) {
-						for (GastoLineaDetalle gastoLinea : gasto.getGastoLineaDetalleList()) {
-							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList())
-									&& !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())) {
-								List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidadList = gastoLinea
-										.getGastoLineaEntidadList();
-								if (gastosLineaDetalleEntidadList == null) {
+					
+				
+					if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){
+						for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
+							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList()) && !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())){
+								List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidadList = gastoLinea.getGastoLineaEntidadList();
+								if(gastosLineaDetalleEntidadList == null) {
 									gastosLineaDetalleEntidadList = new ArrayList<GastoLineaDetalleEntidad>();
 								}
 								gastosLineaDetalleEntidadList.add(gastoProveedorActivo);
@@ -1744,49 +1754,50 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			validarAgrupacion(agrupacion, gasto);
 
-			if (!Checks.estaVacio(agrupacion.getActivos())) {
+			if (!Checks.estaVacio(agrupacion.getActivos())) {	
 				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+														
+							filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+							gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
-					filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-					gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+							Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+							Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+							List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
-					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id",
-							activoAgrupacion.getActivo().getId());
-					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order,
-							filtroCatastro);
-
-					GastoLineaDetalleEntidad gastoProveedorActivo = new GastoLineaDetalleEntidad();
-					gastoProveedorActivo.setEntidad(activoAgrupacion.getActivo().getId());
-					// TODO GASTO
-					GastoLineaDetalle gastoLineaDetalle = new GastoLineaDetalle();
-					gastoLineaDetalle.setGastoProveedor(gasto);
-					DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDSubtipoGasto.class, DDSubtipoGasto.OTROS);
-					gastoLineaDetalle.setSubtipoGasto(subtipoGasto);
-					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
-					gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
-
-					if (!Checks.estaVacio(activosCatastro)) {
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-					}
-
-					if (!Checks.estaVacio(gasto.getGastoLineaDetalleList())) {
-						for (GastoLineaDetalle gastoLinea : gasto.getGastoLineaDetalleList()) {
-							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList())
-									&& !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())) {
-								List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidadList = gastoLinea
-										.getGastoLineaEntidadList();
-								gastosLineaDetalleEntidadList.add(gastoProveedorActivo);
-								this.calculaPorcentajeEquitativoGastoActivos(gastosLineaDetalleEntidadList);
+							GastoLineaDetalleEntidad gastoProveedorActivo = new GastoLineaDetalleEntidad();
+							gastoProveedorActivo.setEntidad(activoAgrupacion.getActivo().getId());
+							//TODO GASTO
+							GastoLineaDetalle gastoLineaDetalle = new GastoLineaDetalle();
+							gastoLineaDetalle.setGastoProveedor(gasto);
+							DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class,DDSubtipoGasto.OTROS);
+							gastoLineaDetalle.setSubtipoGasto(subtipoGasto);
+							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+							gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
+							
+						
+							if (!Checks.estaVacio(activosCatastro)) {						
+								ActivoCatastro activoCatastro = activosCatastro.get(0);
+								if(activoCatastro.getCatastro() != null) {
+									gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+								}else {
+									gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+								}
 							}
-						}
-					}
+							
+							if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){
+								for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
+									if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList()) && !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())){
+										List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidadList = gastoLinea.getGastoLineaEntidadList();
+										gastosLineaDetalleEntidadList.add(gastoProveedorActivo);
+										this.calculaPorcentajeEquitativoGastoActivos(gastosLineaDetalleEntidadList);
+									}
+								}
+							}
 
-					genericDao.save(GastoLineaDetalleEntidad.class, gastoProveedorActivo);
+							genericDao.save(GastoLineaDetalleEntidad.class, gastoProveedorActivo);
 				}
-
 			}
+
 		} else {
 			throw new JsonViewerException("Se debe pasar un activo o una agrupación");
 		}

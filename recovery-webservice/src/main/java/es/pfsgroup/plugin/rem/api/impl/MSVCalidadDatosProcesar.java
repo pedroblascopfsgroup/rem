@@ -25,10 +25,12 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -36,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
+import es.pfsgroup.plugin.rem.model.Catastro;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -62,7 +65,9 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 		static final int COL_NUM_CAMPO = 1;
 		static final int COL_NUM_VALOR = 2;		
 	}
-
+	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
 	@Autowired
 	ProcessAdapter processAdapter;
 	
@@ -86,6 +91,9 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private CatastroApi catastroApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -148,10 +156,22 @@ public class MSVCalidadDatosProcesar extends AbstractMSVActualizador implements 
 			}
 			ActivoCatastro ac;
 			for (int i = 0; i < split.length; i++) {
+				String refCatastral = split[i];
 				ac = new ActivoCatastro();
 				ac.setAuditoria(Auditoria.getNewInstance());
 				ac.setActivo(act);
-				ac.setRefCatastral(split[i]);
+				
+				Catastro cat = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS, "refCatastral",  refCatastral));
+				boolean isReferenciaValida  = catastroApi.isReferenciaValida(refCatastral);
+				if(cat != null) {
+					ac.setCatastro(cat);
+					ac.setCatastroCorrecto(isReferenciaValida);
+				}else {
+					ac.setRefCatastral(refCatastral);
+					if(!isReferenciaValida) {
+						ac.setCatastroCorrecto(isReferenciaValida);
+					}
+				}
 				genericDao.save(ActivoCatastro.class, ac);
 			}
 			break;

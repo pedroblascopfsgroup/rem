@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220404
+--## FECHA_CREACION=20220405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17611
@@ -61,10 +61,13 @@ BEGIN
                WHEN aux.TANTEO_RETRACTO_TRANS IN (''S'',''1'') THEN 1
                WHEN aux.TANTEO_RETRACTO_TRANS IN (''N'',''0'') THEN 0
             END AS ADM_RENUNCIA_TANTEO_RETRAC,            
-            aux.IND_COMPRADOR_ACOGE_AYUDA as COMPRADOR_ACOJE_AYUDA,
+            CASE
+               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''S'',''1'') THEN 1
+               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''N'',''0'') THEN 0
+            END AS COMPRADOR_ACOJE_AYUDA,
             aux.IMP_AYUDA_FINANCIACION as IMPORTE_AYUDA_FINANCIACION,
-            aux.FEC_VENCIMIENTO_SEGURO as FECHA_VENCIMIENTO_AVAL_SEGURO,
-            aux.FEC_DEVOLUCION_AYUDA as FECHA_DEVOLUCION_AYUDA,
+            TO_DATE(aux.FEC_VENCIMIENTO_SEGURO,''yyyymmdd'') as FECHA_VENCIMIENTO_AVAL_SEGURO,
+            TO_DATE(aux.FEC_DEVOLUCION_AYUDA,''yyyymmdd'') as FECHA_DEVOLUCION_AYUDA,
             ADM.ADM_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux                             
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0

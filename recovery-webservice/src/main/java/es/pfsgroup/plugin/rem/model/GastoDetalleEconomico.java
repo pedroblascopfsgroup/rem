@@ -155,6 +155,9 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "DD_TRE_ID")
    private DDTipoRetencion tipoRetencion;
+   
+   @Column(name = "GDE_PAGO_URGENTE")
+   private Boolean pagoUrgente;
 
 	@Version   
 	private Long version;
@@ -442,8 +445,13 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setTipoRetencion(DDTipoRetencion tipoRetencion) {
 		this.tipoRetencion = tipoRetencion;
 	}
-	
-	
-	
+
+	public Boolean getPagoUrgente() {
+		return pagoUrgente;
+	}
+
+	public void setPagoUrgente(Boolean pagoUrgente) {
+		this.pagoUrgente = pagoUrgente;
+	}
 	
 }

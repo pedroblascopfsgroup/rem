@@ -326,7 +326,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 
 							   flex: 1,
 					           renderer: coloredRender,
-					           formatter: 'date("d/m/Y h:i")'
+					           formatter: 'date("d/m/Y H:i")'
 						   },
 						   {
 

@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -361,6 +362,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
     private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -965,6 +969,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())
 					&& ofertaDto.getOfertaLote() != null && ofertaDto.getOfertaLote() && ofertaDto.getCodigoAgrupacionComercialRem() != null) {
 				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
+			} else if(ofertaDto.getCodigoAgrupacionComercialRem() != null) {
+				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
 			}
 
 			oferta = new Oferta();
@@ -1044,8 +1050,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
+			List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)) {
-				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 			
 				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
 				oferta.setActivosOferta(listaActOfr);
@@ -1064,7 +1070,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 				ActivoAgrupacion agrupacion = null;
-				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				List<ActivoAgrupacionActivo> listaAgrups = null;
 
 				activo = genericDao.get(Activo.class,
@@ -1098,6 +1103,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setActivosOferta(listaActOfr);
 
 				}
+			}
+			
+			if(agrup != null) {
+				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
+				oferta.setActivosOferta(listaActOfr);
+				oferta.setAgrupacion(agrup);
 			}
 
 			if (!Checks.esNulo(ofertaDto.getIdClienteRem())) {
@@ -2717,8 +2728,33 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				replicateOfertaFlush(oferta);
 			}
 		}
+		
+		setEstadoOfertaByIsNecesarioDeposito(oferta);
 
 		return oferta;
+	}
+
+	private void setEstadoOfertaByIsNecesarioDeposito(Oferta oferta) {
+		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+		DDCartera cartera = null;
+		if(oferta.getActivoPrincipal() != null) {
+			cartera = oferta.getActivoPrincipal().getCartera();
+		}else if(oferta.getAgrupacion() != null) {
+			if(oferta.getAgrupacion().getActivoPrincipal() != null){
+				cartera = oferta.getAgrupacion().getActivoPrincipal().getCartera();	
+			}else if (oferta.getAgrupacion().getActivos() != null && !oferta.getAgrupacion().getActivos().isEmpty()) {
+				cartera = oferta.getAgrupacion().getActivos().get(0).getActivo().getCartera();
+			}
+		}
+		
+		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
+			if(depositoApi.esNecesarioDeposito(oferta)) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;	
+			}
+			DDEstadoOferta ddEstadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
+			oferta.setEstadoOferta(ddEstadoOferta);
+		}
 	}
 
 	private void cambiarEstadoOfertaHayaHomeRechazada(Oferta oferta, DDEstadosExpedienteComercial estadoExpCom, Date fechaAccion, String entidadOrigen) {

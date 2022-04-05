@@ -147,7 +147,7 @@ BEGIN
                 CASE WHEN CRI.CRI_ARMARIOS_EMPOTRADOS = 1
                     THEN ''01''
                     WHEN CRI.CRI_ARMARIOS_EMPOTRADOS = 0
-                    THEN ''02''
+                    ELSE ''02''
                     ELSE NULL
                 END ICO_ARM_EMPOTRADOS,
 
@@ -157,7 +157,6 @@ BEGIN
                     THEN ''02''
                     WHEN SPS.SPS_OCUPADO = 1 AND TTA.DD_TPA_CODIGO = ''01''
                     THEN ''04''
-                    ELSE NULL
                 END DD_ESO_CODIGO
                 
                 FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ICO

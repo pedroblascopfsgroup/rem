@@ -145,9 +145,6 @@ public class InformeMediadorDto implements Serializable {
 	private Boolean patio;
 	
 	private Boolean ascensor;
-	
-	@EntityDefinition(procesar = false)
-	private Float utilSuperficie;
 
 	private Boolean rehabilitado;
 	
@@ -556,14 +553,6 @@ public class InformeMediadorDto implements Serializable {
 
 	public void setAscensor(Boolean ascensor) {
 		this.ascensor = ascensor;
-	}
-
-	public Float getUtilSuperficie() {
-		return utilSuperficie;
-	}
-
-	public void setUtilSuperficie(Float utilSuperficie) {
-		this.utilSuperficie = utilSuperficie;
 	}
 
 	public Boolean getRehabilitado() {

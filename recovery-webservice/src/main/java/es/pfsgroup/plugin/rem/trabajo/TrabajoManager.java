@@ -6362,6 +6362,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo) {
 		List<AgendaTrabajo> listAgenda = null; 
 		List<DtoAgendaTrabajo> listDtoAgenda = new ArrayList<DtoAgendaTrabajo>();
+		String gestor = "Gestor";
+		String proveedor = "Proveedor";
 		try {	
 		
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
@@ -6375,15 +6377,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
 					dto.setIdAgenda(agendaTrabajo.getId());
 					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
-					if (agendaTrabajo.getGestor().getId() != null) {
+					if (agendaTrabajo.getGestor() != null) {
 						Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", agendaTrabajo.getGestor().getId());
 						VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
 						if (usuarioGestorOrProveedor != null) {
 							if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
-								dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+								dto.setGestorAgenda(gestor);
 							} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
-								dto.setProveedorAgenda(agendaTrabajo.getGestor().getUsername());
+								dto.setGestorAgenda(proveedor);
 							}
+							dto.setNombreGestorOrProveedor(agendaTrabajo.getGestor().getApellidoNombre());
 						}
 					}
 					//dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());

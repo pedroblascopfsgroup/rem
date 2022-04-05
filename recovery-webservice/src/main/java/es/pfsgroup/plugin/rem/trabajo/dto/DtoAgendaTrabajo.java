@@ -15,7 +15,7 @@ public class DtoAgendaTrabajo extends WebDto {
 	private Long idAgenda;
 	private Long idTrabajo;
 	private String gestorAgenda;
-	private String proveedorAgenda;
+	private String nombreGestorOrProveedor;
 	private Date fechaAgenda;
 	private String tipoGestion;
 	private String observacionesAgenda;
@@ -56,11 +56,11 @@ public class DtoAgendaTrabajo extends WebDto {
 	public void setObservacionesAgenda(String observacionesAgenda) {
 		this.observacionesAgenda = observacionesAgenda;
 	}
-	public String getProveedorAgenda() {
-		return proveedorAgenda;
+	public String getNombreGestorOrProveedor() {
+		return nombreGestorOrProveedor;
 	}
-	public void setProveedorAgenda(String proveedorAgenda) {
-		this.proveedorAgenda = proveedorAgenda;
+	public void setNombreGestorOrProveedor(String nombreGestorOrProveedor) {
+		this.nombreGestorOrProveedor = nombreGestorOrProveedor;
 	}
 	
 }

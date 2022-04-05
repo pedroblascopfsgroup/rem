@@ -89,6 +89,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AltaAsuntosLegalReoApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PerfilApi;
@@ -285,6 +286,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private AltaAsuntosLegalReoApi altaAsuntosLegalReoApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -4139,6 +4143,7 @@ public class ActivoAdapter {
 			if (permiteOfertaNoComercialActivoAlquilado) {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 			}
+			
 
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
@@ -4542,6 +4547,8 @@ public class ActivoAdapter {
 				oferta.setRespDocCliente(respCodCliente);
 			}
 			
+			codigoEstado = setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&
@@ -4666,6 +4673,22 @@ public class ActivoAdapter {
 		}
 		
 		return ofertaCreada;
+	}
+
+	public String setEstadoOfertaByEsNecesarioDeposito(DtoOfertasFilter dto, String codigoEstado, Oferta oferta) {
+		DDEstadoOferta estadoOferta;
+		DDCartera cartera = oferta.getActivoPrincipal().getCartera();
+		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
+			if(depositoApi.esNecesarioDeposito(oferta)) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;	
+			}else {
+				codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+			}
+			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+		}
+		return codigoEstado;
 	}
 
 

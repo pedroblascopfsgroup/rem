@@ -3019,6 +3019,8 @@ public class AgrupacionAdapter {
 				oferta.setRespDocCliente(respCodCliente);
 			}
 			
+			activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 			
 			if(activo != null && activo.getSubcartera() != null &&

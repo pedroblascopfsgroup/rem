@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220404
+--## FECHA_CREACION=20220405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17614
@@ -29,6 +29,7 @@
 --##        0.17 Se cambia los campos por el nuevo modelo de Informe comercial - [HREOS-17366] - Daniel Algaba
 --##        0.18 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
 --##        0.19 Añadido BALCON y quitado TIPO_VIVIENDA_INF y TIPOLOGIA_EDIFICIO - [HREOS-17614] - Daniel Algaba
+--##        0.20 Corrección Fecha fin informe - [HREOS-17614] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -257,7 +258,7 @@ BEGIN
             JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT.ACT_ID AND ACT_PRO.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = ACT_PRO.PRO_ID AND PRO.BORRADO = 0
             LEFT JOIN FEC_INF FEC_INI ON FEC_INI.ACT_ID = ACT.ACT_ID AND FEC_INI.RN = 1 AND FEC_INI.DD_FSP_CODIGO = ''05''
-            LEFT JOIN FEC_INF FASE_ANT ON FASE_ANT.ACT_ID = ACT.ACT_ID AND FASE_ANT.RN = 2 AND FEC_INI.DD_FSP_CODIGO = ''05''
+            LEFT JOIN FEC_INF FASE_ANT ON FASE_ANT.ACT_ID = ACT.ACT_ID AND FASE_ANT.RN = 2 AND FASE_ANT.DD_FSP_CODIGO = ''05''
             LEFT JOIN FEC_INF FEC_FIN ON FEC_FIN.ACT_ID = ACT.ACT_ID AND FEC_FIN.RN = 1 AND FEC_FIN.DD_FSP_CODIGO IN (''08'',''10'') AND FASE_ANT.ACT_ID IS NOT NULL
             WHERE ACT.BORRADO = 0
             AND ACT.ACT_EN_TRAMITE = 0

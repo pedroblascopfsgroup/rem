@@ -9,4 +9,6 @@ public interface DepositoApi {
 
 	boolean isDepositoIngresado(Deposito deposito);
 
+	Long vincularCuentaVirtual();
+
 }

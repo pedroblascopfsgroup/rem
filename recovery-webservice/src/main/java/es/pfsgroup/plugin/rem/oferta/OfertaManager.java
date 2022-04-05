@@ -8892,10 +8892,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return tipoComercializar;
 	}
-	
-	@Override
-	public Long vincularCuentaVirtual() {
-		return 1L;
-	}
 }
 	

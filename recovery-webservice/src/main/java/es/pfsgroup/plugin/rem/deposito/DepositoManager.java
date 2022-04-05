@@ -56,4 +56,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		return isIngresado;
 	}
 	
+	@Override
+	public Long vincularCuentaVirtual() {
+		return 1L;
+	}
+	
 }

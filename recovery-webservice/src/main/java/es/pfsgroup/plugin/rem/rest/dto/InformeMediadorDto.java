@@ -311,7 +311,6 @@ public class InformeMediadorDto implements Serializable {
 	
 	private Boolean ocupado;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	private Boolean visitableFechaVisita;
 	
 	private Float valorEstimadoMaxVenta;

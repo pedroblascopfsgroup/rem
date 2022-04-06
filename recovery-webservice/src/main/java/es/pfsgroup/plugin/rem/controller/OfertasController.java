@@ -1130,6 +1130,19 @@ public class OfertasController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTextosOfertaByActivoOferta(Long idOferta, ModelMap model) {
 
+		try {
+			model.put("data", ofertaApi.getListTextosOfertaByOferta(idOferta));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

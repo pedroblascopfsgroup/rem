@@ -34,6 +34,9 @@ Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     		},
     		{
     			name:'checkIncluirTrabajo'
+    		},
+    		{
+    			name:'nombrePropietario'
     		}
     ]
 });

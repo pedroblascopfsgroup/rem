@@ -76,6 +76,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean retencionGarantiaAplica;
 	private Double importeBrutoLbk;
 	private String tipoRetencionCodigo;
+	private Boolean pagoUrgente;
 
 	public Long getGastoProveedor() {
 		return gastoProveedor;
@@ -410,6 +411,11 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setTipoRetencionCodigo(String tipoRetencionCodigo) {
 		this.tipoRetencionCodigo = tipoRetencionCodigo;
 	}
+	public Boolean getPagoUrgente() {
+		return pagoUrgente;
+	}
+	public void setPagoUrgente(Boolean pagoUrgente) {
+		this.pagoUrgente = pagoUrgente;
+	}
 	
-
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +33,7 @@ import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -217,8 +211,16 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 						if (reserva != null) {
 							Auditoria.delete(reserva);
 							genericDao.save(Reserva.class, reserva);
-						}			
-						
+						}
+
+						CondicionanteExpediente condicionanteExpediente = expediente.getCondicionante();
+						condicionanteExpediente.setSolicitaReserva(0);
+						condicionanteExpediente.setTipoCalculoReserva(null);
+						condicionanteExpediente.setPorcentajeReserva(null);
+						condicionanteExpediente.setPlazoFirmaReserva(null);
+						condicionanteExpediente.setImporteReserva(null);
+						genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
+
 					}else if(anula && DDCartera.isCarteraBk(activoPrincipal.getCartera())) {
 						String estadoBcString = null;
 						if(reservaApi.tieneReservaFirmada(expediente)) {

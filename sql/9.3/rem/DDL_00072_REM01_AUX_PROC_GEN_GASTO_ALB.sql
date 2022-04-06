@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210329
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20211202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9354
+--## INCIDENCIA_LINK=HREOS-16546
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar para AUX_PROC_GEN_GASTO_ALB
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##	    0.2 REMVIP-9354 Añadir columna GPV_ID
+--##	    0.3 HREOS-16546 Añadir columna PRO_ID
 --#########################################
 ----*/
 
@@ -58,6 +59,7 @@ BEGIN
 		, DD_TTR_ID NUMBER(16,0)
 		, DD_STR_ID NUMBER(16,0)
 		, DD_TEG_ID NUMBER(16,0)
+		, PRO_ID NUMBER(16,0)
 	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] LA TABLA '''||V_TABLA||''' HA SIDO CREADA CON EXITO.');

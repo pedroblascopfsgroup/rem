@@ -3,12 +3,12 @@ package es.pfsgroup.plugin.rem.activo.alta;
 import java.util.Calendar;
 import java.util.Date;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -35,7 +35,9 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.CatastroApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -63,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.Catastro;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
@@ -92,14 +95,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
-import es.pfsgroup.plugin.rem.service.AltaActivoService;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-
-import javax.annotation.Resource;
 
 @Component
 public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
@@ -132,6 +129,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	
 	@Autowired
     private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private CatastroApi catastroApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -340,7 +340,18 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		//ActivoCatastro
 		ActivoCatastro catastro = new ActivoCatastro();
 		catastro.setActivo(activo);
-		beanUtilNotNull.copyProperty(catastro, "refCatastral", dtoAATP.getReferenciaCatastral());
+		Catastro cat = genericDao.get(Catastro.class, genericDao.createFilter(FilterType.EQUALS, "refCatastral",  dtoAATP.getReferenciaCatastral()));
+		boolean isReferenciaValida  = catastroApi.isReferenciaValida(dtoAATP.getReferenciaCatastral());
+		if(cat != null) {
+			catastro.setCatastro(cat);
+			catastro.setCatastroCorrecto(isReferenciaValida);
+		}else {
+			beanUtilNotNull.copyProperty(catastro, "refCatastral", dtoAATP.getReferenciaCatastral());
+			if(!isReferenciaValida) {
+				catastro.setCatastroCorrecto(isReferenciaValida);
+			}
+		}
+		
 		genericDao.save(ActivoCatastro.class, catastro);
 		
 		//ActivoInfAdministrativa

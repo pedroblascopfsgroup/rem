@@ -356,8 +356,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
  * @param usuarioLogado
  * @param devolverPage   true:  el objeto retornado será de tipo Page,  false: el objeto retornado será de tipo List
  * @return
+ * @throws Exception 
  */
-	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage) throws Exception;
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
 

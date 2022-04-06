@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.OrganismosGrid'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo', 'HreRem.view.common.ComboBoxFieldBaseDD', 'HreRem.view.activos.detalle.CatastroGrid', 'HreRem.view.activos.detalle.OrganismosGrid'],
     
     initComponent: function () {
 
@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
-        var items= [
+        var items= [ 	
 			{
 			xtype:'fieldsettable',
 	        title: HreRem.i18n('title.identificacion'),

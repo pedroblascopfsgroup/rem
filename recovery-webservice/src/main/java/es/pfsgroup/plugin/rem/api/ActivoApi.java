@@ -1436,4 +1436,6 @@ public interface ActivoApi {
 	void deleteOrganismoById(Long idOrganismo);
 
 	void saveOrUpdateOrganismo(Long idActivo, DtoOrganismos dto);
+	
+	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

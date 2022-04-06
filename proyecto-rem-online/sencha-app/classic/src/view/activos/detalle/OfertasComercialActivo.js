@@ -318,7 +318,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 													value: '{detalleOfertaModel.cuentaBancariaCliente}'
 												},
 							    				width: 410
-							    			},
+							    			}/*,
 							    			{
 							    				text :  HreRem.i18n('fieldlabel.modificar.deposito'),
 							                	xtype: 'button',
@@ -328,7 +328,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 							                	bind: {
 							                		disabled: '{!detalleOfertaModel.id}'
 							                	}
-							                }
+							                }*/
 							    			
 							    		]
 					    			}

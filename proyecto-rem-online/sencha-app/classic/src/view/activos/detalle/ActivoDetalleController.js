@@ -8771,8 +8771,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangePublicarCaixa: function(get){
     	var me = this;    	
     	var carteraCaixa;
+    },
     }
-    }*/
 
     onClickModificarDeposito: function(btn){
     	var me = this;
@@ -8786,7 +8786,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});
     	
 		 ventana.show();
-    },
+    },*/
     
 	onClickCancelarModificarDeposito : function(btn) {
 		var window = btn.up('window');

@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.AuxiliarCierreOficinasBankiaMul;
 import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
+import es.pfsgroup.plugin.rem.model.ConfiguracionDeposito;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DatosPBCDto;
 import es.pfsgroup.plugin.rem.model.DtoAccionRechazoCaixa;
@@ -1969,14 +1970,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}	
 	
 	@Override
-	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo) {
 
 		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
 		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
+		Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+		Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+		Activo activo = activoApi.get(idActivo);
+		DDSubcartera subcartera = null;
+		boolean depositoNecesario = false;
+		if(activo != null) {
+			subcartera = activo.getSubcartera();
+		}
 		
 		if (DDCartera.CODIGO_CAIXA.equals(cartera)) {
-			Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
-			Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
 			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
 				listaDDEstadoOferta.add(ddEstadoOferta);
 				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
@@ -1985,6 +1992,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		} else {
 			listaDDEstadoOferta.addAll(estadosOferta);
+			
+			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
+			if(conDep != null && conDep.getDepositoNecesario()) {
+				depositoNecesario = true ;
+			}
+			
+			if(subcartera != null && !depositoNecesario) {
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+			}
+			
 		}
 
 		return listaDDEstadoOferta;
@@ -2150,6 +2168,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	    map.put("comboResultado", comboResultado);
 	    
 	    return map;
+	}
+
+	@Override
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion) {
+
+		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
+		Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		DDCartera cartera = null;
+		DDSubcartera subcartera = null;
+		boolean depositoNecesario = false;
+		if(agrupacion != null) {
+			if(agrupacion.getActivoPrincipal() != null) {
+				cartera = agrupacion.getActivoPrincipal().getCartera();
+				subcartera = agrupacion.getActivoPrincipal().getSubcartera();
+			}else if(agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()) {
+				cartera = agrupacion.getActivos().get(0).getActivo().getCartera();
+				subcartera = agrupacion.getActivos().get(0).getActivo().getSubcartera();
+			}
+		}
+		
+		if (cartera != null && subcartera != null && !DDCartera.CODIGO_CAIXA.equals(cartera.getCodigo())) {
+			listaDDEstadoOferta.addAll(estadosOferta);
+			
+			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
+			if(conDep != null && conDep.getDepositoNecesario()) {
+				depositoNecesario = true ;
+			}
+			
+			if(subcartera != null && !depositoNecesario) {
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+			}
+			
+		}
+
+		return listaDDEstadoOferta;
 	}
 
 }

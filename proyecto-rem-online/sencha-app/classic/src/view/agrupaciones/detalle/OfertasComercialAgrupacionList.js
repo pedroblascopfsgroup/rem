@@ -23,7 +23,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     initComponent: function () {
     	        
         var me = this;
-        
+        var agrupacion = me.lookupController().getViewModel().get('agrupacionficha').getData();
         me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
         me.columns= [
@@ -78,8 +78,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
-								extraParams: {diccionario: 'estadosOfertas'}
+								remoteUrl: 'generic/getDiccionarioEstadosOfertasAgrupacion',
+								extraParams: {idAgrupacion: agrupacion.id}
 							},
 							autoLoad: true
 						}),

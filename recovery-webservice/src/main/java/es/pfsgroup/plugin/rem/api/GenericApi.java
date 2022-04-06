@@ -388,7 +388,7 @@ public interface GenericApi {
 	HashMap<String, String> validateCierreOficinaPostRequestData(CierreOficinaBankiaDto cierreOfiDto)
 			throws Exception;
 
-	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion);
+	List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo);
 
 	public List<DDEstadosCiviles> comboEstadoCivilCustom(String codCartera);
 
@@ -405,4 +405,6 @@ public interface GenericApi {
 	List<DDSubtipoGasto> getComboSubtipoGastoFiltered(String codCartera, String codigoTipoGasto);
 
 	Boolean avanzaDatosPbc(AvanzarDatosPBCDto dto) throws Exception;
+
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
 }

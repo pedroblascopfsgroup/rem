@@ -756,8 +756,13 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion)));	
+	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion, idActivo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertasAgrupacion(idAgrupacion)));	
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -122,7 +122,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 								type: 'uxproxy',
 								remoteUrl: 'generic/getDiccionarioEstadosOfertas',
 								extraParams: {cartera: activo.entidadPropietariaCodigo,
-												equipoGestion: activo.tipoEquipoGestionCodigo}
+												equipoGestion: activo.tipoEquipoGestionCodigo,
+												idActivo: activo.id}
 							},
 							autoLoad: true,
 							bind: {

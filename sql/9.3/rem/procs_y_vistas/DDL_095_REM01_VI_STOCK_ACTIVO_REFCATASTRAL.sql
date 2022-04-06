@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## FECHA_CREACION=20211215
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-16549
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos y su última referencia catastral
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Versión Julián Dolz - Añadir campo CAT_CORRECTO
 --##########################################
 --*/
 
@@ -56,8 +57,8 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...');
   EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.'|| V_TEXT_VISTA ||' 
 	AS
-		SELECT AUX.ACT_ID, AUX.CAT_REF_CATASTRAL FROM (
-			SELECT CAT.ACT_ID, CAT.CAT_REF_CATASTRAL,
+		SELECT AUX.ACT_ID, AUX.CAT_REF_CATASTRAL, AUX.CAT_CORRECTO FROM (
+			SELECT CAT.ACT_ID, CAT.CAT_REF_CATASTRAL, CAT.CAT_CORRECTO,
 			ROW_NUMBER() OVER (PARTITION BY CAT.ACT_ID ORDER BY CAT.CAT_ID DESC) REF
 			FROM '||V_ESQUEMA||'.ACT_CAT_CATASTRO CAT) AUX
 		WHERE AUX.REF = 1';

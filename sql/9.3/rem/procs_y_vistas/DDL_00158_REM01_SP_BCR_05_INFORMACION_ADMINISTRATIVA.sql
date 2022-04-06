@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220405
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17611
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,6 +14,7 @@
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##        0.4 Añadir campos VPO - HREOS-17611
+--##        0.5 Corrección campo IND_COMPRADOR_ACOGE_AYUDA, envían una X como Si - HREOS-17515
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -62,8 +63,8 @@ BEGIN
                WHEN aux.TANTEO_RETRACTO_TRANS IN (''N'',''0'') THEN 0
             END AS ADM_RENUNCIA_TANTEO_RETRAC,            
             CASE
-               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''S'',''1'') THEN 1
-               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''N'',''0'') THEN 0
+               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''S'',''1'',''X'') THEN 1
+               ELSE NULL
             END AS COMPRADOR_ACOJE_AYUDA,
             aux.IMP_AYUDA_FINANCIACION as IMPORTE_AYUDA_FINANCIACION,
             TO_DATE(aux.FEC_VENCIMIENTO_SEGURO,''yyyymmdd'') as FECHA_VENCIMIENTO_AVAL_SEGURO,

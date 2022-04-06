@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220404
+--## FECHA_CREACION=20220406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17614
@@ -32,6 +32,7 @@
 --##	      0.20 Corección DD_CBC_ID [HREOS-17497] - Daniel Algaba
 --##	      0.21 Corección DD_TPA por si no viniese o no hubiesa Clase uso registral [HREOS-17515] - Daniel Algaba
 --##	      0.22 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
+--##	      0.23 Corrección número anterior [HREOS-17614] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -273,7 +274,15 @@ BEGIN
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA act1
 				using (		
-
+               WITH APORTADOS AS (
+                  SELECT
+                  aux.NUM_IDENTIFICATIVO,
+                  aux.NUM_INMUEBLE_ANTERIOR,
+                  ACT.ACT_NUM_ACTIVO_CAIXA
+                  FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
+                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = aux.NUM_INMUEBLE_ANTERIOR AND ACT.BORRADO = 0  
+                  WHERE ACT.ACT_NUM_ACTIVO_CAIXA != aux.NUM_IDENTIFICATIVO
+               )
                SELECT
                aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
                act2.ACT_ID as ACT_ID,
@@ -332,7 +341,7 @@ BEGIN
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
                ctc.DD_CTC_ID as DD_CTC_ID,
                CAIXA.CBX_ID,
-               aux.NUM_INMUEBLE_ANTERIOR as CBX_NUMERO_INMUEBLE_ANTERIOR,
+               APO.ACT_NUM_ACTIVO_CAIXA as CBX_NUMERO_INMUEBLE_ANTERIOR,
                CASE
                   WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  
                      AND DCA.DCA_EST_CONTRATO = ''Alquilada'' THEN (SELECT DD_CBC_ID FROM '|| V_ESQUEMA ||'.DD_CBC_CARTERA_BC WHERE DD_CBC_CODIGO = ''03'')
@@ -365,7 +374,8 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv11 ON eqv11.DD_NOMBRE_CAIXA = ''TIPO_VIVIENDA_INF''  AND eqv11.DD_CODIGO_CAIXA = aux.TIPO_VIVIENDA_INF
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TVC_TIPO_VIVIENDA_CAIXA TVC ON TVC.DD_TVC_CODIGO = eqv11.DD_CODIGO_REM 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv12 ON eqv12.DD_NOMBRE_CAIXA = ''TIPOLOGIA_EDIFICIO''  AND eqv12.DD_CODIGO_CAIXA = aux.TIPOLOGIA_EDIFICIO
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_TEC_TIPO_EDIFICIO_CAIXA TEC ON TEC.DD_TEC_CODIGO = eqv12.DD_CODIGO_REM                
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_TEC_TIPO_EDIFICIO_CAIXA TEC ON TEC.DD_TEC_CODIGO = eqv12.DD_CODIGO_REM  
+               LEFT JOIN APORTADOS APO ON APO.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO              
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
                ) us ON (us.CBX_ID = act1.CBX_ID )

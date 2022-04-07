@@ -11,4 +11,6 @@ public interface DepositoApi {
 
 	Long vincularCuentaVirtual();
 
+	Double getImporteDeposito(Oferta oferta);
+
 }

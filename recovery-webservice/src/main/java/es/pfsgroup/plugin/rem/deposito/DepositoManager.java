@@ -61,4 +61,11 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		return 1L;
 	}
 	
+	@Override
+	public Double getImporteDeposito(Oferta oferta) {
+		Double importeDeposito = 1.1;
+		
+		return importeDeposito;
+	}
+	
 }

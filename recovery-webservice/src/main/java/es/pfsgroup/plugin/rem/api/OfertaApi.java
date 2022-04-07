@@ -848,4 +848,6 @@ public interface OfertaApi {
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 
     DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta);
+
+	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);
 }

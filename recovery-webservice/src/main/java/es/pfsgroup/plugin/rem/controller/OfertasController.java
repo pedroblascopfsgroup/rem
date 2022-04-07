@@ -1073,12 +1073,8 @@ public class OfertasController {
 	public ModelAndView actualizaEstadoOferta(Long idOferta, String codigoEstado, ModelMap model) {
 		try {
 			Boolean actualizado = ofertaApi.actualizaEstadoOferta(idOferta, codigoEstado);
-			if (actualizado && DDEstadoOferta.CODIGO_PENDIENTE.equals(codigoEstado)){
-				Oferta oferta = ofertaApi.getOfertaById(idOferta);
-				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
-					ofertaApi.replicateOfertaFlush(oferta);
-				}
+			if (actualizado){
+				ofertaApi.llamaReplicarCambioEstado(idOferta, codigoEstado);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, actualizado);
 

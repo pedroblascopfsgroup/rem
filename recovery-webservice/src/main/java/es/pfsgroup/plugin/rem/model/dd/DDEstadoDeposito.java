@@ -28,6 +28,9 @@ public class DDEstadoDeposito implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String CODIGO_INGRESADO = "ING";
+	public static final String CODIGO_PENDIENTE = "PDT";
+	public static final String CODIGO_DEVUELTO = "DEV";
+	public static final String CODIGO_INCAUTADO = "INC";
 
 	@Id
 	@Column(name = "DD_EDP_ID")

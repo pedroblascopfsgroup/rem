@@ -13,4 +13,5 @@ public interface DepositoApi {
 
 	Double getImporteDeposito(Oferta oferta);
 
+    void generaDeposito(Oferta oferta);
 }

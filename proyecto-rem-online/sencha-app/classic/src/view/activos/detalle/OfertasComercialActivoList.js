@@ -476,7 +476,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				me.onCambioARechazoOfertaList(me, context.record);
 			} else if (CONST.ESTADOS_OFERTA['CADUCADA'] == estado){
 				me.onCambioARechazoOfertaList(me, context.record);
-			} else if(CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+			} else if((CONST.ESTADOS_OFERTA['PENDIENTE'] == estado && $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
+			    || CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == estado){
 			    var idOferta = context.record.get('idOferta');
 			    var url = $AC.getRemoteUrl('ofertas/actualizaEstadoOferta');
                 Ext.Ajax.request({

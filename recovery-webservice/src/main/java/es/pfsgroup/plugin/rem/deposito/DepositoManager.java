@@ -60,6 +60,17 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public Long vincularCuentaVirtual() {
 		return 1L;
 	}
+
+	@Override
+	public void generaDeposito(Oferta oferta){
+		Deposito dep = new Deposito();
+		dep.setImporte(getImporteDeposito(oferta));
+		dep.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PENDIENTE)));
+		dep.setOferta(oferta);
+		vincularCuentaVirtual();
+
+		genericDao.save(Deposito.class, dep);
+	}
 	
 	@Override
 	public Double getImporteDeposito(Oferta oferta) {

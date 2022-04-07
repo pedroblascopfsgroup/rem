@@ -43,7 +43,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -8299,6 +8298,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		if(oferta != null && codigoEstado != null){
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
+
+			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado) && depositoApi.esNecesarioDeposito(oferta)){
+				depositoApi.generaDeposito(oferta);
+			}
+
 			ofertaDao.saveOrUpdate(oferta);
 
 			return true;
@@ -8927,6 +8931,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return tipoComercializar;
+	}
+
+	@Override
+	public void llamaReplicarCambioEstado(Long idOferta, String codigoEstado){
+		Oferta oferta = getOfertaById(idOferta);
+		if(oferta != null){
+			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+
+			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado)) {
+				replicateOfertaFlush(oferta);
+			}
+		}
+	}
+
+	public boolean cumpleCondicionesReplicarPorEstadoYOferta(Oferta oferta, String codEstado){
+		return (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado))
+				|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codEstado);
 	}
 }
 	

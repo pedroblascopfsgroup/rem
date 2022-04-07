@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16840
@@ -39,7 +39,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			--   NOMBRE CAMPO						TIPO CAMPO			DESCRIPCION
-	    	T_ALTER('OFR_ID','NUMBER(16,0)','Id de la oferta')
+	    	T_ALTER('OFR_ID','NUMBER(16,0)','Id de la oferta'),
+	    	T_ALTER('DEP_FECHA_INGRESO','DATE','Fecha de ingreso del deposito')
 
 		);
     V_T_ALTER T_ALTER;
@@ -120,6 +121,16 @@ BEGIN
 
             END IF;			
 			
+		ELSIF('DEP_FECHA_INGRESO' = ''||V_T_ALTER(1)||'') THEN
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+            V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| '
+                           MODIFY ('||V_T_ALTER(1)||' NULL ) ';
+
+            EXECUTE IMMEDIATE V_MSQL;
+            --DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
+            DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna MODIFICADA en tabla, con tipo '||V_T_ALTER(2));
+
 		END IF;
 		
 	END LOOP;

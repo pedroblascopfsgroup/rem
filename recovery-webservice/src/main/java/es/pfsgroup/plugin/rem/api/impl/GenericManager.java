@@ -1974,35 +1974,26 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
 		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
-		Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
 		Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
 		Activo activo = activoApi.get(idActivo);
 		DDSubcartera subcartera = null;
-		boolean depositoNecesario = false;
 		if(activo != null) {
 			subcartera = activo.getSubcartera();
 		}
-		
-		if (DDCartera.CODIGO_CAIXA.equals(cartera)) {
-			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
-				listaDDEstadoOferta.add(ddEstadoOferta);
-				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
-					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
-				}
-			}
-		} else {
-			listaDDEstadoOferta.addAll(estadosOferta);
-			
+
+		if(subcartera != null){
+
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo());
+			Filter filtroAplica = genericDao.createFilter(FilterType.EQUALS,"depositoNecesario", true);
+
 			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
-					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
-			if(conDep != null && conDep.getDepositoNecesario()) {
-				depositoNecesario = true ;
-			}
-			
-			if(subcartera != null && !depositoNecesario) {
+					,filtroSubcartera, filtroAplica);
+
+			listaDDEstadoOferta.addAll(estadosOferta);
+
+			if(conDep == null) {
 				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
 			}
-			
 		}
 
 		return listaDDEstadoOferta;

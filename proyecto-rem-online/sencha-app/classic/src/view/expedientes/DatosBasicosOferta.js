@@ -485,7 +485,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					        },
 					        tableAttrs: {
 					            style: {
-					                width: '50%'
+					                width: '100%'
 									}
 					        }
 						},

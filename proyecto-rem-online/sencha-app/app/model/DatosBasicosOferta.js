@@ -326,8 +326,7 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             	name:'checkFormCajamar'  			       	
             },
             {
-            	name:'checkForzadoCajamar',
-    			type: 'boolean'   	
+            	name:'checkForzadoCajamar'
             },
             {
             	name:'usuarioForzadoCajamar'	

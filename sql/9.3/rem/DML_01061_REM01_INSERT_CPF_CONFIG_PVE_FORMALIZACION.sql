@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220401
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17581
@@ -37,10 +37,14 @@ BEGIN
 			 CPF_ID
             ,PVE_ID
             ,CPF_FORMALIZACION_CAJAMAR
+            ,USUARIOCREAR
+            ,FECHACREAR
             )
             SELECT '||V_ESQUEMA||'.S_CPF_CONFIG_PVE_FORMALIZACION.NEXTVAL CPF_ID
             ,PVE.PVE_ID
             ,1
+            ,''HREOS-17581''
+            ,SYSDATE
             FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
             JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = PVE.DD_LOC_ID
             WHERE LOC.DD_LOC_CODIGO = ''04013'' 

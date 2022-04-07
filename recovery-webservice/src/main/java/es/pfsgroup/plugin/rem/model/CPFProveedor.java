@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -46,6 +47,12 @@ public class CPFProveedor implements Serializable {
 	
     @Column(name = "CPF_FORMALIZACION_CAJAMAR")
     private Boolean cpfFormalizacionCajamar;
+    
+    @Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
 
 	public Long getId() {
 		return id;
@@ -70,7 +77,22 @@ public class CPFProveedor implements Serializable {
 	public void setCpfFormalizacionCajamar(Boolean cpfFormalizacionCajamar) {
 		this.cpfFormalizacionCajamar = cpfFormalizacionCajamar;
 	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
 	
-    
 
 }

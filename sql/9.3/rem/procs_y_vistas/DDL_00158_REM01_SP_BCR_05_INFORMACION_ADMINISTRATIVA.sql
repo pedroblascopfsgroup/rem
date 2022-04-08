@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220406
+--## FECHA_CREACION=20220408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17515
@@ -66,7 +66,7 @@ BEGIN
                WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''S'',''1'',''X'') THEN 1
                ELSE NULL
             END AS COMPRADOR_ACOJE_AYUDA,
-            aux.IMP_AYUDA_FINANCIACION as IMPORTE_AYUDA_FINANCIACION,
+            aux.IMP_AYUDA_FINANCIACION/100 as IMPORTE_AYUDA_FINANCIACION,
             TO_DATE(aux.FEC_VENCIMIENTO_SEGURO,''yyyymmdd'') as FECHA_VENCIMIENTO_AVAL_SEGURO,
             TO_DATE(aux.FEC_DEVOLUCION_AYUDA,''yyyymmdd'') as FECHA_DEVOLUCION_AYUDA,
             ADM.ADM_ID

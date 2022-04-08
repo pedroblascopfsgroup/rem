@@ -258,7 +258,75 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 					    					loadOnBind: false,
 					    					forceSelection: false,
 					    					addUxReadOnlyEditFieldPlugin: true
-										}
+										},
+										
+										{
+							            	xtype: 'comboboxfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.origen.peticion.homologacion'),
+								        	reference: 'origenPeticionHomologacion',
+								        	bind: {
+											      store: '{comboOrigenPeticion}',
+											      value: '{proveedor.origenPeticionHomologacionCodigo}',
+										          hidden: '{!proveedor.isMediador}'
+								        	}
+								        	 
+							            },
+										{
+											xtype: 'textfieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.proveedor.peticionario'),					        	
+								        	bind: { value:  '{proveedor.peticionario}',
+								        			hidden: '{!proveedor.isMediador}'
+								        	}
+											
+								        },
+								        {
+							            	xtype: 'comboboxfieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.proveedor.linea.negocio'),
+								        	reference: 'lineaNegocio',
+								        	bind: {
+											      store: '{comboLineaDeNegocio}',
+											      value: '{proveedor.lineaNegocioCodigo}',
+										          hidden: '{!proveedor.isMediador}'
+								        	}
+								        	 
+							            },
+							            {
+							            	xtype: 'comboboxfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.clientes.no.residentes'),
+								        	reference: 'clitntesNoResidentes',
+								        	bind: {
+											      store: '{comboSinSino}',
+											      value: '{proveedor.gestionClientesNoResidentesCodigo}',
+										          hidden: '{!proveedor.isMediador}'
+								        	}
+								        	 
+							            },
+							            {
+											xtype: 'numberfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.numero.comerciales'),				        	
+								        	bind: { value: '{proveedor.numeroComerciales}',
+								        			hidden: '{!proveedor.isMediador}'
+								        	}
+											
+								        },
+								        { 
+											xtype: 'datefieldbase',
+											fieldLabel:  HreRem.i18n('fieldlabel.proveedor.fecha.ultimo.contrato.vigente'),
+											reference: 'fechaUltimoContratoVigente',
+											bind: { value: '{proveedor.fechaUltimoContratoVigente}',
+													hidden: '{!proveedor.isMediador}'
+											}
+										},
+							            {
+											xtype: 'textfieldbase',
+								        	fieldLabel:   HreRem.i18n('fieldlabel.proveedor.motivo.baja'),					        	
+								        	bind: { value:'{proveedor.motivoBaja}',
+								        			hidden: '{!proveedor.isMediador}'
+								        	}
+											
+								        }
+							            
+										
 									]
 								},				             				        
 					         // Fila 7 (Ámbito)
@@ -271,7 +339,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									bind: {
 										disabled: '{!proveedor.isProveedor}'
 									},
-									colspan: 3,
+									colspan: 4,
+									layout: {
+			                            type: 'table',
+			                            columns: 4,
+			                            tdAttrs: {
+			                                width: '25%',
+			                                style: 'vertical-align: top'
+			                            },
+			                            tableAttrs: {
+			                                style: {
+			                                    width: '100%'
+			                                    }
+			                            }
+			                        },
 									items :
 										[
 											{
@@ -319,14 +400,41 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									            	}
 									            }
 									        },
+									       {
+											    xtype: 'itemselectorbase',
+											    reference: 'itemselEspecialidad',
+											    fieldLabel: HreRem.i18n('fieldlabel.proveedor.especialidad'),
+											    store: {
+									            	model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'especialidad'}
+													},
+													autoLoad: true
+									            },									   
+											    bind: {
+											    	value: '{proveedor.especialidadCodigo}',
+											    	hidden: '{!proveedor.isMediador}'
+											    }
+											   
+											},
 											{
-												xtype : 'comboboxfieldbase',
-											    fieldLabel : HreRem.i18n('fieldlabel.proveedores.subcartera'),
-											    reference: 'cbProveedorSubcartera',
-											    disabled: true,
-											    bind : {
-											      store : '{comboSubcartera}',
-											      value : '{proveedor.subcarteraCodigo}'
+											    xtype: 'itemselectorbase',
+											    reference: 'itemselIdiomas',
+											    fieldLabel: HreRem.i18n('fieldlabel.proveedor.idiomas'),
+											    store: {
+									            	model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'idioma'}
+													},
+													autoLoad: true
+									            },
+											    bind: {
+											    	value: '{proveedor.idiomaCodigo}',
+											    	hidden: '{!proveedor.isMediador}'
 											    }
 											}
 										]

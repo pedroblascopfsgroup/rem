@@ -265,7 +265,7 @@ public class ActivoProveedor implements Serializable, Auditable {
 	private DDSinSiNo gestionClientesNoResidentes;
 	
 	@Column(name = "PVE_NUMERO_COMERCIALES")
-	private Integer numeroComerciales;
+	private Long numeroComerciales;
 	
 	@Column(name = "PVE_FECHA_ULT_CNT_VIGNETE")
 	private Date fechaUltimoContratoVigente;
@@ -789,11 +789,11 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.gestionClientesNoResidentes = gestionClientesNoResidentes;
 	}
 
-	public Integer getNumeroComerciales() {
+	public Long getNumeroComerciales() {
 		return numeroComerciales;
 	}
 
-	public void setNumeroComerciales(Integer numeroComerciales) {
+	public void setNumeroComerciales(Long numeroComerciales) {
 		this.numeroComerciales = numeroComerciales;
 	}
 

@@ -392,6 +392,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoConducta", DDTipoConductaInapropiada.class);
 		mapa.put("nivelConducta", DDNivelConductaInapropiada.class);
 		mapa.put("categoriaConducta", DDCategoriaConductaInapropiada.class);
+		mapa.put("origenPeticionHomologacion", DDOrigenPeticionHomologacion.class);	
+		mapa.put("idioma", DDIdioma.class);
+		mapa.put("especialidad", DDEspecialidad.class);
+		
 
 		return Collections.unmodifiableMap(mapa);
 	}

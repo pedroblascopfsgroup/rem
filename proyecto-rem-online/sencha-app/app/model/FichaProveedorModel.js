@@ -77,10 +77,7 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		    			return value;
 		    		}
 		    	}
-		    },
-		    {
-		    	name: 'subcarteraCodigo'
-		    },
+		    },	    
 		    {
 		    	name: 'custodioCodigo'
 		    },
@@ -187,7 +184,38 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             },
             {
             	name:'idMediadorRelacionado'
+            },
+            
+            {
+            	name:'origenPeticionHomologacionCodigo'
+            },
+            {
+            	name:'peticionario'
+            },
+            {
+            	name:'lineaNegocioCodigo'
+            },
+            {
+            	name:'gestionClientesNoResidentesCodigo'
+            },
+            {
+            	name:'numeroComerciales'
+            },
+            {
+            	name: 'fechaUltimoContratoVigente',
+    			type:'date',
+    			dateFormat: 'c'
+            },
+            {
+            	name:'motivoBaja'
+            },
+            {
+            	name:'especialidadCodigo'
+            },
+            {
+            	name:'idiomaCodigo'
             }
+            
     ],
 
 	proxy: {

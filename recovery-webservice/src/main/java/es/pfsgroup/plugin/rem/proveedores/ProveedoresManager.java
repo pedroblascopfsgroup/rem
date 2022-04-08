@@ -57,11 +57,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDIdioma;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -269,6 +274,53 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				if(proveedor.getMediadorRelacionado()!=null) {
 					beanUtilNotNull.copyProperty(dto, "idMediadorRelacionado", proveedor.getMediadorRelacionado().getCodigoProveedorRem());
 				}
+					
+				
+				if(proveedor.getOrigenPeticionHomologacion()!=null) {
+					beanUtilNotNull.copyProperty(dto, "origenPeticionHomologacionCodigo", proveedor.getOrigenPeticionHomologacion().getCodigo());
+				}
+				if(proveedor.getPeticionario()!=null) {
+					beanUtilNotNull.copyProperty(dto, "peticionario", proveedor.getPeticionario());
+				}
+				if(proveedor.getLineaNegocio()!=null) {
+					beanUtilNotNull.copyProperty(dto, "lineaNegocioCodigo", proveedor.getLineaNegocio().getCodigo());
+				}		
+				if(proveedor.getGestionClientesNoResidentes()!=null) {
+					beanUtilNotNull.copyProperty(dto, "gestionClientesNoResidentesCodigo", proveedor.getGestionClientesNoResidentes().getCodigo());
+				}
+				if(proveedor.getNumeroComerciales()!=null) {
+					beanUtilNotNull.copyProperty(dto, "numeroComerciales", proveedor.getNumeroComerciales());
+				}
+				if(proveedor.getFechaUltimoContratoVigente()!=null) {
+					beanUtilNotNull.copyProperty(dto, "fechaUltimoContratoVigente", proveedor.getFechaUltimoContratoVigente());
+				}
+				if(proveedor.getMotivoBaja()!=null) {
+					beanUtilNotNull.copyProperty(dto, "motivoBaja", proveedor.getMotivoBaja());
+				}
+								
+				List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, proveedorIdFiltro);
+				if(!Checks.estaVacio(proveedorEspecialidad)) {
+					StringBuffer codigos = new StringBuffer();
+					for(ProveedorEspecialidad pe : proveedorEspecialidad) {
+						if(!Checks.esNulo(pe.getEspecialidad())) {
+							codigos.append(pe.getEspecialidad().getCodigo()).append(",");
+						}
+					}
+					beanUtilNotNull.copyProperty(dto, "especialidadCodigo", codigos.substring(0, (codigos.length()-1)));
+				}
+				
+				List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, proveedorIdFiltro);
+				if(!Checks.estaVacio(proveedorIdioma)) {
+					StringBuffer codigos = new StringBuffer();
+					for(ProveedorIdioma pi : proveedorIdioma) {
+						if(!Checks.esNulo(pi.getIdioma())) {
+							codigos.append(pi.getIdioma().getCodigo()).append(",");
+						}
+					}
+					beanUtilNotNull.copyProperty(dto, "idiomaCodigo", codigos.substring(0, (codigos.length()-1)));
+				}
+				
+				
 			} catch (IllegalAccessException e) {
 				logger.error(e.getMessage());
 			} catch (InvocationTargetException e) {
@@ -429,10 +481,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 						}
 					}
 				}
-			}
-			if(!Checks.esNulo(dto.getSubcarteraCodigo())) {
-				//beanUtilNotNull.copyProperty(proveedor, "subcarteraCodigo", proveedor.get);// TODO: todavia no existe.
-			}
+			}				
+			
 			if(!Checks.esNulo(dto.getCustodioCodigo())) {
 				beanUtilNotNull.copyProperty(proveedor, "custodio", dto.getCustodioCodigo());
 			}
@@ -519,6 +569,107 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 				if(mediadorRelacionado!=null) {
 					beanUtilNotNull.copyProperty(proveedor, "mediadorRelacionado", mediadorRelacionado);	
+				}
+				
+			}
+			
+			if(!Checks.esNulo(dto.getPeticionario())) {
+				proveedor.setPeticionario(dto.getPeticionario());
+			}
+			
+			if(!Checks.esNulo(dto.getOrigenPeticionHomologacionCodigo())) {
+				DDOrigenPeticionHomologacion origenPeticion = genericDao.get(DDOrigenPeticionHomologacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getOrigenPeticionHomologacionCodigo()));
+				proveedor.setOrigenPeticionHomologacion(origenPeticion);			
+			}
+			
+			if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+				DDTipoComercializacion lineaNegocio = genericDao.get(DDTipoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getLineaNegocioCodigo()));
+				proveedor.setLineaNegocio(lineaNegocio);			
+			}
+			
+			if(!Checks.esNulo(dto.getGestionClientesNoResidentesCodigo())) {
+				DDSinSiNo gestClientesNoResidentes = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getGestionClientesNoResidentesCodigo()));
+				proveedor.setGestionClientesNoResidentes(gestClientesNoResidentes);			
+			}
+			
+			if(!Checks.esNulo(dto.getNumeroComerciales())) {
+				proveedor.setNumeroComerciales(dto.getNumeroComerciales());
+			}
+			
+			if(!Checks.esNulo(dto.getFechaUltimoContratoVigente())) {
+				proveedor.setFechaUltimoContratoVigente(dto.getFechaUltimoContratoVigente());
+			}
+			
+			if(!Checks.esNulo(dto.getMotivoBaja())) {
+				proveedor.setMotivoBaja(dto.getMotivoBaja());
+			}
+			
+			if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+				List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
+				
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+				List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
+					if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
+						ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroProveedor);
+						if(!Checks.esNulo(especialidadABorrar)) {
+							genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosEspecialidad) {
+					DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
+					if(!Checks.esNulo(especialidad)) {
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
+						List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroProveedor, filtroEspecialidad);
+						if(Checks.estaVacio(proveedorEspecialidad)) {
+							ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
+							pveEspecialidad.setEspecialidad(especialidad);
+							pveEspecialidad.setProveedor(proveedor);						
+							genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+						}
+					}
+				}
+				
+			}
+			
+			if(!Checks.esNulo(dto.getIdiomaCodigo())) {
+				List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
+				
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
+				List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroProveedor);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorIdioma pi : proveedorIdiomaByProvID){
+					if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
+						ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroProveedor);
+						if(!Checks.esNulo(idiomaABorrar)) {
+							genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosIdioma) {
+					DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
+					if(!Checks.esNulo(idioma)) {
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
+						List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroProveedor, filtroIdioma);
+						if(Checks.estaVacio(proveedorIdioma)) {
+							ProveedorIdioma pveIdioma = new ProveedorIdioma();
+							pveIdioma.setIdioma(idioma);
+							pveIdioma.setProveedor(proveedor);						
+							genericDao.save(ProveedorIdioma.class, pveIdioma);
+						}
+					}
 				}
 				
 			}

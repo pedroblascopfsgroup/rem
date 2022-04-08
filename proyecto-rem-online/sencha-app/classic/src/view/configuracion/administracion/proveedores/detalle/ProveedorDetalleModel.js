@@ -198,6 +198,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 			},
 			autoLoad: true
 		},
+		comboOrigenPeticion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'origenPeticionHomologacion'}
+			}
+		},
 		comboCategoriaConductaFiltered: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -222,7 +230,24 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				extraParams: {id: '{proveedor.id}'}
 			},
 			autoLoad: true
-		}
+		},
+				
+		comboLineaDeNegocio: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposComercializacionActivo'}
+			}
+		},
+		comboSinSino: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'DDSiNo'}
+			}
+		}		
     }
     
 });

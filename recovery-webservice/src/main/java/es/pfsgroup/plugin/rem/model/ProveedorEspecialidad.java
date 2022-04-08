@@ -18,6 +18,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 
@@ -31,7 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 @Table(name = "PVE_PROVEEDOR_ESPECIALIDAD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class ProveedorEspecialidad implements Serializable {
+public class ProveedorEspecialidad implements Serializable,Auditable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -47,6 +48,10 @@ public class ProveedorEspecialidad implements Serializable {
     @ManyToOne
     @JoinColumn(name = "DD_ESP_ID")
     private DDEspecialidad especialidad;
+    
+    @ManyToOne
+    @JoinColumn(name = "PRD_ID")
+    private ActivoProveedorDireccion direccion;
 
     @Version   
 	private Long version;
@@ -94,6 +99,12 @@ public class ProveedorEspecialidad implements Serializable {
 		this.auditoria = auditoria;
 	}
 
-	
+	public ActivoProveedorDireccion getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(ActivoProveedorDireccion direccion) {
+		this.direccion = direccion;
+	}
 
 }

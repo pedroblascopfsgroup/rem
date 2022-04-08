@@ -274,6 +274,15 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			beanUtilNotNull.copyProperties(visita, visitaDto);
 			visita.setNumVisitaRem(visitaDao.getNextNumVisitaRem());
 
+			if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
+				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								visitaDto.getIdProveedorRemPrescriptor()));
+				if (!Checks.esNulo(prescriptor)) {
+					visita.setPrescriptor(prescriptor);
+				}
+			}
+
 			if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 				ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
@@ -284,7 +293,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 					boolean esActivoCaixa = activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera());
 
-					if (esActivoCaixa)
+					if (esActivoCaixa && esVisitaCaixaEnviar(visita))
 						informarCamposCLienteBC(cliente,activo);
 
 					errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
@@ -317,14 +326,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 				if (!Checks.esNulo(subEstVis)) {
 					visita.setSubEstadoVisita(subEstVis);
-				}
-			}
-			if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
-				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-								visitaDto.getIdProveedorRemPrescriptor()));
-				if (!Checks.esNulo(prescriptor)) {
-					visita.setPrescriptor(prescriptor);
 				}
 			}
 
@@ -436,6 +437,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		errorsList = validateVisitaPostRequestData(visitaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
 
+			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
+				if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
+					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemPrescriptor()));
+					if (!Checks.esNulo(prescriptor)) {
+						visita.setPrescriptor(prescriptor);
+					}
+				} else {
+					visita.setPrescriptor(null);
+				}
+			}
+
 			if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
 				if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
@@ -447,7 +461,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 						boolean esActivoCaixa = activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera());
 
-						if (esActivoCaixa)
+						if (esActivoCaixa && esVisitaCaixaEnviar(visita))
 							informarCamposCLienteBC(cliente,activo);
 
 						errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
@@ -497,18 +511,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					}
 				} else {
 					visita.setUsuarioAccion(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
-				if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
-					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-									visitaDto.getIdProveedorRemPrescriptor()));
-					if (!Checks.esNulo(prescriptor)) {
-						visita.setPrescriptor(prescriptor);
-					}
-				} else {
-					visita.setPrescriptor(null);
 				}
 			}
 

@@ -243,9 +243,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setLongitud(activoInfoComercial.getLongitud().toString());
 			
 			//Informacion general
-			if (!Checks.esNulo(activoInfoComercial.getRegimenProteccion())) {
-				informeComercial.setRegimenInmuebleCod(activoInfoComercial.getRegimenProteccion().getCodigo());
-				informeComercial.setRegimenInmuebleDesc(activoInfoComercial.getRegimenProteccion().getDescripcion());
+			if (!Checks.esNulo(activo.getInfoAdministrativa())
+					&& !Checks.esNulo(activo.getInfoAdministrativa().getTipoVpo())) {
+				informeComercial.setRegimenInmuebleCod(activo.getInfoAdministrativa().getTipoVpo().getCodigo());
+				informeComercial.setRegimenInmuebleDesc(activo.getInfoAdministrativa().getTipoVpo().getDescripcion());
 			}
 			if (!Checks.esNulo(activoInfoComercial.getEstadoOcupacional())) {
 				informeComercial.setEstadoOcupacionalCod(activoInfoComercial.getEstadoOcupacional().getCodigo());
@@ -285,8 +286,14 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				informeComercial.setTerrazaCod(activoInfoComercial.getTerraza().getCodigo());
 				informeComercial.setTerrazaDesc(activoInfoComercial.getTerraza().getDescripcion());
 			}
-			if (!Checks.esNulo(activoInfoComercial.getSuperficieUtil()))
-				informeComercial.setSuperficieUtil(activoInfoComercial.getSuperficieUtil().doubleValue());
+			if (!Checks.esNulo(activo.getInfoRegistral())) {
+				if (!Checks.esNulo(activo.getInfoRegistral().getSuperficieUtil())) {
+					informeComercial.setSuperficieUtil(activo.getInfoRegistral().getSuperficieUtil().doubleValue());
+				} else if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien())
+						&& !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
+					informeComercial.setSuperficieUtil(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().doubleValue());
+				}
+			}
 			if (!Checks.esNulo(activoInfoComercial.getSuperficieTerraza())) 
 				informeComercial.setSuperficieTerraza(activoInfoComercial.getSuperficieTerraza().doubleValue());
 			if (!Checks.esNulo(activoInfoComercial.getPatio())) {
@@ -624,14 +631,14 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			
 			//Informacion general
-			if (!Checks.esNulo(activoInformeDto.getRegimenInmuebleCod())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getRegimenInmuebleCod());
-				actInfoComercial.setRegimenProteccion(genericDao.get(DDTipoVpo.class, filtro));
-			}
-			if (!Checks.esNulo(activoInformeDto.getEstadoOcupacionalCod())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoOcupacionalCod());
-				actInfoComercial.setEstadoOcupacional(genericDao.get(DDEstadoOcupacional.class, filtro));
-			}
+//			if (!Checks.esNulo(activoInformeDto.getRegimenInmuebleCod())) {
+//				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getRegimenInmuebleCod());
+//				actInfoComercial.setRegimenProteccion(genericDao.get(DDTipoVpo.class, filtro));
+//			}
+//			if (!Checks.esNulo(activoInformeDto.getEstadoOcupacionalCod())) {
+//				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoOcupacionalCod());
+//				actInfoComercial.setEstadoOcupacional(genericDao.get(DDEstadoOcupacional.class, filtro));
+//			}
 			if (!Checks.esNulo(activoInformeDto.getAnyoConstruccion())) 
 				actInfoComercial.setAnyoConstruccion(activoInformeDto.getAnyoConstruccion());
 			if (!Checks.esNulo(activoInformeDto.getLicenciaObraCod())) {
@@ -671,10 +678,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getVisitableCod());
 				actInfoComercial.setVisitable(genericDao.get(DDSinSiNo.class, filtro));
 			}
-			if (!Checks.esNulo(activoInformeDto.getOcupadoCod())) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getOcupadoCod());
-				actInfoComercial.setOcupado(genericDao.get(DDSinSiNo.class, filtro));
-			}
+//			if (!Checks.esNulo(activoInformeDto.getOcupadoCod())) {
+//				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getOcupadoCod());
+//				actInfoComercial.setOcupado(genericDao.get(DDSinSiNo.class, filtro));
+//			}
 
 			if (!Checks.esNulo(activoInformeDto.getSalones())) {
 				actInfoComercial.setNumSalones(activoInformeDto.getSalones().longValue());
@@ -691,9 +698,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			if (!Checks.esNulo(activoInformeDto.getSuperficiePatio())) {
 				actInfoComercial.setSuperficiePatio(activoInformeDto.getSuperficiePatio().floatValue());
 			}
-			if (!Checks.esNulo(activoInformeDto.getSuperficieUtil())) {
-				actInfoComercial.setSuperficieUtil(activoInformeDto.getSuperficieUtil().floatValue());
-			}
+//			if (!Checks.esNulo(activoInformeDto.getSuperficieUtil())) {
+//				actInfoComercial.setSuperficieUtil(activoInformeDto.getSuperficieUtil().floatValue());
+//			}
 			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionCod())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionCod());
 				actInfoComercial.setEstadoConservacion(genericDao.get(DDEstadoConservacion.class, filtro));

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210514
+--## FECHA_CREACION=20220407
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9171
+--## INCIDENCIA_LINK=REMVIP-11485
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##	    0.2 Juan Bautista Alfonso - REMVIP-8566 - Añadido campo TAS_ILOCALIZABLE
 --##	    0.3 Juan Bautista Alfonso - REMVIP-9171 - Modificado actualizacion para que actualice por TAS_ID en vez de por ID_EXTERNO
+--##	    0.4 Juan Bautista Alfonso - REMVIP-11485 - Añadidos filtros de borrados logicos para quitar duplicados
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -172,7 +173,7 @@ BEGIN
 				HLP_REGISTRO_EJEC := '[ERROR] El activo ['||ID_ACTIVO_HAYA||'] no existe en la tabla ACT_ACTIVO o es un activo borrado.';
 				COD_RETORNO := 1;
 		ELSE
-			    V_MSQL := 'SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' ';
+			    V_MSQL := 'SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0 ';
 				EXECUTE IMMEDIATE V_MSQL INTO ACT_ID;
                 DBMS_OUTPUT.PUT_LINE('[INFO] - El activo '||ID_ACTIVO_HAYA||' existe en la ACT_ACTIVO. Continuamos la ejecución.');
                 
@@ -232,8 +233,8 @@ BEGIN
 	                    FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
 	                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
 	                      ON TAS.ACT_ID = ACT.ACT_ID
-	                     AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-	                     AND TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||''') ';
+	                     AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0
+	                     AND TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||''') AND TAS.BORRADO = 0 ';
 	        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 	
 	      
@@ -247,8 +248,8 @@ BEGIN
 	                        FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
 	                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
 	                        ON TAS.ACT_ID = ACT.ACT_ID
-	                        AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-	                        AND TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||''') ';
+	                        AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0
+	                        AND TAS.TAS_ID_EXTERNO_BBVA = TRIM('''||ID_EXTERNO||''') AND TAS.BORRADO = 0 ';
 	            EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;
 	            
 	            FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -314,8 +315,8 @@ BEGIN
 	                        FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
 	                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
 	                        ON TAS.ACT_ID = ACT.ACT_ID
-	                        WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-	                        AND TRIM(TAS.TAS_ID_EXTERNO_BBVA) = TRIM('''||ID_EXTERNO||''')';
+	                        WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0
+	                        AND TRIM(TAS.TAS_ID_EXTERNO_BBVA) = TRIM('''||ID_EXTERNO||''') AND TAS.BORRADO = 0';
 	                        
 	           EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 	           

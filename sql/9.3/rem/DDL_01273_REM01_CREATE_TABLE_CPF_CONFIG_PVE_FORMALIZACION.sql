@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220401
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17581
@@ -64,13 +64,7 @@ DECLARE
  
 		DBMS_OUTPUT.PUT_LINE('[INFO] Creada la tabla '||V_TABLA);
 
-	ELSE
-
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia la tabla '||V_TABLA);	
-	
-	END IF;
-
-	-- Creamos primary key
+		-- Creamos primary key
 	DBMS_OUTPUT.PUT_LINE('[INFO] Creamos la PK');
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (CPF_ID))';
 	EXECUTE IMMEDIATE V_MSQL;
@@ -103,8 +97,11 @@ DECLARE
 	  
 	END IF;
 
+	ELSE
 
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existia la tabla '||V_TABLA);	
 	
+	END IF;
 
 COMMIT;
  

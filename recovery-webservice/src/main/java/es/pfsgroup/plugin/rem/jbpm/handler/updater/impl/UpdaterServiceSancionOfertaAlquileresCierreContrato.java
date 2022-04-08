@@ -145,10 +145,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				}
 			}
 		}
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
 	}
 
 	public String[] getCodigoTarea() {

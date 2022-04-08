@@ -1498,4 +1498,14 @@ public interface ExpedienteComercialApi {
 	DtoPage getIntervinientesByOferta(Long numOferta, WebDto dto);
 		
 	boolean esTitulizada(TareaExterna tareaExterna);
+
+	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente);
+
+	public String getEstadoExpedienteBcFromNumOferta(Long numOferta);
+
+	public String getEstadoExpedienteBcFromIdTarea(Long idTarea);
+
+	public ExpedienteComercial getExpedienteComercyalByNumOferta(Long numOferta);
+
+
 }

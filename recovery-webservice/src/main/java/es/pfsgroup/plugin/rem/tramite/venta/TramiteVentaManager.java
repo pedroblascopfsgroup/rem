@@ -149,8 +149,6 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	        	eco.setFechaAnulacion(new Date());
 	        }
 			genericDao.save(ExpedienteComercial.class, eco);
-			
-			ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 		}
 	}
 	

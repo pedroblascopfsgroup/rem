@@ -275,10 +275,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					}
 				}
 				
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndEstadoArras(expediente,estadoArras));
-				}
-				
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);
 				

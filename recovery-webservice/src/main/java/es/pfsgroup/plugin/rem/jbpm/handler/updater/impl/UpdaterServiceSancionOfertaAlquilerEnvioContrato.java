@@ -80,10 +80,7 @@ public class UpdaterServiceSancionOfertaAlquilerEnvioContrato implements Updater
 		}
 
 		expedienteComercialApi.update(expedienteComercial,false);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaEnvio(expedienteComercial, fechaEnvio));
-		}
+
 	}
 
 	public String[] getCodigoTarea() {

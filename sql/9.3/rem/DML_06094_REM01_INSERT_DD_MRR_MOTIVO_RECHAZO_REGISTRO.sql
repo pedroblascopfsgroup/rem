@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220406
+--## FECHA_CREACION=20220408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17515
@@ -35,8 +35,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('F71','Formato de fecha del campo FECHA_VENCIMIENTO_AVAL_SEGURO incorrecto','Formato de fecha del campo FECHA_VENCIMIENTO_AVAL_SEGURO incorrecto',1,'WHERE 0 = IS_VALIDATE_DATE(AUX.FECHA_VENCIMIENTO_AVAL_SEGURO, ''''yyyymmdd'''')'),
-        T_TIPO_DATA('F72','Formato de fecha del campo FECHA_DEVOLUCION_AYUDA incorrecto','Formato de fecha del campo FECHA_DEVOLUCION_AYUDA incorrecto',1,'WHERE 0 = IS_VALIDATE_DATE(AUX.FECHA_DEVOLUCION_AYUDA, ''''yyyymmdd'''')')
+        T_TIPO_DATA('F71','Formato de fecha del campo FEC_VENCIMIENTO_SEGURO incorrecto','Formato de fecha del campo FEC_VENCIMIENTO_SEGURO incorrecto',1,'WHERE 0 = IS_VALIDATE_DATE(AUX.FEC_VENCIMIENTO_SEGURO, ''''yyyymmdd'''')'),
+        T_TIPO_DATA('F72','Formato de fecha del campo FEC_DEVOLUCION_AYUDA incorrecto','Formato de fecha del campo FEC_DEVOLUCION_AYUDA incorrecto',1,'WHERE 0 = IS_VALIDATE_DATE(AUX.FEC_DEVOLUCION_AYUDA, ''''yyyymmdd'''')')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

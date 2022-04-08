@@ -8301,6 +8301,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado) && depositoApi.esNecesarioDeposito(oferta)){
 				depositoApi.generaDeposito(oferta);
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(oferta);
+				oferta.setCuentaVirtual(cuentaVirtual);
 			}
 
 			ofertaDao.saveOrUpdate(oferta);

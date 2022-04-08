@@ -1,12 +1,15 @@
 package es.pfsgroup.plugin.rem.deposito;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -15,6 +18,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.model.ConfiguracionDeposito;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ParametrizacionDeposito;
@@ -24,7 +28,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 @Service("depositoManager")
 public class DepositoManager extends BusinessOperationOverrider<DepositoApi> implements DepositoApi {
 	
-	
 	protected static final Log logger = LogFactory.getLog(DepositoManager.class);
 	
 	@Autowired
@@ -32,6 +35,9 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 	
 	@Override
 	public String managerName() {
@@ -66,8 +72,27 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	}
 	
 	@Override
-	public Long vincularCuentaVirtual() {
-		return 1L;
+	@Transactional
+	public synchronized CuentasVirtuales vincularCuentaVirtual(Oferta oferta) {
+
+		List<CuentasVirtuales> cuentasVirtuales = null;
+		if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getSubcartera() != null) {
+			cuentasVirtuales = genericDao.getList(CuentasVirtuales.class,
+					genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()),
+					genericDao.createFilter(FilterType.NULL, "fechaInicio"));
+		}
+		
+		CuentasVirtuales cuentaVirtual = null;
+		if(cuentasVirtuales != null && !cuentasVirtuales.isEmpty()) {
+			cuentaVirtual = cuentasVirtuales.get(0);
+			cuentaVirtual.setFechaInicio(new Date());
+			cuentaVirtual.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			cuentaVirtual.getAuditoria().setFechaModificar(new Date());
+
+			genericDao.update(CuentasVirtuales.class, cuentaVirtual);
+		}
+		
+		return cuentaVirtual;
 	}
 
 	@Override
@@ -76,11 +101,11 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		dep.setImporte(getImporteDeposito(oferta));
 		dep.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PENDIENTE)));
 		dep.setOferta(oferta);
-		vincularCuentaVirtual();
 
 		genericDao.save(Deposito.class, dep);
+		
 	}
-	
+
 	@Override
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;

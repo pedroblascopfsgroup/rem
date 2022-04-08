@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.Oferta;
 
@@ -9,7 +10,7 @@ public interface DepositoApi {
 
 	boolean isDepositoIngresado(Deposito deposito);
 
-	Long vincularCuentaVirtual();
+	CuentasVirtuales vincularCuentaVirtual(Oferta oferta);
 
 	Double getImporteDeposito(Oferta oferta);
 

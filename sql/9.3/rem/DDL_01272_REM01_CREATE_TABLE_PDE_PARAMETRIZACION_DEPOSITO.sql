@@ -111,7 +111,7 @@ BEGIN
 		    EXECUTE IMMEDIATE V_MSQL;	
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.PDE_ID IS ''Id de la tabla''';
             EXECUTE IMMEDIATE V_SQL;
-			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_EQG_ID IS ''Id de la oferta''';
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_EQG_ID IS ''Id del equipo de gestión''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SCR_ID IS ''Id de la subcartera''';
             EXECUTE IMMEDIATE V_SQL;

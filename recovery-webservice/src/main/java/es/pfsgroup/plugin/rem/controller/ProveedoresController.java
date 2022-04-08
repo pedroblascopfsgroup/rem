@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
@@ -75,7 +76,7 @@ public class ProveedoresController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(ProveedoresController.class);
 
 	private static final String RESPONSE_SUCCESS_KEY = "success";
-
+	private static final String RESPONSE_ERROR_MESSAGE_KEY= "msgError";
 	private static final String RESPONSE_DATA_KEY = "data";
 
 	@Autowired
@@ -759,5 +760,55 @@ public class ProveedoresController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getConductasInapropiadasByProveedor(Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, proveedoresApi.getConductasInapropiadasByProveedor(id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveConductasInapropiadas(DtoConductasInapropiadas dto, ModelMap model, HttpServletRequest request) {
+		try{
+			boolean success = proveedoresApi.saveConductasInapropiadas(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboDelegacionesByProveedor(String id) {
+		return createModelAndViewJson(new ModelMap(RESPONSE_DATA_KEY, proveedoresApi.getDelegacionesByProveedor(id)));	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteConductasInapropiadas(String id, ModelMap model) {
+		try {
+			boolean success = proveedoresApi.deleteConductasInapropiadas(id);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

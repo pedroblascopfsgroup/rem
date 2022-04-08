@@ -389,6 +389,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("activoAccesibilidad", DDActivoAccesibilidad.class);
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
+		mapa.put("tipoConducta", DDTipoConductaInapropiada.class);
+		mapa.put("nivelConducta", DDNivelConductaInapropiada.class);
+		mapa.put("categoriaConducta", DDCategoriaConductaInapropiada.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

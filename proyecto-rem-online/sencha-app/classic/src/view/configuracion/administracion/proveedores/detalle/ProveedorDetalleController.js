@@ -377,5 +377,82 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		combo.up('proveedoresdetallemain').lookupReference('dateConstitucionProveedor').reset();
     		combo.up('proveedoresdetallemain').lookupReference('cbLocalizada').reset();
     	}
+    },
+
+	onChangeTipoConducta: function(combo) {
+    	var me = this,
+    	comboCategoria = me.lookupReference(combo.chainedReference),
+    	comboNivel = me.lookupReference(comboCategoria.chainedReference);      	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(comboCategoria.getValue())) {
+			comboCategoria.clearValue();
+			comboNivel.clearValue();
+    	}
+		
+    	var chainedStore = comboCategoria.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idTipoConducta' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					comboCategoria.setDisabled(false);
+						comboCategoria.allowBlank = false;
+	   				} else {
+	   					comboCategoria.setDisabled(true);
+						comboCategoria.allowBlank = true;
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(comboCategoria.chainedReference) != null) {
+			var chainedDos = me.lookupReference(comboCategoria.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+
+	onChangeCategoriaConducta: function(combo) {
+    	var me = this,
+    	comboNivel = me.lookupReference(combo.chainedReference);    	
+    	me.getViewModel().notify();
+    	if(!Ext.isEmpty(comboNivel.getValue())) {
+			comboNivel.clearValue();
+    	}
+		
+    	var chainedStore = comboNivel.getStore();
+    	
+    	if(!Ext.isEmpty(chainedStore)) {
+    		chainedStore.getProxy().extraParams = {
+    			'idCategoriaConducta' : combo.getValue()
+    		}
+    		
+	    	chainedStore.load({
+				callback: function(records, operation, success) {
+	   				if(!Ext.isEmpty(records) && records.length > 0) {
+	   					comboNivel.setValue(records[0]);
+	   					comboNivel.setDisabled(false);
+	   				} else {
+	   					comboNivel.setDisabled(true);
+	   				}
+				}
+			});
+    	}
+    	
+		if (me.lookupReference(comboNivel.chainedReference) != null) {
+			var chainedDos = me.lookupReference(comboNivel.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
     }
 });

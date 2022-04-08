@@ -4,7 +4,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.DireccionesDelegacionesModel',
                 'HreRem.model.PersonasContactoModel', 'HreRem.model.ActivosIntegradosModel', 'HreRem.model.AdjuntoProveedor',
-                'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor','HreRem.model.ComboProveedorHistoricoMediadorModel'],
+                'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor','HreRem.model.ComboProveedorHistoricoMediadorModel',
+				'HreRem.model.ConductasInapropiadasModel'],
     
     data: {
     	proveedor: null
@@ -177,6 +178,50 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposDocumentos'}
 			}
+		},
+		storeConductasInapropiadas: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ConductasInapropiadasModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getConductasInapropiadasByProveedor',
+				extraParams: {id: '{proveedor.id}'}
+			},
+			autoLoad: true
+		},
+		comboTipoConducta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoConducta'}
+			},
+			autoLoad: true
+		},
+		comboCategoriaConductaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboCategoriaConducta'
+			},
+			autoLoad: true
+		},
+		comboNivelConductaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboNivelConducta'
+			},
+			autoLoad: true
+		},
+		comboDelegaciones: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getComboDelegacionesByProveedor',
+				extraParams: {id: '{proveedor.id}'}
+			},
+			autoLoad: true
 		}
     }
     

@@ -111,6 +111,7 @@ import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -122,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDNivelConductaInapropiada;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -2151,5 +2153,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	    
 	    return map;
 	}
+	
+	@Override
+	public List<DDCategoriaConductaInapropiada> getComboCategoriaConducta(String idTipoConducta) {
+		if(!Checks.esNulo(idTipoConducta)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoConducta.codigo", idTipoConducta);
+			return genericDao.getList(DDCategoriaConductaInapropiada.class, filtro);
+		}
+		return null;
+	}
 
+	@Override
+	public DDNivelConductaInapropiada getComboNivelConducta(String idCategoriaConducta) {
+		if(!Checks.esNulo(idCategoriaConducta)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", idCategoriaConducta);
+			return genericDao.get(DDCategoriaConductaInapropiada.class, filtro).getNivelConducta();
+		}
+		return null;
+	}
 }

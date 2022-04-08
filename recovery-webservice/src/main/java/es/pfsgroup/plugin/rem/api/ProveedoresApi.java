@@ -12,6 +12,8 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
@@ -300,5 +302,13 @@ public interface ProveedoresApi {
 	 * @return Devuelve un Booleano.
 	 */
 	public Boolean cambiaMediador(String numActivo, String pveCodRem, String userName);
+
+	public List<DtoConductasInapropiadas> getConductasInapropiadasByProveedor(Long id);
+
+	public boolean saveConductasInapropiadas(DtoConductasInapropiadas dto);
+
+	public List<DtoDiccionario> getDelegacionesByProveedor(String id);
+	
+	public boolean deleteConductasInapropiadas(String id);
 
 }

@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
@@ -1396,5 +1397,109 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public List<ActivoProveedor> getMediadoresActivos() {		
 		
 		return proveedoresDao.getMediadoresActivos();
+	}
+	
+	@Override
+	public List<DtoConductasInapropiadas> getConductasInapropiadasByProveedor(Long id) {
+
+		List<DtoConductasInapropiadas> dtoConductas = new ArrayList<DtoConductasInapropiadas>();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
+		List<ConductasInapropiadas> conductasList = genericDao.getList(ConductasInapropiadas.class, 
+				genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor));
+		
+		if(!Checks.esNulo(conductasList) && !conductasList.isEmpty()) {
+			for (ConductasInapropiadas conducta : conductasList) {
+				dtoConductas.add(objectToDtoConductasInapropiadas(conducta));
+			}
+		}
+		
+		return dtoConductas;
+	}
+	
+	private DtoConductasInapropiadas objectToDtoConductasInapropiadas(ConductasInapropiadas conducta) {
+		DtoConductasInapropiadas dto = new DtoConductasInapropiadas();
+		dto.setId(conducta.getId());
+		dto.setIdProveedor(conducta.getProveedor().getId());
+		
+		Date fechaAlta = !Checks.esNulo(conducta.getAuditoria().getFechaModificar()) 
+				? conducta.getAuditoria().getFechaModificar() : conducta.getAuditoria().getFechaCrear(); 
+		dto.setFechaAlta(fechaAlta);
+		
+		String username = !Checks.esNulo(conducta.getAuditoria().getUsuarioModificar()) 
+				? conducta.getAuditoria().getUsuarioModificar() : conducta.getAuditoria().getUsuarioCrear(); 
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+		dto.setUsuarioAlta(usuario.getApellidoNombre());
+		
+		dto.setCategoriaConductaCodigo(conducta.getCategoriaConducta().getCodigo());
+		dto.setCategoriaConducta(conducta.getCategoriaConducta().getDescripcion());
+		dto.setTipoConducta(conducta.getCategoriaConducta().getTipoConducta().getDescripcion());
+		dto.setNivelConducta(conducta.getCategoriaConducta().getNivelConducta().getDescripcion());
+	
+		dto.setComentarios(conducta.getComentarios());
+		if (!Checks.esNulo(conducta.getDelegacion()))
+			dto.setDelegacion(conducta.getDelegacion().getId().toString());
+		
+		if (!Checks.esNulo(conducta.getAdjunto())) {
+			dto.setIdAdjunto(conducta.getAdjunto().getId().toString());
+			dto.setAdjunto(!Checks.esNulo(conducta.getAdjunto().getDescripcion()) ? conducta.getAdjunto().getDescripcion() : conducta.getAdjunto().getNombre());
+		}
+		
+		return dto;
+	}
+	
+	@Override
+	@Transactional()
+	public boolean saveConductasInapropiadas(DtoConductasInapropiadas dto) {
+		ConductasInapropiadas conducta = new ConductasInapropiadas();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(dto.getIdProveedor());
+		
+		if (!Checks.esNulo(dto.getId())) {
+			conducta = genericDao.get(ConductasInapropiadas.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+		}
+		
+		conducta.setProveedor(proveedor);
+		conducta.setCategoriaConducta(genericDao.get(DDCategoriaConductaInapropiada.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCategoriaConductaCodigo())));
+		
+		conducta.setComentarios(dto.getComentarios());
+		
+		if (!Checks.esNulo(dto.getDelegacion())) {
+			conducta.setDelegacion(genericDao.get(ActivoProveedorDireccion.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getDelegacion()))));
+		} else conducta.setDelegacion(null);
+		
+		genericDao.save(ConductasInapropiadas.class, conducta);
+		
+		return true;
+	}
+
+	@Override
+	public List<DtoDiccionario> getDelegacionesByProveedor(String id) {
+		List<DtoDiccionario> dtoList = new ArrayList<DtoDiccionario>();
+		ActivoProveedor proveedor = proveedoresDao.getProveedorById(Long.parseLong(id));
+		List<ActivoProveedorDireccion> delegacionesList = genericDao.getList(ActivoProveedorDireccion.class, 
+				genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor));
+		
+		if(!Checks.esNulo(delegacionesList) && !delegacionesList.isEmpty()) {
+			for (ActivoProveedorDireccion delegacion : delegacionesList) {
+				DtoDiccionario dto = new DtoDiccionario();
+				dto.setId(delegacion.getId());
+				dto.setCodigo(delegacion.getId().toString());
+				dtoList.add(dto);
+			}
+		}
+		
+		return dtoList;
+	}
+
+	@Override
+	@Transactional()
+	public boolean deleteConductasInapropiadas(String id) {
+
+		if(!Checks.esNulo(id)) {
+			genericDao.deleteById(ConductasInapropiadas.class, Long.parseLong(id));
+			return true;
+		}
+		return false;
 	}
 }

@@ -212,6 +212,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -468,6 +469,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
@@ -4985,6 +4989,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
+
+			if (!Checks.esNulo(expedienteComercial.getOferta().getVentaSobrePlano()) && expedienteComercial.getOferta().getVentaSobrePlano() 
+					&& (DDEstadosExpedienteComercial.RESERVADO.equals(expedienteComercial.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expedienteComercial.getEstado().getCodigo())))
+				notificationOfertaManager.notificationReservaVentaSobrePlano(expedienteComercial.getOferta());
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);

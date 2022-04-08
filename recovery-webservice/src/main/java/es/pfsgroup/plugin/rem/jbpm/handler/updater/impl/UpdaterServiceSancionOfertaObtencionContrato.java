@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -76,6 +77,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -302,6 +306,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					
 					genericDao.save(HistoricoTareaPbc.class, htp);
 				}
+				
+				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+						|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+					notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

@@ -1500,4 +1500,6 @@ public interface ActivoApi {
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
+
+	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterService {
@@ -66,6 +67,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionTanteo.class);
 
@@ -199,6 +203,11 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 						}
 					}
 				}
+				
+				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+						|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+					notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 			}
 		}
 	}

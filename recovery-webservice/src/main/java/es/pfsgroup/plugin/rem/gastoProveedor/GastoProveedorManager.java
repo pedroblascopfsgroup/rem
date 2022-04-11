@@ -369,6 +369,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}else {
 						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaEntidadList) {
 							Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
+							dto.setSubcartera(activo.getSubcartera().getCodigo());
 							if(activo == null || gasto.getCartera()==null || activo.getSubcartera()==null || gasto.getTipoGasto()==null) {
 								dto.setVisibleSuplidos(false);
 								break;
@@ -1333,6 +1334,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setImporteBrutoLbk(importeBrutoLbk.getImporteBrutoLbk());
 			}
 			
+			if (!Checks.esNulo(detalleGasto.getPagoUrgente())) {
+				dto.setPagoUrgente(detalleGasto.getPagoUrgente());
+			}		
 		}
 
 		return dto;
@@ -1525,6 +1529,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo()))) {
 						gastoLineaDetalleApi.actualizarDiariosLbk(gasto.getId());
 				}
+				
+				if (dto.getPagoUrgente() != null) {
+					detalleGasto.setPagoUrgente(dto.getPagoUrgente());
+				}
 						
 				
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
@@ -1636,10 +1644,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoProveedorActivo.setEntidad(activo.getId());
 					gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
 					
-					if (!Checks.estaVacio(activosCatastro)) {
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+					if (!Checks.estaVacio(activosCatastro)) {						
+						ActivoCatastro activoCatastro = act.getCatastro().get(0);
+						if(activoCatastro.getCatastro() != null) {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+						}else {
+							gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+						}
 					}
 					
+				
 					if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){
 						for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
 							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList()) && !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())){
@@ -1690,8 +1704,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 									genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 									gastoProveedorActivo.setGastoLineaDetalle(gastoLineaDetalle);
 									
-									if (!Checks.estaVacio(activosCatastro)) {
-										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+								
+									if (!Checks.estaVacio(activosCatastro)) {						
+										ActivoCatastro activoCatastro = activosCatastro.get(0);
+										if(activoCatastro.getCatastro() != null) {
+											gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getCatastro().getRefCatastral());
+										}else {
+											gastoProveedorActivo.setReferenciaCatastral(activoCatastro.getRefCatastral());
+										}
 									}
 									
 									if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){

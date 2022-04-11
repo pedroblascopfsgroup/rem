@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterTransitionService {
@@ -70,6 +71,9 @@ public class UpdaterTransitionService {
 
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 	
 	
 	public void updateFrom(DtoSaltoTarea dto) throws Exception {
@@ -254,6 +258,10 @@ public class UpdaterTransitionService {
 			
 		updateReserva(reserva, dto);
 		
+		if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+				&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+				|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+			notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 		
 	}
 	

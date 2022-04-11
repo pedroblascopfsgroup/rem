@@ -894,7 +894,12 @@ public class CatastroManager implements CatastroApi {
 		for(DtoDatosCatastro datosCatastro : listadoCatastro) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS,"refCatastral",datosCatastro.getRefCatastral());
 			Filter filtroMun = genericDao.createFilter(FilterType.EQUALS,"localidad.codigo",datosCatastro.getMunicipioCod());
-			Filter filtroPrv = genericDao.createFilter(FilterType.EQUALS,"provincia.codigo",datosCatastro.getProvinciaCod());
+			String provinciaString = datosCatastro.getProvinciaCod();
+			
+			if (provinciaString != null && provinciaString.startsWith("0") && provinciaString.length() > 1) {
+				provinciaString = provinciaString.substring(1);
+			}
+			Filter filtroPrv = genericDao.createFilter(FilterType.EQUALS,"provincia.codigo",provinciaString);
 			
 			Catastro catastro = genericDao.get(Catastro.class, filtro,filtroMun,filtroPrv);
 			
@@ -913,7 +918,7 @@ public class CatastroManager implements CatastroApi {
 				catastro.setPlanta(datosCatastro.getPlanta());
 				catastro.setPuerta(datosCatastro.getPuerta());
 				if (!Checks.esNulo(datosCatastro.getProvinciaCod())) {
-					Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",datosCatastro.getProvinciaCod());
+					Filter provFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", provinciaString);
 					DDProvincia provincia = genericDao.get(DDProvincia.class, provFilter);
 					if (!Checks.esNulo(provincia)) catastro.setProvincia(provincia);
 				}

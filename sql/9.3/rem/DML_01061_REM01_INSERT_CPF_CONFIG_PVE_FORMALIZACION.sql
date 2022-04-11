@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220411
+--## FECHA_CREACION=20220412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17581
@@ -47,7 +47,7 @@ BEGIN
             ,SYSDATE
             FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
             JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = PVE.DD_PRV_ID
-            WHERE PRV.DD_PRV_CODIGO = ''04'' 
+            WHERE PRV.DD_PRV_CODIGO = ''4'' 
             ';
     EXECUTE IMMEDIATE V_MSQL;
 

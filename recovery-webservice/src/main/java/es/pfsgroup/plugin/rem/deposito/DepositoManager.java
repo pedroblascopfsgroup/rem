@@ -3,10 +3,6 @@ package es.pfsgroup.plugin.rem.deposito;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +17,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.ConfiguracionDeposito;
 import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.Deposito;
+import es.pfsgroup.plugin.rem.model.GeneraDepositoDto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ParametrizacionDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 @Service("depositoManager")
@@ -147,4 +146,16 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		return false;
 	}
 
+	
+	@Override
+	public void modificarEstadoDepositoSiIngresado(Oferta oferta) {
+		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+		if(isDepositoIngresado(deposito)) {
+			Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo","PDC");
+			DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+			deposito.setEstadoDeposito(estadoDeposito);
+			genericDao.save(Deposito.class, deposito);
+		}
+	}
+	
 }

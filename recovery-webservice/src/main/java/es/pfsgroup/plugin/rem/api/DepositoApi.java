@@ -18,4 +18,6 @@ public interface DepositoApi {
     void generaDeposito(Oferta oferta);
 
     Boolean generaDepositoFromRem3(GeneraDepositoDto dto);
+	
+	void modificarEstadoDepositoSiIngresado(Oferta oferta);
 }

@@ -336,6 +336,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                             colspan : 2,
                             style: 'background: transparent; border: none;',
                             handleMouseEvents: true,
+                            readOnly: true,
 							listeners: {
    								'render': function() { 
    									this.getEl().on('mousedown', 'enlaceAbrirTrabajo');

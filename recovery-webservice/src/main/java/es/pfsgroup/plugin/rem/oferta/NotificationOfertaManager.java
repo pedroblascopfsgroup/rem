@@ -73,6 +73,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
 	private static final String CODIGO_TRAMITE_T015 = "T015";
+	private static final String BUZON_HMEDIADORES = "buzonhonorariosmediadores";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -1401,6 +1402,50 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			contenido += "</ul></p>";
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
+	}
+	
+	public void notificationReservaVentaSobrePlano(Oferta oferta) {
+
+		Activo activo = oferta.getActivoPrincipal();
+		limpiarMails();
+			
+		String titulo = "Oferta de 'Venta sobre plano' reservada: " + oferta.getNumOferta();
+			
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+		dtoSendNotificator.setNumActivo(activo.getNumActivo());
+		dtoSendNotificator.setDireccion(generateDireccion(activo));
+		dtoSendNotificator.setTitulo(titulo);
+
+		if(!Checks.esNulo(oferta.getAgrupacion())) {
+			dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+		}
+
+		List<String> mailsPara 		= new ArrayList<String>();
+		List<String> mailsCC 		= new ArrayList<String>();	
+
+		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonHonorarios = usuarioManager.getByUsername(BUZON_HMEDIADORES);
+
+		if (!Checks.esNulo(buzonRem)) {
+			mailsPara.add(buzonRem.getEmail());
+		}
+		if (!Checks.esNulo(buzonPfs)) {
+			mailsPara.add(buzonPfs.getEmail());
+		}
+		if (!Checks.esNulo(buzonHonorarios)) {
+			mailsPara.add(buzonHonorarios.getEmail());
+		}
+
+		mailsCC.add(this.getCorreoFrom());
+		
+		String contenido = String.format("<p>La oferta con número identificador %s ha sido reservada y está marcada con Venta sobre plano.</p>", 
+						oferta.getNumOferta().toString());
+		
+		contenido += String.format("<br><p>Pueden revisar la operación y aplicar la correspondiente comisión");
+		
+		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 	}
 	
 	

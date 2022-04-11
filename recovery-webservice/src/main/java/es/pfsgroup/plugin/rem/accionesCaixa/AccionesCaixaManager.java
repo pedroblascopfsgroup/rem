@@ -11,6 +11,7 @@ import java.util.Map;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -837,6 +838,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         map.put("comboRiesgo", riesgoOperacion);
 
         return map;
+    }
+
+    @Override
+    @Transactional
+    public void sendReplicarOfertaByOferta(Long idOferta) {
+        Oferta ofr = ofertaApi.getOfertaById(idOferta);
+        ReplicarOfertaDto dto = new ReplicarOfertaDto();
+        dto.setNumeroOferta(ofr.getNumOferta());
+        ofertaApi.replicateOfertaFlushDto(ofr, dto);
     }
 
 }

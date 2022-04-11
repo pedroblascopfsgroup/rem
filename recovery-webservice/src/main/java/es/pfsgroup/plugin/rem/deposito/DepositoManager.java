@@ -3,6 +3,10 @@ package es.pfsgroup.plugin.rem.deposito;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 @Service("depositoManager")
 public class DepositoManager extends BusinessOperationOverrider<DepositoApi> implements DepositoApi {
-	
+
 	protected static final Log logger = LogFactory.getLog(DepositoManager.class);
 	
 	@Autowired
@@ -35,10 +39,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	
 	@Autowired
 	private ActivoApi activoApi;
-	
+
+	@Autowired
+	private OfertaApi ofertaApi;
+
 	@Autowired
 	private UsuarioApi usuarioApi;
-	
+
 	@Override
 	public String managerName() {
 		return "depositoManager";
@@ -81,7 +88,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 					genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()),
 					genericDao.createFilter(FilterType.NULL, "fechaInicio"));
 		}
-		
+
 		CuentasVirtuales cuentaVirtual = null;
 		if(cuentasVirtuales != null && !cuentasVirtuales.isEmpty()) {
 			cuentaVirtual = cuentasVirtuales.get(0);
@@ -91,11 +98,12 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 
 			genericDao.update(CuentasVirtuales.class, cuentaVirtual);
 		}
-		
+
 		return cuentaVirtual;
 	}
 
 	@Override
+	@Transactional
 	public void generaDeposito(Oferta oferta){
 		Deposito dep = new Deposito();
 		dep.setImporte(getImporteDeposito(oferta));
@@ -103,7 +111,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		dep.setOferta(oferta);
 
 		genericDao.save(Deposito.class, dep);
-		
+
 	}
 
 	@Override
@@ -111,16 +119,32 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
-		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
 		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterEquipoGestion);
 		if (parametrizacionDeposito != null) {
 			for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
-				if (paramDeposito.getPrecioVenta() >= precioVentaActivo) {
+				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() >= precioVentaActivo) {
 					importeDeposito = paramDeposito.getImporteDeposito();
 				}
 			}
 		}
 		return importeDeposito;
 	}
-	
+
+	@Override
+	@Transactional
+	public Boolean generaDepositoFromRem3(GeneraDepositoDto dto){
+		if(dto != null && dto.getIdOferta() != null){
+			Oferta ofr = ofertaApi.getOfertaById(dto.getIdOferta());
+			if(ofr != null && esNecesarioDeposito(ofr)){
+				generaDeposito(ofr);
+				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+				genericDao.save(Oferta.class, ofr);
+			}
+
+			return true;
+		}
+		return false;
+	}
+
 }

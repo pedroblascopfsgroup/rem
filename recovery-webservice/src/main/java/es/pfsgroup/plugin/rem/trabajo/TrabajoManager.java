@@ -1842,15 +1842,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Double total= 0d;
 			Boolean algunoSinPrecio= false;
 			Map<Long,Double> mapaValores= new HashMap<Long,Double>();
-			for(Activo activo:listaActivos){
-				Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
-				total= total+valor;
-				if(valor.equals(0d)){
-					algunoSinPrecio= true;
-					break;
+			if(dtoTrabajo.getEsSolicitudConjunta()){
+				for(Activo activo:listaActivos){
+					Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
+					total= total+valor;
+					if(valor.equals(0d)){
+						algunoSinPrecio= true;
+						break;
+					}
+					mapaValores.put(activo.getId(), valor);
 				}
-				mapaValores.put(activo.getId(), valor);
 			}
+			
 			Double participacion = null, resto = 0d;
 			Integer participacionTotalPorCien = 10000;
 			Integer participacionPorCien = 0;
@@ -1859,25 +1862,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				participacionPorCien = 0;
 				participacion = null;
 				cont++;
-				if (algunoSinPrecio) {
-					participacion = (100d / listaActivos.size());
-				} else {
-					participacion = (mapaValores.get(activo.getId()) / total) * 100;
-				}
-				if(participacion != null) {
-					participacionPorCien = (int)(participacion*100);
-					participacionTotalPorCien -= participacionPorCien;
-					resto += (participacion*100d) - participacionPorCien;
-					if(resto >= 1d) {
-						participacionTotalPorCien--;
-						participacionPorCien++;
-						resto--;
-					}else if(participacionTotalPorCien != 0 && cont == listaActivos.size()) {
-						participacionTotalPorCien--;
-						participacionPorCien++;
+				if(dtoTrabajo.getEsSolicitudConjunta()) {
+					if (algunoSinPrecio) {
+						participacion = (100d / listaActivos.size());
+					} else {
+						participacion = (mapaValores.get(activo.getId()) / total) * 100;
 					}
+					if(participacion != null) {
+						participacionPorCien = (int)(participacion*100);
+						participacionTotalPorCien -= participacionPorCien;
+						resto += (participacion*100d) - participacionPorCien;
+						if(resto >= 1d) {
+							participacionTotalPorCien--;
+							participacionPorCien++;
+							resto--;
+						}else if(participacionTotalPorCien != 0 && cont == listaActivos.size()) {
+							participacionTotalPorCien--;
+							participacionPorCien++;
+						}
+					}					
+					dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
+				}else {
+					participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), null, activo, null);
+					dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				}
-				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : String.valueOf(participacionPorCien/100f));
 
 				Usuario usuarioGestor = null;
 
@@ -1899,8 +1907,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					} else {
 						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
 					}
-
-					trabajo.setEstado(this.getEstadoNuevoTrabajoUsuario(dtoTrabajo, activo, usuarioLogado));
+					
+					Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO);
+					// Por defecto: en Curso
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
+					trabajo.setEstado(estadoTrabajo);
 
 					// El gestor de activo se salta tareas de estos trámites y
 					// por tanto es necesario settear algunos datos

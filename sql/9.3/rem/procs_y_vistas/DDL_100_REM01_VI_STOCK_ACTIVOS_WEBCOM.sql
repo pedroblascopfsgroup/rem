@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Ivan Repiso
---## FECHA_CREACION=20220328
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11188

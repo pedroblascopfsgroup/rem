@@ -180,9 +180,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_TVP_ID")
-	private DDTipoVpo regimenProteccion;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "DD_TVP_ID")
+//	private DDTipoVpo regimenProteccion;
 
 	@Column(name = "ICO_VALOR_ESTIMADO_VENTA")
 	private Float valorEstimadoVenta;
@@ -227,8 +227,8 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "ICO_ASCENSOR")
 	private DDSinSiNo ascensor;
 	
-	@Column(name="ICO_SUP_UTIL")
-	private Float superficieUtil;
+//	@Column(name="ICO_SUP_UTIL")
+//	private Float superficieUtil;
 
 	@ManyToOne
 	@JoinColumn(name = "ICO_REHABILITADO")
@@ -752,13 +752,13 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public DDTipoVpo getRegimenProteccion() {
-		return regimenProteccion;
-	}
-
-	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
-		this.regimenProteccion = regimenProteccion;
-	}
+//	public DDTipoVpo getRegimenProteccion() {
+//		return regimenProteccion;
+//	}
+//
+//	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
+//		this.regimenProteccion = regimenProteccion;
+//	}
 
 	public Float getValorEstimadoVenta() {
 		return valorEstimadoVenta;
@@ -840,13 +840,13 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.ascensor = ascensor;
 	}
 	
-	public Float getSuperficieUtil() {
-		return superficieUtil;
-	}
-
-	public void setSuperficieUtil(Float superficieUtil) {
-		this.superficieUtil = superficieUtil;
-	}
+//	public Float getSuperficieUtil() {
+//		return superficieUtil;
+//	}
+//
+//	public void setSuperficieUtil(Float superficieUtil) {
+//		this.superficieUtil = superficieUtil;
+//	}
 
 	public DDSinSiNo getRehabilitado() {
 		return rehabilitado;

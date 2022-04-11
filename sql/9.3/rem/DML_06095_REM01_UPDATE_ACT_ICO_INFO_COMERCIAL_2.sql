@@ -40,8 +40,8 @@ BEGIN
                         ICO.ICO_NUM_TERRAZA_DESCUBIERTA,
                         ICO.ICO_NUM_TERRAZA_CUBIERTA,
                         CASE WHEN (ICO_NUM_TERRAZA_DESCUBIERTA > 0 OR ICO.ICO_NUM_TERRAZA_CUBIERTA > 0)
-                            THEN '1'                
-                            ELSE '2'
+                            THEN 1                
+                            ELSE 2
                         END ICO_TERRAZA
                     FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ICO
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID AND ACT.BORRADO = 0 

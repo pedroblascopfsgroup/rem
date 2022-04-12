@@ -46,22 +46,30 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoProveedorFilter> getProveedoresList(DtoProveedorFilter dto, Usuario usuarioLogado, Boolean esProveedor, Boolean esGestoria, Boolean esExterno) {
-		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		List<String> subcarteras = new ArrayList<String>();
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));	
+		String select = "select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones";
+		String from = " from VBusquedaProveedor pve";		
+		String where = "";
+		Boolean haswhere = false;
 		
-		HQLBuilder hb = new HQLBuilder(
-				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
+		if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+			from += ",DDTipoComercializacion tco";
+			where += " where tco.id = pve.idLineaNegocio";
+			haswhere = true;
+		}
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			from += ",ProveedorEspecialidad pveEsp, DDEspecialidad esp";
+			where += (haswhere ? " and " : " where ");
+			where += "pveEsp.proveedor.id = pve.id and pveEsp.especialidad.id = esp.id";
+			haswhere = true;
+		}
+			
+		HQLBuilder hb = new HQLBuilder(select + from + where);
+		if (haswhere) hb.setHasWhere(true);
 
 		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
 			dto.setCartera(usuarioCartera.get(0).getCartera().getCodigo());
-			
-			if (dto.getSubCartera() == null) {
-				for (UsuarioCartera usu : usuarioCartera) {
-					if (usu.getSubCartera() != null) {
-						subcarteras.add(usu.getSubCartera().getCodigo());
-					}
-				}
-			}
+					
 		}
 		
 		if (!Checks.esNulo(dto.getCodigo())) {
@@ -85,13 +93,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.subtipoProveedorCodigo", dto.getSubtipoProveedorCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nifProveedor", dto.getNifProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoPersonaProveedorCodigo", dto.getTipoPersonaCodigo());
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);
-		// TODO: falta por definir en la vista
-		/*if (subcarteras != null && !subcarteras.isEmpty()) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
-		} else {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubCartera());
-		}*/
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);	
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.provinciaProveedor", dto.getProvinciaCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.municipioProveedor", dto.getMunicipioCodigo());
@@ -121,7 +123,16 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		} else {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.cartera", dto.getCartera());
 		}
-
+		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombreProveedor", dto.getNombre(), true);
+		
+		if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getLineaNegocioCodigo());		
+		}
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			this.addFiltroWhereInSiNotNullConStrings(hb, "esp.codigo", Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+		}
+		
 		// Tiene que tratarse de la siguiente manera debido a la personalizacion
 		// de la query hql.
 		Page p = HibernateQueryUtils.page(this, hb, dto);
@@ -152,8 +163,25 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			}
 		}
 
-		return dtoProveedorFilter;
+		return dtoProveedorFilter;	
 	}
+	
+	private void addFiltroWhereInSiNotNullConStrings(HQLBuilder hb, String nombreCampo, List<String> valores) {
+        if (!Checks.estaVacio(valores)) {
+            final StringBuilder b = new StringBuilder();
+            boolean first = true;
+            for (String s : valores) {
+                if (!first) {
+                    b.append(", ");
+                } else {
+                    first = false;
+                }
+                b.append("'" + s + "'");
+            }
+            hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
+        }
+        
+    }
 
 	@Override
 	public List<ActivoProveedor> getProveedoresByNifList(String nif) {

@@ -623,6 +623,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
+			
+			oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaWebcom());
+			
+			if(oferta == null) {
+				oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaRem());	
+			}
+			
+			Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+			
+			if(DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaDto.getCodEstadoOferta()) && depositoApi.isDepositoIngresado(deposito)) {
+				errorsList.put("depositoIngresado", "OFERTA_DEPOSITO_INGRESADO");
+			}
 
 		}
 		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
@@ -1512,7 +1524,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente(), ofertaDto.getEntidadOrigen());
-			
+			 
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
@@ -2459,6 +2471,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setOrigenComprador(origenComprador);
 				ofertaDao.saveOrUpdate(oferta);
 			}
+		} else if (!Checks.esNulo(errorsList.get("depositoIngresado"))) {
+			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
 		}
 
 		return errorsList;
@@ -2689,7 +2703,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}				
 			}
 		}
-
 
 		if(oferta.getFechaAlta() == null){
 			oferta.setFechaAlta(fechaAccion);

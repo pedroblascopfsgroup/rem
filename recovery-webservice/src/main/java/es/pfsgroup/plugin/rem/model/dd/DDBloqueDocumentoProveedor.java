@@ -3,12 +3,9 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -22,40 +19,36 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de documentos de proveedor.
+ * Modelo que gestiona el diccionario de bloque documentos proveedor
  * 
- * @author Daniel Gutiérrez
+ * @author Ivan Repiso
  *
  */
 @Entity
-@Table(name = "DD_TDP_TIPO_DOC_PROVEEDOR", schema = "${entity.schema}")
+@Table(name = "DD_BDP_BLOQUE_DOC_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
+public class DDBloqueDocumentoProveedor implements Auditable, Dictionary {
+	
+	public static final String COD_DOCUMENTOS ="01";
+	public static final String COD_CONDUCTAS_INAPROPIADAS ="02";
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TDP_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoProveedorGenerator")
-	@SequenceGenerator(name = "DDTipoDocumentoProveedorGenerator", sequenceName = "S_DD_TDP_TIPO_DOC_PROVEEDOR")
+	@Column(name = "DD_BDP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDBloqueDocumentoProveedorGenerator")
+	@SequenceGenerator(name = "DDBloqueDocumentoProveedorGenerator", sequenceName = "S_DD_BDP_BLOQUE_DOC_PROVEEDOR")
 	private Long id;
 	    
-	@Column(name = "DD_TDP_CODIGO")   
+	@Column(name = "DD_BDP_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TDP_DESCRIPCION")   
+	@Column(name = "DD_BDP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TDP_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	
-	@Column(name = "DD_TDP_MATRICULA_GD")   
-	private String matricula;	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_BDP_ID")
-    private DDBloqueDocumentoProveedor bloque;
+	@Column(name = "DD_BDP_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	
 
 	@Version   
 	private Long version;
@@ -94,14 +87,6 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
-	
-	public String getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
-	}
 
 	public Long getVersion() {
 		return version;
@@ -117,14 +102,6 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public DDBloqueDocumentoProveedor getBloque() {
-		return bloque;
-	}
-
-	public void setBloque(DDBloqueDocumentoProveedor bloque) {
-		this.bloque = bloque;
 	}
 
 }

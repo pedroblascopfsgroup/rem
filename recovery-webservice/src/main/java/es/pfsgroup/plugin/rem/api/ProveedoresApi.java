@@ -311,4 +311,6 @@ public interface ProveedoresApi {
 	
 	public boolean deleteConductasInapropiadas(String id);
 
+	String uploadConducta(WebFileItem fileItem) throws Exception;
+
 }

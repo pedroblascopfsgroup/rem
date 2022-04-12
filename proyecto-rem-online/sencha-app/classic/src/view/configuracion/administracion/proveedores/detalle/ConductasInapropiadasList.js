@@ -10,7 +10,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
 
     initComponent: function () {
      	var me = this;
-		me.setTitle('Conductas inapropiadas');
+		me.setTitle(HreRem.i18n('title.conductas.inapropiadas'));
 		me.columns = [
 				{
 					dataIndex: 'usuarioAlta',
@@ -109,9 +109,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
                     items: [							
 							{
                  				xtype: 'button',
-                  				//handler: 'onClickDescargarAdjuntoAN',
+                  				handler: 'downloadDocumentoConductas',
                   				isDisabled: function(view, rowIndex, colIndex, item, record ) {
-					            	if (!Ext.isEmpty(record.get("idadjunto"))) return false;
+					            	if (!Ext.isEmpty(record.get("idAdjunto"))) return false;
 					            	return true;		            	
 			            		},
 			            		getClass: function(v, metadata, record ) {					            	
@@ -120,9 +120,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
               		 		},
               		 		{
                  				xtype: 'button',                  				
-                  				//handler: 'onClickCargarAdjuntoAN',
+                  				handler: 'abrirFormularioAdjuntarConductas',
                   				isDisabled: function(view, rowIndex, colIndex, item, record ) {
-					            	if (Ext.isEmpty(record.get("idadjunto"))) return false;
+					            	if (Ext.isEmpty(record.get("idAdjunto"))) return false;
 					            	return true;		            	
 			            		},
 			            		getClass: function(v, metadata, record ) {					            	
@@ -131,9 +131,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
               		 		},
               		 		{
                  				xtype: 'button',
-                  				//handler: 'onClickBorrarAdjuntoAN',
+                  				handler: 'borrarDocumentoAdjuntoConductas',
                   				isDisabled: function(view, rowIndex, colIndex, item, record ) {
-					            	if (!Ext.isEmpty(record.get("idadjunto"))) return false;
+					            	if (!Ext.isEmpty(record.get("idAdjunto"))) return false;
 					            	return true;		            	
 			            		},
 			            		getClass: function(v, metadata, record ) {					            	
@@ -143,9 +143,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Conduct
           		 	],
           		 	renderer: function(value, metadata, record) {
           		 		var documento = null;
-          		 		if(!Ext.isEmpty(record.get("adjunto"))){
-          		 			documento = record.get("adjunto");
-          		 		}
+          		 		if(!Ext.isEmpty(record.get("adjunto"))) documento = record.get("adjunto");
           		 		if(Ext.isEmpty(record.get("adjunto"))) {
 			        		return '<div style="float:left; margin:3px; font-size: 11px; line-height: 1em;"></div>'
 			        	} else {

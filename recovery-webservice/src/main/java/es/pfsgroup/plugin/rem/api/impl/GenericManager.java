@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -2168,6 +2169,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		if(!Checks.esNulo(idCategoriaConducta)) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", idCategoriaConducta);
 			return genericDao.get(DDCategoriaConductaInapropiada.class, filtro).getNivelConducta();
+		}
+		return null;
+	}
+	
+	@Override
+	public List<DDTipoDocumentoProveedor> getDocumentosProveedor(String codBloque) {
+		if(!Checks.esNulo(codBloque)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "bloque.codigo", codBloque);
+			Order orden = new Order(OrderType.ASC,"descripcion");
+			return genericDao.getListOrdered(DDTipoDocumentoProveedor.class,orden, filtro);
 		}
 		return null;
 	}

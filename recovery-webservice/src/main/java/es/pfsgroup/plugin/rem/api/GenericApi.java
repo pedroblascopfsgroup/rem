@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -411,4 +412,6 @@ public interface GenericApi {
 	public List<DDCategoriaConductaInapropiada> getComboCategoriaConducta(String idTipoConducta);
 
 	public DDNivelConductaInapropiada getComboNivelConducta(String idCategoriaConducta);
+
+	List<DDTipoDocumentoProveedor> getDocumentosProveedor(String codBloque);
 }

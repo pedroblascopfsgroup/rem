@@ -256,14 +256,21 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			List<DtoAdjunto> list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 
 			for (DtoAdjunto adjunto : list) {
+				boolean noMostrar = false;
 				ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
 						genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
-				if (!Checks.esNulo(activoAdjuntoProveedor)) {
-					if(!Checks.esNulo(activoAdjuntoProveedor.getTipoDocumentoProveedor())) 
+				if (!Checks.esNulo(activoAdjuntoProveedor)) {						
+					if(!Checks.esNulo(activoAdjuntoProveedor.getTipoDocumentoProveedor())) {
+						if (DDBloqueDocumentoProveedor.COD_CONDUCTAS_INAPROPIADAS.equals(
+								activoAdjuntoProveedor.getTipoDocumentoProveedor().getBloque().getCodigo()))
+							noMostrar = true;
 						adjunto.setDescripcionTipo(activoAdjuntoProveedor.getTipoDocumentoProveedor().getDescripcion());
+					}
 					adjunto.setGestor(activoAdjuntoProveedor.getAuditoria().getUsuarioCrear());
 					adjunto.setFechaDocumento(activoAdjuntoProveedor.getAuditoria().getFechaCrear());
 				}
+				
+				if (noMostrar) list.remove(adjunto);
 			}
 
 			return list;

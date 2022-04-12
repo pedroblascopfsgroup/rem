@@ -968,5 +968,10 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboNivelConducta(String idCategoriaConducta) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboNivelConducta(idCategoriaConducta)));	
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getDocumentosProveedor(String codBloque) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDocumentosProveedor(codBloque)));	
+	}
  }
 

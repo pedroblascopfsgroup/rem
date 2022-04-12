@@ -44,6 +44,9 @@ Ext.define('HreRem.model.ConductasInapropiadasModel', {
     		},
     		{
     			name:'idadjunto'
+    		},
+    		{
+    			name:'tamanyoAdjunto'
     		}
     ],
 

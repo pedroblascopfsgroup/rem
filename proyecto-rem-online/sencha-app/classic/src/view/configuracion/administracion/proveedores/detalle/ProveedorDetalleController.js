@@ -499,7 +499,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		var record = grid.record.data;
 		params = {};
 		params.idEntidad = me.getViewModel().get("proveedor.id");
-		params.id = grid.record.data.idAdjunto;
+		params.id = record.idAdjunto;
 		
 		Ext.Ajax.request({
 		     url: $AC.getRemoteUrl('proveedores/deleteAdjunto'),

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220411
+--## FECHA_CREACION=20220412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17622
@@ -35,11 +35,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('500', 'En trámite - Pdte titulares secundarios'),
-    	T_TIPO_DATA('510', 'En trámite - Pdte documentación'),
-    	T_TIPO_DATA('520', 'En trámite – Pdte pago deposito'),
-    	T_TIPO_DATA('530', 'En trámite – Pdte tramitación'),
-    	T_TIPO_DATA('540', 'En trámite – Congelada')
+    	T_TIPO_DATA('04', 'En trámite - Pdte titulares secundarios', '500'),
+    	T_TIPO_DATA('05', 'En trámite - Pdte documentación','510'),
+    	T_TIPO_DATA('06', 'En trámite – Pdte pago deposito','520'),
+    	T_TIPO_DATA('07', 'En trámite – Pdte tramitación','530'),
+    	T_TIPO_DATA('08', 'En trámite – Congelada','540')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -65,6 +65,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 					  DD_EOB_CODIGO,
 					  DD_EOB_DESCRIPCION,
 					  DD_EOB_DESCRIPCION_LARGA,
+					  DD_EOB_CODIGO_C4C,
 					  VERSION,
 					  USUARIOCREAR,
 					  FECHACREAR,
@@ -74,6 +75,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 					  '''||TRIM(V_TMP_TIPO_DATA(1))||''',
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+  					  '''||TRIM(V_TMP_TIPO_DATA(3))||''',
 					  0,
 					  ''HREOS-17622'',
 					  SYSDATE,

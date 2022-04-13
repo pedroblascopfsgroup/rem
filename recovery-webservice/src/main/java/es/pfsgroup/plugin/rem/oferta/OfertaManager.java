@@ -2962,15 +2962,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional(readOnly = false)
 	public Boolean rechazarOferta(Oferta oferta) {
 		try {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setEstadoOferta(estado);
-			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			oferta.setUsuarioBaja(usu.getApellidoNombre());
-			updateStateDispComercialActivosByOferta(oferta);
-			darDebajaAgrSiOfertaEsLoteCrm(oferta);
-			genericDao.save(Oferta.class, oferta);
-			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
+			Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+			if(depositoApi.isDepositoIngresado(deposito)) {
+				Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+				DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+				deposito.setEstadoDeposito(estadoDeposito);
+				genericDao.save(Deposito.class, deposito);
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+				oferta.setEstadoOferta(estado);
+				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				oferta.setUsuarioBaja(usu.getApellidoNombre());
+				updateStateDispComercialActivosByOferta(oferta);
+				darDebajaAgrSiOfertaEsLoteCrm(oferta);
+				genericDao.save(Oferta.class, oferta);
+				descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
+			}
 
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
@@ -3093,26 +3101,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		try {
 			if(!DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
 					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
-				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-				oferta.setEstadoOferta(estado);
-				updateStateDispComercialActivosByOferta(oferta);
-				genericDao.save(Oferta.class, oferta);
-	
-				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-				if (!Checks.esNulo(expediente)) {
-					Trabajo trabajo = expediente.getTrabajo();
-					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-					ActivoTramite tramite = tramites.get(0);
-	
-					Set<TareaActivo> tareasTramite = tramite.getTareas();
-					if(tareasTramite != null && !tareasTramite.isEmpty()) {
-						for (TareaActivo tarea : tareasTramite) {
-							tarea.getAuditoria().setBorrado(true);
+				Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));				
+				if(depositoApi.isDepositoIngresado(deposito)) {
+					Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+					DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+					deposito.setEstadoDeposito(estadoDeposito);
+					genericDao.save(Deposito.class, deposito);
+				}else {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+					DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+					oferta.setEstadoOferta(estado);
+					updateStateDispComercialActivosByOferta(oferta);
+					genericDao.save(Oferta.class, oferta);
+					
+					ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+					if (!Checks.esNulo(expediente)) {
+						Trabajo trabajo = expediente.getTrabajo();
+						List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+						ActivoTramite tramite = tramites.get(0);
+						
+						Set<TareaActivo> tareasTramite = tramite.getTareas();
+						if(tareasTramite != null && !tareasTramite.isEmpty()) {
+							for (TareaActivo tarea : tareasTramite) {
+								tarea.getAuditoria().setBorrado(true);
+							}
 						}
 					}
 				}
 			}
+				
 
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
@@ -3125,27 +3142,36 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public Boolean finalizarOferta(Oferta oferta) {
 		try {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-			oferta.setEstadoOferta(estado);
-			updateStateDispComercialActivosByOferta(oferta);
-			genericDao.save(Oferta.class, oferta);
-
-			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-			if (!Checks.esNulo(expediente)) {
-				Trabajo trabajo = expediente.getTrabajo();
-				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-				ActivoTramite tramite = tramites.get(0);
-
-				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					if (Checks.esNulo(tarea.getFechaFin())) {
-						tarea.setFechaFin(new Date());
-						tarea.getAuditoria().setBorrado(true);
+			
+			Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+			if(depositoApi.isDepositoIngresado(deposito)) {
+				Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+				DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+				deposito.setEstadoDeposito(estadoDeposito);
+				genericDao.save(Deposito.class, deposito);
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+				oferta.setEstadoOferta(estado);
+				updateStateDispComercialActivosByOferta(oferta);
+				genericDao.save(Oferta.class, oferta);
+				
+				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+				if (!Checks.esNulo(expediente)) {
+					Trabajo trabajo = expediente.getTrabajo();
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+					ActivoTramite tramite = tramites.get(0);
+					
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					for (TareaActivo tarea : tareasTramite) {
+						if (Checks.esNulo(tarea.getFechaFin())) {
+							tarea.setFechaFin(new Date());
+							tarea.getAuditoria().setBorrado(true);
+						}
 					}
 				}
+				descongelarOfertas(expediente);
 			}
-			descongelarOfertas(expediente);
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;

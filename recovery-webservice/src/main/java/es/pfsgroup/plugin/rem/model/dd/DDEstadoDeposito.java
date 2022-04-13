@@ -32,8 +32,8 @@ public class DDEstadoDeposito implements Auditable, Dictionary {
 	public static final String CODIGO_DEVUELTO = "DEV";
 	public static final String CODIGO_INCAUTADO = "INC";
 	public static final String CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION = "PDC";
-	public static final String CODIGO_PEND_INCAUTACION = "PIN";
-	public static final String CODIGO_PEND_DEVOLUCION = "PDV";
+	public static final String CODIGO_PDTE_INCAUTACION = "PIN";
+	public static final String CODIGO_PDTE_DEVOLUCION = "PDV";
 
 	@Id
 	@Column(name = "DD_EDP_ID")
@@ -108,6 +108,30 @@ public class DDEstadoDeposito implements Auditable, Dictionary {
 	public static boolean isIngresado(DDEstadoDeposito dd) {
 		boolean is = false;
 		if(dd != null && CODIGO_INGRESADO.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPendienteDevolucion(DDEstadoDeposito dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_DEVOLUCION.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPendienteIncautacion(DDEstadoDeposito dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_INCAUTACION.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPdteDecisionDevolucionIncautacion(DDEstadoDeposito dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;

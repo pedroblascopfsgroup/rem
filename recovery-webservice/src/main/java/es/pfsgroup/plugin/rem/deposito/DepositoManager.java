@@ -70,7 +70,11 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Override
 	public boolean isDepositoIngresado(Deposito deposito) {
 		boolean isIngresado = false;
-		if(deposito != null && DDEstadoDeposito.isIngresado(deposito.getEstadoDeposito())) {
+		if(deposito != null 
+				&& (DDEstadoDeposito.isIngresado(deposito.getEstadoDeposito()) 
+						|| DDEstadoDeposito.isPendienteDevolucion(deposito.getEstadoDeposito()) 
+						|| DDEstadoDeposito.isPendienteIncautacion(deposito.getEstadoDeposito())
+						|| DDEstadoDeposito.isPdteDecisionDevolucionIncautacion(deposito.getEstadoDeposito()))) {
 			isIngresado= true;
 		}
 		

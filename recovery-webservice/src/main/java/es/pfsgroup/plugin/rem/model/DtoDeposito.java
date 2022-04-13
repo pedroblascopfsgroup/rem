@@ -1,14 +1,21 @@
 package es.pfsgroup.plugin.rem.model;
 
-public class DtoDeposito {
+import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
 
+public class DtoDeposito extends WebDto {
+
+	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private Double importeDeposito;
-	private String fechaIngresoDeposito;
+	private Date fechaIngresoDeposito;
 	private String estadoCodigo;
-	private String fechaDevolucionDeposito;
+	private Date fechaDevolucionDeposito;
 	private String ibanDevolucionDeposito;
+	private Boolean ofertaConDeposito;
+	private Boolean usuCrearOfertaDepositoExterno;
 	
 	
 	public Long getId() {
@@ -23,10 +30,10 @@ public class DtoDeposito {
 	public void setImporteDeposito(Double importeDeposito) {
 		this.importeDeposito = importeDeposito;
 	}
-	public String getFechaIngresoDeposito() {
+	public Date getFechaIngresoDeposito() {
 		return fechaIngresoDeposito;
 	}
-	public void setFechaIngresoDeposito(String fechaIngresoDeposito) {
+	public void setFechaIngresoDeposito(Date fechaIngresoDeposito) {
 		this.fechaIngresoDeposito = fechaIngresoDeposito;
 	}
 	public String getEstadoCodigo() {
@@ -35,10 +42,10 @@ public class DtoDeposito {
 	public void setEstadoCodigo(String estadoCodigo) {
 		this.estadoCodigo = estadoCodigo;
 	}
-	public String getFechaDevolucionDeposito() {
+	public Date getFechaDevolucionDeposito() {
 		return fechaDevolucionDeposito;
 	}
-	public void setFechaDevolucionDeposito(String fechaDevolucionDeposito) {
+	public void setFechaDevolucionDeposito(Date fechaDevolucionDeposito) {
 		this.fechaDevolucionDeposito = fechaDevolucionDeposito;
 	}
 	public String getIbanDevolucionDeposito() {
@@ -47,6 +54,17 @@ public class DtoDeposito {
 	public void setIbanDevolucionDeposito(String ibanDevolucionDeposito) {
 		this.ibanDevolucionDeposito = ibanDevolucionDeposito;
 	}
-	
+	public Boolean getOfertaConDeposito() {
+		return ofertaConDeposito;
+	}
+	public void setOfertaConDeposito(Boolean ofertaConDeposito) {
+		this.ofertaConDeposito = ofertaConDeposito;
+	}
+	public Boolean getUsuCrearOfertaDepositoExterno() {
+		return usuCrearOfertaDepositoExterno;
+	}
+	public void setUsuCrearOfertaDepositoExterno(Boolean usuCrearOfertaDepositoExterno) {
+		this.usuCrearOfertaDepositoExterno = usuCrearOfertaDepositoExterno;
+	}
 	
 }

@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.Deposito;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GeneraDepositoDto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 
@@ -20,4 +22,19 @@ public interface DepositoApi {
     Boolean generaDepositoFromRem3(GeneraDepositoDto dto);
 	
 	void modificarEstadoDepositoSiIngresado(Oferta oferta);
+
+	DtoDeposito expedienteToDtoDeposito(ExpedienteComercial expediente);
+	
+	boolean esOfertaConDeposito(Oferta oferta);
+	
+	boolean esUsuarioCrearOfertaDepositoExterno(Oferta oferta);
+	
+	/**
+	 * Modifica los datos del depósito
+	 *
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	boolean saveDeposito(DtoDeposito dto, Long idExpediente);
 }

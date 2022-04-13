@@ -47,11 +47,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		if(!isBK){
     		me.down('reservaexpediente').setDisabled(reservaDisabled);
 		}
-		
 		if(me.down('expedientedetalle').getActiveTab().getConfig().reference === "ofertaexpedienteref"){
 			var comboClaseOferta = me.down('ofertaexpediente').down('[name="claseOferta"]');
 			comboClaseOferta.events.change.fire(comboClaseOferta, comboClaseOferta.getValue(), comboClaseOferta.getValue());
-		}else if(me.down('expedientedetalle').getActiveTab().getConfig().reference != 'reservaExpediente'){
+		}else if(me.down('expedientedetalle').getActiveTab().getConfig().reference != 'reservaExpediente' 
+			&& me.down('expedientedetalle').getActiveTab().getConfig().reference != 'depositoExpediente'){
 			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		}
 

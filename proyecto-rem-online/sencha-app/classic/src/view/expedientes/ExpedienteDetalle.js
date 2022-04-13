@@ -11,7 +11,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas','HreRem.model.DatosBasicosOferta',
 				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente',
-				'HreRem.view.expedientes.GarantiasExpediente', 'HreRem.view.expedientes.PbcExpediente'],
+				'HreRem.view.expedientes.GarantiasExpediente', 'HreRem.view.expedientes.PbcExpediente',
+				'HreRem.view.expedientes.DepositoExpediente'],
 
 	bloqueado: false,
 	procesado: false,
@@ -76,6 +77,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        		// Si la pestaña necesita botones de edición
 	        		if(tabNext.reference === 'reservaExpediente'){
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
+	        		}else if(tabNext.reference === 'depositoExpediente') {
+	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}else if(!tabNext.ocultarBotonesEdicion) {
 	        			tabPanel.evaluarBotonesEdicion(tabNext);
 	        		}
@@ -116,6 +119,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		initComponent: function () {
 	        var me = this;
 	        var esBankia = me.lookupController().getViewModel().get('expediente').get('esBankia');
+	        var ofertaConDeposto = me.lookupController().getViewModel().get('expediente').get('ofertaConDeposito')
 	        var items = [];
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosexpediente', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertaexpediente', ocultarBotonesEdicion: true})}, ['TAB_OFERTA_EXPEDIENTES']);
@@ -146,6 +150,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			}else{
 	        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'reservaexpediente', bind: {disabled: '{esExpedienteSinReservaOdeTipoAlquiler}'}, funPermEdition: ['EDITAR_TAB_RESERVA_EXPEDIENTES']})}, ['TAB_RESERVA_EXPEDIENTES']);
 	        }
+        	
+        	if (esBankia && ofertaConDeposto) {
+        		items.push({xtype: 'depositoexpediente', ocultarBotonesEdicion: false});
+			}
 	        
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'compradoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_COMPRADORES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_EXPEDIENTES']);
@@ -175,9 +183,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			if(tab.reference === 'reservaExpediente'){
 				var tabAnterior = tab.up('expedientedetallemain').down('[reference=condicionesExpediente]');
 				me.bloquearExpedienteReserva(tab,me.bloqueado, tabAnterior);
+			}else if (tab.xtype == 'depositoexpediente') {
+				var tabAnterior = tab.up('expedientedetallemain').down('[reference=depositoExpediente]');
+				me.bloquearExpedienteDeposito(tab,me.bloqueado, tabAnterior);
 			}else{
 				me.bloquearExpediente(tab,me.bloqueado);
-
 			}
 		},
 
@@ -228,6 +238,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				}
 				me.down("[itemId=botoneditar]").setVisible(editarReserva);
 
+			}else{
+				me.down("[itemId=botoneditar]").setVisible(false);
+			}
+		},
+		
+		bloquearExpedienteDeposito: function(tab, bloqueado, tabAnterior) {    	
+			var me = this;
+			me.bloqueado = bloqueado;
+			var editarDeposito = true;
+			me.down("[itemId=botoneditar]").setVisible(false);
+			var editionEnabled = function() {
+				me.down("[itemId=botoneditar]").setVisible(true);
+			}
+			if(!bloqueado){
+				// Si la pestaña recibida no tiene asignados roles de edicion
+				if(Ext.isEmpty(tab.funPermEdition)) {
+					editionEnabled();
+				} else {
+					$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				}
+				var usuCrearOfertaExterno = me.lookupController().getViewModel().get('expediente').get('usuCrearOfertaDepositoExterno');
+				if (tabAnterior.reference === 'depositoExpediente' && usuCrearOfertaExterno) {
+					editarDeposito = false;
+				}
+				me.down("[itemId=botoneditar]").setVisible(editarDeposito);
 			}else{
 				me.down("[itemId=botoneditar]").setVisible(false);
 			}

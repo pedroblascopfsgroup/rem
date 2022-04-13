@@ -175,6 +175,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		CONDICIONES:		'condicionesexpediente',
 		ACTIVOS:			'activosexpediente',
 		RESERVA:			'reservaexpediente',
+		DEPOSITO:			'depositoexpediente',
 		COMPRADOR:			'compradoresexpediente',
 		DIARIO:				'diariogestionesexpediente',
 		TRAMITES:			'tramitestareasexpediente',

@@ -8822,10 +8822,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoDeposito.setImporteDeposito(deposito.getImporte());
 		
 		if(deposito.getFechaIngreso() != null) {
-			dtoDeposito.setFechaIngresoDeposito(groovyft.format(deposito.getFechaIngreso()));
+			dtoDeposito.setFechaIngresoDeposito(deposito.getFechaIngreso());
 		}
 		if(deposito.getFechaDevolucion() != null) {
-			dtoDeposito.setFechaDevolucionDeposito(groovyft.format(deposito.getFechaDevolucion()));
+			dtoDeposito.setFechaDevolucionDeposito(deposito.getFechaDevolucion());
 		}
 		dtoDeposito.setIbanDevolucionDeposito(deposito.getIbanDevolucion());
 
@@ -8842,10 +8842,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			deposito.setImporte(dto.getImporteDeposito());
 		}
 		if(!Checks.esNulo(dto.getFechaIngresoDeposito())){
-			deposito.setFechaIngreso(groovyft.parse(dto.getFechaIngresoDeposito()));
+			deposito.setFechaIngreso(dto.getFechaIngresoDeposito());
 		}
 		if(!Checks.esNulo(dto.getFechaDevolucionDeposito())) {
-			deposito.setFechaDevolucion(groovyft.parse(dto.getFechaDevolucionDeposito()));
+			deposito.setFechaDevolucion(dto.getFechaDevolucionDeposito());
 		}
 		if(dto.getIbanDevolucionDeposito() != null) {
 			deposito.setIbanDevolucion(dto.getIbanDevolucionDeposito());

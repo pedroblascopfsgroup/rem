@@ -285,6 +285,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String OFERTA_DICCIONARIO_CODIGO_NULO = "0";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";
 	private static final String OPERACION_ALTA = "Alta";
+	private static final String PESTANA_DEPOSITO = "deposito";
 
 	// Codigo Estdo Civil URSUS
 	private static final String DESCONOCIDO = "5";
@@ -540,6 +541,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoTanteoYRetractoOferta(expediente);
 		} else if (PESTANA_RESERVA.equals(tab)) {
 			dto = expedienteToDtoReserva(expediente);
+		} else if (PESTANA_DEPOSITO.equals(tab)) {
+			dto = depositoApi.expedienteToDtoDeposito(expediente);
 		} else if (PESTANA_CONDICIONES.equals(tab)) {
 			dto = expedienteToDtoCondiciones(expediente);
 		} else if (PESTANA_FORMALIZACION.equals(tab)) {
@@ -2010,6 +2013,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
 				}
 			}
+			dto.setOfertaConDeposito(depositoApi.esOfertaConDeposito(oferta));
+			dto.setUsuCrearOfertaDepositoExterno(depositoApi.esUsuarioCrearOfertaDepositoExterno(oferta));
 		}
 		return dto;
 	}
@@ -15404,5 +15409,4 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return compradorExpediente;
 	}
-
 }

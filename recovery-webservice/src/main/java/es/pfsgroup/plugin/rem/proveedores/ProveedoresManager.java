@@ -1803,18 +1803,18 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		bloqueo = new BloqueoApis();
 		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 		bloqueo.setProveedor(proveedor);
-//		if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
-//			this.saveBloqueosCartera(bloqueo,Arrays.asList(dto.getCarteraCodigo().split(",")));
-//		}
-//		if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
-//			this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(dto.getEspecialidadCodigo().split(",")));
-//		}
-//		if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
-//			this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(dto.getLineaNegocioCodigo().split(",")));
-//		}
-//		if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
-//			this.saveBloqueosProvincia(bloqueo,Arrays.asList(dto.getProvinciaCodigo().split(",")));
-//		}
+		if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+			//this.saveBloqueosCartera(bloqueo,Arrays.asList(dto.getCarteraCodigo().split(",")));
+		}
+		if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+			this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+		}
+		if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+			this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(dto.getLineaNegocioCodigo().split(",")));
+		}
+		if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+			this.saveBloqueosProvincia(bloqueo,Arrays.asList(dto.getProvinciaCodigo().split(",")));
+		}
 		
 		genericDao.save(BloqueoApis.class, bloqueo);
 	}

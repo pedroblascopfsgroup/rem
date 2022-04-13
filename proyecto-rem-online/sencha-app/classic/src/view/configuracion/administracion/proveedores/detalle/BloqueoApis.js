@@ -7,8 +7,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Bloqueo
     scrollable	: 'y',
     recordName: "bloqueo",
 	recordClass: "HreRem.model.BloqueoApis",
-	requires: ['HreRem.model.FichaProveedorModel','HreRem.model.BloqueoApis', 'HreRem.view.common.ItemSelectorBase'],
-
+	requires: ['HreRem.model.FichaProveedorModel','HreRem.model.BloqueoApis', 'HreRem.view.common.ItemSelectorBase', 'HreRem.model.BloqueoApis'],
+	listeners	: {
+			boxready:'cargarTabData'
+	},
     initComponent: function () {
         var me = this;
 

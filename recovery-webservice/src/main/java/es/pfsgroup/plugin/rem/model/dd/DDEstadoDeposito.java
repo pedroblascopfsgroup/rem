@@ -32,6 +32,8 @@ public class DDEstadoDeposito implements Auditable, Dictionary {
 	public static final String CODIGO_DEVUELTO = "DEV";
 	public static final String CODIGO_INCAUTADO = "INC";
 	public static final String CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION = "PDC";
+	public static final String CODIGO_PEND_INCAUTACION = "PIN";
+	public static final String CODIGO_PEND_DEVOLUCION = "PDV";
 
 	@Id
 	@Column(name = "DD_EDP_ID")

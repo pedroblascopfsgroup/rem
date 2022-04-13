@@ -5,7 +5,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.DireccionesDelegacionesModel',
                 'HreRem.model.PersonasContactoModel', 'HreRem.model.ActivosIntegradosModel', 'HreRem.model.AdjuntoProveedor',
                 'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor','HreRem.model.ComboProveedorHistoricoMediadorModel',
-				'HreRem.model.ConductasInapropiadasModel'],
+				'HreRem.model.ConductasInapropiadasModel', 'HreRem.model.BloqueoApisHistorico'],
     
     data: {
     	proveedor: null
@@ -247,7 +247,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
 			}
-		}		
+		},		
+		storeBloqueoAPIs: {
+			model: 'HreRem.model.BloqueoApisHistorico',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getHistoricoBloqueos',
+	     	    extraParams: {id: '{proveedor.id}'}
+			}
+		}
     }
     
 });

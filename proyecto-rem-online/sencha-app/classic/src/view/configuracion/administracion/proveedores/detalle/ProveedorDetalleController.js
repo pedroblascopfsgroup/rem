@@ -64,7 +64,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		var me = this,
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
-		
+	
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));

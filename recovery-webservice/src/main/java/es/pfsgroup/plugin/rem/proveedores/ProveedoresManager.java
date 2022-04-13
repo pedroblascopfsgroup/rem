@@ -9,9 +9,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -24,7 +21,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -51,6 +47,40 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.BloqueoApis;
+import es.pfsgroup.plugin.rem.model.BloqueoApisCartera;
+import es.pfsgroup.plugin.rem.model.BloqueoApisEspecialidad;
+import es.pfsgroup.plugin.rem.model.BloqueoApisHistorico;
+import es.pfsgroup.plugin.rem.model.BloqueoApisLineaNegocio;
+import es.pfsgroup.plugin.rem.model.BloqueoApisProvincia;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoInterlocutorBC;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
+import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.EntidadProveedor;
+import es.pfsgroup.plugin.rem.model.ProveedorEspecialidad;
+import es.pfsgroup.plugin.rem.model.ProveedorIdioma;
+import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
@@ -74,6 +104,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresCarteraDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 @Service("proveedoresManager")
@@ -1652,5 +1683,194 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public DtoBloqueoApis getBloqueoApiByProveedorId(Long id) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		if(bloqueo != null) {
+			dto =  this.bloqueoApiToDtoBloqueoApi(bloqueo);
+		}
+	
+		return dto;
+	}
+	
+	
+	private DtoBloqueoApis bloqueoApiToDtoBloqueoApi (BloqueoApis bloqueo) {
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		
+		dto.setIdBloqueo(bloqueo.getId());
+		dto.setMotivo(bloqueo.getMotivoBloqueo());
+		List<BloqueoApisCartera> bloqueoApisCarteraList = bloqueo.getBloqueoApisCartera();
+		if(bloqueoApisCarteraList != null && !bloqueoApisCarteraList.isEmpty()) {
+			dto.setCarteraCodigo(this.devolverCodigoCarterasBloqueadasApi(bloqueoApisCarteraList));
+		}
+		List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList = bloqueo.getBloqueoApisEspecialidad();
+		if(bloqueoApisEspecialidadList != null && !bloqueoApisEspecialidadList.isEmpty()) {
+			dto.setEspecialidadCodigo(this.devolverCodigoEspecialidadBloqueadasApi(bloqueoApisEspecialidadList));
+		}
+		List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList = bloqueo.getBloqueoApisLineaNegocio();
+		if(bloqueoApisLineaNegocioList != null && !bloqueoApisLineaNegocioList.isEmpty()) {
+			dto.setLineaNegocioCodigo(this.devolverCodigoLineaNegocioBloqueadasApi(bloqueoApisLineaNegocioList));
+		}
+		List<BloqueoApisProvincia> bloqueoApisProvinciaList = bloqueo.getBloqueoApisProvincia();
+		if(bloqueoApisProvinciaList != null && !bloqueoApisProvinciaList.isEmpty()) {
+			dto.setProvinciaCodigo(this.devolverCodigoProvinciaBloqueadasApi(bloqueoApisProvinciaList));
+		}
+	
+		return dto;
+	}
+	
+	private String devolverCodigoCarterasBloqueadasApi(List<BloqueoApisCartera> bloqueoApisCarteraList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisCartera bloqueo : bloqueoApisCarteraList) {
+			if(bloqueo.getCartera() != null) {
+				lista.append(bloqueo.getCartera().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+	private String devolverCodigoEspecialidadBloqueadasApi(List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisEspecialidad bloqueo : bloqueoApisEspecialidadList) {
+			if(bloqueo.getEspecialidad() != null) {
+				lista.append(bloqueo.getEspecialidad().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+	private String devolverCodigoLineaNegocioBloqueadasApi(List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisLineaNegocio bloqueo : bloqueoApisLineaNegocioList) {
+			if(bloqueo.getTipoComercializacion() != null) {
+				lista.append(bloqueo.getTipoComercializacion().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+	private String devolverCodigoProvinciaBloqueadasApi(List<BloqueoApisProvincia> bloqueoApisProvinciaList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisProvincia bloqueo : bloqueoApisProvinciaList) {
+			if(bloqueo.getProvincia() != null) {
+				lista.append(bloqueo.getProvincia().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+
+	@Override
+	public List<VHistoricoBloqueosApis> getHistoricoBloqueos(Long id) {
+		List<VHistoricoBloqueosApis> hBAHList = genericDao.getList(VHistoricoBloqueosApis.class, genericDao.createFilter(FilterType.EQUALS, "id", id)); 
+		return hBAHList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void saveBloqueoProveedorById (Long id, DtoBloqueoApis dto) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+
+		if(bloqueo != null && bloqueo.getProveedor()!= null) {
+			//this.createRegistroHistoricoBloqueoApis(bloqueo);
+			Auditoria.delete(bloqueo);
+			genericDao.save(BloqueoApis.class, bloqueo);
+		}
+		
+		bloqueo = new BloqueoApis();
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		bloqueo.setProveedor(proveedor);
+//		if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+//			this.saveBloqueosCartera(bloqueo,Arrays.asList(dto.getCarteraCodigo().split(",")));
+//		}
+//		if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+//			this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+//		}
+//		if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+//			this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(dto.getLineaNegocioCodigo().split(",")));
+//		}
+//		if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+//			this.saveBloqueosProvincia(bloqueo,Arrays.asList(dto.getProvinciaCodigo().split(",")));
+//		}
+		
+		genericDao.save(BloqueoApis.class, bloqueo);
+	}
+	
+	private void saveBloqueosCartera(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisCartera bl = new BloqueoApisCartera();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setCartera(genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisCartera.class, bl);
+			
+		}
+	}
+	
+	private void saveBloqueosEspecialidad(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisEspecialidad bl = new BloqueoApisEspecialidad();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setEspecialidad(genericDao.get(DDEspecialidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisEspecialidad.class, bl);
+			
+		}
+	}
+
+		private void saveBloqueosLineaNegocio(BloqueoApis bloqueo, List<String> listaCodigos) {
+			for (String codigo : listaCodigos) {
+			BloqueoApisLineaNegocio bl = new BloqueoApisLineaNegocio();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setTipoComercializacion(genericDao.get(DDTipoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisLineaNegocio.class, bl);
+			
+		}
+	}
+	
+	private void saveBloqueosProvincia(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisProvincia bl = new BloqueoApisProvincia();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisProvincia.class, bl);
+			
+		}
+	}
+	
+	private void createRegistroHistoricoBloqueoApis(BloqueoApis bloqueo ) {
+		BloqueoApisHistorico bha = new BloqueoApisHistorico();
+		bha.setProveedor(bloqueo.getProveedor());
+		bha.setAuditoria(Auditoria.getNewInstance());
+		bha.setMotivoBloqueo(bloqueo.getMotivoBloqueo());
+		bha.setFecha(new Date());
+	//	bha.setUsuario(bloqueo());
+		
+		genericDao.save(BloqueoApisHistorico.class, bha);
 	}
 }

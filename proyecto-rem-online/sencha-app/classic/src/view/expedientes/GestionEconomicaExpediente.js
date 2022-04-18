@@ -29,7 +29,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var items= [
 			  {
 				  xtype:'fieldsettable',
-					title: 'Cierre Ecomomico de Fecha Ingreso',
+					title: 'Controller',
 					items :
 					 [
 						{ 

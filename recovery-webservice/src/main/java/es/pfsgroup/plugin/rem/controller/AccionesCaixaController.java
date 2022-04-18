@@ -5,6 +5,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaDtoData;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -564,6 +565,48 @@ public class AccionesCaixaController extends ParadiseJsonController {
         try {
             expedienteComercialApi.tareaDesbloqueoScreening(dto);
             model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautacionDeposito(DtoAccionRechazoCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
+            if(success){
+                success = accionesCaixaApi.accionRechazo(dto);
+                accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+                model.put("success", true);
+            }else{
+                model.put("msgError", "Error al actualizar depósito");
+                model.put("success", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolucionDeposito(DtoAccionRechazoCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
+            if(success){
+                success = accionesCaixaApi.accionRechazo(dto);
+                accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+                model.put("success", true);
+            }else{
+                model.put("msgError", "Error al actualizar depósito");
+                model.put("success", false);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);

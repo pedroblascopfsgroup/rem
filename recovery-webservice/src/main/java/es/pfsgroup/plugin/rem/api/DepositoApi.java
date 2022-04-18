@@ -23,12 +23,16 @@ public interface DepositoApi {
 	
 	void modificarEstadoDepositoSiIngresado(Oferta oferta);
 
+    Deposito getDepositoByNumOferta(Long numOferta);
+
+	boolean cambiaEstadoDeposito(Deposito dep, String codDeposito);
+
 	DtoDeposito expedienteToDtoDeposito(ExpedienteComercial expediente);
-	
+
 	boolean esOfertaConDeposito(Oferta oferta);
-	
+
 	boolean esUsuarioCrearOfertaDepositoExterno(Oferta oferta);
-	
+
 	/**
 	 * Modifica los datos del depósito
 	 *

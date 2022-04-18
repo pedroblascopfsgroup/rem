@@ -73,4 +73,7 @@ public interface AccionesCaixaApi {
 
     @Transactional
     void sendReplicarOfertaByOferta(Long idOferta);
+
+    @Transactional
+    boolean modificaEstadoDeposito(String codEstado, Long idOferta);
 }

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import net.sf.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -801,6 +802,48 @@ class AccionesCaixaControllerDispachableMethods {
             public Boolean execute(DtoScreening dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionDesbloqueoScoring(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_DEV_CONTABILIZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionDevolucionDeposito(dto);
+                    if ("false".equals(mm.getModel().get("success").toString())
+                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
+                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_INC_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+            @Override
+            public Class<DtoAccionRechazoCaixa> getArgumentType() {
+                return DtoAccionRechazoCaixa.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionRechazoCaixa dto) {
+                if (dto != null) {
+                    ModelAndView mm = this.controller.accionIncautacionDeposito(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
                             && !Checks.esNulo(mm.getModel().get("msgError"))) {
                         throw new JsonViewerException(mm.getModel().get("msgError").toString());

@@ -66,6 +66,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Autowired
     private ReservaApi reservaApi;
 
+    @Autowired
+    private DepositoApi depositoApi;
+
     @Override
     public String managerName() {
         return "accionesCaixaManager";
@@ -847,6 +850,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         ReplicarOfertaDto dto = new ReplicarOfertaDto();
         dto.setNumeroOferta(ofr.getNumOferta());
         ofertaApi.replicateOfertaFlushDto(ofr, dto);
+    }
+
+    @Override
+    @Transactional
+    public boolean modificaEstadoDeposito(String codEstado, Long numOferta){
+        Deposito dep = depositoApi.getDepositoByNumOferta(numOferta);
+        return depositoApi.cambiaEstadoDeposito(dep, codEstado);
     }
 
 }

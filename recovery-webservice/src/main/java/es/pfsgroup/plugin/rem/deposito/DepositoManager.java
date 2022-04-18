@@ -164,11 +164,29 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public void modificarEstadoDepositoSiIngresado(Oferta oferta) {
 		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
 		if(isDepositoIngresado(deposito)) {
-			Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
-			DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
-			deposito.setEstadoDeposito(estadoDeposito);
-			genericDao.save(Deposito.class, deposito);
+			cambiaEstadoDeposito(deposito, DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
 		}
+	}
+
+	@Override
+	public Deposito getDepositoByNumOferta(Long numOferta) {
+		if(numOferta != null){
+			Deposito dep = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", numOferta));
+			if(dep != null) return dep;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean cambiaEstadoDeposito(Deposito dep, String codDeposito) {
+		if(dep != null){
+			Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					codDeposito);
+			dep.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, filtroDeposito));
+			genericDao.save(Deposito.class, dep);
+			return true;
+		}
+		return false;
 	}
 	
 	

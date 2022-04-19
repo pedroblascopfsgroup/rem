@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
     private static final String MESES_FIANZA = "mesesFianza";
     private static final String IMPORTE_FIANZA = "importeFianza";
     private static final String TIPO_OPERACION = "tipoOperacion";
+	private static final String COMBO_RIESGO = "cambioRiesgo";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -98,6 +100,12 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 						}
 						
 					}
+					if(COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor()) && DDEstadoOferta.isRechazada(ofertaAceptada.getEstadoOferta())) {
+							ofertaAceptada.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
+						}
+					}
 				}
 
 				if (vuelveArras) {		
@@ -113,8 +121,6 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 				
 				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBC)));
 				genericDao.save(ExpedienteComercial.class, expediente);
-
-				ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expediente, fechaPropuesta));
 				
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);

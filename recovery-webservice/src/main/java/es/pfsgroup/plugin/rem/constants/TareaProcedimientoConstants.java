@@ -22,6 +22,8 @@ public class TareaProcedimientoConstants {
         public static final String CODIGO_T017_AGENDAR_FECHA_ARRAS = "T017_AgendarFechaFirmaArras";
         public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
         public static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
+        public static final String CODIGO_T017_AGENDAR_POSICIONAMIENTO = "T017_AgendarPosicionamiento";
+        public static final String CODIGO_T107_FIRMA_CONTRATO = "T017_FirmaContrato";
     }
     
     public class TramiteAlquilerT015{

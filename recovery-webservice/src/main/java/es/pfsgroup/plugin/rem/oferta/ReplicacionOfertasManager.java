@@ -81,7 +81,9 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 || calculaT015DatosPBC(codTarea,codEstado) || calculaT018DatosPBC(codTarea,codEstado)
                 || calculaT015CalculoRiesgo(codTarea,codEstado) || calculaT018CalculoRiesgo(codTarea,codEstado)
                 || calculaT015PBCAlquiler(codTarea,codEstado) || calculaT018PBCAlquiler(codTarea,codEstado)
-                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado) || calculaT018TrasladarOfertaCliente(codTarea, codEstado);
+                || calculaT015SolicitarGarantiasAdicionales(codTarea, codEstado) || calculaT018TrasladarOfertaCliente(codTarea, codEstado)
+                || calculaResolucionT017ConfirmarFechaEscritura(codTarea, codEstado) || calculaResolucionT017AgendarPosicionamiento(codTarea, codEstado)
+                || calculaResolucionT017FirmaContrato(codTarea, codEstado);
     }
 
 	private boolean calculaT017ResolucionExpdiente(String codTarea, String codEstado) {
@@ -258,6 +260,34 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
         if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_T018_TRASLADAR_OFERTA_CLIENTE.equals(codTarea)
                 && (DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE.equals(codEstado)
                     || DDEstadoExpedienteBc.PTE_REVISAR_CONDICIONES_BC.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaResolucionT017ConfirmarFechaEscritura(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017.equals(codTarea)
+                && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO.equals(codEstado)))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaResolucionT017AgendarPosicionamiento(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_AGENDAR_POSICIONAMIENTO.equals(codTarea)
+                && DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC.equals(codEstado))
+            return true;
+
+        return false;
+    }
+
+    private boolean calculaResolucionT017FirmaContrato(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T107_FIRMA_CONTRATO.equals(codTarea)
+                && (DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)
+                || DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)))
             return true;
 
         return false;

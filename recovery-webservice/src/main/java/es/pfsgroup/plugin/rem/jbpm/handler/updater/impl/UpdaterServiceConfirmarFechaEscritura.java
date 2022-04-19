@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,6 @@ import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Component
 public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
@@ -63,6 +59,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
         private static final String MESES_FIANZA = "mesesFianza";
         private static final String IMPORTE_FIANZA = "importeFianza";
         private static final String OBSERVACIONES_REM = "observaciones";
+		private static final String COMBO_RIESGO = "cambioRiesgo";
     }
     
     private static final String TIPO_OPERACION = "tipoOperacion";
@@ -121,6 +118,12 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					else if(CamposConfirmarFechaFirmaEscritura.OBSERVACIONES_REM.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						dto.setObservacionesRem(valor.getValor());
 					}
+					if(CamposConfirmarFechaFirmaEscritura.COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						if(DDSiNo.SI.equals(valor.getValor()) && DDEstadoOferta.isRechazada(ofertaAceptada.getEstadoOferta())) {
+							ofertaAceptada.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
+						}
+					}
 				}
 				
 				if (vuelveArras) {
@@ -154,8 +157,6 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 			HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, eco);
 				
 			genericDao.save(HistoricoSancionesBc.class, historico);
-			
-	        ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
 	        
 	        if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 				boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);

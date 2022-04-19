@@ -315,7 +315,7 @@ BEGIN
 					IF V_TMP_TIPO_DATA(4) IS NOT NULL THEN
                     
                      V_MSQL:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE 
-                            ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(2)||''' AND BORRADO = 0';
+                            ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(4)||''' AND BORRADO = 0';
                                                         DBMS_OUTPUT.PUT_LINE(V_MSQL);
         
                            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;

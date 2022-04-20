@@ -10,16 +10,44 @@ Ext.define('HreRem.model.BloqueoApis', {
     		name:'idBloqueo'
     	},
     	{
-    		name:'carteraCodigo'
+    		name:'carteraCodigo',
+    		convert: function(value) {
+	    		if(Ext.isEmpty(value)){
+	    			return 'VALOR_POR_DEFECTO';
+	    		} else {
+	    			return value;
+	    		}
+	    	}
     	},
     	{
-    		name:'lineaNegocioCodigo'
+    		name:'lineaNegocioCodigo',
+    		convert: function(value) {
+	    		if(Ext.isEmpty(value)){
+	    			return 'VALOR_POR_DEFECTO';
+	    		} else {
+	    			return value;
+	    		}
+	    	}
     	},
     	{
-    		name:'especialidadCodigo'
+    		name:'especialidadCodigo',
+    		convert: function(value) {
+	    		if(Ext.isEmpty(value)){
+	    			return 'VALOR_POR_DEFECTO';
+	    		} else {
+	    			return value;
+	    		}
+	    	}
     	},
     	{
-    		name:'provinciaCodigo'
+    		name:'provinciaCodigo',
+    		convert: function(value) {
+	    		if(Ext.isEmpty(value)){
+	    			return 'VALOR_POR_DEFECTO';
+	    		} else {
+	    			return value;
+	    		}
+	    	}
     	},
     	{
     		name:'motivo'

@@ -77,22 +77,22 @@ public class BloqueoApis implements Serializable, Auditable {
 	private String motivoBloqueo;
 	
     @OneToMany(mappedBy = "bloqueoApis", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BAC_ID")
+    @JoinColumn(name = "BAP_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BloqueoApisCartera> bloqueoApisCartera;    
     
     @OneToMany(mappedBy = "bloqueoApis", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BAL_ID")
+    @JoinColumn(name = "BAP_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocio;    
     
     @OneToMany(mappedBy = "bloqueoApis", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BAE_ID")
+    @JoinColumn(name = "BAP_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BloqueoApisEspecialidad> bloqueoApisEspecialidad;    
     
     @OneToMany(mappedBy = "bloqueoApis", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BAR_ID")
+    @JoinColumn(name = "BAP_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BloqueoApisProvincia> bloqueoApisProvincia;    
 	

@@ -33,7 +33,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		model.setId(id);
 		model.load({
 		    success: function(record) {
-		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
 		    },

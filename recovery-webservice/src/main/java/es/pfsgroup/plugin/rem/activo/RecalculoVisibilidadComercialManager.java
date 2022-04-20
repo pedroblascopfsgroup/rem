@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -23,13 +22,10 @@ import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
-import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.validators.VisibilidadGestionComercialValidator;
 
 @Service("recalculoVisibilidadComercialManager")
@@ -40,9 +36,6 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 	
 	@Autowired
 	private ActivoApi activoApi;
-	
-	@Autowired
-	private ActivoPublicacionDao activoPublicacionDao;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -56,8 +49,6 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 		Map<Long, List<String>> mapaErrores = new HashMap<Long, List<String>>();
 
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-
-		HistoricoFasePublicacionActivo fasePublicacionActivo = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activo.getId());
 		
 		mapaErrores = visibilidadGestionComercialValidator.validarPerimetroActivo(activo, dtoCheckGestorComercial, dtoExcluirValidaciones, fichaActivo);
 		
@@ -77,10 +68,8 @@ public class RecalculoVisibilidadComercialManager implements RecalculoVisibilida
 			if(!tieneErrores) {
 				perimetroActivo.setCheckGestorComercial(true);	
 				perimetroActivo.setFechaGestionComercial(new Date());
-				if(!DDFasePublicacion.isFaseCinco(fasePublicacionActivo.getFasePublicacion()) && !DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivo.getSubFasePublicacion())) {
-					perimetroActivo.setExcluirValidaciones((DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO));
-					perimetroActivo.setMotivoGestionComercial(null);
-				}
+				perimetroActivo.setExcluirValidaciones((DDSinSiNo) diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO));
+				perimetroActivo.setMotivoGestionComercial(null);
 				
 				genericDao.update(PerimetroActivo.class,perimetroActivo);
 			}

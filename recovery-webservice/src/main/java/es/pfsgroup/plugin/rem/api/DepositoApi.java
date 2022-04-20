@@ -11,13 +11,15 @@ public interface DepositoApi {
 	
 	boolean esNecesarioDeposito(Oferta oferta);
 
-	boolean isDepositoIngresado(Deposito deposito);
+    boolean esNecesarioDepositoBySubcartera(String codSubcartera);
+
+    boolean isDepositoIngresado(Deposito deposito);
 
 	CuentasVirtuales vincularCuentaVirtual(Oferta oferta);
 
 	Double getImporteDeposito(Oferta oferta);
 
-    void generaDeposito(Oferta oferta);
+	Deposito generaDeposito(Oferta oferta);
 
     Boolean generaDepositoFromRem3(GeneraDepositoDto dto);
 	

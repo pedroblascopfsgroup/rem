@@ -570,6 +570,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.putAll(validateIdRepresentanteAndIdContacto(ofertaDto.getIdOfertaHayaHome(), ofertaDto.getIdOfertaRem(),
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
+
+			if(ofertaDto.getIbanDevolucion() == null){
+				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
+				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
+			}
 		} else {
 			errorsList = restApi.validateRequestObject(ofertaDto, TIPO_VALIDACION.UPDATE);
 			// Validación para la actualización de ofertas
@@ -900,7 +905,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return errorsList;
 	}
-	
+
+	private Map<String, String> validateIbanDevolucionNecesario(Long idActivo) {
+		HashMap<String, String> error = new HashMap<String, String>();
+
+		Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo));
+		String subcartera = act.getSubcartera() != null ? act.getSubcartera().getCodigo() : null;
+		if(depositoApi.esNecesarioDepositoBySubcartera(subcartera)){
+			error.put("ibanDevolucion", RestApi.REST_MSG_MISSING_REQUIRED);
+		}
+
+		return error;
+	}
+
 	private Activo getActivoByWS(OfertaDto dto, DDSistemaOrigen sistemaOrigen) {
 		Activo activo = null;
 		if (!Checks.esNulo(dto.getIdActivoHaya())) {
@@ -1524,7 +1541,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente(), ofertaDto.getEntidadOrigen());
-			 
+			try{
+				if(depositoApi.esNecesarioDeposito(oferta)){
+					Deposito dep = depositoApi.generaDeposito(oferta);
+					if(ofertaDto.getIbanDevolucion() != null){
+						dep.setIbanDevolucion(ofertaDto.getIbanDevolucion());
+						genericDao.save(Deposito.class, dep);
+					}
+				}
+			} catch(Exception e){
+				logger.error("No se ha podido crear el depósito");
+			}
+
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
@@ -2462,6 +2490,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setFechaCreacionOpSf(oferta.getFechaCreacionOpSf());
 			}
 
+			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo()) && depositoApi.esNecesarioDeposito(oferta)){
+				try{
+					Deposito dep = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+					if(dep == null){
+						dep = depositoApi.generaDeposito(oferta);
+					}
+					if(ofertaDto.getIbanDevolucion() != null){
+						dep.setIbanDevolucion(ofertaDto.getIbanDevolucion());
+						genericDao.save(Deposito.class, dep);
+					}
+				} catch(Exception e){
+					logger.error("No se ha podido crear/modificar el depósito");
+				}
+			}
+
 		} else if(!Checks.esNulo(errorsList.get("origenComisionamiento"))) {
 			errorsList.remove("origenComisionamiento");
 			if (errorsList.isEmpty()) {
@@ -2741,12 +2784,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		setEstadoOfertaByIsNecesarioDeposito(oferta);
+		oferta = setEstadoOfertaByIsNecesarioDeposito(oferta);
+
 
 		return oferta;
 	}
 
-	private void setEstadoOfertaByIsNecesarioDeposito(Oferta oferta) {
+	private Oferta setEstadoOfertaByIsNecesarioDeposito(Oferta oferta) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 		DDCartera cartera = null;
 		if(oferta.getActivoPrincipal() != null) {
@@ -2761,12 +2805,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
 			if(depositoApi.esNecesarioDeposito(oferta)) {
-				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;	
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 			}
 			DDEstadoOferta ddEstadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			oferta.setEstadoOferta(ddEstadoOferta);
 		}
+
+		return oferta;
 	}
 
 	private void cambiarEstadoOfertaHayaHomeRechazada(Oferta oferta, DDEstadosExpedienteComercial estadoExpCom, Date fechaAccion, String entidadOrigen) {

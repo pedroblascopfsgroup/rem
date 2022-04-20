@@ -66,13 +66,18 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		
 		if(oferta != null && oferta.getActivoPrincipal() != null 
 				&& oferta.getActivoPrincipal().getSubcartera() != null ) {
-			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
-					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()));
-			if(conDep != null && conDep.getDepositoNecesario()) {
-				return true;
-			}
+			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo());
 		}
 		
+		return false;
+	}
+	@Override
+	public boolean esNecesarioDepositoBySubcartera(String codSubcartera){
+		ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+				,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", codSubcartera));
+		if(conDep != null && conDep.getDepositoNecesario()) {
+			return true;
+		}
 		return false;
 	}
 
@@ -116,14 +121,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 
 	@Override
 	@Transactional
-	public void generaDeposito(Oferta oferta){
+	public Deposito generaDeposito(Oferta oferta){
 		Deposito dep = new Deposito();
 		dep.setImporte(getImporteDeposito(oferta));
 		dep.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PENDIENTE)));
 		dep.setOferta(oferta);
 
-		genericDao.save(Deposito.class, dep);
-
+		return genericDao.save(Deposito.class, dep);
 	}
 
 	@Override

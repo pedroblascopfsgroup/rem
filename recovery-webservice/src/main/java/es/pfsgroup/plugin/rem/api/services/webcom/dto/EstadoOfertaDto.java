@@ -64,6 +64,9 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private DoubleDataType bonificacionAnyo4Contraoferta;
 	private StringDataType codSubestadoExpediente;
 	private StringDataType codOfertaSalesforce;
+	private StringDataType ibanDevolucion;
+	private StringDataType cuentaVirtual;
+
 
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -324,5 +327,19 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 		this.codOfertaSalesforce = codOfertaSalesforce;
 	}
 
+	public StringDataType getIbanDevolucion() {
+		return ibanDevolucion;
+	}
 
+	public void setIbanDevolucion(StringDataType ibanDevolucion) {
+		this.ibanDevolucion = ibanDevolucion;
+	}
+
+	public StringDataType getCuentaVirtual() {
+		return cuentaVirtual;
+	}
+
+	public void setCuentaVirtual(StringDataType cuentaVirtual) {
+		this.cuentaVirtual = cuentaVirtual;
+	}
 }

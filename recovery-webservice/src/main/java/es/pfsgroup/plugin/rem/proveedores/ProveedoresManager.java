@@ -1703,6 +1703,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		dto.setIdBloqueo(bloqueo.getId());
 		dto.setMotivo(bloqueo.getMotivoBloqueo());
+		dto.setMotivoAnterior(bloqueo.getMotivoBloqueo());
 		List<BloqueoApisCartera> bloqueoApisCarteraList = bloqueo.getBloqueoApisCartera();
 		if(bloqueoApisCarteraList != null && !bloqueoApisCarteraList.isEmpty()) {
 			dto.setCarteraCodigo(this.devolverCodigoCarterasBloqueadasApi(bloqueoApisCarteraList));

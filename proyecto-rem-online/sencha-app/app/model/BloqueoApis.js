@@ -54,6 +54,9 @@ Ext.define('HreRem.model.BloqueoApis', {
     	},
     	{
     		name:'id'
+    	},
+    	{
+    	    name:'motivoAnterior'
     	}
 		    
     ],

@@ -16,6 +16,7 @@ public class DtoBloqueoApis extends WebDto {
 	private String especialidadCodigo;
 	private String provinciaCodigo;
 	private String motivo;
+	private String motivoAnterior;
 
 	
 	
@@ -55,8 +56,12 @@ public class DtoBloqueoApis extends WebDto {
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
-	
-	
-	
 
+	public String getMotivoAnterior() {
+		return motivoAnterior;
+	}
+
+	public void setMotivoAnterior(String motivoAnterior) {
+		this.motivoAnterior = motivoAnterior;
+	}
 }

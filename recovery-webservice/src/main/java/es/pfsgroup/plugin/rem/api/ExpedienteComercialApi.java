@@ -99,6 +99,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ExpedienteComercialApi {
 	/**
@@ -445,6 +446,9 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	DtoPage getSubsanacionesExpediente(Long idExpediente);
+
+	@Transactional(readOnly = false)
+	boolean deletePosicionamientoMotivoAplazamiento(Long idPosicionamiento, String codEstado);
 
 	/**
 	 * Método que obtiene los notarios del expediente

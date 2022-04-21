@@ -268,7 +268,8 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
     private boolean calculaResolucionT017ConfirmarFechaEscritura(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017.equals(codTarea)
                 && (DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
-                || DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO.equals(codEstado)))
+                || DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
             return true;
 
         return false;
@@ -276,7 +277,8 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
     private boolean calculaResolucionT017AgendarPosicionamiento(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_AGENDAR_POSICIONAMIENTO.equals(codTarea)
-                && DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC.equals(codEstado))
+                && (DDEstadoExpedienteBc.CODIGO_VALIDACION_DE_FIRMA_DE_CONTRATO_POR_BC.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
             return true;
 
         return false;
@@ -287,7 +289,8 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
                 && (DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC.equals(codEstado)
                 || DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(codEstado)
-                || DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)))
+                || DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO.equals(codEstado)
+                || DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
             return true;
 
         return false;

@@ -78,6 +78,7 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 		Integer mesesFianza = null;
 		String estadoBC = null;
 		String estadoExpediente = null;
+		boolean vuelvePBC = false;
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		
 		DtoPosicionamiento dto = new DtoPosicionamiento();
@@ -119,9 +120,19 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						dto.setObservacionesRem(valor.getValor());
 					}
 					if(CamposConfirmarFechaFirmaEscritura.COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						if(DDSiNo.SI.equals(valor.getValor()) && DDEstadoOferta.isRechazada(ofertaAceptada.getEstadoOferta())) {
-							ofertaAceptada.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
+						if(DDSiNo.SI.equals(valor.getValor())) {
+							if(DDSiNo.SI.equals(valor.getValor())) {
+								if(eco.getUltimoPosicionamiento() != null){
+									DtoPosicionamiento dtoPos = new DtoPosicionamiento();
+									dtoPos.setIdPosicionamiento(eco.getUltimoPosicionamiento().getId());
+									dtoPos.setMotivoAplazamiento("Aplazamiento automático por cálculo riesgo");
+									dtoPos.setMotivoAnulacionBc(DDMotivoAnulacionBC.CODIGO_PENDIENTE_PBC);
+									dtoPos.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
+									expedienteComercialApi.savePosicionamiento(dtoPos);
+								}
+								estadoBC = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
+								vuelvePBC = true;
+							}
 						}
 					}
 				}
@@ -134,16 +145,16 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}
 									
-				}else {
+				}else if(!vuelvePBC){
 
 					if(DDMotivosEstadoBC.CODIGO_RECHAZADA_BC.equals(dto.getValidacionBCPosi())) {
 						dto.setFechaFinPosicionamiento(new Date());
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-						estadoBC = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+						estadoBC = estadoBC != null ? estadoBC :  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 						dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.POSICIONADO;
-						estadoBC = DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
+						estadoBC = estadoBC != null ? estadoBC :  DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 					}
 				}
 				expedienteComercialApi.createOrUpdateUltimoPosicionamiento(eco.getId(), dto);

@@ -73,6 +73,7 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 		Integer mesesFianza = null;
 		boolean aplaza = false;
 		boolean aprueba = false;
+		boolean vuelvePBC = false;
 		DtoPosicionamiento dtoPos = new DtoPosicionamiento();
 		Map<String, Boolean> campos = new HashMap<String,Boolean>();
 		try {
@@ -123,9 +124,17 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							}
 						}
 						if(COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-							if(DDSiNo.SI.equals(valor.getValor()) && DDEstadoOferta.isRechazada(ofertaAceptada.getEstadoOferta())) {
-								ofertaAceptada.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-										genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
+							if(DDSiNo.SI.equals(valor.getValor())) {
+								if(expediente.getUltimoPosicionamiento() != null){
+									DtoPosicionamiento dto = new DtoPosicionamiento();
+									dto.setIdPosicionamiento(expediente.getUltimoPosicionamiento().getId());
+									dto.setMotivoAplazamiento("Aplazamiento automático por cálculo riesgo");
+									dto.setMotivoAnulacionBc(DDMotivoAnulacionBC.CODIGO_PENDIENTE_PBC);
+									dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
+									expedienteComercialApi.savePosicionamiento(dto);
+								}
+								estadoBc = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
+								vuelvePBC = true;
 							}
 						}
 					}
@@ -147,24 +156,27 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 						}
 					}else if(aplaza){
 						estadoExp = DDEstadosExpedienteComercial.PTE_AGENDAR_FIRMA;
-						estadoBc = DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
+						estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_IMPORTE_FINAL_APROBADO;
 						dtoPos.setMotivoAnulacionBc(DDMotivosEstadoBC.CODIGO_APLAZADA);
 						dtoPos.setFechaFinPosicionamiento(new Date());
 						expedienteComercialApi.createOrUpdateUltimoPosicionamiento(expediente.getId(), dtoPos);
-					}else {
+					}else if(!vuelvePBC){
 						if(aprueba) {
 							estadoExp = DDEstadosExpedienteComercial.FIRMADO;
-							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
+							estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
 							if(reservaApi.tieneReservaFirmada(expediente)) {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+								estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
 								if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
 						        	expediente.setFechaAnulacion(new Date());
 						        }
 							}else {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
-								ofertaApi.finalizarOferta(ofertaAceptada);
+								Boolean finalizar = estadoBc == null;
+								estadoBc = estadoBc != null ? estadoBc :  DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+								if(finalizar){
+									ofertaApi.finalizarOferta(ofertaAceptada);
+								}
 							}
 						}
 					}

@@ -162,7 +162,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDMetodoActualizacionRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionBC;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAntiguoDeud;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
@@ -7406,6 +7405,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(posicionamiento)) {
 			posicionamiento.setFechaFinPosicionamiento(new Date());
+			genericDao.update(Posicionamiento.class, posicionamiento);
+		}
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deletePosicionamientoMotivoAplazamiento(Long idPosicionamiento, String codEstado) {
+		Filter filtroPosicionamiento = genericDao.createFilter(FilterType.EQUALS, "id", idPosicionamiento);
+		Posicionamiento posicionamiento = genericDao.get(Posicionamiento.class, filtroPosicionamiento);
+
+		if (!Checks.esNulo(posicionamiento)) {
+			posicionamiento.setFechaFinPosicionamiento(new Date());
+			if(codEstado != null){
+				posicionamiento.setMotivoAnulacionBc(genericDao.get(DDMotivoAnulacionBC.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", codEstado)));
+			}
 			genericDao.update(Posicionamiento.class, posicionamiento);
 		}
 

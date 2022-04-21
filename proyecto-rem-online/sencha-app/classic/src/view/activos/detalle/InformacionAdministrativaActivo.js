@@ -256,6 +256,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                	xtype: 'datefieldbase',     
 											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
 											 		bind: {
+											 				readOnly : true,
 											 				value:'{infoAdministrativa.fechaVencimientoAvalSeguro}',
 											 				hidden: '{!isCarteraBankia}'
 											 			},								 		
@@ -265,6 +266,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                	xtype: 'datefieldbase',     
 											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
 											 		bind: {
+											 				readOnly : true,
 											 				value:'{infoAdministrativa.fechaDevolucionAyuda}',
 											 				hidden: '{!isCarteraBankia}'
 											 			},								 		
@@ -408,6 +410,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										        	xtype: 'comboboxfieldbase',							        	
 										        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
 										        	bind: {
+										        			readOnly : true,
 			            									store: '{comboSiNoBoolean}',
 			            									value: '{infoAdministrativa.compradorAcojeAyuda}',
 			            									hidden: '{!isCarteraBankia}'
@@ -417,6 +420,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 													xtype: 'currencyfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
 					                				bind: {
+					                						readOnly : true,
 					                						value: '{infoAdministrativa.importeAyudaFinanciacion}',
 					                						hidden: '{!isCarteraBankia}'
 					                					  }

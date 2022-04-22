@@ -129,6 +129,18 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 
 		return genericDao.save(Deposito.class, dep);
 	}
+	
+	@Override
+	@Transactional
+	public Deposito generaDepositoAndIban(Oferta oferta, String iban){
+		Deposito dep = new Deposito();
+		dep.setImporte(getImporteDeposito(oferta));
+		dep.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PENDIENTE)));
+		dep.setOferta(oferta);
+		dep.setIbanDevolucion(iban);
+
+		return genericDao.save(Deposito.class, dep);
+	}
 
 	@Override
 	public Double getImporteDeposito(Oferta oferta) {
@@ -278,6 +290,12 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		}
 
 		return true;
+	}
+	
+	@Override
+	public boolean validarIban(String iban){
+		//IBANValidator ibanCheck = new IBANValidator();
+		return true;//ibanCheck.isValid(iban);
 	}
 	
 }

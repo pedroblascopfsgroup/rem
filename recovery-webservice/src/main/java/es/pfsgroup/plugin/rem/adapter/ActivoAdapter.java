@@ -4667,6 +4667,10 @@ public class ActivoAdapter {
 				}
 			}
 			
+			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
+			
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;

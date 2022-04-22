@@ -574,6 +574,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(ofertaDto.getIbanDevolucion() == null){
 				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
 				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
+			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
+				errorsList.put("ibanDevolucion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		} else {
 			errorsList = restApi.validateRequestObject(ofertaDto, TIPO_VALIDACION.UPDATE);
@@ -618,6 +620,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					&& sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
 
 					errorsList.put("transicion de estado no permitida", RestApi.REST_MSG_UNKNOWN_KEY);
+				} else if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equalsIgnoreCase(oferta.getEstadoOferta().getCodigo()) && DDEstadoOferta.CODIGO_PENDIENTE.equalsIgnoreCase(ofertaDto.getCodEstadoOferta())) {
+					errorsList.put("codEstadoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
 			
@@ -1543,11 +1547,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente(), ofertaDto.getEntidadOrigen());
 			try{
 				if(depositoApi.esNecesarioDeposito(oferta)){
-					Deposito dep = depositoApi.generaDeposito(oferta);
-					if(ofertaDto.getIbanDevolucion() != null){
-						dep.setIbanDevolucion(ofertaDto.getIbanDevolucion());
-						genericDao.save(Deposito.class, dep);
-					}
+					depositoApi.generaDepositoAndIban(oferta,ofertaDto.getIbanDevolucion());
 				}
 			} catch(Exception e){
 				logger.error("No se ha podido crear el depósito");
@@ -2607,7 +2607,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (!Checks.esNulo(ofertaAcepted) && 
 				!(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOfertaToCheck) 
 				|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOfertaToCheck) 
-				|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOfertaToCheck))) {
+				|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOfertaToCheck)
+				|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOfertaToCheck))) {
 			Activo activo = ofertaAcepted.getActivoPrincipal();
 			if (oferta.getAgrupacion() != null) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -3113,7 +3114,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (!ofr.getId().equals(expediente.getOferta().getId())
 							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())
 							&& !DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(ofr.getEstadoOferta().getCodigo())
-							&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(ofr.getEstadoOferta().getCodigo())) {
+							&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(ofr.getEstadoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ofr.getEstadoOferta().getCodigo())) {
 
 						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
@@ -3146,7 +3148,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public Boolean congelarOferta(Oferta oferta) {
 		try {
 			if(!DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())
-					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())) {
+					&& !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo())
+					&& !DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo())) {
 				Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));				
 				if(depositoApi.isDepositoIngresado(deposito)) {
 					Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);

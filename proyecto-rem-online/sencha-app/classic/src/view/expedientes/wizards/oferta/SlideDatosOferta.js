@@ -34,6 +34,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		var isBk = false;
 		var isBkOrTitlizada = false;
 		var activosDetalle = me.up('[reference="activosdetalle"]');
+		var esNecesarioDeposito = false;
 		
 		if(Ext.isEmpty(activosDetalle)){
 			isBk = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionCaixa");
@@ -46,6 +47,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			isBkOrTitlizada = isBk || this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionTitulizada");
 		}else{
 			isBkOrTitlizada = isBk || me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraTitulizada');
+		}
+		
+		if(Ext.isEmpty(activosDetalle)){
+			esNecesarioDeposito = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito");
+		}else{
+			esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
 		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
@@ -183,6 +190,19 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    						},
 			    				colspan: 2
 							},
+							{
+								fieldLabel: HreRem.i18n('fieldlabel.iban.devolucion'),
+		            	    	name:		'ibanDevolucion',
+								hidden: !esNecesarioDeposito,
+								allowBlank: !esNecesarioDeposito,
+								bind: {
+									value: '{oferta.ibanDevolucion}'
+								},
+			    				colspan: 2,
+								listeners: {
+								 	'focusleave': 'checkIbanDevolucion'
+								}						
+		            	    },
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),
 		            	    	name:		'nombreCliente',

@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -102,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
@@ -294,6 +296,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -818,6 +823,7 @@ public class AgrupacionAdapter {
 					
 					if(!Checks.esNulo(activoPrincipal.getSubcartera())){
 						BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", activoPrincipal.getSubcartera().getCodigo());
+						BeanUtils.copyProperty(dtoAgrupacion, "esNecesarioDeposito", depositoApi.esNecesarioDepositoBySubcartera(activoPrincipal.getSubcartera().getCodigo()));
 					}
 					
 					if (perimetroActivo != null) {
@@ -3019,7 +3025,7 @@ public class AgrupacionAdapter {
 				oferta.setRespDocCliente(respCodCliente);
 			}
 			
-			activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 			
@@ -3157,6 +3163,10 @@ public class AgrupacionAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
+			}
+			
+			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
 			}
 
 

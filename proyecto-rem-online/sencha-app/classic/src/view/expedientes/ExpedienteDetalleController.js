@@ -5879,6 +5879,28 @@ comprobarFormatoModificar: function() {
 					});
 				}
 			});
+	},
+
+	checkIbanDevolucion: function(campo){
+		var me = this;
+		Ext.Ajax.request({
+	 		url: $AC.getRemoteUrl('expedientecomercial/validarIban'),
+	   		params: {iban : campo.getValue()},
+	    	
+	   		success: function(response, opts) {
+	   			data = Ext.decode(response.responseText);
+				if (data.success == "true"){
+					me.fireEvent("infoToast", HreRem.i18n("msg.validacion.iban.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.validacion.iban.ko"));
+					campo.setValue(null);
+				}
+	   		},
+	   		failure: function(response) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				campo.setValue(null);
+	    	} 		     
+		});	 
 	}
 	
 });

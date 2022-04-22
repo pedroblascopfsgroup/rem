@@ -1399,6 +1399,10 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name:'discrepanciasLocalizacionObservaciones'
+            },
+            {
+            	name:'esNecesarioDeposito',
+				type: 'boolean'
             }
     ],
     

@@ -43,4 +43,8 @@ public interface DepositoApi {
 	 * @return
 	 */
 	boolean saveDeposito(DtoDeposito dto, Long idExpediente);
+
+	Deposito generaDepositoAndIban(Oferta oferta, String iban);
+
+	boolean validarIban(String iban);
 }

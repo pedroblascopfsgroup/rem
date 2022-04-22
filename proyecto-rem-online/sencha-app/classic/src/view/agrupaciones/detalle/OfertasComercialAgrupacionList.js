@@ -477,6 +477,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 						&& CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 				return false;
+			} else if ((CONST.ESTADOS_OFERTA['CONGELADA'] == codigoEstadoNuevo || (CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo && !$AU.userIsRol("HAYASUPER")))
+							&& CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.pdte.deposito"));
+				return false;
 			}
 		}
 		

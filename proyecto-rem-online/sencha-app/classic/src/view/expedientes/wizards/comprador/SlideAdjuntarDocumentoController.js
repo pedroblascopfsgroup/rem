@@ -799,7 +799,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            antiguoDeudor:bindRecord.antiguoDeudor,
 	            nacionalidadCodigo:bindRecord.nacionalidadCodigo,
 	            nacionalidadRprCodigo:bindRecord.nacionalidadRprCodigo,
-	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores
+	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores,
+				ibanDevolucion:bindRecord.ibanDevolucion
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -864,7 +865,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            antiguoDeudor:bindRecord.antiguoDeudor,
 	            nacionalidadCodigo:bindRecord.nacionalidadCodigo,
 	            nacionalidadRprCodigo:bindRecord.nacionalidadRprCodigo,
-	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores
+	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores,
+				ibanDevolucion:bindRecord.ibanDevolucion
 			});
 		}
  

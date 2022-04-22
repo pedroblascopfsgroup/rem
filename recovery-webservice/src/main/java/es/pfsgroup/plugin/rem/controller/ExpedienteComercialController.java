@@ -3216,4 +3216,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView validarIban(String iban, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, depositoApi.validarIban(iban));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (validarIban)", e);
+		}
+		return createModelAndViewJson(model);
+	}
 }

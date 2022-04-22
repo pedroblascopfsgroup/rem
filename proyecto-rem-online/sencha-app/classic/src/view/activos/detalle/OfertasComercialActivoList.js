@@ -598,6 +598,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
 			return false;
+		} else if ((CONST.ESTADOS_OFERTA['CONGELADA'] == codigoEstadoNuevo || (CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo && !$AU.userIsRol("HAYASUPER")))
+						&& CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.pdte.deposito"));
+			return false;
 		}
 
 		//HREOS-2814 Validacion si estado oferta = rechazada, tipo y motivo obligatorios.

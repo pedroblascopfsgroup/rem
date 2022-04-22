@@ -134,6 +134,7 @@ public class DtoOfertasFilter extends WebDto {
     private Boolean antiguoDeudor;
     private String nacionalidadCodigo;
     private String nacionalidadRprCodigo;
+    private String ibanDevolucion;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -804,6 +805,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setNacionalidadRprCodigo(String nacionalidadRprCodigo) {
 		this.nacionalidadRprCodigo = nacionalidadRprCodigo;
+	}
+	public String getIbanDevolucion() {
+		return ibanDevolucion;
+	}
+	public void setIbanDevolucion(String ibanDevolucion) {
+		this.ibanDevolucion = ibanDevolucion;
 	}
 	
 }

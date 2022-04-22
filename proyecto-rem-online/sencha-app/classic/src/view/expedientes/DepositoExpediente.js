@@ -37,6 +37,7 @@ Ext.define('HreRem.view.expedientes.DepositoExpediente', {
 						reference: 'importeIngresoDeposito',
 						fieldLabel: HreRem.i18n('header.importe'),
 						bind: {
+							readOnly : !$AU.userIsRol("HAYASUPER"),
 							value: '{deposito.importeDeposito}'
 						}
 	    			},
@@ -76,16 +77,9 @@ Ext.define('HreRem.view.expedientes.DepositoExpediente', {
 						bind: {
 							value: '{deposito.ibanDevolucionDeposito}'
 						},
-						maxLength: 29,
-						validator: function(value){
-			    			if (value.length == 0) {
-			    				return true;
-			    			}else{
-			    				return value.match(/^ES[0-9]{2}-[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$/) ? true : 'Formato IBAN: ESXX-XXXX-XXXX-XXXX-XXXX-XXXX donde X debe ser numérico';
-			    			}							    			
-			    		}/*,
 			    		listeners:{
-			    			change:function(field, newValue, oldValue, eOpts){
+							'focusLeave': 'checkIbanDevolucion'
+			    			/*change:function(field, newValue, oldValue, eOpts){
 			    				if (newValue.length >= 4 && newValue.length < 8 && !newValue.includes("-")) {
 			    					field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8));
 			    				}else if (newValue.length >= 9 && newValue.length < 13 && newValue.includes("-")) {
@@ -98,8 +92,8 @@ Ext.define('HreRem.view.expedientes.DepositoExpediente', {
 			    					field.setValue(newValue.substring(16,20)+ "-" + newValue.substring(20,24))
 			    				}
 								field.validate();
-							}
-			    		}*/
+							}*/
+			    		}
 	    			}/*,
 	    			{
 	    				text :  HreRem.i18n('fieldlabel.modificar.deposito'),

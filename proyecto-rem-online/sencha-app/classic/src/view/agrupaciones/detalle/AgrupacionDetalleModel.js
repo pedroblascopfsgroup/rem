@@ -815,6 +815,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                     return true;
             }
             return false;
+         },
+	     esNecesarioDeposito: function(get) {
+            return get('agrupacionficha.esNecesarioDeposito') == "true";
          }
     },
 				

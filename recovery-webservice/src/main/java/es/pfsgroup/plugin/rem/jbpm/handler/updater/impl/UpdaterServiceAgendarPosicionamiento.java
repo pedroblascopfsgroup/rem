@@ -108,6 +108,7 @@ public class UpdaterServiceAgendarPosicionamiento implements UpdaterService {
 								dto.setValidacionBCPosi(DDMotivosEstadoBC.CODIGO_ANULADA);
 								expedienteComercialApi.savePosicionamiento(dto);
 							}
+							expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO)));
 							estadoBC = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
 							vuelvePBC = true;
 						}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220425
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17696
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -27,6 +27,7 @@
 --##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
 --##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
 --##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
+--##	      0.18 Añadir estado posesorio y fecha a la tabla ACT_ACTIVO_CAIXA [HREOS-17696] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -325,7 +326,9 @@ BEGIN
                tcr1.DD_TCR_ID as CBX_CANAL_DIST_VENTA,
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
                ctc.DD_CTC_ID as DD_CTC_ID,
-               CAIXA.CBX_ID
+               CAIXA.CBX_ID,
+               ETP.DD_ETP_ID,
+               TO_DATE(aux.FEC_ESTADO_POSESORIO,''yyyymmdd'') FEC_EST_POSESORIO_BC
                FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux
                JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND ACT2.BORRADO = 0  
                LEFT JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA CAIXA ON ACT2.ACT_ID=CAIXA.ACT_ID AND CAIXA.BORRADO=0
@@ -339,6 +342,8 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR tcr2 ON tcr2.DD_TCR_CODIGO = eqv8.DD_CODIGO_REM                 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''CAT_COMERCIALIZACION''  AND eqv1.DD_CODIGO_CAIXA = aux.CAT_COMERCIALIZACION
                LEFT JOIN '|| V_ESQUEMA ||'.DD_CTC_CATEG_COMERCIALIZ ctc ON ctc.DD_CTC_CODIGO = eqv1.DD_CODIGO_REM    
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv9 ON eqv9.DD_NOMBRE_CAIXA = ''ESTADO_POSESORIO''  AND eqv9.DD_CODIGO_CAIXA = aux.ESTADO_POSESORIO
+               LEFT JOIN '|| V_ESQUEMA ||'.DD_ETP_ESTADO_POSESORIO ETP ON ETP.DD_ETP_CODIGO = eqv9.DD_CODIGO_REM    
                LEFT JOIN (SELECT MOT.ACT_ID, LISTAGG(MOT.MOT_NECESIDAD_ARRAS, '', '') WITHIN GROUP (ORDER BY MOT.MOT_NECESIDAD_ARRAS) MOT_NECESIDAD_ARRAS FROM '|| V_ESQUEMA ||'.TMP_MOTIVOS_NECESIDAD_ARRAS MOT GROUP BY MOT.ACT_ID) MOT_NEC_ARRAS ON MOT_NEC_ARRAS.ACT_ID = ACT2.ACT_ID 
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
@@ -364,7 +369,9 @@ BEGIN
                               ,act1.FECHA_EAT_EST_TECNICO=us.FECHA_EAT_EST_TECNICO
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
-                              ,act1.DD_CTC_ID = us.DD_CTC_ID                                                                                                                         
+                              ,act1.DD_CTC_ID = us.DD_CTC_ID    
+                              ,act1.DD_ETP_ID = us.DD_ETP_ID    
+                              ,act1.FEC_EST_POSESORIO_BC = us.FEC_EST_POSESORIO_BC                                                                                                                         
                               ,act1.USUARIOMODIFICAR = ''STOCK_BC''
                               ,act1.FECHAMODIFICAR = sysdate
                               
@@ -391,7 +398,9 @@ BEGIN
                                           FECHA_EAT_EST_TECNICO,
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
-                                          DD_CTC_ID,                                                                        
+                                          DD_CTC_ID,  
+                                          DD_ETP_ID,
+                                          FEC_EST_POSESORIO_BC,                                                                      
                                           USUARIOCREAR,
                                           FECHACREAR
                                           )
@@ -418,6 +427,8 @@ BEGIN
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,
                                           us.DD_CTC_ID,
+                                          us.DD_ETP_ID,
+                                          us.FEC_EST_POSESORIO_BC,
                                           ''STOCK_BC'',
                                           sysdate)';
 

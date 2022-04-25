@@ -1499,6 +1499,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		
 		if (!Checks.esNulo(dto.getCheckForzadoCajamar())) {
+			oferta.setCheckFormCajamar(dto.getCheckForzadoCajamar());
 			oferta.setCheckForzadoCajamar(dto.getCheckForzadoCajamar());
 			oferta.setFechaForzadoCajamar(new Date());
 			oferta.setUsuarioForzadoCajamar(genericAdapter.getUsuarioLogado());
@@ -2432,10 +2433,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaForzadoCajamar(oferta.getFechaForzadoCajamar());
 			}
 		
-			dto.setModificarFormalizacionCajamar(true);
-			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado()) 
-					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-				dto.setModificarFormalizacionCajamar(false);						
+			dto.setModificarFormalizacionCajamar(false);
+			if (!Checks.esNulo(expediente) && tramiteVentaApi.isExpedienteAntesAprobadoT013(expediente.getEstado())) {
+				dto.setModificarFormalizacionCajamar(true);						
 			}	
 		}
 		return dto;

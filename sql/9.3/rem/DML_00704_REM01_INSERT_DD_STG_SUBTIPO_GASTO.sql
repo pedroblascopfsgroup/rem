@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220304
+--## FECHA_CREACION=20220421
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17341
+--## INCIDENCIA_LINK=HREOS-17686
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INSERTAMOS SUBTIPO GASTO
@@ -16,6 +16,7 @@
 --##        0.3 Añadir subtipos de promociones y cambiar todos los códigos de los subtipos nuevos del PEP - [HREOS-17018] - Alejandra García
 --##        0.3 Añadir update - [HREOS-17087] - Alejandra García
 --##        0.5 Añadir nuevos subtipos: Nuevas PEPs A INCLUIR DIC 21 - [HREOS-17341] - Alejandra García
+--##        0.6 Añadir nuevos subtipos: Comisión Alquiler Prorrata - [HREOS-17686] - Alejandra García
 --#########################################
 --*/
 
@@ -30,7 +31,7 @@ DECLARE
 	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
  	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
  	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17018'; -- USUARIO CREAR/MODIFICAR
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17686'; -- USUARIO CREAR/MODIFICAR
 	V_COUNT NUMBER(16); -- Vble. para comprobar
 	V_TGA_ID NUMBER(16); 
 	err_num NUMBER; -- Numero de errores
@@ -131,10 +132,12 @@ DECLARE
       T_TIPO_DATA('252','Comisión cumplimiento objetivos Alquiler Prorrata 0%','13'),
       T_TIPO_DATA('253','Comisión cumplimiento objetivos Alquiler Prorrata 100%','13'),
       T_TIPO_DATA('254','Burofax Reocupados','18'),
-      T_TIPO_DATA('255','Notas Simples Negocio','18')
-
-
-
+      T_TIPO_DATA('255','Notas Simples Negocio','18'),
+      --Nuevos subtipos Comisión Alquiler Prorrata del 256 al 300 son los nuevos subtipos para las cartas de pago
+      T_TIPO_DATA('301','Comisión Gestión alquiler Prorrata 0%','13'),
+      T_TIPO_DATA('302','Comisión Gestión alquiler Prorrata 100%','13'),
+      T_TIPO_DATA('303','Comisión Gestión Gestorías Alquiler Prorrata 0%','13'),
+      T_TIPO_DATA('304','Comisión Gestión Gestorías Alquiler Prorrata 100%','13')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 	

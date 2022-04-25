@@ -1,10 +1,10 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220218
+--## FECHA_CREACION=20220422
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17208
+--## INCIDENCIA_LINK=HREOS-17495
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,6 +18,8 @@
 --##        0.6 Corrección filtro del la ETG campos TGA y STG- [HREOS-17073] - Alejandra García
 --##        0.7 Cambiar campo PROMOCION por DD_PRO_ID - [HREOS-17073] - Alejandra García
 --##        0.8 Añadir campo DD_SCM_ID como nuevo parámetro- [HREOS-17208] - Alejandra García
+--##        0.9 Modificar el cálculo de las PEP para desligar los gastos de tipo 'Carta de pago conjunta' del ejercicio - [HREOS-17468] - Alejandra García
+--##        0.10 Corrección cálculo para PEP Tarifa plana Prorrata 0% y Tarifa plana Prorrata 100% - [HREOS-17495] - Alejandra García
 --##########################################
 --*/
 
@@ -72,16 +74,17 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0  AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
                     AND EJE.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                  AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID AND GEN.ENT_ID = AUX.ACT_ID
                     AND GEN.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID
+                    AND TGA.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
                                                                                               WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL AND EJE.EJE_ANYO > ''2021'' THEN 0
                                                                                               ELSE GPV.DD_TGA_ID
@@ -98,8 +101,9 @@ BEGIN
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
                     AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
-                    AND ETG.EJE_ID = CASE
+                    AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
+                                        WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
@@ -107,6 +111,8 @@ BEGIN
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
                     AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
+                WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0
+                AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                 UNION
                 SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
@@ -130,14 +136,17 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
                     AND EJE.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                  AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID
+                    AND TGA.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = GLD.DD_STG_ID
+                    AND STG.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
                                                                                               WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.DD_PRO_ID IS NOT NULL THEN 0
                                                                                               ELSE GPV.DD_TGA_ID
@@ -152,12 +161,16 @@ BEGIN
                               ELSE ETG.PRO_ID
                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND ETG.EJE_ID = CASE
+                    AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
+                                        WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
+                WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 
+                AND (TGA.DD_TGA_CODIGO, STG.DD_STG_CODIGO) NOT IN ((''13'', ''181''), (''13'', ''182''))
+                AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN = 1)
               WHEN MATCHED THEN UPDATE SET
                   T1.COD_GRUPO_GASTO = T2.COD_GRUPO_GASTO
@@ -194,16 +207,17 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
                     AND EJE.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                  AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_ENT GEN ON GEN.GLD_ID = GLD.GLD_ID
                     AND GEN.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID
+                    AND TGA.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
                                                                                               WHEN GEN.DD_SED_ID IS NOT NULL AND GEN.DD_PRO_ID IS NOT NULL THEN 0
                                                                                               ELSE GPV.DD_TGA_ID
@@ -218,10 +232,11 @@ BEGIN
                               ELSE ETG.PRO_ID
                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID
+                    AND NVL(ETG.DD_CBC_ID, GEN.DD_CBC_ID) = GEN.DD_CBC_ID 
                     AND NVL(ETG.DD_TTR_ID, NVL(GEN.DD_TTR_ID, 0)) = NVL(GEN.DD_TTR_ID, 0)
-                    AND ETG.EJE_ID = CASE
+                    AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
+                                        WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
@@ -229,6 +244,8 @@ BEGIN
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
                     AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)
                     AND ETG.BORRADO = 0
+                WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 0
+                AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                 UNION
                  SELECT
                         GPV.GPV_NUM_GASTO_HAYA AS FAC_ID_REM
@@ -252,14 +269,17 @@ BEGIN
                 JOIN '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_NUM_GASTO_HAYA = AUX.FAC_ID_REM
                     AND GPV.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
-                      AND GLD.BORRADO = 0 AND NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 AND GLD.GLD_ID = AUX.LINEA_GASTO
+                      AND GLD.BORRADO = 0 AND GLD.GLD_ID = AUX.LINEA_GASTO
                 JOIN '|| V_ESQUEMA ||'.GIC_GASTOS_INFO_CONTABILIDAD GIC ON GIC.GPV_ID = GPV.GPV_ID
                     AND GIC.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = GIC.EJE_ID
                     AND EJE.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-                  AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
                   AND PRO.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = GPV.DD_TGA_ID
+                    AND TGA.BORRADO = 0
+                JOIN '|| V_ESQUEMA ||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = GLD.DD_STG_ID
+                    AND STG.BORRADO = 0
                 JOIN '|| V_ESQUEMA ||'.DD_ETG_EQV_TIPO_GASTO ETG ON NVL(ETG.DD_TGA_ID, 0) = CASE
                                                                                               WHEN GLD.DD_SED_ID IS NOT NULL AND GLD.DD_PRO_ID IS NOT NULL THEN 0
                                                                                               ELSE GPV.DD_TGA_ID
@@ -274,12 +294,16 @@ BEGIN
                               ELSE ETG.PRO_ID
                           END = PRO.PRO_ID
                     AND NVL(ETG.SUBROGADO,NVL(GPV.ALQ_SUBROGADO, 0)) = NVL(GPV.ALQ_SUBROGADO, 0)
-                    AND ETG.EJE_ID = CASE
+                    AND NVL(ETG.EJE_ID, 0) = CASE
                                         WHEN EJE.EJE_ANYO <= ''2021'' THEN (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2021'')
+                                        WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
+                WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 
+                AND (TGA.DD_TGA_CODIGO, STG.DD_STG_CODIGO) NOT IN ((''13'', ''181''), (''13'', ''182''))
+                AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN =1)
               WHEN MATCHED THEN UPDATE SET
                   T1.COD_GRUPO_GASTO = T2.COD_GRUPO_GASTO

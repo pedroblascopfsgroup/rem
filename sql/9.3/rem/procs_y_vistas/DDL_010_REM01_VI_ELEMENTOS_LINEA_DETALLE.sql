@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220309
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220425
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17156
+--## INCIDENCIA_LINK=HREOS-17713
 --## PRODUCTO=NO
 --## Finalidad: Vista para sacar las entidades de una línea de detalle
 --##           
@@ -16,6 +16,7 @@
 --##        0.4 Añadir nuevo campo elementos líneas detalle  - [HREOS-17131] - Javier Esbri
 --##        0.5 Añadir nuevo campo elementos líneas detalle  - [HREOS-17209] - Javier Esbri
 --##        0.6 Cambar de donde se aprovisiona el campo DD_CBC_ID - [HREOS-17156] - Javier Esbri
+--##        0.7 Cambiar de donde se aprovisiona el campo DD_CBC_ID, debe salir de la GLD_ENT - [HREOS-17713] - Alejandra García
 --##########################################
 --*/
 
@@ -108,8 +109,7 @@ BEGIN
         LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
         LEFT JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION LOC ON ACT.BIE_ID = LOC.BIE_ID and LOC.BORRADO = 0
         LEFT JOIN ' || V_ESQUEMA || '.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID AND BBVA.BORRADO = 0
-        LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO_CAIXA CBX ON CBX.ACT_ID = ACT.ACT_ID AND CBX.BORRADO = 0
-        LEFT JOIN ' || V_ESQUEMA || '.DD_CBC_CARTERA_BC CBC ON CBC.DD_CBC_ID = CBX.DD_CBC_ID
+        LEFT JOIN ' || V_ESQUEMA || '.DD_CBC_CARTERA_BC CBC ON CBC.DD_CBC_ID = GLDENT.DD_CBC_ID
         LEFT JOIN ' || V_ESQUEMA || '.DD_TTR_TIPO_TRANSMISION TTR ON TTR.DD_TTR_ID = GLDENT.DD_TTR_ID
         LEFT JOIN ' || V_ESQUEMA || '.DD_SED_SUBPARTIDA_EDIFICACION SED ON SED.DD_SED_ID = GLDENT.DD_SED_ID
         LEFT JOIN ' || V_ESQUEMA || '.DD_PRO_PROMOCIONES PROMO ON PROMO.DD_PRO_ID = GLDENT.DD_PRO_ID

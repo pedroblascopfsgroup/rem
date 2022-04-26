@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya	
---## FECHA_CREACION=20220218
+--## FECHA_CREACION=20220408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11185
@@ -255,7 +255,7 @@ BEGIN
 		            FROM
 		                '||V_ESQUEMA||'.act_hfp_hist_fases_pub hfp 
 						JOIN '||V_ESQUEMA||'.AUX_VIS_GESTION_COMERCIAL_RES AUX2 ON AUX2.ACT_ID=HFP.act_id and AUX2.CHECK_VISIBILIDAD is null
-						where hfp.borrado = 0
+						where hfp.borrado = 0 AND HFP.HFP_FECHA_FIN IS NULL
 		        ), toFilter AS (
 		            SELECT dd_sfp_id,act_id, dd_fsp_id
 		            FROM ordenado
@@ -521,7 +521,7 @@ BEGIN
 		            FROM
 		                '||V_ESQUEMA||'.act_hfp_hist_fases_pub hfp 
 						JOIN '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial AUX2 ON AUX2.ACT_ID=HFP.act_id and AUX2.CHECK_VISIBILIDAD is null
-						where hfp.borrado = 0
+						where hfp.borrado = 0 AND HFP.HFP_FECHA_FIN IS NULL
 		        ), toFilter AS (
 		            SELECT dd_sfp_id,act_id, dd_fsp_id
 		            FROM ordenado
@@ -555,7 +555,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	
 	--####################		INSERCIÓN DEL PERÍMETRO			###################### 	
-	
+	/*
 	V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac USING (
 		        SELECT aux1.act_id, aux1.CHECK_VISIBILIDAD 
                 from '||V_ESQUEMA||'.aux_visibilidad_gestion_comercial aux1 
@@ -573,7 +573,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('- Actualización de la pac');
 	
 	EXECUTE IMMEDIATE V_MSQL;
-	
+	*/
 	/*V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.aux_vis_gestion_comercial_res PURGE';
 	DBMS_OUTPUT.PUT_LINE('- Borrar tabla aux restringidas');
 	EXECUTE IMMEDIATE V_MSQL;

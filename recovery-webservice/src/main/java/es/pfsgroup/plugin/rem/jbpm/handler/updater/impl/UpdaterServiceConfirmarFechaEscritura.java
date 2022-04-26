@@ -121,7 +121,6 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 					}
 					if(CamposConfirmarFechaFirmaEscritura.COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if(DDSiNo.SI.equals(valor.getValor())) {
-							if(DDSiNo.SI.equals(valor.getValor())) {
 								if(eco.getUltimoPosicionamiento() != null){
 									DtoPosicionamiento dtoPos = new DtoPosicionamiento();
 									dtoPos.setIdPosicionamiento(eco.getUltimoPosicionamiento().getId());
@@ -133,7 +132,6 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 								estadoExpediente = DDEstadosExpedienteComercial.APROBADO;
 								estadoBC = DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER;
 								vuelvePBC = true;
-							}
 						}
 					}
 				}
@@ -158,7 +156,9 @@ public class UpdaterServiceConfirmarFechaEscritura implements UpdaterService {
 						estadoBC = estadoBC != null ? estadoBC :  DDEstadoExpedienteBc.CODIGO_FIRMA_DE_CONTRATO_AGENDADO;
 					}
 				}
-				expedienteComercialApi.createOrUpdateUltimoPosicionamiento(eco.getId(), dto);
+				if(!vuelvePBC){
+					expedienteComercialApi.createOrUpdateUltimoPosicionamiento(eco.getId(), dto);
+				}
 			}
 			
 			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoExpediente)));

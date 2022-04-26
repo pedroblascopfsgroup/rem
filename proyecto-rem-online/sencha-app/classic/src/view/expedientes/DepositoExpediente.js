@@ -79,20 +79,6 @@ Ext.define('HreRem.view.expedientes.DepositoExpediente', {
 						},
 			    		listeners:{
 							'focusLeave': 'checkIbanDevolucion'
-			    			/*change:function(field, newValue, oldValue, eOpts){
-			    				if (newValue.length >= 4 && newValue.length < 8 && !newValue.includes("-")) {
-			    					field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,8));
-			    				}else if (newValue.length >= 9 && newValue.length < 13 && newValue.includes("-")) {
-			    					field.setValue(newValue.substring(0,4)+ "-" + newValue.substring(4,9)+ "-" + newValue.substring(9,13));
-			    				}else if (newValue.length >= 13 && newValue.length < 17 && !newValue.includes("-")) {
-			    					field.setValue(newValue.substring(8,12)+ "-" + newValue.substring(12,16));
-			    				}else if (newValue.length >= 17 && newValue.length < 21 && !newValue.includes("-")) {
-			    					field.setValue(newValue.substring(12,16)+ "-" + newValue.substring(16,20));
-			    				}else if (newValue.length >= 21 && newValue.length < 25 && !newValue.includes("-")) {
-			    					field.setValue(newValue.substring(16,20)+ "-" + newValue.substring(20,24))
-			    				}
-								field.validate();
-							}*/
 			    		}
 	    			}/*,
 	    			{

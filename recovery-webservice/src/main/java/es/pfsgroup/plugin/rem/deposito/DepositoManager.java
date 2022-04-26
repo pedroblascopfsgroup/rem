@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.IBANValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -294,8 +295,8 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	
 	@Override
 	public boolean validarIban(String iban){
-		//IBANValidator ibanCheck = new IBANValidator();
-		return true;//ibanCheck.isValid(iban);
+		IBANValidator ibanCheck = new IBANValidator();
+		return ibanCheck.isValid(iban);
 	}
 	
 }

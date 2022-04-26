@@ -6,12 +6,13 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
 import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
 
 public interface ProveedoresApi {
 	
@@ -310,6 +312,12 @@ public interface ProveedoresApi {
 	public List<DtoDiccionario> getDelegacionesByProveedor(String id);
 	
 	public boolean deleteConductasInapropiadas(String id);
+
+	List<VHistoricoBloqueosApis> getHistoricoBloqueos(Long id);
+
+	DtoBloqueoApis getBloqueoApiByProveedorId(Long id);
+
+	void saveBloqueoProveedorById(Long id, DtoBloqueoApis dto);
 
 	String uploadConducta(WebFileItem fileItem) throws Exception;
 

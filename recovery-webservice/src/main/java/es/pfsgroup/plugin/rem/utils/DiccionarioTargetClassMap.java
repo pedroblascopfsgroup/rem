@@ -395,7 +395,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("origenPeticionHomologacion", DDOrigenPeticionHomologacion.class);	
 		mapa.put("idioma", DDIdioma.class);
 		mapa.put("especialidad", DDEspecialidad.class);
-		
 
 		return Collections.unmodifiableMap(mapa);
 	}

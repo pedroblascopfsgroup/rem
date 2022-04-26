@@ -9,9 +9,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -24,7 +21,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -51,6 +47,40 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.BloqueoApis;
+import es.pfsgroup.plugin.rem.model.BloqueoApisCartera;
+import es.pfsgroup.plugin.rem.model.BloqueoApisEspecialidad;
+import es.pfsgroup.plugin.rem.model.BloqueoApisHistorico;
+import es.pfsgroup.plugin.rem.model.BloqueoApisLineaNegocio;
+import es.pfsgroup.plugin.rem.model.BloqueoApisProvincia;
+import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
+import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoInterlocutorBC;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
+import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.EntidadProveedor;
+import es.pfsgroup.plugin.rem.model.ProveedorEspecialidad;
+import es.pfsgroup.plugin.rem.model.ProveedorIdioma;
+import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
 import es.pfsgroup.plugin.rem.model.dd.DDBloqueDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
@@ -67,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
@@ -75,6 +106,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresCarteraDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 @Service("proveedoresManager")
@@ -94,6 +126,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
+	public static final String VALOR_POR_DEFECTO = "VALOR_POR_DEFECTO";
 
 	protected static final Log logger = LogFactory.getLog(ProveedoresManager.class);
 
@@ -1658,6 +1691,381 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return false;
 	}
+
+
+	@Override
+	public DtoBloqueoApis getBloqueoApiByProveedorId(Long id) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		if(bloqueo != null) {
+			dto =  this.bloqueoApiToDtoBloqueoApi(bloqueo);
+		}
+	
+		return dto;
+	}
+	
+	
+	private DtoBloqueoApis bloqueoApiToDtoBloqueoApi (BloqueoApis bloqueo) {
+		DtoBloqueoApis dto = new DtoBloqueoApis();
+		
+		dto.setIdBloqueo(bloqueo.getId());
+		dto.setMotivo(bloqueo.getMotivoBloqueo());
+		dto.setMotivoAnterior(bloqueo.getMotivoBloqueo());
+		List<BloqueoApisCartera> bloqueoApisCarteraList = bloqueo.getBloqueoApisCartera();
+		if(bloqueoApisCarteraList != null && !bloqueoApisCarteraList.isEmpty()) {
+			dto.setCarteraCodigo(this.devolverCodigoCarterasBloqueadasApi(bloqueoApisCarteraList));
+		}
+		List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList = bloqueo.getBloqueoApisEspecialidad();
+		if(bloqueoApisEspecialidadList != null && !bloqueoApisEspecialidadList.isEmpty()) {
+			dto.setEspecialidadCodigo(this.devolverCodigoEspecialidadBloqueadasApi(bloqueoApisEspecialidadList));
+		}
+		List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList = bloqueo.getBloqueoApisLineaNegocio();
+		if(bloqueoApisLineaNegocioList != null && !bloqueoApisLineaNegocioList.isEmpty()) {
+			dto.setLineaNegocioCodigo(this.devolverCodigoLineaNegocioBloqueadasApi(bloqueoApisLineaNegocioList));
+		}
+		List<BloqueoApisProvincia> bloqueoApisProvinciaList = bloqueo.getBloqueoApisProvincia();
+		if(bloqueoApisProvinciaList != null && !bloqueoApisProvinciaList.isEmpty()) {
+			dto.setProvinciaCodigo(this.devolverCodigoProvinciaBloqueadasApi(bloqueoApisProvinciaList));
+		}
+	
+		return dto;
+	}
+	
+	private String devolverCodigoCarterasBloqueadasApi(List<BloqueoApisCartera> bloqueoApisCarteraList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisCartera bloqueo : bloqueoApisCarteraList) {
+			if(bloqueo.getCartera() != null) {
+				lista.append(bloqueo.getCartera().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoEspecialidadBloqueadasApi(List<BloqueoApisEspecialidad> bloqueoApisEspecialidadList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisEspecialidad bloqueo : bloqueoApisEspecialidadList) {
+			if(bloqueo.getEspecialidad() != null) {
+				lista.append(bloqueo.getEspecialidad().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoLineaNegocioBloqueadasApi(List<BloqueoApisLineaNegocio> bloqueoApisLineaNegocioList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisLineaNegocio bloqueo : bloqueoApisLineaNegocioList) {
+			if(bloqueo.getTipoComercializacion() != null) {
+				lista.append(bloqueo.getTipoComercializacion().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String devolverCodigoProvinciaBloqueadasApi(List<BloqueoApisProvincia> bloqueoApisProvinciaList) {
+		StringBuffer lista = new StringBuffer();
+		for (BloqueoApisProvincia bloqueo : bloqueoApisProvinciaList) {
+			if(bloqueo.getProvincia() != null) {
+				lista.append(bloqueo.getProvincia().getCodigo()).append(",");
+			}
+		}
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return this.returnStringFromList(lista);
+	}
+	
+	private String returnStringFromList(StringBuffer lista) {
+		String listString = lista.toString();
+		if(!listString.isEmpty()) {
+			listString = lista.substring(0, (listString.length()-1));
+		}
+		
+		return listString;
+	}
+	
+	@Override
+	public List<VHistoricoBloqueosApis> getHistoricoBloqueos(Long id) {
+		List<VHistoricoBloqueosApis> hBAHList = genericDao.getList(VHistoricoBloqueosApis.class, genericDao.createFilter(FilterType.EQUALS, "idPve", id)); 
+		return hBAHList;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void saveBloqueoProveedorById (Long id, DtoBloqueoApis dto) {
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
+		DtoBloqueoApis bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
+		if(bloqueo != null && bloqueo.getProveedor()!= null) {
+			this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
+			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
+			Auditoria.delete(bloqueo);
+			genericDao.save(BloqueoApis.class, bloqueo);
+		}
+		
+		bloqueo = new BloqueoApis();
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		bloqueo.setProveedor(proveedor);
+		bloqueo.setMotivoBloqueo(dto.getMotivo());
+		genericDao.save(BloqueoApis.class, bloqueo);
+
+		if(!VALOR_POR_DEFECTO.equals(dto.getCarteraCodigo())) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				this.saveBloqueosCartera(bloqueo,Arrays.asList(dto.getCarteraCodigo().split(",")));
+			}else if(bloqueoAntiguo.getCarteraCodigo() != null && !bloqueoAntiguo.getCarteraCodigo().isEmpty()) {
+				this.saveBloqueosCartera(bloqueo,Arrays.asList(bloqueoAntiguo.getCarteraCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getEspecialidadCodigo())) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty() && !VALOR_POR_DEFECTO.equals(dto.getCarteraCodigo())) {
+				this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(dto.getEspecialidadCodigo().split(",")));
+			}else if(bloqueoAntiguo.getEspecialidadCodigo() != null && !bloqueoAntiguo.getEspecialidadCodigo().isEmpty()) {
+				this.saveBloqueosEspecialidad(bloqueo,Arrays.asList(bloqueoAntiguo.getEspecialidadCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getLineaNegocioCodigo())) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(dto.getLineaNegocioCodigo().split(",")));
+			}else if(bloqueoAntiguo.getLineaNegocioCodigo() != null && !bloqueoAntiguo.getLineaNegocioCodigo().isEmpty()) {
+				this.saveBloqueosLineaNegocio(bloqueo,Arrays.asList(bloqueoAntiguo.getLineaNegocioCodigo().split(",")));
+			}
+		}
+		
+		if(!VALOR_POR_DEFECTO.equals(dto.getProvinciaCodigo())) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				this.saveBloqueosProvincia(bloqueo,Arrays.asList(dto.getProvinciaCodigo().split(",")));
+			}else if(bloqueoAntiguo.getProvinciaCodigo() != null && !bloqueoAntiguo.getProvinciaCodigo().isEmpty()) {
+				this.saveBloqueosProvincia(bloqueo,Arrays.asList(bloqueoAntiguo.getProvinciaCodigo().split(",")));
+			}
+		}
+		
+		
+	}
+	
+	private void saveBloqueosCartera(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisCartera bl = new BloqueoApisCartera();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setCartera(genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisCartera.class, bl);
+			
+		}
+	}
+	
+	private void saveBloqueosEspecialidad(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisEspecialidad bl = new BloqueoApisEspecialidad();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setEspecialidad(genericDao.get(DDEspecialidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisEspecialidad.class, bl);
+			
+		}
+	}
+
+	private void saveBloqueosLineaNegocio(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisLineaNegocio bl = new BloqueoApisLineaNegocio();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setTipoComercializacion(genericDao.get(DDTipoComercializacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisLineaNegocio.class, bl);
+		}
+	}
+	
+	private void saveBloqueosProvincia(BloqueoApis bloqueo, List<String> listaCodigos) {
+		for (String codigo : listaCodigos) {
+			BloqueoApisProvincia bl = new BloqueoApisProvincia();
+			bl.setAuditoria(Auditoria.getNewInstance());
+			bl.setBloqueoApis(bloqueo);
+			bl.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo)));
+			genericDao.save(BloqueoApisProvincia.class, bl);
+			
+		}
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void createRegistroHistoricoBloqueoApis(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
+		
+		
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+	
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			List<String> nuevosCodigos = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), dto, bloqueoAntiguo);
+			DDTipoBloqueoApi tpC = genericDao.get(DDTipoBloqueoApi.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ddTipoBloqueoApi.getCodigo()));
+			for (String codigo : nuevosCodigos) {
+				BloqueoApisHistorico bah = new BloqueoApisHistorico();
+				bah.setTipoBloqueo(tpC);
+				bah = this.saveBloqueo(bah, tpC, codigo);
+				bah.setProveedor(proveedor);
+				bah.setMotivoBloqueo(dto.getMotivo());
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+		
+		
+	}
+	
+	
+	private BloqueoApisHistorico saveBloqueo(BloqueoApisHistorico bah, DDTipoBloqueoApi tipoBloqueo, String codigo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		if(DDTipoBloqueoApi.CARTERA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisCartera(genericDao.get(DDCartera.class, filtro));
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisLineaNegocio(genericDao.get(DDTipoComercializacion.class, filtro));
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisEspecialidad(genericDao.get(DDEspecialidad.class, filtro));
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisProvincia(genericDao.get(DDProvincia.class, filtro));
+		}
+		
+		
+		return bah;
+	}
+	
+	private List<String> devolverCodigos(String codigoTipo, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo){
+		List<String> codigosNuevos = new ArrayList<String>();
+		List<String> codigosAntiguos= new ArrayList<String>();
+		List<String> anyadirCodigo = new ArrayList<String>();
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getCarteraCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getCarteraCodigo() != null && !bloqueoAntiguo.getCarteraCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getCarteraCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getLineaNegocioCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getLineaNegocioCodigo() != null && !bloqueoAntiguo.getLineaNegocioCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getLineaNegocioCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getEspecialidadCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getEspecialidadCodigo() != null && !bloqueoAntiguo.getEspecialidadCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getEspecialidadCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getProvinciaCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getProvinciaCodigo() != null && !bloqueoAntiguo.getProvinciaCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getProvinciaCodigo().split(","));
+			}
+		}
+			
+		for (String codigoNuevo : codigosNuevos) {
+			if(!codigosAntiguos.contains(codigoNuevo)) {
+				anyadirCodigo.add(codigoNuevo);
+			}
+		}
+		
+		anyadirCodigo.remove(VALOR_POR_DEFECTO);
+		
+		return anyadirCodigo;
+	}
+	
+	
+	
+	@Transactional(readOnly = false)
+	private void modificarRegistrosAnteriores(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
+		
+		Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id);
+		Filter filtroMotivoDesbloqueoNull = genericDao.createFilter(FilterType.NULL, "motivoDesbloqueo");
+		String motivo = dto.getMotivo();
+		
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			if(this.seHaModificadoRegistro(ddTipoBloqueoApi.getCodigo(), dto)) {
+				List<String> codigosBorrar = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), bloqueoAntiguo, dto);
+				for (String codigo : codigosBorrar) {
+					this.actualizarRegistros(ddTipoBloqueoApi.getCodigo(), codigo, motivo, filtroProveedor, filtroMotivoDesbloqueoNull);
+				}
+			}
+		}
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void actualizarRegistros(String codigoBloqueo, String codigo, String motivo, Filter filtroProveedor, Filter filtroMotivoDesbloqueoNull) {
+		Filter filtro = this.devolverFiltro(codigoBloqueo, codigo);
+		if(filtro != null) {
+			BloqueoApisHistorico bah = genericDao.get(BloqueoApisHistorico.class, filtroProveedor, filtroMotivoDesbloqueoNull,filtro);
+			if(bah != null) {
+				bah.setMotivoDesbloqueo(motivo);
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+	}
+	
+	private boolean seHaModificadoRegistro(String codigoTipo, DtoBloqueoApis dto) {
+		boolean registroModificado = false;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}
+		
+		return registroModificado;
+	}
+	private Filter  devolverFiltro(String codigoTipo, String codigo){
+		Filter filter = null;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisCartera.codigo", codigo);
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisLineaNegocio.codigo", codigo);
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisEspecialidad.codigo", codigo);
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisProvincia.codigo", codigo);
+		}
+		
+		return filter;
+	}
+	
+	
 	
 	@Override
 	@Transactional(readOnly = false)

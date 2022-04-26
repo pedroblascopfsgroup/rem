@@ -11,7 +11,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,16 +35,15 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
@@ -57,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
 import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
@@ -813,6 +812,60 @@ public class ProveedoresController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoBloqueos(Long id, ModelMap model) {
+		try {
+			
+			model.put("data", proveedoresApi.getHistoricoBloqueos(id));
+			model.put("success", true);
+		} catch (Exception e) {
+			
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getBloqueoByProveedorId(Long id, ModelMap model) {
+		try {
+			
+			model.put("data", proveedoresApi.getBloqueoApiByProveedorId(id));
+			model.put("success", true);
+		} catch (Exception e) {
+			
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveBloqueoProveedorById(Long id, DtoBloqueoApis dto, ModelMap model, HttpServletRequest request) {
+		try{
+			proveedoresApi.saveBloqueoProveedorById(id, dto);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+			logger.warn("Excepción controlada en ProveedoresController", jvex);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadConducta(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
@@ -850,4 +903,5 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
 }

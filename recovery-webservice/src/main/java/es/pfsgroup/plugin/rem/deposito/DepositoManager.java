@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.IBANValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ConfiguracionDeposito;
 import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.Deposito;
@@ -34,6 +36,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Service("depositoManager")
 public class DepositoManager extends BusinessOperationOverrider<DepositoApi> implements DepositoApi {
@@ -99,25 +103,38 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	@Override
 	@Transactional
 	public synchronized CuentasVirtuales vincularCuentaVirtual(Oferta oferta) {
-
-		List<CuentasVirtuales> cuentasVirtuales = null;
-		if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getSubcartera() != null) {
-			cuentasVirtuales = genericDao.getList(CuentasVirtuales.class,
-					genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()),
-					genericDao.createFilter(FilterType.NULL, "fechaInicio"));
-		}
-
-		CuentasVirtuales cuentaVirtual = null;
-		if(cuentasVirtuales != null && !cuentasVirtuales.isEmpty()) {
-			cuentaVirtual = cuentasVirtuales.get(0);
-			cuentaVirtual.setFechaInicio(new Date());
-			cuentaVirtual.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
-			cuentaVirtual.getAuditoria().setFechaModificar(new Date());
-
-			genericDao.update(CuentasVirtuales.class, cuentaVirtual);
-		}
+			CuentasVirtuales cuentaVirtual = null;
+			List<CuentasVirtuales> cuentasVirtuales = null;
+			if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getSubcartera() != null) {
+				cuentasVirtuales = genericDao.getList(CuentasVirtuales.class,
+						genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()),
+						genericDao.createFilter(FilterType.NULL, "fechaInicio"));
+			}
+			if(cuentasVirtuales != null && !cuentasVirtuales.isEmpty()) {
+				cuentaVirtual = cuentasVirtuales.get(0);
+				cuentaVirtual.setFechaInicio(new Date());
+				cuentaVirtual.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+				cuentaVirtual.getAuditoria().setFechaModificar(new Date());
+	
+				genericDao.update(CuentasVirtuales.class, cuentaVirtual);
+			}
 
 		return cuentaVirtual;
+	}
+	
+	@Override
+	public boolean esNecesarioDepositoNuevaOferta(Activo ActivoCuentaVirtual) {
+		
+		if(ActivoCuentaVirtual != null 
+				&& ActivoCuentaVirtual.getSubcartera() != null ) {
+			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", ActivoCuentaVirtual.getSubcartera().getCodigo()));
+			if(conDep != null && conDep.getDepositoNecesario()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	@Override

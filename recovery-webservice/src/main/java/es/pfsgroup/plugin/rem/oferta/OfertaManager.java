@@ -905,8 +905,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				&& !Checks.esNulo(ofertaDto.getCodMotivoRechazoRCDC())){
 			errorsList.put("recomendacionRC||recomendacionDC", RestApi.REST_MSG_MISSING_REQUIRED);
 		}
-		
-
 		return errorsList;
 	}
 
@@ -1007,6 +1005,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			oferta = new Oferta();
 
+
+			
+			
+			
 			if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_WEBCOM.equals(sistemaOrigen.getCodigo())) {
 				oferta.setOrigen(sistemaOrigen);
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())) {
@@ -1424,9 +1426,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setTitularesConfirmadosSINo(diccionarioSiNo);
 				}
 			}
-
+			
+			//Aqui se realiza el save de la oferta pura
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
+			
+			
+			if(!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
+				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual)){
+					depositoApi.generaDeposito(oferta);
+					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(oferta);
+					if(cuentaVirtual == null) {
+						errorsList.put("cuentaVirtual", RestApi.REST_NO_EXIST_CUENTA_VIRTUAL);
+						return errorsList;
+					}
+					oferta.setCuentaVirtual(cuentaVirtual);
+				}
+			}
+			
+		
+
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				oferta.setId(idOferta);
 				oferta.setTitularesAdicionales(null);

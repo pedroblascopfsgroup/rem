@@ -171,31 +171,18 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							
 							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
 							
-							if(ofertaAceptada.getCheckForzadoCajamar() != null) {
-								if(ofertaAceptada.getCheckForzadoCajamar()) {
-									GestorEntidadDto ge = new GestorEntidadDto();
-									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-									
-									ge.setIdEntidad(expediente.getId());
-									ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-									ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-									ge.setIdTipoGestor(tipoGestorComercial.getId());
-									gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);
-								}
-							}else {
-								if(ofertaAceptada.getCheckFormCajamar()) {
-									GestorEntidadDto ge = new GestorEntidadDto();
-									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-									
-									ge.setIdEntidad(expediente.getId());
-									ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-									ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-									ge.setIdTipoGestor(tipoGestorComercial.getId());
-									gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);
-								}
+							if(ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()) {
+								GestorEntidadDto ge = new GestorEntidadDto();
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+								
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);
 							}
+							
 						}
 						valorCampoEjerce = resultadoTanteo.getDescripcion();
 					}

@@ -159,8 +159,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							
 							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
 							
-							if(ofertaAceptada.getCheckForzadoCajamar() != null) {
-								if(ofertaAceptada.getCheckForzadoCajamar()) {
+							if(ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()) {
 									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
 									
@@ -170,18 +169,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 									ge.setIdTipoGestor(tipoGestorComercial.getId());
 									gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 								}
-							}else {
-								if(ofertaAceptada.getCheckFormCajamar()) {
-									EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-											.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-									
-									ge.setIdEntidad(expediente.getId());
-									ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-									ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-									ge.setIdTipoGestor(tipoGestorComercial.getId());
-									gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
-								}
-							}
+							
 							
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación

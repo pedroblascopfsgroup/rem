@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220426
+--## FECHA_CREACION=20220427
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=version-2.35.3-rem
 --## INCIDENCIA_LINK=REMVIP-7058
@@ -1228,6 +1228,10 @@ BEGIN
                             V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
                             --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
                         END IF;
+
+                    ELSE
+                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/2 | El estado del expediente NO pasa a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||' por la formalizacion Cajamar.');
+                        V_PASOS := V_PASOS+1;
                     END IF;
 
                     IF COD_RETORNO = 0 THEN

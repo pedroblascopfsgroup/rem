@@ -4356,15 +4356,15 @@ public class ActivoAdapter {
 				}
 				
 				if (dto.getEmailRte() != null) {
-					clienteComercial.setEmail(dto.getEmailRte());
+					clienteComercial.setEmailRepresentante(dto.getEmailRte());
 				}
 				
 				if (dto.getTelefono1Rte() != null) {
-					clienteComercial.setTelefono1(dto.getTelefono1Rte());
+					clienteComercial.setTelefonoRepresentante(dto.getTelefono1Rte());
 				}
 				
 				if (dto.getTelefono2Rte() != null) {
-					clienteComercial.setTelefono2(dto.getTelefono2Rte());
+					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
 
 				if (clienteComercial.getDocumentoRepresentante() != null && !clienteComercial.getDocumentoRepresentante().trim().isEmpty()){

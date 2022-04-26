@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.ProveedorIdioma;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VHistoricoBloqueosApis;
+import es.pfsgroup.plugin.rem.model.dd.DDBloqueDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
@@ -93,11 +94,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDIdioma;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
-import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
@@ -1224,12 +1223,14 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			List<ActivoAdjuntoProveedor> adjuntos = genericDao.getList(ActivoAdjuntoProveedor.class, adjuntoFilter, adjuntoBorradoFilter, adjuntoLocalFilter);
 
 			for (ActivoAdjuntoProveedor adjunto : adjuntos) {
-				DtoAdjunto dto = new DtoAdjunto();
-				BeanUtils.copyProperties(dto, adjunto);
-				beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
-				beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
-				beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());									
-				listaAdjuntos.add(dto);
+				if (DDBloqueDocumentoProveedor.COD_DOCUMENTOS.equals(adjunto.getTipoDocumentoProveedor().getBloque().getCodigo())) {
+					DtoAdjunto dto = new DtoAdjunto();
+					BeanUtils.copyProperties(dto, adjunto);
+					beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
+					beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());									
+					listaAdjuntos.add(dto);
+				}
 			}
 		}
 		
@@ -1626,8 +1627,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			dto.setDelegacion(conducta.getDelegacion().getId().toString());
 		
 		if (!Checks.esNulo(conducta.getAdjunto())) {
-			dto.setIdAdjunto(conducta.getAdjunto().getId().toString());
+			dto.setIdAdjunto(!Checks.esNulo(conducta.getAdjunto().getIdDocRestClient()) ? 
+					conducta.getAdjunto().getIdDocRestClient().toString() : conducta.getAdjunto().getId().toString());
 			dto.setAdjunto(!Checks.esNulo(conducta.getAdjunto().getDescripcion()) ? conducta.getAdjunto().getDescripcion() : conducta.getAdjunto().getNombre());
+			dto.setTamanyoAdjunto(!Checks.esNulo(conducta.getAdjunto().getTamanyo()) ? conducta.getAdjunto().getTamanyo().toString() : "0");
 		}
 		
 		return dto;
@@ -1688,6 +1691,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return false;
 	}
+
 
 	@Override
 	public DtoBloqueoApis getBloqueoApiByProveedorId(Long id) {
@@ -2062,4 +2066,48 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 	
 	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String uploadConducta(WebFileItem fileItem) throws Exception {
+				
+		Adjunto adj = null;
+		Long idDocRestClient = null;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		ActivoAdjuntoProveedor adjuntoProveedor = new ActivoAdjuntoProveedor();
+		ConductasInapropiadas conducta = genericDao.get(ConductasInapropiadas.class, 
+				genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(fileItem.getParameter("idEntidad"))));
+		ActivoProveedor proveedor = proveedoresDao.get(conducta.getProveedor().getId());
+		
+	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+	   	
+	   	if(!Checks.esNulo(tipoDocumentoProveedor)) {
+		   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		   		idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoProveedor(proveedor, fileItem, usuarioLogado.getUsername(), tipoDocumentoProveedor.getMatricula());
+		   	} else {
+		   		adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		   	}
+		   	
+		   	if (!Checks.esNulo(idDocRestClient) || !Checks.esNulo(adj)) {
+					adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumentoProveedor);
+					adjuntoProveedor.setProveedor(proveedor);
+					adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
+					adjuntoProveedor.setTamanyo(fileItem.getFileItem().getLength());
+					adjuntoProveedor.setNombre(fileItem.getFileItem().getFileName());
+					adjuntoProveedor.setDescripcion(fileItem.getParameter("descripcion"));			
+					adjuntoProveedor.setFechaDocumento(new Date());
+					adjuntoProveedor.setIdDocRestClient(idDocRestClient);
+					adjuntoProveedor.setAdjunto(adj);
+					genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
+					
+					conducta.setAdjunto(adjuntoProveedor);
+					genericDao.save(ConductasInapropiadas.class, conducta);
+		   	}
+	   	} else {
+			throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+		}
+	   	
+	   	return null;
+	}
 }

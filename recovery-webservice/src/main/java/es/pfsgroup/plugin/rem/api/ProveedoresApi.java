@@ -319,4 +319,6 @@ public interface ProveedoresApi {
 
 	void saveBloqueoProveedorById(Long id, DtoBloqueoApis dto);
 
+	String uploadConducta(WebFileItem fileItem) throws Exception;
+
 }

@@ -22,6 +22,7 @@ public class DtoConductasInapropiadas extends WebDto {
 	private String delegacion;
 	private String adjunto;
 	private String idAdjunto;
+	private String tamanyoAdjunto;
 	
 	public Long getId() {
 		return id;
@@ -94,5 +95,11 @@ public class DtoConductasInapropiadas extends WebDto {
 	}
 	public void setIdAdjunto(String idAdjunto) {
 		this.idAdjunto = idAdjunto;
+	}
+	public String getTamanyoAdjunto() {
+		return tamanyoAdjunto;
+	}
+	public void setTamanyoAdjunto(String tamanyoAdjunto) {
+		this.tamanyoAdjunto = tamanyoAdjunto;
 	}
 }

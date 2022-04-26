@@ -863,8 +863,45 @@ public class ProveedoresController extends ParadiseJsonController {
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView uploadConducta(HttpServletRequest request, HttpServletResponse response) {
+		ModelMap model = new ModelMap();
+		WebFileItem fileItem = new WebFileItem();
+
+		try {
+			fileItem = uploadAdapter.getWebFileItem(request);
+
+			String errores = proveedoresApi.uploadConducta(fileItem);
+
+			model.put("errores", errores);
+			model.put("success", errores == null);
+			
+		} catch (GestorDocumentalException ex) {
+			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
+			model.put("success", false);
+			if (ex.getMessage().contains("An item with the name '"+fileItem.getFileItem().getFileName()+"' already exists") || ex.getMessage().contains("Ya existe un elemento con el nombre")) {
+				model.put("errorMessage", ProveedoresManager.ERROR_NOMBRE_DOCUMENTO_PROVEEDOR+": "+fileItem.getFileItem().getFileName());
+			} else if (ex.getMessage().contains("Control duplicado, ya existe un documento igual")) {
+			   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, 
+			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")), 
+			   			genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR+": "+tipoDocumentoProveedor.getDescripcion());
+			} else {
+				model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
+			}
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			if (ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+			}
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
 
 		return createModelAndViewJson(model);
 	}
-	
+
 }

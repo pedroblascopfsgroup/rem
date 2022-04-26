@@ -3,9 +3,12 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -49,6 +52,10 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 	
 	@Column(name = "DD_TDP_MATRICULA_GD")   
 	private String matricula;	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_BDP_ID")
+    private DDBloqueDocumentoProveedor bloque;
 
 	@Version   
 	private Long version;
@@ -110,6 +117,14 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDBloqueDocumentoProveedor getBloque() {
+		return bloque;
+	}
+
+	public void setBloque(DDBloqueDocumentoProveedor bloque) {
+		this.bloque = bloque;
 	}
 
 }

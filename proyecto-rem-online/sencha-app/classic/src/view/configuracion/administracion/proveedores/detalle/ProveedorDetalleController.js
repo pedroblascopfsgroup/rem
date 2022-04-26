@@ -20,7 +20,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     abrirFormularioAdjuntarDocumentos: function(grid) {
 		var me = this,
 		idProveedor = me.getViewModel().get("proveedor.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idProveedor, parent: grid}).show();
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idProveedor, parent: grid, bloque: '01'}).show();
 		
 	},
     
@@ -453,5 +453,67 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				chainedDos.setDisabled(true);
 			}
 		}
-    }
+    },
+    
+    abrirFormularioAdjuntarConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this,
+		idConducta = grid.record.id;
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor", {entidad: 'proveedores', idEntidad: idConducta, parent: table, bloque: '02'}).show();
+		
+	},
+	
+	downloadDocumentoConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this;
+    	var url= $AC.getRemoteUrl('activo/getLimiteArchivo');
+		var data;
+		var record = grid.record.data;
+		Ext.Ajax.request({
+		     url: url,
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.sucess == "true"){
+		    		 var limite = data.limite;
+		    		 if(!Ext.isDefined(record.tamanyoAdjunto) || record.tamanyoAdjunto == null || limite == 0  || record.tamanyoAdjunto/1024/1024 <= limite){
+		    			 config = {};
+
+						config.url=$AC.getWebPath()+"proveedores/bajarAdjuntoProveedor."+$AC.getUrlPattern();
+						config.params = {};
+						config.params.id=record.idAdjunto;
+						config.params.nombreDocumento=record.adjunto.replace(/,/g, "");
+						me.fireEvent("downloadFile", config);
+						
+		    		 }else{
+		    			 table.fireEvent("errorToast", "No se puede descargar ficheros mayores de "+limite+"Mb.");
+		    		 }
+		    	 }					        		         
+		     },
+		     failure: function(response) {
+		    	 table.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+		 });					                
+	},
+	
+	borrarDocumentoAdjuntoConductas: function(table, rowIndex, colIndex,button, grid) {
+		var me = this;
+		var record = grid.record.data;
+		params = {};
+		params.idEntidad = me.getViewModel().get("proveedor.id");
+		params.id = record.idAdjunto;
+		
+		Ext.Ajax.request({
+		     url: $AC.getRemoteUrl('proveedores/deleteAdjunto'),
+			params: params,
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.success == "true"){
+		    		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 	table.store.load();
+		    	 }					        		         
+		     },
+		     failure: function(response) {
+		    	 table.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           		 	table.store.load();
+		     }
+		 });
+	}
 });

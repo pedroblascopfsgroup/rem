@@ -96,6 +96,10 @@ public class VBusquedaProveedor implements Serializable {
 	@Column(name = "USU_ID")
 	private Long idUser;
 	
+	@Column(name = "LINEA_NEGOCIO")
+	private String idLineaNegocio;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -311,7 +315,14 @@ public class VBusquedaProveedor implements Serializable {
 	public void setIdUser(Long idUser) {
 		this.idUser = idUser;
 	}
-	
+
+	public String getIdLineaNegocio() {
+		return idLineaNegocio;
+	}
+
+	public void setIdLineaNegocio(String idLineaNegocio) {
+		this.idLineaNegocio = idLineaNegocio;
+	}
 	
 
 }

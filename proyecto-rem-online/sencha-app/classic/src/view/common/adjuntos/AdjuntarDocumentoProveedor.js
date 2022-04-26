@@ -25,10 +25,11 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
      * @type 
      */
     parent: null,
-	
+	bloque: null,
     initComponent: function() {
     	
     	var me = this;
+		var url = me.bloque == '02' ? $AC.getRemoteUrl(me.entidad + "/uploadConducta") : $AC.getRemoteUrl(me.entidad + "/upload");
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
     	
@@ -39,7 +40,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	me.items = [
     				{
 	    				xtype: 'formBase', 
-	    				url: $AC.getRemoteUrl(me.entidad + "/upload"),
+	    				url: url,
 	    				reference: 'adjuntarDocumentoFormRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
@@ -84,7 +85,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	publishes: 'value',
 						        	width: '100%',
 						        	bind: {
-						        		store: '{comboTipoDocumento}'
+						        		store: {
+											model: 'HreRem.model.ComboBase',
+											proxy: {
+												type: 'uxproxy',
+												remoteUrl: 'generic/getDocumentosProveedor',
+												extraParams: {codBloque: me.bloque}
+											}
+										}
 						        	},
 					            	displayField	: 'descripcion',	    							
 								    valueField		: 'codigo',

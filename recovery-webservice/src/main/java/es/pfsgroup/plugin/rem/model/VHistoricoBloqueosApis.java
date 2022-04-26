@@ -16,7 +16,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "V_BLOQUEO_APIS", schema = "${entity.schema}")
+@Table(name = "V_HISTORICO_BLOQUEO_APIS", schema = "${entity.schema}")
 public class VHistoricoBloqueosApis implements Serializable{
 	
 	/**
@@ -25,27 +25,60 @@ public class VHistoricoBloqueosApis implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "PVE_ID")
+	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "BHA_BLOQUEOS")
+	@Column(name = "PVE_ID")
+	private Long idPve;
+	
+	@Column(name = "DD_TPB_DESCRIPCION")
+	private String tipoBloqueo;
+	
+	@Column(name = "BLOQUEOS")
 	private String bloqueos;
 	
-	@Column(name = "BHA_MOTIVO")
-	private String motivo;
+	@Column(name = "BHA_MOTIVO_BLOQUEO")
+	private String motivoBloqueo;
 	
-	@Column(name = "NOMBRE_USUARIO")
-	private String usuario;
+	@Column(name = "FECHA_BLOQUEO")
+	private Date fechaBloqueo;
 	
-	@Column(name = "BHA_FECHA")
-	private Date fecha;
+	@Column(name = "USUARIO_BLOQUEO")
+	private String usuarioBloqueo;
+	
+	@Column(name = "BHA_MOTIVO_DESBLOQUEO")
+	private String motivoDesbloqueo;
+	
+	@Column(name = "FECHA_DESBLOQUEO")
+	private Date fechaDesbloqueo;
+	
+	@Column(name = "USUARIO_DESBLOQUEO")
+	private String usuarioDesbloqueo;
 
+	
+	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdPve() {
+		return idPve;
+	}
+
+	public void setIdPve(Long idPve) {
+		this.idPve = idPve;
+	}
+
+	public String getTipoBloqueo() {
+		return tipoBloqueo;
+	}
+
+	public void setTipoBloqueo(String tipoBloqueo) {
+		this.tipoBloqueo = tipoBloqueo;
 	}
 
 	public String getBloqueos() {
@@ -56,28 +89,52 @@ public class VHistoricoBloqueosApis implements Serializable{
 		this.bloqueos = bloqueos;
 	}
 
-	public String getMotivo() {
-		return motivo;
+	public String getMotivoBloqueo() {
+		return motivoBloqueo;
 	}
 
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
+	public void setMotivoBloqueo(String motivoBloqueo) {
+		this.motivoBloqueo = motivoBloqueo;
 	}
 
-	public String getUsuario() {
-		return usuario;
+	public Date getFechaBloqueo() {
+		return fechaBloqueo;
 	}
 
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
+	public void setFechaBloqueo(Date fechaBloqueo) {
+		this.fechaBloqueo = fechaBloqueo;
 	}
 
-	public Date getFecha() {
-		return fecha;
+	public String getUsuarioBloqueo() {
+		return usuarioBloqueo;
 	}
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
+	public void setUsuarioBloqueo(String usuarioBloqueo) {
+		this.usuarioBloqueo = usuarioBloqueo;
 	}
-	
+
+	public String getMotivoDesbloqueo() {
+		return motivoDesbloqueo;
+	}
+
+	public void setMotivoDesbloqueo(String motivoDesbloqueo) {
+		this.motivoDesbloqueo = motivoDesbloqueo;
+	}
+
+	public Date getFechaDesbloqueo() {
+		return fechaDesbloqueo;
+	}
+
+	public void setFechaDesbloqueo(Date fechaDesbloqueo) {
+		this.fechaDesbloqueo = fechaDesbloqueo;
+	}
+
+	public String getUsuarioDesbloqueo() {
+		return usuarioDesbloqueo;
+	}
+
+	public void setUsuarioDesbloqueo(String usuarioDesbloqueo) {
+		this.usuarioDesbloqueo = usuarioDesbloqueo;
+	}
+
 }

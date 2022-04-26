@@ -1,48 +1,30 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
-import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
-import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 
 
 
@@ -73,18 +55,32 @@ public class BloqueoApisHistorico implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID")
     private ActivoProveedor proveedor; 
     
-	@Column(name = "BHA_BLOQUEOS")
-	private String bloqueos;
+	@ManyToOne
+	@JoinColumn(name = "DD_TPB_ID")
+	private DDTipoBloqueoApi tipoBloqueo;
 	
-	@Column(name = "BHA_MOTIVO")
+	@ManyToOne
+	@JoinColumn(name = "BHA_BLOQUEO_LN")
+	private DDTipoComercializacion bloqueoApisLineaNegocio;
+    
+	@ManyToOne
+	@JoinColumn(name = "BHA_BLOQUEO_CARTERA")
+	private DDCartera bloqueoApisCartera;
+    
+	@ManyToOne
+	@JoinColumn(name = "BHA_BLOQUEO_ESPECIALIDAD")
+	private DDEspecialidad bloqueoApisEspecialidad;
+    
+	@ManyToOne
+	@JoinColumn(name = "BHA_BLOQUEO_PRV")
+	private DDProvincia bloqueoApisProvincia;
+	
+	@Column(name = "BHA_MOTIVO_BLOQUEO")
 	private String motivoBloqueo;
 	
-    @ManyToOne
-    @JoinColumn(name = "USU_ID")
-    private Usuario usuario; 
-    
-    @Column(name = "BHA_FECHA")
-	private Date fecha;
+	@Column(name = "BHA_MOTIVO_DESBLOQUEO")
+	private String motivoDesbloqueo;
+	
 	
 	@Version   
 	private Long version;
@@ -108,12 +104,44 @@ public class BloqueoApisHistorico implements Serializable, Auditable {
 		this.proveedor = proveedor;
 	}
 
-	public String getBloqueos() {
-		return bloqueos;
+	public DDTipoBloqueoApi getTipoBloqueo() {
+		return tipoBloqueo;
 	}
 
-	public void setBloqueos(String bloqueos) {
-		this.bloqueos = bloqueos;
+	public void setTipoBloqueo(DDTipoBloqueoApi tipoBloqueo) {
+		this.tipoBloqueo = tipoBloqueo;
+	}
+
+	public DDTipoComercializacion getBloqueoApisLineaNegocio() {
+		return bloqueoApisLineaNegocio;
+	}
+
+	public void setBloqueoApisLineaNegocio(DDTipoComercializacion bloqueoApisLineaNegocio) {
+		this.bloqueoApisLineaNegocio = bloqueoApisLineaNegocio;
+	}
+
+	public DDCartera getBloqueoApisCartera() {
+		return bloqueoApisCartera;
+	}
+
+	public void setBloqueoApisCartera(DDCartera bloqueoApisCartera) {
+		this.bloqueoApisCartera = bloqueoApisCartera;
+	}
+
+	public DDEspecialidad getBloqueoApisEspecialidad() {
+		return bloqueoApisEspecialidad;
+	}
+
+	public void setBloqueoApisEspecialidad(DDEspecialidad bloqueoApisEspecialidad) {
+		this.bloqueoApisEspecialidad = bloqueoApisEspecialidad;
+	}
+
+	public DDProvincia getBloqueoApisProvincia() {
+		return bloqueoApisProvincia;
+	}
+
+	public void setBloqueoApisProvincia(DDProvincia bloqueoApisProvincia) {
+		this.bloqueoApisProvincia = bloqueoApisProvincia;
 	}
 
 	public String getMotivoBloqueo() {
@@ -124,20 +152,12 @@ public class BloqueoApisHistorico implements Serializable, Auditable {
 		this.motivoBloqueo = motivoBloqueo;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public String getMotivoDesbloqueo() {
+		return motivoDesbloqueo;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
+	public void setMotivoDesbloqueo(String motivoDesbloqueo) {
+		this.motivoDesbloqueo = motivoDesbloqueo;
 	}
 
 	public Long getVersion() {

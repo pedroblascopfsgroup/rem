@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20210408
+--## FECHA_CREACION=20210415
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17600
@@ -45,8 +45,12 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     -- Por defecto el nombre de la fk es: FK_LETRASTABLA_CAMPOFK
     V_FK T_ARRAY_FK := T_ARRAY_FK(
-    	 T_FK(   'USU_ID',            	 V_ESQUEMA_M||'.USU_USUARIOS',       'USU_ID'),
-    	 T_FK(   'PVE_ID',            	 V_ESQUEMA||'.ACT_PVE_PROVEEDOR',    'PVE_ID')
+    	 T_FK(   'DD_TPB_ID',            	 					V_ESQUEMA||'.DD_TPB_TIPO_BLOQUEO',       	'DD_TPB_ID'),
+    	 T_FK(   'PVE_ID',            	 						V_ESQUEMA||'.ACT_PVE_PROVEEDOR',    		'PVE_ID'),
+    	 T_FK(   V_LETRAS_TABLA||'_BLOQUEO_LN',   				V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION', 'DD_TCO_ID'),
+    	 T_FK(   V_LETRAS_TABLA||'_BLOQUEO_CARTERA',  			V_ESQUEMA||'.DD_CRA_CARTERA',     			'DD_CRA_ID'),
+    	 T_FK(   V_LETRAS_TABLA||'_BLOQUEO_PRV',  				V_ESQUEMA_M||'.DD_PRV_PROVINCIA',   		'DD_PRV_ID'),
+    	 T_FK(   V_LETRAS_TABLA||'_BLOQUEO_ESPECIALIDAD',  		V_ESQUEMA||'.DD_ESP_ESPECIALIDAD', 			'DD_ESP_ID')
    	);
     V_T_FK T_FK;
 
@@ -68,12 +72,17 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
-                '||V_LETRAS_TABLA||'_ID          		    NUMBER(16)                  NOT NULL,
-				PVE_ID										NUMBER(16,0)				NOT NULL,
-                '||V_LETRAS_TABLA||'_BLOQUEOS				VARCHAR2(150 CHAR)			NOT NULL,
-		 		'||V_LETRAS_TABLA||'_MOTIVO           		VARCHAR2(150 CHAR),
-				USU_ID										NUMBER(16,0)				NOT NULL,
-				'||V_LETRAS_TABLA||'_FECHA					DATE						NOT NULL,
+                '||V_LETRAS_TABLA||'_ID          		    	NUMBER(16)                  NOT NULL,
+				DD_TPB_ID										NUMBER(16,0)				NOT NULL,
+				PVE_ID											NUMBER(16,0)				NOT NULL,
+
+                '||V_LETRAS_TABLA||'_BLOQUEO_CARTERA			NUMBER(16,0),
+ 				'||V_LETRAS_TABLA||'_BLOQUEO_LN					NUMBER(16,0),
+ 				'||V_LETRAS_TABLA||'_BLOQUEO_PRV				NUMBER(16,0),
+				'||V_LETRAS_TABLA||'_BLOQUEO_ESPECIALIDAD		NUMBER(16,0),
+
+		 		'||V_LETRAS_TABLA||'_MOTIVO_BLOQUEO         VARCHAR2(150 CHAR)			NOT NULL,
+				'||V_LETRAS_TABLA||'_MOTIVO_DESBLOQUEO      VARCHAR2(150 CHAR),
 
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
                 USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
@@ -135,14 +144,21 @@ BEGIN
             
             -- Comentarios de las columnas propias de la tabla
             
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.USU_ID IS ''Usuario que creo el registro original''';
+     
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_TPB_ID IS ''Tipo de bloqueo''';
             EXECUTE IMMEDIATE V_SQL;
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_FECHA IS ''Fecha de creación del registro original ''';
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_BLOQUEO_CARTERA IS ''Bloqueos cartera originales''';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_BLOQUEO_LN IS ''Bloqueos linea de negocio originales''';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_BLOQUEO_PRV IS ''Bloqueos provincia originales''';
+			EXECUTE IMMEDIATE V_SQL;
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_BLOQUEO_ESPECIALIDAD IS ''Bloqueos especialidad originales''';
+			EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_MOTIVO_BLOQUEO IS ''Motivo de bloqueo original''';
             EXECUTE IMMEDIATE V_SQL;
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_BLOQUEOS IS ''Bloqueos originales''';
-            EXECUTE IMMEDIATE V_SQL;
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_MOTIVO IS ''Motivo de bloqueo original''';
-            EXECUTE IMMEDIATE V_SQL;
+             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.'||V_LETRAS_TABLA||'_MOTIVO_DESBLOQUEO IS ''Motivo desbloqueo original ''';
+         	EXECUTE IMMEDIATE V_SQL;
         	V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.PVE_ID IS ''Proveedor bloqueado ''';
             EXECUTE IMMEDIATE V_SQL;
         

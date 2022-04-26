@@ -6,20 +6,40 @@ Ext.define('HreRem.model.BloqueoApisHistorico', {
     idProperty: 'id',
 
     fields: 
-    	[    
+    	[   
+    		{
+    			name:'id'
+    		},
+    		{
+    			name:'idPve'
+    		},
+    		{
+				name:'tipoBloqueo'
+			},
     		{
     			name:'bloqueos'
     		},
     		{
-    			name: 'fecha',
+    			name: 'fechaBloqueo',
     			type:'date',
     			dateFormat: 'c'
     		},
     		{
-    			name: 'usuario'
+    			name: 'usuarioBloqueo'
     		},
     		{
-    			name:'motivo'
+    			name:'motivoBloqueo'
+    		},
+    		{
+    			name: 'fechaDesbloqueo',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'usuarioDesbloqueo'
+    		},
+    		{
+    			name:'motivoDesbloqueo'
     		}
 	  ]
 });

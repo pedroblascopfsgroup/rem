@@ -93,9 +93,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDIdioma;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenPeticionHomologacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
@@ -1795,7 +1798,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Override
 	public List<VHistoricoBloqueosApis> getHistoricoBloqueos(Long id) {
-		List<VHistoricoBloqueosApis> hBAHList = genericDao.getList(VHistoricoBloqueosApis.class, genericDao.createFilter(FilterType.EQUALS, "id", id)); 
+		List<VHistoricoBloqueosApis> hBAHList = genericDao.getList(VHistoricoBloqueosApis.class, genericDao.createFilter(FilterType.EQUALS, "idPve", id)); 
 		return hBAHList;
 	}
 	
@@ -1805,7 +1808,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
 		DtoBloqueoApis bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
 		if(bloqueo != null && bloqueo.getProveedor()!= null) {
-			//this.createRegistroHistoricoBloqueoApis(bloqueo);
+			this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
+			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
 			Auditoria.delete(bloqueo);
 			genericDao.save(BloqueoApis.class, bloqueo);
 		}
@@ -1894,14 +1898,168 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 	}
 	
-	private void createRegistroHistoricoBloqueoApis(BloqueoApis bloqueo ) {
-		BloqueoApisHistorico bha = new BloqueoApisHistorico();
-		bha.setProveedor(bloqueo.getProveedor());
-		bha.setAuditoria(Auditoria.getNewInstance());
-		bha.setMotivoBloqueo(bloqueo.getMotivoBloqueo());
-		bha.setFecha(new Date());
-	//	bha.setUsuario(bloqueo());
+	
+	@Transactional(readOnly = false)
+	private void createRegistroHistoricoBloqueoApis(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
 		
-		genericDao.save(BloqueoApisHistorico.class, bha);
+		
+		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+	
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			List<String> nuevosCodigos = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), dto, bloqueoAntiguo);
+			DDTipoBloqueoApi tpC = genericDao.get(DDTipoBloqueoApi.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ddTipoBloqueoApi.getCodigo()));
+			for (String codigo : nuevosCodigos) {
+				BloqueoApisHistorico bah = new BloqueoApisHistorico();
+				bah.setTipoBloqueo(tpC);
+				bah = this.saveBloqueo(bah, tpC, codigo);
+				bah.setProveedor(proveedor);
+				bah.setMotivoBloqueo(dto.getMotivo());
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+		
+		
 	}
+	
+	
+	private BloqueoApisHistorico saveBloqueo(BloqueoApisHistorico bah, DDTipoBloqueoApi tipoBloqueo, String codigo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		if(DDTipoBloqueoApi.CARTERA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisCartera(genericDao.get(DDCartera.class, filtro));
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisLineaNegocio(genericDao.get(DDTipoComercializacion.class, filtro));
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisEspecialidad(genericDao.get(DDEspecialidad.class, filtro));
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(tipoBloqueo.getCodigo())) {
+			bah.setBloqueoApisProvincia(genericDao.get(DDProvincia.class, filtro));
+		}
+		
+		
+		return bah;
+	}
+	
+	private List<String> devolverCodigos(String codigoTipo, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo){
+		List<String> codigosNuevos = new ArrayList<String>();
+		List<String> codigosAntiguos= new ArrayList<String>();
+		List<String> anyadirCodigo = new ArrayList<String>();
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getCarteraCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getCarteraCodigo() != null && !bloqueoAntiguo.getCarteraCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getCarteraCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getLineaNegocioCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getLineaNegocioCodigo() != null && !bloqueoAntiguo.getLineaNegocioCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getLineaNegocioCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getEspecialidadCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getEspecialidadCodigo() != null && !bloqueoAntiguo.getEspecialidadCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getEspecialidadCodigo().split(","));
+			}
+		}
+		if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				codigosNuevos=  Arrays.asList(dto.getProvinciaCodigo().split(","));
+			}
+			if(bloqueoAntiguo.getProvinciaCodigo() != null && !bloqueoAntiguo.getProvinciaCodigo().isEmpty()) {
+				codigosAntiguos = Arrays.asList(bloqueoAntiguo.getProvinciaCodigo().split(","));
+			}
+		}
+			
+		for (String codigoNuevo : codigosNuevos) {
+			if(!codigosAntiguos.contains(codigoNuevo)) {
+				anyadirCodigo.add(codigoNuevo);
+			}
+		}
+		
+		anyadirCodigo.remove(VALOR_POR_DEFECTO);
+		
+		return anyadirCodigo;
+	}
+	
+	
+	
+	@Transactional(readOnly = false)
+	private void modificarRegistrosAnteriores(Long id, DtoBloqueoApis dto, DtoBloqueoApis bloqueoAntiguo) {
+		
+		Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id);
+		Filter filtroMotivoDesbloqueoNull = genericDao.createFilter(FilterType.NULL, "motivoDesbloqueo");
+		String motivo = dto.getMotivo();
+		
+		List<DDTipoBloqueoApi> tiposBloqueoList = genericDao.getList(DDTipoBloqueoApi.class);
+		for (DDTipoBloqueoApi ddTipoBloqueoApi : tiposBloqueoList) {
+			if(this.seHaModificadoRegistro(ddTipoBloqueoApi.getCodigo(), dto)) {
+				List<String> codigosBorrar = this.devolverCodigos(ddTipoBloqueoApi.getCodigo(), bloqueoAntiguo, dto);
+				for (String codigo : codigosBorrar) {
+					this.actualizarRegistros(ddTipoBloqueoApi.getCodigo(), codigo, motivo, filtroProveedor, filtroMotivoDesbloqueoNull);
+				}
+			}
+		}
+	}
+	
+	
+	@Transactional(readOnly = false)
+	private void actualizarRegistros(String codigoBloqueo, String codigo, String motivo, Filter filtroProveedor, Filter filtroMotivoDesbloqueoNull) {
+		Filter filtro = this.devolverFiltro(codigoBloqueo, codigo);
+		if(filtro != null) {
+			BloqueoApisHistorico bah = genericDao.get(BloqueoApisHistorico.class, filtroProveedor, filtroMotivoDesbloqueoNull,filtro);
+			if(bah != null) {
+				bah.setMotivoDesbloqueo(motivo);
+				genericDao.save(BloqueoApisHistorico.class, bah);
+			}
+		}
+	}
+	
+	private boolean seHaModificadoRegistro(String codigoTipo, DtoBloqueoApis dto) {
+		boolean registroModificado = false;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			if(dto.getCarteraCodigo() != null && !dto.getCarteraCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			if(dto.getLineaNegocioCodigo() != null && !dto.getLineaNegocioCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			if(dto.getEspecialidadCodigo() != null && !dto.getEspecialidadCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			if(dto.getProvinciaCodigo() != null && !dto.getProvinciaCodigo().isEmpty()) {
+				registroModificado = true;
+			}
+		}
+		
+		return registroModificado;
+	}
+	private Filter  devolverFiltro(String codigoTipo, String codigo){
+		Filter filter = null;
+		
+		if(DDTipoBloqueoApi.CARTERA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisCartera.codigo", codigo);
+		}else if(DDTipoBloqueoApi.LINEA_NEGOCIO.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisLineaNegocio.codigo", codigo);
+		}else if(DDTipoBloqueoApi.ESPECIALIDAD.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisEspecialidad.codigo", codigo);
+		}else if(DDTipoBloqueoApi.PROVINCIA.equals(codigoTipo)) {
+			filter = genericDao.createFilter(FilterType.EQUALS, "bloqueoApisProvincia.codigo", codigo);
+		}
+		
+		return filter;
+	}
+	
+	
 }

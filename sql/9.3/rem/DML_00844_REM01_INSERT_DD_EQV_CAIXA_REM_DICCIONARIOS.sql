@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20211123
+--## FECHA_CREACION=20220426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16493
@@ -13,6 +13,14 @@
 --##        0.1 Versión 
 --##        0.2 Añadir mapeos nuevos y rellenar campo PRIORIDAD en COMPLEMENTO - [HREOS-15855] - Alejandra García
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
+--##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
+--##        0.5 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
+--##        0.6 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.7 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
+--##        0.8 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.9 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
+--##        0.10 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
+--##	      0.11 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -247,6 +255,18 @@ DECLARE
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','16','Constitución préstamo promotor','DD_MEC_MOTIVO_EXCLU_CAIXA','16','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','17','Inmueble no vvda utilizado como vvda','DD_MEC_MOTIVO_EXCLU_CAIXA','17','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','18','Inmueble es una zona común','DD_MEC_MOTIVO_EXCLU_CAIXA','18','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','19','Posible invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','19','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','20','Inmueble dummy','DD_MEC_MOTIVO_EXCLU_CAIXA','20','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','21','Invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','21','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','22','Posible destino reubicación','DD_MEC_MOTIVO_EXCLU_CAIXA','22','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','23','Posible ocupacion pdte IO/Denuncia','DD_MEC_MOTIVO_EXCLU_CAIXA','23','0'),
+                                        
+        --Motivo de exoneración CEE
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','01','Local en bruto','DD_MEC_MOTIVO_EXONERACION_CEE','01','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','02','Preciosa reformas +25% del total de su envolvente','DD_MEC_MOTIVO_EXONERACION_CEE','02','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','03','Precisa reformas importantes por la totalidad instalaciones térmicas','DD_MEC_MOTIVO_EXONERACION_CEE','03','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','04','Precisa reformas importantes por recomendación cambio tipo combustible','DD_MEC_MOTIVO_EXONERACION_CEE','04','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','05','Nave sin oficina','DD_MEC_MOTIVO_EXONERACION_CEE','05','0'),
       --País
         T_TIPO_DATA('PAIS','AD','Andorra','DD_CIC_CODIGO_ISO_CIRBE_BKP','043','0'),
         T_TIPO_DATA('PAIS','ES','España','DD_CIC_CODIGO_ISO_CIRBE_BKP','011','0'),

@@ -60,6 +60,7 @@ public class VisibilidadGestionComercialValidator {
 	public static final String VALID_ACTIVO_TIPO_COMERCIALIZACION = "Activo no tiene tipo de comercialización";
 	public static final String VALID_FASE_PUBLICACION= "La fase de publicación del activo no permite la modificación del check Visibilidad Gestion Comercial ";
 	public static final String VALID_ACTIVO_INDICADORES_PUBLICACION= "Activo no tiene ningún indicador de Caixa marcado";
+	public static final String VALID_ACTIVO_VENDIDO= "El activo se encuentra en situacion comercial Vendido, se desmarca Visibilidad Gestion Comercial";
 
 	public static final String[] SOCIEDADES_PARTICIPADAS = {Ecoarenys, JaleProcam, PromocionesMiesdelValle};
 	
@@ -109,15 +110,9 @@ public class VisibilidadGestionComercialValidator {
 			}
 			Boolean checkGestorComercial = dtoCheckGestorComercial != null ? dtoCheckGestorComercial
 					: perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() == true; // Comparo con True para tomar null como false
-			Boolean excluirValidaciones = dtoExcluirValidaciones != null ? dtoExcluirValidaciones
-					: perimetroActivo.getExcluirValidaciones() != null && DDSinSiNo.CODIGO_SI.equals(perimetroActivo.getExcluirValidaciones().getCodigo());
 			
-			
-			List<ActivoOferta> listaActivoOferta = activoActual.getOfertas();
-			if (!excluirValidaciones) {
-				erroresActivo = this.erroresJerarquicosParaMarcar(activoActual, nuevoEstadoExpediente, listaActivoOferta);
-				this.erroresParaDesMarcar(erroresActivo, activoActual.getId(), checkGestorComercial, ficha, modificadoEnFicha);
-			}
+			erroresActivo = this.erroresJerarquicosParaMarcar(activoActual, nuevoEstadoExpediente, activoActual.getOfertas());
+			this.erroresParaDesMarcar(erroresActivo, activoActual.getId(), checkGestorComercial, ficha, modificadoEnFicha);
 			
 			mapaErrores.put(activoActual.getNumActivo(), erroresActivo);
 		}
@@ -135,7 +130,10 @@ public class VisibilidadGestionComercialValidator {
 		List<String> erroresActivo = new ArrayList<String>();
 
 		if(activoPublicacion != null) {
-			if(DDCartera.isCarteraSareb(activoActual.getCartera())) {
+			if(!Checks.esNulo(activoActual.getSituacionComercial()) 
+				&& DDSituacionComercial.CODIGO_VENDIDO.equals(activoActual.getSituacionComercial().getCodigo())){
+				erroresActivo.add(VALID_ACTIVO_VENDIDO);
+			}else if(DDCartera.isCarteraSareb(activoActual.getCartera())) {
 				if (perimetroActivo != null && perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 0) {
 					erroresActivo.add(VALID_ACTIVO_NO_COMERCIALIZABLE);
 				}

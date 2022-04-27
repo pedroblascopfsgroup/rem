@@ -1123,7 +1123,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public boolean isAgrupacionONDnd(ActivoAgrupacion agrupacion) {
-		ActivoObraNueva on = (ActivoObraNueva) agrupacion;
+		ActivoObraNueva on = null;
+		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion()))
+				on = (ActivoObraNueva) agrupacion;
 		return !Checks.esNulo(on) && !Checks.esNulo(on.getIdOnvDnd()) ? true : false;
 	}
 	

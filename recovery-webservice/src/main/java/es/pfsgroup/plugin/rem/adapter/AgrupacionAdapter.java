@@ -934,6 +934,7 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
+				dtoAgrupacion.setONDnd(activoAgrupacionApi.isAgrupacionONDnd(agrupacion));
 			}
 			
 			

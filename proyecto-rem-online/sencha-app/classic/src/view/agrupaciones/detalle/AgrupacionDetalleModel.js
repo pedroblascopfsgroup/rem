@@ -720,10 +720,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
 		 },
 		 
-		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
+		 esAgrupacionThirdpartiesYubaiObraNuevaDnd: function(get) {
 			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
-			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']
+						&& get('agrupacionficha.isONDnd') == "true") {
 		     		return true;
 		     	} else {
 		     		return false;

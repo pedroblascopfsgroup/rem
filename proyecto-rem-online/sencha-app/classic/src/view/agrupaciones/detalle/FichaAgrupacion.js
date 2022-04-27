@@ -318,7 +318,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								store: '{comboTrueFalse}',
 								readOnly: false,
 								disabled: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}',
 								listeners: {
 									change: 'onChangeComboComercializableConsPlano'
 								}
@@ -334,7 +334,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.existePiloto}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}',
 								disabled: '{!comercializableConstruccionPlano}',
 								listeners: {
 									change: 'onChangeComboExistePisoPiloto'
@@ -351,7 +351,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.esVisitable}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}',
 								disabled: '{!comprobarExistePiloto}',
 								listeners: {
 									change: 'onChangeComboEsVisitable'
@@ -368,7 +368,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								readOnly: false,
 								disabled: '{!comprobarEsVisitable}',
 								allowBlank: '{!comprobarEsVisitable}',
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}'
 							}
 						},
 						{
@@ -379,7 +379,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind: {
 								value: '{agrupacionficha.empresaPromotora}',
 								readOnly: false,
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}'
 							}
 						},
 						{
@@ -390,7 +390,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind: {
 								value: '{agrupacionficha.empresaComercializadora}',
 								readOnly: false,
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNuevaDnd}'
 							}
 						},
 						{
@@ -400,7 +400,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	bind: {	
 				        		readOnly: '{!esUsuarioGestorComercialAgrupacionObraNueva}',
 			            		store: '{comboSiNoBoolean}',
-			            		value: '{agrupacionficha.ventaSobrePlano}'
+			            		value: '{agrupacionficha.ventaSobrePlano}',
+								hidden: '{agrupacionficha.isObraNueva}'
 			            	}
 						},
 						{

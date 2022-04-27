@@ -339,6 +339,17 @@ Ext.define('HreRem.model.AgrupacionFicha', {
     			{
                 	name: 'perimetroMacc',
     	 			type: 'boolean'
+                },
+                {
+	            	name: 'isObraNueva',
+	            	calculate: function(data) {
+	        			return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'];
+	        		},
+	        		depends: ['tipoAgrupacionCodigo']
+	            },
+    			{
+                	name: 'isONDnd',
+    	 			type: 'boolean'
                 }
     ],
     

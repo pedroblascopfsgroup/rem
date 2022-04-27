@@ -239,6 +239,27 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														}
 													]
 											},
+											{
+												xtype:'fieldsettable',
+												defaultType: 'textfieldbase',
+												colspan: 3,
+				        						reference: 'pagoUrgente',
+												title: HreRem.i18n('title.gasto.detalle.economico.pago.urgente'),
+												listeners: {
+													afterrender: 'onVisualizaPagoUrgente'
+												},
+												items :
+													[
+														{
+														    xtype: 'checkboxfieldbase',
+														    reference: 'pagoUrgenteCheck',
+														    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pago.urgente'),
+														    bind: {
+													        	value: '{detalleeconomico.pagoUrgente}'
+													        }
+										           		}
+													]
+											},
 									/*		{
 												xtype: 'tbspacer',
 												colspan: 2

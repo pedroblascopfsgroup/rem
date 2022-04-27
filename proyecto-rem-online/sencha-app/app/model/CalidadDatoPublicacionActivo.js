@@ -293,6 +293,8 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},
 		{
 			name: 'correctoF4BloqueFase4'
+		},{
+			name: 'codigo'
 		}
 		
 	],

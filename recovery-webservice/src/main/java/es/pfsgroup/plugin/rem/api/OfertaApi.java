@@ -854,4 +854,6 @@ public interface OfertaApi {
 	boolean isOfertaONPisoPiloto(Oferta oferta);
 
 	Long numAgrupacionONVentaSobrePlano(Oferta oferta);
+	
+	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
 }

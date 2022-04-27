@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.restclient.exception.VisitasException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import net.sf.json.JSONObject;
 
@@ -273,29 +274,29 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			beanUtilNotNull.copyProperties(visita, visitaDto);
 			visita.setNumVisitaRem(visitaDao.getNextNumVisitaRem());
 
+			if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
+				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								visitaDto.getIdProveedorRemPrescriptor()));
+				if (!Checks.esNulo(prescriptor)) {
+					visita.setPrescriptor(prescriptor);
+				}
+			}
+
 			if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 				ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 						genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 						genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 				if (!Checks.esNulo(cliente)) {
-					InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
-					if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
-						|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
-						if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
-							Activo activo = (Activo) genericDao.get(Activo.class,
-									genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-							if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
-								String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
-								cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
-								genericDao.save(ClienteComercial.class,cliente);
-								iap.setIdPersonaHayaCaixa(idPersonaCaixa);
-								genericDao.save(InfoAdicionalPersona.class, iap);
-								errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
-							}
-						}
-					} else {
-						errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
-					}
+					Activo activo = visitaDto.getIdActivoHaya() != null ? genericDao.get(Activo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya())) : null;
+
+					boolean esActivoCaixa = activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera());
+
+					if (esActivoCaixa && esVisitaCaixaEnviar(visita))
+						informarCamposCLienteBC(cliente,activo);
+
+					errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
 					visita.setCliente(cliente);
 				}
 			}
@@ -325,14 +326,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 						genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 				if (!Checks.esNulo(subEstVis)) {
 					visita.setSubEstadoVisita(subEstVis);
-				}
-			}
-			if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
-				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-								visitaDto.getIdProveedorRemPrescriptor()));
-				if (!Checks.esNulo(prescriptor)) {
-					visita.setPrescriptor(prescriptor);
 				}
 			}
 
@@ -444,30 +437,34 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		errorsList = validateVisitaPostRequestData(visitaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
 
+			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
+				if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
+					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemPrescriptor()));
+					if (!Checks.esNulo(prescriptor)) {
+						visita.setPrescriptor(prescriptor);
+					}
+				} else {
+					visita.setPrescriptor(null);
+				}
+			}
+
 			if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
 				if (!Checks.esNulo(visitaDto.getIdClienteRem())) {
 					ClienteComercial cliente = (ClienteComercial) genericDao.get(ClienteComercial.class,
 							genericDao.createFilter(FilterType.EQUALS, "idClienteRem", visitaDto.getIdClienteRem()),
 							genericDao.createFilter(FilterType.NOTNULL, "idClienteWebcom"));
 					if (!Checks.esNulo(cliente)) {
-						InfoAdicionalPersona iap = cliente.getInfoAdicionalPersona();
-						if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()
-								|| (iap != null && iap.getIdPersonaHayaCaixa() == null)) {
-							if (!Checks.esNulo(visitaDto.getIdActivoHaya())) {
-								Activo activo = (Activo) genericDao.get(Activo.class,
-										genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya()));
-								if(activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera())) {
-									String idPersonaCaixa = interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento());
-									cliente.setIdPersonaHayaCaixa(idPersonaCaixa);
-									genericDao.save(ClienteComercial.class,cliente);
-									iap.setIdPersonaHayaCaixa(idPersonaCaixa);
-									genericDao.save(InfoAdicionalPersona.class, iap);
-									errorsList.put("idCliente", cliente.getIdClienteRem().toString());
-								}
-							}
-						} else {
-							errorsList.put("idCliente", cliente.getIdClienteRem().toString());
-						}
+						Activo activo = visitaDto.getIdActivoHaya() != null ? genericDao.get(Activo.class,
+								genericDao.createFilter(FilterType.EQUALS, "numActivo", visitaDto.getIdActivoHaya())) : null;
+
+						boolean esActivoCaixa = activo != null && activo.getCartera() != null && DDCartera.isCarteraBk(activo.getCartera());
+
+						if (esActivoCaixa && esVisitaCaixaEnviar(visita))
+							informarCamposCLienteBC(cliente,activo);
+
+						errorsList.put("idCliente", visitaDto.getIdClienteRem().toString());
 						visita.setCliente(cliente);
 					}
 				}
@@ -514,18 +511,6 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					}
 				} else {
 					visita.setUsuarioAccion(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
-				if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
-					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-									visitaDto.getIdProveedorRemPrescriptor()));
-					if (!Checks.esNulo(prescriptor)) {
-						visita.setPrescriptor(prescriptor);
-					}
-				} else {
-					visita.setPrescriptor(null);
 				}
 			}
 
@@ -780,11 +765,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				}
 				listaProcesadas.add(map);
 				listaCompleta.add(map);
+			}catch (VisitasException ve){
+				errorsList.put(ve.getErrorFieldName(),ve.getMessage());
+				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
+				map.put("idVisitaRem", visitaDto.getIdVisitaRem());
+				map.put("success", false);
+				map.put("invalidFields", errorsList);
+				listaCompleta.add(map);
 			}catch(Exception e){
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
 				map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 				map.put("success", false);
 				map.put("invalidFields", errorsList);
+				e.printStackTrace();
 				listaCompleta.add(map);
 			}
 
@@ -894,4 +887,32 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		}
 
 	}
+
+	public void informarCamposCLienteBC(ClienteComercial cliente, Activo activo) throws VisitasException{
+
+		boolean clienteModificado = false;
+
+		if (cliente.getDocumento() == null || cliente.getDocumento().trim().isEmpty())
+			throw new VisitasException("documentoCliente",RestApi.REST_MSG_MISSING_REQUIRED);
+
+		if (cliente.getIdPersonaHayaCaixa() == null || cliente.getIdPersonaHayaCaixa().trim().isEmpty()){
+			cliente.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumento()));
+			InfoAdicionalPersona iapCliente = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixa(),cliente.getIdPersonaHaya());
+			if (!iapCliente.getId().equals(cliente.getInfoAdicionalPersona() == null ? null : cliente.getInfoAdicionalPersona().getId()))
+				cliente.setInfoAdicionalPersona(iapCliente);
+			clienteModificado = true;
+		}
+		if (cliente.getDocumentoRepresentante() != null && (cliente.getIdPersonaHayaCaixaRepresentante() == null || cliente.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())){
+			cliente.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixaByCarteraAndDocumento(activo.getCartera(), activo.getSubcartera(), cliente.getDocumentoRepresentante()));
+			InfoAdicionalPersona iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(cliente.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(cliente.getDocumentoRepresentante()));
+			if (!iapRep.getId().equals(cliente.getInfoAdicionalPersonaRep() == null ? null : cliente.getInfoAdicionalPersonaRep().getId()))
+				cliente.setInfoAdicionalPersonaRep(iapRep);
+			clienteModificado = true;
+		}
+
+		if (clienteModificado)
+			genericDao.save(ClienteComercial.class,cliente);
+
+	}
+
 }

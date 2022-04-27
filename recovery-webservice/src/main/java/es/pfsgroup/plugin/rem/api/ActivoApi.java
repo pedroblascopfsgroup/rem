@@ -1506,4 +1506,6 @@ public interface ActivoApi {
 	boolean isActivoONPisoPiloto(Activo activo);
 
 	Long numAgrupacionONVentaSobrePlano(Activo activo);
+	
+	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

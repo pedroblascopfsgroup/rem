@@ -212,6 +212,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
@@ -468,6 +469,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	ParticularValidatorApi particularValidatorApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
@@ -2483,7 +2487,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			if (!Checks.esNulo(expediente.getOferta().getSucursal())) {
+				if(!Checks.esNulo(expediente.getOferta().getSucursal().getCodProveedorUvem())) {			
 				dto.setCodigoSucursal(expediente.getOferta().getSucursal().getCodProveedorUvem().substring(4));
+				}
 				dto.setSucursal(expediente.getOferta().getSucursal().getNombre() + " ("
 						+ expediente.getOferta().getSucursal().getTipoProveedor().getDescripcion() + ")");
 			}
@@ -3910,7 +3916,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reserva.setNumReserva(reservaDao.getNextNumReservaRem());
 				reserva.setAuditoria(Auditoria.getNewInstance());
 				
-				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())) {
+				if(expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null && 
+					(DDCartera.isCarteraBk(expediente.getOferta().getActivoPrincipal().getCartera())
+						|| (DDCartera.isCarteraCerberus(expediente.getOferta().getActivoPrincipal().getCartera()) 
+							&& DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())))) {
 					DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 					reserva.setTipoArras(tipoArras);
 				}
@@ -4979,6 +4989,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
+
+			if (!Checks.esNulo(expedienteComercial.getOferta().getVentaSobrePlano()) && expedienteComercial.getOferta().getVentaSobrePlano() 
+					&& (DDEstadosExpedienteComercial.RESERVADO.equals(expedienteComercial.getEstado().getCodigo()) 
+					|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expedienteComercial.getEstado().getCodigo())))
+				notificationOfertaManager.notificationReservaVentaSobrePlano(expedienteComercial.getOferta());
 
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -15397,4 +15412,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return compradorExpediente;
 	}
 
+	
 }

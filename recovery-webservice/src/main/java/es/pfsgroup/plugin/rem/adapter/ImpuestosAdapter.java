@@ -1,5 +1,17 @@
 package es.pfsgroup.plugin.rem.adapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -18,7 +30,15 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
@@ -26,15 +46,6 @@ import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class ImpuestosAdapter {
@@ -139,9 +150,14 @@ public class ImpuestosAdapter {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
+			HashSet<ActivoCatastro> listaCatastros = new HashSet<ActivoCatastro>();
 			
 			lista = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo),genericDao.createFilter(FilterType.EQUALS,"refCatastral",catastro));
-			
+			listaCatastros.addAll(lista);
+			lista = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo),genericDao.createFilter(FilterType.EQUALS,"catastro.refCatastral",catastro));
+			listaCatastros.addAll(lista);
+			lista.clear();
+			lista.addAll(listaCatastros);
 			
 			if (!Checks.estaVacio(lista)) {
 

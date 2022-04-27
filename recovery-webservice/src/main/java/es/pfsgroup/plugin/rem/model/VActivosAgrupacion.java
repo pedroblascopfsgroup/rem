@@ -127,8 +127,11 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name = "ES_PISO_PILOTO")
 	private Boolean esPisoPiloto;
+	
+	@Column(name = "AGA_FECHA_ESCRITURACION")
+   	private Date fechaEscrituracion;
 
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -416,4 +419,14 @@ public class VActivosAgrupacion implements Serializable {
 	public void setEsPisoPiloto(Boolean esPisoPiloto) {
 		this.esPisoPiloto = esPisoPiloto;
 	}
+
+	public Date getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+
+	public void setFechaEscrituracion(Date fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
+	
+	
 }

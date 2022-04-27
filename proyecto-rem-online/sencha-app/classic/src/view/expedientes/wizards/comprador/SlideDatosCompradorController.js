@@ -928,6 +928,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+				&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
 					&& campoTipoConyuge.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.conyuge"));
 			return false;
@@ -937,6 +938,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+				&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
 					&& campoTipoRte.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 	
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
@@ -947,6 +949,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+				&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
 					&& campoTipoDocumentoComprador.getValue() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 
 			me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.comprador"));

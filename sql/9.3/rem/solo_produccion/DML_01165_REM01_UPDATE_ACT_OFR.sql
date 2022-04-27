@@ -1,0 +1,192 @@
+--/*
+--##########################################
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220411
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-10990
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+ALTER SESSION SET NLS_NUMERIC_CHARACTERS = ',.';
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS2 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS3 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-11356'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_ECO_ID NUMBER(16); 
+    
+    V_ACTIVO_BORRAR NUMBER(16):='5964825';
+    V_OFERTA NUMBER(16):='90234818';
+    ACT_NUM_ACTIVO NUMBER(16);
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_TOTAL NUMBER(16):=0;
+    V_IMPORTE_OFERTA NUMBER(16):=3182833;
+    
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+        --OFERTA    ACTIVO  IMPORTE PORCENTAJE
+    T_JBV('90234818','5969917','52701','1,66'),
+    T_JBV('90234818','5963703','335378','10,54'),
+    T_JBV('90234818','5965547','28406','0,89'),
+    T_JBV('90234818','5963225','3251','0,10'),
+    T_JBV('90234818','5958721','3388','0,11'),
+    T_JBV('90234818','5947064','199493','6,27'),
+    T_JBV('90234818','5952539','28406','0,89'),
+    T_JBV('90234818','5927312','56813','1,78'),
+    T_JBV('90234818','5943821','49510','1,56'),
+    T_JBV('90234818','5944114','42499','1,34'),
+    T_JBV('90234818','5943305','28406','0,89'),
+    T_JBV('90234818','5942976','197093','6,19'),
+    T_JBV('90234818','6525374','27609','0,87'),
+    T_JBV('90234818','6804151','137194','4,31'),
+    T_JBV('90234818','6129017','54444','1,71'),
+    T_JBV('90234818','6351021','269278','8,46'),
+    T_JBV('90234818','6063541','17547','0,55'),
+    T_JBV('90234818','6061735','31980','1,00'),
+    T_JBV('90234818','6061736','29114','0,91'),
+    T_JBV('90234818','6061737','35766','1,12'),
+    T_JBV('90234818','6059254','36844','1,16'),
+    T_JBV('90234818','6059604','47329','1,49'),
+    T_JBV('90234818','6051415','55515','1,74'),
+    T_JBV('90234818','6053559','340992','10,71'),
+    T_JBV('90234818','6991816','168670','5,30'),
+    T_JBV('90234818','6990557','70871','2,23'),
+    T_JBV('90234818','6988175','39172','1,23'),
+    T_JBV('90234818','6987479','201661','6,34'),
+    T_JBV('90234818','6984131','68091','2,14'),
+    T_JBV('90234818','6998647','26036','0,82'),
+    T_JBV('90234818','6998770','25678','0,81'),
+    T_JBV('90234818','6999001','86234','2,71'),
+    T_JBV('90234818','6999002','85772','2,69'),
+    T_JBV('90234818','6996621','8370','0,26'),
+    T_JBV('90234818','6981345','16573','0,52'),
+    T_JBV('90234818','6980727','201101','6,32'),
+    T_JBV('90234818','6979636','28013','0,88'),
+    T_JBV('90234818','6965883','47635','1,50')
+
+
+	); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN	
+    DBMS_OUTPUT.PUT_LINE('[INICIO] SE ACTUALIZA TABLA ACT_OFR');
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE BORRADO = 0 AND ACT_NUM_ACTIVO = '||V_ACTIVO_BORRAR;
+    
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE BORRADO = 0 AND OFR_NUM_OFERTA = '||V_OFERTA||'';
+    
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS2;
+
+    V_SQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_OFR AOF
+    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=AOF.ACT_ID AND ACT.BORRADO = 0
+    JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID=AOF.OFR_ID AND OFR.BORRADO =0
+    WHERE ACT.ACT_NUM_ACTIVO = '||V_ACTIVO_BORRAR||' AND OFR.OFR_NUM_OFERTA='||V_OFERTA||'';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS3;
+
+    IF V_NUM_FILAS = 1 AND V_NUM_FILAS2 = 1 AND V_NUM_FILAS3 = 1 THEN
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Se procede a borrar el activo: '||V_ACTIVO_BORRAR||'');
+
+        V_SQL:='DELETE FROM '||V_ESQUEMA||'.ACT_OFR WHERE 
+        OFR_ID=(SELECT OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR WHERE OFR.OFR_NUM_OFERTA ='||V_OFERTA||') AND
+        ACT_ID=(SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO='||V_ACTIVO_BORRAR||')';
+        EXECUTE IMMEDIATE V_SQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON ACT_NUM_ACTIVO BORRADO: '||V_ACTIVO_BORRAR||' ACTUALIZADO');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('[WARN] REGISTRO NO EXISTE: '||V_OFERTA||' Y ACTIVO: '||V_ACTIVO_BORRAR||' ');
+    END IF;
+	
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizamos importe oferta: '||V_OFERTA||'');
+
+    IF V_NUM_FILAS2 = 1 THEN
+        V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS 
+                                SET 
+                                OFR_IMPORTE = '||V_IMPORTE_OFERTA||',
+                                USUARIOMODIFICAR = '''||V_USR||''',
+                                FECHAMODIFICAR = SYSDATE
+                                WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||V_OFERTA||')';
+        
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] IMPORTE ACTUALIZADO CORRECTAMENTE: '||V_OFERTA||'');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('[WARN] NO EXISTE: '||V_OFERTA||'');
+    END IF;
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+        V_TMP_JBV := V_JBV(I);
+        V_COUNT_TOTAL:=V_COUNT_TOTAL+1;
+        
+        ACT_NUM_ACTIVO := TRIM(V_TMP_JBV(2));
+        
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE BORRADO = 0 AND ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO;
+        
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE BORRADO = 0 AND OFR_NUM_OFERTA = '||V_TMP_JBV(1)||'';
+        
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS2;
+
+        V_SQL :='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_OFR AOF
+        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID=AOF.ACT_ID AND ACT.BORRADO = 0
+        JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID=AOF.OFR_ID AND OFR.BORRADO =0
+        WHERE ACT.ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO||' AND OFR.OFR_NUM_OFERTA='||V_TMP_JBV(1)||'';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS3;
+        
+        IF V_NUM_FILAS = 1 AND V_NUM_FILAS2 = 1 AND V_NUM_FILAS3 = 1 THEN
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_OFR 
+                                SET 
+                                ACT_OFR_IMPORTE = '''||V_TMP_JBV(3)||''',
+                                OFR_ACT_PORCEN_PARTICIPACION = '''||V_TMP_JBV(4)||'''
+                                WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO||')
+                                AND OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||V_TMP_JBV(1)||')';
+        
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON ACT_NUM_ACTIVO: '||ACT_NUM_ACTIVO||' ACTUALIZADO');
+            
+            V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+            
+        ELSE
+            
+            DBMS_OUTPUT.PUT_LINE('[WARN] REGISTRO NO EXISTE '||ACT_NUM_ACTIVO||' - '||V_TMP_JBV(1)||'  ');
+            
+        END IF;
+	
+	END LOOP;
+		
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE||' registros');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

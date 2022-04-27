@@ -724,7 +724,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
 			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']
-						&& get('agrupacionficha.isONDnd') == "true") {
+						&& get('agrupacionficha.esONDnd') == "true") {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -789,8 +789,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	return false;
 	     },
 	     
-	     esAgrupacionCaixaOrPromocionAlquiler: function(get) {
-				return get('esAgrupacionEditableCaixa') || get('esAgrupacionPromocionAlquiler');
+	     esAgrupacionCaixaOrPromocionAlquilerOrONDnd: function(get) {
+				return get('esAgrupacionEditableCaixa') || get('esAgrupacionPromocionAlquiler') || get('agrupacionONDnd');
 	     },
 	     esAgrupacionCaixaComercial: function(get){
 	     	var me = this;
@@ -822,7 +822,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
             var tipoCartera = get('agrupacionficha.codigoCartera');
 
             return tipoCartera == CONST.CARTERA['BANKIA'];
-         }
+         },
+
+		 agrupacionONDnd: function(get) {
+            return get('agrupacionficha.isObraNueva') && get('agrupacionficha.esONDnd');
+         },
+	     
+	     esAgrupacionEditableCaixaOrONDnd: function(get) {
+	    	return get('esAgrupacionEditableCaixa') || get('agrupacionONDnd');
+	     }
     },
 				
     stores: {

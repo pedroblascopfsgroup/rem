@@ -90,7 +90,7 @@ public class DtoAgrupaciones extends WebDto {
 	
 	private Boolean perimetroMacc;
 	private Boolean esHayaHome;
-	private boolean isONDnd;
+	private Boolean esONDnd;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -558,11 +558,11 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEsHayaHome(Boolean esHayaHome) {
 		this.esHayaHome = esHayaHome;
 	}
-	public boolean isONDnd() {
-		return isONDnd;
+	public Boolean getEsONDnd() {
+		return esONDnd;
 	}
-	public void setONDnd(boolean isONDnd) {
-		this.isONDnd = isONDnd;
+	public void setEsONDnd(Boolean esONDnd) {
+		this.esONDnd = esONDnd;
 	}
 	
 	

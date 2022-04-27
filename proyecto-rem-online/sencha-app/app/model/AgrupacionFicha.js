@@ -348,7 +348,7 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	        		depends: ['tipoAgrupacionCodigo']
 	            },
     			{
-                	name: 'isONDnd',
+                	name: 'esONDnd',
     	 			type: 'boolean'
                 }
     ],

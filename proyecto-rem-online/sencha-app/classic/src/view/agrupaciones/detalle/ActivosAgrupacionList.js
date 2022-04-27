@@ -117,8 +117,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionCaixaOrPromocionAlquiler}'}, handler: 'onAddClick', scope: this}; 
-		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', bind: {hidden: '{esAgrupacionEditableCaixa}'},  handler: 'onDeleteClick', scope: this, disabled: true};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionCaixaOrPromocionAlquilerOrONDnd}'}, handler: 'onAddClick', scope: this}; 
+		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', bind: {hidden: '{esAgrupacionEditableCaixaOrONDnd}'},  handler: 'onDeleteClick', scope: this, disabled: true};
 		
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.

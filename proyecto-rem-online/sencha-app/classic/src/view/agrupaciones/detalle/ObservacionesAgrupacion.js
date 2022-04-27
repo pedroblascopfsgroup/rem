@@ -7,14 +7,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion', {
     initComponent: function () {
 
         var me = this;
-        
+		var agrupacionONDnd = me.lookupController().getViewModel().get('agrupacionficha.isObraNueva')
+								&& me.lookupController().getViewModel().get('agrupacionficha.esONDnd');
+        var habilitarTopBar = $AU.userHasFunction(['EDITAR_TAB_OBSERVACIONES_AGRUPACION']) && !agrupacionONDnd;
         me.setTitle('Observaciones');
         		         
         var items= [
 
 			{
 			    xtype		: 'gridBaseEditableRow',
-			    topBar		: $AU.userHasFunction(['EDITAR_TAB_OBSERVACIONES_AGRUPACION']),
+			    topBar		: habilitarTopBar,
 			    idPrincipal : 'agrupacionficha.id',
 			   	secFunToEdit: 'EDITAR_AGRUPACION',				
 				secButtons: {

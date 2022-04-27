@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20220401
+--## FECHA_CREACION=20220412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9459
+--## INCIDENCIA_LINK=REMVIP-11493
 --## PRODUCTO=NO
 --## Finalidad: Vista para filtrar por los activos BBVA
 --##           
@@ -18,6 +18,7 @@
 --##        0.6 REMVIP-9399 - VRO - se corrige calculo campos DEP_JURIDICAMENTE y FECHA_DEP_JURIDICA
 --##        0.7 REMVIP-10156 - JAC - se modifican errores en la query y logica de calculo de algunos campos
 --##        0.8 REMVIP-9459 - JAC - se modifica logica tipologia inmueble
+--##        0.9 REMVIP-11493 - JAC - Se modifica case when tipologia inmueble para añadir condicion
 --##########################################
 --*/
 
@@ -73,6 +74,7 @@ BEGIN
         , COALESCE(SUBSTR(BBVA.BBVA_NUM_ACTIVO, 1, 6),''NULL'') AS NUM_INTERNO
         , COALESCE(BBVA.BBVA_CLASE,''NULL'') AS CLASE
 	,CASE 
+	    WHEN PRO.PRO_TITULIZADO IS NOT NULL AND TUD.DD_TUD_CODIGO = ''03'' AND TPA.DD_TPA_CODIGO = ''01'' THEN ''11''
 	    WHEN PRO.PRO_TITULIZADO IS NOT NULL THEN TIB.TIB_CODIGO_SGITAS
 	    WHEN EAC.DD_EAC_CODIGO = ''05'' THEN ''81'' /*RUINA*/
 	    WHEN TGP.DD_TGP_CODIGO IN (''04'',''05'') AND EAC.DD_EAC_CODIGO = ''06'' AND SAC.DD_SAC_CODIGO IN (''24'',''25'') THEN ''92'' /*GARAJE-TRASTERO TERCIARIO - OBRA PARADA*/

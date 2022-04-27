@@ -1123,16 +1123,19 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public boolean isAgrupacionONDnd(ActivoAgrupacion agrupacion) {
-		ActivoObraNueva on = null;
-		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion()))
-				on = (ActivoObraNueva) agrupacion;
-		return !Checks.esNulo(on) && !Checks.esNulo(on.getIdOnvDnd()) ? true : false;
+		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
+			ActivoObraNueva on = genericDao.get(ActivoObraNueva.class, filtro);
+			return !Checks.esNulo(on) && !Checks.esNulo(on.getIdOnvDnd()) ? true : false;
+		}
+		return false;
 	}
 	
 	@Override
 	public boolean isONVentaSobrePlano(ActivoAgrupacion agrupacion) {
 		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
-			ActivoObraNueva on = (ActivoObraNueva) agrupacion;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
+			ActivoObraNueva on = genericDao.get(ActivoObraNueva.class, filtro);
 			if(!Checks.esNulo(on.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(on.getVentaPlano().getCodigo())) 
 				return true;
 		} else if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 

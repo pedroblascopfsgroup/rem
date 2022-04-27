@@ -5,17 +5,13 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
-@Service("expedienteAvisoPisoPiloto")
-public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
+@Service("expedienteAvisoVentaSobrePlano")
+public class ExpedienteAvisoVentaSobrePlano implements ExpedienteAvisadorApi{
 	
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -25,12 +21,12 @@ public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 		
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if(ofertaApi.isOfertaONPisoPiloto(expediente.getOferta())){
-			dtoAviso.setDescripcion("Piso piloto incluido en la oferta");
+		Long numAgrupacionONVentaSobrePlano = ofertaApi.numAgrupacionONVentaSobrePlano(expediente.getOferta());
+		if(!Checks.esNulo(numAgrupacionONVentaSobrePlano)){
+			dtoAviso.setDescripcion("Venta sobre plano ".concat(numAgrupacionONVentaSobrePlano.toString()));
 			dtoAviso.setId(String.valueOf(expediente.getId()));
 		}
 
 		return dtoAviso;
 	}
-
 }

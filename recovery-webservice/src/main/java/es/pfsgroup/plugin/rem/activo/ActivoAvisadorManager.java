@@ -355,20 +355,11 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 		// Aviso 19: Es Piso Piloto
 		
-		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getAgrupaciones())) {
-			for(ActivoAgrupacionActivo act_agr : activo.getAgrupaciones()){
-				if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(act_agr.getAgrupacion().getTipoAgrupacion().getCodigo())
-					&& !Checks.esNulo(activo.getSubcartera().getCodigo()) &&
-					DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()) &&
-					!Checks.esNulo(activo.getEstadoActivo().getCodigo())) {
-					DtoAviso dtoAviso = new DtoAviso();
-					if (activoApi.isPisoPiloto(activo)) {
-						dtoAviso.setDescripcion("Piso Piloto");
-						dtoAviso.setId(String.valueOf(id));
-						listaAvisos.add(dtoAviso);
-					}
-				}
-			}
+		if (activoApi.isActivoONPisoPiloto(activo)) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Piso Piloto");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		// Aviso 19: Activo perteneciente a agrupacion DND
@@ -391,6 +382,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		if(activo.getDiscrepanciasLocalizacion() != null && activo.getDiscrepanciasLocalizacion()) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Discrepancias localización");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		Long numAgrupacionONVentaSobrePlano = activoApi.numAgrupacionONVentaSobrePlano(activo);
+		if (!Checks.esNulo(numAgrupacionONVentaSobrePlano)) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Venta sobre plano ".concat(numAgrupacionONVentaSobrePlano.toString()));
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

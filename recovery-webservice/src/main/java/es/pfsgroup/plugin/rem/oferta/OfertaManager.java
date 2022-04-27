@@ -8903,5 +8903,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return tipoComercializar;
 	}
+	
+	@Override
+	public boolean isOfertaONVentaSobrePlano(Oferta oferta) {
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			return activoAgrupacionApi.isONVentaSobrePlano(oferta.getAgrupacion());
+		} else {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				if (activoApi.isActivoONVentaSobrePlano(activoOferta.getPrimaryKey().getActivo()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isOfertaONPisoPiloto(Oferta oferta) {
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			return activoAgrupacionApi.isONPisoPiloto(oferta.getAgrupacion());
+		} else {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				if (activoApi.isActivoONPisoPiloto(activoOferta.getPrimaryKey().getActivo()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Long numAgrupacionONVentaSobrePlano(Oferta oferta) {
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			if (activoAgrupacionApi.isONVentaSobrePlano(oferta.getAgrupacion()))
+				return oferta.getAgrupacion().getNumAgrupRem();
+		} else {
+			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+				return activoApi.numAgrupacionONVentaSobrePlano(activoOferta.getPrimaryKey().getActivo());
+			}
+		}
+		return null;
+	}
+	
 }
 	

@@ -9790,5 +9790,38 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean isActivoONVentaSobrePlano(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			if (DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())) {
+				ActivoObraNueva on = (ActivoObraNueva) agrupActivo.getAgrupacion();
+				if(!Checks.esNulo(on.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(on.getVentaPlano().getCodigo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoONPisoPiloto(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			if (!Checks.esNulo(agrupActivo.getAgrupacion().getIdAgrDnd()) 
+					&& DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())
+					&& !Checks.esNulo(agrupActivo.getPisoPiloto()) && agrupActivo.getPisoPiloto()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Long numAgrupacionONVentaSobrePlano(Activo activo) {
+		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
+			if (activoAgrupacionApi.isONVentaSobrePlano(agrupActivo.getAgrupacion()))
+				return agrupActivo.getAgrupacion().getNumAgrupRem();
+		}
+		return null;
+	}
 }
 

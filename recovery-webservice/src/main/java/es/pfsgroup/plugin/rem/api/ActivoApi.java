@@ -1500,4 +1500,10 @@ public interface ActivoApi {
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
+
+	boolean isActivoONVentaSobrePlano(Activo activo);
+
+	boolean isActivoONPisoPiloto(Activo activo);
+
+	Long numAgrupacionONVentaSobrePlano(Activo activo);
 }

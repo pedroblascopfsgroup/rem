@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAutorizacionTramitacionOfertas;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -1118,5 +1119,47 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean isAgrupacionONDnd(ActivoAgrupacion agrupacion) {
+		ActivoObraNueva on = (ActivoObraNueva) agrupacion;
+		return !Checks.esNulo(on) && !Checks.esNulo(on.getIdOnvDnd()) ? true : false;
+	}
+	
+	@Override
+	public boolean isONVentaSobrePlano(ActivoAgrupacion agrupacion) {
+		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+			ActivoObraNueva on = (ActivoObraNueva) agrupacion;
+			if(!Checks.esNulo(on.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(on.getVentaPlano().getCodigo())) 
+				return true;
+		} else if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 
+					|| DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion())) {
+			for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				if (activoApi.isActivoONVentaSobrePlano(activoAgrupacion.getActivo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isONPisoPiloto(ActivoAgrupacion agrupacion) {
+		if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 
+			|| DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion())) {
+			for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				if (activoApi.isActivoONPisoPiloto(activoAgrupacion.getActivo())) 
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Long numAgrupacionONDnd(ActivoAgrupacion agrupacion) {
+		if (!Checks.esNulo(agrupacion.getIdAgrDnd()) && DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+			return agrupacion.getNumAgrupRem();
+		}
+		return null;
 	}
 }

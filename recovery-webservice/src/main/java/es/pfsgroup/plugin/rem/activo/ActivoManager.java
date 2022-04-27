@@ -9807,7 +9807,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoONPisoPiloto(Activo activo) {
 		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
-			if (!Checks.esNulo(agrupActivo.getAgrupacion().getIdAgrDnd()) 
+			if (!Checks.esNulo(agrupActivo.getAgrupacion().getAgrupacionONDnd()) 
 					&& DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())
 					&& !Checks.esNulo(agrupActivo.getPisoPiloto()) && agrupActivo.getPisoPiloto()) {
 				return true;

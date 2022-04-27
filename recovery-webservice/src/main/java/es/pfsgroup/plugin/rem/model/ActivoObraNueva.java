@@ -147,8 +147,9 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 		this.idOnvDnd = idOnvDnd;
 	}
 	
-
-	
-	
+	public Integer getIncluidos() {
+        return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
+    }
+		
 
 }

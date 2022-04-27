@@ -177,9 +177,9 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@Column(name = "AGR_COD_ON_SAREB")
 	private String codigoOnSareb;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_DND_ID")
-    private Long idAgrDnd;
+    private ActivoAgrupacion agrupacionONDnd;
 
 	public Long getId() {
 		return id;
@@ -462,14 +462,6 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 		this.codigoOnSareb = codigoOnSareb;
 	}
 
-	public Long getIdAgrDnd() {
-		return idAgrDnd;
-	}
-
-	public void setIdAgrDnd(Long idAgrDnd) {
-		this.idAgrDnd = idAgrDnd;
-	}
-
 	public Boolean getComercializableConsPlano() {
 		return comercializableConsPlano;
 	}
@@ -481,6 +473,15 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public Boolean getEsVisitable() {
 		return esVisitable;
 	}
+
+	public ActivoAgrupacion getAgrupacionONDnd() {
+		return agrupacionONDnd;
+	}
+
+	public void setAgrupacionONDnd(ActivoAgrupacion agrupacionONDnd) {
+		this.agrupacionONDnd = agrupacionONDnd;
+	}
+		
 	
 
 }

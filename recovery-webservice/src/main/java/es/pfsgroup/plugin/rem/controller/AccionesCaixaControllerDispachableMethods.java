@@ -424,48 +424,6 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(AccionesCaixaController.ACCION_DEVOLVER_RESERVA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
-            @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
-            }
-
-            @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
-                if (dto != null) {
-                    ModelAndView mm = this.controller.accionDevolverReserva(dto);
-                    if ("false".equals(mm.getModel().get("success").toString())
-                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-        dispachableMethods.put(AccionesCaixaController.ACCION_INCAUTAR_RESERVA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
-            @Override
-            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
-                return DtoOnlyExpedienteYOfertaCaixa.class;
-            }
-
-            @Override
-            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
-                if (dto != null) {
-                    ModelAndView mm = this.controller.accionIncautarReserva(dto);
-                    if ("false".equals(mm.getModel().get("success").toString())
-                            && !Checks.esNulo(mm.getModel().get("msgError"))) {
-                        throw new JsonViewerException(mm.getModel().get("msgError").toString());
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
         dispachableMethods.put(AccionesCaixaController.ACCION_DEVOL_ARRAS_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
             @Override
             public Class<DtoAccionRechazoCaixa> getArgumentType() {
@@ -813,7 +771,7 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_DEV_CONTABILIZADO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_DEVOL_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
             @Override
             public Class<DtoAccionRechazoCaixa> getArgumentType() {
                 return DtoAccionRechazoCaixa.class;
@@ -834,7 +792,7 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_INC_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_INCAUTACION_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
             @Override
             public Class<DtoAccionRechazoCaixa> getArgumentType() {
                 return DtoAccionRechazoCaixa.class;

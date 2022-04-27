@@ -532,40 +532,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Override
     @Transactional
-    public void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
-        expediente.setEstadoBc(estadoExpedienteBc);
-        if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
-        	expediente.setFechaAnulacion(new Date());
-        }
-
-
-        genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
-    }
-
-    @Override
-    @Transactional
-    public void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-
-        DDEstadoExpedienteBc estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC));
-        expediente.setEstadoBc(estadoExpedienteBc);
-        if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
-        	expediente.setFechaAnulacion(new Date());
-        }
-
-
-        genericDao.save(ExpedienteComercial.class, expediente);
-		ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
-    }
-
-    @Override
-    @Transactional
     public void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException {
     	ExpedienteComercial eco = expedienteComercialApi.findOne(dto.getIdExpediente());
     	if(eco != null) {

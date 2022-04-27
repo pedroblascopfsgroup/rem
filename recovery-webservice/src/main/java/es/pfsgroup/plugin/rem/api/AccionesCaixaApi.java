@@ -41,10 +41,6 @@ public interface AccionesCaixaApi {
 
     void accionIncautarArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) throws ParseException;
 
-    void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto);
-
-    void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto);
-
     void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionDevolReservaCont(DtoAccionRechazoCaixa dto);

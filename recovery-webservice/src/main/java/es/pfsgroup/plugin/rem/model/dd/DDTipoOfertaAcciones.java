@@ -59,8 +59,9 @@ public class DDTipoOfertaAcciones implements Auditable, Dictionary {
 	public static final String CODIGO_PENDIENTE_NEGOCIACION = "039";
 	public static final String CODIGO_PDTE_CL_ROD = "040";
 	public static final String CODIGO_RECHAZO_PBC = "041";
-	public static final String ACCION_DEV_CONTABILIZADO = "047";
-	public static final String ACCION_INC_CONTABILIZADA = "048";
+	public static final String ACCION_RESERVA_CONTABILIZADA = "021";
+	public static final String ACCION_DEVOL_RESERVA_CONT = "033";
+	public static final String ACCION_INCAUTACION_RESERVA_CONT = "035";
 	public static final String ACCION_TAREA_DATOS_PBC = "996";
 	public static final String ACCION_SOLICITUD_DOC_MINIMA = "997";
 	public static final String ACCION_CONFIRMACION_REP_OFERTAS = "998";

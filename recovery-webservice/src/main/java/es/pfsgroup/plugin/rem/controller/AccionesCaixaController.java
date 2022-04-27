@@ -361,34 +361,6 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionDevolverReserva(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
-    public ModelAndView accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionIncautarReserva(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
     public ModelAndView accionDevolArrasCont(DtoAccionRechazoCaixa dto) {
         ModelMap model = new ModelMap();
         try {

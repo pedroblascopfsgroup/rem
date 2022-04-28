@@ -1509,4 +1509,6 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	Boolean isAgrupacionONDnd(Long numAgrupacion);
+
 }

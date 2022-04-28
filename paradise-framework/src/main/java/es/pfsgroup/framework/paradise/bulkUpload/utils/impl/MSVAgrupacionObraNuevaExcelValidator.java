@@ -47,6 +47,7 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enAgrupacion";
 	public static final String ACTIVO_EN_OTRA_AGRUPACION = "msg.error.masivo.agrupar.activos.asistida.activo.enOtraAgrupacion";
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
+	public static final String ERROR_AGRUPACION_DND = "msg.error.masivo.agrupar.activos.proyecto.dnd";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -104,11 +105,13 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
+			mapaErrores.put(messageServices.getMessage(ERROR_AGRUPACION_DND), isAgrupacionONDnd(exc));
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() || !mapaErrores
-							.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()) {
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() 
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ERROR_AGRUPACION_DND)).isEmpty()) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -370,6 +373,25 @@ public class MSVAgrupacionObraNuevaExcelValidator extends MSVExcelValidatorAbstr
 	@Override
 	public Integer getNumFilasHoja() {
 		return this.numFilasHoja;
+	}
+	
+	private List<Integer> isAgrupacionONDnd(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = 1; i < this.numFilasHoja; i++) {
+				if (particularValidator.isAgrupacionONDnd(Long.parseLong(exc.dameCelda(i, 0))))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0)
+				listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return listaFilas;
 	}
 	
 }

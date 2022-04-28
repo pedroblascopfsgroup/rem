@@ -9411,5 +9411,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						);
 		return !"0".equals(resultado);
     }
+
+	@Override
+	public Boolean isAgrupacionONDnd(Long numAgrupacion) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_AGR_AGRUPACION AGR"
+				+ "					JOIN ACT_ONV_OBRA_NUEVA ONV ON ONV.AGR_ID = AGR.AGR_ID"
+				+ "			  		WHERE AGR.AGR_NUM_AGRUP_REM  = :numAgrupacion "
+				+ "					AND (AGR.AGR_FECHA_BAJA IS NULL OR AGR.AGR_FECHA_BAJA  > SYSDATE)"
+				+ "			    	AND ONV.ONV_DND_ID IS NOT NULL AND AGR.BORRADO  = 0 ");
+		return !"0".equals(resultado);
+	}
 }
 

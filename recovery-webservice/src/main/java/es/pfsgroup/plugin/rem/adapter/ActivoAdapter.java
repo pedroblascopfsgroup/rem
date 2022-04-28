@@ -302,7 +302,7 @@ public class ActivoAdapter {
 	public static final String T_APROBACION_INFORME_COMERCIAL= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
-	
+	public static final String ERROR_CREAR_OFERTA = "No se ha podido crear la oferta debido a falta de configuración.";
 	//Se añaden aqui tambien, ya que no se por que esta cogiendo el diccionario de gestores de un .class que no es editable, en vez del .java que si que lo es
 	public static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
@@ -4548,6 +4548,13 @@ public class ActivoAdapter {
 			}
 			
 			codigoEstado = setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo)){
+				Double importe = depositoApi.getImporteDeposito(oferta);
+				if(importe == null) {
+					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
+				}
+			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			

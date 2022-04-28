@@ -1436,6 +1436,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
 				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual)){
+					Double importe = depositoApi.getImporteDeposito(oferta);
+					if(importe == null) {
+						errorsList.put("deposito", "Error al crear oferta, no existe configuración de importe para crear el depósito.");
+						return errorsList;
+					}
 					depositoApi.generaDeposito(oferta);
 					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(oferta);
 					if(cuentaVirtual == null) {

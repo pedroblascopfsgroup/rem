@@ -240,7 +240,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			        		}
 			        },
 		            flex: 1
-		        }
+		        },
+		        {
+		        	dataIndex: 'estadoDeposito',
+		            text: HreRem.i18n('fieldlabel.estado.deposito'),
+					reference:'codigoEstadoDepositoRef'
+				}
 		        
         ];
         

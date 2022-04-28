@@ -152,7 +152,12 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            text: HreRem.i18n('header.oferta.fechaEntradaCRMSF'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
-		        }
+		        },
+		        {
+		        	dataIndex: 'estadoDeposito',
+		            text:HreRem.i18n('fieldlabel.estado.deposito'),
+					reference:'codigoEstadoDepositoRef'
+				}
         ];
         
          me.addListener ('beforeedit', function(editor, context) {

@@ -2203,7 +2203,9 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = oferta != null;
 
 			model.put(RESPONSE_SUCCESS_KEY, success);
-
+			if(success == false) {
+				model.put("error", ActivoAdapter.ERROR_CREAR_OFERTA);
+			}
 		} catch (Exception e) {
 			if (e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
 				model.put(RESPONSE_MESSAGE_KEY, ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
@@ -2211,6 +2213,7 @@ public class ActivoController extends ParadiseJsonController {
 			} else {
 				logger.error("error en activoController", e);
 				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put("error", e.getMessage());
 			}
 		}
 

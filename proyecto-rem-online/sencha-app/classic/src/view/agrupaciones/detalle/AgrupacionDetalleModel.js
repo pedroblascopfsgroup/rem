@@ -720,11 +720,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
 		 },
 		 
-		 esAgrupacionThirdpartiesYubaiObraNuevaDnd: function(get) {
+		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
 			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
-			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']
-						&& get('agrupacionficha.esONDnd') == "true") {
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
 		     		return true;
 		     	} else {
 		     		return false;
@@ -835,7 +834,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     hideBotoneraFotosSubdivision: function(get) {
 	    	 return get('agrupacionficha.existeFechaBaja') || get('agrupacionONDnd');
 	    	 
-	     }
+	     },
+		 
+		 esAgrupacionThirdpartiesYubaiObraNuevaDnd: function(get) {
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
+			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']
+						&& get('agrupacionficha.esONDnd')) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		}
     },
 				
     stores: {

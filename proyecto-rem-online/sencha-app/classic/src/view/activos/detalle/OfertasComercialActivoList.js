@@ -27,6 +27,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
         var activo = me.lookupController().getViewModel().get('activo').getData();
         var isBk = activo.isCarteraBankia;
+		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
         
         me.columns= [
 		        {
@@ -98,7 +99,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1,                	
 			        decimalPrecision: 2,
 			        decimalSeparation: ',',
-			        thousandSeparation: '.'
+			        thousandSeparation: '.',
+			        hidden: enConcurrencia
 		        },
 		        {
 		        	xtype: 'numbercolumn',

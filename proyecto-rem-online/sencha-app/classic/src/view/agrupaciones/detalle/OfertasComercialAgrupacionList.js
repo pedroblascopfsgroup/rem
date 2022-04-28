@@ -23,6 +23,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     initComponent: function () {
     	        
         var me = this;
+		var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
+		var enConcurrencia = me.lookupController().getViewModel().getData().agrupacionficha.get('enConcurrencia');
         
         me.topBar = $AU.userHasFunction(['EDITAR_TAB_COMERCIAL_AGRUPACION']);
         
@@ -67,7 +69,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            flex: 1
+		            flex: 1,
+			        hidden: enConcurrencia
 		        },
 		        {
 		            dataIndex: 'codigoEstadoOferta',

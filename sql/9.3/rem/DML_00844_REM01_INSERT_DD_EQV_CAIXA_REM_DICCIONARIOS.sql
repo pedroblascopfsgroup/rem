@@ -266,6 +266,11 @@ DECLARE
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','16','Constitución préstamo promotor','DD_MEC_MOTIVO_EXCLU_CAIXA','16','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','17','Inmueble no vvda utilizado como vvda','DD_MEC_MOTIVO_EXCLU_CAIXA','17','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','18','Inmueble es una zona común','DD_MEC_MOTIVO_EXCLU_CAIXA','18','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','19','Posible invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','19','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','20','Inmueble dummy','DD_MEC_MOTIVO_EXCLU_CAIXA','20','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','21','Invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','21','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','22','Posible destino reubicación','DD_MEC_MOTIVO_EXCLU_CAIXA','22','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','23','Posible ocupacion pdte IO/Denuncia','DD_MEC_MOTIVO_EXCLU_CAIXA','23','0'),
         --Motivo de exoneración CEE
         T_TIPO_DATA('MOTIVO_EXONERACION_CEE','01','Local en bruto','DD_MEC_MOTIVO_EXONERACION_CEE','01','0'),
         T_TIPO_DATA('MOTIVO_EXONERACION_CEE','02','Preciosa reformas +25% del total de su envolvente','DD_MEC_MOTIVO_EXONERACION_CEE','02','0'),
@@ -1286,7 +1291,7 @@ DECLARE
         T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
         T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
         T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
-        --T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0')
+        T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0')
         --- Balcón
         T_TIPO_DATA('BALCON','015201','Sí','DD_SIN_SINO','01','0'),
         T_TIPO_DATA('BALCON','015202','No','DD_SIN_SINO','02','0'),

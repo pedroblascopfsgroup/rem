@@ -85,8 +85,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 
     initComponent: function () {
         var me = this;
-
         var items = [];
+      
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isSociedadTasadora}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
 
@@ -100,12 +100,31 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-
+		var editionDisabled = function() {
+            me.down("[itemId=botoneditar]").setVisible(false);
+        }
 		// Si la pestaña recibida no tiene asignados roles de edicion 
 		if(Ext.isEmpty(tab.funPermEdition)) {
     		editionEnabled();
-    	} else {
+    	} else if(!this.permiteProveedorNoHomologable()){
+    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+    	}
+    	else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
+    },
+    permiteProveedorNoHomologable: function () {
+    	 var me = this;
+    	 var tipoProveedor =  me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
+    	 if($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO']) && 
+    		(tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] &&
+    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['JUNTA_DE_COMPENSACION'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['AGRUPACION_DE_INTERES_URBANISTICO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['AYUNTAMIENTO_MUNICIPAL'] &&
+    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['DIPUTACION_PROVINCIAL'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['CONSEJERIA_AUTONOMICO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['HACIENDA_ESTATAL'] &&
+    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['OTRA_ADMINISTRACION_PUBLICA'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['NOTARIO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['REGISTRO'] &&
+    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])
+    	 ) {
+    		 return false;
+    	 }
+    	 return true;
     }
 });

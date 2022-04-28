@@ -28,5 +28,6 @@ public interface TramiteVentaApi {
 
 	DtoDocPostVenta getDatosDocPostventa(Long idExpediente);
 
+	boolean isTramiteT017DivarianAprobado(ExpedienteComercial eco);
 }
 

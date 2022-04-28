@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
@@ -64,16 +65,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -294,6 +285,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidatorApi;
+
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -2632,8 +2626,6 @@ public class AgrupacionAdapter {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;
 			}
 
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class,
 					dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
@@ -2963,15 +2955,19 @@ public class AgrupacionAdapter {
 					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
 				}		   
 			}
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);
+
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
+
 			oferta.setCliente(clienteComercial);
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();

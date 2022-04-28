@@ -272,8 +272,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 		    dock: 'top',
 		    height: 50,
 		    items: [
-		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoSubdivisionClick',  bind: {hidden: '{existeFechaBaja}'}, secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'},
-		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick',  bind: {hidden: '{existeFechaBaja}'}, secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'},
+		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoSubdivisionClick',  bind: {hidden: '{hideBotoneraFotosSubdivision}'}, secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'},
+		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick',  bind: {hidden: '{hideBotoneraFotosSubdivision}'}, secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'},
 		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'},
 		        { 
 		        	xtype: 'combobox',
@@ -292,7 +292,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 	            	displayField: 'descripcion',
 					valueField: 'id'
 		        },
-		        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'}
+		        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'onReloadFotoClick',  bind: {hidden: '{hideBotoneraFotosSubdivision}'}, secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'}
 		    ]
 		}
 		];

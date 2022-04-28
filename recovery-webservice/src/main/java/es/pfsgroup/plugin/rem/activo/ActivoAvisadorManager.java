@@ -389,7 +389,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		Long numAgrupacionONVentaSobrePlano = activoApi.numAgrupacionONVentaSobrePlano(activo);
 		if (!Checks.esNulo(numAgrupacionONVentaSobrePlano)) {
 			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Venta sobre plano ".concat(numAgrupacionONVentaSobrePlano.toString()));
+			dtoAviso.setDescripcion("Venta sobre plano (".concat(numAgrupacionONVentaSobrePlano.toString()).concat(")"));
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

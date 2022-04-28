@@ -23,7 +23,7 @@ public class ExpedienteAvisoVentaSobrePlano implements ExpedienteAvisadorApi{
 		
 		Long numAgrupacionONVentaSobrePlano = ofertaApi.numAgrupacionONVentaSobrePlano(expediente.getOferta());
 		if(!Checks.esNulo(numAgrupacionONVentaSobrePlano)){
-			dtoAviso.setDescripcion("Venta sobre plano ".concat(numAgrupacionONVentaSobrePlano.toString()));
+			dtoAviso.setDescripcion("Venta sobre plano (".concat(numAgrupacionONVentaSobrePlano.toString()).concat(")"));
 			dtoAviso.setId(String.valueOf(expediente.getId()));
 		}
 

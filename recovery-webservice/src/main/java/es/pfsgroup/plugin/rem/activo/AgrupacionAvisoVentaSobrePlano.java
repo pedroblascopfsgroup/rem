@@ -28,7 +28,7 @@ public class AgrupacionAvisoVentaSobrePlano implements AgrupacionAvisadorApi {
 		
 		Long numAgrupacionONDnd = activoAgrupacionApi.numAgrupacionONDnd(agrupacion);
 		if(!Checks.esNulo(numAgrupacionONDnd)){
-			dtoAviso.setDescripcion("Venta sobre plano ".concat(numAgrupacionONDnd.toString()));
+			dtoAviso.setDescripcion("Venta sobre plano (".concat(numAgrupacionONDnd.toString()).concat(")"));
 			dtoAviso.setId(String.valueOf(agrupacion.getId()));
 		}
 

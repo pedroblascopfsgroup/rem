@@ -9796,9 +9796,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isActivoONVentaSobrePlano(Activo activo) {
 		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
 			if (DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupActivo.getAgrupacion().getId());
-				ActivoObraNueva on = genericDao.get(ActivoObraNueva.class, filtro);
-				if(!Checks.esNulo(on.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(on.getVentaPlano().getCodigo())) 
+				if(!Checks.esNulo(agrupActivo.getAgrupacion().getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(agrupActivo.getAgrupacion())) 
 					return true;
 			}
 		}

@@ -193,4 +193,6 @@ public interface ActivoAgrupacionApi {
 	boolean isONPisoPiloto(ActivoAgrupacion agrupacion);
 
 	Long numAgrupacionONDnd(ActivoAgrupacion agrupacion);
+
+	Boolean checkIdON(Long numAgrupacion);
 }

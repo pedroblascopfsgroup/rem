@@ -350,7 +350,19 @@ Ext.define('HreRem.model.AgrupacionFicha', {
     			{
                 	name: 'esONDnd',
     	 			type: 'boolean'
-                }
+                },
+	            {
+	            	name: 'isComercialVentaRestringidaVsP',
+	            	calculate: function(data) {
+	            		return (data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
+	            			|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'])
+							&& data.ventaSobrePlano;
+	            	},
+	            	depends: ['tipoAgrupacionCodigo', 'ventaSobrePlano']
+	            },
+				{
+					name: 'idObraNueva'
+				}
     ],
     
 	proxy: {

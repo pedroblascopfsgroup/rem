@@ -414,6 +414,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								readOnly: '{!usuarioEditarAgrupaciones}',
 								hidden: '{!agrupacionficha.isObraNuevaSareb}'
 							}
+						},
+						{
+							xtype: 'numberfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.id.on'),
+							bind: {
+								value: '{agrupacionficha.idObraNueva}',
+								hidden: '{!agrupacionficha.isComercialVentaRestringidaVsP}'
+							},
+							allowBlank: false,
+		                    listeners: {
+		                        'focusLeave': 'checkIdON'
+		                    }
 						}
 				]
           },

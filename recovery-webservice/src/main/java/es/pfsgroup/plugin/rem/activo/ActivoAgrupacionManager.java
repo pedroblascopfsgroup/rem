@@ -1134,9 +1134,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	public boolean isONVentaSobrePlano(ActivoAgrupacion agrupacion) {
 		if (DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
-			ActivoObraNueva on = genericDao.get(ActivoObraNueva.class, filtro);
-			if(!Checks.esNulo(on.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(on.getVentaPlano().getCodigo())) 
+			if(!Checks.esNulo(agrupacion.getVentaPlano()) && DDSinSiNo.CODIGO_SI.equals(agrupacion.getVentaPlano().getCodigo())) 
 				return true;
 		} else if (DDTipoAgrupacion.isComercialVenta(agrupacion.getTipoAgrupacion()) 
 					|| DDTipoAgrupacion.isRestringida(agrupacion.getTipoAgrupacion())) {
@@ -1166,5 +1164,14 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			return agrupacion.getAgrupacionONDnd().getNumAgrupRem();
 		}
 		return null;
+	}
+	
+	@Override
+	public Boolean checkIdON(Long numAgrupacion) {
+		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion));
+		if (!Checks.esNulo(agr) && (Checks.esNulo(agr.getFechaBaja()) || (!Checks.esNulo(agr.getFechaBaja()) && agr.getFechaBaja().before(new Date()))) 
+				&& isAgrupacionONDnd(agr) && isONVentaSobrePlano(agr))
+			return true;
+		return false;
 	}
 }

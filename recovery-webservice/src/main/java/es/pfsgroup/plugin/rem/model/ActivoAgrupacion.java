@@ -30,6 +30,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
@@ -180,6 +181,10 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_DND_ID")
     private ActivoAgrupacion agrupacionONDnd;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_VENTA_PLANO")
+	private DDSinSiNo ventaPlano;
 
 	public Long getId() {
 		return id;
@@ -481,7 +486,13 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setAgrupacionONDnd(ActivoAgrupacion agrupacionONDnd) {
 		this.agrupacionONDnd = agrupacionONDnd;
 	}
-		
-	
+
+	public DDSinSiNo getVentaPlano() {
+		return ventaPlano;
+	}
+
+	public void setVentaPlano(DDSinSiNo ventaPlano) {
+		this.ventaPlano = ventaPlano;
+	}
 
 }

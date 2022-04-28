@@ -1318,4 +1318,18 @@ public class AgrupacionController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkIdON(String numAgrupacion, ModelMap model) {
+
+		try {
+			model.put("success", activoAgrupacionApi.checkIdON(Long.parseLong(numAgrupacion)));
+		} catch(Exception e) {
+			logger.error("error obteniendo la agrupacion ",e);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

@@ -63,10 +63,6 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	@Column(name = "ONV_ACREEDOR_PDV")
 	private String acreedorPDV;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ONV_VENTA_PLANO")
-	private DDSinSiNo ventaPlano;
-	
 	@OneToMany(mappedBy = "obraNueva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -121,14 +117,6 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 
 	public void setAcreedorPDV(String acreedorPDV) {
 		this.acreedorPDV = acreedorPDV;
-	}
-
-	public DDSinSiNo getVentaPlano() {
-		return ventaPlano;
-	}
-
-	public void setVentaPlano(DDSinSiNo ventaPlano) {
-		this.ventaPlano = ventaPlano;
 	}
 
 	public List<ActivoSubdivision> getSubdivision() {

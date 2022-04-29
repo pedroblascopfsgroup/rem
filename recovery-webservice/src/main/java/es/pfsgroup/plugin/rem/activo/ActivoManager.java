@@ -9706,7 +9706,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			esActivoAlquiler = !Checks.esNulo(activoFinal.getActivoPublicacion()) 
 					&& !Checks.esNulo(activoFinal.getActivoPublicacion().getTipoComercializacion())
 					&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activoFinal.getActivoPublicacion().getTipoComercializacion().getCodigo());
-			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
+			es1to1 = !Checks.esNulo(activoFinal.getSubcartera())  && !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
 		

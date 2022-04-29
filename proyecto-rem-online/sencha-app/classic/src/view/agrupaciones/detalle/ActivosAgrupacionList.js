@@ -406,7 +406,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        xtype: 'actioncolumn',
 		        reference: 'esPisoPiloto',
 		        bind: {
-		        	hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}' // Agrupación Third Party - Yubai
+		        	hidden: '{!agrupacionONDnd}' 
 		        },
 		        flex: 1,
 		        width: 30,
@@ -425,7 +425,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 					            }
 				        	}
 				 ]
-    		}
+    		},
+    		{   
+            	text	 : HreRem.i18n('header.fecha.escrituracion'),
+                dataIndex: 'fechaEscrituracion',
+                bind: {
+                	 hidden: '{!agrupacionONDnd}'
+		        },
+		        formatter: 'date("d/m/Y")',
+		        flex: 0.7,
+		        width: 130
+		       
+		    }
         ];
 
         me.saveSuccessFn = function() {

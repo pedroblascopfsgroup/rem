@@ -8,8 +8,8 @@ import es.capgemini.devon.dto.WebDto;
  * Dto para el Estado de disponibilidad comercial
  */
 public class DtoVActivosAgrupacion extends WebDto {
-
-
+	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private Long activoId;	
 	private Long numActivo; 
@@ -36,6 +36,7 @@ public class DtoVActivosAgrupacion extends WebDto {
 	private String publicado;
 	private Boolean estadoSituacionComercial;
 	private Boolean esPisoPiloto;
+	private Date fechaEscrituracion;
 	
 	public Long getId() {
 		return id;
@@ -194,4 +195,12 @@ public class DtoVActivosAgrupacion extends WebDto {
 	public void setEsPisoPiloto(Boolean esPisoPiloto) {
 		this.esPisoPiloto = esPisoPiloto;
 	}
+	public Date getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+	public void setFechaEscrituracion(Date fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
+	
+	
 }

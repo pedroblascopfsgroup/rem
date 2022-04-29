@@ -26,7 +26,7 @@ public class AgrupacionAvisoPisoPiloto implements AgrupacionAvisadorApi {
 		DtoAviso dtoAviso = new DtoAviso();
 		
 		if (activoAgrupacionApi.isONPisoPiloto(agrupacion)) {
-			dtoAviso.setDescripcion("Piso piloto");
+			dtoAviso.setDescripcion("Piso piloto incluido en la agrupación");
 			dtoAviso.setId(String.valueOf(agrupacion.getId()));
 		}
 

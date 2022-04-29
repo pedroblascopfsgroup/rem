@@ -24,6 +24,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 
 
@@ -87,6 +89,23 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 	
 	@Column(name = "PRD_LOCAL_ABIERTO_PUBLICO")
 	private Integer localAbiertoPublico;
+	
+	@Column(name = "PRD_PISO")
+	private Integer piso;
+	
+	@Column(name = "PRD_OTROS")
+	private String otros;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRD_LINEA_NEGOCIO")
+	private DDTipoComercializacion lineaNegocio;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PRD_GEST_CLIENT_NO_RESIDENTES")
+	private DDSinSiNo gestionClientes;
+	
+	@Column(name = "PRD_NUMERO_COMERCIALES")
+	private Integer numeroComerciales;
 
 	@Version   
 	private Long version;
@@ -222,7 +241,43 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 		this.localidad = localidad;
 	}
 
+	public Integer getPiso() {
+		return piso;
+	}
 
+	public void setPiso(Integer piso) {
+		this.piso = piso;
+	}
 	
+	public String getOtros() {
+		return otros;
+	}
+
+	public void setOtros(String otros) {
+		this.otros = otros;
+	}
 	
+	public DDTipoComercializacion getLineaNegocio() {
+		return lineaNegocio;
+	}
+
+	public void setLineaNegocio(DDTipoComercializacion lineaNegocio) {
+		this.lineaNegocio = lineaNegocio;
+	}
+	
+	public DDSinSiNo getGestionClientes() {
+		return gestionClientes;
+	}
+
+	public void setGestionClientes(DDSinSiNo gestionClientes) {
+		this.gestionClientes = gestionClientes;
+	}
+	
+	public Integer getNumeroComerciales() {
+		return numeroComerciales;
+	}
+
+	public void setNumeroComerciales(Integer numeroComerciales) {
+		this.numeroComerciales = numeroComerciales;
+	}
 }

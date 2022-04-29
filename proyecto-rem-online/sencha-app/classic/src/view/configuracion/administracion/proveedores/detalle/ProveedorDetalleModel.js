@@ -247,7 +247,31 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
 			}
-		}		
+		},
+		comboProvincia: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'provincias'}
+			}   	
+    	},
+		comboMunicipioDatosBasicos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getComboMunicipioMultiple',
+				extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
+			}
+		},
+		comboCodigoPostalDatosContacto: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getComboCodigoPostalMultiple',
+				extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
+			}
+		}
     }
     
 });

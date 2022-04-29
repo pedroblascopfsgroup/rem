@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -13,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDatosContacto;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
@@ -312,5 +314,11 @@ public interface ProveedoresApi {
 	public boolean deleteConductasInapropiadas(String id);
 
 	String uploadConducta(WebFileItem fileItem) throws Exception;
+
+	public Object getDatosContactoById(Long id);
+
+	public boolean saveDatosContactoById(DtoDatosContacto dto);
+
+	List<Localidad> getComboMunicipioMultiple(String codigoProvincia);
 
 }

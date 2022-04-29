@@ -34,8 +34,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	dataIndex: 'id',
 		        	text: HreRem.i18n('fieldlabel.proveedores.id'),
-		        	flex:0.5, 
-		        	hidden:true
+		        	collapsible: true,
+		        	colspan: 3, 
+		        	hidden:false
 		        },
 		        {
 		        	xtype: 'gridcolumn',
@@ -43,7 +44,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			            var store =  this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoDireccionProveedor');
 			        	if(store.isLoading()) {
 			        		store.on('load', function(store, items){
-            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+			        			var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
+			        			if(!Ext.isEmpty(grid)){
+			        				grid = me;
+			        			}
+            		       		grid = grid.getView();
             		       		grid.refreshNode(rowIndex);
             		       	});
 			        	}
@@ -111,7 +116,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			        	var store =  this.up('proveedoresdetallemain').getViewModel().getStore('comboTipoVia');
 			        	if(store.isLoading()) {
 			        		store.on('load', function(store, items){
-            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+			        			var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
+			        			if(!Ext.isEmpty(grid)){
+			        				grid = me;
+			        			}
+            		       		grid = grid.getView();
             		       		grid.refreshNode(rowIndex);
             		       	});
 			        	}
@@ -151,6 +160,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            text: HreRem.i18n('header.numero'),
 		            flex: 0.5,
 		            editor: {
+		            	xtype: 'textfield',
+		            	maskRe: /[0-9]/,
+		            	stripCharsRe: /[^0-9]/,
+		            	maxLength: 5
+		            }
+		        },
+		        {
+		        	dataIndex: 'piso',
+		        	text: HreRem.i18n('fieldlabel.proveedores.piso'),
+		        	flex:0.5,
+		        	editor: {
 		            	xtype: 'textfield',
 		            	maskRe: /[0-9]/,
 		            	stripCharsRe: /[^0-9]/,
@@ -239,7 +259,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
             		       			store.load();
             		       		}
             		       		store.on('load', function(store, items){
-	            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref').getView();
+	            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
+				        			if(!Ext.isEmpty(grid)){
+				        				grid = me;
+				        			}
+	            		       		grid = grid.getView();
 	            		       		grid.refreshNode(rowIndex);
 	            		       	});
             		       	}
@@ -290,6 +314,16 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            	xtype: 'textfield',
 		            	vtype: 'email',
 		            	maxLength: 50
+		            }
+		        },
+		        {
+		            dataIndex: 'otros',
+		            text: HreRem.i18n('fieldlabel.proveedores.otros'),
+		            flex: 1,
+		            editor: {
+		            	xtype: 'textfield',
+		            	allowBlank: false,
+		            	maxLength: 100
 		            }
 		        }
 		    ];

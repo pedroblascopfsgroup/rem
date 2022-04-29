@@ -24,6 +24,8 @@ public class DtoDireccionDelegacion extends WebDto {
 	private String telefono;
 	private String email;
 	private int totalCount;
+	private Integer piso;
+	private String otros;
 	
 	
 	public int getTotalCount() {
@@ -122,6 +124,18 @@ public class DtoDireccionDelegacion extends WebDto {
 	}
 	public void setProveedorID(String proveedorID) {
 		this.proveedorID = proveedorID;
+	}
+	public Integer getPiso() {
+		return piso;
+	}
+	public void setPiso(Integer piso) {
+		this.piso = piso;
+	}
+	public String getOtros() {
+		return otros;
+	}
+	public void setOtros(String otros) {
+		this.otros = otros;
 	}
 	
 }

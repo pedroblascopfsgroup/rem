@@ -222,9 +222,7 @@ Ext.define('HreRem.model.FichaProveedorModel', {
 		type: 'uxproxy',
 		api: {
             read: 'proveedores/getProveedorById',
-            create: 'proveedores/createProveedor',
-            update: 'proveedores/saveProveedorById',
-            destroy: 'proveedores/deleteProveedorById'
+            update: 'proveedores/saveProveedorById'
         }
     }    
 });

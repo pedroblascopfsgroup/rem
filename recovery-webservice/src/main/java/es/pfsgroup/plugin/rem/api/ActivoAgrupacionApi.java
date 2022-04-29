@@ -194,5 +194,5 @@ public interface ActivoAgrupacionApi {
 
 	Long numAgrupacionONDnd(ActivoAgrupacion agrupacion);
 
-	Boolean checkIdON(Long numAgrupacion);
+	String checkIdON(Long idAgrupacion,Long numAgrupacionON);
 }

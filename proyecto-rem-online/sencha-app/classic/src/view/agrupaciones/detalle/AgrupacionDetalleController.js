@@ -1427,14 +1427,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
 	checkIdON: function(field){
 		var me = this;
-		var numAgrupacion = field.getValue();
-		if (numAgrupacion != "" && numAgrupacion != undefined){
+		var numAgrupacionON = field.getValue();
+	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+		if (numAgrupacionON != "" && numAgrupacionON != undefined){
     		Ext.Ajax.request({
 	    	    url: $AC.getRemoteUrl('agrupacion/checkIdON'),
-	    	    params: {numAgrupacion: numAgrupacion},
+	    	    params: {idAgrupacion: idAgrupacion, numAgrupacionON: numAgrupacionON},
 				success: function(response, opts) {
 	  				if(Ext.decode(response.responseText).success == "false") {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.check.idON"));
+						me.fireEvent("errorToast", Ext.decode(response.responseText).error);
 						field.setValue(null);
 	    	        }
 	    	    },

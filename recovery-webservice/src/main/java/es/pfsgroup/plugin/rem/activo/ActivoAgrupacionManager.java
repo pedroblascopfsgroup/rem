@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -131,6 +132,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
+
+	@Resource
+	private MessageService messageServices;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -1167,11 +1171,23 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	
 	@Override
-	public Boolean checkIdON(Long numAgrupacion) {
-		ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion));
-		if (!Checks.esNulo(agr) && (Checks.esNulo(agr.getFechaBaja()) || (!Checks.esNulo(agr.getFechaBaja()) && agr.getFechaBaja().before(new Date()))) 
-				&& isAgrupacionONDnd(agr) && isONVentaSobrePlano(agr))
-			return true;
-		return false;
+	public String checkIdON(Long idAgrupacion, Long numAgrupacionON) {
+		ActivoAgrupacion agrON = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacionON));
+		if (!Checks.esNulo(agrON) && (Checks.esNulo(agrON.getFechaBaja()) || (!Checks.esNulo(agrON.getFechaBaja()) && agrON.getFechaBaja().before(new Date())))) {
+			if (isAgrupacionONDnd(agrON) && isONVentaSobrePlano(agrON)) {
+				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+					boolean esAgrupacionCorrecta = false;
+					for (ActivoAgrupacionActivo agrupacionActivo : activoAgrupacion.getActivo().getAgrupaciones()) {
+						if (agrupacionActivo.getAgrupacion().equals(agrON))
+							esAgrupacionCorrecta = true;
+					}
+					if (!esAgrupacionCorrecta) return messageServices.getMessage("msg.operacion.ko.check.idON.error.activo");
+				}
+				return null;
+			}
+			return messageServices.getMessage("msg.operacion.ko.check.idON");		
+		}
+		return messageServices.getMessage("msg.operacion.ko.check.idON.error.agrupacion");
 	}
 }

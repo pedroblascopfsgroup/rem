@@ -115,16 +115,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     },
     permiteProveedorNoHomologable: function () {
     	 var me = this;
-    	 var tipoProveedor =  me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
-    	 if($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO']) && 
-    		(tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] &&
-    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['JUNTA_DE_COMPENSACION'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['AGRUPACION_DE_INTERES_URBANISTICO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['AYUNTAMIENTO_MUNICIPAL'] &&
-    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['DIPUTACION_PROVINCIAL'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['CONSEJERIA_AUTONOMICO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['HACIENDA_ESTATAL'] &&
-    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['OTRA_ADMINISTRACION_PUBLICA'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['NOTARIO'] && tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['REGISTRO'] &&
-    		tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] &&  tipoProveedor != CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])
+    	 var subTipoProveedor =  me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
+    	 var tipoProveedor =  me.lookupController().getViewModel().get('proveedor.tipoProveedorCodigo');
+    	 if($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO']) && tipoProveedor == CONST.TIPOS_PROVEEDOR['PROVEEDOR'] &&
+    		(subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['JUNTA_DE_COMPENSACION'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AGRUPACION_DE_INTERES_URBANISTICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AYUNTAMIENTO_MUNICIPAL'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['DIPUTACION_PROVINCIAL'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['CONSEJERIA_AUTONOMICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['HACIENDA_ESTATAL'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['OTRA_ADMINISTRACION_PUBLICA'] &&  subTipoProveedor != CONST.SUBTIPOS_PROVEEDOR['NOTARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['REGISTRO'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])
     	 ) {
-    		 return false;
+    		 return true;
     	 }
-    	 return true;
+    	 return false;
     }
 });

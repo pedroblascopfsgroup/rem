@@ -1511,4 +1511,8 @@ public interface ParticularValidatorApi {
 
 	Boolean isAgrupacionONDnd(Long numAgrupacion);
 
+	Boolean isAgrupacionContieneONDnd(Long numAgrupacion);
+
+	Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo);
+
 }

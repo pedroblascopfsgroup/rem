@@ -58,6 +58,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_FUERA_PERIMETRO = "msg.error.masivo.agrupar.activos.restringida.activo.noIncluidoPerimetro";
 	public static final String ACTIVO_CON_OFERTAS = "msg.error.masivo.agrupar.activos.restringida.oferta.aceptada";
 	public static final String ACTIVO_CON_SUBCARTERA_DIFERENTE = "msg.error.masivo.agrupar.activos.restringida.activo.subcartera";
+	public static final String ERROR_AGRUPACION_DND = "msg.error.masivo.agrupar.activos.on.dnd";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -126,7 +127,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO), activosFueraPerimetroRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_OFERTAS), activosConOfertasVivasRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_SUBCARTERA_DIFERENTE), activosDistintaSubcartera(exc));
-						
+			mapaErrores.put(messageServices.getMessage(ERROR_AGRUPACION_DND), esActivoAgrupacionDnd(exc));
+			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
@@ -139,7 +141,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_DADA_DE_BAJA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_OFERTAS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_SUBCARTERA_DIFERENTE)).isEmpty()) {
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_SUBCARTERA_DIFERENTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ERROR_AGRUPACION_DND)).isEmpty()) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -629,6 +632,26 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 					listaFilas.add(i);
 				}
 					
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> esActivoAgrupacionDnd(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionContieneONDnd(Long.parseLong(exc.dameCelda(i, 0))) &&
+						!particularValidator.isActivoAgrupacionONDnd(Long.parseLong(exc.dameCelda(i, 0)), Long.parseLong(exc.dameCelda(i, 1)))) 
+					listaFilas.add(i);
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);

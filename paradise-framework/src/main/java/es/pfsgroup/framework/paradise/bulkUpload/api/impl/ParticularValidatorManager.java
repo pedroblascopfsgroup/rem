@@ -9425,5 +9425,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    	AND ONV.ONV_DND_ID IS NOT NULL AND AGR.BORRADO  = 0 ");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isAgrupacionContieneONDnd(Long numAgrupacion) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_AGR_AGRUPACION "
+				+ "			  		WHERE AGR_NUM_AGRUP_REM  = :numAgrupacion "
+				+ "					AND (AGR_FECHA_BAJA IS NULL OR AGR_FECHA_BAJA  > SYSDATE)"
+				+ "			    	AND AGR_DND_ID IS NOT NULL AND BORRADO = 0 ");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numAgrupacion", numAgrupacion);
+		params.put("numActivo", numActivo);
+		
+		rawDao.addParams(params);
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_AGR_AGRUPACION AGR"
+				+ "			  		JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_DND_ID = AGA.AGR_ID AND AGA.BORRADO = 0"
+				+ "			  		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.BORRADO = 0"
+				+ "			  		WHERE AGR.AGR_NUM_AGRUP_REM  = :numAgrupacion "
+				+ "			  		AND ACT.ACT_NUM_ACTIVO  = :numActivo "
+				+ "					AND AGR.AGR_DND_ID IS NOT NULL AND AGR.BORRADO = 0 ");
+		return !"0".equals(resultado);
+	}
 }
 

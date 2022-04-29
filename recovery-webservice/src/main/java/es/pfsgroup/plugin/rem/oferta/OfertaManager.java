@@ -286,8 +286,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES = "T017_RespuestaOfertanteCES";
 	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM = "T017_RespuestaOfertantePM";
-	private static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
-	private static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
 
 	private static final String APRUEBA_COMBO_RESPUESTA = "01";
 	private static final String CONTRAOFERTA_COMBO_RESPUESTA = "03";
@@ -7958,8 +7956,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T017_RESOLUCION_CES.equals(codigo)
-					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)
-					|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigo)) {
+					|| CODIGO_T017_RATIFIACION_COMITE_CES.equals(codigo)) {
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
 			} else if (CODIGO_T013_RESOLUCION_TANTEO.equals(codigo) 
@@ -7967,7 +7964,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);
 				
-			} else if (CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo)
+			} else if ((CODIGO_T013_RESPUESTA_OFERTANTE.equals(codigo) 
+					|| CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(codigo))
 					&& !trabajoApi.checkBankia(expedienteComercial.getTrabajo())) {
 				
 				response = boardingComunicacionApi.actualizarOfertaBoarding(expedienteComercial.getNumExpediente(), oferta.getNumOferta(), new ModelMap(),BoardingComunicacionApi.TIMEOUT_30_SEGUNDOS);

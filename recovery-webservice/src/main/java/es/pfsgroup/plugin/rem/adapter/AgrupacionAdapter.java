@@ -1108,6 +1108,18 @@ public class AgrupacionAdapter {
 		if (Checks.esNulo(activo)) {
 			throw new JsonViewerException("El activo no existe");
 		}
+		
+		if (!Checks.esNulo(agrupacion.getAgrupacionONDnd())) {
+			boolean esActivoCorrecto = false;
+			for (ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+				if (agrupacion.getAgrupacionONDnd().equals(agrupacionActivo.getAgrupacion())) {
+					esActivoCorrecto = true;
+					break;
+				}
+			}
+			if (!esActivoCorrecto)
+				throw new JsonViewerException(messageServices.getMessage("msg.error.agrupar.activos.agrupacion.vinculado.dnd"));
+		}
 
 		Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
 		List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);

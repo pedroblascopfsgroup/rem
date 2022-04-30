@@ -8593,9 +8593,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		HashMap<String, String> error = new HashMap<String, String>();
 
-		if(codEstadoExpediente != null && DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)
+		if(codEstadoExpediente != null &&
+				(DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)
 				&& codSubestadoExpediente != null && (DDSubestadosExpedienteComercial.ACTIVO_NO_DISPONIBLE.equals(codSubestadoExpediente)
-						|| DDSubestadosExpedienteComercial.ACTIVO_OKUPADO.equals(codSubestadoExpediente))) {
+						|| DDSubestadosExpedienteComercial.ACTIVO_OKUPADO.equals(codSubestadoExpediente)))
+				|| (DDEstadosExpedienteComercial.DESCARTADA.equals(codEstadoExpediente) || DDEstadosExpedienteComercial.CANCELADA.equals(codEstadoExpediente))) {
 			return error;
 		}
 
@@ -8645,6 +8647,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						&& !DDEstadosExpedienteComercial.CANCELADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.ANULADO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.FINALIZADA.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
+						&& !DDEstadosExpedienteComercial.VENDIDO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
+						&& !DDEstadosExpedienteComercial.FIRMADO.equals(actOfr.getPrimaryKey().getOferta().getExpedienteComercial().getEstado().getCodigo())
 						&& !DDEstadosExpedienteComercial.CONGELADA.equals(codEstadoExpediente)) {
 					DDMotivoIndisponibilidad motivoIndisponibilidad = genericDao.get(DDMotivoIndisponibilidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoIndisponibilidad.CODIGO_OTRA_OFERTA_APROBADA));

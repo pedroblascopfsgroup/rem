@@ -620,18 +620,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		nuevoExpediente.setOferta(oferta);
+
+		String estadoEcoCod = DDEstadosExpedienteComercial.EN_TRAMITACION;
+		String subestadoCod = DDSubestadosExpedienteComercial.ENVIADO;
+
+		if (oferta.getIdOfertaHayaHome() != null){
+			estadoEcoCod = DDEstadosExpedienteComercial.BORRADOR;
+			subestadoCod = DDSubestadosExpedienteComercial.BORRADOR;
+		}
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-						DDEstadosExpedienteComercial.EN_TRAMITACION);
+						estadoEcoCod);
 		nuevoExpediente.setEstado(estadoExpediente);
 		
-		String subestado = DDSubestadosExpedienteComercial.ENVIADO;
 		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
-			subestado = DDSubestadosExpedienteComercial.NO_ENVIADO;
+			subestadoCod = DDSubestadosExpedienteComercial.NO_ENVIADO;
 		}
 		
 		DDSubestadosExpedienteComercial subestadoExpediente = (DDSubestadosExpedienteComercial) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestado);
+				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestadoCod);
 		nuevoExpediente.setSubestadoExpediente(subestadoExpediente);
 		
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);

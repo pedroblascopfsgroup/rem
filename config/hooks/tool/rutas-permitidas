@@ -304,3 +304,5 @@ rem_mirror|func-rem-volcadoPagosUrgentesASPRO
 func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
 func-rem-volcadoPagosUrgentesASPRO|R-Ortanique
 func-rem-edicionPestañaInformeComercial|R-Freezer
+func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
+rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia

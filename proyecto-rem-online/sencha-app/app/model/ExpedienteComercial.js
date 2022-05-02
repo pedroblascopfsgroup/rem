@@ -382,6 +382,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             },
             {
             	name: 'peticionarioAnulacion'
+            },
+            {
+            	name: 'esActivoDnd',
+            	type: 'boolean'
             }
     		
     ],

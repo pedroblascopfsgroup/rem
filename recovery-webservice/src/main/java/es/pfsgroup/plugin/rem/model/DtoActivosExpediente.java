@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoActivosExpediente extends WebDto {
@@ -25,6 +27,8 @@ public class DtoActivosExpediente extends WebDto {
 	private String puerta;
 	private Float superficieConstruida;
 	private String activoEPA;
+	private Boolean esPisoPiloto;
+	private Date fechaEscrituracion;
 	
 
 	public Long getIdActivo() {
@@ -186,5 +190,22 @@ public class DtoActivosExpediente extends WebDto {
 	public void setActivoEPA(String activoEPA) {
 		this.activoEPA = activoEPA;
 	}
+
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
+	}
+
+	public Date getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+
+	public void setFechaEscrituracion(Date fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
+	
 	
 }

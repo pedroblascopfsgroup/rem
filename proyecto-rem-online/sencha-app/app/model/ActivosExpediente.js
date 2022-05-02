@@ -57,6 +57,10 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		},
     		{
     			name:'activoEPA'
+    		},
+    		{
+    			name:'esPisoPiloto',
+    			type: 'boolean'
     		}
     ],
     

@@ -2006,6 +2006,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
 				}
 			}
+			
+			for (ActivoAgrupacionActivo agrupacionActivo : activo.getAgrupaciones()) {
+	            if(activoAgrupacionApi.isAgrupacionONDnd(agrupacionActivo.getAgrupacion()))
+	                dto.setEsActivoDnd(true);
+	        }
+			
 		}
 		return dto;
 	}

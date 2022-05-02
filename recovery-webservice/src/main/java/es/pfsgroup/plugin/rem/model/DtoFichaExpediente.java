@@ -185,6 +185,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String codigoEstadoComunicacionC4C;
 	
+	private Boolean esActivoDnd;
+	
 	public Long getId() {
 		return id;
 	}
@@ -954,4 +956,13 @@ public class DtoFichaExpediente extends WebDto {
 	public void setEstadoPbcAlquiler(Integer estadoPbcAlquiler) {
 		this.estadoPbcAlquiler = estadoPbcAlquiler;
 	}
+
+	public Boolean getEsActivoDnd() {
+		return esActivoDnd;
+	}
+
+	public void setEsActivoDnd(Boolean esActivoDnd) {
+		this.esActivoDnd = esActivoDnd;
+	}
+	
 }

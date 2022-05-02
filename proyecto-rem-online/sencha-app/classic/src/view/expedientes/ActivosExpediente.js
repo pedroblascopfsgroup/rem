@@ -48,6 +48,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
         }; 
         
         esAlquiler = me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+              
+		var esActivoDnd = me.lookupController().getViewModel().get('expediente.esActivoDnd');	
         
         me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));		         
         var items= [
@@ -264,7 +266,39 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            bind: {
 			            	hidden: '{!esCarteraBBVA}'
 			            }
-			       }
+			       },
+			       {
+				        xtype: 'actioncolumn',
+				        reference: 'esPisoPiloto',
+				        bind: {
+				        	hidden: !esActivoDnd
+				        }, 
+				        flex: 1,
+				        width: 30,
+				        text: HreRem.i18n('header.pisoPiloto'),
+						hideable: false,
+						items: [
+						        	{ // Check si es piso piloto
+							            getClass: function(v, meta, rec) {						            
+							            	if (rec.data.get('esPisoPiloto') != 1) {						                	
+							                    return 'fa fa-check';
+							                } else {
+							                    return 'fa fa-check green-color';
+							                }
+							            }
+						        	}
+						 ]
+		    		},
+			       {   
+		            	text	 : HreRem.i18n('header.fecha.escrituracion'),
+		                dataIndex: 'fechaEscrituracion',
+		                bind: {
+		                	 hidden: !esActivoDnd
+				        },
+				        formatter: 'date("d/m/Y")',
+				        flex: 0.7,
+				        width: 130 
+				    }
 			       	        
 			    ],
 			    dockedItems : [

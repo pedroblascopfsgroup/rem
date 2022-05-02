@@ -474,6 +474,19 @@ public class Oferta implements Serializable, Auditable {
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private OfertaCaixa ofertaCaixa;
+    
+    @Column(name = "CHECK_FORM_CAJAMAR")
+    private Boolean checkFormCajamar;
+    
+    @Column(name = "CHECK_FORZADO_CAJAMAR")
+    private Boolean checkForzadoCajamar;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USUARIO_FORZADO_CAJAMAR")
+    private Usuario usuarioForzadoCajamar;
+    
+    @Column(name="FECHA_FORZADO_CAJAMAR")
+	private Date fechaForzadoCajamar;
 
 	@Transient
 	private Boolean replicateBC;
@@ -1539,4 +1552,37 @@ public class Oferta implements Serializable, Auditable {
 	public void setReplicateBC(Boolean replicateBC) {
 		this.replicateBC = replicateBC;
 	}
+
+	public Boolean getCheckFormCajamar() {
+		return checkFormCajamar;
+	}
+
+	public void setCheckFormCajamar(Boolean checkFormCajamar) {
+		this.checkFormCajamar = checkFormCajamar;
+	}
+
+	public Boolean getCheckForzadoCajamar() {
+		return checkForzadoCajamar;
+	}
+
+	public void setCheckForzadoCajamar(Boolean checkForzadoCajamar) {
+		this.checkForzadoCajamar = checkForzadoCajamar;
+	}
+
+	public Usuario getUsuarioForzadoCajamar() {
+		return usuarioForzadoCajamar;
+	}
+
+	public void setUsuarioForzadoCajamar(Usuario usuarioForzadoCajamar) {
+		this.usuarioForzadoCajamar = usuarioForzadoCajamar;
+	}
+
+	public Date getFechaForzadoCajamar() {
+		return fechaForzadoCajamar;
+	}
+
+	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
+		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+	
 }

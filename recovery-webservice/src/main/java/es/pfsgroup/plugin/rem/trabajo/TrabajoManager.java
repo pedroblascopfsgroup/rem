@@ -3172,10 +3172,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setPerteneceGastoOPrefactura(true);
 			}
 		}
-		
-		if (!Checks.esNulo(trabajo.getPrefactura()) && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
-			dtoTrabajo.setPerteneceGastoOPrefactura(true);
-		}
 
 		if (trabajo.getTipoTrabajo() != null) {
 			dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());
@@ -3427,14 +3423,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		Filter filtroPrefacturas = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 		Prefacturas prefacturas = genericDao.get(Prefacturas.class, filtroPrefacturas);
-		
-		if (prefacturas != null && prefacturas.getPrefactura().getAlbaran() != null) {
-			Albaran albaran = prefacturas.getPrefactura().getAlbaran();
-			
-			if (albaran.getNumAlbaran() != null) {
-				dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
+		if(prefacturas != null && prefacturas.getPrefactura() != null ) {
+			if (prefacturas.getPrefactura().getAlbaran() != null) {
+				Albaran albaran = prefacturas.getPrefactura().getAlbaran();
+				if (albaran.getNumAlbaran() != null) {
+					dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
+				}
 			}
+			
+			if (!Checks.esNulo(prefacturas.getPrefactura()) && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(prefacturas.getPrefactura().getEstadoPrefactura().getCodigo())) {
+				dtoTrabajo.setPerteneceGastoOPrefactura(true);
+			}
+			
 		}
+		
 		if (trabajo.getGastoTrabajo() != null 
 				&& trabajo.getGastoTrabajo().getGastoLineaDetalle() != null 
 				&& trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor() != null) {

@@ -469,7 +469,69 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								}
 							}
 						]
+					},											
+					
+					{
+						xtype : 'fieldsettable',	
+						colspan: 3,	
+						collapsible: false,					
+						title : HreRem.i18n('title.formalizacion.cajamar'),
+						bind : { hidden : '{!esCarteraCajamar}'},
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
+						margin: '0 10 10 0',
+						items : [
+							
+							{
+								xtype : "textfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.check.form.cajamar'),						
+								bind : {value : '{datosbasicosoferta.checkFormCajamar}'},
+								readOnly : true,
+								colspan: 3
+							},
+							
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.check.forzado.cajamar'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{datosbasicosoferta.checkForzadoCajamar}',
+									readOnly: '{!habilitarForzadoCajamar}'
+								}
+							},
+							
+							
+							{
+								xtype : 'textfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.usuario.forzado.cajamar'),							
+								bind : {value : '{datosbasicosoferta.usuarioForzadoCajamar}'},							
+								readOnly : true
+								
+							}, 
+						
+
+							{
+			    				xtype : 'datefieldbase',
+								formatter : 'date("d/m/Y")',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.forzado.cajamar'),
+								name : 'fechaForzadoCajamar',													
+								bind : {value: '{datosbasicosoferta.fechaForzadoCajamar}'},
+								readOnly : true						
+							}
+
+						]
 					},
+													
 					{
 					xtype : 'container',
 					layout: 'hbox',

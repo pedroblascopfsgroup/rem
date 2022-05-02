@@ -145,7 +145,15 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 					} else {
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
 					}
-				} else {
+				} else if(!Checks.esNulo(ofertaAceptada.getCheckForzadoCajamar())) {
+					if(ofertaAceptada.getCheckForzadoCajamar()) {
+						filtro = checkFechaContabilizacionPropietarioFilter(expediente);
+						pasaAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue()) ? true : false;
+					}
+				}else if(!Checks.esNulo(ofertaAceptada.getCheckFormCajamar()) && ofertaAceptada.getCheckFormCajamar()) {
+					filtro = checkFechaContabilizacionPropietarioFilter(expediente);
+					pasaAVendido = DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue()) ? true : false;
+				}else {
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 					pasaAVendido = updateEstadoExp;
 				}
@@ -234,6 +242,14 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private Filter checkFechaContabilizacionPropietarioFilter(ExpedienteComercial expediente) {
+		if (Checks.esNulo(expediente.getFechaContabilizacionPropietario())) {
+			return genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO); 
+		} else {
+			return genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+		}
 	}
 
 }

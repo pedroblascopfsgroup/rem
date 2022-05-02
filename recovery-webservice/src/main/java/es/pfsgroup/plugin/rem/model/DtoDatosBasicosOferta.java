@@ -181,6 +181,16 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean enviarCorreoAprobacion;
 	
+	private String checkFormCajamar;
+	
+	private Boolean checkForzadoCajamar;
+	
+	private String usuarioForzadoCajamar;
+	
+	private Date fechaForzadoCajamar;
+	
+	private Boolean modificarFormalizacionCajamar;
+	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -887,4 +897,46 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setEnviarCorreoAprobacion(Boolean enviarCorreoAprobacion) {
 		this.enviarCorreoAprobacion = enviarCorreoAprobacion;
 	}
+
+	public String getCheckFormCajamar() {
+		return checkFormCajamar;
+	}
+
+	public void setCheckFormCajamar(String checkFormCajamar) {
+		this.checkFormCajamar = checkFormCajamar;
+	}
+
+	public Boolean getModificarFormalizacionCajamar() {
+		return modificarFormalizacionCajamar;
+	}
+
+	public void setModificarFormalizacionCajamar(Boolean modificarFormalizacionCajamar) {
+		this.modificarFormalizacionCajamar = modificarFormalizacionCajamar;
+	}
+
+	public Boolean getCheckForzadoCajamar() {
+		return checkForzadoCajamar;
+	}
+
+	public void setCheckForzadoCajamar(Boolean checkForzadoCajamar) {
+		this.checkForzadoCajamar = checkForzadoCajamar;
+	}
+
+
+	public String getUsuarioForzadoCajamar() {
+		return usuarioForzadoCajamar;
+	}
+
+	public void setUsuarioForzadoCajamar(String usuarioForzadoCajamar) {
+		this.usuarioForzadoCajamar = usuarioForzadoCajamar;
+	}
+
+	public Date getFechaForzadoCajamar() {
+		return fechaForzadoCajamar;
+	}
+
+	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
+		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+	
 }

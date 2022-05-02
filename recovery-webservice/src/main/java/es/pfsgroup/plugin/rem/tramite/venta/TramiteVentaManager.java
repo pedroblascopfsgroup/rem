@@ -21,7 +21,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
@@ -188,6 +187,18 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		
 		
 		return dto;
+	}
+	
+	@Override
+	public boolean isExpedienteAntesAprobadoT013(DDEstadosExpedienteComercial estado){
+		boolean isAntes = false;
+		
+		if(DDEstadosExpedienteComercial.isEnTramitacion(estado) ||  DDEstadosExpedienteComercial.isPendienteSancion(estado) || DDEstadosExpedienteComercial.isContraofertado(estado)) {
+			isAntes = true;
+		}
+		
+		
+		return isAntes;
 	}
 
 }

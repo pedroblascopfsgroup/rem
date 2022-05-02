@@ -1509,4 +1509,6 @@ public interface ExpedienteComercialApi {
 	DtoPage getIntervinientesByOferta(Long numOferta, WebDto dto);
 		
 	boolean esTitulizada(TareaExterna tareaExterna);
+
+	void calculoFormalizacionCajamar(Oferta oferta);
 }

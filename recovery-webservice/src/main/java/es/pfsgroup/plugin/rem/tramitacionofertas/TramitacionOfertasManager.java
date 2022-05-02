@@ -2213,6 +2213,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ActivoTramite activoTramite = null;
 		if(!activoManager.esActivoHayaHome(activo, null))
 			activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+		if (oferta.getOfertaExpress())
+			expedienteComercialApi.calculoFormalizacionCajamar(oferta);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);

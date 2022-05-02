@@ -21,6 +21,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
+import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 
 @Service("tramiteVentaManager")
 public class TramiteVentaManager implements TramiteVentaApi {
@@ -182,6 +191,18 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		
 		
 		return dto;
+	}
+	
+	@Override
+	public boolean isExpedienteAntesAprobadoT013(DDEstadosExpedienteComercial estado){
+		boolean isAntes = false;
+		
+		if(DDEstadosExpedienteComercial.isEnTramitacion(estado) ||  DDEstadosExpedienteComercial.isPendienteSancion(estado) || DDEstadosExpedienteComercial.isContraofertado(estado)) {
+			isAntes = true;
+		}
+		
+		
+		return isAntes;
 	}
 
 	@Override

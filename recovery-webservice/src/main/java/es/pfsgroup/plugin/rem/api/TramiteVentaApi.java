@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 public interface TramiteVentaApi {
 
@@ -29,5 +30,8 @@ public interface TramiteVentaApi {
 	DtoDocPostVenta getDatosDocPostventa(Long idExpediente);
 
 	boolean isTramiteT017DivarianAprobado(ExpedienteComercial eco);
+	
+	boolean isExpedienteAntesAprobadoT013(DDEstadosExpedienteComercial estado);
+
 }
 

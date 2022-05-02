@@ -62,10 +62,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor provincia con codigo '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
         ELSE
             V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' SET
-              DD_PRV_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+              DD_PRV_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
               , USUARIOMODIFICAR = '''||V_USUARIO||'''
               , FECHAMODIFICAR = SYSDATE
-            WHERE DD_PRV_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+            WHERE DD_PRV_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha actualizado el valor provincia '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
         END IF;

@@ -321,7 +321,27 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             },
 			{
                 name: 'enviarCorreoAprobacion'
+            },
+            {
+            	name:'checkFormCajamar'  			       	
+            },
+            {
+            	name:'checkForzadoCajamar'
+            },
+            {
+            	name:'usuarioForzadoCajamar'	
+            	
+            },
+            {
+            	name:'fechaForzadoCajamar',
+            	type:'date',
+        		dateFormat: 'c'
+            },
+            {
+            	name:'modificarFormalizacionCajamar',
+    			type: 'boolean'   	
             }
+            
     		
     ],
 

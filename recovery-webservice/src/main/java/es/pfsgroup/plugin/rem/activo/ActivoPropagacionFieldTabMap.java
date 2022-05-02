@@ -166,7 +166,8 @@ public class ActivoPropagacionFieldTabMap {
 					"emailMediador",
 					"telefonoMediador",
 					"autorizacionWeb",
-					"fechaAutorizacionHasta"
+					"fechaAutorizacionHasta",
+					"descripcionComercial"
     			));
 
     	pmap.put(TAB_DATOS_REGISTRALES,

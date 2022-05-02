@@ -129,6 +129,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";
 	public static final String USERNAME_GRUPO_BC_FOR = "grupobc03";
 	public static final String USERNAME_GRUPO_BOARDING = "gruboarding";
+	public static final String GESTORIA_FORMALIZACION_CAJAMAR = "gestformcajamar";
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -216,6 +217,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean tieneGBOAR = this.tieneGBOAR(tareaActivo);
 		boolean isActivoJaguar = this.isActivoJaguar(tareaActivo);
 		boolean isActivoBFA = this.isActivoBFA(tareaActivo);
+		boolean formalizacionCajamar = formalizacionCajamar(tareaExterna);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -307,7 +309,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
-						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)
+						|| (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && !formalizacionCajamar)
 						|| DDCartera.CODIGO_CARTERA_TITULIZADA.equals(codigoCartera))
 						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
 			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
@@ -316,6 +318,15 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if(usuarioDevolver != null) {
 				return usuarioDevolver;
 			}
+		}
+		
+		if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera) && formalizacionCajamar 
+				&& (CODIGO_T013_RESULTADO_PBC.equals(codigoTarea) || CODIGO_T013_DOCUMENTOS_POSTVENTA.equals(codigoTarea)
+						|| CODIGO_T013_POSICIONAMIENTO_FIRMA.equals(codigoTarea))) {		
+			Filter filtroUsername = genericDao.createFilter(FilterType.EQUALS, "username", GESTORIA_FORMALIZACION_CAJAMAR);
+			Usuario gestoriaFormCajamar = genericDao.get(Usuario.class, filtroUsername);
+			
+			if(gestoriaFormCajamar != null) return gestoriaFormCajamar;
 		}
 		
 		
@@ -1485,5 +1496,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				
 				
 		return Boolean.TRUE.equals(estadosRestringidos.contains(codigoEstadoExpedienteComercial));
+	}
+
+	private boolean formalizacionCajamar(TareaExterna tareaExterna) {
+		Oferta oferta = ofertaApi.tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(oferta)) {
+			if (!Checks.esNulo(oferta.getCheckForzadoCajamar())){
+				return oferta.getCheckForzadoCajamar();
+			} else {
+				if (!Checks.esNulo(oferta.getCheckFormCajamar()))
+					return oferta.getCheckFormCajamar();
+			}
+		}
+		return false;
 	}
 }

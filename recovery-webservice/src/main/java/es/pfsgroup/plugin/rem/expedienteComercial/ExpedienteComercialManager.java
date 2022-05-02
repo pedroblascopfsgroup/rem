@@ -1496,6 +1496,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDClaseContratoAlquiler claseContrato = genericDao.get(DDClaseContratoAlquiler.class, genericDao.createFilter(FilterType.EQUALS,"codigo",  dto.getClaseContratoCodigo()));
 			oferta.setClaseContratoAlquiler(claseContrato);
 		}
+
+		
+		if (!Checks.esNulo(dto.getCheckForzadoCajamar())) {
+			oferta.setCheckFormCajamar(dto.getCheckForzadoCajamar());
+			oferta.setCheckForzadoCajamar(dto.getCheckForzadoCajamar());
+			oferta.setFechaForzadoCajamar(new Date());
+			oferta.setUsuarioForzadoCajamar(genericAdapter.getUsuarioLogado());
+			
+		}
 		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
@@ -2407,7 +2416,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
-
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+			if (!Checks.esNulo(oferta.getCheckFormCajamar())) {
+				dto.setCheckFormCajamar("No");
+				if (oferta.getCheckFormCajamar())
+					dto.setCheckFormCajamar("Si");		
+			}
+			
+			if (!Checks.esNulo(oferta.getCheckForzadoCajamar())) {
+				dto.setCheckForzadoCajamar(oferta.getCheckForzadoCajamar());
+				
+				if (!Checks.esNulo(oferta.getUsuarioForzadoCajamar()) && !Checks.esNulo(oferta.getUsuarioForzadoCajamar().getApellidoNombre())) 
+					dto.setUsuarioForzadoCajamar(oferta.getUsuarioForzadoCajamar().getApellidoNombre());
+				
+				if (!Checks.esNulo(oferta.getFechaForzadoCajamar())) 
+					dto.setFechaForzadoCajamar(oferta.getFechaForzadoCajamar());
+			}
+		
+			dto.setModificarFormalizacionCajamar(false);
+			if (!Checks.esNulo(expediente) && tramiteVentaApi.isExpedienteAntesAprobadoT013(expediente.getEstado())) {
+				dto.setModificarFormalizacionCajamar(true);						
+			}	
+		}
 		return dto;
 	}
 
@@ -15412,5 +15442,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return compradorExpediente;
 	}
 
-	
+	@Override
+	@Transactional()
+	public void calculoFormalizacionCajamar(Oferta oferta) {
+		if (DDCartera.isCarteraCajamar(oferta.getActivoPrincipal().getCartera())) {
+			Filter filtroPrescriptor=  genericDao.createFilter(FilterType.EQUALS, "proveedor.id", oferta.getPrescriptor().getId());
+			Filter filtroBorrado =  genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			CPFProveedor pveFormalizacion = genericDao.get(CPFProveedor.class, filtroPrescriptor, filtroBorrado);
+			
+			boolean importeCorrecto = !Checks.esNulo(oferta.getImporteOferta()) ? oferta.getImporteOferta() > 500000 ? false : true : false;
+			boolean activosPermitidos = !Checks.esNulo(oferta.getActivosOferta()) ? oferta.getActivosOferta().size() > 3 ? false : true : true;
+			boolean prescriptorConfigurado = !Checks.esNulo(pveFormalizacion) ? true : false;
+			
+			oferta.setCheckFormCajamar(false);
+			
+			if (importeCorrecto && activosPermitidos && prescriptorConfigurado)
+				oferta.setCheckFormCajamar(true);
+				
+			genericDao.save(Oferta.class, oferta);
+		}
+	}
+
 }

@@ -1383,7 +1383,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("data", adapter.getListOfertasActivos(id)); 
 		}
 		else {
-			if(concurrenciaApi.isConcurrenciaOfertasEnProgresoActivo(activoDao.getActivoById(id))){
+			if(concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoActivo(activoDao.getActivoById(id))){
 				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id));
 			}else {
 				model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));

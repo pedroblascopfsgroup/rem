@@ -156,8 +156,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	}
 	
 	@Override
+	public boolean isConcurrenciaTerminadaOfertasEnProgresoActivo(Activo activo) {
+		return !this.isActivoEnConcurrencia(activo) && this.tieneActivoOfertasDeConcurrencia(activo);
+	}
+	
+	@Override
 	public boolean isConcurrenciaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion) {
 		return this.isAgrupacionEnConcurrencia(agrupacion) || this.tieneAgrupacionOfertasDeConcurrencia(agrupacion);
+	}
+	
+	@Override
+	public boolean isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion) {
+		return !this.isAgrupacionEnConcurrencia(agrupacion) && this.tieneAgrupacionOfertasDeConcurrencia(agrupacion);
 	}
 
 	@Override

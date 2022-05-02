@@ -39,4 +39,8 @@ public interface ConcurrenciaApi {
 
 	@Transactional
 	void caducaOfertaConcurrencia(Long idActivo, Long idOferta);
+
+	boolean isConcurrenciaTerminadaOfertasEnProgresoActivo(Activo activo);
+
+	boolean isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion);
 }

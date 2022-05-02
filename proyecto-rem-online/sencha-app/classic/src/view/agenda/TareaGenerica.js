@@ -3649,7 +3649,6 @@
 		
 		if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubartera 
 			|| CONST.SUBCARTERA['DIVARIANREMAINING'] == codigoSubartera){
-			me.bloquearCampo(tipoArras);
 			tipoArras.setValue(CONST.TIPO_ARRAS['CODIGO_PENITENCIALES']);
 		}
 		

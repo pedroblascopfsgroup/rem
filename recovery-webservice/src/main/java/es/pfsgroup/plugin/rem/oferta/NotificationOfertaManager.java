@@ -73,6 +73,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private static final String MENSAJE_BC = "Para el número del inmueble BC: ";
 	private static final String CODIGO_TRAMITE_T015 = "T015";
+	private static final String BUZON_HMEDIADORES = "buzonhonorariosmediadores";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -807,35 +808,33 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsPara 		= new ArrayList<String>();
 			List<String> mailsCC 		= new ArrayList<String>();	
 
-			if(activo != null){
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-					if(!Checks.esNulo(gboinm)){						
-						if(Checks.estaVacio(mailsSustituto)){
-							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
-						}else {
-							mailsSustituto.clear();
-							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
-						}						
-						if (!Checks.estaVacio(mailsSustituto)){
-							mailsPara.addAll(mailsSustituto);
-							mailsCC.add(gboinm.getEmail());
-						}else{
-							mailsPara.add(gboinm.getEmail());
-						}
-					}	
-				}
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_EGEO.equals(activo.getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(activo.getCartera().getCodigo())){
+				gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+				if(!Checks.esNulo(gboinm)){						
+					if(Checks.estaVacio(mailsSustituto)){
+						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+					}else {
+						mailsSustituto.clear();
+						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
+					}						
+					if (!Checks.estaVacio(mailsSustituto)){
+						mailsPara.addAll(mailsSustituto);
+						mailsCC.add(gboinm.getEmail());
+					}else{
+						mailsPara.add(gboinm.getEmail());
+					}
+				}	
 			}
 			
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
 					|| (!Checks.esNulo(activo.getSubcartera()) 
 					&& ( DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 						|| DDSubcartera.CODIGO_JAGUAR.equals(activo.getSubcartera().getCodigo())))){
@@ -898,15 +897,14 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
-			String contenido = 
-					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
+			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
 							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
 						
+			contenido += "<br><p>Titulares: <br><ul>";
 			if (!Checks.esNulo(oferta.getCliente())) {
 				boolean gdpr = !Checks.esNulo(oferta.getCliente().getCesionDatos()) 
 						&& !Checks.esNulo(oferta.getCliente().getTransferenciasInternacionales())
 						&& !Checks.esNulo(oferta.getCliente().getComunicacionTerceros());
-				contenido += "<br><p>Titulares: <br><ul>";
 				contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getCliente().getNombreCompleto(),gdpr ? "" : "No");
 				if(!Checks.esNulo(oferta.getTitularesAdicionales()) && !oferta.getTitularesAdicionales().isEmpty()) {
 					for (int i = 0;i < oferta.getTitularesAdicionales().size() && i < 3; i++) {
@@ -916,55 +914,81 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						contenido += String.format("<li>%s : %s ha confirmado GDPR</li>", oferta.getTitularesAdicionales().get(i).getNombreCompleto(),gdpr ? "" : "No");
 					}
 				}
-				contenido += "</ul></p>";
 			}
+			contenido += "</ul></p>";
 			
-			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pdte Titulares Secundarios", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
 			
 			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
 			
 			if (!Checks.esNulo(oferta.getAgrupacion())) contenido += String.format(", Agrupación: %s.</p>",oferta.getAgrupacion().getNumAgrupRem());
 			else contenido += ".</p>";
 			
-			contenido += String.format("<br><p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), activo.getSubcartera().getDescripcion());
+			contenido += String.format("<p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getDescripcion() : "");
 			
-			contenido += String.format("<br><p>Prescriptor: %s %s.</p>",codigoPrescriptor,nombrePrescriptor);
-			
-			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
-			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
-				contenido += "<br><p>Testigos: <br><ul>";
-				for (int i = 0;i < testigos.size() && i < 3; i++) {
-					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
-				}
-				contenido += "</ul></p>";
-			}
-			
+			contenido += "<p>Gestor comercial: ";
 			if(!Checks.esNulo(gcom) && !Checks.esNulo(gcom.getApellidoNombre())){	
-				contenido += String.format("<br><p>Gestor comercial: %s", gcom.getApellidoNombre());
+				contenido += String.format("%s", gcom.getApellidoNombre());
 				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
 					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
-				} else contenido += ".</p>";
+				} else contenido += "</p>";
 			} else {
+				contenido += "-";
 				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
-					contenido += String.format("Director comercial: %s.</p>", supervisor.getApellidoNombre());
-				}
+					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				} else contenido += "</p>";
 			}
 			
-			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL);
 			TextosOferta textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Recomendación RC: " + textoOferta.getTexto() + "</p>";  
+			contenido += "<p>Importe inicial SF: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € ,"; 
+			else contenido += "- € ,";  
 			
-			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Recomendación DC: " + textoOferta.getTexto() + "</p>";  
+			contenido += "Importe RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € ,";  
+			else contenido += "- € ,";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "Importe prescriptor: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € .</p>";  
+			else contenido += "- €.</p>";  
 			
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Justificación API: " + textoOferta.getTexto() + "</p>";  
+			contenido += "<p>Justificación API: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "<p>Recomendación RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>"; 
+			else contenido += "- </p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "<p>Motivo rechazo RC/DC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
 			
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Observaciones: " + textoOferta.getTexto() + "</p>";
+			contenido += "<p>Observaciones RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
+			
+			contenido += "<p>Testigos: <br><ul>";
+			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
+				for (int i = 0;i < testigos.size() && i < 3; i++) {
+					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+				}
+			}
+			contenido += "</ul></p>";
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
@@ -1290,8 +1314,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
-			String contenido = 
-					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
+			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
 							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
 						
 			if (!Checks.esNulo(oferta.getCliente())) {
@@ -1305,55 +1328,124 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				contenido += "</ul></p>";
 			}
 			
-			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", "Pendiente", NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
+			contenido += String.format("<br><p>Estado de la oferta: %s. Importe inicial: %s €.", oferta.getEstadoOferta().getDescripcion(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()));
 			
 			contenido += String.format("<br><p>Activo: %s", activo.getNumActivo());
 			
 			if (!Checks.esNulo(oferta.getAgrupacion())) contenido += String.format(", Agrupación: %s.</p>",oferta.getAgrupacion().getNumAgrupRem());
 			else contenido += ".</p>";
 			
-			contenido += String.format("<br><p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), activo.getSubcartera().getDescripcion());
+			contenido += String.format("<p>Cartera: %s, Subcartera: %s.</p>", activo.getCartera().getDescripcion(), !Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getDescripcion() : "");
 			
-			contenido += String.format("<br><p>Prescriptor: %s %s.</p>",codigoPrescriptor,nombrePrescriptor);
-			
-			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
-			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
-				contenido += "<br><p>Testigos: <br><ul>";
-				for (int i = 0;i < testigos.size() && i < 3; i++) {
-					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
-				}
-				contenido += "</ul></p>";
-			}
-			
+			contenido += "<p>Gestor comercial: ";
 			if(!Checks.esNulo(gcom) && !Checks.esNulo(gcom.getApellidoNombre())){	
-				contenido += String.format("<br><p>Gestor comercial: %s", gcom.getApellidoNombre());
+				contenido += String.format("%s", gcom.getApellidoNombre());
 				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
 					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
-				} else contenido += ".</p>";
+				} else contenido += "</p>";
 			} else {
+				contenido += "-";
 				if(!Checks.esNulo(supervisor) && !Checks.esNulo(supervisor.getApellidoNombre())){
-					contenido += String.format("Director comercial: %s.</p>", supervisor.getApellidoNombre());
-				}
+					contenido += String.format(", Director comercial: %s.</p>", supervisor.getApellidoNombre());
+				} else contenido += "</p>";
 			}
 			
-			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+			Filter filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_INICIAL);
 			TextosOferta textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><br><p>Recomendación RC: " + textoOferta.getTexto() + "</p>";  
+			contenido += "<p>Importe inicial SF: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € ,"; 
+			else contenido += "- € ,";  
 			
-			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_DC);
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_RCDC);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Recomendación DC: " + textoOferta.getTexto() + "</p>";  
+			contenido += "Importe RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € ,";  
+			else contenido += "- € ,";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_IMPORTE_CONTRAOFERTA_PRESCRIPTOR);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "Importe prescriptor: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + " € .</p>";  
+			else contenido += "- €.</p>";  
 			
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_JUSTIFICACION);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Justificación API: " + textoOferta.getTexto() + "</p>";  
+			contenido += "<p>Justificación API: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_RECOMENDACION_RC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "<p>Recomendación RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>"; 
+			else contenido += "- </p>";  
+			
+			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_MOT_RECHAZO_RCDC);
+			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
+			contenido += "<p>Motivo rechazo RC/DC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
 			
 			filtroTipoTexto = genericDao.createFilter(FilterType.EQUALS, "tipoTexto.codigo", DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_OBSERVACIONES);
 			textoOferta = genericDao.get(TextosOferta.class, filtroOferta, filtroTipoTexto);
-			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += "<br><p>Observaciones: " + textoOferta.getTexto() + "</p>";
+			contenido += "<p>Observaciones RC: ";
+			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
+			else contenido += "- </p>";  
 			
+			contenido += "<p>Testigos: <br><ul>";
+			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
+				for (int i = 0;i < testigos.size() && i < 3; i++) {
+					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+				}
+			}
+			contenido += "</ul></p>";
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
+	}
+	
+	public void notificationReservaVentaSobrePlano(Oferta oferta) {
+
+		Activo activo = oferta.getActivoPrincipal();
+		limpiarMails();
+			
+		String titulo = "Oferta de 'Venta sobre plano' reservada: " + oferta.getNumOferta();
+			
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+		dtoSendNotificator.setNumActivo(activo.getNumActivo());
+		dtoSendNotificator.setDireccion(generateDireccion(activo));
+		dtoSendNotificator.setTitulo(titulo);
+
+		if(!Checks.esNulo(oferta.getAgrupacion())) {
+			dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+		}
+
+		List<String> mailsPara 		= new ArrayList<String>();
+		List<String> mailsCC 		= new ArrayList<String>();	
+
+		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonHonorarios = usuarioManager.getByUsername(BUZON_HMEDIADORES);
+
+		if (!Checks.esNulo(buzonRem)) {
+			mailsPara.add(buzonRem.getEmail());
+		}
+		if (!Checks.esNulo(buzonPfs)) {
+			mailsPara.add(buzonPfs.getEmail());
+		}
+		if (!Checks.esNulo(buzonHonorarios)) {
+			mailsPara.add(buzonHonorarios.getEmail());
+		}
+
+		mailsCC.add(this.getCorreoFrom());
+		
+		String contenido = String.format("<p>La oferta con número identificador %s ha sido reservada y está marcada con Venta sobre plano.</p>", 
+						oferta.getNumOferta().toString());
+		
+		contenido += String.format("<br><p>Pueden revisar la operación y aplicar la correspondiente comisión");
+		
+		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 	}
 	
 	

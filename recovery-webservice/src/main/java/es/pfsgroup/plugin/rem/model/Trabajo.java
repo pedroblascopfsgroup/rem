@@ -378,6 +378,10 @@ public class Trabajo implements Serializable, Auditable {
 	
 	@Column(name = "TBJ_IMPORTE_MARGEN")
    	private Double importeMargen;
+	
+    @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    private Prefacturas prefacturaTrabajo;
 		
 	public Long getId() {
 		return id;
@@ -1265,5 +1269,13 @@ public class Trabajo implements Serializable, Auditable {
 	
 	public void setImporteMargen(Double importeMargen) {
 		this.importeMargen = importeMargen;
+	}
+
+	public Prefacturas getPrefacturaTrabajo() {
+		return prefacturaTrabajo;
+	}
+
+	public void setPrefacturaTrabajo(Prefacturas prefacturaTrabajo) {
+		this.prefacturaTrabajo = prefacturaTrabajo;
 	}
 }

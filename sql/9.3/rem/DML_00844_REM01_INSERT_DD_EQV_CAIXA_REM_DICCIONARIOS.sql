@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220404
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17614
@@ -20,6 +20,7 @@
 --##        0.8 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
 --##        0.9 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
 --##        0.10 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
+--##	      0.11 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##########################################
 --*/
 

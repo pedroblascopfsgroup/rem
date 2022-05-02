@@ -15,6 +15,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -82,20 +84,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.AltaAsuntosLegalReoApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.PerfilApi;
-import es.pfsgroup.plugin.rem.api.PresupuestoApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
@@ -346,6 +334,9 @@ public class ActivoAdapter {
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
+
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
@@ -4204,8 +4195,6 @@ public class ActivoAdapter {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 			}
 
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class,
 					dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
@@ -4460,15 +4449,15 @@ public class ActivoAdapter {
 				}
 				
 				if (dto.getEmailRte() != null) {
-					clienteComercial.setEmail(dto.getEmailRte());
+					clienteComercial.setEmailRepresentante(dto.getEmailRte());
 				}
 				
 				if (dto.getTelefono1Rte() != null) {
-					clienteComercial.setTelefono1(dto.getTelefono1Rte());
+					clienteComercial.setTelefonoRepresentante(dto.getTelefono1Rte());
 				}
 				
 				if (dto.getTelefono2Rte() != null) {
-					clienteComercial.setTelefono2(dto.getTelefono2Rte());
+					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
 
 				if (clienteComercial.getDocumentoRepresentante() != null && !clienteComercial.getDocumentoRepresentante().trim().isEmpty()){
@@ -4511,9 +4500,7 @@ public class ActivoAdapter {
 				
 			   
 			}
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
+
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 
@@ -4524,6 +4511,12 @@ public class ActivoAdapter {
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
 
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
+			
 			oferta.setCliente(clienteComercial);
 
 			ActivoProveedor prescriptor = (ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor());

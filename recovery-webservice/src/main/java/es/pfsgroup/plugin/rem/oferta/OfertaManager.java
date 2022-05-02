@@ -2760,6 +2760,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
+				if(oferta.getCheckForzadoCajamar() != null) {
+					if(oferta.getCheckForzadoCajamar()) {
+						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+						
+						GestorEntidadDto gestor = new GestorEntidadDto();
+						gestor.setIdEntidad(expedienteComercial.getId());
+						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
+						gestor.setIdTipoGestor(tipoGestorComercial.getId());
+						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
+					}
+				}else {
+					if(oferta.getCheckFormCajamar()) {
+						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+						
+						GestorEntidadDto gestor = new GestorEntidadDto();
+						gestor.setIdEntidad(expedienteComercial.getId());
+						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
+						gestor.setIdTipoGestor(tipoGestorComercial.getId());
+						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
+					}
+				}
+				
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{
@@ -8820,7 +8844,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		if (tit.getIdPersonaHayaCaixa() == null || tit.getIdPersonaHayaCaixa().trim().isEmpty())
-		tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumento(), null));
+			tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumento(), null));
 
 		if (tit.getIdPersonaHaya() == null)
 			tit.setIdPersonaHaya(interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumento()));
@@ -8856,7 +8880,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(tit.getDocumentoRepresentante() != null) {
 
 			if (tit.getIdPersonaHayaCaixaRepresentante() == null || tit.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
-				tit.setIdPersonaHayaCaixa(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante(), null));
+				tit.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(ofr,null,tit.getDocumentoRepresentante(), null));
 
 			iapRep = interlocutorCaixaService.getIapCaixaOrDefaultAndCleanReferences(tit.getIdPersonaHayaCaixaRepresentante(),interlocutorGenericService.getIdPersonaHayaClienteHayaByDocumento(tit.getDocumentoRepresentante()));
 

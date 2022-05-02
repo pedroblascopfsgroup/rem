@@ -1471,12 +1471,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
 		var tipoOferta = me.getViewModel().get('expediente.tipoExpedienteCodigo');
 		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
-
-		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value.data.codigo==1){ 
+		
+		if (CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo && value==1){ 
+			var porcentajeReservaBBDD = me.getView().getViewModel().get('condiciones.porcentajeReserva');
 			tipoCalculo.setValue(CONST.TIPOS_CALCULO['PORCENTAJE']);
 			tipoCalculo.setDisabled(false);
-			porcentajeReserva.setValue('5');
-		} else if(!esCarteraGaleonOZeus && value.data.codigo==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
+			if(Ext.isEmpty(porcentajeReservaBBDD)){
+				porcentajeReserva.setValue('5');
+			}
+		} else if(!esCarteraGaleonOZeus && value==1 && CONST.TIPOS_OFERTA['VENTA'] == tipoOferta){
 			tipoCalculo.setDisabled(false);
 			tipoCalculo.allowBlank = false;
 		}else{

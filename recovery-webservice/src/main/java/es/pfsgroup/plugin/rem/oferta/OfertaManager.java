@@ -2714,9 +2714,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				if (oferta.getOfertaExpress() && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo())) {
 					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
-				} else if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && codEstadoExpediente != null && codSubestadoExpediente != null) {
-					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(codEstadoExpediente);
-					subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoExpediente));
+				} else if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo())) {
+					if (codEstadoExpediente != null && codSubestadoExpediente != null){
+						estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(codEstadoExpediente);
+						subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoExpediente));
+					}
 				} else {
 					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.EN_TRAMITACION);
 				}
@@ -2758,7 +2760,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
 					}
 				}else {
-					if(oferta.getCheckFormCajamar()) {
+					if(oferta.getCheckFormCajamar() != null && oferta.getCheckFormCajamar()) {
 						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
 						
 						GestorEntidadDto gestor = new GestorEntidadDto();

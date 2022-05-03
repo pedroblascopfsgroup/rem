@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -475,5 +476,22 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
 
 		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("codCartera", codCartera).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Localidad> getMunicipiosList(String codigoProvincia) {
+		
+		HQLBuilder hb = new HQLBuilder(
+				"select loc from Localidad loc "
+				+ "where loc.provincia = (select prv from DDProvincia prv where prv.codigo in("+codigoProvincia+") ");
+		
+		List<Localidad> localidadList = (List<Localidad>) getHibernateTemplate().find(hb.toString());
+		
+		if (localidadList != null && !localidadList.isEmpty()) {
+			return localidadList;
+		}else {
+			return null;
+		}
 	}
 }

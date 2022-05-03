@@ -45,7 +45,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			        	if(store.isLoading()) {
 			        		store.on('load', function(store, items){
 			        			var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
-			        			if(!Ext.isEmpty(grid)){
+			        			if(Ext.isEmpty(grid)){
 			        				grid = me;
 			        			}
             		       		grid = grid.getView();
@@ -117,7 +117,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 			        	if(store.isLoading()) {
 			        		store.on('load', function(store, items){
 			        			var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
-			        			if(!Ext.isEmpty(grid)){
+			        			if(Ext.isEmpty(grid)){
 			        				grid = me;
 			        			}
             		       		grid = grid.getView();
@@ -260,7 +260,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
             		       		}
             		       		store.on('load', function(store, items){
 	            		       		var grid = me.up('proveedoresdetallemain').lookupReference('direccionesdelegacioneslistref');
-				        			if(!Ext.isEmpty(grid)){
+				        			if(Ext.isEmpty(grid)){
 				        				grid = me;
 				        			}
 	            		       		grid = grid.getView();

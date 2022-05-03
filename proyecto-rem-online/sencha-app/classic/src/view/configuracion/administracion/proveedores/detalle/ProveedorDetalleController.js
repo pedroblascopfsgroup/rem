@@ -549,5 +549,16 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
-	}
+	},
+	
+	onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	var comboMunicipio = me.lookupReference('municipioCombo');
+    	var storeMunicipio = comboMunicipio.getStore();
+    	storeMunicipio.getProxy().extraParams = {
+    		codigoProvincia: value
+    	};
+    	storeMunicipio.load();
+    	
+    }
 });

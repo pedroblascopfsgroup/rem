@@ -22,28 +22,54 @@ Ext.define('HreRem.model.DatosContactoModel', {
             	name:'numeroComerciales'
             },
             {
-            	name:'especialidadCodigo'
+            	name:'especialidadCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             },
             {
-            	name:'idiomaCodigo'
+            	name:'idiomaCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             },
             {
-            	name:'provinciaCodigo'
+            	name:'provinciaCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             },
             {
-            	name:'provinciaDescripcion'
+            	name:'municipioCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             },
             {
-            	name:'municipioCodigo'
-            },
-            {
-            	name:'municipioDescripcion'
-            },
-            {
-            	name:'codigoPostalCodigo'
-            },
-            {
-            	name:'codigoPostalDescripcion'
+            	name:'codigoPostalCodigo',
+		    	convert: function(value) {
+		    		if(Ext.isEmpty(value)){
+		    			return 'VALOR_POR_DEFECTO';
+		    		} else {
+		    			return value;
+		    		}
+		    	}
             }
             
     ],

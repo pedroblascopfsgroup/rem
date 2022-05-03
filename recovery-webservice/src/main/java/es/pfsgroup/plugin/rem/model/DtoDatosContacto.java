@@ -17,6 +17,8 @@ public class DtoDatosContacto extends WebDto {
 	private Integer numeroComerciales;
 	private String especialidadCodigo;
 	private String idiomaCodigo;
+	private String provinciaCodigo;
+	private String municipioCodigo;
 	
 
 	public String getId() {
@@ -66,6 +68,18 @@ public class DtoDatosContacto extends WebDto {
 	}
 	public void setNumeroComerciales(Integer numeroComerciales) {
 		this.numeroComerciales = numeroComerciales;
+	}
+	public String getProvinciaCodigo() {
+		return provinciaCodigo;
+	}
+	public void setProvinciaCodigo(String provinciaCodigo) {
+		this.provinciaCodigo = provinciaCodigo;
+	}
+	public String getMunicipioCodigo() {
+		return municipioCodigo;
+	}
+	public void setMunicipioCodigo(String municipioCodigo) {
+		this.municipioCodigo = municipioCodigo;
 	}
 	
 }

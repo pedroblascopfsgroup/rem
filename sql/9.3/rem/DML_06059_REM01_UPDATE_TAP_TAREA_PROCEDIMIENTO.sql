@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20220406
+--## FECHA_CREACION=20220503
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-14202
@@ -53,7 +53,10 @@ DECLARE
 	 T_TIPO_TAP('T017_FirmaContrato'		, '(checkBankia() && valores[''''T017_FirmaContrato''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null : '	, '', 'TAP_SCRIPT_VALIDACION_JBPM'),
 	 T_TIPO_TAP('T017_ConfirmarFechaEscritura'		, '(checkBankia() && valores[''''T017_ConfirmarFechaEscritura''''][''''cambioRiesgo''''] == DDSiNo.SI) ? ''''ReagendarVenta'''' : '	, '', 'TAP_SCRIPT_DECISION'),
    T_TIPO_TAP('T017_AgendarPosicionamiento'    ,  '(checkBankia() && valores[''''T017_AgendarPosicionamiento''''][''''cambioRiesgo''''] == DDSiNo.SI) ? ''''ReagendarVenta'''' : '  , '', 'TAP_SCRIPT_DECISION'),
-   T_TIPO_TAP('T017_FirmaContrato'    ,  '(checkBankia() && valores[''''T017_FirmaContrato''''][''''cambioRiesgo''''] == DDSiNo.SI) ? ''''ReagendarVenta'''' : '  , '', 'TAP_SCRIPT_DECISION')
+   T_TIPO_TAP('T017_FirmaContrato'    ,  '(checkBankia() && valores[''''T017_FirmaContrato''''][''''cambioRiesgo''''] == DDSiNo.SI) ? ''''ReagendarVenta'''' : '  , '', 'TAP_SCRIPT_DECISION'),
+	 T_TIPO_TAP('T017_ConfirmarFechaEscritura'		, '(checkBankia() && valores[''''T017_ConfirmarFechaEscritura''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null : '	, '', 'TAP_SCRIPT_VALIDACION'),
+   T_TIPO_TAP('T017_AgendarPosicionamiento'    ,  '(checkBankia() && valores[''''T017_AgendarPosicionamiento''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null : '  , '', 'TAP_SCRIPT_VALIDACION'),
+   T_TIPO_TAP('T017_FirmaContrato'    ,  '(checkBankia() && valores[''''T017_FirmaContrato''''][''''cambioRiesgo''''] == DDSiNo.SI) ? null : '  , '', 'TAP_SCRIPT_VALIDACION')
 
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;

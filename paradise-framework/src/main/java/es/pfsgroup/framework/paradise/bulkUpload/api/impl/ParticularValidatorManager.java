@@ -799,7 +799,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		WHERE "
 				+ "		scr.DD_SCR_CODIGO IN ('01','02','03','38') "
 				+ "		AND act.ACT_NUM_ACTIVO =  :numActivo ");
-
+		
+		rawDao.addParams(params);
 		String resultado2 = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "		FROM ACT_ACTIVO act "
 				+ "		INNER JOIN ACT_ABA_ACTIVO_BANCARIO aba "
@@ -9419,6 +9420,45 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"where SYSDATE BETWEEN cn.con_fecha_ini and cn.con_fecha_fin \n" + 
 				"AND act.act_num_activo = " + numActivo);
 		
+		return !"0".equals(resultados);
+	}
+	
+	@Override
+	public boolean isActivoConOfertaEnConcurrencia(String numActivo) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_activo act \n" + 
+				"join act_ofr aof on aof.act_id = act.act_id \n" + 
+				"join ofr_ofertas ofr on aof.ofr_id = ofr.ofr_id \n" + 
+				"join dd_eof_estados_oferta eof on ofr.dd_eof_id = eof.dd_eof_id 	\n" + 
+				"where eof.dd_eof_codigo in ('01', '04', '08', '07', '09') AND ofr.OFR_CONCURRENCIA = 1 \n"+
+				"AND act.act_num_activo = " + numActivo);
+					
+		return !"0".equals(resultados);
+	}
+	
+	@Override
+	public boolean isAgrupacionEnConcurrencia(String agrupacion) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_agr_agrupacion agr \n" + 
+							"join act_aga_agrupacion_activo aga on agr.agr_id = aga.agr_id and aga.borrado = 0 \n" + 
+							"join act_activo act on act.act_id = aga.act_id and act.borrado = 0 \n" + 
+							"join con_concurrencia cn on cn.act_id = act.act_id and cn.borrado = 0 \n" + 
+							"where agr.borrado = 0 and SYSDATE BETWEEN cn.con_fecha_ini and cn.con_fecha_fin AND agr.agr_num_agrup_rem =" + agrupacion);
+		
+		return !"0".equals(resultados);
+	}
+	
+	@Override
+	public boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT count(*) FROM act_agr_agrupacion agr \n" + 
+								"join act_aga_agrupacion_activo aga on agr.agr_id = aga.agr_id and aga.borrado = 0 \n" + 
+								"join act_activo act on act.act_id = aga.act_id and act.borrado = 0 \n" + 
+								"join act_ofr aof on aof.act_id = act.act_id \n" + 
+								"join ofr_ofertas ofr on aof.ofr_id = ofr.ofr_id and ofr.borrado = 0\n" + 
+								"join dd_eof_estados_oferta eof on ofr.dd_eof_id = eof.dd_eof_id and eof.borrado = 0 \n" + 
+								"where agr.borrado = 0 and eof.dd_eof_codigo in ('01', '04', '08', '07', '09') AND ofr.OFR_CONCURRENCIA = 1 AND agr.agr_num_agrup_rem =" + agrupacion);
+					
 		return !"0".equals(resultados);
 	}
 }

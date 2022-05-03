@@ -1130,8 +1130,17 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+		
 		if(concurrenciaApi.isActivoEnConcurrencia(activo))
 			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+		
+		if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+		
+		if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
 		
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
@@ -1472,8 +1481,17 @@ public class AgrupacionAdapter {
 				}
 			}
 			
+			if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+			
 			if(concurrenciaApi.isActivoEnConcurrencia(activo))
 				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+			
+			if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+			
+			if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
 			
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 

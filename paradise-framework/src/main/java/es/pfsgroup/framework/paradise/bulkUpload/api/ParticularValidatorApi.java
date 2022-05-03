@@ -1512,4 +1512,10 @@ public interface ParticularValidatorApi {
 
 	boolean isActivoEnConcurrencia(String numActivo);
 
+	boolean isActivoConOfertaEnConcurrencia(String numActivo);
+
+	boolean isAgrupacionEnConcurrencia(String agrupacion);
+
+	boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion);
+
 }

@@ -56,6 +56,9 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 	public static final String ACTIVO_DISTINTO_TIPO_ALQUILER = "msg.error.masivo.agrupar.activos.distinto.tipo.alquiler.agrupacion";
 	public static final String ACTIVO_VENDIDO = "msg.error.masivo.agrupar.activos.asistida.activo.vendido";
 	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
+	public static final String ACTIVO_OFERTA_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.ofertas.concurrencia";
+	public static final String AGRUPACION_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupacion.concurrencia";
+	public static final String AGRUPACION_OFERTA_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupacion.ofertas.concurrencia";
 	
 	
 	
@@ -136,6 +139,15 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 			// Activo en periodo de concurrencia
 			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
 			
+			// Activo con oferta en periodo de concurrencia
+			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTA_PERIODO_CONCURRENCIA), activosConOfertaEnPeriodoDeConcurrencia(exc));
+			
+			//Agrupación en periodo de concurrencia
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_PERIODO_CONCURRENCIA), agrupacionEnPeriodoDeConcurrencia(exc));
+			
+			//Agrupacióncon ofertas en periodo de concurrencia
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_OFERTA_PERIODO_CONCURRENCIA), agrupacionConOfertaEnPeriodoDeConcurrencia(exc));
+			
 			// Activo fuera perímetro HAYA.
 			mapaErrores.put(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO), activosFueraPerimetroRows(exc));
 			
@@ -188,6 +200,7 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_VENDIDO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTA_PERIODO_CONCURRENCIA)).isEmpty()
 				) {
 			
 			dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -671,6 +684,60 @@ public class MSVAgrupacionLoteComercialAlquilerExcelValidator extends MSVExcelVa
 		try {
 			for(i=1; i<this.numFilasHoja;i++){
 				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosConOfertaEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoConOfertaEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionEnConcurrencia(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionConOfertaEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionConOfertaEnConcurrencia(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

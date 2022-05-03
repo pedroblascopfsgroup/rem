@@ -55,7 +55,6 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	public static final String PORCENTAJE_PARTICIPACION = "% de participación erróneo";
 	public static final String PARTICIPACION_TOTAL= "El % de participación de las UAs supera el 100%";
 	public static final String USUARIOSUPER = "HAYASUPER";
-	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -114,7 +113,6 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			mapaErrores.put(PROMOCION_NO_EXISTE, existePromocion(exc));
 			mapaErrores.put(PROMOCION_DADA_DE_BAJA, esPromocionVigente(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
 			mapaErrores.put(SIN_MA, tieneActimoMatriz(exc));
 			mapaErrores.put(GESTOR_DIFIERE, esGestorSupervisorComercialAlquilerDelAM(exc));
 			mapaErrores.put(TIPOLOGIA_SUBTIPOLOGIA_ERRONEA, esTipologiaSubtipologiaCorrecta(exc));
@@ -128,7 +126,6 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		
 		if(!mapaErrores.get(PROMOCION_NO_EXISTE).isEmpty()
 				|| !mapaErrores.get(PROMOCION_DADA_DE_BAJA).isEmpty()
-				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
 				|| !mapaErrores.get(SIN_MA).isEmpty()
 				|| !mapaErrores.get(GESTOR_DIFIERE).isEmpty()
 				|| !mapaErrores.get(TIPOLOGIA_SUBTIPOLOGIA_ERRONEA).isEmpty()
@@ -494,24 +491,6 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 			}
 		}catch(Exception e){
 			if (i != 0) listaFilas.add(1);
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return listaFilas;
-	}
-	
-	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		int i = 0;
-		try {
-			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 0)))
-					listaFilas.add(i);
-			}
-		} catch (Exception e) {
-			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

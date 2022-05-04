@@ -1,21 +1,35 @@
 package es.pfsgroup.plugin.rem.concurrencia;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
+import es.pfsgroup.plugin.rem.model.Puja;
+import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("concurrenciaManager")
@@ -29,6 +43,9 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {
@@ -248,5 +265,46 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 		}
 		return correos;
+	}
+	
+	@Override
+	@Transactional
+	public List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
+		String importeOculto = "*****";
+		List<DtoPujaDetalle> dtoLista = new ArrayList<DtoPujaDetalle>();
+		List<Puja> listaPujas = new ArrayList<Puja>();		
+		Activo activo = activoAdapter.getActivoById(idActivo);
+
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		listaPujas = genericDao.getListOrdered(Puja.class, order, filtroOferta);
+	
+		if (listaPujas != null) {					
+			
+			for (Puja puja : listaPujas) {
+				DtoPujaDetalle dto = new DtoPujaDetalle();
+				if (puja.getId() != null) {
+					dto.setId(puja.getId());
+				}
+				if (puja.getOferta() != null) {
+					dto.setIdOferta(puja.getOferta().getId());
+				}
+				if (!Checks.isFechaNula(puja.getAuditoria().getFechaCrear())) {
+					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
+				}
+				if (this.isActivoEnConcurrencia(activo)) {
+					if (puja.getImporte() != null) {
+						dto.setImportePuja(null);
+					}
+				} else {
+					if (puja.getImporte() != null) {
+						dto.setImportePuja(puja.getImporte());
+					}
+				}
+				
+				dtoLista.add(dto);
+			}
+		}
+		return dtoLista;
 	}
 }

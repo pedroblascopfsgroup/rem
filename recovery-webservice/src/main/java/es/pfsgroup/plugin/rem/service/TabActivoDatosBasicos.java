@@ -1290,6 +1290,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
 		
+		activoDto.setActivoOfertasConcurrencia(concurrenciaApi.isConcurrenciaOfertasEnProgresoActivo(activo));
+		
 		return activoDto;
 	}
 	

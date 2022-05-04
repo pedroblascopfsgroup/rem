@@ -153,9 +153,11 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
+import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -4430,4 +4432,28 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListConcurrenciasActivoById(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListOfertasVivasConcurrentes(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DtoPujaDetalle> dtoPujasOfertaActivoConcurrencia = concurrenciaApi.getPujasDetalleByIdOferta(idActivo, idOferta);
+			model.put("data", dtoPujasOfertaActivoConcurrencia);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	} 
 }

@@ -91,6 +91,24 @@ public class VGridOfertasActivosAgrupacionConcurrencia implements Serializable {
     @Column(name="FECHA_INGRESO_DOCUMENTACION")
     private Date fechaIngresoDocumentacion;
     
+    @Column(name = "CON_ID")
+	private Long idConcurrencia;
+    
+	@Column(name = "DD_EDP_DESCRIPCION")
+	private String estadoDeposito;
+	
+	@Column(name = "DD_EDP_CODIGO")
+	private String codigoEstadoDeposito;
+	
+	@Column(name = "FECHA_INICIO_CONCURRENCIA")
+	private Date fechaInicioConcurrencia;
+	
+	@Column(name = "FECHA_FIN_CONCURRENCIA")
+	private Date fechaFinConcurrencia;
+	
+	@Column(name = "PERIODO_CONCURRENCIA")
+	private Long periodoConcurrencia;
+    
     @Column(name="ORDEN_GANADOR")
     private Integer ordenGanador;
 
@@ -300,6 +318,54 @@ public class VGridOfertasActivosAgrupacionConcurrencia implements Serializable {
 
 	public void setOrdenGanador(Integer ordenGanador) {
 		this.ordenGanador = ordenGanador;
+	}
+
+	public String getEstadoDeposito() {
+		return estadoDeposito;
+	}
+
+	public void setEstadoDeposito(String estadoDeposito) {
+		this.estadoDeposito = estadoDeposito;
+	}
+
+	public String getCodigoEstadoDeposito() {
+		return codigoEstadoDeposito;
+	}
+
+	public void setCodigoEstadoDeposito(String codigoEstadoDeposito) {
+		this.codigoEstadoDeposito = codigoEstadoDeposito;
+	}
+
+	public Date getFechaInicioConcurrencia() {
+		return fechaInicioConcurrencia;
+	}
+
+	public void setFechaInicioConcurrencia(Date fechaInicioConcurrencia) {
+		this.fechaInicioConcurrencia = fechaInicioConcurrencia;
+	}
+
+	public Date getFechaFinConcurrencia() {
+		return fechaFinConcurrencia;
+	}
+
+	public void setFechaFinConcurrencia(Date fechaFinConcurrencia) {
+		this.fechaFinConcurrencia = fechaFinConcurrencia;
+	}
+
+	public Long getPeriodoConcurrencia() {
+		return periodoConcurrencia;
+	}
+
+	public void setPeriodoConcurrencia(Long periodoConcurrencia) {
+		this.periodoConcurrencia = periodoConcurrencia;
+	}
+
+	public Long getIdConcurrencia() {
+		return idConcurrencia;
+	}
+
+	public void setIdConcurrencia(Long idConcurrencia) {
+		this.idConcurrencia = idConcurrencia;
 	}	
 	
 }

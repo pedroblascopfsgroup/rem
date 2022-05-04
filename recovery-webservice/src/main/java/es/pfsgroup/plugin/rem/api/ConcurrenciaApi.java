@@ -2,12 +2,14 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface ConcurrenciaApi {
 	
@@ -43,4 +45,6 @@ public interface ConcurrenciaApi {
 	boolean isConcurrenciaTerminadaOfertasEnProgresoActivo(Activo activo);
 
 	boolean isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(ActivoAgrupacion agrupacion);
+	
+	List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta);
 }

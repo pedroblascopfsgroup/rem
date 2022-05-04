@@ -412,6 +412,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean enConcurrencia;
 	
+	private Boolean activoOfertasConcurrencia;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -3059,6 +3061,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEnConcurrencia(Boolean enConcurrencia) {
 		this.enConcurrencia = enConcurrencia;
+	}
+
+	public Boolean getActivoOfertasConcurrencia() {
+		return activoOfertasConcurrencia;
+	}
+
+	public void setActivoOfertasConcurrencia(Boolean activoOfertasConcurrencia) {
+		this.activoOfertasConcurrencia = activoOfertasConcurrencia;
 	}
 	
 }

@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas', 'HreRem.model.PujasActivo'],
 
     data: {
     	activo: null,
@@ -4330,6 +4330,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tasadoraCaixa'}
 			},
 			autoLoad: true
-		}
+		},
+		storePujasActivo: {
+      		 model: 'HreRem.model.PujasActivo',
+  		     proxy: {
+  		        type: 'uxproxy',
+  		        remoteUrl: 'activo/getListConcurrenciasActivoById',
+  		        extraParams: {
+ 		        	id: '{activo.id}'
+ 		        }
+  	    	 }
+      	},
+      	storePuja: {
+     		 model: 'HreRem.model.Pujas',
+ 		     proxy: {
+ 		        type: 'uxproxy',
+ 		        remoteUrl: 'activo/getPujasDetalleByIdOferta',
+ 		        extraParams: {
+		        	idOferta: '{detallepuja.id}',
+		        	idActivo: '{detallepuja.idActivo}'
+		        }
+ 	    	 },
+ 			autoLoad: true
+     	}
 	 }
 });

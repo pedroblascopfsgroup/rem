@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220425
+--## FECHA_CREACION=20220504
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17696
@@ -37,7 +37,7 @@ DECLARE
         T_TIPO_DATA('P02', '1'),
         T_TIPO_DATA('P03', '1'),
         T_TIPO_DATA('P04', '0'),
-        T_TIPO_DATA('P05', '0'),
+        T_TIPO_DATA('P05', '1'),
         T_TIPO_DATA('P06', '1')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

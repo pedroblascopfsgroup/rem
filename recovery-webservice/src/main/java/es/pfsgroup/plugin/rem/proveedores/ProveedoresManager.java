@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -1780,6 +1781,18 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				beanUtilNotNull.copyProperty(dto, "provinciaCodigo", codigos.substring(0, (codigos.length()-1)));
 			}
+			
+			List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionCodigoPostal)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesCodigoPostal cp : delegacionCodigoPostal) {
+					if(!Checks.esNulo(cp.getCodigoPostal())) {
+						codigos.append(cp.getCodigoPostal().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "codigoPostalCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
 		}catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
@@ -1957,7 +1970,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
 				// Dejar los elementos que vangan en la lista y exista en la DDBB.
 				for(String codigo : codigosMuncicipio) {
-					Localidad municipio = (Localidad) utilDiccionarioApi.dameValorDiccionarioByCod(Localidad.class, codigo);
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					Localidad municipio = genericDao.get(Localidad.class, filtroMunicipio);
 					if(!Checks.esNulo(municipio)) {
 						Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", municipio.getCodigo());
 						List<DelegacionesLocalidad> delegacionLocalidad = genericDao.getList(DelegacionesLocalidad.class, filtroDelegacion, filtroLocalidad);
@@ -1966,6 +1980,47 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 							dlgLocalidad.setLocalidad(municipio);
 							dlgLocalidad.setDireccion(delegacion);
 							genericDao.save(DelegacionesLocalidad.class, dlgLocalidad);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getCodigoPostalCodigo())) {
+			if(dto.getCodigoPostalCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesCodigoPostal.class, filtroDelegacion);
+			} else {
+				List<String> codigosCodigoPostal = Arrays.asList(dto.getCodigoPostalCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesCodigoPostal> delegacionCodigoPostalByProvID = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesCodigoPostal dcp : delegacionCodigoPostalByProvID){
+					if(!codigosCodigoPostal.contains(dcp.getCodigoPostal().getCodigo())){
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", dcp.getCodigoPostal().getCodigo());
+						DelegacionesCodigoPostal codigoPostalABorrar = genericDao.get(DelegacionesCodigoPostal.class, filtroCodigoPostal, filtroDelegacion);
+						if(!Checks.esNulo(codigoPostalABorrar)) {
+							genericDao.deleteById(DelegacionesCodigoPostal.class, codigoPostalABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosCodigoPostal) {
+					Filter filtroCP = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					DDCodigoPostal codigoPostal = genericDao.get(DDCodigoPostal.class, filtroCP);
+					if(!Checks.esNulo(codigoPostal)) {
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", codigoPostal.getCodigo());
+						List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion, filtroCodigoPostal);
+						if(Checks.estaVacio(delegacionCodigoPostal)) {
+							DelegacionesCodigoPostal dlgCodigoPostal = new DelegacionesCodigoPostal();
+							dlgCodigoPostal.setCodigoPostal(codigoPostal);
+							dlgCodigoPostal.setDireccion(delegacion);
+							genericDao.save(DelegacionesCodigoPostal.class, dlgCodigoPostal);
 						}
 					}
 				}
@@ -2000,5 +2055,39 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		
 		return municipiosADevolver;
+	}
+	
+	@Override
+	public List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio) {
+				
+		List<DDCodigoPostal> codigosPostalesBusqueda = new ArrayList<DDCodigoPostal>();
+		
+		DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
+		
+		List<DtoCodigoPostalCombo> codigosPostalesADevolver = new ArrayList<DtoCodigoPostalCombo>();
+		
+		if(!"VALOR_POR_DEFECTO".equals(codigoMunicipio) && codigoMunicipio != null) {
+		
+			String[] codigoMunicipioSplit = codigoMunicipio.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(codigoMunicipioSplit));
+		
+			for(String municipio : list) {
+				
+				codigosPostalesBusqueda = proveedoresDao.getCodigosPostalesList(municipio);
+				
+				for(DDCodigoPostal codigosPostalesFinal : codigosPostalesBusqueda) {
+					
+					codigosPostalesIndividuales.setId(codigosPostalesFinal.getId());
+					codigosPostalesIndividuales.setCodigo(codigosPostalesFinal.getCodigo());
+					codigosPostalesIndividuales.setDescripcion(codigosPostalesFinal.getCodigo());
+
+					codigosPostalesADevolver.add(codigosPostalesIndividuales);
+				}
+				
+			}
+		}
+		
+		return codigosPostalesADevolver;
 	}
 }

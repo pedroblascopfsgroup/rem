@@ -886,4 +886,9 @@ public class ProveedoresController extends ParadiseJsonController {
 	public ModelAndView getComboMunicipioMultiple(String codigoProvincia){
 		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboMunicipioMultiple(codigoProvincia)));
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboCodigoPostalMultiple(String codigoMunicipio){
+		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboCodigoPostalMultiple(codigoMunicipio)));
+	}
 }

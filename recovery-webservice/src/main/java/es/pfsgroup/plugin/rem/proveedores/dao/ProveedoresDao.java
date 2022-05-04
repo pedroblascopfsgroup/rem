@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
@@ -105,4 +106,6 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public List<VProveedores> getProveedoresCarterizados(String codCartera);
 	
 	public List<Localidad> getMunicipiosList(String codigoProvincia);
+	
+	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio);
 }

@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCodigoPostalCombo;
 import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
 import es.pfsgroup.plugin.rem.model.DtoDatosContacto;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 
 public interface ProveedoresApi {
 	
@@ -320,5 +322,7 @@ public interface ProveedoresApi {
 	public boolean saveDatosContactoById(DtoDatosContacto dto);
 
 	List<Localidad> getComboMunicipioMultiple(String codigoProvincia);
+	
+	List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio);
 
 }

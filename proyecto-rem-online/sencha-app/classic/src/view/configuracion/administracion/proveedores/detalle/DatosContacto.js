@@ -95,29 +95,29 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 											extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
 										},
 										autoLoad: false
-						            }
+						            },
+		    						listeners: {
+										change: 'onChangeMunicipio'
+
+		    						}
 								},
-//								{
-//									xtype: 'itemselectorbase',
-//									fieldLabel: HreRem.i18n('fieldlabel.codigopostal'),
-//									reference: 'codigoPostalCombo',
-//					            	bind: {
-//					            		value: '{datosContacto.codigoPostalCodigo}',
-//					            		disabled: '{!datosContacto.municipioCodigo}'
-//					            	},
-//					        		comboCodigoPostalDatosContacto: {
-//					        			model: 'HreRem.model.ComboBase',
-//					        			proxy: {
-//					        				type: 'uxproxy',
-//					        				remoteUrl: 'proveedores/getComboCodigoPostalMultiple',
-//					        				extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
-//					        			},
-//					        			autoload: false
-//					        		},
-//		    						listeners: {
-//										select: 'onChangeChainedCombo'
-//		    						}
-//								},
+								{
+									xtype: 'itemselectorbase',
+									fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+									reference: 'codigoPostalCombo',
+					            	bind: {
+					            		value: '{datosContacto.codigoPostalCodigo}'
+					            	},
+					        		store: {
+					        			model: 'HreRem.model.ComboBase',
+					        			proxy: {
+					        				type: 'uxproxy',
+					        				remoteUrl: 'proveedores/getComboCodigoPostalMultiple',
+					        				extraParams: {codigoMunicipio: '{datosContacto.municipioCodigo}'}
+					        			},
+					        			autoload: false
+					        		}
+								},
 						        {
 								    xtype: 'itemselectorbase',
 								    reference: 'itemselEspecialidad',

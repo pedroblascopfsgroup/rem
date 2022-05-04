@@ -19,6 +19,7 @@ public class DtoDatosContacto extends WebDto {
 	private String idiomaCodigo;
 	private String provinciaCodigo;
 	private String municipioCodigo;
+	private String codigoPostalCodigo;
 	
 
 	public String getId() {
@@ -80,6 +81,12 @@ public class DtoDatosContacto extends WebDto {
 	}
 	public void setMunicipioCodigo(String municipioCodigo) {
 		this.municipioCodigo = municipioCodigo;
+	}
+	public String getCodigoPostalCodigo() {
+		return codigoPostalCodigo;
+	}
+	public void setCodigoPostalCodigo(String codigoPostalCodigo) {
+		this.codigoPostalCodigo = codigoPostalCodigo;
 	}
 	
 }

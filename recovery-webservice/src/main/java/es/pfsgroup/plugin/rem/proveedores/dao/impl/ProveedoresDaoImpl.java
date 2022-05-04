@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -490,6 +491,23 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		
 		if (localidadList != null && !localidadList.isEmpty()) {
 			return localidadList;
+		}else {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio) {
+		
+		HQLBuilder hb = new HQLBuilder(
+				"select cdp from DDCodigoPostal cdp "
+				+ "where cdp.localidad = (select loc from Localidad loc where loc.codigo in("+codigoMunicipio+") ");
+		
+		List<DDCodigoPostal> codigoPostalList = (List<DDCodigoPostal>) getHibernateTemplate().find(hb.toString());
+		
+		if (codigoPostalList != null && !codigoPostalList.isEmpty()) {
+			return codigoPostalList;
 		}else {
 			return null;
 		}

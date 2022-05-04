@@ -15462,7 +15462,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			oferta.setCheckFormCajamar(false);
 			
-			if (importeCorrecto && activosPermitidos && prescriptorConfigurado && ofertaApi.isOfertaONVentaSobrePlano(oferta))
+			if (importeCorrecto && activosPermitidos && prescriptorConfigurado && !ofertaApi.isOfertaONVentaSobrePlano(oferta))
 				oferta.setCheckFormCajamar(true);
 				
 			genericDao.save(Oferta.class, oferta);

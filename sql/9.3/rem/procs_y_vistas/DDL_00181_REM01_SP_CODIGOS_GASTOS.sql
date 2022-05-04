@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20220422
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17495
+--## INCIDENCIA_LINK=HREOS-17704
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@
 --##        0.8 Añadir campo DD_SCM_ID como nuevo parámetro- [HREOS-17208] - Alejandra García
 --##        0.9 Modificar el cálculo de las PEP para desligar los gastos de tipo 'Carta de pago conjunta' del ejercicio - [HREOS-17468] - Alejandra García
 --##        0.10 Corrección cálculo para PEP Tarifa plana Prorrata 0% y Tarifa plana Prorrata 100% - [HREOS-17495] - Alejandra García
+--##        0.11 Quitar la versión 1.10 - [HREOS-17704] - Alejandra García
 --##########################################
 --*/
 
@@ -169,7 +170,6 @@ BEGIN
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
                 WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 
-                AND (TGA.DD_TGA_CODIGO, STG.DD_STG_CODIGO) NOT IN ((''13'', ''181''), (''13'', ''182''))
                 AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN = 1)
               WHEN MATCHED THEN UPDATE SET
@@ -302,7 +302,6 @@ BEGIN
                     AND NVL(ETG.DD_PRO_ID, NVL(GLD.DD_PRO_ID, 0)) = NVL(GLD.DD_PRO_ID, 0)
                     AND ETG.BORRADO = 0
                 WHERE NVL(GLD.GLD_LINEA_SIN_ACTIVOS, 0) = 1 
-                AND (TGA.DD_TGA_CODIGO, STG.DD_STG_CODIGO) NOT IN ((''13'', ''181''), (''13'', ''182''))
                 AND PRO.PRO_DOCIDENTIF IN (''B46644290'',''A08663619'',''A58032244'') AND PRO.PRO_SOCIEDAD_PAGADORA IN (''3148'',''0001'',''0015'')
               ) T2 ON (T1.FAC_ID_REM = T2.FAC_ID_REM AND T1.LINEA_GASTO = T2.LINEA_GASTO AND NVL(T1.ID_ACTIVO_ESPECIAL, 0) = NVL(T2.ID_ACTIVO_ESPECIAL, 0) AND T2.RN =1)
               WHEN MATCHED THEN UPDATE SET

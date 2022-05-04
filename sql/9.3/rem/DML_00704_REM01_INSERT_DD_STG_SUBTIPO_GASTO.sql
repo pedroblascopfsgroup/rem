@@ -18,6 +18,7 @@
 --##        0.5 Añadir nuevos subtipos: Nuevas PEPs A INCLUIR DIC 21 - [HREOS-17341] - Alejandra García
 --##        0.6 Añadir nuevos subtipos: Comisión Alquiler Prorrata - [HREOS-17686] - Alejandra García
 --##        0.7 Añadir nuevos subtipos excel revisión - [HREOS-17704] - Alejandra García
+--##        0.8 Añadir nuevos subtipos después de la revisión del excel - [HREOS-17704] - Alejandra García
 --#########################################
 --*/
 
@@ -149,7 +150,9 @@ DECLARE
       T_TIPO_DATA('311','Honorarios gestión activos alquiler prorrata 100%','12'),
       T_TIPO_DATA('312','Honorarios gestión activos prorrata 0%','12'),
       T_TIPO_DATA('313','Honorarios gestión activos prorrata 100%','12'),
-      T_TIPO_DATA('314','Actuación post-venta','15')
+      T_TIPO_DATA('314','Actuación post-venta','15'),
+      T_TIPO_DATA('315','Tarifa plana Alquiler Prorrata 0%','13'),
+      T_TIPO_DATA('316','Tarifa plana Alquiler Prorrata 100%','13')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

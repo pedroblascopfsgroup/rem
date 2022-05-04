@@ -2747,29 +2747,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);																	
 					}
 				}
-				
-				if(oferta.getCheckForzadoCajamar() != null) {
-					if(oferta.getCheckForzadoCajamar()) {
-						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-						
+
+				if((oferta.getCheckForzadoCajamar() != null && oferta.getCheckForzadoCajamar()
+						|| (oferta.getCheckForzadoCajamar() == null && oferta.getCheckFormCajamar() != null && oferta.getCheckFormCajamar()))) {
+					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+
 						GestorEntidadDto gestor = new GestorEntidadDto();
 						gestor.setIdEntidad(expedienteComercial.getId());
 						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
 						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
 						gestor.setIdTipoGestor(tipoGestorComercial.getId());
 						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
-					}
-				}else {
-					if(oferta.getCheckFormCajamar() != null && oferta.getCheckFormCajamar()) {
-						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-						
-						GestorEntidadDto gestor = new GestorEntidadDto();
-						gestor.setIdEntidad(expedienteComercial.getId());
-						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-						gestor.setIdTipoGestor(tipoGestorComercial.getId());
-						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
-					}
 				}
 				
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);

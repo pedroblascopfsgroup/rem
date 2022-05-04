@@ -9806,7 +9806,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoONPisoPiloto(Activo activo) {
 		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
-			if (!Checks.esNulo(agrupActivo.getAgrupacion().getAgrupacionONDnd()) 
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", agrupActivo.getAgrupacion().getId());
+			ActivoObraNueva obraNueva = genericDao.get(ActivoObraNueva.class, filtro);
+			if (!Checks.esNulo(obraNueva) && !Checks.esNulo(obraNueva.getIdOnvDnd())
 					&& DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion())
 					&& !Checks.esNulo(agrupActivo.getPisoPiloto()) && agrupActivo.getPisoPiloto()) {
 				return true;

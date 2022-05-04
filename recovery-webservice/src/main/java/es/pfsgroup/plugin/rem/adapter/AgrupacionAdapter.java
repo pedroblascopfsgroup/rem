@@ -387,7 +387,8 @@ public class AgrupacionAdapter {
 					if(DDSinSiNo.CODIGO_SI.equals(agrupacion.getVentaPlano().getCodigo())) {
 						beanUtilNotNull.copyProperty(dtoAgrupacion, "ventaSobrePlano", true);
 					}
-					beanUtilNotNull.copyProperty(dtoAgrupacion, "idObraNueva", agrupacion.getAgrupacionONDnd().getNumAgrupRem());
+					if(!Checks.esNulo(agrupacion.getAgrupacionONDnd()))
+						beanUtilNotNull.copyProperty(dtoAgrupacion, "idObraNueva", agrupacion.getAgrupacionONDnd().getNumAgrupRem());
 				}
 
 				// Si es de tipo 'Lote Comercial'
@@ -543,6 +544,14 @@ public class AgrupacionAdapter {
 						}
 					}
 					dtoAgrupacion.setEsGestorComercialEnActivo(esGestorComercial(agrupacion));
+					
+					for(ActivoAgrupacionActivo activos : agrupacion.getActivos()) {
+						if(!Checks.esNulo(activos.getPisoPiloto()) && activos.getPisoPiloto()) {
+							dtoAgrupacion.setIdActivoPisoPiloto(activos.getActivo().getNumActivo().toString());
+							break;
+						}
+					}
+					
 					// SI ES TIPO RESTRINGIDA VENTA
 				} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;

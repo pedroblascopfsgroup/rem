@@ -362,6 +362,27 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            },
 				{
 					name: 'idObraNueva'
+				},
+				{
+					name: 'idOnvDnd'
+				},						
+				{
+		    		name : 'fechaPrevFinalizacion',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name : 'fechaEscrituraDesde',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+		    		name : 'fechaEscrituraHasta',
+		    		type : 'date',
+		    		dateFormat: 'c'
+		    	},
+		    	{
+					name: 'idActivoPisoPiloto'
 				}
     ],
     

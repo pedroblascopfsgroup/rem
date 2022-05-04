@@ -92,7 +92,15 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean esHayaHome;
 	private Boolean esONDnd;
 	private Long idObraNueva;
-
+	
+	private String idOnvDnd;
+	
+	private Date fechaPrevFinalizacion;
+	private Date fechaEscrituraDesde;
+	private Date fechaEscrituraHasta;
+	private String idActivoPisoPiloto;
+	
+	
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
 	}
@@ -570,7 +578,37 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setIdObraNueva(Long idObraNueva) {
 		this.idObraNueva = idObraNueva;
+	}	
+	public String getIdOnvDnd() {
+		return idOnvDnd;
+	}
+	public void setIdOnvDnd(String idOnvDnd) {
+		this.idOnvDnd = idOnvDnd;
 	}
 	
+	public Date getFechaPrevFinalizacion() {
+		return fechaPrevFinalizacion;
+	}
+	public void setFechaPrevFinalizacion(Date fechaPrevFinalizacion) {
+		this.fechaPrevFinalizacion = fechaPrevFinalizacion;
+	}
+	public Date getFechaEscrituraDesde() {
+		return fechaEscrituraDesde;
+	}
+	public void setFechaEscrituraDesde(Date fechaEscrituraDesde) {
+		this.fechaEscrituraDesde = fechaEscrituraDesde;
+	}
+	public Date getFechaEscrituraHasta() {
+		return fechaEscrituraHasta;
+	}
+	public void setFechaEscrituraHasta(Date fechaEscrituraHasta) {
+		this.fechaEscrituraHasta = fechaEscrituraHasta;
+	}
+	public String getIdActivoPisoPiloto() {
+		return idActivoPisoPiloto;
+	}
+	public void setIdActivoPisoPiloto(String idActivoPisoPiloto) {
+		this.idActivoPisoPiloto = idActivoPisoPiloto;
+	}	
 	
 }

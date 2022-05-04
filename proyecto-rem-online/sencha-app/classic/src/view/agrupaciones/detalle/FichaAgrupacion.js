@@ -606,7 +606,100 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	}
 						}
 					]
-          	}
+          	},
+			
+			
+          	{
+				xtype		:'fieldsettable',
+				collapsible	: true,
+				defaultType	: 'textfieldbase',
+				title		: HreRem.i18n('fieldlabel.datos.dnd'),
+				bind:{
+						hidden		: '{!agrupacionficha.esONDnd}'
+					},
+				items 		: [
+						{ 
+							xtype		: 'textfieldbase',
+							fieldLabel	: HreRem.i18n('fieldlabel.id.proyecto.dnd'),
+							reference: 'idOnvDnd',
+			            	bind		: {
+			            		value: '{agrupacionficha.idOnvDnd}'
+			            	}		
+		                },
+		                {
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel : HreRem.i18n('fieldlabel.venta.sobre.plano'),
+				        	reference: 'ventaSobrePlanoDND',						
+				        	bind: {				        		
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{agrupacionficha.ventaSobrePlano}'							
+			            	} 
+						},
+						{ 
+							xtype		: 'numberfieldbase',
+							fieldLabel	: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
+							reference: 'idActivoPisoPiloto',
+			            	bind		: {
+			            		value: '{agrupacionficha.idActivoPisoPiloto}'
+			            	}		
+		                },
+		                {
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel : HreRem.i18n('fieldLabel.agrupacion.visitable'),
+				        	reference: 'esVisitable',						
+				        	bind: {				        		
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{agrupacionficha.esVisitable}'							
+			            	}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.empresa.constructora'),
+							name: 'empresapromotora',
+							reference: 'empresapromotora',
+							bind: {
+								value: '{agrupacionficha.empresaPromotora}'
+							}
+						},	
+						{
+							xtype: 'textfieldbase',
+							fieldLabel : HreRem.i18n('fieldlabel.empresa.comercializadora'),
+							name: 'empresacomercializadora',
+							reference: 'empresacomercializadora',
+							bind: {
+								value: '{agrupacionficha.empresaComercializadora}'															
+							}
+						},
+						{ 
+		                	xtype		: 'datefieldbase',
+		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.prev.finalizavion'),               	
+			            	bind		: {
+			            		value: '{agrupacionficha.fechaPrevFinalizacion}'		            						        					        		
+			            	}		
+						}, 
+		                { 
+		                	xtype		: 'datefieldbase',
+		                	readOnly	:	true,
+		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.escrituracion.desde'),
+			            	bind		: {
+			            		value: '{agrupacionficha.fechaEscrituraDesde}'
+			            	}		
+						},
+						 { 
+		                	xtype		: 'datefieldbase',
+		                	readOnly	:	true,
+		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.escrituracion.hasta'),
+			            	bind		: {
+			            		value: '{agrupacionficha.fechaEscrituraHasta}'
+			            	}		
+						}
+          	
+				]
+            }
+          	
+			
+			
+			
           ];
 
         me.addPlugin({ptype: 'lazyitems', items: items });

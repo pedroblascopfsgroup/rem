@@ -112,6 +112,7 @@
   		<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition> 
         <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
 		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
+		<transition to="T017_InstruccionesReserva" name="AceptaSaltaPbc"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
 		<state name="T017_RespuestaOfertanteCES">
 		<event type="node-enter">

@@ -101,7 +101,7 @@ BEGIN
               AND ETI.DD_ETI_CODIGO = ''02''
               AND TIT.TIT_FECHA_INSC_REG IS NULL
               AND NOT EXISTS (SELECT 1 
-              FROM ACT_AHT_HIST_TRAM_TITULO AHT
+              FROM '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT
               WHERE AHT.BORRADO = 0
               AND AHT.TIT_ID = TIT.TIT_ID)';   
   EXECUTE IMMEDIATE V_MSQL;

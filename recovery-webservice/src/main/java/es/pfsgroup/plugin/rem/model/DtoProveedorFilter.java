@@ -31,7 +31,7 @@ public class DtoProveedorFilter extends WebDto {
 	private String ambitoProveedor;
 	private String provinciaCodigo;
 	private String municipioCodigo;
-	private Integer codigoPostal;
+	private String codigoPostal;
 	private String contactoNIFProveedor;
 	private String contactoNombreProveedor;
 	private Integer homologadoCodigo;
@@ -161,10 +161,10 @@ public class DtoProveedorFilter extends WebDto {
 	public void setMunicipioCodigo(String municipioCodigo) {
 		this.municipioCodigo = municipioCodigo;
 	}
-	public Integer getCodigoPostal() {
+	public String getCodigoPostal() {
 		return codigoPostal;
 	}
-	public void setCodigoPostal(Integer codigoPostal) {
+	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
 	public String getContactoNIFProveedor() {

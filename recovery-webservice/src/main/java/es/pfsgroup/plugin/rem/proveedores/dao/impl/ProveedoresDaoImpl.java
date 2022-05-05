@@ -51,17 +51,49 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		String from = " from VBusquedaProveedor pve";		
 		String where = "";
 		Boolean haswhere = false;
+		Boolean hasJoinDireccion = false;
 		
 		if(!Checks.esNulo(dto.getLineaNegocioCodigo())) {
-			from += ",DDTipoComercializacion tco";
-			where += " where tco.id = pve.idLineaNegocio";
+			from += ",DDTipoComercializacion tco, ActivoProveedorDireccion apd";
+			where += " where (tco.id = pve.idLineaNegocio or tco.id = apd.lineaNegocio) and apd.proveedor.id = pve.id";
 			haswhere = true;
+			hasJoinDireccion = true;
 		}
 		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
 			from += ",ProveedorEspecialidad pveEsp, DDEspecialidad esp";
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
 			where += (haswhere ? " and " : " where ");
-			where += "pveEsp.proveedor.id = pve.id and pveEsp.especialidad.id = esp.id";
+			where += "(pveEsp.proveedor.id = pve.id or pveEsp.direccion.id = apd.id) and pveEsp.especialidad.id = esp.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
 			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += ",DelegacionesProvincia dpr, DDProvincia ddprv";
+			where += (haswhere ? " and " : " where ");
+			where += "dpr.direccion.id = apd.id and dpr.provincia.id = ddprv.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += ",DelegacionesLocalidad dlo, Localidad ddloc";
+			where += (haswhere ? " and " : " where ");
+			where += "dlo.direccion.id = apd.id and dlo.localidad.id = ddloc.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
+		}
+		if(!Checks.esNulo(dto.getCodigoPostal())) {
+			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
+			from += ",DelegacionesCodigoPostal dcp, DDCodigoPostal ddcp";
+			where += (haswhere ? " and " : " where ");
+			where += "dcp.direccion.id = apd.id and dcp.codigoPostal.id = ddcp.id ";
+			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
+			haswhere = true;
+			hasJoinDireccion = true;
 		}
 			
 		HQLBuilder hb = new HQLBuilder(select + from + where);
@@ -94,10 +126,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nifProveedor", dto.getNifProveedor(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoPersonaProveedorCodigo", dto.getTipoPersonaCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.propietarioActivoVinculado", dto.getPropietario(), true);	
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.provinciaProveedor", dto.getProvinciaCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.municipioProveedor", dto.getMunicipioCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.codigoPostalProveedor", dto.getCodigoPostal());
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.nifPersonaContacto", dto.getNifPersonaContacto());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "pve.nombrePersonaContacto", dto.getNombrePersonaContacto(), true);
@@ -132,7 +160,16 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
 			this.addFiltroWhereInSiNotNullConStrings(hb, "esp.codigo", Arrays.asList(dto.getEspecialidadCodigo().split(",")));
 		}
-		
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			HQLBuilder.addFiltroOrClause(hb,"pve.provinciaProveedor", "ddprv.codigo", dto.getProvinciaCodigo());	
+		}
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			HQLBuilder.addFiltroOrClause(hb, "pve.municipioProveedor", "ddloc.codigo", dto.getMunicipioCodigo());
+		}
+		if(!Checks.esNulo(dto.getCodigoPostal())) {
+			HQLBuilder.addFiltroOrClause(hb, "pve.codigoPostalProveedor", "ddcp.codigo", dto.getCodigoPostal());
+		}
+
 		// Tiene que tratarse de la siguiente manera debido a la personalizacion
 		// de la query hql.
 		Page p = HibernateQueryUtils.page(this, hb, dto);

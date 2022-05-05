@@ -73,7 +73,7 @@ public class VBusquedaProveedor implements Serializable {
 	private String municipioProveedor;
 
 	@Column(name = "CODIGO_POSTAL_PROVEEDOR")
-	private Integer codigoPostalProveedor;
+	private String codigoPostalProveedor;
 
 	@Column(name = "NIF_PERSONA_CONTACTO")
 	private String nifPersonaContacto;
@@ -252,11 +252,11 @@ public class VBusquedaProveedor implements Serializable {
 		this.municipioProveedor = municipioProveedor;
 	}
 
-	public Integer getCodigoPostalProveedor() {
+	public String getCodigoPostalProveedor() {
 		return codigoPostalProveedor;
 	}
 
-	public void setCodigoPostalProveedor(Integer codigoPostalProveedor) {
+	public void setCodigoPostalProveedor(String codigoPostalProveedor) {
 		this.codigoPostalProveedor = codigoPostalProveedor;
 	}
 

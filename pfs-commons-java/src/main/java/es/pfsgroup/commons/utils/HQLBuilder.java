@@ -706,6 +706,33 @@ public class HQLBuilder {
 			hqlBuilder.getParametros().putObject(nombreParametro, valor);
 		}
 	}
+	
+	/**
+     * Consulta para dos campos que necesitan clausula OR
+     * 
+     * @return
+     */
+    public static void addFiltroOrClause(final HQLBuilder hqlBuilder, final String campoPrincipal, final String campoSecundario, 
+            final Object valor) {
+        if (!Checks.esNulo(valor)) {
+            final String nombreParametroPrinc = nombraParametro(campoPrincipal);
+            final String nombreParametroSecun = nombraParametro(campoSecundario);
+            hqlBuilder.appendWhereTwoValues(campoPrincipal.concat(" = :").concat(nombreParametroPrinc), campoSecundario.concat(" = :").concat(nombreParametroSecun));
+            hqlBuilder.getParametros().putObject(nombreParametroPrinc, valor);
+            hqlBuilder.getParametros().putObject(nombreParametroSecun, valor);
+        }
+    }
+    
+    public void appendWhereTwoValues(final String wherePrincipal, final String whereSecundario) {
+
+        initWhereClause();
+
+        this.stringBuilder.append("(").append(wherePrincipal).append(")");
+        
+        initWhereClause(true);
+        
+        this.stringBuilder.append(whereSecundario).append(")").append(")");
+    }
 
 	
 }

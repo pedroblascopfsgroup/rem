@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220505
+--## FECHA_CREACION=20220506
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17598
@@ -52,7 +52,7 @@ BEGIN
 
 
 		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_TMP_TIPO_DATA(1)||'''
-                             and DATA_TYPE = '''||V_TMP_TIPO_DATA(2)||'''
+                             
 														 and TABLE_NAME = '''||V_TEXT_TABLA||''' 
 														 and OWNER = '''||V_ESQUEMA||'''';
 		

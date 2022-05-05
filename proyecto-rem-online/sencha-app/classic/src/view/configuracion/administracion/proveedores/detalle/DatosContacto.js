@@ -77,7 +77,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 						            },
 		    						listeners: {
 										change: 'onChangeProvincia'
-
 		    						}
 								},
 								{
@@ -94,11 +93,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 											remoteUrl: 'proveedores/getComboMunicipioMultiple',
 											extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
 										},
-										autoLoad: false
+										autoLoad: true
 						            },
 		    						listeners: {
 										change: 'onChangeMunicipio'
-
 		    						}
 								},
 								{
@@ -115,12 +113,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 					        				remoteUrl: 'proveedores/getComboCodigoPostalMultiple',
 					        				extraParams: {codigoMunicipio: '{datosContacto.municipioCodigo}'}
 					        			},
-					        			autoload: false
-					        		}
+										autoLoad: true
+						            }
 								},
 						        {
 								    xtype: 'itemselectorbase',
-								    reference: 'itemselEspecialidad',
 								    fieldLabel: HreRem.i18n('fieldlabel.proveedor.especialidad'),
 								    store: {
 						            	model: 'HreRem.model.ComboBase',
@@ -134,11 +131,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 								    bind: {
 								    	value: '{datosContacto.especialidadCodigo}'
 								    }
-								   
 								},
 								{
 								    xtype: 'itemselectorbase',
-								    reference: 'itemselIdiomas',
 								    fieldLabel: HreRem.i18n('fieldlabel.proveedor.idiomas'),
 								    store: {
 						            	model: 'HreRem.model.ComboBase',

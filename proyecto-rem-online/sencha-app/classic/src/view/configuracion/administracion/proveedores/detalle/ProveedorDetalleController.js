@@ -559,9 +559,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		codigoProvincia: value
     	};
     	storeMunicipio.load();
-    	
     },
-	
+    
     onChangeMunicipio: function(combo, value, oldValue, eOpts){
     	var me = this;
     	var comboCodigoPostal = me.lookupReference('codigoPostalCombo');
@@ -570,7 +569,5 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		codigoMunicipio: value
     	};
     	storeCodigoPostal.load();
-
-    	
     }
 });

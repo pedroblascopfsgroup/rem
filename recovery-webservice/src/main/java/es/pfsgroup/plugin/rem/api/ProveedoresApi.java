@@ -6,7 +6,9 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -320,5 +322,7 @@ public interface ProveedoresApi {
 	void saveBloqueoProveedorById(Long id, DtoBloqueoApis dto);
 
 	String uploadConducta(WebFileItem fileItem) throws Exception;
+
+	void isProveedorValidoParaActivo(ActivoProveedor proveedor, Activo activo) throws JsonViewerException;
 
 }

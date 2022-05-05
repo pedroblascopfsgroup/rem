@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.BloqueoApis;
 import es.pfsgroup.plugin.rem.model.BloqueoApisCartera;
 import es.pfsgroup.plugin.rem.model.BloqueoApisEspecialidad;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.BloqueoApisHistorico;
 import es.pfsgroup.plugin.rem.model.BloqueoApisLineaNegocio;
 import es.pfsgroup.plugin.rem.model.BloqueoApisProvincia;
 import es.pfsgroup.plugin.rem.model.ConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.ConfigEspecialidad;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -123,6 +125,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public static final String ERROR_TIPO_DOCUMENTO_PROVEEDOR = "No existe el tipo de documento indicado";
 	public static final String ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR = "Ya existe un documento del mismo tipo";
 	public static final String ERROR_NOMBRE_DOCUMENTO_PROVEEDOR = "Ya existe un documento con el mismo nombre";
+	private static final String ERROR_BLOQUEO_CARTERA = "api.bloqueado.cartera";
+	private static final String ERROR_BLOQUEO_TIPO_COMERCIALIZACION = "api.bloqueado.tipo.comercializacion";
+	private static final String ERROR_BLOQUEO_PROVINCIA = "api.bloqueado.provincia";
+	private static final String ERROR_BLOQUEO_ESPECIALIDAD = "api.bloqueado.especialidad";
+
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
@@ -2109,5 +2116,56 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 	   	
 	   	return null;
+	}
+	
+	@Override
+	public void isProveedorValidoParaActivo(ActivoProveedor proveedor, Activo activo) throws JsonViewerException {
+		
+		
+		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId()));
+		
+		if(bloqueo != null) {
+			Filter bloqueoFilter = genericDao.createFilter(FilterType.EQUALS, "id", bloqueo.getId());
+			Filter carteraFilter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+			List<BloqueoApisCartera> bloqueoCartera =  genericDao.getList(BloqueoApisCartera.class, bloqueoFilter,carteraFilter);
+			if(bloqueoCartera != null || !bloqueoCartera.isEmpty()) {
+				throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_CARTERA));
+			}
+			
+			ActivoPublicacion apu = activo.getActivoPublicacion();
+			if(apu != null && apu.getTipoComercializacion() != null) {
+				Filter destinoComercialFilter = genericDao.createFilter(FilterType.EQUALS, "tipoComercializacion.codigo", apu.getTipoComercializacion().getCodigo());
+				List<BloqueoApisLineaNegocio> bloqueoLineaNegocio =  genericDao.getList(BloqueoApisLineaNegocio.class, bloqueoFilter,destinoComercialFilter);
+				if(bloqueoLineaNegocio != null || !bloqueoLineaNegocio.isEmpty()) {
+					throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_TIPO_COMERCIALIZACION));
+				}
+			}
+			
+			if(activo.getProvincia() != null) {
+				Filter provinciaFilter = genericDao.createFilter(FilterType.EQUALS, "tipoComercializacion.codigo", activo.getProvincia());
+				List<BloqueoApisProvincia> bloqueoProvincia =  genericDao.getList(BloqueoApisProvincia.class, bloqueoFilter,provinciaFilter);
+				if(bloqueoProvincia != null || !bloqueoProvincia.isEmpty()) {
+					throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_PROVINCIA));
+				}
+			}
+			
+//			if(activo.getSubtipoActivo() != null) {
+//				Filter configEspecialidadFilter = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", activo.getSubtipoActivo().getCodigo());	
+//				List<ConfigEspecialidad>  configEspecialidadList = genericDao.getList(ConfigEspecialidad.class, configEspecialidadFilter);
+//				
+//				if(configEspecialidadList != null && !configEspecialidadList.isEmpty()) {
+//					List<String> listEspecialidad = new ArrayList<String>();
+//					for (ConfigEspecialidad configEspecialidad : configEspecialidadList) {
+//						listEspecialidad.add(configEspecialidad.getEspecialidad().getCodigo());
+//					}
+//					configEspecialidadFilter = genericDao.createFilter(FilterType.SIMILARY, "especialidad.codigo", listEspecialidad);
+//					List<BloqueoApisEspecialidad> bloqueoApisEspecialidad =  genericDao.getList(BloqueoApisEspecialidad.class, bloqueoFilter,configEspecialidadFilter);
+//					if(bloqueoApisEspecialidad != null || !bloqueoApisEspecialidad.isEmpty()) {
+//						throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_ESPECIALIDAD));
+//					}
+//				}
+//			}
+		}
+		
 	}
 }

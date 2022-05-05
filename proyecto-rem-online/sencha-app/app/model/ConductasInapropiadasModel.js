@@ -25,13 +25,13 @@ Ext.define('HreRem.model.ConductasInapropiadasModel', {
     			name:'usuarioAlta'
     		},
     		{
-    			name:'tipoConductaCodigo'
+    			name:'tipoConducta'
     		},
     		{
-    			name:'categoriaConductaCodigo'
+    			name:'categoriaConducta'
     		},
     		{
-    			name:'nivelConductaCodigo'
+    			name:'nivelConducta'
     		},
     		{
     			name:'comentarios'

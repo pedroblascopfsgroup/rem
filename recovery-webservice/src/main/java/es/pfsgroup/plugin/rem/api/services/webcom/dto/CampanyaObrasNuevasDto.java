@@ -46,6 +46,10 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	
 	private LongDataType idAgrupacionBc;
 	
+	private DateDataType fechaPrevFinalizacion;
+	private DateDataType fechaEscrituraDesde;
+	private DateDataType fechaEscrituraHasta;
+	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -196,5 +200,22 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	public void setIdAgrupacionBc(LongDataType idAgrupacionBc) {
 		this.idAgrupacionBc = idAgrupacionBc;
 	}
-	
+	public DateDataType getFechaPrevFinalizacion() {
+		return fechaPrevFinalizacion;
+	}
+	public void setFechaPrevFinalizacion(DateDataType fechaPrevFinalizacion) {
+		this.fechaPrevFinalizacion = fechaPrevFinalizacion;
+	}
+	public DateDataType getFechaEscrituraDesde() {
+		return fechaEscrituraDesde;
+	}
+	public void setFechaEscrituraDesde(DateDataType fechaEscrituraDesde) {
+		this.fechaEscrituraDesde = fechaEscrituraDesde;
+	}
+	public DateDataType getFechaEscrituraHasta() {
+		return fechaEscrituraHasta;
+	}
+	public void setFechaEscrituraHasta(DateDataType fechaEscrituraHasta) {
+		this.fechaEscrituraHasta = fechaEscrituraHasta;
+	}
 }

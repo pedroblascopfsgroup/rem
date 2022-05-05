@@ -393,6 +393,9 @@ public class StockDto implements WebcomRESTDto{
 	
 	private StringDataType codMotivoIndisponibilidad;
 	
+	private BooleanDataType pisoPiloto;
+	private DateDataType fechaEscrituracion;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1279,4 +1282,17 @@ public class StockDto implements WebcomRESTDto{
 	public void setEmailGestorComercialAlquiler(StringDataType emailGestorComercialAlquiler) {
 		this.emailGestorComercialAlquiler = emailGestorComercialAlquiler;
 	}
+	public BooleanDataType getPisoPiloto() {
+		return pisoPiloto;
+	}
+	public void setPisoPiloto(BooleanDataType pisoPiloto) {
+		this.pisoPiloto = pisoPiloto;
+	}
+	public DateDataType getFechaEscrituracion() {
+		return fechaEscrituracion;
+	}
+	public void setFechaEscrituracion(DateDataType fechaEscrituracion) {
+		this.fechaEscrituracion = fechaEscrituracion;
+	}
+	
 }

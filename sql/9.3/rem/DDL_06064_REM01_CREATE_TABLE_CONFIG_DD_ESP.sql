@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20220506
+--## FECHA_CREACION=20220507
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17708
@@ -36,7 +36,7 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TABLA VARCHAR2(2400 CHAR) := 'ESP_SAC_CONFIG'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla con los datos de actualización de renta libre para bk'; -- Vble. para los comentarios de las tablas
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Configuracion de especialidad'; -- Vble. para los comentarios de las tablas
     V_LETRAS_TABLA VARCHAR2(2400 CHAR) := 'EAC';
     V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
@@ -47,6 +47,7 @@ DECLARE
     V_FK T_ARRAY_FK := T_ARRAY_FK(
  	--         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
         T_FK(   'DD_SAC_ID',            V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO',        'DD_SAC_ID'),
+        T_FK(   'DD_TPA_ID',            V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO',        	'DD_TPA_ID'),
         T_FK(   'DD_ESP_ID',            V_ESQUEMA||'.DD_ESP_ESPECIALIDAD',       	'DD_ESP_ID')
 
     );
@@ -73,6 +74,7 @@ BEGIN
                 '||V_LETRAS_TABLA||'_ID          		    NUMBER(16)                  NOT NULL,
                 DD_SAC_ID        		        			NUMBER(16,0)				NOT NULL,
                 DD_ESP_ID              						NUMBER(16,0)				NOT NULL,
+				DD_TPA_ID              						NUMBER(16,0)				NOT NULL,
 
 
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
@@ -135,10 +137,13 @@ BEGIN
             
             -- Comentarios de las columnas propias de la tabla
             
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SAC_ID IS ''Configuración de DD_SAC_SUBTIPO_ACTIVO ''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SAC_ID IS ''Configuración de DD_SAC_SUBTIPO_ACTIVO ''';
             EXECUTE IMMEDIATE V_SQL;
-             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_ESP_ID IS ''Configuración de DD_ESP_ESPECIALIDAD ''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_ESP_ID IS ''Configuración de DD_ESP_ESPECIALIDAD ''';
             EXECUTE IMMEDIATE V_SQL;
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_TPA_ID IS ''Configuración de DD_TPA_TIPO_ACTIVO ''';
+            EXECUTE IMMEDIATE V_SQL;
+
 
         
             

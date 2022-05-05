@@ -2149,22 +2149,23 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 			}
 			
-//			if(activo.getSubtipoActivo() != null) {
-//				Filter configEspecialidadFilter = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", activo.getSubtipoActivo().getCodigo());	
-//				List<ConfigEspecialidad>  configEspecialidadList = genericDao.getList(ConfigEspecialidad.class, configEspecialidadFilter);
-//				
-//				if(configEspecialidadList != null && !configEspecialidadList.isEmpty()) {
-//					List<String> listEspecialidad = new ArrayList<String>();
-//					for (ConfigEspecialidad configEspecialidad : configEspecialidadList) {
-//						listEspecialidad.add(configEspecialidad.getEspecialidad().getCodigo());
-//					}
-//					configEspecialidadFilter = genericDao.createFilter(FilterType.SIMILARY, "especialidad.codigo", listEspecialidad);
-//					List<BloqueoApisEspecialidad> bloqueoApisEspecialidad =  genericDao.getList(BloqueoApisEspecialidad.class, bloqueoFilter,configEspecialidadFilter);
-//					if(bloqueoApisEspecialidad != null || !bloqueoApisEspecialidad.isEmpty()) {
-//						throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_ESPECIALIDAD));
-//					}
-//				}
-//			}
+			if(activo.getSubtipoActivo() != null && activo.getTipoActivo() != null) {
+				Filter configTipoActivo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo());
+				Filter configSubtipoActivo = genericDao.createFilter(FilterType.EQUALS, "subtipoActivo.codigo", activo.getSubtipoActivo().getCodigo());	
+				List<ConfigEspecialidad>  configEspecialidadList = genericDao.getList(ConfigEspecialidad.class, configTipoActivo, configSubtipoActivo);
+				
+				if(configEspecialidadList != null && !configEspecialidadList.isEmpty()) {
+					List<String> listEspecialidad = new ArrayList<String>();
+					for (ConfigEspecialidad configEspecialidad : configEspecialidadList) {
+						listEspecialidad.add(configEspecialidad.getEspecialidad().getCodigo());
+					}
+					Filter configEspecialidadFilter = genericDao.createFilter(FilterType.SIMILARY, "especialidad.codigo", listEspecialidad);
+					List<BloqueoApisEspecialidad> bloqueoApisEspecialidad =  genericDao.getList(BloqueoApisEspecialidad.class, bloqueoFilter,configEspecialidadFilter);
+					if(bloqueoApisEspecialidad != null || !bloqueoApisEspecialidad.isEmpty()) {
+						throw new JsonViewerException(messageServices.getMessage(ERROR_BLOQUEO_ESPECIALIDAD));
+					}
+				}
+			}
 		}
 		
 	}

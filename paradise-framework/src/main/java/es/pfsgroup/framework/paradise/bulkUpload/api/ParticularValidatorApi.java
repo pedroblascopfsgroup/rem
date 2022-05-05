@@ -1515,4 +1515,6 @@ public interface ParticularValidatorApi {
 
 	Boolean apiBloqueadoLineaDeNegocio(String numActivo, String codProveedor);
 
+	Boolean apiBloqueadoEspecialidad(String numActivo, String codProveedor);
+
 }

@@ -9431,6 +9431,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    	if(Checks.esNulo(codigoProvincia)) {
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoProvincia", codigoProvincia);
+	    		rawDao.addParams(params);
 	    		
 	    		resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM act_pve_proveedor pve\n" + 
 	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
@@ -9461,6 +9462,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    	if(Checks.esNulo(codigoCartera)) {
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoCartera", codigoCartera);
+	    		rawDao.addParams(params);
 	    		
 	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" +
 	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
@@ -9490,6 +9492,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    	if(Checks.esNulo(codigoComercializacion)) {
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoComercializacion", codigoComercializacion);
+	    		rawDao.addParams(params);
 	    		
 	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" + 
 	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
@@ -9497,6 +9500,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    				"join dd_tco_tipo_comercializacion tco on bal.dd_tco_id = tco.dd_tco_id and tco.borrado = 0\n" + 
 	    				"where pve.PVE_COD_REM = :codProveedor and tco.dd_tco_codigo = :codigoComercializacion  ");
 	    	}
+		}
+		
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean apiBloqueadoEspecialidad(String numActivo, String codProveedor) {
+		String resultado = "0";
+
+		if(!Checks.esNulo(numActivo) && !Checks.esNulo(codProveedor)){
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("numActivo", numActivo);
+			params.put("codProveedor", codProveedor);
+			rawDao.addParams(params);
+			
+    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" + 
+    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0 \n" + 
+    				"join bae_bloqueo_apis_esp bae on bae.bap_id = bap.bap_id and bae.borrado =  0\n" + 
+    				"join esp_sac_config esa on esa.dd_esp_id = bae.dd_esp_id and bae.borrado = 0\n" + 
+    				"join act_activo act on act.dd_tpa_id = esa.dd_Tpa_id and esa.dd_sac_id = act.dd_sac_id\n" + 
+    				"and act.act_num_activo = :numActivo and pve.pve_cod_rem = :codProveedor ");
+	    
 		}
 		
 		return !"0".equals(resultado);

@@ -23,6 +23,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 
 
 
@@ -56,6 +57,10 @@ public class ConfigEspecialidad implements Serializable, Auditable {
 	@JoinColumn(name = "DD_ESP_ID")  
 	@ManyToOne(fetch = FetchType.LAZY)
 	private DDEspecialidad especialidad;
+	
+	@JoinColumn(name = "DD_TPA_ID")  
+	@ManyToOne(fetch = FetchType.LAZY)
+	private DDTipoActivo tipoActivo;
 	
 	
 	@Version   

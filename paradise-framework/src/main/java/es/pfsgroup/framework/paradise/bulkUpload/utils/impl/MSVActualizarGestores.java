@@ -274,6 +274,10 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
 						esCorrecto = false;
 					}
+					if(particularValidator.apiBloqueadoEspecialidad(numActivo, codApiEspejo)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
+						esCorrecto = false;
+					}
 				}
 				
 				if(!Checks.esNulo(codApiPrimario) && !Checks.esNulo(numActivo)) {
@@ -289,6 +293,11 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
 						esCorrecto = false;
 					}
+					if(particularValidator.apiBloqueadoEspecialidad(numActivo, codApiPrimario)) {
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
+						esCorrecto = false;
+					}
+					
 				}
 
 			} catch (Exception e) {

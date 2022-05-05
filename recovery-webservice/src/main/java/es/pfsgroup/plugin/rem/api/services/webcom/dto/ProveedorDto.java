@@ -49,17 +49,27 @@ public class ProveedorDto implements WebcomRESTDto {
 	private StringDataType telefonoContactoVisitas;
 	private LongDataType numeroDelegaciones;
 	private StringDataType nombreComercial;
-	
 	private LongDataType idProveedorRemAsociado;
 
 	@WebcomRequired
 	@NestedDto(groupBy="idProveedorRem", type=CodigoCarterasDto.class)
 	private List<CodigoCarterasDto> arrCodCarteraAmbito;
 	
-	
+	private StringDataType codOrigenPeticion;
+	private StringDataType nombrePeticionario;
+	private StringDataType codLineaNegocio;
+	private StringDataType arrCodEspecialidad;
+	private StringDataType arrCodIdioma;
+	private StringDataType codGestionCnr;
+	private LongDataType numComerciales;
+	private DateDataType fechaUltContrato;
+	private StringDataType motivoBaja;
 
 	@NestedDto(groupBy = "idProveedorRem", type = DelegacionDto.class)
 	private List<DelegacionDto> delegaciones;
+	
+	@NestedDto(groupBy = "idProveedorRem", type = ConductasInapropiadasDto.class)
+	private List<ConductasInapropiadasDto> conductasInapropiadas;
 
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
@@ -316,6 +326,84 @@ public class ProveedorDto implements WebcomRESTDto {
 	public void setIdProveedorRemAsociado(LongDataType idProveedorRemAsociado) {
 		this.idProveedorRemAsociado = idProveedorRemAsociado;
 	}
-	
-	
+
+	public StringDataType getCodOrigenPeticion() {
+		return codOrigenPeticion;
+	}
+
+	public void setCodOrigenPeticion(StringDataType codOrigenPeticion) {
+		this.codOrigenPeticion = codOrigenPeticion;
+	}
+
+	public StringDataType getNombrePeticionario() {
+		return nombrePeticionario;
+	}
+
+	public void setNombrePeticionario(StringDataType nombrePeticionario) {
+		this.nombrePeticionario = nombrePeticionario;
+	}
+
+	public StringDataType getCodLineaNegocio() {
+		return codLineaNegocio;
+	}
+
+	public void setCodLineaNegocio(StringDataType codLineaNegocio) {
+		this.codLineaNegocio = codLineaNegocio;
+	}
+
+	public StringDataType getArrCodEspecialidad() {
+		return arrCodEspecialidad;
+	}
+
+	public void setArrCodEspecialidad(StringDataType arrCodEspecialidad) {
+		this.arrCodEspecialidad = arrCodEspecialidad;
+	}
+
+	public StringDataType getArrCodIdioma() {
+		return arrCodIdioma;
+	}
+
+	public void setArrCodIdioma(StringDataType arrCodIdioma) {
+		this.arrCodIdioma = arrCodIdioma;
+	}
+
+	public StringDataType getCodGestionCnr() {
+		return codGestionCnr;
+	}
+
+	public void setCodGestionCnr(StringDataType codGestionCnr) {
+		this.codGestionCnr = codGestionCnr;
+	}
+
+	public LongDataType getNumComerciales() {
+		return numComerciales;
+	}
+
+	public void setNumComerciales(LongDataType numComerciales) {
+		this.numComerciales = numComerciales;
+	}
+
+	public DateDataType getFechaUltContrato() {
+		return fechaUltContrato;
+	}
+
+	public void setFechaUltContrato(DateDataType fechaUltContrato) {
+		this.fechaUltContrato = fechaUltContrato;
+	}
+
+	public StringDataType getMotivoBaja() {
+		return motivoBaja;
+	}
+
+	public void setMotivoBaja(StringDataType motivoBaja) {
+		this.motivoBaja = motivoBaja;
+	}
+
+	public List<ConductasInapropiadasDto> getConductasInapropiadas() {
+		return conductasInapropiadas;
+	}
+
+	public void setConductasInapropiadas(List<ConductasInapropiadasDto> conductasInapropiadas) {
+		this.conductasInapropiadas = conductasInapropiadas;
+	}
 }

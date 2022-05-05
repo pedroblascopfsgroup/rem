@@ -616,40 +616,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								}
 							]
 		            },
-// Datos de Contacto
-		            {
-		            	xtype:'fieldsettable',
-						defaultType: 'textfieldbase',						
-						title: HreRem.i18n('title.datos.contacto'),
-						collapsible: true,
-						items :
-							[
-							// Fila 0 (Direcciones y Delegaciones)
-							 {
-								 xtype:'fieldsettable',
-									defaultType: 'textfieldbase',						
-									title: HreRem.i18n('title.direcciones.delegaciones'),
-									collapsible: true,
-									colspan: 3,
-									items :
-										[
-										 {xtype: 'direccionesdelegacioneslist'}
-										]
-							 },
-							// Fila 1 (Personas de Contacto)
-							 {
-								 xtype:'fieldsettable',
-									defaultType: 'textfieldbase',						
-									title: HreRem.i18n('title.personas.contacto'),
-									collapsible: true,
-									colspan: 3,
-									items :
-										[
-										 {xtype: 'personascontactolist'}
-										]
-							 }
-							]
-		            },
 // Activos Integrados
 		            {
 		            	 xtype:'fieldsettable',

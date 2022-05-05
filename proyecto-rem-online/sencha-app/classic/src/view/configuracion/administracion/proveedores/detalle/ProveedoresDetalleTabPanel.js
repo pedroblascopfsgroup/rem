@@ -4,7 +4,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
     requires 	: ['HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleController', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedorDetalleModel',
                 'HreRem.view.configuracion.administracion.proveedores.detalle.FichaProveedor', 'HreRem.view.configuracion.administracion.proveedores.detalle.DocumentosProveedor',
-				'HreRem.view.configuracion.administracion.proveedores.detalle.ConductasInapropiadasList'],
+				'HreRem.view.configuracion.administracion.proveedores.detalle.ConductasInapropiadasList', 'HreRem.view.configuracion.administracion.proveedores.detalle.DatosContacto'],
    	listeners	: {
 		boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -92,8 +92,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'bloqueoApis', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isSociedadTasadora}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
-		if (isMediador)
+        if (isMediador){
+        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscontacto', ocultarBotonesEdicion: false})}, ['TAB_DATOS_PROVEEDORES']);
 			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'conductasInapropiadasList', ocultarBotonesEdicion: true})}, ['TAB_CONDUCTAS_PROVEEDORES']);
+        }
 
         
         me.addPlugin({ptype: 'lazyitems', items: items});

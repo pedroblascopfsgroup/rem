@@ -12,7 +12,7 @@ Ext.define('HreRem.view.administracion.juntas.FichaJuntas', {
     	       'HreRem.view.common.ItemSelectorBase',
                'HreRem.view.configuracion.administracion.proveedores.detalle.DireccionesDelegacionesList',
                'HreRem.view.configuracion.administracion.proveedores.detalle.PersonasContactoList',
-               'HreRem.view.configuracion.administracion.proveedores.detalle.ActivosIntegradosList'], 
+               'HreRem.view.configuracion.administracion.proveedores.detalle.ActivosIntegradosList', 'HreRem.model.DatosContactoModel'], 
 
  
 

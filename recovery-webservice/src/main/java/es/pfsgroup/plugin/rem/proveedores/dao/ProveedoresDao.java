@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -11,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
@@ -102,4 +104,8 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName);
 
 	public List<VProveedores> getProveedoresCarterizados(String codCartera);
+	
+	public List<Localidad> getMunicipiosList(String codigoProvincia);
+	
+	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio);
 }

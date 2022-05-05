@@ -318,7 +318,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     /**
      * Este método es llamado cuando se selecciona un elemento del grid DireccionesDelegaciones.
      */
-    onDireccionesDelegacionesGridClick: function(grid) {
+    onDireccionesDelegacionesGridClick: function(grid, record) {
     	var me = this;
     	var gridPersonasContactos = grid.up('proveedoresdetallemain').lookupReference('personascontactolistref');
     	var personasContactosStore = gridPersonasContactos.getStore();
@@ -332,8 +332,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 				};
 	    		
 	    		personasContactosStore.load();
+	    		
+	    		model = Ext.create('HreRem.model.DatosContactoModel');
+	    		model.setId(selection.getData().id);
+	    		model.load({
+	    					success : function(record) {
+	    						me.getViewModel().set("datosContacto", record);
+	    					}
+	    				});
     		}
     	}
+    	
     },
     
     /**
@@ -515,5 +524,49 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
            		 	table.store.load();
 		     }
 		 });
-	}
+	},
+    
+	cargarTabDataDelegacion: function (form) {
+		var me = this;
+		var model = form.getModelInstance();
+		var grid = form.down('[reference=gridDelegacionesRef]');
+		if(Ext.isEmpty(grid.selection)){
+			return;
+		}
+		var id = grid.selection.get('id');
+		
+		form.up("tabpanel").mask(HreRem.i18n('msg.mask.loading'));	
+		model.setId(id);
+		model.load({
+		    success: function(record) {
+		    	
+		    	form.setBindRecord(record);		    	
+		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+		});
+	},
+	
+	onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	var comboMunicipio = me.lookupReference('municipioCombo');
+    	var storeMunicipio = comboMunicipio.getStore();
+    	storeMunicipio.getProxy().extraParams = {
+    		codigoProvincia: value
+    	};
+    	storeMunicipio.load();
+    },
+    
+    onChangeMunicipio: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	var comboCodigoPostal = me.lookupReference('codigoPostalCombo');
+    	var storeCodigoPostal = comboCodigoPostal.getStore();
+    	storeCodigoPostal.getProxy().extraParams = {
+    		codigoMunicipio: value
+    	};
+    	storeCodigoPostal.load();
+    }
 });

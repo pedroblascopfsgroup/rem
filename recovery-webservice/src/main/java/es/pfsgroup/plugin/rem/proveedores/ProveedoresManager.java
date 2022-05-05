@@ -31,6 +31,8 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -42,6 +44,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
@@ -89,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaConductaInapropiada;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEspecialidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -100,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueoApi;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
@@ -1012,6 +1017,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					beanUtilNotNull.copyProperty(dto, "codigoPostal", delegacion.getCodigoPostal());
 					beanUtilNotNull.copyProperty(dto, "telefono", delegacion.getTelefono());
 					beanUtilNotNull.copyProperty(dto, "email", delegacion.getEmail());
+					beanUtilNotNull.copyProperty(dto, "piso", delegacion.getPiso());
+					beanUtilNotNull.copyProperty(dto, "otros", delegacion.getOtros());
 					beanUtilNotNull.copyProperty(dto, "totalCount", page.getTotalCount());
 				} catch (IllegalAccessException e) {
 					logger.error(e.getMessage());
@@ -2167,6 +2174,387 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 			}
 		}
+	}
 		
+
+	@Override
+	public Object getDatosContactoById(Long id) {
+		
+		DtoDatosContacto dto = new DtoDatosContacto();
+		
+		Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		
+		Filter idFilterMultiple = genericDao.createFilter(FilterType.EQUALS, "direccion.id", id);
+		
+		ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, idFilter);
+		
+		try {
+			if(delegacion.getLineaNegocio() != null) {
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, delegacion.getLineaNegocio().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "tipoLineaDeNegocioDescripcion", tipoComercializacion.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "tipoLineaDeNegocioCodigo", tipoComercializacion.getCodigo());
+			}
+			
+			if(delegacion.getGestionClientes() != null) {
+				DDSinSiNo gestionClientes = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, delegacion.getGestionClientes().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "gestionClientesDescripcion", gestionClientes.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "gestionClientesCodigo", gestionClientes.getCodigo());
+			}
+			
+			if(delegacion.getNumeroComerciales() != null) {
+				beanUtilNotNull.copyProperty(dto, "numeroComerciales", delegacion.getNumeroComerciales());
+			}
+			
+			List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, idFilterMultiple);
+			if(!Checks.estaVacio(proveedorEspecialidad)) {
+				StringBuffer codigos = new StringBuffer();
+				for(ProveedorEspecialidad pe : proveedorEspecialidad) {
+					if(!Checks.esNulo(pe.getEspecialidad())) {
+						codigos.append(pe.getEspecialidad().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "especialidadCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, idFilterMultiple);
+			if(!Checks.estaVacio(proveedorIdioma)) {
+				StringBuffer codigos = new StringBuffer();
+				for(ProveedorIdioma pi : proveedorIdioma) {
+					if(!Checks.esNulo(pi.getIdioma())) {
+						codigos.append(pi.getIdioma().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "idiomaCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesLocalidad> delegacionMunicipio = genericDao.getList(DelegacionesLocalidad.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionMunicipio)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesLocalidad pi : delegacionMunicipio) {
+					if(!Checks.esNulo(pi.getLocalidad())) {
+						codigos.append(pi.getLocalidad().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "municipioCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesProvincia> delegacionProvincia = genericDao.getList(DelegacionesProvincia.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionProvincia)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesProvincia dp : delegacionProvincia) {
+					if(!Checks.esNulo(dp.getProvincia())) {
+						codigos.append(dp.getProvincia().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "provinciaCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+			List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, idFilterMultiple);
+			if(!Checks.estaVacio(delegacionCodigoPostal)) {
+				StringBuffer codigos = new StringBuffer();
+				for(DelegacionesCodigoPostal cp : delegacionCodigoPostal) {
+					if(!Checks.esNulo(cp.getCodigoPostal())) {
+						codigos.append(cp.getCodigoPostal().getCodigo()).append(",");
+					}
+				}
+				beanUtilNotNull.copyProperty(dto, "codigoPostalCodigo", codigos.substring(0, (codigos.length()-1)));
+			}
+			
+		}catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+		}
+
+		return dto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveDatosContactoById(DtoDatosContacto dto) {
+		
+		Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getId()));
+				
+		ActivoProveedorDireccion delegacion = genericDao.get(ActivoProveedorDireccion.class, idFilter);
+
+		if(dto.getTipoLineaDeNegocioCodigo() != null) {
+			DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoLineaDeNegocioCodigo());
+			delegacion.setLineaNegocio(tipoComercializacion);
+		}
+		
+		if(dto.getGestionClientesCodigo() != null) {
+			DDSinSiNo gestionClientes = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getGestionClientesCodigo());
+			delegacion.setGestionClientes(gestionClientes);
+		}
+		
+		if(dto.getNumeroComerciales() != null) {
+			delegacion.setNumeroComerciales(dto.getNumeroComerciales());
+		}
+		
+		if(!Checks.esNulo(dto.getEspecialidadCodigo())) {
+			if(dto.getEspecialidadCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(ProveedorEspecialidad.class, filtroDelegacion);
+			} else {
+				List<String> codigosEspecialidad = Arrays.asList(dto.getEspecialidadCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<ProveedorEspecialidad> proveedorEspecialidadByProvID = genericDao.getList(ProveedorEspecialidad.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorEspecialidad pe : proveedorEspecialidadByProvID){
+					if(!codigosEspecialidad.contains(pe.getEspecialidad().getCodigo())){
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", pe.getEspecialidad().getCodigo());
+						ProveedorEspecialidad especialidadABorrar = genericDao.get(ProveedorEspecialidad.class, filtroEspecialidad, filtroDelegacion);
+						if(!Checks.esNulo(especialidadABorrar)) {
+							genericDao.deleteById(ProveedorEspecialidad.class, especialidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosEspecialidad) {
+					DDEspecialidad especialidad = (DDEspecialidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDEspecialidad.class, codigo);
+					if(!Checks.esNulo(especialidad)) {
+						Filter filtroEspecialidad = genericDao.createFilter(FilterType.EQUALS, "especialidad.codigo", especialidad.getCodigo());
+						List<ProveedorEspecialidad> proveedorEspecialidad = genericDao.getList(ProveedorEspecialidad.class, filtroDelegacion, filtroEspecialidad);
+						if(Checks.estaVacio(proveedorEspecialidad)) {
+							ProveedorEspecialidad pveEspecialidad = new ProveedorEspecialidad();
+							pveEspecialidad.setEspecialidad(especialidad);
+							pveEspecialidad.setDireccion(delegacion);
+							pveEspecialidad.setProveedor(delegacion.getProveedor());
+							genericDao.save(ProveedorEspecialidad.class, pveEspecialidad);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getIdiomaCodigo())) {
+			if(dto.getIdiomaCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(ProveedorIdioma.class, filtroDelegacion);
+			} else {
+				List<String> codigosIdioma = Arrays.asList(dto.getIdiomaCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<ProveedorIdioma> proveedorIdiomaByProvID = genericDao.getList(ProveedorIdioma.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(ProveedorIdioma pi : proveedorIdiomaByProvID){
+					if(!codigosIdioma.contains(pi.getIdioma().getCodigo())){
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", pi.getIdioma().getCodigo());
+						ProveedorIdioma idiomaABorrar = genericDao.get(ProveedorIdioma.class, filtroIdioma, filtroDelegacion);
+						if(!Checks.esNulo(idiomaABorrar)) {
+							genericDao.deleteById(ProveedorIdioma.class, idiomaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosIdioma) {
+					DDIdioma idioma = (DDIdioma) utilDiccionarioApi.dameValorDiccionarioByCod(DDIdioma.class, codigo);
+					if(!Checks.esNulo(idioma)) {
+						Filter filtroIdioma = genericDao.createFilter(FilterType.EQUALS, "idioma.codigo", idioma.getCodigo());
+						List<ProveedorIdioma> proveedorIdioma = genericDao.getList(ProveedorIdioma.class, filtroDelegacion, filtroIdioma);
+						if(Checks.estaVacio(proveedorIdioma)) {
+							ProveedorIdioma pveIdioma = new ProveedorIdioma();
+							pveIdioma.setIdioma(idioma);
+							pveIdioma.setDireccion(delegacion);
+							pveIdioma.setProveedor(delegacion.getProveedor());
+							genericDao.save(ProveedorIdioma.class, pveIdioma);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
+			if(dto.getProvinciaCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesProvincia.class, filtroDelegacion);
+			} else {
+				List<String> codigosProvincia = Arrays.asList(dto.getProvinciaCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesProvincia> delegacionProvinciaByProvID = genericDao.getList(DelegacionesProvincia.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesProvincia dp : delegacionProvinciaByProvID){
+					if(!codigosProvincia.contains(dp.getProvincia().getCodigo())){
+						Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", dp.getProvincia().getCodigo());
+						DelegacionesProvincia provinciaABorrar = genericDao.get(DelegacionesProvincia.class, filtroProvincia, filtroDelegacion);
+						if(!Checks.esNulo(provinciaABorrar)) {
+							genericDao.deleteById(DelegacionesProvincia.class, provinciaABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosProvincia) {
+					DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, codigo);
+					if(!Checks.esNulo(provincia)) {
+						Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", provincia.getCodigo());
+						List<DelegacionesProvincia> delegacionProvincia = genericDao.getList(DelegacionesProvincia.class, filtroDelegacion, filtroProvincia);
+						if(Checks.estaVacio(delegacionProvincia)) {
+							DelegacionesProvincia dlgProvincia = new DelegacionesProvincia();
+							dlgProvincia.setProvincia(provincia);
+							dlgProvincia.setDireccion(delegacion);
+							genericDao.save(DelegacionesProvincia.class, dlgProvincia);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getMunicipioCodigo())) {
+			if(dto.getMunicipioCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesLocalidad.class, filtroDelegacion);
+			} else {
+				List<String> codigosMuncicipio = Arrays.asList(dto.getMunicipioCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesLocalidad> delegacionMunicipioByProvID = genericDao.getList(DelegacionesLocalidad.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesLocalidad dl : delegacionMunicipioByProvID){
+					if(!codigosMuncicipio.contains(dl.getLocalidad().getCodigo())){
+						Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", dl.getLocalidad().getCodigo());
+						DelegacionesLocalidad localidadABorrar = genericDao.get(DelegacionesLocalidad.class, filtroLocalidad, filtroDelegacion);
+						if(!Checks.esNulo(localidadABorrar)) {
+							genericDao.deleteById(DelegacionesLocalidad.class, localidadABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosMuncicipio) {
+					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					Localidad municipio = genericDao.get(Localidad.class, filtroMunicipio);
+					if(!Checks.esNulo(municipio)) {
+						Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", municipio.getCodigo());
+						List<DelegacionesLocalidad> delegacionLocalidad = genericDao.getList(DelegacionesLocalidad.class, filtroDelegacion, filtroLocalidad);
+						if(Checks.estaVacio(delegacionLocalidad)) {
+							DelegacionesLocalidad dlgLocalidad = new DelegacionesLocalidad();
+							dlgLocalidad.setLocalidad(municipio);
+							dlgLocalidad.setDireccion(delegacion);
+							genericDao.save(DelegacionesLocalidad.class, dlgLocalidad);
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!Checks.esNulo(dto.getCodigoPostalCodigo())) {
+			if(dto.getCodigoPostalCodigo().equals("VALOR_POR_DEFECTO")) {					
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				genericDao.delete(DelegacionesCodigoPostal.class, filtroDelegacion);
+			} else {
+				List<String> codigosCodigoPostal = Arrays.asList(dto.getCodigoPostalCodigo().split(","));
+				
+				Filter filtroDelegacion = genericDao.createFilter(FilterType.EQUALS, "direccion.id", delegacion.getId());
+				List<DelegacionesCodigoPostal> delegacionCodigoPostalByProvID = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion);
+				
+				// Borrar los elementos que no vengan en la lista y existan en la DDBB.
+				for(DelegacionesCodigoPostal dcp : delegacionCodigoPostalByProvID){
+					if(!codigosCodigoPostal.contains(dcp.getCodigoPostal().getCodigo())){
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", dcp.getCodigoPostal().getCodigo());
+						DelegacionesCodigoPostal codigoPostalABorrar = genericDao.get(DelegacionesCodigoPostal.class, filtroCodigoPostal, filtroDelegacion);
+						if(!Checks.esNulo(codigoPostalABorrar)) {
+							genericDao.deleteById(DelegacionesCodigoPostal.class, codigoPostalABorrar.getId());
+						}
+					}
+				}
+				
+				// Almacenar los elementos que vengan en la lista y no existan en la DDBB.
+				// Dejar los elementos que vangan en la lista y exista en la DDBB.
+				for(String codigo : codigosCodigoPostal) {
+					Filter filtroCP = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+					DDCodigoPostal codigoPostal = genericDao.get(DDCodigoPostal.class, filtroCP);
+					if(!Checks.esNulo(codigoPostal)) {
+						Filter filtroCodigoPostal = genericDao.createFilter(FilterType.EQUALS, "codigoPostal.codigo", codigoPostal.getCodigo());
+						List<DelegacionesCodigoPostal> delegacionCodigoPostal = genericDao.getList(DelegacionesCodigoPostal.class, filtroDelegacion, filtroCodigoPostal);
+						if(Checks.estaVacio(delegacionCodigoPostal)) {
+							DelegacionesCodigoPostal dlgCodigoPostal = new DelegacionesCodigoPostal();
+							dlgCodigoPostal.setCodigoPostal(codigoPostal);
+							dlgCodigoPostal.setDireccion(delegacion);
+							genericDao.save(DelegacionesCodigoPostal.class, dlgCodigoPostal);
+						}
+					}
+				}
+			}
+			
+		}
+
+		genericDao.save(ActivoProveedorDireccion.class, delegacion);
+
+		return true;
+	}
+	
+	@Override
+	public List<Localidad> getComboMunicipioMultiple(String codigoProvincia) {
+		
+		List<Localidad> municipiosADevolver = new ArrayList<Localidad>();
+		
+		List<Localidad> municipiosBusqueda = new ArrayList<Localidad>();
+		
+		if(!"VALOR_POR_DEFECTO".equals(codigoProvincia) && codigoProvincia != null) {
+		
+			String[] codigoProvinciaSplit = codigoProvincia.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(codigoProvinciaSplit));
+		
+			for(String provincia : list) {
+				
+				municipiosBusqueda = proveedoresDao.getMunicipiosList(provincia);
+				
+				municipiosADevolver.addAll(municipiosBusqueda);
+			}
+		}
+		
+		return municipiosADevolver;
+	}
+	
+	@Override
+	public List<DtoCodigoPostalCombo> getComboCodigoPostalMultiple(String codigoMunicipio) {
+				
+		List<DDCodigoPostal> codigosPostalesBusqueda = new ArrayList<DDCodigoPostal>();
+		
+		DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
+		
+		List<DtoCodigoPostalCombo> codigosPostalesADevolver = new ArrayList<DtoCodigoPostalCombo>();
+		
+		if(!"VALOR_POR_DEFECTO".equals(codigoMunicipio) && codigoMunicipio != null) {
+		
+			String[] codigoMunicipioSplit = codigoMunicipio.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(codigoMunicipioSplit));
+		
+			for(String municipio : list) {
+				
+				codigosPostalesBusqueda = proveedoresDao.getCodigosPostalesList(municipio);
+				
+				for(DDCodigoPostal codigosPostalesFinal : codigosPostalesBusqueda) {
+					
+					codigosPostalesIndividuales.setId(codigosPostalesFinal.getId());
+					codigosPostalesIndividuales.setCodigo(codigosPostalesFinal.getCodigo());
+					codigosPostalesIndividuales.setDescripcion(codigosPostalesFinal.getCodigo());
+
+					codigosPostalesADevolver.add(codigosPostalesIndividuales);
+				}
+				
+			}
+		}
+		
+		return codigosPostalesADevolver;
 	}
 }

@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoBloqueoApis;
 import es.pfsgroup.plugin.rem.model.DtoConductasInapropiadas;
+import es.pfsgroup.plugin.rem.model.DtoDatosContacto;
 import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
@@ -903,5 +904,44 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosContactoById(Long id, ModelMap model, HttpServletRequest request) {
+		model.put("data", proveedoresApi.getDatosContactoById(id));
+		model.put("success", true);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_VER);
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosContactoById(DtoDatosContacto dto, ModelMap model, HttpServletRequest request) {
+		try{
+			boolean success = proveedoresApi.saveDatosContactoById(dto);
+			model.put("success", success);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msg", jvex.getMessage());
+			logger.warn("Excepción controlada en ProveedoresController", jvex);
+
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboMunicipioMultiple(String codigoProvincia){
+		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboMunicipioMultiple(codigoProvincia)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboCodigoPostalMultiple(String codigoMunicipio){
+		return createModelAndViewJson(new ModelMap("data", proveedoresApi.getComboCodigoPostalMultiple(codigoMunicipio)));
+	}
 }

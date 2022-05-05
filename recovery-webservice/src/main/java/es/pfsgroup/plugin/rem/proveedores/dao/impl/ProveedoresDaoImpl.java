@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -30,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoPostal;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -512,5 +514,39 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
 
 		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).setParameter("codCartera", codCartera).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Localidad> getMunicipiosList(String codigoProvincia) {
+		
+		HQLBuilder hb = new HQLBuilder(
+				"select loc from Localidad loc "
+				+ "where loc.provincia = (select prv from DDProvincia prv where prv.codigo in("+codigoProvincia+") ");
+		
+		List<Localidad> localidadList = (List<Localidad>) getHibernateTemplate().find(hb.toString());
+		
+		if (localidadList != null && !localidadList.isEmpty()) {
+			return localidadList;
+		}else {
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio) {
+		
+		HQLBuilder hb = new HQLBuilder(
+				"select cdp from DDCodigoPostal cdp "
+				+ "where cdp.localidad = (select loc from Localidad loc where loc.codigo in("+codigoMunicipio+") ");
+		
+		List<DDCodigoPostal> codigoPostalList = (List<DDCodigoPostal>) getHibernateTemplate().find(hb.toString());
+		
+		if (codigoPostalList != null && !codigoPostalList.isEmpty()) {
+			return codigoPostalList;
+		}else {
+			return null;
+		}
 	}
 }

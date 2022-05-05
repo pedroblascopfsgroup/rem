@@ -5,7 +5,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.DireccionesDelegacionesModel',
                 'HreRem.model.PersonasContactoModel', 'HreRem.model.ActivosIntegradosModel', 'HreRem.model.AdjuntoProveedor',
                 'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor','HreRem.model.ComboProveedorHistoricoMediadorModel',
-				'HreRem.model.ConductasInapropiadasModel', 'HreRem.model.BloqueoApisHistorico'],
+				'HreRem.model.ConductasInapropiadasModel', 'HreRem.model.DatosContactoModel', 'HreRem.model.BloqueoApisHistorico'],
     
     data: {
     	proveedor: null

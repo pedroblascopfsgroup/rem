@@ -40,7 +40,7 @@ public class ConductasInapropiadas implements Serializable, Auditable {
 	@Id
 	@Column(name = "COI_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ConductasInapropiadasGenerator")
-	@SequenceGenerator(name = "ConductasInapropiadasGenerator", sequenceName = "S_COI_CONDUCTAS_INAPROPIADAS")
+	@SequenceGenerator(name = "ConductasInapropiadasGenerator", sequenceName = "S_PVE_COI_CONDUCTAS_INAPROPIADAS")
 	private Long id;
 	  
 	@JoinColumn(name = "COI_PVE")  

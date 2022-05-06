@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220228
+--## FECHA_CREACION=20220425
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17078
+--## INCIDENCIA_LINK=HREOS-17716
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -33,6 +33,7 @@
 --##        0.20 Cambio en lógica de perímetros para que mande el check de publicar
 --##        0.21 Cambio de cálculo en check Visible gestión comercial
 --##        0.22 Cambio de cálculo de oferta viva y perímetros cuando es solo Indicadores API - HREOS-17078
+--##        0.23 Se añade el borrado lógico al cursor de agrupaciones - HREOS-17716
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -83,7 +84,7 @@ CREATE OR REPLACE PROCEDURE SP_BCR_08_PUBLICACION
         JOIN #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = AGA.ACT_ID AND APU.BORRADO = 0
         JOIN #ESQUEMA#.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
         JOIN #ESQUEMA#.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
-        WHERE (EPV.DD_EPV_CODIGO <> '01' OR EPA.DD_EPA_CODIGO <> '01') AND AGR.AGR_ID = TMP.AGR_ID);
+        WHERE AGR.BORRADO = 0 AND (EPV.DD_EPV_CODIGO <> '01' OR EPA.DD_EPA_CODIGO <> '01') AND AGR.AGR_ID = TMP.AGR_ID);
 
    AGR_ID NUMBER(16);
 

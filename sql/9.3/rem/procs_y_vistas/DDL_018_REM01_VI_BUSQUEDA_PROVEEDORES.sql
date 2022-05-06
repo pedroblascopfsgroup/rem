@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20220505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-17601
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista busqueda de proveedores.
 --##           

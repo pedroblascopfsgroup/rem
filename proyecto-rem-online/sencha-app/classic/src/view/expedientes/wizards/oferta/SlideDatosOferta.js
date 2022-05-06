@@ -263,7 +263,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var paisNacimientoRepresentante = form.down('field[name=paisNacimientoRepresentanteCodigo]');
 	    								var provinciaNacimientoRepresentante = form.down('field[name=provinciaNacimientoRepresentanteCodigo]');
 	    								var municipioNacimientoRepresentante = form.down('field[name=localidadNacimientoRepresentanteCodigo]');
-	    								var fechaNacimientaRepresentante = form.down('field[name=fechaNacimientoRepresentante]');
+	    								var fechaNacimientoRepresentante = form.down('field[name=fechaNacimientoRepresentante]');
 	    								var paisRepresentante = form.down('field[name=codigoPaisRte]');
 	    								var provinciaRepresentante = form.down('field[name=provinciaRteCodigo]');
 	    								var municipioRepresentante = form.down('field[name=municipioRteCodigo]');
@@ -286,7 +286,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									paisNacimientoRepresentante.setValue(null);
 	    									provinciaNacimientoRepresentante.allowBlank = true;
 	    									municipioNacimientoRepresentante.allowBlank = true;
-	    									fechaNacimientaRepresentante.allowBlank = true;
+	    									fechaNacimientoRepresentante.allowBlank = true;
 	    									paisRepresentante.allowBlank = true;
 	    									paisRepresentante.setValue(null);
 	    									provinciaRepresentante.allowBlank = true;
@@ -320,7 +320,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		    									paisNacimientoRepresentante.setValue("28");
 		    									provinciaNacimientoRepresentante.allowBlank = false;
 		    									municipioNacimientoRepresentante.allowBlank = false;
-		    									fechaNacimientaRepresentante.allowBlank = false;
+		    									fechaNacimientoRepresentante.allowBlank = false;
 		    									nacionalidadCodigo.allowBlank = true;
 		    									nacionalidadRprCodigo.allowBlank = false;
 	    									}
@@ -345,7 +345,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								if(!Ext.isEmpty(paisNacimientoRepresentante)) paisNacimientoRepresentante.validate();
 	    								if(!Ext.isEmpty(provinciaNacimientoRepresentante)) provinciaNacimientoRepresentante.validate();
 	    								if(!Ext.isEmpty(municipioNacimientoRepresentante)) municipioNacimientoRepresentante.validate();
-	    								if(!Ext.isEmpty(fechaNacimientaRepresentante)) fechaNacimientaRepresentante.validate();
+	    								if(!Ext.isEmpty(fechaNacimientoRepresentante)) fechaNacimientoRepresentante.validate();
 	    								if(!Ext.isEmpty(paisRepresentante)) paisRepresentante.validate();
 	    								if(!Ext.isEmpty(provinciaRepresentante)) provinciaRepresentante.validate();
 	    								if(!Ext.isEmpty(municipioRepresentante)) municipioRepresentante.validate();
@@ -956,7 +956,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				        	name: 'fechaNacimientoRepresentante',
 				        	reference: 'fechaNacimientoRepresentante',
 				        	padding: '5px',
-				        	hidden: !isBk
+				        	hidden: !isBk,
+				        	bind: {
+                            	value: '{oferta.fechaNacimientoRepresentante}'
+                            }
 				        },
 						{
 							xtype: 'comboboxfieldbase',

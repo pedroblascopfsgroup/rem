@@ -161,6 +161,58 @@ Ext.define('HreRem.view.activos.detalle.CatastroGrid', {
 	        	text: HreRem.i18n('fieldlabel.longitud'),
 	        	dataIndex: 'longitud',
 	        	flex: 1
+	        },
+	        {   
+				text: HreRem.i18n('fieldlabel.origen.datos.catastrales'),
+	        	dataIndex: 'origenDatosCatastrales',
+	        	bind: {
+					hidden: '{!isCarteraBankia}'
+                },
+	        	flex: 1
+	        },
+	        {   
+				text: HreRem.i18n('fieldlabel.clase.uso.catastral'),
+	        	dataIndex: 'claseUsoCatastral',
+	        	bind: {
+					hidden: '{!isCarteraBankia}'
+                },
+	        	flex: 1
+	        },
+	        {   
+				text: HreRem.i18n('fieldlabel.vigente'),
+	        	dataIndex: 'catastroVigente',
+	        	bind: {
+					hidden: '{!isCarteraBankia}'
+                },
+                renderer : function(value) {
+	        		if(value == true){
+	        			return "Si";
+	        		}else if(value == false){
+	        			return "No";
+	        		}else {
+	        			return "";
+	        		}
+                },
+	        	flex: 1
+	        },
+	        {   
+				text: HreRem.i18n('fieldlabel.valor.catastral'),
+	        	dataIndex: 'valorCatastral',
+	        	bind: {
+					hidden: '{!isCarteraBankia}'
+                },
+                renderer: function(value) {
+	        		return Ext.util.Format.currency(value);
+	        	},
+	        	flex: 1
+	        },
+	        {   
+				text: HreRem.i18n('fieldlabel.moneda'),
+	        	dataIndex: 'tipoMoneda',
+	        	bind: {
+					hidden: '{!isCarteraBankia}'
+                },
+	        	flex: 1
 	        }
      
 	    ]; 	

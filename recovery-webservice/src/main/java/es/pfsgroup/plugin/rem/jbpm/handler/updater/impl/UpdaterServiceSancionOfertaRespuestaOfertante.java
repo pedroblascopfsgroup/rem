@@ -163,17 +163,18 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 									}
 									
 									expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
-									
-									if(ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckFormCajamar()) {
-											GestorEntidadDto ge = new GestorEntidadDto();
-											EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-													.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-											
-											ge.setIdEntidad(expediente.getId());
-											ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-											ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-											ge.setIdTipoGestor(tipoGestorComercial.getId());
-											gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
+
+									if((ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()
+											|| (ofertaAceptada.getCheckForzadoCajamar() == null && ofertaAceptada.getCheckFormCajamar() != null && ofertaAceptada.getCheckFormCajamar()))) {
+										GestorEntidadDto ge = new GestorEntidadDto();
+										EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+												.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+
+										ge.setIdEntidad(expediente.getId());
+										ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+										ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());
+										ge.setIdTipoGestor(tipoGestorComercial.getId());
+										gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
 									}
 									
 								}

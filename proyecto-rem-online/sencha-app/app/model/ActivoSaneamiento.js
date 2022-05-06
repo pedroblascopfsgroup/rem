@@ -389,6 +389,23 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 					}
 				}
 			}
+		},
+		{
+			name:'compradorAcojeAyuda',
+			type: 'boolean'
+		},
+		{
+			name:'importeAyudaFinanciacion'
+		},
+		{
+			name:'fechaVencimientoAvalSeguro',
+			type: 'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'fechaDevolucionAyuda',
+			type: 'date',
+			dateFormat: 'c'
 		}
     ],
 

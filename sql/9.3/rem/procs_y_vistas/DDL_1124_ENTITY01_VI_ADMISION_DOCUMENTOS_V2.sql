@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Gomez
---## FECHA_CREACION=20210518
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-12909
+--## INCIDENCIA_LINK=HREOS-17278
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista V_ADMISION_DOCUMENTOS
 --##           
@@ -16,9 +16,7 @@
 --##		0.4 Versión - Carlos Santos - REMVIP-8402 Añadido filtrado por tipo y comprobación de comunidad autónoma
 --##		0.5 Versión - Jesus Jativa - HREOS-13379 modificacion vista V_ADMISION_DOCUMENTO para mostrar nuevos documentos ln 75 y 87
 --##		0.6 Versión - Sergio Gomez - HREOS-13379 modificacion vista para mostrar lista de emisiones
---##
---##		
---##
+--##		0.7 Versión - Javier Esbrí - HREOS-17278 modificacion vista para mostrar motivo exoneración cee y incidencia cee
 --##########################################
 --*/
 
@@ -72,7 +70,9 @@ BEGIN
 				ADO.CONSUMO,
 				LEM.DD_LEM_CODIGO AS LETRA_EMISIONES,
 				ADO.EMISION,
-				ADO.REGISTRO
+				ADO.REGISTRO,
+				MEC.DD_MEC_CODIGO AS MOTIVO_EXONERACION_CEE,
+				ICE.DD_ICE_CODIGO AS INCIDENCIA_CEE
 		FROM ' || V_ESQUEMA || '.ACT_CFD_CONFIG_DOCUMENTO CFD
 		CROSS JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT 
 		INNER JOIN ' || V_ESQUEMA || '.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
@@ -87,6 +87,8 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = CTD.DD_TGE_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON TCE.DD_TCE_ID = ADO.DD_TCE_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_LEM_LISTA_EMISIONES LEM ON LEM.DD_LEM_ID = ADO.DD_LEM_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_MEC_MOTIVO_EXONERACION_CEE MEC ON MEC.DD_MEC_ID = ADO.DD_MEC_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_ICE_INCIDENCIA_CEE ICE ON ICE.DD_ICE_ID = ADO.DD_ICE_ID
     where act.borrado = 0 and (act.dd_sac_id = cfd.dd_sac_id or cfd.dd_sac_id is null) and (act.dd_tpa_id = cfd.dd_tpa_id or (cfd.dd_tpa_id is null and ado.ado_fecha_obtencion is not null)) and cfd.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ADMISION_DOCUMENTOS...Creada OK');

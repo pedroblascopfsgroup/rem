@@ -29,7 +29,7 @@ public class DtoActivoGridFilter extends WebDto {
 	private String codPromoPrinex;
 	private String numFinca;
 	private String refCatastral;
-	private String numAgrupacion;
+	private Long numAgrupacion;
 	private String numActivoSareb;
 	private String numActivoPrinex;
 	private String numActivoUvem;
@@ -221,10 +221,10 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setRefCatastral(String refCatastral) {
 		this.refCatastral = refCatastral;
 	}
-	public String getNumAgrupacion() {
+	public Long getNumAgrupacion() {
 		return numAgrupacion;
 	}
-	public void setNumAgrupacion(String numAgrupacion) {
+	public void setNumAgrupacion(Long numAgrupacion) {
 		this.numAgrupacion = numAgrupacion;
 	}
 	public String getNumActivoSareb() {

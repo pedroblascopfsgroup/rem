@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20210813
+--## FECHA_CREACION=20220216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14716
+--## INCIDENCIA_LINK=HREOS-17162
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM 
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-13942] - Santi Monzó
 --##        0.2 Modificación campos - [HREOS-14716] - Alejandra García
+--##        0.3 Añadir campos nuevos y cambiar de 15,2 a 10,2 en campo CAPITAL_PENDIENTE- [HREOS-17162] - Alejandra García
 --##########################################
 --*/
 
@@ -64,13 +65,19 @@ BEGIN
         TIPO_CARGA           VARCHAR2(3 CHAR),
         INTERLOCUTOR         VARCHAR2(40 CHAR),
         FEC_INI              DATE,
-        CAPITAL_PENDIENTE    NUMBER(15,2),
+        CAPITAL_PENDIENTE    NUMBER(10,2),
         FEC_FIN              DATE,
         COD_ESTADO_CARGA     VARCHAR2(3 CHAR),
         BORRADO              NUMBER(1,0) DEFAULT 0,
         BIE_CAR_ID           NUMBER(16,0),
         CRG_ID               NUMBER(16,0),
-        ACTUALIZA            NUMBER(1,0) DEFAULT 0
+        ACTUALIZA            NUMBER(1,0) DEFAULT 0,
+        IND_PREFERENTE       VARCHAR2(1 CHAR),
+        IND_CARGA_EJECUTADA  VARCHAR2(1 CHAR),
+        IGUALDAD_RANGO       VARCHAR2(1 CHAR),
+        IND_CARGA_INDEFINIDA VARCHAR2(1 CHAR),
+        IND_CARGA_ECONOMICA  VARCHAR2(1 CHAR),
+        ORDEN                NUMBER(4,0)
 
 
 
@@ -104,6 +111,14 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.CAPITAL_PENDIENTE IS '' Importe máximo de la carga''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FEC_FIN IS '' Fecha presentacion can. en re''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.COD_ESTADO_CARGA IS '' Código estado de la carga''';
+
+
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_PREFERENTE IS '' Indicador preferente''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_CARGA_EJECUTADA IS '' Identificador carga ejecutada''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IGUALDAD_RANGO IS '' Igualdad de rango''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_CARGA_INDEFINIDA IS '' Identificador carga indefinida''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.IND_CARGA_ECONOMICA IS '' Identificador carga económica''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ORDEN IS '' Orden''';
     
    
 

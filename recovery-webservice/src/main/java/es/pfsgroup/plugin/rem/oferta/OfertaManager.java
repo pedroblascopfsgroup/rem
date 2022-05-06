@@ -15,10 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
-
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
@@ -37,19 +34,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -88,6 +85,7 @@ import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
@@ -102,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
@@ -119,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -131,7 +131,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDatosBancariosDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
@@ -221,7 +220,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -249,6 +250,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
@@ -2714,9 +2716,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				if (oferta.getOfertaExpress() && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo())) {
 					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
-				} else if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo()) && codEstadoExpediente != null && codSubestadoExpediente != null) {
-					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(codEstadoExpediente);
-					subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoExpediente));
+				} else if (DDSistemaOrigen.CODIGO_HAYA_HOME.equals(oferta.getOrigen().getCodigo())) {
+					if (codEstadoExpediente != null && codSubestadoExpediente != null){
+						estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(codEstadoExpediente);
+						subestadoExpCom = genericDao.get(DDSubestadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoExpediente));
+					}
 				} else {
 					estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.EN_TRAMITACION);
 				}
@@ -2745,29 +2749,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);																	
 					}
 				}
-				
-				if(oferta.getCheckForzadoCajamar() != null) {
-					if(oferta.getCheckForzadoCajamar()) {
-						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-						
+
+				if((oferta.getCheckForzadoCajamar() != null && oferta.getCheckForzadoCajamar()
+						|| (oferta.getCheckForzadoCajamar() == null && oferta.getCheckFormCajamar() != null && oferta.getCheckFormCajamar()))) {
+					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+
 						GestorEntidadDto gestor = new GestorEntidadDto();
 						gestor.setIdEntidad(expedienteComercial.getId());
 						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
 						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
 						gestor.setIdTipoGestor(tipoGestorComercial.getId());
 						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
-					}
-				}else {
-					if(oferta.getCheckFormCajamar()) {
-						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
-						
-						GestorEntidadDto gestor = new GestorEntidadDto();
-						gestor.setIdEntidad(expedienteComercial.getId());
-						gestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-						gestor.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
-						gestor.setIdTipoGestor(tipoGestorComercial.getId());
-						gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(gestor);
-					}
 				}
 				
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);

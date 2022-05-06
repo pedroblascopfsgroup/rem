@@ -97,6 +97,65 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDDesarrolloPlanteamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDIncidenciaCee;
+import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
+import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionCee;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
+import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
+import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
+import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
@@ -879,6 +938,31 @@ public class ActivoAdapter {
 					if (!Checks.esNulo(activoCarga.getFechaPresentacionRpCarta())) {
 						beanUtilNotNull.copyProperty(cargaDto, "fechaPresentacionRpCarta",
 								activoCarga.getFechaPresentacionRpCarta());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIndicadorPreferente())) {
+						beanUtilNotNull.copyProperty(cargaDto, "indicadorPreferente",
+								activoCarga.getIndicadorPreferente());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEjecutada())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEjecutada",
+								activoCarga.getIdentificadorCargaEjecutada());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIgualdadRango())) {
+						beanUtilNotNull.copyProperty(cargaDto, "igualdadRango",
+								activoCarga.getIgualdadRango());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaIndefinida())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaIndefinida",
+								activoCarga.getIdentificadorCargaIndefinida());
+					}
+					
+					if (!Checks.esNulo(activoCarga.getIdentificadorCargaEconomica())) {
+						beanUtilNotNull.copyProperty(cargaDto, "identificadorCargaEconomica",
+								activoCarga.getIdentificadorCargaEconomica());
 					}
 
 
@@ -2853,6 +2937,8 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setEmision(null);
 				activoAdmisionDocumento.setRegistro(null);
 				activoAdmisionDocumento.setTipoListaEmisiones(null);
+				activoAdmisionDocumento.setMotivoExoneracionCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
 
 			} else {
 
@@ -2903,10 +2989,15 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "aplica",
 					BooleanUtils.toBoolean(dtoAdmisionDocumento.getAplica()));
 
-			if (dtoAdmisionDocumento.getEstadoDocumento() != null) {
+			if (!Checks.esNulo(dtoAdmisionDocumento.getEstadoDocumento())) {
 				DDEstadoDocumento estadoDocumento = (DDEstadoDocumento) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDEstadoDocumento.class, dtoAdmisionDocumento.getEstadoDocumento());
 				activoAdmisionDocumento.setEstadoDocumento(estadoDocumento);
+				if (DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO.equalsIgnoreCase(estadoDocumento.getCodigo()) 
+						|| !Checks.isFechaNula(dtoAdmisionDocumento.getFechaObtencion())) {
+					dtoAdmisionDocumento.setIncidenciaCee(null);
+					activoAdmisionDocumento.setIncidenciaCee(null);
+				}
 			}
 			
 			if (dtoAdmisionDocumento.getTipoCalificacionCodigo() != null) {
@@ -2928,6 +3019,20 @@ public class ActivoAdapter {
 				DDListaEmisiones emision = (DDListaEmisiones) proxyFactory.proxy(UtilDiccionarioApi.class)
 						.dameValorDiccionarioByCod(DDListaEmisiones.class, dtoAdmisionDocumento.getLetraEmisiones());
 				activoAdmisionDocumento.setTipoListaEmisiones(emision);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getMotivoExoneracionCee())) {
+				DDMotivoExoneracionCee motivoExoneracionCee = (DDMotivoExoneracionCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDMotivoExoneracionCee.class, dtoAdmisionDocumento.getMotivoExoneracionCee());
+				activoAdmisionDocumento.setMotivoExoneracionCee(motivoExoneracionCee);
+				dtoAdmisionDocumento.setIncidenciaCee(null);
+				activoAdmisionDocumento.setIncidenciaCee(null);
+			}
+			
+			if (!Checks.esNulo(dtoAdmisionDocumento.getIncidenciaCee())) {
+				DDIncidenciaCee incidenciaCee = (DDIncidenciaCee) proxyFactory.proxy(UtilDiccionarioApi.class)
+						.dameValorDiccionarioByCod(DDIncidenciaCee.class, dtoAdmisionDocumento.getIncidenciaCee());
+				activoAdmisionDocumento.setIncidenciaCee(incidenciaCee);
 			}
 
 		} catch (IllegalAccessException e) {

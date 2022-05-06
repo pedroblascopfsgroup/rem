@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220411
+--## FECHA_CREACION=20220412
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17622

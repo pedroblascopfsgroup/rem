@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220504
+--## FECHA_CREACION=20220506
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17704
+--## INCIDENCIA_LINK=HREOS-17811
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -32,6 +32,7 @@
 --##        0.19 Cambiar subtipulogías de Comisión Alquiler Prorrata - [HREOS-17686] - Alejandra García
 --##        0.20 Añadir nuevas PEP, quitar algunas "--QUITAR************",  quitar columna 1º posesión y quitar algunas de IBI "QUITAR_IBI" después de la revisión del excel - [HREOS-17704] - Alejandra García
 --##        0.21 Quitar Alquiler PAO (XXXX-22-1-VIGILANCIA), quitar CBC a todos los del tipología comisión - [HREOS-17704] - Alejandra García
+--##        0.22 Añadir nuevas PEPs Certificado Deuda COmunidad con mismo PEP que Comunidad de propietario-Cuota ordinaria/extraordinaria(derrama) - [HREOS-17811] - Alejandra García
 --#########################################
 --*/
 
@@ -47,7 +48,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17704';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17811';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -405,7 +406,11 @@ DECLARE
 		T_TABLA('1023','XXXX-22-3-I-CERT V','22','02','31','14','62','01','','','null','','','','2022'),
 		T_TABLA('1024','XXXX-22-3-A-I-CRT V','22','02','33','14','62','03','','','null','','','','2022'),
 		T_TABLA('1025','XXXX-22-3-I-CERT V','22','02','31','14','58','01','','','null','','','','2022'),
-		T_TABLA('1026','XXXX-22-3-A-I-CRT V','22','02','33','14','58','03','','','null','','','','2022')
+		T_TABLA('1026','XXXX-22-3-A-I-CRT V','22','02','33','14','58','03','','','null','','','','2022'),
+
+		--Añadir nuevas PEPs Certificado Deuda COmunidad con mismo PEP que Comunidad de propietario-Cuota ordinaria/extraordinaria(derrama)
+		T_TABLA('1027','XXXX-22-2-COM','22','00','2','05','93','01','','','null','','','','2022'),
+		T_TABLA('1028','XXXX-22-2-A-COM','22','00','3','05','93','03','','','null','','','','2022')
     ); 
     V_TMP_TABLA T_TABLA;
 	
@@ -461,7 +466,7 @@ BEGIN
 				, DD_PRO_ID
 				, DD_SCM_ID
 		  ) VALUES (
-			  	'||V_ESQUEMA||'.S_DD_ETG_EQV_TIPO_GASTO_RU.NEXTVAL
+			  	'||V_ESQUEMA||'.S_DD_ETG_EQV_TIPO_GASTO.NEXTVAL
 				  , (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(6)||''' AND BORRADO = 0 )
 				  , (SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TABLA(7)||''' AND BORRADO = 0 )
 				  , '''||V_TMP_TABLA(1)||'''

@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.model.CorreoSaliente;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.recovery.Encriptador;
 
 @Component
@@ -382,6 +383,36 @@ public class RemCorreoUtils {
 		props.setProperty(MAIL_SMTP_DEBUG, "false");
 
 		return props;
+	}
+	
+	public String generateCuerpoCorreo(String titulo, String contenido) {
+		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
+				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
+				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
+				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
+				+ "				<img src='" + this.getUrlImagenes() + "ico_notificacion.png' " 
+				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
+				+ "             <div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'>" 
+				+ titulo + "</div></div>"
+				+ "			<div style='background: #b7ddf0; width: 625px; min-height: 300px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 625px; height: 300px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "					<div style='display: table; margin: 20px;'>"
+				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
+				+ contenido + "				</div>"
+				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 15px; color: #fff; display: table;'>"
+				+ "					<div style='display: table-cell'>" + "						<img src='"
+				+ this.getUrlImagenes() + "ico_advertencia.png' />" + "					</div>"
+				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
+				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
+				+ "				</div>" + "			</div>" + "		</div>" + "</body>" + "</html>";
+
+		return cuerpo;
+	}
+	
+	private String getUrlImagenes() {
+		String url = appProperties.getProperty("url");
+
+		return url + "/pfs/js/plugin/rem/resources/images/notificator/";
 	}
 
 }

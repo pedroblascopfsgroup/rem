@@ -37,6 +37,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemCorreoUtils;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
@@ -54,9 +55,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
 import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.CorreoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
@@ -96,6 +97,9 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Autowired
     public AccionesCaixaApi accionesCaixaApi;
+	
+	@Autowired
+	private RemCorreoUtils remCorreoUtils;
 	
 
 	
@@ -956,6 +960,34 @@ public class GenericController extends ParadiseJsonController{
 
 		model.put("idPersonaHaya",genericApi.getIdPersonaHayaSinCartera(documentoInterlocutor));
 
+		restApi.sendResponse(response, model, request);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/mail")
+	public void sendMail(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		CorreoDto jsonMail = null;
+
+		try {
+
+			JSONObject jsonFields = request.getJsonObject();
+			jsonMail = (CorreoDto) request.getRequestData(CorreoDto.class);
+
+			if (jsonFields == null || jsonFields != null && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else {
+				String body = remCorreoUtils.generateCuerpoCorreo(jsonMail.getSubject(), jsonMail.getBody());
+				adapter.sendMail(jsonMail.getTo(), jsonMail.getToCC(), jsonMail.getSubject(), body);
+
+				model.put("succes", true);
+				model.put("error", null);
+			}
+		} catch (Exception e) {
+			logger.error("Error GenericController.sendMail() > ", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
 		restApi.sendResponse(response, model, request);
 	}
  }

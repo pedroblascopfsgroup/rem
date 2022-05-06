@@ -188,4 +188,11 @@ public class DDSubcartera implements Auditable, Dictionary {
 		return is;
 	}
 
+	public static boolean isSubcarteraDivarianArrowInmob(DDSubcartera subcartera) {
+		return (subcartera != null && (CODIGO_DIVARIAN_ARROW_INMB.equals(subcartera.getCodigo())));
+	}
+
+	public static boolean isSubcarteraDivarianRemainingInmob(DDSubcartera subcartera) {
+		return (subcartera != null && (CODIGO_DIVARIAN_REMAINING_INMB.equals(subcartera.getCodigo())));
+	}
 }

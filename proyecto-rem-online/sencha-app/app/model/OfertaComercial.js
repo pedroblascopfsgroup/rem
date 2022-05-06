@@ -144,9 +144,7 @@ Ext.define('HreRem.model.OfertaComercial', {
     			name:'localidadNacimientoRepresentanteDescripcion'
     		},
     		{
-    			name:'fechaNacimientoRepresentante',
-    			type:'date',
-    			dateFormat: 'c'
+    			name:'fechaNacimientoRepresentante'
     		},
     		{
     			name:'codigoPaisRte'

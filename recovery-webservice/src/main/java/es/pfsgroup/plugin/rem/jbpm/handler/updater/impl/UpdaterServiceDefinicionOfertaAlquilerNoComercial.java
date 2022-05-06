@@ -1,11 +1,11 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.aspectj.apache.bcel.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +44,10 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 	private static final String CODIGO_T018_DEFINICION_OFERTA = "T018_DefinicionOferta";
 	private static final String TIPO_OFERTA_ALQUILER = "tipoOfertaAlquiler";
 	private static final String VULNERABLE = "isVulnerable";
-	private static final String EXPEDIENTE_ANTERIOR = "expedienteAnterior";
+	private static final String CONTRATO_ANTERIOR = "numContratoAnterior";
+	private static final String FECHA_CONTRATO_ANTERIOR = "fechaContratoAnt";
 	private static final String RIESGO_REPUTACIONAL = "riesgoReputacional";
 	private static final String CONFLICTO_INTERESES = "conflictoIntereses";
-
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -70,9 +70,15 @@ public class UpdaterServiceDefinicionOfertaAlquilerNoComercial implements Update
 				Boolean vulnerabilidadDetectada = DDSinSiNo.cambioStringtoBooleano(valor.getValor());
 				coe.setVulnerabilidadDetectada(vulnerabilidadDetectada);
 			}
-			if(EXPEDIENTE_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				ExpedienteComercial expedienteAnterior = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(valor.getValor()));
-				expedienteComercial.setExpedienteAnterior(expedienteAnterior);
+			if(CONTRATO_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				expedienteComercial.setNumContratoAnterior(valor.getValor());
+			}
+			try {
+				if(FECHA_CONTRATO_ANTERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					expedienteComercial.setFechaFinContratoAnterior(ft.parse(valor.getValor()));
+				}
+			}catch (ParseException pe){
+				logger.error("error parseando fecha contrato anterior");
 			}
 			if (RIESGO_REPUTACIONAL.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				expedienteComercial.setRiesgoReputacional(DDSinSiNo.cambioStringToIntger(valor.getValor()));

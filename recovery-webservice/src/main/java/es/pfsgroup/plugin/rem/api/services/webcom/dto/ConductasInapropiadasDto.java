@@ -2,16 +2,25 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class ConductasInapropiadasDto{
 	
+	@WebcomRequired
 	private LongDataType idConductaInapropiada;
+	@WebcomRequired
 	private StringDataType fechaAlta;
+	@WebcomRequired
 	private StringDataType usuarioAlta;
+	@WebcomRequired
 	private StringDataType codTipologia;
+	@WebcomRequired
 	private StringDataType codCategoria;
+	@WebcomRequired
 	private StringDataType codNivel;
+	@WebcomRequired
 	private StringDataType comentarios;
+	@WebcomRequired
 	private LongDataType idDelegacion;
 	
 	

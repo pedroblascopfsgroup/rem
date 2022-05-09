@@ -2,32 +2,57 @@ package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class DelegacionDto{
 	
+	@WebcomRequired
 	private LongDataType idDelegacion;
+	@WebcomRequired
 	private StringDataType codTipoVia;
+	@WebcomRequired
 	private StringDataType nombreCalle;
+	@WebcomRequired
 	private StringDataType numeroCalle;
+	@WebcomRequired
 	private StringDataType escalera;
+	@WebcomRequired
 	private StringDataType planta;
+	@WebcomRequired
 	private StringDataType puerta;
+	@WebcomRequired
 	private StringDataType codMunicipio;
+	@WebcomRequired
 	private StringDataType codPedania;
+	@WebcomRequired
 	private StringDataType codProvincia;
+	@WebcomRequired
 	private StringDataType codigoPostal;
+	@WebcomRequired
 	private StringDataType telefono1;
+	@WebcomRequired
 	private StringDataType telefono2;
+	@WebcomRequired
 	private StringDataType email;
+	@WebcomRequired
 	private StringDataType piso;
+	@WebcomRequired
 	private StringDataType otros;
+	@WebcomRequired
 	private StringDataType codLineaNegocio;
+	@WebcomRequired
 	private StringDataType arrCodEspecialidad;
+	@WebcomRequired
 	private StringDataType arrCodIdioma;
+	@WebcomRequired
 	private LongDataType numComerciales;
+	@WebcomRequired
 	private StringDataType codGestionCnr;
+	@WebcomRequired
 	private StringDataType arrCodProvincia;
+	@WebcomRequired
 	private StringDataType arrCodLocalidad;
+	@WebcomRequired
 	private StringDataType arrCodigoPostal;
 	
 	public StringDataType getCodTipoVia() {

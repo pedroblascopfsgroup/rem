@@ -1829,8 +1829,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Transactional(readOnly = false)
 	public void saveBloqueoProveedorById (Long id, DtoBloqueoApis dto) {
 		BloqueoApis bloqueo = genericDao.get(BloqueoApis.class, genericDao.createFilter(FilterType.EQUALS, "proveedor.id", id));
-		DtoBloqueoApis bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
+		DtoBloqueoApis bloqueoAntiguo = new DtoBloqueoApis();
+				
 		if(bloqueo != null && bloqueo.getProveedor()!= null) {
+			bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
 			this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
 			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
 			Auditoria.delete(bloqueo);

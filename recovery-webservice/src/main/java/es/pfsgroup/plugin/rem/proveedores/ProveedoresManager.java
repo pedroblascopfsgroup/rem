@@ -2537,8 +2537,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 		List<DDCodigoPostal> codigosPostalesBusqueda = new ArrayList<DDCodigoPostal>();
 		
-		DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
-		
 		List<DtoCodigoPostalCombo> codigosPostalesADevolver = new ArrayList<DtoCodigoPostalCombo>();
 		
 		if(!"VALOR_POR_DEFECTO".equals(codigoMunicipio) && codigoMunicipio != null) {
@@ -2552,6 +2550,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				codigosPostalesBusqueda = proveedoresDao.getCodigosPostalesList(municipio);
 				
 				for(DDCodigoPostal codigosPostalesFinal : codigosPostalesBusqueda) {
+					
+					DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
 					
 					codigosPostalesIndividuales.setId(codigosPostalesFinal.getId());
 					codigosPostalesIndividuales.setCodigo(codigosPostalesFinal.getCodigo());

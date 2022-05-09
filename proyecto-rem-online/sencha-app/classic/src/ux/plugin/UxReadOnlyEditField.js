@@ -419,7 +419,8 @@ Ext.define('HreRem.ux.plugin.UxReadOnlyEditField', {
 					var stringResults = '';
 					Ext.Array.each(results, function(n) {
 						if (n != 'VALOR_POR_DEFECTO'){
-							stringResults = stringResults + me.parent.getStore().findRecord('codigo', n).getData().descripcion + '<br>';
+							if (me.parent.getStore().findRecord('codigo', n) != null)
+								stringResults = stringResults + me.parent.getStore().findRecord('codigo', n).getData().descripcion + '<br>';
 						}
 			        });
 					

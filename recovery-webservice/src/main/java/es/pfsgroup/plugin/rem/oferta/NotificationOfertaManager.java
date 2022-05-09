@@ -808,30 +808,22 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsPara 		= new ArrayList<String>();
 			List<String> mailsCC 		= new ArrayList<String>();	
 
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) 
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_EGEO.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_HYT.equals(activo.getCartera().getCodigo())){
-				gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-				if(!Checks.esNulo(gboinm)){						
-					if(Checks.estaVacio(mailsSustituto)){
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
-					}else {
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
-					}						
-					if (!Checks.estaVacio(mailsSustituto)){
-						mailsPara.addAll(mailsSustituto);
-						mailsCC.add(gboinm.getEmail());
-					}else{
-						mailsPara.add(gboinm.getEmail());
-					}
-				}	
+			gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			if(!Checks.esNulo(gboinm)){
+				if(Checks.estaVacio(mailsSustituto)){
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+				}else {
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+				}
+				if (!Checks.estaVacio(mailsSustituto)){
+					mailsPara.addAll(mailsSustituto);
+					mailsCC.add(gboinm.getEmail());
+				}else{
+					mailsPara.add(gboinm.getEmail());
+				}
 			}
+
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
@@ -897,8 +889,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
-			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
-							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s con teléfono %s y e-mail %s, por importe de %s €. Prescriptor: %s %s.</p>",
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
 						
 			contenido += "<br><p>Titulares: <br><ul>";
 			if (!Checks.esNulo(oferta.getCliente())) {
@@ -981,14 +973,32 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
 			else contenido += "- </p>";  
 			
-			contenido += "<p>Testigos: <br><ul>";
+			contenido += "<p>Testigos: <br>";
 			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			contenido += "<table border='1' style='table-layout: fixed; width: 100%;border: 1px solid black; border-collapse: collapse;'>" +
+					"<tr>" +
+					"<th>Fuente</th>" +
+					"<th>Superficie</th>" +
+					"<th>Tipología</th>" +
+					"<th>Precio mercado</th>" +
+					"<th>URL</th>" +
+					"<th>Dirección</th>" +
+					"</tr>";
 			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
 				for (int i = 0;i < testigos.size() && i < 3; i++) {
-					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+					contenido += "<tr>";
+					contenido += String.format("<th>%s</th>", testigos.get(i).getFuenteTestigos().getDescripcion());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getSuperficie());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getTipoActivo().getDescripcion());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getPrecioMercado());
+					contenido += String.format("<th><a href='%s'>URL</a></th>", testigos.get(i).getEnlace());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getDireccion());
+					contenido += "</tr>";
 				}
 			}
-			contenido += "</ul></p>";
+			contenido += "</table>";
+
+			contenido += "</p>";
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
@@ -1223,32 +1233,23 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsPara 		= new ArrayList<String>();
 			List<String> mailsCC 		= new ArrayList<String>();	
 
-			if(activo != null){
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-					if(!Checks.esNulo(gboinm)){						
-						if(Checks.estaVacio(mailsSustituto)){
-							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
-						}else {
-							mailsSustituto.clear();
-							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);	
-						}						
-						if (!Checks.estaVacio(mailsSustituto)){
-							mailsPara.addAll(mailsSustituto);
-							mailsCC.add(gboinm.getEmail());
-						}else{
-							mailsPara.add(gboinm.getEmail());
-						}
-					}	
+
+			gboinm = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			if(!Checks.esNulo(gboinm)){
+				if(Checks.estaVacio(mailsSustituto)){
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+				}else {
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gboinm);
+				}
+				if (!Checks.estaVacio(mailsSustituto)){
+					mailsPara.addAll(mailsSustituto);
+					mailsCC.add(gboinm.getEmail());
+				}else{
+					mailsPara.add(gboinm.getEmail());
 				}
 			}
+
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
@@ -1314,8 +1315,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				
 			}
 			
-			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
-							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+			String contenido = String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s con teléfono %s y e-mail %s, por importe de %s €. Prescriptor: %s %s.</p>",
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, oferta.getCliente().getTelefono1(), oferta.getCliente().getEmail(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
 						
 			if (!Checks.esNulo(oferta.getCliente())) {
 				contenido += "<br><p>Titulares: <br><ul>";
@@ -1392,14 +1393,31 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if (!Checks.esNulo(textoOferta) && !Checks.esNulo(textoOferta.getTexto())) contenido += textoOferta.getTexto() + "</p>";  
 			else contenido += "- </p>";  
 			
-			contenido += "<p>Testigos: <br><ul>";
+			contenido += "<p>Testigos: <br>";
 			List<OfertaTestigos> testigos = genericDao.getList(OfertaTestigos.class, filtroOferta);
+			contenido += "<table border='1' style='table-layout: fixed; width: 100%;border: 1px solid black; border-collapse: collapse;'>" +
+					"<tr>" +
+					"<th>Fuente</th>" +
+					"<th>Superficie</th>" +
+					"<th>Tipología</th>" +
+					"<th>Precio mercado</th>" +
+					"<th>URL</th>" +
+					"<th>Dirección</th>" +
+					"</tr>";
 			if (!Checks.esNulo(testigos) && !testigos.isEmpty()) {
 				for (int i = 0;i < testigos.size() && i < 3; i++) {
-					contenido += String.format("<li>%s</li>", testigos.get(i).getFuenteTestigos().getDescripcion());
+					contenido += "<tr>";
+					contenido += String.format("<th>%s</th>", testigos.get(i).getFuenteTestigos().getDescripcion());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getSuperficie());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getTipoActivo().getDescripcion());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getPrecioMercado());
+					contenido += String.format("<th><a href='%s'>URL</a></th>", testigos.get(i).getEnlace());
+					contenido += String.format("<th>%s</th>", testigos.get(i).getDireccion());
+					contenido += "</tr>";
 				}
 			}
-			contenido += "</ul></p>";
+			contenido += "</table>";
+			contenido += "</p>";
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
 	}

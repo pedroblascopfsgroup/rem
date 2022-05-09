@@ -89,6 +89,21 @@ public class VActivoCatastro implements Serializable{
 	
 	@Column(name = "LONGITUD")
 	private String longitud;
+	
+	@Column(name = "ORIGENDATOSCATASTRALES")
+	private String origenDatosCatastrales;
+	
+	@Column(name = "CLASEUSOCATASTRAL")
+	private String claseUsoCatastral;
+	
+	@Column(name = "TIPOMONEDA")
+	private String tipoMoneda;
+	
+	@Column(name = "CATASTROVIGENTE")
+	private String catastroVigente;
+	
+	@Column(name = "VALORCATASTRAL")
+	private String valorCatastral;
 
 	public Long getIdActivoCatastro() {
 		return idActivoCatastro;
@@ -265,4 +280,45 @@ public class VActivoCatastro implements Serializable{
 	public void setLongitud(String longitud) {
 		this.longitud = longitud;
 	}
+
+	public String getOrigenDatosCatastrales() {
+		return origenDatosCatastrales;
+	}
+
+	public void setOrigenDatosCatastrales(String origenDatosCatastrales) {
+		this.origenDatosCatastrales = origenDatosCatastrales;
+	}
+
+	public String getClaseUsoCatastral() {
+		return claseUsoCatastral;
+	}
+
+	public void setClaseUsoCatastral(String claseUsoCatastral) {
+		this.claseUsoCatastral = claseUsoCatastral;
+	}
+
+	public String getTipoMoneda() {
+		return tipoMoneda;
+	}
+
+	public void setTipoMoneda(String tipoMoneda) {
+		this.tipoMoneda = tipoMoneda;
+	}
+
+	public String getCatastroVigente() {
+		return catastroVigente;
+	}
+
+	public void setCatastroVigente(String catastroVigente) {
+		this.catastroVigente = catastroVigente;
+	}
+
+	public String getValorCatastral() {
+		return valorCatastral;
+	}
+
+	public void setValorCatastral(String valorCatastral) {
+		this.valorCatastral = valorCatastral;
+	}
+	
 }

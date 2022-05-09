@@ -78,6 +78,11 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private String estadoVentaCodigo;
 	private String estadoVentaDescripcion;
 	
+	private Boolean compradorAcojeAyuda;
+	private Double importeAyudaFinanciacion;
+	private Date fechaVencimientoAvalSeguro;
+	private Date fechaDevolucionAyuda;
+	
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}
@@ -361,6 +366,30 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	}
 	public void setMaxPrecioModuloAlquiler(String maxPrecioModuloAlquiler) {
 		this.maxPrecioModuloAlquiler = maxPrecioModuloAlquiler;
+	}
+	public Boolean getCompradorAcojeAyuda() {
+		return compradorAcojeAyuda;
+	}
+	public void setCompradorAcojeAyuda(Boolean compradorAcojeAyuda) {
+		this.compradorAcojeAyuda = compradorAcojeAyuda;
+	}
+	public Double getImporteAyudaFinanciacion() {
+		return importeAyudaFinanciacion;
+	}
+	public void setImporteAyudaFinanciacion(Double importeAyudaFinanciacion) {
+		this.importeAyudaFinanciacion = importeAyudaFinanciacion;
+	}
+	public Date getFechaVencimientoAvalSeguro() {
+		return fechaVencimientoAvalSeguro;
+	}
+	public void setFechaVencimientoAvalSeguro(Date fechaVencimientoAvalSeguro) {
+		this.fechaVencimientoAvalSeguro = fechaVencimientoAvalSeguro;
+	}
+	public Date getFechaDevolucionAyuda() {
+		return fechaDevolucionAyuda;
+	}
+	public void setFechaDevolucionAyuda(Date fechaDevolucionAyuda) {
+		this.fechaDevolucionAyuda = fechaDevolucionAyuda;
 	}
 	
 }

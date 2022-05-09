@@ -1895,8 +1895,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			listaDDEstadoOferta.addAll(estadosOferta);
 
-			if(conDep != null) {
+			if(conDep == null) {
 				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+			}else if(conDep != null){
+				Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroCongelada));
 			}
 		}
 

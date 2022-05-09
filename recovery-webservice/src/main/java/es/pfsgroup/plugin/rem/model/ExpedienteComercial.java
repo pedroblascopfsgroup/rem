@@ -348,6 +348,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name = "ECO_EDICION_COMPRADORES_CBX")
     private String motivoEdicionCompradores;
+
+	@Column(name = "ECO_NUM_CONTRATO_ANT")
+	private String numContratoAnterior;
+
+	@Column(name = "ECO_FECHA_FIN_CONTRATO_ANT")
+	private Date fechaFinContratoAnterior;
+
     
     @Version   
 	private Long version;
@@ -1096,5 +1103,21 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
 		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
+	}
+
+	public String getNumContratoAnterior() {
+		return numContratoAnterior;
+	}
+
+	public void setNumContratoAnterior(String numContratoAnterior) {
+		this.numContratoAnterior = numContratoAnterior;
+	}
+
+	public Date getFechaFinContratoAnterior() {
+		return fechaFinContratoAnterior;
+	}
+
+	public void setFechaFinContratoAnterior(Date fechaFinContratoAnterior) {
+		this.fechaFinContratoAnterior = fechaFinContratoAnterior;
 	}
 }

@@ -76,6 +76,21 @@ Ext.define('HreRem.model.Catastro', {
 	        },
 	        {   
 	        	name: 'longitud'
+	        },
+	        {   
+	        	name: 'origenDatosCatastrales'
+	        },
+	        {
+	        	name: 'claseUsoCatastral'
+	        },
+	        {   
+	        	name: 'tipoMoneda'
+	        },
+	        {   
+	        	name: 'catastroVigente'
+	        },
+	        {   
+	        	name: 'valorCatastral'
 	        }
 	  ],
     

@@ -29,6 +29,15 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 		
 	},
 	
+	isCaixa: function(){
+		var me = this;
+		if (me.activo.data.isCarteraBankia){
+			return true;
+		}else {
+			return false;
+		}
+	},
+	
 	initWindow: function() {
     	var me = this;
     	
@@ -119,12 +128,12 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.anyo.concesion'),
 												name: 'anyoConcesion',
-                                                readOnly: false
+												readOnly: me.isCaixa()
 											},
 											{
 												fieldLabel: HreRem.i18n('fiedlabel.fecha.fin.concesion'),
 												name: 'fechaFinConcesion',
-                                                readOnly: false
+												readOnly: me.isCaixa()
 											}			    					        	
 			    					    ]
 									},

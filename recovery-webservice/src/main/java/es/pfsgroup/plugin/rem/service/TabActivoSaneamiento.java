@@ -359,6 +359,18 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}catch (Exception e) {
 				logger.error(e.getMessage());
 			}
+			if (activo.getInfoAdministrativa().getCompradorAcojeAyuda() != null) {
+				activoDto.setCompradorAcojeAyuda(activo.getInfoAdministrativa().getCompradorAcojeAyuda());
+			}
+			if (activo.getInfoAdministrativa().getImporteAyudaFinanciacion() != null) {
+				activoDto.setImporteAyudaFinanciacion(activo.getInfoAdministrativa().getImporteAyudaFinanciacion());
+			}
+			if (activo.getInfoAdministrativa().getFechaVencimientoAvalSeguro() != null) {
+				activoDto.setFechaVencimientoAvalSeguro(activo.getInfoAdministrativa().getFechaVencimientoAvalSeguro());
+			}
+			if (activo.getInfoAdministrativa().getFechaDevolucionAyuda() != null) {
+				activoDto.setFechaDevolucionAyuda(activo.getInfoAdministrativa().getFechaDevolucionAyuda());
+			}
 		}
 		
 		//TITULO ADICIONAL SANEAMIENTO
@@ -599,6 +611,18 @@ public class TabActivoSaneamiento implements TabActivoService{
 					Filter filterEstadoVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getEstadoVentaCodigo());
 					DDEstadoVenta ddEstadoVenta = genericDao.get(DDEstadoVenta.class, filterEstadoVenta); 
 					infoAdministrativa.setEstadoVenta(ddEstadoVenta);	
+				}
+				if (activoDto.getCompradorAcojeAyuda() != null) {
+					infoAdministrativa.setCompradorAcojeAyuda(activoDto.getCompradorAcojeAyuda());
+				}
+				if (activoDto.getImporteAyudaFinanciacion() != null) {
+					infoAdministrativa.setImporteAyudaFinanciacion(activoDto.getImporteAyudaFinanciacion());
+				}
+				if (activoDto.getFechaVencimientoAvalSeguro() != null) {
+					infoAdministrativa.setFechaVencimientoAvalSeguro(activoDto.getFechaVencimientoAvalSeguro());
+				}
+				if (activoDto.getFechaDevolucionAyuda() != null) {
+					infoAdministrativa.setFechaDevolucionAyuda(activoDto.getFechaDevolucionAyuda());
 				}
 			}
 			

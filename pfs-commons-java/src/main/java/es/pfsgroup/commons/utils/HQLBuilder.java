@@ -391,6 +391,50 @@ public class HQLBuilder {
 			hqlBuilder.getParametros().putObject(nombreParametro, valor.toString());
 		}
 	}
+	
+	public static void montaAppendWhere(final HQLBuilder hqlBuilder, String query, final String[] campo, Object[] valor, 
+			String claveBuscar, final boolean upper ) {
+		
+		if (hqlBuilder != null && query !=null && claveBuscar != null && (campo != null && campo.length>0) 
+			&& (valor != null && valor.length>0) && campo.length==valor.length) {
+			String nombreParametro = null;
+			int posFin;
+			int	posIni;
+			char charFin;
+			char charIni;
+			boolean esNulo = true;
+			
+			for (int i = 0; i < campo.length; i++) {
+				String textoCampo = campo[i];
+				Object textoValor = valor[i];
+				if (textoCampo != null && textoValor != null) {
+					esNulo = false;
+					posFin = query.indexOf(claveBuscar)+claveBuscar.length();
+					posIni = query.indexOf(claveBuscar)-1;
+					charFin = query.charAt(posFin);
+					charIni = query.charAt(posIni);
+					nombreParametro = nombraParametro(textoCampo);
+					if(charIni != ' ' && charFin != ' ') {
+						query=query.replaceFirst(claveBuscar, " :"+nombreParametro+" ");
+					}else if (charIni == ' ' && charFin != ' ') {
+						query=query.replaceFirst(claveBuscar, ":"+nombreParametro+" ");
+					}else if (charIni != ' ' && charFin == ' ') {
+						query=query.replaceFirst(claveBuscar, " :"+nombreParametro);
+					}else {
+						query=query.replaceFirst(claveBuscar, ":"+nombreParametro);
+					}
+					if(textoValor instanceof String) {
+						hqlBuilder.getParametros().putObject(nombreParametro, upper ? textoValor.toString().toUpperCase() : textoValor.toString());	
+					}else {
+						hqlBuilder.getParametros().putObject(nombreParametro, textoValor);
+					}
+					
+				}
+			}
+				if (!esNulo)
+				hqlBuilder.appendWhere(query);		
+			}
+	}
 
 	private final StringBuilder stringBuilder;
 	private final StringBuilder order;

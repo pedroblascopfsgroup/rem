@@ -966,7 +966,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
 		
-		genericDao.update(GastoProveedor.class, gastoProveedor);
+		genericDao.save(GastoProveedor.class, gastoProveedor);
 		
 		if(actualizaSuplidos) {
 			Thread actualizaSuplidosAsync = new Thread(new ActualizaSuplidosAsync(gastoProveedor.getId(),

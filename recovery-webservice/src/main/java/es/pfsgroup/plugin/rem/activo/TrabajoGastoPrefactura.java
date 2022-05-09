@@ -32,7 +32,8 @@ public class TrabajoGastoPrefactura implements TrabajoAvisadorApi {
 					mensaje = "Trabajo en gasto";
 				}
 			}
-			if (!Checks.esNulo(trabajo.getPrefactura()) && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+			if (!Checks.esNulo(trabajo.getPrefacturaTrabajo()) && !Checks.esNulo(trabajo.getPrefacturaTrabajo().getPrefactura()) 
+					&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 				if (mensaje != null) {
 					mensaje += " y en prefactura validada";
 				} else {

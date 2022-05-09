@@ -335,6 +335,88 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        		}
 								        	}
 								        },
+								        //motivo Exoneracion Cee
+							        	{   
+								        	text: HreRem.i18n('admision.grid.header.motivo.exoneracion.cee'),
+								        	dataIndex: 'motivoExoneracionCee',
+								        	flex: 1.2,
+								            align: 'center',
+								            cls: 'grid-no-seleccionable-col',
+								            tdCls: 'grid-no-seleccionable-td',
+								            bind: {
+							            		hidden: '{!isCarteraBankia}'
+							            	},
+								            editor: {
+								        		xtype: 'combobox',
+								        		editable: false,
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		store: Ext.create('Ext.data.Store',{								        		
+								        			model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'motivoExoneracionCee'}
+													},
+													autoLoad: true
+												}),								            	
+								            	displayField: 'descripcion',
+    											valueField: 'codigo'    											
+								        	},
+								        	renderer: function(value) {								        		
+								        		var me = this,
+								        		comboEditor = me.columns && me.columns[13].getEditor ? me.columns[13].getEditor() : me.getEditor ? me.getEditor():null;
+								        		if(!Ext.isEmpty(comboEditor)) {
+									        		store = comboEditor.getStore(),							        		
+									        		record = store.findRecord("codigo", value);
+									        		if(!Ext.isEmpty(record)) {								        			
+									        			return record.get("descripcion");								        		
+									        		} else {
+									        			comboEditor.setValue(value);								        			
+									        		}
+								        		}
+								        	}
+								        },
+							        	//incidencia Cee
+							        	{   
+								        	text: HreRem.i18n('admision.grid.header.incidencia.cee'),
+								        	dataIndex: 'incidenciaCee',
+								        	flex: 1.2,
+								            align: 'center',
+								            cls: 'grid-no-seleccionable-col',
+								            tdCls: 'grid-no-seleccionable-td',
+								            bind: {
+							            		hidden: '{!isCarteraBankia}'
+							            	},
+								            editor: {
+								        		xtype: 'combobox',
+								        		editable: false,
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		store: Ext.create('Ext.data.Store',{								        		
+								        			model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'incidenciaCee'}
+													},
+													autoLoad: true
+												}),								            	
+								            	displayField: 'descripcion',
+    											valueField: 'codigo'    											
+								        	},
+								        	renderer: function(value) {								        		
+								        		var me = this,
+								        		comboEditor = me.columns && me.columns[14].getEditor ? me.columns[14].getEditor() : me.getEditor ? me.getEditor():null;
+								        		if(!Ext.isEmpty(comboEditor)) {
+									        		store = comboEditor.getStore(),							        		
+									        		record = store.findRecord("codigo", value);
+									        		if(!Ext.isEmpty(record)) {								        			
+									        			return record.get("descripcion");								        		
+									        		} else {
+									        			comboEditor.setValue(value);								        			
+									        		}
+								        		}
+								        	}
+								        },
 								        {   
 								        	text: HreRem.i18n('admision.grid.header.emision'),
 								        	dataIndex: 'emision',

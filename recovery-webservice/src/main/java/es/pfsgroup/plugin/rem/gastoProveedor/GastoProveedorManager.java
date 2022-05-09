@@ -1015,13 +1015,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (dto.getClaveFactura() != null) {
 			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
-
-		genericDao.update(GastoProveedor.class, gastoProveedor);
-
-		if (actualizaSuplidos) {
-			Thread actualizaSuplidosAsync = new Thread(
-					new ActualizaSuplidosAsync(gastoProveedor.getId(), dto.getCodigoProveedorRem(),
-							dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
+		
+		genericDao.save(GastoProveedor.class, gastoProveedor);
+		
+		if(actualizaSuplidos) {
+			Thread actualizaSuplidosAsync = new Thread(new ActualizaSuplidosAsync(gastoProveedor.getId(),
+					dto.getCodigoProveedorRem(), dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
 
 			actualizaSuplidosAsync.start();
 		}

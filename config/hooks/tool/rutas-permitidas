@@ -300,7 +300,12 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+func-rem-informeMediador|R-Jaffa
+func-rem-stockHydra-F1.1|R-Jaffa
+func-rem-catastro|R-Jaffa
+rem_mirror|func-rem-stockHydra-F1.1
 rem_mirror|func-rem-cambioJerarquiaPrefacturasBBVA
+R-Jaffa|R-Jaffa-ContrasteListas
 rem_mirror|func-rem-volcadoPagosUrgentesASPRO
 func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
 func-rem-volcadoPagosUrgentesASPRO|R-Ortanique

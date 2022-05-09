@@ -5316,10 +5316,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(dto.getNumeroClienteUrsusBh() != null)
 				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
-			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
-				comprador.setApellidos(null);
-			}
-
 			if (!Checks.esNulo(dto.getEstadoCivilURSUS())) {
 				comprador.setEstadoCivilURSUS(Long.parseLong(dto.getEstadoCivilURSUS()));
 			}
@@ -5347,12 +5343,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				reiniciarPBC = true;
 			}
 
-			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
-				comprador.setApellidos(null);
-			}else {
-				comprador.setApellidos(dto.getApellidos());
-			}
-
 			if (!Checks.esNulo(dto.getCodTipoDocumento())) {
 				DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumento());
@@ -5362,8 +5352,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getNombreRazonSocial())) {
 				reiniciarPBC = true;
 			}
-
-			comprador.setNombre(dto.getNombreRazonSocial());
 
 			if (!Checks.esNulo(dto.getProvinciaCodigo())) {
 				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class,
@@ -5388,12 +5376,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			comprador.setCodigoPostal(dto.getCodigoPostal());
-
-			if (!Checks.esNulo(dto.getNumDocumento())) {
-				documentoModificado = !dto.getNumDocumento().equals(comprador.getDocumento());
-				comprador.setDocumento(dto.getNumDocumento());
-				reiniciarPBC = true;
-			}
 
 			if (!Checks.esNulo(dto.getDireccion())) {
 				reiniciarPBC = true;
@@ -5479,6 +5461,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpComComprador);
 			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 
+			if((dto.getApellidos() != null && !dto.getApellidos().equals(comprador.getApellidos())) || !dto.getNumDocumento().equals(comprador.getDocumento()) || !dto.getNombreRazonSocial().equals(comprador.getNombre())) {
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
+				compradorExpediente.setFechaContrasteListas(new Date());
+			}
+			
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}
+			
+			if (!Checks.esNulo(dto.getNumDocumento())) {
+				documentoModificado = !dto.getNumDocumento().equals(comprador.getDocumento());
+				comprador.setDocumento(dto.getNumDocumento());
+				reiniciarPBC = true;
+			}
+			
+			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
+				comprador.setApellidos(null);
+			}else {
+				comprador.setApellidos(dto.getApellidos());
+			}
+			
+			comprador.setNombre(dto.getNombreRazonSocial());
+			
 			Oferta oferta = expedienteComercial.getOferta();
 
 			boolean esNuevo = false;
@@ -5658,12 +5663,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (!Checks.esNulo(comprador.getAdjunto())) {
 				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
 			}
-			if(dto.getApellidos()!=null || dto.getNumDocumento()!=null || dto.getNombreRazonSocial()!=null) {
-				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
-				compradorExpediente.setFechaContrasteListas(new Date());
-			}
 			
-
 			if(!Checks.esNulo(dto.getCodEstadoContraste())) {
 				Filter estadoContrasteFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstadoContraste());
 				DDEstadoContrasteListas estadoContraste = genericDao.get(DDEstadoContrasteListas.class, estadoContrasteFilter);
@@ -14502,7 +14502,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return new ReplicarOfertaDto(){{
 			setNumeroOferta(eco.getOferta().getNumOferta());
 			setEstadoExpedienteBcCodigoBC(eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigoC4C() : null);
-			setFechaEscritura(eco.getFechaFirmaContrato() == null ? null : ft.format(eco.getFechaFirmaContrato()));
+			setFechaEscritura(eco.getFechaVenta() == null ? null : ft.format(eco.getFechaVenta()));
 		}};
 	}
 

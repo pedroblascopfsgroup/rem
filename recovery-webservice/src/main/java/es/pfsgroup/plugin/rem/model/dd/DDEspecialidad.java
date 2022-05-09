@@ -25,11 +25,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEspecialidad implements Auditable, Dictionary {
 	
-	public static final String CODIGO_RESIDENCIAL= "01";
-	public static final String CODIGO_OBRA_NUEVA= "02";
-	public static final String CODIGO_SUELOS= "03";
-	public static final String CODIGO_NAVES= "04";
-	public static final String CODIGO_LOCALES= "05";
+	public static final String CODIGO_VIVIENDA    = "01";
+	public static final String CODIGO_OBRA_NUEVA  = "02";
+	public static final String CODIGO_SUELO       = "03";
+	public static final String CODIGO_INDUSTRIAL  = "04";
+	public static final String CODIGO_COMERCIAL   = "05";
+	public static final String CODIGO_OTROS       = "06";
+	public static final String CODIGO_OFICINA     = "07";
+	public static final String CODIGO_GARAJE      = "08";
+	public static final String CODIGO_TRASTERO    = "09";
 	
 	private static final long serialVersionUID = 1L;
 

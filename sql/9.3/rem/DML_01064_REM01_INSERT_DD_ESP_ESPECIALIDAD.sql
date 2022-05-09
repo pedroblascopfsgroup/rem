@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20220405
+--## AUTOR=Pedro Blasco
+--## FECHA_CREACION=20220506
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17597
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial: Santi Monzó
+--##        1.0 Versión: Pedro Blasco, cambio de valores del diccionario
 --##########################################
 --*/
 
@@ -36,12 +37,16 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-	  T_TIPO_DATA('01','Residencial','Residencial'),
+    T_TIPO_DATA('01','Vivienda','Vivienda'),
     T_TIPO_DATA('02','Obra Nueva','Obra Nueva'),
-    T_TIPO_DATA('03','Suelos','Suelos'),
-    T_TIPO_DATA('04','Naves','Naves'),
-    T_TIPO_DATA('05','Locales','Locales')
-	
+    T_TIPO_DATA('03','Suelo','Suelo'),
+    T_TIPO_DATA('04','Industrial','Industrial'),
+    T_TIPO_DATA('05','Comercial','Comercial'),
+    T_TIPO_DATA('06','Otros','Otros'),
+    T_TIPO_DATA('07','Oficina','Oficina'),
+    T_TIPO_DATA('08','Garaje','Garaje'),
+    T_TIPO_DATA('09','Trastero	','Trastero	')
+
     ); 
 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -62,11 +67,15 @@ BEGIN
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_ESP_ESPECIALIDAD WHERE DD_ESP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-        IF V_NUM_TABLAS > 0 THEN				
+      IF V_NUM_TABLAS > 0 THEN				
  
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO YA EXISTE');
+          V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||
+              ' SET DD_ESP_DESCRIPCION=:1, DD_ESP_DESCRIPCION_LARGA=:2, VERSION=:3, USUARIOMODIFICAR=:4, FECHAMODIFICAR=:5 ' ||
+              ' WHERE DD_ESP_CODIGO = :6';
+          EXECUTE IMMEDIATE V_MSQL USING V_TMP_TIPO_DATA(2), V_TMP_TIPO_DATA(3), 1, 'HREOS-17597', SYSDATE, V_TMP_TIPO_DATA(1);
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ' || V_TMP_TIPO_DATA(1) || ' YA EXISTENTE: ACTUALIZADO CORRECTAMENTE');
 
-       ELSE
+      ELSE
        	-- Si no existe se inserta.
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
           V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';

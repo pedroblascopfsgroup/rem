@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220331
+--## FECHA_CREACION=20220401
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-16840
@@ -42,7 +42,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_CVC_DD_SCR',                   'DD_SCR_ID',             V_ESQUEMA||'.DD_SCR_SUBCARTERA',                'DD_SCR_ID')
+        T_FK(   'FK_COD_DD_SCR_ID',                   'DD_SCR_ID',             V_ESQUEMA||'.DD_SCR_SUBCARTERA',                'DD_SCR_ID')
     );
     V_T_FK T_FK;
 
@@ -107,7 +107,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.COD_DEPOSITO_NECESARIO IS ''Booleano deposito necesario''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SRC_ID IS ''Id de la subcartera''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SCR_ID IS ''Id de la subcartera''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Versión del registro''';
             EXECUTE IMMEDIATE V_SQL;

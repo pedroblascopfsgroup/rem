@@ -74,10 +74,10 @@ public class VElementosLineaDetalle implements Serializable{
 	@Column(name = "IMPORTE_PROPORCIONAL_SUJETO")
 	private Double importeProporcinalSujeto;
 	
-	@Column(name = "TIPOCOMERC_COD")
+	@Column(name = "CARTERABC_COD")
 	private String carteraBcCodigo;
 	
-	@Column(name = "TIPOCOMERC_DESC")
+	@Column(name = "CARTERABC_DESC")
 	private String carteraBc;
 	
 	@Column(name = "TIPOTRANS_COD")

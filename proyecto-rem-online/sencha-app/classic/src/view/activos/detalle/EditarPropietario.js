@@ -37,6 +37,15 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 		}
 	},
 	
+	isCaixa: function(){
+		var me = this;
+		if (me.activo.data.isCarteraBankia){
+			return true;
+		}else {
+			return false;
+		}
+	},
+	
 	initWindow: function() {
     	var me = this;
     	if (me.up().getViewModel().get('activo.unidadAlquilable') != undefined && me.up().getViewModel().get('activo.unidadAlquilable') != null)
@@ -142,13 +151,13 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 													   		} 
 											},
 											{
-												readOnly: false,
+												readOnly: me.isCaixa(),
 												fieldLabel: HreRem.i18n('fieldlabel.anyo.concesion'),
 												name: 'anyoConcesion',
 												bind: '{propietario.anyoConcesion}'
 											},
 											{
-												readOnly: false,
+												readOnly: me.isCaixa(),
 												fieldLabel: HreRem.i18n('fiedlabel.fecha.fin.concesion'),
 												name: 'fechaFinConcesion',
 												bind: '{propietario.fechaFinConcesion}'

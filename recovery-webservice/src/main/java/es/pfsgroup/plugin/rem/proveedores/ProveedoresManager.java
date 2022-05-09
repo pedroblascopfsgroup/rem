@@ -1833,11 +1833,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 		if(bloqueo != null && bloqueo.getProveedor()!= null) {
 			bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
-			this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
 			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
 			Auditoria.delete(bloqueo);
 			genericDao.save(BloqueoApis.class, bloqueo);
 		}
+		
+		this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
 		
 		bloqueo = new BloqueoApis();
 		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));

@@ -1,52 +1,19 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -78,27 +45,12 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
@@ -106,7 +58,9 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VListadoOfertasAgrupadasLbkDao;
@@ -114,17 +68,11 @@ import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
-import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
-import es.pfsgroup.plugin.rem.rest.dto.ComunicacionBoardingResponse;
-import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
-import es.pfsgroup.plugin.rem.rest.dto.ReportGeneratorResponse;
-import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
+import es.pfsgroup.plugin.rem.rest.dto.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
@@ -132,6 +80,26 @@ import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("ofertaManager")
 public class OfertaManager extends BusinessOperationOverrider<OfertaApi> implements OfertaApi {
@@ -638,11 +606,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(oferta == null) {
 				oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaRem());	
 			}
-			
-			Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
-			
-			if(DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaDto.getCodEstadoOferta()) && depositoApi.isDepositoIngresado(deposito)) {
-				errorsList.put("depositoIngresado", "OFERTA_DEPOSITO_INGRESADO");
+
+			if(oferta != null){
+				Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+
+				if(DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaDto.getCodEstadoOferta()) && depositoApi.isDepositoIngresado(deposito)) {
+					errorsList.put("depositoIngresado", "OFERTA_DEPOSITO_INGRESADO");
+				}
 			}
 
 		}

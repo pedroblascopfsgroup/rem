@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17329
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -17,6 +17,7 @@
 --##	    0.5 Corrección Tipo de grado - HREOS-14960
 --##	    0.6 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.7 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##        0.8 Se quitan los campos año concesión y fecha fin concesión - [HREOS-17329] - Javier Esbri
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -64,8 +65,6 @@ BEGIN
                             WHEN SPS.SPS_OCUPADO=1 AND TPA.DD_TPA_CODIGO IN (''02'',''03'') THEN ''S''
                             ELSE ''N''
                         END AS AVISO_OCUP_SERVICER
-                        , PAC.PAC_ANYO_CONCES ANYO_CONCESION
-                        , TO_CHAR(PAC.PAC_FEC_FIN_CONCES,''YYYYMMDD'') FEC_FIN_CONCESION
                     FROM '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC
                     JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON PAC.ACT_ID=ACT.ACT_ID AND ACT.BORRADO=0
                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TGP_TIPO_GRADO_PROPIEDAD TGP ON TGP.DD_TGP_ID = PAC.DD_TGP_ID AND TGP.BORRADO=0
@@ -85,24 +84,18 @@ BEGIN
                      AUX.CUOTA=US.CUOTA
                     ,AUX.GRADO_PROPIEDAD=US.GRADO_PROPIEDAD
                     ,AUX.AVISO_OCUP_SERVICER=US.AVISO_OCUP_SERVICER
-                    ,AUX.ANYO_CONCESION=US.ANYO_CONCESION
-                    ,AUX.FEC_FIN_CONCESION=US.FEC_FIN_CONCESION
                 WHEN NOT MATCHED THEN INSERT (
                      NUM_IDENTIFICATIVO
                     ,NUM_INMUEBLE
                     ,CUOTA
                     ,GRADO_PROPIEDAD
                     ,AVISO_OCUP_SERVICER
-                    ,ANYO_CONCESION
-                    ,FEC_FIN_CONCESION
                     )VALUES(
                          US.NUM_IDENTIFICATIVO
                         ,US.NUM_INMUEBLE
                         ,US.CUOTA
                         ,US.GRADO_PROPIEDAD
                         ,US.AVISO_OCUP_SERVICER
-                        ,US.ANYO_CONCESION
-                        ,US.FEC_FIN_CONCESION
                     )
    ';
    EXECUTE IMMEDIATE V_MSQL;

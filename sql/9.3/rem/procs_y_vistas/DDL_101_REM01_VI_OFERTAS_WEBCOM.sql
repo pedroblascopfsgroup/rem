@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20220315
+--## FECHA_CREACION=20220509
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16054
+--## INCIDENCIA_LINK=HREOS-17809
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           
@@ -21,6 +21,7 @@
 --##		0.6 Añadir campos HAYA HOME - Juan Jose Sanjuan - HREOS-15266
 --##		0.7 Corrección nombres de campos HAYA HOME - Pedro Blasco - HREOS-15266
 --##		0.8 Añadir campo TIPO_RECHAZO_SANCION - Juan Jose Sanjuan - [REMVIP-11028]
+--##		0.9 Quitar campo IBAN_DEVOLUCION - Adrián Molina - [HREOS-17809]
 --##########################################
 --*/
 
@@ -172,7 +173,6 @@ BEGIN
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
 		END																					AS EXCLUSION_IF,
-		DEP.DEP_IBAN_DEVOLUCION                                                             AS IBAN_DEVOLUCION,
 		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL
 
 

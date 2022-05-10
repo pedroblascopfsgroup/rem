@@ -1489,11 +1489,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleEntidad.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalleEntidad.getAuditoria().setFechaModificar(new Date());
 		
-		
-		if (!Checks.esNulo(dto.getPrimeraPosesion())) {
-			gastoLineaDetalleEntidad.setPrimeraPosesion(dto.getPrimeraPosesion().equals("1") ? true : false);
-		}
-		
 		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 		
 		if(gastoLineaDetalleEntidad.getGastoLineaDetalle() != null) {
@@ -2100,10 +2095,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						   gldEnt.setTipoTransmision(tipoTransmision);
 						}
 					}
-					
-					if (activoTrabajo.getTrabajo().getTomaPosesion() != null) {
-						gldEnt.setPrimeraPosesion(activoTrabajo.getTrabajo().getTomaPosesion());
-					}
 					if (activoTrabajo.getTrabajo().getCodigoSubpartida() != null) {
 						Filter filtroCodigoSubpartida = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getTrabajo().getCodigoSubpartida());
 						DDSubpartidasEdificacion subpartida = genericDao.get(DDSubpartidasEdificacion.class, filtroCodigoSubpartida);
@@ -2496,11 +2487,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				vElementoLineaDetalle.setGrupo(gastoLineaDetalle.getGrupo());
 				vElementoLineaDetalle.setTipo(gastoLineaDetalle.getTipo());
 				vElementoLineaDetalle.setSubtipo(gastoLineaDetalle.getSubtipo());
-				if (gastoLineaDetalle.getPrimeraPosesion() != null) {
-					vElementoLineaDetalle.setPrimeraPosesion(gastoLineaDetalle.getPrimeraPosesion() == true ? "Si" : "No");
-				} else {
-					vElementoLineaDetalle.setPrimeraPosesion("No");
-				}
 				if (gastoLineaDetalle.getSubpartidasEdificacion() != null) {
 					vElementoLineaDetalle.setSubpartidaEdif(gastoLineaDetalle.getSubpartidasEdificacion().getDescripcion());
 					vElementoLineaDetalle.setSubpartidaEdifCodigo(gastoLineaDetalle.getSubpartidasEdificacion().getCodigo());

@@ -95,9 +95,6 @@ public class VElementosLineaDetalle implements Serializable{
 	@Column(name = "SUBTIPO")
 	private String subtipo;
 	
-	@Column(name = "PRIM_TOMA_POSESION")
-	private String primeraPosesion;
-	
 	@Column(name = "SUBPARTEDIF_COD")
 	private String subpartidaEdifCodigo;
 	
@@ -309,14 +306,6 @@ public class VElementosLineaDetalle implements Serializable{
 
 	public void setSubtipo(String subtipo) {
 		this.subtipo = subtipo;
-	}
-
-	public String getPrimeraPosesion() {
-		return primeraPosesion;
-	}
-
-	public void setPrimeraPosesion(String primeraPosesion) {
-		this.primeraPosesion = primeraPosesion;
 	}
 
 	public String getSubpartidaEdifCodigo() {

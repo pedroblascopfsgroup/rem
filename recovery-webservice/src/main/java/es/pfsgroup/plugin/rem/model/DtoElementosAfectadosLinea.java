@@ -58,8 +58,6 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private String subtipo;
 	 
-	 private String primeraPosesion;
-	 
 	 private String subpartidaEdifCodigo;
 	 
 	 private String subpartidaEdif;
@@ -248,14 +246,6 @@ public class DtoElementosAfectadosLinea extends WebDto {
 
 	public void setSubtipo(String subtipo) {
 		this.subtipo = subtipo;
-	}
-
-	public String getPrimeraPosesion() {
-		return primeraPosesion;
-	}
-
-	public void setPrimeraPosesion(String primeraPosesion) {
-		this.primeraPosesion = primeraPosesion;
 	}
 
 	public String getSubpartidaEdifCodigo() {

@@ -32,9 +32,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				if (columnas[i].dataIndex == 'participacion') {
 					participacion = columnas[i];
 				}
-				if (columnas[i].dataIndex == 'primeraPosesion') {
-					primeraPosesion = columnas[i];
-				}
 			}
 
 			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
@@ -288,22 +285,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
                 	} 
 				},
 				{
-					text : HreRem.i18n('header.activos.afectados.primera.posesion'),
-					dataIndex : 'primeraPosesion',
-					flex : 1,
-					bind:	{
-						hidden:'{!esPropietarioCaixa}' 
-                	},
-    				editor: {
-    					xtype: 'combobox',
-    					bind: {
-    						store: '{comboSiNoRem}'
-    					},
-    					displayField: 'descripcion',
-    					valueField: 'codigo'
-    				}
-				},
-				{
 					text : HreRem.i18n('header.activos.afectados.subpartidas.edificacion'),
 					dataIndex : 'subpartidaEdif',
 					flex : 1,
@@ -479,8 +460,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
             params: {
             	id: data.id,
             	participacion:data.participacion,
-            	referenciaCatastral: data.referenciaCatastral,
-            	primeraPosesion:data.primeraPosesion
+            	referenciaCatastral: data.referenciaCatastral
             },  	
 			success: function(a, operation, c){
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));

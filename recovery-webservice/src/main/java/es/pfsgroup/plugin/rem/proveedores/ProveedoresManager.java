@@ -1833,11 +1833,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 		if(bloqueo != null && bloqueo.getProveedor()!= null) {
 			bloqueoAntiguo = this.bloqueoApiToDtoBloqueoApi(bloqueo);
-			this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
 			this.modificarRegistrosAnteriores(id, dto, bloqueoAntiguo);
 			Auditoria.delete(bloqueo);
 			genericDao.save(BloqueoApis.class, bloqueo);
 		}
+		
+		this.createRegistroHistoricoBloqueoApis(id, dto, bloqueoAntiguo);
 		
 		bloqueo = new BloqueoApis();
 		ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
@@ -2536,8 +2537,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				
 		List<DDCodigoPostal> codigosPostalesBusqueda = new ArrayList<DDCodigoPostal>();
 		
-		DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
-		
 		List<DtoCodigoPostalCombo> codigosPostalesADevolver = new ArrayList<DtoCodigoPostalCombo>();
 		
 		if(!"VALOR_POR_DEFECTO".equals(codigoMunicipio) && codigoMunicipio != null) {
@@ -2551,6 +2550,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				codigosPostalesBusqueda = proveedoresDao.getCodigosPostalesList(municipio);
 				
 				for(DDCodigoPostal codigosPostalesFinal : codigosPostalesBusqueda) {
+					
+					DtoCodigoPostalCombo codigosPostalesIndividuales = new DtoCodigoPostalCombo();
 					
 					codigosPostalesIndividuales.setId(codigosPostalesFinal.getId());
 					codigosPostalesIndividuales.setCodigo(codigosPostalesFinal.getCodigo());

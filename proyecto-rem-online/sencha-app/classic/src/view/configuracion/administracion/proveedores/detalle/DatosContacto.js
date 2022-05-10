@@ -90,8 +90,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 						            	model: 'HreRem.model.ComboBase',
 										proxy: {
 											type: 'uxproxy',
-											remoteUrl: 'proveedores/getComboMunicipioMultiple',
-											extraParams: {codigoProvincia: '{datosContacto.provinciaCodigo}'}
+											remoteUrl: 'proveedores/getComboMunicipioMultiple'
 										},
 										autoLoad: true
 						            },
@@ -110,8 +109,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 					        			model: 'HreRem.model.ComboBase',
 					        			proxy: {
 					        				type: 'uxproxy',
-					        				remoteUrl: 'proveedores/getComboCodigoPostalMultiple',
-					        				extraParams: {codigoMunicipio: '{datosContacto.municipioCodigo}'}
+					        				remoteUrl: 'proveedores/getComboCodigoPostalMultiple'
 					        			},
 										autoLoad: true
 						            }

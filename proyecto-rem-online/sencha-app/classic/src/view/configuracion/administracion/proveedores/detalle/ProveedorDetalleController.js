@@ -557,16 +557,98 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	storeMunicipio.getProxy().extraParams = {
     		codigoProvincia: value
     	};
-    	storeMunicipio.load();
+		storeMunicipio.comboMunicipio = comboMunicipio;
+		storeMunicipio.me = me;
+    	storeMunicipio.load({ 			
+			callback: function(records, operation, success) {
+				this.me.refrescarItemMunicipio(this.comboMunicipio, records);
+			}
+		});
+    },
+
+	refrescarItemMunicipio: function(comboMunicipio, records) {
+        var fromField = comboMunicipio.fromField,
+            toField  = comboMunicipio.toField,
+            fromStore = fromField.store,
+            toStore = toField.store;
+		var dataSelected = [];
+		for(var i = 0; i < comboMunicipio.value.length; i++){
+			records.filter(function(x){
+				if (x.data.codigo === comboMunicipio.value[i]){
+					dataSelected.push(comboMunicipio.value[i]);
+					records.splice(records.indexOf(x), 1);
+				}
+			});
+		}
+		comboMunicipio.setValue(null);
+		
+        fromStore.suspendEvents();
+        toStore.suspendEvents();
+        fromStore.removeAll();
+		fromStore.add(records);
+		toStore.removeAll();
+		toStore.add(dataSelected);
+        fromStore.resumeEvents();
+        toStore.resumeEvents();
+
+        fromField.boundList.refresh();
+        toField.boundList.refresh();
+
+		comboMunicipio.setValue(dataSelected.toString());
+
+		this.onChangeMunicipio(comboMunicipio, dataSelected);
     },
     
     onChangeMunicipio: function(combo, value, oldValue, eOpts){
     	var me = this;
     	var comboCodigoPostal = me.lookupReference('codigoPostalCombo');
     	var storeCodigoPostal = comboCodigoPostal.getStore();
-    	storeCodigoPostal.getProxy().extraParams = {
-    		codigoMunicipio: value
-    	};
-    	storeCodigoPostal.load();
+		if (!Ext.isEmpty(value) && value != null && value != "" && value[0] != null){
+	    	storeCodigoPostal.getProxy().extraParams = {
+	    		codigoMunicipio: value
+	    	};
+			storeCodigoPostal.comboCodigoPostal = comboCodigoPostal;
+			storeCodigoPostal.me = me;
+	    	storeCodigoPostal.load({ 			
+				callback: function(records, operation, success) {
+					this.me.refrescarItemCodigoPostal(this.comboCodigoPostal, records);
+				}
+			});
+		} else {
+			this.refrescarItemCodigoPostal(comboCodigoPostal, [], []);
+		}
+    },
+
+	refrescarItemCodigoPostal: function(comboCodigoPostal, records) {
+        var fromField = comboCodigoPostal.fromField,
+            toField  = comboCodigoPostal.toField,
+            fromStore = fromField.store,
+            toStore = toField.store;
+		var dataSelected = [];
+		for(var i = 0; i < comboCodigoPostal.value.length; i++){
+			if (!Ext.isEmpty(records)){
+				records.filter(function(x){
+					if (x.data.codigo === comboCodigoPostal.value[i]){
+						dataSelected.push(comboCodigoPostal.value[i]);
+						records.splice(records.indexOf(x), 1);
+					}
+				});
+			}
+		}
+		if (!Ext.isEmpty(dataSelected))comboCodigoPostal.setValue(null);
+	
+        fromStore.suspendEvents();
+        toStore.suspendEvents();
+        fromStore.removeAll();
+		fromStore.add(records);
+		toStore.removeAll();
+		toStore.add(dataSelected);
+        fromStore.resumeEvents();
+        toStore.resumeEvents();
+
+        fromField.boundList.refresh();
+        toField.boundList.refresh();
+
+		if (!Ext.isEmpty(dataSelected))comboCodigoPostal.setValue(dataSelected.toString());
     }
 });

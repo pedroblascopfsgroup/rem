@@ -87,10 +87,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     initComponent: function () {
         var me = this;
 		var isMediador = me.lookupController().getViewModel().get('proveedor').get('isMediador');
-
+		var subtipoProveedorCodigo = me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
+		  
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'bloqueoApis', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
+      
+        if(subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['ACREDITADOS']){
+        	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'bloqueoApis', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
+    	}
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isSociedadTasadora}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
         if (isMediador){
         	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscontacto', ocultarBotonesEdicion: false})}, ['TAB_DATOS_PROVEEDORES']);

@@ -10,12 +10,20 @@ export DIR_ETL=$DIR_BASE_ETL/$nameETL
 export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
+export INPUT_PATH=`cat $CFG_FILE | grep input_dir | cut -d';' -f2`
 
 cd "$DIR_ETL" &> /dev/null
 if [ $? -ne 0 ] ; then
    echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
    exit 1
 fi
+
+if [[ ! -f ${INPUT_PATH}/STOCK_APIS_????????.xlsx ]] ; then
+   echo "$(basename $0) Error ${INPUT_PATH}/STOCK_APIS_????????.xlsx inexistente"
+   exit 1
+fi
+
+mv STOCK_APIS_????????.xslx STOCK_APIS.xlsx
 
 if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
@@ -27,4 +35,6 @@ else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1
 fi
+
+
 

@@ -1,23 +1,5 @@
 package es.pfsgroup.plugin.rem.accionesCaixa;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import es.pfsgroup.plugin.rem.api.*;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
@@ -27,8 +9,21 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
 import es.pfsgroup.plugin.rem.controller.AgendaController;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -726,7 +721,14 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public Boolean avanzarTareaGenerico(net.sf.json.JSONObject dto) throws Exception {
-        return adapter.save(createRequestAvanzarTareaGenerico(dto));
+        boolean success = adapter.save(createRequestAvanzarTareaGenerico(dto));
+
+        if(success){
+            String idTarea = dto.get("idTarea").toString();
+            replicacionOfertasApi.callReplicateOferta(Long.parseLong(idTarea), success);
+        }
+
+        return success;
     }
 
     public Map<String, String[]> createRequestAvanzarTareaGenerico(net.sf.json.JSONObject dto) throws ParseException {

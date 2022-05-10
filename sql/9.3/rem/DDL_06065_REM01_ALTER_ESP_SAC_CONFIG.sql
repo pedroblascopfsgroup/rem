@@ -1,0 +1,60 @@
+--/*
+--##########################################
+--## AUTOR=Pedro Blasco
+--## FECHA_CREACION=20220510
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-17708
+--## PRODUCTO=NO
+--## Finalidad:  Creación de columna nueva
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial: Pedro Blasco
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+V_MSQL VARCHAR2(32000 CHAR);
+V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_M VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';       
+V_TABLA VARCHAR2(40 CHAR) := 'ESP_SAC_CONFIG';
+V_COLUMN_NAME VARCHAR2(50):= 'EAC_APLICA_OBRA_NUEVA';
+V_COMMENT_COLUMN VARCHAR2(500 CHAR):= 'Aplica Obra Nueva'; 
+
+V_NUM_COLS NUMBER(10,0);
+
+BEGIN
+
+
+-- Comprobar si existe la columna.
+V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = :1 AND TABLE_NAME = :2 AND OWNER = :3';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_COLS USING V_COLUMN_NAME, V_TABLA, V_ESQUEMA;
+DBMS_OUTPUT.PUT_LINE('[INICIO] ADD COLUMN ' || V_MSQL);
+IF V_NUM_COLS = 0 THEN
+ 	DBMS_OUTPUT.PUT_LINE('[INICIO] ADD COLUMN ' || V_COLUMN_NAME);
+    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COLUMN_NAME||' NUMBER(1,0) DEFAULT 0';    
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COLUMN_NAME||' IS '''||V_COMMENT_COLUMN||'''';	
+    DBMS_OUTPUT.PUT_LINE('[INFO] COLUMNA '||V_COLUMN_NAME||' AÑADIDA');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET '||V_COLUMN_NAME||' = 0';
+	DBMS_OUTPUT.PUT_LINE('[INFO] GUARDADAS '||SQL%ROWCOUNT||' FILAS EN '||V_COLUMN_NAME||''); 
+END IF;
+
+COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+	DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+	DBMS_OUTPUT.put_line(SQLERRM);
+	ROLLBACK;
+	RAISE;
+END;
+/
+EXIT;

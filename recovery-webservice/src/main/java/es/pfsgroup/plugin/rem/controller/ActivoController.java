@@ -4470,7 +4470,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 		public ModelAndView createActivoBbvaUic(DtoActivoBbvaUic dto, ModelMap model) {
 			try {
-				Boolean success = activoApi.createActivoBbvaUic(dto);
+				Boolean success = activoApi.createOrUpdateActivoBbvaUic(dto);
 				model.put(RESPONSE_SUCCESS_KEY, success);
 
 			} catch (Exception e) {
@@ -4495,4 +4495,19 @@ public class ActivoController extends ParadiseJsonController {
 
 			return createModelAndViewJson(model);
 		}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoBbvaUicProp(DtoActivoBbvaUic dto, ModelMap model) {
+		try {
+			Boolean success = activoApi.updateActivoBbvaUicProp(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+			logger.error("error en createActivoBbvaUic", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

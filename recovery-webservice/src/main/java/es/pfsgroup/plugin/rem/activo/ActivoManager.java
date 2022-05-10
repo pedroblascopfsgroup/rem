@@ -9812,7 +9812,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Transactional(readOnly = false)
 	@Override
-	public Boolean createActivoBbvaUic(DtoActivoBbvaUic dto) throws Exception  {
+	public Boolean createOrUpdateActivoBbvaUic(DtoActivoBbvaUic dto) throws Exception  {
 		
 		try {				
 			if(dto.getUicBbva()!=null && dto.getIdActivo()!=null) {
@@ -9828,6 +9828,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				if(activoBbvaUic != null) {
 					activoBbvaUic.setUicBbva(dto.getUicBbva());
+					if (dto.getActivoEpa()) {
+						Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
+						activoBbvaUic.setActivoEpa(ddSi);
+					} else {
+						Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
+						activoBbvaUic.setActivoEpa(ddNo);
+					}
+					activoBbvaUic.setEmpresa(dto.getEmpresa());
+					activoBbvaUic.setOficina(dto.getOficina());
+					activoBbvaUic.setContrapartida(dto.getContrapartida());
+					activoBbvaUic.setFolio(dto.getFolio());
+					activoBbvaUic.setCdpen(dto.getCdpen());
+					activoBbvaUic.setCexperBbva(dto.getCexperBbva());
 					genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
 				}
 				return true;
@@ -9879,6 +9894,44 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return activo;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto) throws Exception {
+		
+		try {				
+			if(dto.getUicBbva()!=null && dto.getIdActivo()!=null) {
+				Filter activoBbvaUicIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdActivo());
+				Filter activoBbvaUicBbva = genericDao.createFilter(FilterType.EQUALS, "uicBbva", dto.getUicBbva());
+				ActivoBbvaUic activoBbvaUic = genericDao.get(ActivoBbvaUic.class, activoBbvaUicIdActivo, activoBbvaUicBbva);
+				
+				if(activoBbvaUic != null) {
+						if (dto.getActivoEpa()) {
+							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+							DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
+							activoBbvaUic.setActivoEpa(ddSi);
+						} else {
+							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+							DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
+							activoBbvaUic.setActivoEpa(ddNo);
+						}
+						activoBbvaUic.setEmpresa(dto.getEmpresa());
+						activoBbvaUic.setOficina(dto.getOficina());
+						activoBbvaUic.setContrapartida(dto.getContrapartida());
+						activoBbvaUic.setFolio(dto.getFolio());
+						activoBbvaUic.setCdpen(dto.getCdpen());
+						activoBbvaUic.setCexperBbva(dto.getCexperBbva());
+						genericDao.save(ActivoBbvaUic.class, activoBbvaUic);
+				}
+				return true;
+			}			
+			
+			return false;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
 	}
 }
 

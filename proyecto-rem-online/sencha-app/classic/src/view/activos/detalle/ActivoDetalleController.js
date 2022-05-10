@@ -8987,6 +8987,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		tabData.id = me.getViewModel().get("activo.id");
 		tabData.models = [];
 		var uic = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().uicBbva;
+		var activoEpa = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().activoEpa;
+		var cexperBbva = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().cexperBbva;
+		var contrapartida = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().contrapartida;
+		var folio = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().folio;
+		var cdpen = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().cdpen;
+		var oficina = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().oficina;
+		var empresa = me.getView().down('[xtype=activobbvauicgrid]').selection.getData().empresa;
 		Ext.Array.each(listadoActivos, function(record, index) {
 			var model = {};
 			model.name = 'activobbvauic';
@@ -8994,6 +9001,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			model.data = {};
 			model.data.idActivo = record.data.activoId;
 			model.data.uicBbva = uic;
+			model.data.activoEpa = activoEpa;
+			model.data.cexperBbva = cexperBbva;
+			model.data.contrapartida = contrapartida;
+			model.data.folio = folio;
+			model.data.cdpen = cdpen;
+			model.data.oficina = oficina;
+			model.data.empresa = empresa;
 			tabData.models.push(model);
 		}); 
 		

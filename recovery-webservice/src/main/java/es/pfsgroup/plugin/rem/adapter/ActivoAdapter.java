@@ -5783,7 +5783,31 @@ public class ActivoAdapter {
 				if (activoBbvaUic.getUicBbva() != null) {
 					dto.setUicBbva(activoBbvaUic.getUicBbva());
 				}
-				
+				if(activoBbvaUic.getActivoEpa() != null) {
+					if(DDSinSiNo.CODIGO_SI.equals(activoBbvaUic.getActivoEpa().getCodigo())){
+						dto.setActivoEpa(true);
+					}else {
+						dto.setActivoEpa(false);
+					}
+				}
+				if (activoBbvaUic.getCexperBbva() != null) {
+					dto.setCexperBbva(activoBbvaUic.getCexperBbva());
+				}
+				if (activoBbvaUic.getContrapartida() != null) {
+					dto.setContrapartida(activoBbvaUic.getContrapartida());
+				}
+				if (activoBbvaUic.getFolio() != null) {
+					dto.setFolio(activoBbvaUic.getFolio());
+				}
+				if (activoBbvaUic.getCdpen() != null) {
+					dto.setCdpen(activoBbvaUic.getCdpen());
+				}
+				if (activoBbvaUic.getOficina() != null) {
+					dto.setOficina(activoBbvaUic.getOficina());
+				}
+				if (activoBbvaUic.getEmpresa() != null) {
+					dto.setEmpresa(activoBbvaUic.getEmpresa());
+				}
 				dtoLista.add(dto);
 			}
 		}

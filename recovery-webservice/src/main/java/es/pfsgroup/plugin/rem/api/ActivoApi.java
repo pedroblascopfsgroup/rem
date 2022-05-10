@@ -1503,7 +1503,9 @@ public interface ActivoApi {
 		
 	Boolean destroyActivoBbvaUic(Long idActivo, String uicBbva) throws Exception;
 
-	Boolean createActivoBbvaUic(DtoActivoBbvaUic dto)throws Exception;
+	Boolean createOrUpdateActivoBbvaUic(DtoActivoBbvaUic dto)throws Exception;
+	
+	Boolean updateActivoBbvaUicProp(DtoActivoBbvaUic dto)throws Exception;
 
 	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

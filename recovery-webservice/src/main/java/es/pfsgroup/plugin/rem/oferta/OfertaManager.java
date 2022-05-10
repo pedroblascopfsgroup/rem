@@ -6408,17 +6408,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Activo activo = activoAgrupacionActivo.getActivo();
 				if(activoAgrupacionActivo.getActivo() != null) {
 					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoAgrupacionActivo.getActivo().getId());
-					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroactivo);
-					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
-						return 3;
+					List <ActivoBbvaUic> activoBbvaUic = genericDao.getList(ActivoBbvaUic.class, filtroactivo);
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
+						for (ActivoBbvaUic activoBbvaUic2 : activoBbvaUic) {
+							if (DDSinSiNo.CODIGO_SI.equals(activoBbvaUic2.getActivoEpa().getCodigo())) {
+								return 3;
+							}
+							break;
+						}
 					}
 					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
 						return 2;
 					}
-					if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
-						return 1;
+					for (ActivoBbvaUic activoBbvaUic3 : activoBbvaUic) {
+						if(DDSinSiNo.CODIGO_SI.equals(activoBbvaUic3.getActivoEpa().getCodigo())) {
+							return 1;
+						}
+						break;
 					}
-					
 				}
 			}
 		}
@@ -6931,10 +6938,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					
 					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id_Agr);
+					ActivoBbvaUic actBbvaUic = genericDao.get(ActivoBbvaUic.class,filtroAct_id_Agr);
 					if(!Checks.esNulo(actBbva)) {
 						activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
-						if(actBbva.getActivoEpa() != null) {
-							activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+						if(actBbvaUic != null && actBbvaUic.getActivoEpa() != null) {
+							activosFichaComercial.setEpa(actBbvaUic.getActivoEpa().getDescripcion());
 						}
 					}
 					
@@ -7225,10 +7233,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 	
 				ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id);
+				ActivoBbvaUic actBbvaUic = genericDao.get(ActivoBbvaUic.class,filtroAct_id);
 				if(!Checks.esNulo(actBbva)) {
 					activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
-					if(!Checks.esNulo(actBbva.getActivoEpa())) {
-						activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+					if(actBbvaUic != null && !Checks.esNulo(actBbvaUic.getActivoEpa())) {
+						activosFichaComercial.setEpa(actBbvaUic.getActivoEpa().getDescripcion());
 					}
 				}
 	

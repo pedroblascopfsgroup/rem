@@ -2819,8 +2819,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
-					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
-					if(activoBbva != null && activoBbva.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+					ActivoBbvaUic activoBbvaUic  = genericDao.get(ActivoBbvaUic.class, filtroActivo);
+					if(activoBbvaUic != null && activoBbvaUic.getActivoEpa() != null && DDSinSiNo.CODIGO_SI.equals(activoBbvaUic.getActivoEpa().getCodigo())) {
 						return true;
 					}
 				}

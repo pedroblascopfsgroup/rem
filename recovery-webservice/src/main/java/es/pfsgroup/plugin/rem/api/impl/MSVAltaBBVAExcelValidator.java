@@ -426,33 +426,31 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			if(colIuc !=null && !colIuc.isEmpty()) {
 				activoBbvaUic.setActivo(activo);
 				activoBbvaUic.setUicBbva(colIuc);	
-
-				genericDao.save(ActivoBbvaUic.class,activoBbvaUic);
 			}			
 			if(colCexper!=null && !colCexper.isEmpty()) {
-				activoBBVA.setCexperBbva(colCexper);
+				activoBbvaUic.setCexperBbva(colCexper);
 			}
 			if(colIndicadorActivoEPA!=null &&  !colIndicadorActivoEPA.isEmpty()) {
 				if(colIndicadorActivoEPA.contains("s") || colIndicadorActivoEPA.contains("S")) {
-					activoBBVA.setActivoEpa(ddSi);
+					activoBbvaUic.setActivoEpa(ddSi);
 				}else {
-					activoBBVA.setActivoEpa(ddNo);
+					activoBbvaUic.setActivoEpa(ddNo);
 				}
 			}
 			if(colEmpresa!=null && !colEmpresa.isEmpty()) {
-				activoBBVA.setEmpresa(colEmpresa);
+				activoBbvaUic.setEmpresa(colEmpresa);
 			}
 			if(colOficina!=null && !colOficina.isEmpty() ) {
-				activoBBVA.setOficina(colOficina);
+				activoBbvaUic.setOficina(colOficina);
 			}
 			if(colContrapartida!=null && !colContrapartida.isEmpty()) {
-				activoBBVA.setContrapartida(colContrapartida);
+				activoBbvaUic.setContrapartida(colContrapartida);
 			}
 			if(colFolio!=null && !colFolio.isEmpty()) {
-				activoBBVA.setFolio(colFolio);
+				activoBbvaUic.setFolio(colFolio);
 			}
 			if(colCDPEN!=null && !colCDPEN.isEmpty()) {
-				activoBBVA.setCdpen(colCDPEN);
+				activoBbvaUic.setCdpen(colCDPEN);
 			}
 			
 			
@@ -485,7 +483,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			}
 			
 			genericDao.save(ActivoBbvaActivos.class, activoBBVA);
-			
+			genericDao.save(ActivoBbvaUic.class,activoBbvaUic);
 			
 			//ACT_ADM_INF_ADMINISTRATIVA
 			

@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaUic;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -1144,22 +1145,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		//ActivoBbvaUic activoBbvaUic = genericDao.get(ActivoBbvaUic.class, filtro);
 		
 		if(activoBbva != null) {
-			if(activoBbva.getActivoEpa() != null) {
-				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
-					activoDto.setActivoEpa(true);
-				}else {
-					activoDto.setActivoEpa(false);
+			/*
+			if (activoBbvaUic != null) {
+				if(activoBbvaUic.getActivoEpa() != null) {
+					if(DDSinSiNo.CODIGO_SI.equals(activoBbvaUic.getActivoEpa().getCodigo())){
+						activoDto.setActivoEpa(true);
+					}else {
+						activoDto.setActivoEpa(false);
+					}
 				}
+				activoDto.setCexperBbva(activoBbvaUic.getCexperBbva());
+				activoDto.setContrapartida(activoBbvaUic.getContrapartida());
+				activoDto.setFolio(activoBbvaUic.getFolio());
+				activoDto.setCdpen(activoBbvaUic.getCdpen());
+				activoDto.setOficina(activoBbvaUic.getOficina());
+				activoDto.setEmpresa(activoBbvaUic.getEmpresa());
 			}
-			activoDto.setEmpresa(activoBbva.getEmpresa());
-			activoDto.setOficina(activoBbva.getOficina());
-			activoDto.setContrapartida(activoBbva.getContrapartida());
-			activoDto.setFolio(activoBbva.getFolio());
-			activoDto.setCdpen(activoBbva.getCdpen());
-			
-			
+			*/
 			if(activoBbva.getTipoTransmision() != null) {
 				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
 				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
@@ -1173,7 +1178,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
 			activoDto.setLineaFactura(activoBbva.getLineaFactura());
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
-			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+			//activoDto.setCexperBbva(activoBbva.getCexperBbva());
 
 			if(activoBbva.getCodPromocion() != null)
 				activoDto.setCodPromocionBbva(activoBbva.getCodPromocion());
@@ -2084,6 +2089,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+			//ActivoBbvaUic activoBbvaUic = genericDao.get(ActivoBbvaUic.class, filtro);
 			if(activoBbva != null) {
 				if(dto.getCodPromocionBbva() != null) {
 					List<ActivoBbvaActivos> activosPromocion = genericDao.getList(ActivoBbvaActivos.class, 
@@ -2097,13 +2103,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				//No comprobar los nulos, porque siempre se van a setear,
 				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
-				activoBbva.setCexperBbva(dto.getCexperBbva());
+				/*
+				if (activoBbvaUic != null) {
+					activoBbvaUic.setCexperBbva(dto.getCexperBbva());
+				}
+				 */
 			}
-			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
-				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
-				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
-				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
-				dto.getCexperBbva() !=  null
+			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null ||  dto.getNumActivoBbva() != null ||
+				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null
 
 			) {
 				
@@ -2121,39 +2128,41 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						DDTipoAlta ddAut = genericDao.get(DDTipoAlta.class, filtroAut);
 						activoBbva.setTipoAlta(ddAut);
 					}
+					/*
+					if (activoBbvaUic != null) {
+						if (dto.getActivoEpa() != null) {
+							if (dto.getActivoEpa()) {
+								Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+								DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
+								activoBbvaUic.setActivoEpa(ddSi);
+							} else {
+								Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+								DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
+								activoBbvaUic.setActivoEpa(ddNo);
+							}
+						}
+						
+						if (dto.getEmpresa() != null) {
+							activoBbvaUic.setEmpresa(dto.getEmpresa());
+						}
 
-					if (dto.getActivoEpa() != null) {
-						if (dto.getActivoEpa()) {
-							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
-							DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
-							activoBbva.setActivoEpa(ddSi);
-						} else {
-							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
-							DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
-							activoBbva.setActivoEpa(ddNo);
+						if (dto.getOficina() != null) {	
+							activoBbvaUic.setOficina(dto.getOficina());
+						}
+
+						if (dto.getContrapartida() != null) {
+							activoBbvaUic.setContrapartida(dto.getContrapartida());
+						}
+
+						if (dto.getFolio() != null) {
+							activoBbvaUic.setFolio(dto.getFolio());
+						}
+
+						if (dto.getCdpen() != null) {
+							activoBbvaUic.setCdpen(dto.getCdpen());
 						}
 					}
-
-					if (dto.getEmpresa() != null) {
-						activoBbva.setEmpresa(dto.getEmpresa());
-					}
-
-					if (dto.getOficina() != null) {	
-						activoBbva.setOficina(dto.getOficina());
-					}
-
-					if (dto.getContrapartida() != null) {
-						activoBbva.setContrapartida(dto.getContrapartida());
-					}
-
-					if (dto.getFolio() != null) {
-						activoBbva.setFolio(dto.getFolio());
-					}
-
-					if (dto.getCdpen() != null) {
-						activoBbva.setCdpen(dto.getCdpen());
-					}
-
+					*/
 					if (dto.getNumActivoBbva() != null) {
 						activoBbva.setNumActivoBbva(dto.getNumActivoBbva());
 					}

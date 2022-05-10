@@ -1609,7 +1609,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									rawValue: '{activo.entradaActivoBankiaDescripcion}'
 								}
 							},
-							{
+							/*{
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
 								colspan: 3,
@@ -1618,7 +1618,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									hidden: '{!activo.isCarteraBbva}',
 									value: '{activo.cexperBbva}'
 								}
-							},
+							},*/
 							{	
 								xtype:'fieldsettable',
 								defaultType: 'textfieldbase',
@@ -1644,7 +1644,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						]
 						
 					}, //Fin activo bancario
-					//Activo EPA
+					/*//Activo EPA
 		            {
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
@@ -1742,7 +1742,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									}
 								]
 						}]
-					}, //Fin activo EPA
+					}, //Fin activo EPA*/
 					
 		            {//Per�metro e    
 		                

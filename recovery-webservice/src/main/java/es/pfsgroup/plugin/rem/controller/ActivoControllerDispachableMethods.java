@@ -475,6 +475,8 @@ class ActivoControllerDispachableMethods {
 					
 					if (!existe) {
 						this.controller.createActivoBbvaUic(dto, new ModelMap());
+					} else {
+						this.controller.updateActivoBbvaUicProp(dto, new ModelMap());
 					}
 				}
 			}

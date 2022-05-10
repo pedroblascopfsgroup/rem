@@ -10,6 +10,28 @@ Ext.define('HreRem.model.ActivoBbvaUicGridModel', {
 			name: 'idActivo'
 		},{
 			name: 'id'
+		},
+		{
+			name: 'activoEpa',
+			type: 'boolean'
+		},
+		{
+			name: 'cexperBbva'
+		},
+		{
+			name: 'empresa'
+		},
+		{
+			name: 'oficina'
+		},
+		{
+			name: 'contrapartida'
+		},
+		{
+			name: 'folio'
+		},
+		{
+			name: 'cdpen'
 		}
 	],
 
@@ -19,7 +41,7 @@ Ext.define('HreRem.model.ActivoBbvaUicGridModel', {
 		remoteUrl: 'activo/getActivoBbvaUic',
 		api: {        
 	        create: 'activo/createActivoBbvaUic',
-	        update: 'activo/updateDeudorAcreditado',
+	        update: 'activo/createActivoBbvaUic',
 	        destroy: 'activo/destroyDeudorById'
 	
 	    }

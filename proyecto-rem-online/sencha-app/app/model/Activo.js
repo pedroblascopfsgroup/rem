@@ -1050,10 +1050,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
-    			name: 'activoEpa',
-    			type: 'boolean'
-    		},
-    		{
     			name: 'reoContabilizadoSap',
     			type: 'boolean'
 			},
@@ -1072,10 +1068,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'perimetroAdmision',
     			type:'boolean'
 			},
-			{
-    			name: 'activoEpa',
-    			type: 'boolean'
-    		},
 			{
 				name: 'fechaPerimetroAdmision',
 				type:'date',
@@ -1139,21 +1131,6 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name:'estadoFisicoActivoDNDDescripcion'
 			},
-    		{
-				name: 'empresa'
-    		},
-    		{
-    			name: 'oficina'
-    		},
-    		{
-    			name: 'contrapartida'
-    		},
-    		{
-    			name: 'folio'
-    		},
-    		{
-				name: 'cdpen'
-			},
 			{
     			name: 'isGrupoOficinaKAM',
     			type: 'boolean'
@@ -1170,9 +1147,6 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'idOrigenHre'
-    		},
-    		{
-    			name: 'cexperBbva'
     		},
     		{
     			name: 'tipoTransmisionCodigo'

@@ -33,6 +33,93 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
                 flex	 : 1,
                 hidden: true,
                 dataIndex: 'id'
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activo.epa'),
+                flex	 : 0.5,
+                dataIndex: 'activoEpa',
+                readOnly : '{esUA}',
+                renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+					var foundedRecord = this.up('datosbasicosactivo').lookupController().getStore('comboSiNoBoolean').findRecord('codigo', value);
+					var descripcion;
+					if(!Ext.isEmpty(foundedRecord)) {
+						descripcion = foundedRecord.getData().descripcion;
+					};
+					return descripcion;
+				},
+                editor: {
+					xtype: 'combobox',
+					bind: {
+						store: '{comboSiNoBoolean}'
+					},
+					displayField: 'descripcion',
+					valueField: 'codigo'
+				},
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
+                flex	 : 0.5,
+                dataIndex: 'cexperBbva',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     }
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.contrapartida'),
+                flex	 : 0.5,
+                dataIndex: 'contrapartida',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     },
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.folio'),
+                flex	 : 0.5,
+                dataIndex: 'folio',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     },
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.cdpen'),
+                flex	 : 0.5,
+                dataIndex: 'cdpen',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     },
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.oficina'),
+                flex	 : 0.5,
+                dataIndex: 'oficina',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     },
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
+            },{               
+                text	 : HreRem.i18n('fieldlabel.activobbva.empresa'),
+                flex	 : 0.5,
+                dataIndex: 'empresa',
+                readOnly : '{esUA}',
+                editor: {
+        			xtype:'textfield'
+        	     },
+				listeners: {
+                	change:  'onActivoEpa'
+            	}
             }
 		];
 
@@ -112,6 +199,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
 	   		me.mask(HreRem.i18n("msg.mask.espere"));
 	   		var uicBbva = context.record.get('uicBbva');
 	   		var id = context.record.get('id');
+	   		var activoEpa = context.record.get('activoEpa');
+	   		var cexperBbva = context.record.get('cexperBbva');
+	   		var contrapartida = context.record.get('contrapartida');
+	   		var folio = context.record.get('folio');
+	   		var cdpen = context.record.get('cdpen');
+	   		var oficina = context.record.get('oficina');
+	   		var empresa = context.record.get('empresa');
 	   		if(!me.isNumeric(id)){
 	   			id = null;
 	   		}
@@ -123,7 +217,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoBbvaUicGrid', {
 				params : {
 						idActivo: idActivo, 
 						uicBbva: uicBbva,
-						id: id
+						id: id,
+						activoEpa: activoEpa,
+						cexperBbva: cexperBbva,
+						contrapartida: contrapartida,
+						folio: folio,
+						cdpen: cdpen,
+						oficina: oficina,
+						empresa: empresa
 				},
 				success : function(response, opts) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));

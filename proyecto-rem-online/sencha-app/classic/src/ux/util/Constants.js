@@ -118,7 +118,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		OFICINA_BBVA:'39',
 		OFICINA_LIBERBANK:'38',
 		OFICINA_BANKIA: '28',
-		OFICINA_CAJAMAR: '29'
+		OFICINA_CAJAMAR: '29',
+		ACREDITADOS: '44'
 		
 	},
 

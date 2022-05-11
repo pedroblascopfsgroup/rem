@@ -90,7 +90,92 @@ Ext.define('HreRem.view.activos.detalle.CargasActivoGrid', {
 			        dataIndex : 'fechaPresentacionRpCarta', 
 			        flex : 1,
 		            formatter: 'date("d/m/Y")'
-			      }
+			      },
+			      {
+	                    text : HreRem.i18n('header.indicador.preferente'),
+	                    flex : 1,
+	                    dataIndex : 'indicadorPreferente',
+	                    bind: {
+							hidden: '{!isCarteraBankia}'
+	                    },
+	                    renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+		                }
+	              },
+			      {
+	                    text : HreRem.i18n('header.identificador.carga.ejecutada'),
+	                    flex : 1,
+	                    dataIndex : 'identificadorCargaEjecutada',
+	                    bind: {
+							hidden: '{!isCarteraBankia}'
+	                    },
+	                    renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+		                }
+	              },
+			      {
+	                    text : HreRem.i18n('header.igualdad.rango'),
+	                    flex : 1,
+	                    dataIndex : 'igualdadRango',
+	                    bind: {
+							hidden: '{!isCarteraBankia}'
+	                    },
+	                    renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+		                }
+	              },
+			      {
+	                    text : HreRem.i18n('header.identificador.carga.idefinida'),
+	                    flex : 1,
+	                    dataIndex : 'identificadorCargaIndefinida',
+	                    bind: {
+							hidden: '{!isCarteraBankia}'
+	                    },
+	                    renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+		                }
+	              },
+			      {
+	                    text : HreRem.i18n('header.identificador.carga.economica'),
+	                    flex : 1,
+	                    dataIndex : 'identificadorCargaEconomica',
+	                    bind: {
+							hidden: '{!isCarteraBankia}'
+	                    },
+	                    renderer : function(value) {
+			        		if(value == true){
+			        			return "Si";
+			        		}else if(value == false){
+			        			return "No";
+			        		}else {
+			        			return "";
+			        		}
+		                }
+	              }
 
         ];
 

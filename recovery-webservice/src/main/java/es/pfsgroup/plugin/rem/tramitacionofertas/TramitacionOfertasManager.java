@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -49,17 +50,6 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
@@ -82,7 +72,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -220,6 +209,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -632,18 +624,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		nuevoExpediente.setOferta(oferta);
+
+		String estadoEcoCod = DDEstadosExpedienteComercial.EN_TRAMITACION;
+		String subestadoCod = DDSubestadosExpedienteComercial.ENVIADO;
+
+		if (oferta.getIdOfertaHayaHome() != null){
+			estadoEcoCod = DDEstadosExpedienteComercial.BORRADOR;
+			subestadoCod = DDSubestadosExpedienteComercial.BORRADOR;
+		}
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-						DDEstadosExpedienteComercial.EN_TRAMITACION);
+						estadoEcoCod);
 		nuevoExpediente.setEstado(estadoExpediente);
 		
-		String subestado = DDSubestadosExpedienteComercial.ENVIADO;
 		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
-			subestado = DDSubestadosExpedienteComercial.NO_ENVIADO;
+			subestadoCod = DDSubestadosExpedienteComercial.NO_ENVIADO;
 		}
 		
 		DDSubestadosExpedienteComercial subestadoExpediente = (DDSubestadosExpedienteComercial) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestado);
+				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestadoCod);
 		nuevoExpediente.setSubestadoExpediente(subestadoExpediente);
 		
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);
@@ -2442,5 +2441,59 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 
 		return cex;
+	}
+
+	@Override
+	public boolean debeCongelarseOferta(Long numOferta){
+		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+
+		return (oferta == null) ? false : debeCongelarseOferta(oferta.getNumOferta());
+	}
+
+	@Override
+	public boolean debeCongelarseOferta(Oferta oferta){
+		Activo activoPrincipal = oferta.getActivoPrincipal();
+		DDCartera cartera = activoPrincipal.getCartera();
+		DDSubcartera subcartera = activoPrincipal.getSubcartera();
+
+		List<ExpedienteComercial> restoExpedientes = getRestoExpedientesNoAnulados(oferta);
+
+		if(subcartera != null){
+			// En caso de ser divarian, se congela en caso de tener algun otro expediente en estado Aprobado.
+			if(DDSubcartera.isSubcarteraDivarianArrowInmob(subcartera)
+					|| DDSubcartera.isSubcarteraDivarianRemainingInmob(subcartera)){
+				for (ExpedienteComercial eco : restoExpedientes) {
+					if(funcionesTramitesApi.isTramiteAprobado(eco)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private List<ExpedienteComercial> getRestoExpedientesNoAnulados(Oferta oferta){
+		List<ExpedienteComercial> restoExpedientes = new ArrayList<ExpedienteComercial>();
+		if(oferta == null) return restoExpedientes;
+
+		// Revisamos todas las ofertas que tienen todos los activos implicados en la oferta actual.
+		List<ActivoOferta> activosOfertas = oferta.getActivosOferta();
+		for (ActivoOferta actofr: activosOfertas) {
+			//Recuperamos las ofertas del activo actual
+			List<ActivoOferta> ofertasActivoActual = actofr.getPrimaryKey().getActivo().getOfertas();
+			for (ActivoOferta ofrAct : ofertasActivoActual) {
+				Oferta ofertaActual = ofrAct.getPrimaryKey().getOferta();
+				//Si la oferta que estamos comprobando actualmente es la oferta original, la obviamos
+				if(ofertaActual.getId().equals(oferta.getId())) continue;
+				ExpedienteComercial eco = ofertaActual.getExpedienteComercial();
+				//Si la oferta no tiene expediente o la oferta est anulada, la obviamos tambien.
+				if(eco == null) continue;
+				else if(!DDEstadoOferta.isRechazada(ofertaActual.getEstadoOferta())){
+					restoExpedientes.add(eco);
+				}
+			}
+		}
+
+		return restoExpedientes;
 	}
 }

@@ -149,6 +149,31 @@ Ext.define('HreRem.model.ActivoCargas', {
     			type:'date',
     			dateFormat: 'c'
     				
+    		},
+    		{
+    			name:'indicadorPreferente',
+    			type: 'boolean'
+    			
+    		},
+    		{
+    			name:'identificadorCargaEjecutada',
+    			type: 'boolean'
+    			
+    		},
+    		{
+    			name:'igualdadRango',
+    			type: 'boolean'
+    			
+    		},
+    		{
+    			name:'identificadorCargaIndefinida',
+    			type: 'boolean'
+    			
+    		},
+    		{
+    			name:'identificadorCargaEconomica',
+    			type: 'boolean'
+    			
     		}
     		
     ],

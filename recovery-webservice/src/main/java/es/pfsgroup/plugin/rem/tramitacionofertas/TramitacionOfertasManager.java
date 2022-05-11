@@ -499,6 +499,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							+ " no permite la realización de una oferta");
 				}
 			}
+			
+			if (ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
+				throw new JsonViewerException("Un activo de la agrupación ya tiene una oferta aceptada y aprobada.");
+			}
 
 		}
 	}

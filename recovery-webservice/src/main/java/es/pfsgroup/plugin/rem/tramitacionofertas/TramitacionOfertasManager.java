@@ -2045,13 +2045,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))
 			throw new JsonViewerException(messageServices.getMessage(AGRUPACION_BAJA));
 
-		// Si el activo pertenece a un lote comercial, no se pueden aceptar
-		// ofertas de forma individual en el activo
-		if ((activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())
-				|| activoAgrupacionActivoDao.activoEnAgrupacionLoteComercialAlquiler(dto.getIdActivo()))
-				&& (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
-		}
 		if (!Checks.esNulo(oferta.getCliente())) {
 			if (Checks.esNulo(oferta.getCliente().getDocumento())
 					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {

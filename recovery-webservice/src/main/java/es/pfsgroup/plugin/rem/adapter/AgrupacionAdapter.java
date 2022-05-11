@@ -5004,7 +5004,7 @@ public class AgrupacionAdapter {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			return DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
 				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)

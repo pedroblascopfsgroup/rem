@@ -24,6 +24,11 @@ public class TareaProcedimientoConstants {
         public static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
         public static final String CODIGO_T017_AGENDAR_POSICIONAMIENTO = "T017_AgendarPosicionamiento";
         public static final String CODIGO_T107_FIRMA_CONTRATO = "T017_FirmaContrato";
+        public static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
+        public static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES = "T017_RespuestaOfertanteCES";
+        public static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
+
+
     }
     
     public class TramiteAlquilerT015{

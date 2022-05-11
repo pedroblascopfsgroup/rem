@@ -13,8 +13,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
 	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid', 'HreRem.model.TestigosOpcionales',
-	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel', 'HreRem.model.Organismos'],
+	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
+	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
+	'HreRem.model.TestigosOpcionales', 'HreRem.model.Organismos'],
 
     data: {
     	activo: null,
@@ -739,8 +740,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 			var situacionActivo = get('patrimonio.estadoAlquiler');
 			var isDivarian = get('patrimonio.isCarteraCerberusDivarian');
+			var isCaixa = get('isCarteraBankia');	
 
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian){
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian  && !isCaixa){
 				return false;
 			}else{
 				return true;
@@ -2039,6 +2041,72 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	return true;
 	    	}
 	    	return false;
+	    },
+	    
+	    isVisbleIndicadorPlazaParking: function(get){
+	    	var me = this;
+	    	var anejoGarajeCodRef = me.get('activo.anejoGarajeCodigo');
+
+			if (anejoGarajeCodRef == '01') {
+				return false;
+			} else {
+				return true
+			}
+	    },
+	    
+	    isVisbleIndicadorTrastero: function(get){
+	    	var me = this;
+	    	var anejoTrasteroCodRef = me.get('activo.anejoTrasteroCodigo');
+
+			if (anejoTrasteroCodRef == '01') {
+				return false;
+			} else {
+				return true;
+			}
+	    },
+	    
+	    isEditableAnejo: function(get){
+	    	var me = this;
+	    	var editable = false;
+	    	var claseActivo = get('activo.claseActivoCodigo');
+			var isCarteraBankia = get('activo.isCarteraBankia');
+			var situacionComercialCodigo = get('activo.situacionComercialCodigo');
+			var aplicaComercializar = get('activo.aplicaComercializar');
+			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+			
+	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']))
+	    			&& tieneFuncion) {
+	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
+	    			editable = tieneFuncion;
+	    		}
+	    	}else if(claseActivo =='01'){
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion);
+			}else{
+				editable = tieneFuncion;
+			}
+	    },
+	    
+	    isEditableIdentificador: function(get){
+	    	var me = this;
+	    	var editable = false;
+			var claseActivo = get('activo.claseActivoCodigo');
+			var isCarteraBankia = get('activo.isCarteraBankia');
+			var situacionComercialCodigo = get('activo.situacionComercialCodigo');
+			var aplicaComercializar = get('activo.aplicaComercializar');
+			var tieneFuncion = $AU.userHasFunction('EDITAR_TAB_INFO_COMERCIAL_PUBLICACION');
+
+	    	if (isCarteraBankia && ($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+	    			&& tieneFuncion) {
+	    		if (situacionComercialCodigo != '05' && aplicaComercializar) {
+	    			editable = tieneFuncion;
+	    		}
+	    	}else if(claseActivo =='01'){
+	    		editable = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPREC']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+						 && tieneFuncion);
+			}else{
+				editable = tieneFuncion;
+			}
 	    }
 	 },
     
@@ -4561,6 +4629,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 		},
 
+		comboSegmentacionCartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'segmentacionCartera'}
+			}
+		},
+
 		comboTipoOrganismo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4626,7 +4703,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			listeners:{
 				load: 'cargarReferenciaCatastral'
 			}
-
         },
 
 		storeTextosComercialActivo: {    

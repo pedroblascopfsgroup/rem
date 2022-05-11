@@ -175,13 +175,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         		}
         	}else if(DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
         		ExpedienteComercial eco = oferta.getExpedienteComercial();
+                String estadoBC = eco != null && eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : null;
         		if(eco != null
                     && dto.getIdTarea() != null
                     && dto.getCodTipoTarea() != null
-                    && (DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea()))) {
+                    && (DDTipoTareaPbc.CODIGO_PBC.equals(dto.getCodTipoTarea()) || DDTipoTareaPbc.CODIGO_PBCARRAS.equals(dto.getCodTipoTarea()))
+                        && (DDEstadoExpedienteBc.CODIGO_PTE_CALCULO_RIESGO.equals(estadoBC) || DDEstadoExpedienteBc.CODIGO_ARRAS_FIRMADAS.equals(estadoBC))) {
                         eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER)));
                         genericDao.save(ExpedienteComercial.class, eco);
-        		}
+                    }
         	}
         }
       

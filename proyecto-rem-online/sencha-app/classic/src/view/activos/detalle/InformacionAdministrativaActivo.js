@@ -194,7 +194,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 							        	margin: '0 0 10 0',
 										layout: {
 						 						type: 'table',
-				         						columns: 3
+				         						columns: 2
 				        						},
 										defaultType: 'textfieldbase',
 										title: HreRem.i18n("title.limitaciones.vendedor"), // Limitaciones del vendedor
@@ -252,6 +252,26 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 															value: '{infoAdministrativa.obligatorioSolDevAyuda}'
 														  }
 								                },
+										        { 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.aval.seguro.vpo'),
+											 		bind: {
+											 				readOnly : true,
+											 				value:'{infoAdministrativa.fechaVencimientoAvalSeguro}',
+											 				hidden: '{!isCarteraBankia}'
+											 			},								 		
+											 		maxValue : null
+												},
+												{ 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.ayuda.vpo'),
+											 		bind: {
+											 				readOnly : true,
+											 				value:'{infoAdministrativa.fechaDevolucionAyuda}',
+											 				hidden: '{!isCarteraBankia}'
+											 			},								 		
+											 		maxValue : null
+												},
 								                { 
 								                	xtype: 'comboboxfieldbase',
 								                	fieldLabel: HreRem.i18n('fieldlabel.libertad.cesion'), // Libertad de cesi�n (NUEVO CAMPO)
@@ -285,16 +305,18 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									value: '{infoAdministrativa.venderPersonaJuridica}'
 			            								  }
 												}
-							
-					
 											]
 							        },
 							        
 							        {
 							        	xtype:'fieldset',
 							        	height: 260,
+							        	colspan: 1,
 							        	margin: '0 10 10 10',
-
+							        	layout: {
+					 						type: 'table',
+			         						columns: 2
+			        					},
 										defaultType: 'textfieldbase',
 										title: HreRem.i18n("title.limitaciones.comprador"), // Limitaciones del comprador
 										items :
@@ -338,8 +360,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.noTitularOtraVivienda}'
 			            								  }
-												}				              
-												
+												}									
 											]
 							        },
 						
@@ -384,7 +405,26 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
 											 			},
 											 		   maxValue : $AC.getCurrentDate()
-										        }
+										        },
+												{ 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.comprador.acoje.ayuda.vpo'),
+										        	bind: {
+										        			readOnly : true,
+			            									store: '{comboSiNoBoolean}',
+			            									value: '{infoAdministrativa.compradorAcojeAyuda}',
+			            									hidden: '{!isCarteraBankia}'
+			            								  }
+										        },
+										        { 
+													xtype: 'currencyfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.importe.ayuda.financiacion.vpo'),
+					                				bind: {
+					                						readOnly : true,
+					                						value: '{infoAdministrativa.importeAyudaFinanciacion}',
+					                						hidden: '{!isCarteraBankia}'
+					                					  }
+								                }
 											]
 							        },
 							        

@@ -149,9 +149,6 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							expediente.setEstado(estado);
 							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 
-
-							
-							
 							//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 							for(Oferta oferta : listaOfertas){
@@ -159,6 +156,22 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
+							
+							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
+
+							if((ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()
+									|| (ofertaAceptada.getCheckForzadoCajamar() == null && ofertaAceptada.getCheckFormCajamar() != null && ofertaAceptada.getCheckFormCajamar()))) {
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
+							}
+							
+							
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);

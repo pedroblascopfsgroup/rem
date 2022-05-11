@@ -8974,6 +8974,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
+    onChangeComboAnejoGaraje: function(combo){
+    	var me = this;
+		var identificadorPlazaParking = me.lookupReference('identificadorPlazaParkingRef');
+
+		if (combo.getValue() === '01') {
+			identificadorPlazaParking.setHidden(false);
+		} else {
+			identificadorPlazaParking.setHidden(true);
+		}
+    },
+    
+    onChangeComboAnejoTrastero: function(combo){
+    	var me = this;
+		var identificadorTrastero = me.lookupReference('identificadorTrasteroRef');
+
+		if (combo.getValue() === '01') {
+			identificadorTrastero.setHidden(false);
+		} else {
+			identificadorTrastero.setHidden(true);
+		}
+    },
+    
     onClickActualizarReferencia: function(btn) {
     	var me = this;
     	var window =  btn.up('window');
@@ -9010,6 +9032,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
 			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+			&& me.lookupReference('cbTipoDocumento').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
     		&& me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia')) {
 
     		return 'Error! Tipo de documento incorrecto para caixabank';

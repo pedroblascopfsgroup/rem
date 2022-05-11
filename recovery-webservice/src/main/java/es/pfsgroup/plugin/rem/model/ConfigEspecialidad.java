@@ -44,7 +44,7 @@ public class ConfigEspecialidad implements Serializable, Auditable {
 
 	
 	@Id
-	@Column(name = "DD_EAC_ID")
+	@Column(name = "EAC_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ConfigEspecialidadGenerator")
 	@SequenceGenerator(name = "ConfigEspecialidadGenerator", sequenceName = "S_ESP_SAC_CONFIG")
 	private Long id;
@@ -61,6 +61,9 @@ public class ConfigEspecialidad implements Serializable, Auditable {
 	@JoinColumn(name = "DD_TPA_ID")  
 	@ManyToOne(fetch = FetchType.LAZY)
 	private DDTipoActivo tipoActivo;
+	
+	@Column(name = "EAC_APLICA_OBRA_NUEVA")   
+	private Boolean aplicaON;
 	
 	
 	@Version   
@@ -83,6 +86,14 @@ public class ConfigEspecialidad implements Serializable, Auditable {
 
 	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
 		this.subtipoActivo = subtipoActivo;
+	}
+	
+	public DDTipoActivo getTipoActivo() {
+		return tipoActivo;
+	}
+
+	public void setTipoActivo(DDTipoActivo tipoActivo) {
+		this.tipoActivo = tipoActivo;
 	}
 
 	public DDEspecialidad getEspecialidad() {
@@ -107,6 +118,14 @@ public class ConfigEspecialidad implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public Boolean getAplicaON() {
+		return aplicaON;
+	}
+
+	public void setAplicaON(Boolean aplicaON) {
+		this.aplicaON = aplicaON;
 	}
 
 }

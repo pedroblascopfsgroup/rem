@@ -9516,12 +9516,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			params.put("codProveedor", codProveedor);
 			rawDao.addParams(params);
 			
-    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" + 
-    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0 \n" + 
-    				"join bae_bloqueo_apis_esp bae on bae.bap_id = bap.bap_id and bae.borrado =  0\n" + 
-    				"join esp_sac_config esa on esa.dd_esp_id = bae.dd_esp_id and bae.borrado = 0\n" + 
-    				"join act_activo act on act.dd_tpa_id = esa.dd_Tpa_id and esa.dd_sac_id = act.dd_sac_id\n" + 
-    				"and act.act_num_activo = :numActivo and pve.pve_cod_rem = :codProveedor ");
+    		resultado = rawDao.getExecuteSQL("with  isON as (" + 
+    				"    SELECT (SELECT dd_esp_id FROM dd_esp_especialidad where dd_esp_codigo = '02') AS PRUEBA ,esp.dd_tpa_id as activoTPA, esp.dd_Sac_id as activoSAC" + 
+    				"    FROM ACT_ACTIVO ACT" + 
+    				"    join dd_eac_estado_activo eac on act.dd_eac_id = eac.dd_Eac_id" + 
+    				"    JOIN esp_sac_config esp on act.dd_tpa_id = esp.dd_Tpa_id and esp.dd_sac_id = act.dd_sac_id" +
+    				"    where eac.dd_Eac_codigo like '03' and act.act_num_activo = :numActivo" + 
+    				") " + 
+    				"SELECT count(*)" + 
+    				"    FROM act_pve_proveedor pve" + 
+    				"    join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0" + 
+    				"    join bae_bloqueo_apis_esp bae on bae.bap_id = bap.bap_id and bae.borrado =  0  " + 
+    				"    left join isON isON on bae.dd_esp_id = isON.PRUEBA" + 
+    				"    left join esp_sac_config esa on esa.dd_esp_id = bae.dd_esp_id and bae.borrado = 0" + 
+    				"    join act_activo act on (act.dd_tpa_id = esa.dd_Tpa_id and esa.dd_sac_id = act.dd_sac_id) or (act.dd_tpa_id = isON.activoTPA and isON.activoSAC = act.dd_sac_id)" + 
+    				"    where act.act_num_activo = :numActivo and pve.pve_cod_rem = :codProveedor");
 	    
 		}
 		

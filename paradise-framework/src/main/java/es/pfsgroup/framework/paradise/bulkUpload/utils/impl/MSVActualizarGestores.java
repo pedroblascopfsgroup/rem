@@ -275,7 +275,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 						esCorrecto = false;
 					}
 					if(particularValidator.apiBloqueadoEspecialidad(numActivo, codApiEspejo)) {
-						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_ESPECIALIDAD)).add(fila);
 						esCorrecto = false;
 					}
 				}
@@ -294,7 +294,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 						esCorrecto = false;
 					}
 					if(particularValidator.apiBloqueadoEspecialidad(numActivo, codApiPrimario)) {
-						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN)).add(fila);
+						mapaErrores.get(messageServices.getMessage(PROVEEDOR_BLOQUEDO_ESPECIALIDAD)).add(fila);
 						esCorrecto = false;
 					}
 					
@@ -384,6 +384,10 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		mapaErrores.put(messageServices.getMessage(PRIMARIO_TIPO_MEDIADOR_INCORRECTO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(ESPEJO_TIPO_MEDIADOR_INCORRECTO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(VALIDAR_FILA_EXCEPTION), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_PROVINCIA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_CARTERA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_LN), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(PROVEEDOR_BLOQUEDO_ESPECIALIDAD), new ArrayList<Integer>());
 	}
 
 	@Override

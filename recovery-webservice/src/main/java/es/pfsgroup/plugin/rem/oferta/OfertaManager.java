@@ -2625,9 +2625,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
 		if (listaActivoOferta != null && listaActivoOferta.size() > 0) {
-			ActivoOferta actOfr = listaActivoOferta.get(0);
-			if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
-				ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
+			for (ActivoOferta actOfr : listaActivoOferta) {
+				if (!Checks.esNulo(actOfr) && !Checks.esNulo(actOfr.getPrimaryKey().getActivo())) {
+					ofertaAcepted = getOfertaAceptadaExpdteAprobado(actOfr.getPrimaryKey().getActivo());
+				}
+				if (!Checks.esNulo(ofertaAcepted)) break;
 			}
 		}
 
@@ -2667,14 +2669,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				!(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOfertaToCheck) 
 				|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOfertaToCheck) 
 				|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOfertaToCheck))) {
-			Activo activo = ofertaAcepted.getActivoPrincipal();
-			if (oferta.getAgrupacion() != null) {
-				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
-			} else {
-				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
-			}
+			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA)));
 		} else {
 			if (oferta.getOfertaExpress() || DDSistemaOrigen.CODIGO_HAYA_HOME.equals(entidadOrigen)) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -3047,10 +3042,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public List<Oferta> trabajoToOfertas(Trabajo trabajo) {
 		List<Oferta> listaOfertas = new ArrayList<Oferta>();
-		Activo activo = trabajo.getActivo();
-		if (!Checks.esNulo(activo)) {
-			for (ActivoOferta actofr : activo.getOfertas()) {
-				listaOfertas.add(actofr.getPrimaryKey().getOferta());
+		List<ActivoTrabajo> activos = trabajo.getActivosTrabajo();
+		if (!Checks.esNulo(activos) && !activos.isEmpty()) {
+			for (ActivoTrabajo activo : activos) {
+				for (ActivoOferta actofr : activo.getActivo().getOfertas()) {
+					listaOfertas.add(actofr.getPrimaryKey().getOferta());
+				}
 			}
 		}
 		return listaOfertas;
@@ -4754,6 +4751,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				return true;
 			}
 		}
+		for (ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
+			if (isActivoConOfertaYExpedienteBlocked(activo.getActivo()))
+				return true;
+		}
 
 		return false;
 	}
@@ -5228,14 +5229,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| !Checks.esNulo(perimetroActivo) && perimetroActivo.getIncluidoEnPerimetro() == 0
 				|| loteComercialVivo) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
-		} else {
-			for (Oferta oferta : ofertas) {
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
-						|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())
-						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
-					errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
-				}
-			}
 		}
 	}
 

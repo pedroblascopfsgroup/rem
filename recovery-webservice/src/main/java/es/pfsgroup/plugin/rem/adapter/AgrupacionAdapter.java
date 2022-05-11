@@ -2355,6 +2355,7 @@ public class AgrupacionAdapter {
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			loteComercial.setUsuarioGestorComercial(dtoAgrupacion.getGestorComercial());
+			loteComercial.setUsuarioGestorComercialBackOffice(dtoAgrupacion.getGestorComercialBackOffice());
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(dtoAgrupacion.getTipoAgrupacion())){
 				DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO));

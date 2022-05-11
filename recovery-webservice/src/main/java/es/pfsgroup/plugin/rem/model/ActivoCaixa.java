@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
@@ -173,6 +174,13 @@ public class ActivoCaixa implements Serializable, Auditable {
 	
 	@Column(name = "FEC_EST_POSESORIO_BC")
     private Date fechaEstadoPosesorio;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CBC_ID")
+    private DDCarteraBc segmentacionCartera;
+	
+    @Column(name = "CBX_NUMERO_INMUEBLE_ANTERIOR")
+    private String numeroInmuebleAnterior;
 	
 	@Version   
 	private Long version;
@@ -507,6 +515,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setFechaEstadoPosesorio(Date fechaEstadoPosesorio) {
 		this.fechaEstadoPosesorio = fechaEstadoPosesorio;
+	}
+	
+	public DDCarteraBc getSegmentacionCartera() {
+		return segmentacionCartera;
+	}
+
+	public void setSegmentacionCartera(DDCarteraBc segmentacionCartera) {
+		this.segmentacionCartera = segmentacionCartera;
+	}
+
+	public String getNumeroInmuebleAnterior() {
+		return numeroInmuebleAnterior;
+	}
+
+	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
+		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
 	}
 	
 }

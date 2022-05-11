@@ -102,15 +102,10 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 					Long numTrabajo = Long.valueOf(listaString[i]);
 					Trabajo tbj = genericDao.get(Trabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
-					if(tbj != null) {
-						Prefacturas prefacturas = genericDao.get(Prefacturas.class,
-								genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tbj.getId()));
+					if(tbj != null) {	
+						Prefacturas prefacturas = tbj.getPrefacturaTrabajo();
 						if (prefacturas != null) {
-							Usuario usuariologado = adapter.getUsuarioLogado();
-							prefacturas.getAuditoria().setUsuarioBorrar(usuariologado.getUsername());
-							prefacturas.getAuditoria().setFechaBorrar(new Date());
-							prefacturas.getAuditoria().setBorrado(true);
-							genericDao.save(Prefacturas.class, prefacturas);
+							genericDao.deleteById(Prefacturas.class, prefacturas.getId());
 						}
 						tbj.setPrefactura(null);
 						genericDao.save(Trabajo.class, tbj);

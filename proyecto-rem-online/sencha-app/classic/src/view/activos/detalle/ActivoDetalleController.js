@@ -8974,6 +8974,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
+    onChangeComboAnejoGaraje: function(combo){
+    	var me = this;
+		var identificadorPlazaParking = me.lookupReference('identificadorPlazaParkingRef');
+
+		if (combo.getValue() === '01') {
+			identificadorPlazaParking.setHidden(false);
+		} else {
+			identificadorPlazaParking.setHidden(true);
+		}
+    },
+    
+    onChangeComboAnejoTrastero: function(combo){
+    	var me = this;
+		var identificadorTrastero = me.lookupReference('identificadorTrasteroRef');
+
+		if (combo.getValue() === '01') {
+			identificadorTrastero.setHidden(false);
+		} else {
+			identificadorTrastero.setHidden(true);
+		}
+    },
+    
     onClickActualizarReferencia: function(btn) {
     	var me = this;
     	var window =  btn.up('window');

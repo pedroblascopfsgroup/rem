@@ -46,6 +46,12 @@ public class DDSubestadoGestion implements Auditable, Dictionary {
     public static final String CODIGO_SIN_DEU = "SIN_DEU";
     public static final String CODIGO_SIN_INI = "SIN_INI";
     public static final String CODIGO_SIN_TIT = "SIN_TIT";
+    public static final String CODIGO_GEST_CP = "GEST_CP";
+    public static final String CODIGO_SINT = "SINT";
+    public static final String CODIGO_PUT = "PUT";
+    public static final String CODIGO_SDF = "SDF";
+    public static final String CODIGO_ED_CONST = "ED_CONST";
+    public static final String CODIGO_NGCO = "NGCO";
     
     
 

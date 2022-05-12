@@ -33,10 +33,12 @@ public class DDEstadoLocalizacion implements Auditable, Dictionary {
 	public static final String CODIGO_PDTE = "PDTE";
     public static final String CODIGO_IDENT = "IDENT";
     public static final String CODIGO_NOE = "NOE";
+    public static final String CODIGO_SDF = "SDF";
     
     public static final String DESCRIPCION_PDTE = "Pendiente de identificar";
     public static final String DESCRIPCION_IDENT = "Identificada";
     public static final String DESCRIPCION_NOE = "No existe Comunidad de Propietarios";
+    public static final String DESCRIPCION_SDF = "Sin decreto firme";
     
     private static final long serialVersionUID = 1L;
     

@@ -44,7 +44,7 @@ DECLARE
         T_TIPO_DATA('99', 'Otros persona física','10'),
         T_TIPO_DATA('100', 'Otros persona jurídica','10'),
         T_TIPO_DATA('101', 'Ident Banco de España','10'),
-        T_TIPO_DATA('102', 'NIE','10'),
+        T_TIPO_DATA('102', 'NIF','10'),
         T_TIPO_DATA('103', 'NIF PAIS ORIGEN','10'),
         T_TIPO_DATA('104', 'Otro','10')
     ); 

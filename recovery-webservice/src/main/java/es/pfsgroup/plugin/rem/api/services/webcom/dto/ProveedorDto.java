@@ -71,6 +71,15 @@ public class ProveedorDto implements WebcomRESTDto {
 	@NestedDto(groupBy = "idProveedorRem", type = ConductasInapropiadasDto.class)
 	private List<ConductasInapropiadasDto> conductasInapropiadas;
 
+	private DateDataType fechaAlta;
+	private StringDataType codEstado;
+	private DateDataType fechaBaja;
+	private StringDataType codTipoPersona;
+	private StringDataType urlWeb;
+	private StringDataType nombreContacto;
+	private StringDataType apellido1Contacto;
+	private StringDataType apellido2Contacto;
+
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -405,5 +414,69 @@ public class ProveedorDto implements WebcomRESTDto {
 
 	public void setConductasInapropiadas(List<ConductasInapropiadasDto> conductasInapropiadas) {
 		this.conductasInapropiadas = conductasInapropiadas;
+	}
+
+	public DateDataType getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(DateDataType fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public StringDataType getCodEstado() {
+		return codEstado;
+	}
+
+	public void setCodEstado(StringDataType codEstado) {
+		this.codEstado = codEstado;
+	}
+
+	public DateDataType getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(DateDataType fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public StringDataType getCodTipoPersona() {
+		return codTipoPersona;
+	}
+
+	public void setCodTipoPersona(StringDataType codTipoPersona) {
+		this.codTipoPersona = codTipoPersona;
+	}
+
+	public StringDataType getUrlWeb() {
+		return urlWeb;
+	}
+
+	public void setUrlWeb(StringDataType urlWeb) {
+		this.urlWeb = urlWeb;
+	}
+
+	public StringDataType getNombreContacto() {
+		return nombreContacto;
+	}
+
+	public void setNombreContacto(StringDataType nombreContacto) {
+		this.nombreContacto = nombreContacto;
+	}
+
+	public StringDataType getApellido1Contacto() {
+		return apellido1Contacto;
+	}
+
+	public void setApellido1Contacto(StringDataType apellido1Contacto) {
+		this.apellido1Contacto = apellido1Contacto;
+	}
+
+	public StringDataType getApellido2Contacto() {
+		return apellido2Contacto;
+	}
+
+	public void setApellido2Contacto(StringDataType apellido2Contacto) {
+		this.apellido2Contacto = apellido2Contacto;
 	}
 }

@@ -165,11 +165,12 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+
 		if(precioVentaActivo != null) {
-			Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo());
-			Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+			Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
+			Filter filterTipoComercializar = genericDao.createFilter(FilterType.EQUALS, "tipoComercializar.codigo", oferta.getActivoPrincipal().getTipoComercializar().getCodigo());
 			Order ordenImporteDesc = new Order(OrderType.ASC, "precioVenta");
-			List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getListOrdered(ParametrizacionDeposito.class, ordenImporteDesc, filterSubcartera, filterEquipoGestion);
+			List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getListOrdered(ParametrizacionDeposito.class, ordenImporteDesc, filterSubcartera, filterTipoComercializar);
 			if (parametrizacionDeposito != null) {
 				for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
 					if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
@@ -178,6 +179,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 				}
 			}
 		}
+		
 		return importeDeposito;
 	}
 

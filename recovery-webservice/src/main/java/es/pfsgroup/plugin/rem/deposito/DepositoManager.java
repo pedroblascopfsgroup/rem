@@ -102,14 +102,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	
 	@Override
 	@Transactional
-	public synchronized CuentasVirtuales vincularCuentaVirtual(Oferta oferta) {
+	public synchronized CuentasVirtuales vincularCuentaVirtual(String codigoSubTipoOferta) {
 			CuentasVirtuales cuentaVirtual = null;
 			List<CuentasVirtuales> cuentasVirtuales = null;
-			if(oferta != null && oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getSubcartera() != null) {
-				cuentasVirtuales = genericDao.getList(CuentasVirtuales.class,
-						genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo()),
-						genericDao.createFilter(FilterType.NULL, "fechaInicio"));
-			}
+			Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codigoSubTipoOferta);
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaInicio");
+			cuentasVirtuales = genericDao.getList(CuentasVirtuales.class, filtroSubCartera,filtroFechaFin);
+			
 			if(cuentasVirtuales != null && !cuentasVirtuales.isEmpty()) {
 				cuentaVirtual = cuentasVirtuales.get(0);
 				cuentaVirtual.setFechaInicio(new Date());
@@ -165,8 +164,8 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
-		Filter filterTipoComercializar = genericDao.createFilter(FilterType.EQUALS, "tipoComercializar.codigo", oferta.getActivoPrincipal().getTipoComercializar().getCodigo());
-		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterTipoComercializar);
+		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterEquipoGestion);
 		if (parametrizacionDeposito != null) {
 			for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
 				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() >= precioVentaActivo) {

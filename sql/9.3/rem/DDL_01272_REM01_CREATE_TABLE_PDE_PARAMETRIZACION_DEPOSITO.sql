@@ -1,17 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20220512
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17803
+--## INCIDENCIA_LINK=HREOS-17625
 --## PRODUCTO=NO
 --## Finalidad: Creacion diccionario PDE_PARAMETRIZACION_DEPOSITO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial (HREOS-17635) - Javier Esbri
---##        0.2 Cambio DD_EQG_ID por DD_TCR_ID (HREOS-17803) - Alejandro Valverde
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -45,7 +44,7 @@ DECLARE
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
         T_FK(   'FK_PDE_DD_SCR',                   'DD_SCR_ID',             V_ESQUEMA||'.DD_SCR_SUBCARTERA',                'DD_SCR_ID'),
-		T_FK(   'FK_PDE_DD_TCR',                   'DD_TCR_ID',             V_ESQUEMA||'.DD_TCR_TIPO_COMERCIALIZAR',            'DD_TCR_ID')
+		T_FK(   'FK_PDE_DD_EQG',                   'DD_EQG_ID',             V_ESQUEMA||'.DD_EQG_EQUIPO_GESTION',            'DD_EQG_ID')
     );
     V_T_FK T_FK;
 
@@ -68,7 +67,7 @@ BEGIN
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
                 PDE_ID          		    NUMBER(16)                  NOT NULL,
-				DD_TCR_ID        		    NUMBER(16),
+				DD_EQG_ID        		    NUMBER(16),
 				DD_SCR_ID                   NUMBER(16),
 				PDE_IMPORTE					NUMBER(16,2),
 				PDE_PRECIO          		NUMBER(16,2),
@@ -112,7 +111,7 @@ BEGIN
 		    EXECUTE IMMEDIATE V_MSQL;	
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.PDE_ID IS ''Id de la tabla''';
             EXECUTE IMMEDIATE V_SQL;
-		V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_TCR_ID IS ''Id de tipo comercializar''';
+			V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_EQG_ID IS ''Id del equipo de gestión''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.DD_SCR_ID IS ''Id de la subcartera''';
             EXECUTE IMMEDIATE V_SQL;
@@ -140,7 +139,7 @@ BEGIN
 
             IF V_CREAR_FK = 'SI' THEN
 
-                -- Bucle que CREA las FK de las nuevas columnas
+                -- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
                 FOR I IN V_FK.FIRST .. V_FK.LAST
                 LOOP
 

@@ -50,6 +50,6 @@ public interface DepositoApi {
 	
 	boolean esNecesarioDepositoNuevaOferta(Activo ActivoCuentaVirtual);
 
-	CuentasVirtuales vincularCuentaVirtual(Oferta oferta);
+	CuentasVirtuales vincularCuentaVirtual(String codigoSubTipoOferta);
 
 }

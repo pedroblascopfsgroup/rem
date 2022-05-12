@@ -1399,10 +1399,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			//Aqui se realiza el save de la oferta pura
 			Long idOferta = this.saveOferta(oferta);
-			ofertaDao.flush();
 			
-			
-			if(!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
+			if(!Checks.esNulo(ofertaDto.getIdActivoHaya()) && activo!= null && activo.getSubcartera() != null ) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
 				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual)){
@@ -1412,7 +1410,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						return errorsList;
 					}
 					depositoApi.generaDeposito(oferta);
-					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(oferta);
+					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
 					if(cuentaVirtual == null) {
 						errorsList.put("cuentaVirtual", RestApi.REST_NO_EXIST_CUENTA_VIRTUAL);
 						return errorsList;
@@ -8382,13 +8380,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		if(oferta != null && codigoEstado != null){
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
-
-			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado) && depositoApi.esNecesarioDeposito(oferta)){
-				depositoApi.generaDeposito(oferta);
-				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(oferta);
-				oferta.setCuentaVirtual(cuentaVirtual);
-			}
-
 			ofertaDao.saveOrUpdate(oferta);
 
 			return true;

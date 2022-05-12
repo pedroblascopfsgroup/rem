@@ -21,8 +21,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 
 /**
  * Modelo que gestiona la tabla de parametrizacion deposito
@@ -45,8 +45,8 @@ public class ParametrizacionDeposito implements Serializable, Auditable {
 	private Long id;
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TCR_ID")
-    private DDTipoComercializar tipoComercializar;
+    @JoinColumn(name = "DD_EQG_ID")
+    private DDEquipoGestion equipoGestion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_SCR_ID")
@@ -72,12 +72,12 @@ public class ParametrizacionDeposito implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public DDTipoComercializar getTipoComercializar() {
-		return tipoComercializar;
+	public DDEquipoGestion getEquipoGestion() {
+		return equipoGestion;
 	}
 
-	public void setTipoComercializar(DDTipoComercializar tipoComercializar) {
-		this.tipoComercializar = tipoComercializar;
+	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
+		this.equipoGestion = equipoGestion;
 	}
 
 	public DDSubcartera getSubcartera() {

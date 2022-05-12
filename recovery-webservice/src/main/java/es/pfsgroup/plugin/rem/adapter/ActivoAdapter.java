@@ -5765,7 +5765,7 @@ public class ActivoAdapter {
 				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
 						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))
 				&& !DDSubtipoActivo.COD_GARAJE.equals(activo.getSubtipoActivo().getCodigo())
-				&& !DDSubtipoActivo.CODIGO_SUBTIPO_ALMACEN.equals(activo.getSubtipoActivo().getCodigo())
+				&& !DDSubtipoActivo.COD_TRASTERO.equals(activo.getSubtipoActivo().getCodigo())
 				&& (!Checks.estaVacio(activo.getPropietariosActivo())
 						&& (Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
 								|| (!Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())

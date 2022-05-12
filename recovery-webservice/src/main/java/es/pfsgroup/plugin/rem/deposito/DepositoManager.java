@@ -165,8 +165,8 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
-		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
-		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterEquipoGestion);
+		Filter filterTipoComercializar = genericDao.createFilter(FilterType.EQUALS, "tipoComercializar.codigo", oferta.getActivoPrincipal().getTipoComercializar().getCodigo());
+		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterTipoComercializar);
 		if (parametrizacionDeposito != null) {
 			for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
 				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() >= precioVentaActivo) {

@@ -4051,16 +4051,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
 				
+				Filter filterOfrId = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
+				Deposito deposito = genericDao.get(Deposito.class, filterOfrId);
+				dtoResponse.setDtoDeposito(this.depositoToDto(deposito));
+				if(oferta.getCuentaVirtual() != null) {
+					dtoResponse.setCuentaBancariaVirtual(oferta.getCuentaVirtual().getCuentaVirtual());
+				}
+				
 				if(oferta.getOfertaCaixa() != null) {
 					OfertaCaixa ofrCaixa = oferta.getOfertaCaixa();
-					Filter filterOfertaCaixaID = genericDao.createFilter(FilterType.EQUALS, "ofertaCaixa.id", oferta.getOfertaCaixa().getId());
-					Deposito deposito = genericDao.get(Deposito.class, filterOfertaCaixaID);
-					dtoResponse.setDtoDeposito(this.depositoToDto(deposito));
-					
-					if (ofrCaixa.getCuentaBancariaCliente() != null) {
-						dtoResponse.setCuentaBancariaCliente(ofrCaixa.getCuentaBancariaCliente());
-					}
-					
+									
 					if(ofrCaixa.getNumOfertaCaixa() != null) {
 						dtoResponse.setNumOfertaCaixa(ofrCaixa.getNumOfertaCaixa().toString());						
 					}

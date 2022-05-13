@@ -166,6 +166,10 @@ public class ActivoCaixa implements Serializable, Auditable {
     @JoinColumn(name = "DD_CTC_ID")
     private DDCategoriaComercializacion categoriaComercializacion;
 	
+	@Column(name = "NUEVO_PRECIO_CONCURRENCIA")
+	private Boolean nuevoPrecioConcurrencia;
+	
+	
 	@Version   
 	private Long version;
 	
@@ -484,5 +488,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setCategoriaComercializacion(DDCategoriaComercializacion categoriaComercializacion) {
 		this.categoriaComercializacion = categoriaComercializacion;
 	}
+
+	public Boolean getNuevoPrecioConcurrencia() {
+		return nuevoPrecioConcurrencia;
+	}
+
+	public void setNuevoPrecioConcurrencia(Boolean nuevoPrecioConcurrencia) {
+		this.nuevoPrecioConcurrencia = nuevoPrecioConcurrencia;
+	}
+	
 	
 }

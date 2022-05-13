@@ -3265,6 +3265,24 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return resultado;
 	}
+	
+	@Override
+	public String getCartera(String numActivo) {
+		String resultado = "";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(numActivo != null && !numActivo.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT cra.DD_CRA_CODIGO "
+					+ "		FROM ACT_ACTIVO act "
+					+ "		INNER JOIN DD_CRA_CARTERA cra "
+					+ "		ON act.DD_CRA_ID            = cra.DD_CRA_ID "
+					+ "		WHERE act.ACT_NUM_ACTIVO = :numActivo ");
+		}
+
+		return resultado;
+	}
 
 	@Override
 	public Boolean agrupacionEstaVacia(String numAgrupacion) {

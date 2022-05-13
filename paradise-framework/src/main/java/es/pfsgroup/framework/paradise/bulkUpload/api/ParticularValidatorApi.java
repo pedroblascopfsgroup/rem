@@ -1518,4 +1518,6 @@ public interface ParticularValidatorApi {
 
 	boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion);
 
+	String getCartera(String numActivo);
+
 }

@@ -1398,18 +1398,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			//Aqui se realiza el save de la oferta pura
-			
-			
+
+		
+			boolean necesitaDeposito = false;
+
 			if(!Checks.esNulo(ofertaDto.getIdActivoHaya()) && activo!= null && activo.getSubcartera() != null ) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
 				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual)){
+					necesitaDeposito = true;
 					Double importe = depositoApi.getImporteDeposito(oferta);
 					if(importe == null) {
 						errorsList.put("deposito", "Error al crear oferta, no existe configuración de importe para crear el depósito.");
 						return errorsList;
 					}
-					depositoApi.generaDeposito(oferta);
 					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
 					if(cuentaVirtual == null) {
 						errorsList.put("cuentaVirtual", RestApi.REST_NO_EXIST_CUENTA_VIRTUAL);
@@ -1420,6 +1422,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			Long idOferta = this.saveOferta(oferta);
+
+
+			if(necesitaDeposito && ofertaDto.getIbanDevolucion() != null) {
+				depositoApi.generaDepositoAndIban(oferta,ofertaDto.getIbanDevolucion());
+			}
+
 
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				oferta.setId(idOferta);
@@ -1539,13 +1547,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion(), ofertaDto.getCodEstadoOferta(), ofertaDto.getCodEstadoExpediente(), ofertaDto.getcodSubestadoExpediente(), ofertaDto.getEntidadOrigen());
-			try{
-				if(depositoApi.esNecesarioDeposito(oferta)){
-					depositoApi.generaDepositoAndIban(oferta,ofertaDto.getIbanDevolucion());
-				}
-			} catch(Exception e){
-				logger.error("No se ha podido crear el depósito");
-			}
 
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())

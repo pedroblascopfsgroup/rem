@@ -16,8 +16,10 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
@@ -163,12 +165,13 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera", oferta.getActivoPrincipal().getSubcartera());
+		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo());
 		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
-		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getList(ParametrizacionDeposito.class, filterSubcartera, filterEquipoGestion);
+		Order ordenImporteDesc = new Order(OrderType.ASC, "precioVenta");
+		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getListOrdered(ParametrizacionDeposito.class, ordenImporteDesc, filterSubcartera, filterEquipoGestion);
 		if (parametrizacionDeposito != null) {
 			for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
-				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() >= precioVentaActivo) {
+				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
 					importeDeposito = paramDeposito.getImporteDeposito();
 				}
 			}

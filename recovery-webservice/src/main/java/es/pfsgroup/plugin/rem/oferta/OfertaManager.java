@@ -607,14 +607,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta = getOfertaByNumOfertaRem(ofertaDto.getIdOfertaRem());	
 			}
 
-			if(oferta != null){
-				Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
-
-				if(DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaDto.getCodEstadoOferta()) && depositoApi.isDepositoIngresado(deposito)) {
-					errorsList.put("depositoIngresado", "OFERTA_DEPOSITO_INGRESADO");
-				}
-			}
-
 		}
 		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
 			DDEstadoOferta estadoOferta = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));
@@ -2724,7 +2716,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
 									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
 										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
-								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
+								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))
+										|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo())) {
+										if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta)) {
+											depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+										}
 										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 							}else {
 								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
@@ -3010,17 +3006,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
 				deposito.setEstadoDeposito(estadoDeposito);
 				genericDao.save(Deposito.class, deposito);
-			}else {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-				oferta.setEstadoOferta(estado);
-				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				oferta.setUsuarioBaja(usu.getApellidoNombre());
-				updateStateDispComercialActivosByOferta(oferta);
-				darDebajaAgrSiOfertaEsLoteCrm(oferta);
-				genericDao.save(Oferta.class, oferta);
-				descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			oferta.setUsuarioBaja(usu.getApellidoNombre());
+			updateStateDispComercialActivosByOferta(oferta);
+			darDebajaAgrSiOfertaEsLoteCrm(oferta);
+			genericDao.save(Oferta.class, oferta);
+			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);

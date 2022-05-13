@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=Alejandra García
 --## FECHA_CREACION=20220406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17614
+--## INCIDENCIA_LINK=REMVIP-11683
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -33,6 +33,7 @@
 --##	      0.21 Corección DD_TPA por si no viniese o no hubiesa Clase uso registral [HREOS-17515] - Daniel Algaba
 --##	      0.22 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
 --##	      0.23 Corrección número anterior [HREOS-17614] - Daniel Algaba
+--##	      0.24 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -471,7 +472,34 @@ BEGIN
 
    EXECUTE IMMEDIATE V_MSQL;
 
-   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
+   
+   SALIDA := SALIDA || '   [INFO] 3.1 - ACTUALIZAR EN ACT_ACTIVO_CAIXA EL DD_CBC_ID PARA LOS VENDIDOS'|| CHR(10);  
+   V_MSQL := 'MERGE INTO rem01.ACT_ACTIVO_CAIXA T1
+               USING (
+                  SELECT
+                        ACT.ACT_ID
+                     ,CBC.DD_CBC_ID
+                  FROM REM01.ACT_ACTIVO ACT
+                  JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                     AND SCM.BORRADO = 0
+                  JOIN REM01.DD_CBC_CARTERA_BC CBC ON CBC.DD_CBC_CODIGO = ''01''
+                     AND CBC.BORRADO = 0
+                  JOIN REM01.ACT_ACTIVO_CAIXA CAIXA ON CAIXA.ACT_ID = ACT.ACT_ID
+                     AND CAIXA.BORRADO = 0
+                  WHERE ACT.BORRADO = 0
+                  AND SCM.DD_SCM_CODIGO = ''05''
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                  AND CAIXA.DD_CBC_ID IS NULL
+               ) T2 ON (T1.ACT_ID = T2.ACT_ID)
+               WHEN MATCHED THEN UPDATE SET
+                     T1.DD_CBC_ID = T2.DD_CBC_ID
+                  , T1.USUARIOMODIFICAR = ''STOCK_BC''
+                  , T1.FECHAMODIFICAR = SYSDATE
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
 
    SALIDA := SALIDA || '   [INFO] 4 - INSERTAR/ACTUALIZAR EN ACT_ABA_ACTIVO_BANCARIO'|| CHR(10);   
 

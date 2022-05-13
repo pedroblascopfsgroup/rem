@@ -5736,10 +5736,7 @@ public class ActivoAdapter {
 		if (numActivosList != null && !numActivosList.isEmpty()) {
 			for (Long numActivo : numActivosList) {
 				Activo activo = activoDao.getActivoByNumActivo(numActivo);
-				if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
-						&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
-						&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) || 
-								DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))) {
+				if (validacionesLegalReo(activo)) {
 					numActivosListFinal.add(activo.getNumActivo());
 				}
 			}
@@ -5762,10 +5759,26 @@ public class ActivoAdapter {
 		return filters;
 	}
 	
+	private Boolean validacionesLegalReo (Activo activo) {
+		if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+				&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
+				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
+						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))
+				&& !DDSubtipoActivo.COD_GARAJE.equals(activo.getSubtipoActivo().getCodigo())
+				&& !DDSubtipoActivo.COD_TRASTERO.equals(activo.getSubtipoActivo().getCodigo())
+				&& (!Checks.estaVacio(activo.getPropietariosActivo())
+						&& (Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
+								|| (!Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
+										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))) {
+			return true;
+		}
+		return false;
+	}
+
 	public List<DtoActivoBbvaUic> getActivoBbvaUic(Long idActivo){
 		List<DtoActivoBbvaUic> dtoLista = new ArrayList<DtoActivoBbvaUic>();
-		List<ActivoBbvaUic> listaActivoBbvaUic = new ArrayList<ActivoBbvaUic>();		
-
+		List<ActivoBbvaUic> listaActivoBbvaUic = new ArrayList<ActivoBbvaUic>();
+		
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.DESC, "id");

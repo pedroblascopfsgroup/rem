@@ -758,7 +758,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	calcularMostrarBotonClonarExpediente: function(){
 		var me = this;
-		
+        var activo = me.lookupController().getViewModel().get('activo'),
+
 		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTCOM') || $AU.userIsRol('HAYAGBOINM')
 										&& (me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA']
 											|| me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
@@ -771,6 +772,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 										 * === CONST.SUBCARTERA['DIVARIAN'])
 										 */
 	    								);
+	    mostrarCloneButtonExpediente = (activo.get('isCarteraBankia') == true) ? false : mostrarCloneButtonExpediente;
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
 	},
 	

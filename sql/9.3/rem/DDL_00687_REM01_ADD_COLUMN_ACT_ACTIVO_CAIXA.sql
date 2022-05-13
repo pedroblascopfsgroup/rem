@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220512
+--## FECHA_CREACION=20220513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17808
@@ -31,7 +31,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('NUEVO_PRECIO_CONCURRENCIA', 'NUMBER(1,0)', 'Nuevo precio concurrencia.')
+       T_TIPO_DATA('NUEVO_PRECIO_CONCURRENCIA', 'NUMBER(1,0)', 'Flag nuevo precio concurrencia.')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

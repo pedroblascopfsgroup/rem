@@ -431,6 +431,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
+		
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
@@ -448,6 +449,17 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
 
+		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior 
+				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADO_DEPOSITO['COD_INGRESADO'] != record.get('codigoEstadoDeposito')){
+			return false;
+		}
+		
+		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] == codigoEstadoAnterior 
+				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] != codigoEstadoNuevo 
+					&& !Ext.isEmpty(record.get('codigoEstadoDeposito'))){
+			return false;
+		}
+		
 		if (hayOfertaAceptada && codigoEstadoAnterior == CONST.ESTADOS_OFERTA['CONGELADA']){
 		    if(CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo
 		        && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo) {

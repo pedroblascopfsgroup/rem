@@ -82,6 +82,9 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
          {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.proveedores'),
+			bind: {
+                hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
+            },
 			collapsible: false,
 			items :	[
 				{

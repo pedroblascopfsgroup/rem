@@ -1398,7 +1398,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			//Aqui se realiza el save de la oferta pura
-			Long idOferta = this.saveOferta(oferta);
+			
 			
 			if(!Checks.esNulo(ofertaDto.getIdActivoHaya()) && activo!= null && activo.getSubcartera() != null ) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
@@ -1419,7 +1419,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-		
+			Long idOferta = this.saveOferta(oferta);
 
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				oferta.setId(idOferta);

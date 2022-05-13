@@ -172,6 +172,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -4624,6 +4625,12 @@ public class ActivoAdapter {
 				if(importe == null) {
 					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
 				}
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+				if(cuentaVirtual == null) {
+					throw new Exception("No hay cuentas virtuales libres.");
+				}
+				oferta.setCuentaVirtual(cuentaVirtual);
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
@@ -4743,11 +4750,7 @@ public class ActivoAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 			}
-			
-			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
-				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
-			}
-			
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			return ofertaCreada;

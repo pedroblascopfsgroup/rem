@@ -165,14 +165,16 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public Double getImporteDeposito(Oferta oferta) {
 		Double importeDeposito = null;
 		Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-		Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo());
-		Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
-		Order ordenImporteDesc = new Order(OrderType.ASC, "precioVenta");
-		List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getListOrdered(ParametrizacionDeposito.class, ordenImporteDesc, filterSubcartera, filterEquipoGestion);
-		if (parametrizacionDeposito != null) {
-			for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
-				if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
-					importeDeposito = paramDeposito.getImporteDeposito();
+		if(precioVentaActivo != null) {
+			Filter filterSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", oferta.getActivoPrincipal().getSubcartera().getCodigo());
+			Filter filterEquipoGestion = genericDao.createFilter(FilterType.EQUALS, "equipoGestion.codigo", oferta.getActivoPrincipal().getEquipoGestion().getCodigo());
+			Order ordenImporteDesc = new Order(OrderType.ASC, "precioVenta");
+			List<ParametrizacionDeposito> parametrizacionDeposito = genericDao.getListOrdered(ParametrizacionDeposito.class, ordenImporteDesc, filterSubcartera, filterEquipoGestion);
+			if (parametrizacionDeposito != null) {
+				for (ParametrizacionDeposito paramDeposito: parametrizacionDeposito) {
+					if (paramDeposito.getPrecioVenta() != null && paramDeposito.getPrecioVenta() < precioVentaActivo) {
+						importeDeposito = paramDeposito.getImporteDeposito();
+					}
 				}
 			}
 		}

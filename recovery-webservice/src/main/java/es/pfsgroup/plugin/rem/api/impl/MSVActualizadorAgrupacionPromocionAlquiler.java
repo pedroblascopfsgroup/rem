@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
@@ -64,6 +65,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -171,7 +174,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}	
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
-		DDSinSiNo ddNo = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+		Filter ddsin = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, ddsin);
+		//DDSinSiNo ddNo = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
 		//DDSinSiNo ddSi = (DDSinSiNo)diccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, DDSinSiNo.CODIGO_SI);//descomentar para usar
 		
 		if (!Checks.esNulo(activoMatriz)) {    
@@ -861,6 +866,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		//Situacion posesoria
 		ActivoSituacionPosesoria actSitPosAM = activoMatriz.getSituacionPosesoria();
+		ActivoCaixa activoCaixaM = actSitPosAM.getActivo().getActivoCaixa();
 		ActivoSituacionPosesoria actSitPosUA = new ActivoSituacionPosesoria();
 		
 		
@@ -906,8 +912,18 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if (!Checks.esNulo(actSitPosAM.getFechaTomaPosesion())) {
 				actSitPosUA.setFechaTomaPosesion(actSitPosAM.getFechaTomaPosesion());
 			}
+			/*
 			if (!Checks.esNulo(actSitPosAM.getSitaucionJuridica())) {
 				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
+			}*/
+			
+			if (DDCartera.isCarteraBk(activoMatriz.getCartera())) {
+				ActivoCaixa activoCaixaUA = new ActivoCaixa();
+				activoCaixaUA.setActivo(unidadAlquilable);
+				activoCaixaUA.setEstadoPosesorio(activoCaixaM.getEstadoPosesorio());
+				activoCaixaUA.setFechaEstadoPosesorio(activoCaixaM.getFechaEstadoPosesorio());
+				
+				genericDao.save(ActivoCaixa.class, activoCaixaUA);
 			}
 			//campos obligatorios
 			actSitPosUA.setAuditoria(auditoria);

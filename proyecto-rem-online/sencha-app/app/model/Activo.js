@@ -1394,6 +1394,9 @@ Ext.define('HreRem.model.Activo', {
                 name: 'comunidadDescripcion'
             },
             {
+            	name: 'numeroInmuebleAnterior'
+            },
+            {
             	name:'discrepanciasLocalizacion',
             	type: 'boolean'
             },
@@ -1403,6 +1406,28 @@ Ext.define('HreRem.model.Activo', {
             {
             	name:'esNecesarioDeposito',
 				type: 'boolean'
+            },
+            {
+            	name: 'numeroInmuebleAnterior'
+            },
+       	 	{ 
+            	name: 'anejoGarajeCodigo' 
+            },
+            {
+            	name: 'anejoGarajeDescripcion'
+            },
+            {
+            	name: 'anejoTrasteroCodigo'
+            },
+            {
+            	name: 'anejoTrasteroDescripcion'
+            },
+            {
+            	name: 'identificadorPlazaParking'
+            },
+            {
+            	name: 'identificadorTrastero'
+>>>>>>> rem_mirror
             }
     ],
     

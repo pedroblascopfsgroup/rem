@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220111
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16321
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -20,6 +20,12 @@
 --##	      0.8 Modificar la consulta para la equivalencia COMPLEMENTO - HREOS-15855
 --##	      0.9 Se modifica la población para cruzar por el código, que es el código INE - HREOS-16321
 --##	      0.10 Correcciones - HREOS-16321
+--##	      0.11 Adaptación nuevo modelo catastro - HREOS-16866
+--##	      0.12 Añadir campo idufir - HREOS-17150 - Javier Esbrí
+--##	      0.13 Añadir campos nuevos REG_SUPERFICIE_SOBRE_RASANTE y REG_SUPERFICIE_BAJO_RASANTE - HREOS-17329 - Javier Esbrí
+--##	      0.14 Añadir campos nuevos REG_SUPERFICIE_PARCELA - HREOS-17351 - Javier Esbrí
+--##	      0.15 Corrección REG_SUPERFICIE_SOBRE_RASANTE y REG_SUPERFICIE_BAJO_RASANTE - HREOS-17497 - Daniel Algaba
+--##	      0.16 Añadimos REG_SUPERFICIE_CONSTRUIDA - HREOS-17614 - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -41,6 +47,7 @@ CREATE OR REPLACE PROCEDURE SP_BCR_03_REGISTRAL_LOCALIZACION
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    V_AUX NUMBER(10); -- Variable auxiliar
+   V_COUNT_CATASTRO NUMBER(10) := 0; -- Variable auxiliar
 
    V_FECHA_INICIO VARCHAR2(100 CHAR);
    V_FECHA_FIN VARCHAR2(100 CHAR);
@@ -122,6 +129,11 @@ BEGIN
                   , APR.NOMBRE_REGISTRO_PROPIEDAD REG_NOMBRE_REGISTRO
                   , APR.NUMERO_REGISTRO_PROPIEDAD REG_NUMERO_REGISTRO
                   , REG.REG_ID
+                  , APR.IDUFIR AS REG_IDUFIR
+                  , NVL(APR.SUP_SOBRE_RASANTE, REG.REG_SUPERFICIE_SOBRE_RASANTE)/100 REG_SUPERFICIE_SOBRE_RASANTE
+                  , NVL(APR.SUP_BAJO_RASANTE, REG.REG_SUPERFICIE_BAJO_RASANTE)/100 REG_SUPERFICIE_BAJO_RASANTE
+                  , NVL(APR.SUP_REG_SOLAR, REG.REG_SUPERFICIE_PARCELA)/100 REG_SUPERFICIE_PARCELA
+                  , NVL(APR.SUP_REG_CONSTRUIDA, REG.REG_SUPERFICIE_CONSTRUIDA)/100 REG_SUPERFICIE_CONSTRUIDA
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   JOIN '|| V_ESQUEMA ||'.BIE_BIEN BIE ON ACT.BIE_ID = BIE.BIE_ID AND BIE.BORRADO = 0
@@ -134,6 +146,11 @@ BEGIN
                   UPDATE SET 
                   REG.REG_NOMBRE_REGISTRO = AUX.REG_NOMBRE_REGISTRO
                   , REG.REG_NUMERO_REGISTRO = AUX.REG_NUMERO_REGISTRO
+                  , REG.REG_IDUFIR = AUX.REG_IDUFIR
+                  , REG.REG_SUPERFICIE_SOBRE_RASANTE = AUX.REG_SUPERFICIE_SOBRE_RASANTE
+                  , REG.REG_SUPERFICIE_BAJO_RASANTE = AUX.REG_SUPERFICIE_BAJO_RASANTE
+                  , REG.REG_SUPERFICIE_PARCELA = AUX.REG_SUPERFICIE_PARCELA
+                  , REG.REG_SUPERFICIE_CONSTRUIDA = AUX.REG_SUPERFICIE_CONSTRUIDA
                   , USUARIOMODIFICAR = ''STOCK_BC''
                   , FECHAMODIFICAR = SYSDATE
                   WHEN NOT MATCHED THEN
@@ -142,6 +159,11 @@ BEGIN
                      , BIE_DREG_ID
                      , REG_NOMBRE_REGISTRO
                      , REG_NUMERO_REGISTRO
+                     , REG_IDUFIR
+                     , REG_SUPERFICIE_SOBRE_RASANTE
+                     , REG_SUPERFICIE_BAJO_RASANTE
+                     , REG_SUPERFICIE_PARCELA
+                     , REG_SUPERFICIE_CONSTRUIDA
                      , USUARIOCREAR
                      , FECHACREAR)
                       VALUES 
@@ -150,6 +172,11 @@ BEGIN
                      , AUX.BIE_DREG_ID
                      , AUX.REG_NOMBRE_REGISTRO
                      , AUX.REG_NUMERO_REGISTRO
+                     , AUX.REG_IDUFIR
+                     , AUX.REG_SUPERFICIE_SOBRE_RASANTE
+                     , AUX.REG_SUPERFICIE_BAJO_RASANTE
+                     , AUX.REG_SUPERFICIE_PARCELA
+                     , AUX.REG_SUPERFICIE_CONSTRUIDA
                      , ''STOCK_BC''
                      , SYSDATE)';
    
@@ -157,31 +184,72 @@ BEGIN
 
       SALIDA := SALIDA || '   [INFO] INSERTADOS '|| SQL%ROWCOUNT|| CHR(10);
 
+      IF FLAG_EN_REM = 0 THEN
+
       SALIDA := SALIDA || '   [INFO] 3 - ACT_CAT_CATASTRO'|| CHR(10);
 
-      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO CAT
-                  (
-                  CAT_ID
-                  , ACT_ID
-                  , CAT_REF_CATASTRAL
-                  , USUARIOCREAR
-                  , FECHACREAR
-                  )
-                  SELECT 
-                  '|| V_ESQUEMA ||'.S_ACT_CAT_CATASTRO.nextval CAT_ID
-                  , ACT.ACT_ID 
-                  , APR.NUM_CARTILLA CAT_REF_CATASTRAL
-                  , ''STOCK_BC''
-                  , SYSDATE
+      V_MSQL := 'TRUNCATE TABLE '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO';
+   
+      EXECUTE IMMEDIATE V_MSQL;
+
+      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO CAT
+                  (ACT_ID, CAT_REF_CATASTRAL)
+                  SELECT ACT.ACT_ID , APR.NUM_CARTILLA CAT_REF_CATASTRAL
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK APR
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA = APR.NUM_IDENTIFICATIVO AND ACT.BORRADO = 0
                   WHERE APR.NUM_CARTILLA IS NOT NULL 
-                  AND APR.FLAG_EN_REM = '||FLAG_EN_REM||'
+                  AND APR.FLAG_EN_REM = 0
                   AND NOT EXISTS (SELECT 1 FROM ACT_CAT_CATASTRO AUX_CAT WHERE AUX_CAT.ACT_ID = ACT.ACT_ID)';
    
       EXECUTE IMMEDIATE V_MSQL;
 
-      SALIDA := SALIDA || '   [INFO] INSERTADOS '|| SQL%ROWCOUNT|| CHR(10);
+      V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO T1
+                  USING(
+                  SELECT DISTINCT CAT.CAT_ID, AUX_CAT.ACT_ID
+                  FROM '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO AUX_CAT 
+                  INNER JOIN '|| V_ESQUEMA ||'.CAT_CATASTRO CAT ON AUX_CAT.CAT_REF_CATASTRAL = CAT.CAT_REF_CATASTRAL
+                  ) T2
+                  ON (T1.ACT_ID = T2.ACT_ID)
+                  WHEN MATCHED THEN UPDATE SET
+                  T1.CAT_ID = T2.CAT_ID';
+   
+      EXECUTE IMMEDIATE V_MSQL;
+
+      V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO T1
+                  USING(
+                  SELECT DISTINCT ACT_ID, CAT_ID
+                  FROM '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO WHERE CAT_ID IS NOT NULL) T2
+                  ON (T1.ACT_ID = T2.ACT_ID)
+                  WHEN NOT MATCHED THEN INSERT (ACT_ID,CAT_ID,CAT_CATASTRO,USUARIOCREAR,FECHACREAR)
+                           VALUES (T2.ACT_ID,'|| V_ESQUEMA ||'.S_ACT_CAT_CATASTRO.NEXTVAL,T2.CAT_ID,     
+                                    ''STOCK_BC'',SYSDATE)';
+   
+      EXECUTE IMMEDIATE V_MSQL;
+
+      V_COUNT_CATASTRO := V_COUNT_CATASTRO + SQL%ROWCOUNT;
+
+      V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_CAT_CATASTRO T1
+                  USING(
+                  SELECT DISTINCT ACT_ID, CAT_REF_CATASTRAL
+                  FROM '|| V_ESQUEMA ||'.AUX_CAT_CATASTRO WHERE CAT_ID IS NULL) T2
+                  ON (T1.ACT_ID = T2.ACT_ID)
+                  WHEN NOT MATCHED THEN INSERT (ACT_ID,CAT_ID,CAT_REF_CATASTRAL,USUARIOCREAR,FECHACREAR)
+                           VALUES (T2.ACT_ID,'|| V_ESQUEMA ||'.S_ACT_CAT_CATASTRO.NEXTVAL,T2.CAT_REF_CATASTRAL,     
+                                    ''STOCK_BC'',SYSDATE)';
+   
+      EXECUTE IMMEDIATE V_MSQL;
+
+      V_COUNT_CATASTRO := V_COUNT_CATASTRO + SQL%ROWCOUNT;
+
+      SALIDA := SALIDA || '   [INFO] INSERTADOS '|| V_COUNT_CATASTRO|| CHR(10);
+
+      REM01.SP_VALIDACION_REF_CATASTRAL();
+
+      ELSE
+
+      SALIDA := SALIDA || '   [INFO] 3 - ACT_CAT_CATASTRO NO PROCEDE EN ACTUALIZACION'|| CHR(10);
+
+      END IF;
 
       SALIDA := SALIDA || '   [INFO] 4 - BIE_LOCALIZACION'|| CHR(10);
 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,23 +34,13 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ReservaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceContabilidadBbva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -86,6 +77,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private BoardingComunicacionApi boardingComunicacionApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -182,7 +176,16 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		
 						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
 						dtoArras.setMotivoAnulacion(motivoAplazamiento);
-						
+
+						CondicionanteExpediente condicionanteExpediente = expediente.getCondicionante();
+						condicionanteExpediente.setSolicitaReserva(0);
+						condicionanteExpediente.setTipoCalculoReserva(null);
+						condicionanteExpediente.setPorcentajeReserva(null);
+						condicionanteExpediente.setPlazoFirmaReserva(null);
+						condicionanteExpediente.setImporteReserva(null);
+						genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
+
+
 					}else {
 						estadoExpedienteComercial = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
@@ -307,6 +310,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					
 					genericDao.save(HistoricoTareaPbc.class, htp);
 				}
+				
+				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+						|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+					notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

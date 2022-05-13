@@ -194,9 +194,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
 			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
-		 },
+		 },	 
 	     esCarteraCajamar: function(get) {
-		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['CAJAMAR'] == carteraCodigo;
 	     },
@@ -704,12 +703,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		
     		return puedeEditar;
     	},
-    	esGaleonZeusBkAppleRemaining: function(get) {
+    	esCarteraGaleonZeusBk: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
-			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo 
-					|| CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo 
-					|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo || CONST.CARTERA['BANKIA'] == carteraCodigo;
 		},
 		readOnlyDatosCfv: function(get) {
 	     	var carteraCodigo = get('expediente.codigoEstado');
@@ -783,7 +779,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
 		 	return tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"] && 
 				get('datosbasicosoferta.enviarCorreoAprobacion') == 'true' && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-	 	}
+	 	},
+	 	
+	 	habilitarForzadoCajamar: function(get){
+         	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || get('datosbasicosoferta.modificarFormalizacionCajamar');
+
+         }
 
 	 },
 	

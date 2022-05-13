@@ -181,6 +181,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
      				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
      				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
      				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+     				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
      					&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
 					
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));
@@ -204,6 +205,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                  			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
                  			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
                  			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
+                 			&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']
                  				&& form.findField('codTipoDocumentoRte').value != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
                  		
                  		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.representante"));

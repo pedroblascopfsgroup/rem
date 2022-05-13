@@ -11,10 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -75,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -103,7 +100,6 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
@@ -143,6 +139,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -157,12 +154,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.thread.AnyadirQuitarActivoAgrObREMAsync;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -299,6 +300,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private DepositoApi depositoApi;
+
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -2367,6 +2371,7 @@ public class AgrupacionAdapter {
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			loteComercial.setUsuarioGestorComercial(dtoAgrupacion.getGestorComercial());
+			loteComercial.setUsuarioGestorComercialBackOffice(dtoAgrupacion.getGestorComercialBackOffice());
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(dtoAgrupacion.getTipoAgrupacion())){
 				DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO));
@@ -2638,8 +2643,6 @@ public class AgrupacionAdapter {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO;
 			}
 
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class,
 					dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
@@ -2857,23 +2860,23 @@ public class AgrupacionAdapter {
 					clienteComercial.setFechaNacimientoRep(ft.parse(dto.getFechaNacimientoRepresentante()));
 				}
 				
-				if (dto.getCodigoPaisRte() != null) {
+				if (dto.getPaisNacimientoRepresentanteCodigo() != null && !dto.getPaisNacimientoRepresentanteCodigo().isEmpty()) {
 					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getCodigoPaisRte());
+							dto.getPaisNacimientoRepresentanteCodigo());
 					DDPaises ddPais = genericDao.get(DDPaises.class, filtroPais);
 					clienteComercial.setPaisNacimientoRep(ddPais);
 				}
 				
-				if (dto.getProvinciaRteCodigo() != null) {
+				if (dto.getProvinciaNacimientoRepresentanteCodigo() != null && !dto.getProvinciaNacimientoRepresentanteCodigo().isEmpty()) {
 					Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getProvinciaRteCodigo());
+							dto.getProvinciaNacimientoRepresentanteCodigo());
 					DDProvincia ddProvincia = genericDao.get(DDProvincia.class, filtroProvincia);
 					clienteComercial.setProvinciaNacimientoRep(ddProvincia);
 				}
 				
-				if (dto.getMunicipioRteCodigo() != null) {
+				if (dto.getLocalidadNacimientoRepresentanteCodigo() != null && !dto.getLocalidadNacimientoRepresentanteCodigo().isEmpty()) {
 					Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getMunicipioRteCodigo());
+							dto.getLocalidadNacimientoRepresentanteCodigo());
 					Localidad ddMunicipio = genericDao.get(Localidad.class, filtroMunicipio);
 					clienteComercial.setLocalidadNacimientoRep(ddMunicipio);
 				}
@@ -2887,16 +2890,39 @@ public class AgrupacionAdapter {
 				}
 				
 				if (dto.getEmailRte() != null) {
-					clienteComercial.setEmail(dto.getEmailRte());
+					clienteComercial.setEmailRepresentante(dto.getEmailRte());
 				}
 				
 				if (dto.getTelefono1Rte() != null) {
-					clienteComercial.setTelefono1(dto.getTelefono1Rte());
+					clienteComercial.setTelefonoRepresentante(dto.getTelefono1Rte());
 				}
 				
 				if (dto.getTelefono2Rte() != null) {
-					clienteComercial.setTelefono2(dto.getTelefono2Rte());
+					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
+				
+				if (dto.getProvinciaRteCodigo() != null && !dto.getProvinciaRteCodigo().trim().isEmpty())
+					clienteComercial.setProvinciaRepresentante(genericDao.get(
+							DDProvincia.class,genericDao.createFilter(
+									FilterType.EQUALS,"codigo",dto.getProvinciaRteCodigo())
+							)
+					);
+
+				if (dto.getCodigoPaisRte() != null && !dto.getCodigoPaisRte().trim().isEmpty())
+					clienteComercial.setPaisRepresentante(genericDao.get(
+									DDPaises.class,genericDao.createFilter(
+											FilterType.EQUALS,"codigo",dto.getCodigoPaisRte())
+							)
+					);
+
+				if (dto.getMunicipioRteCodigo() != null && !dto.getMunicipioRteCodigo().trim().isEmpty())
+					clienteComercial.setMunicipioRepresentante(genericDao.get(
+									Localidad.class,genericDao.createFilter(
+											FilterType.EQUALS,"codigo",dto.getMunicipioRteCodigo())
+							)
+					);
+				
+				
 				
 				/*if (dto.getRepresentantePrp() != null) {
 					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
@@ -2946,15 +2972,19 @@ public class AgrupacionAdapter {
 					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
 				}		   
 			}
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);
+
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
+					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
+
 			oferta.setCliente(clienteComercial);
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();

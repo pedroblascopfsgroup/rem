@@ -409,7 +409,56 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 					    				xtype: 'honorariosofertadetallelist'
 					    			}
 								]
-		    			}
+		    			},
+						{
+				
+							xtype : 'fieldset',
+							title : HreRem.i18n('title.textos'),
+							collapsible: true,
+							colspan: 3,
+							items : [{
+										xtype : 'gridBase',
+										idPrincipal : 'detalleOfertaModel.id',
+										topBar : false,
+										reference : 'listadoTextosComercialActivo',
+										cls : 'panel-base shadow-panel',
+										secFunToEdit : 'EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE',
+										bind : {
+											store : '{storeTextosComercialActivo}'
+										},
+										listeners: {
+											rowdblclick: function(grid, record){
+												var cod = record.get("campoCodigo");
+												var allowCopy = cod == '08' || cod == '09';
+												if (allowCopy){
+													var elem = document.createElement('textarea');
+												    elem.value = record.get("texto");
+												    document.body.appendChild(elem);
+												    elem.select();
+												    document.execCommand('copy');
+												    document.body.removeChild(elem);
+													me.fireEvent("infoToast", "Texto copiado correctamente");
+												}
+											}
+										},
+										columns : [{
+													text : HreRem.i18n('header.campo'),
+													dataIndex : 'campoDescripcion',
+													flex : 1
+												}, {
+													text : HreRem.i18n('header.texto'),
+													dataIndex : 'texto',
+													flex : 4,
+													editor : {
+														xtype : 'textarea'
+													}
+												},	{
+													text : HreRem.i18n('header.fecha'),
+													dataIndex : 'fecha',
+													flex : 1
+												}]
+									}]
+						}
 		    		]
         	}
         ];

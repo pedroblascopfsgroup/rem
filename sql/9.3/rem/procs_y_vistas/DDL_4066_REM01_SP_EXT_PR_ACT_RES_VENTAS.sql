@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220210
+--## FECHA_CREACION=20220505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=version-2.35.3-rem
---## INCIDENCIA_LINK=REMVIP-7058
+--## INCIDENCIA_LINK=REMVIP-11465
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -32,6 +32,8 @@
 --##		1.13 (2020312) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar añadida condición estado reserva firmada
 --##		1.14 (20200422) - REMVIP-7058 - Se añade subcartera 151 y 152 (Divarian para cartera Cerberus)
 --##		1.15 (20220210) - Juan alfonso - REMVIP-11136 - Se añade subcartera 70 (Jaguar para cartera cerberus)
+--##		1.16 (20220426) - IVAN REPISO - HREOS-17732 - Se añade filtro formalizacion cajamar para estado expediente
+--##		1.17 (20220505) - Juan alfonso - REMVIP-11465 - Se añade join con expediente comercial a la hora de tramitar expedientes
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -245,6 +247,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_CODIGO_TO_HLP                 VARCHAR2(50 CHAR);
     V_ACTIVO_APPLE 		    NUMBER(16);
     V_ACTIVO_CAJAMAR	NUMBER(16);
+    V_FORMALIZACION_CAJAMAR	NUMBER(16);
 
     --Excepciones
     ERR_NEGOCIO EXCEPTION;
@@ -1057,6 +1060,7 @@ BEGIN
                                             INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR1 ON ACT_OFR1.OFR_ID = OFR1.OFR_ID
                                             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT1 ON ACT1.ACT_ID = ACT_OFR1.ACT_ID
                                             INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF1 ON EOF1.DD_EOF_ID = OFR1.DD_EOF_ID
+                                            INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR1.OFR_ID AND ECO.BORRADO = 0
                                             WHERE ACT1.ACT_ID in (   
                                                             SELECT
                                                             ACT.ACT_ID
@@ -1170,40 +1174,66 @@ BEGIN
                     V_ERROR_DESC := '[ERROR] El estado del expediente es "Vendido" ó "Anulado", o no existe estado para éste expediente.';
                     
                 ELSE
-                    DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Vendido" ó "Anulado". Continuamos la ejecución.');
-                    DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
-                    --PASO 1/2 Actualizar el estado del expediente a "Vendido"
-                    V_MSQL := '
-                    SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''08'''; /*VENDIDO*/
-                    EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
 
-                    V_MSQL := '
-                    UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                    SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*RESERVADO*/
-                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                    FECHAMODIFICAR = SYSDATE
-                    WHERE ECO_ID = '||V_ECO_ID||'
-                    AND OFR_ID = '||V_OFR_ID||'
-                    ';
-                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                    EXECUTE IMMEDIATE V_MSQL;
+                    V_MSQL := 'SELECT COUNT(1) FROM REM01.OFR_OFERTAS OFR
+                                JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
+                                JOIN REM01.ACT_OFR ACO ON ACO.OFR_ID = OFR.OFR_ID
+                                JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_ID = ACO.ACT_ID
+                                JOIN REM01.ACT_TBJ_TRABAJO TRA ON eco.TBJ_ID = TRA.TBJ_ID
+                                JOIN REM01.ACT_TRA_TRAMITE ATR ON ATR.TBJ_ID = TRA.TBJ_ID
+                                JOIN REM01.TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID
+                                JOIN REM01.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID
+                                JOIN REM01.TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID
+                                JOIN REM01.TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID
+                                WHERE OFR.BORRADO = 0
+                                AND ACT.DD_CRA_ID=1
+                                AND TAP.TAP_CODIGO IN (''T013_DocumentosPostVenta'')
+                                AND TAR.TAR_TAREA_FINALIZADA = 0
+                                AND ECO.ECO_ID = '||V_ECO_ID||'
+                                AND OFR.OFR_ID = '||V_OFR_ID||'
+                                AND (OFR.CHECK_FORZADO_CAJAMAR = 1 OR (OFR.CHECK_FORM_CAJAMAR = 1 AND OFR.CHECK_FORZADO_CAJAMAR IS NULL))';
+                    EXECUTE IMMEDIATE V_MSQL INTO V_FORMALIZACION_CAJAMAR;
 
-                    IF SQL%ROWCOUNT > 0 THEN
+                    IF V_FORMALIZACION_CAJAMAR = 0 THEN 
+                        DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Vendido" ó "Anulado". Continuamos la ejecución.');
+                        DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
+                        --PASO 1/2 Actualizar el estado del expediente a "Vendido"
+                        V_MSQL := '
+                        SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''08'''; /*VENDIDO*/
+                        EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
 
-                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/2 | El estado del expediente a pasado a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'.');
-                        V_PASOS := V_PASOS+1;
-                        --Logado en HLD_HIST_LANZA_PER_DETA
-                        PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
-                        PARAM2 := 'ECO_ID';
-                        PARAM3 := 'DD_EEC_ED';
-                        HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
-                        --Reseteamos el V_VALOR_NUEVO
-                        V_VALOR_NUEVO := '';
+                        V_MSQL := '
+                        UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
+                        SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*RESERVADO*/
+                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+                        FECHAMODIFICAR = SYSDATE
+                        WHERE ECO_ID = '||V_ECO_ID||'
+                        AND OFR_ID = '||V_OFR_ID||'
+                        ';
+                        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                        EXECUTE IMMEDIATE V_MSQL;
+
+                        IF SQL%ROWCOUNT > 0 THEN
+
+                            DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/2 | El estado del expediente a pasado a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'.');
+                            V_PASOS := V_PASOS+1;
+                            --Logado en HLD_HIST_LANZA_PER_DETA
+                            PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
+                            PARAM2 := 'ECO_ID';
+                            PARAM3 := 'DD_EEC_ED';
+                            HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
+                            --Reseteamos el V_VALOR_NUEVO
+                            V_VALOR_NUEVO := '';
+
+                        ELSE
+                            COD_RETORNO := 1;
+                            V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+                            --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+                        END IF;
 
                     ELSE
-                        COD_RETORNO := 1;
-                        V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
-                        --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/2 | El estado del expediente NO pasa a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||' por la formalizacion Cajamar.');
+                        V_PASOS := V_PASOS+1;
                     END IF;
 
                     IF COD_RETORNO = 0 THEN

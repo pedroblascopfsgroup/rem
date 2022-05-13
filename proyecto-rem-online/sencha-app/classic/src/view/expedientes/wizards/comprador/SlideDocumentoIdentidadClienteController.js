@@ -52,7 +52,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 			        			&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
-			        				&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+                                && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
+                                && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']){
 			        		me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 			        		return false;
 			        	}
@@ -64,7 +65,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
-			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+                                    && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
+                                    && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']){
 								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 								return false;
 							}
@@ -75,7 +77,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIF']
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF']
 			    					&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['CIF_PAIS_EXTRANJERO']
-			    						&& wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']){
+                                    && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['NIE']
+                                    && wizard.codTipoDocumento.valueOf() != CONST.TIPO_DOCUMENTO_IDENTIDAD['TARJETA_DE_RESIDENTE_NIE']){
 								me.fireEvent("errorToast", HreRem.i18n("msg.error.validar.wizard.oferta.datos.comprador.documento.cliente"));
 								return false;
 							}
@@ -193,6 +196,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				var date = comprador.fechaNacimientoConstitucion.slice(0, 10);
 		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(date);
 		            			}
+
+		            			if(!Ext.isEmpty(comprador.fechaNacimientoRepresentante)){
+                                	var date = comprador.fechaNacimientoRepresentante.slice(0, 10);
+                                    slideDatos.getForm().findField('fechaNacimientoRepresentante').setValue(date);
+                                }
 		            			
 		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
 		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -179,9 +180,9 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_TVP_ID")
-	private DDTipoVpo regimenProteccion;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "DD_TVP_ID")
+//	private DDTipoVpo regimenProteccion;
 
 	@Column(name = "ICO_VALOR_ESTIMADO_VENTA")
 	private Float valorEstimadoVenta;
@@ -226,8 +227,8 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "ICO_ASCENSOR")
 	private DDSinSiNo ascensor;
 	
-	@Column(name="ICO_SUP_UTIL")
-	private Float superficieUtil;
+//	@Column(name="ICO_SUP_UTIL")
+//	private Float superficieUtil;
 
 	@ManyToOne
 	@JoinColumn(name = "ICO_REHABILITADO")
@@ -464,6 +465,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_AAC_ID")
 	private DDActivoAccesibilidad accesibilidad;
+	
+	@Column(name="ICO_IDEF_PLAZA_PARKING")
+	private Long identificadorPlazaParking;
+	
+	@Column(name="ICO_IDEF_TRASTERO")
+	private Long identificadorTrastero;
 
 	public Long getId() {
 		return id;
@@ -745,13 +752,13 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public DDTipoVpo getRegimenProteccion() {
-		return regimenProteccion;
-	}
-
-	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
-		this.regimenProteccion = regimenProteccion;
-	}
+//	public DDTipoVpo getRegimenProteccion() {
+//		return regimenProteccion;
+//	}
+//
+//	public void setRegimenProteccion(DDTipoVpo regimenProteccion) {
+//		this.regimenProteccion = regimenProteccion;
+//	}
 
 	public Float getValorEstimadoVenta() {
 		return valorEstimadoVenta;
@@ -833,13 +840,13 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.ascensor = ascensor;
 	}
 	
-	public Float getSuperficieUtil() {
-		return superficieUtil;
-	}
-
-	public void setSuperficieUtil(Float superficieUtil) {
-		this.superficieUtil = superficieUtil;
-	}
+//	public Float getSuperficieUtil() {
+//		return superficieUtil;
+//	}
+//
+//	public void setSuperficieUtil(Float superficieUtil) {
+//		this.superficieUtil = superficieUtil;
+//	}
 
 	public DDSinSiNo getRehabilitado() {
 		return rehabilitado;
@@ -1360,4 +1367,21 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
 		this.accesibilidad = accesibilidad;
 	}
+
+	public Long getIdentificadorPlazaParking() {
+		return identificadorPlazaParking;
+	}
+
+	public void setIdentificadorPlazaParking(Long identificadorPlazaParking) {
+		this.identificadorPlazaParking = identificadorPlazaParking;
+	}
+
+	public Long getIdentificadorTrastero() {
+		return identificadorTrastero;
+	}
+
+	public void setIdentificadorTrastero(Long identificadorTrastero) {
+		this.identificadorTrastero = identificadorTrastero;
+	}
+	
 }

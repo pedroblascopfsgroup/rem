@@ -55,10 +55,36 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					}
 				]
 			},
-         
+			{
+    			xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: false,
+				reference: 'informacionBCAdministracion',
+				title: HreRem.i18n('title.informacion.BC'),
+				colspan:3,
+				bind:{
+					hidden: '{!isCarteraBankia}'
+				},
+				items :
+					[
+						{
+							xtype:'comboboxfieldbasedd',
+							fieldLabel: HreRem.i18n('fieldlabel.activocaixa.segmentacion.cartera'),
+							bind: {											
+								store: '{comboSegmentacionCartera}',
+								value: '{administracion.segmentacionCarteraCodigo}',
+								rawValue: '{administracion.segmentacionCarteraDescripcion}',
+								readOnly: true
+							}
+						}
+					]
+			},
          {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.proveedores'),
+			bind: {
+                hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
+            },
 			collapsible: false,
 			items :	[
 				{

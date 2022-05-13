@@ -850,4 +850,6 @@ public interface OfertaApi {
     DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) throws Exception;
 
 	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);
+	
+	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
 }

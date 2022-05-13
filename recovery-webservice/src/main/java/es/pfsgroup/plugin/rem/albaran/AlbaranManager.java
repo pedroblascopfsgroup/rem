@@ -21,12 +21,14 @@ import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
 import es.pfsgroup.plugin.rem.model.Prefactura;
+import es.pfsgroup.plugin.rem.model.Prefacturas;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import java.util.Date;
 
 @Service("albaranManager")
 public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> implements AlbaranApi {
@@ -100,7 +102,11 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 					Long numTrabajo = Long.valueOf(listaString[i]);
 					Trabajo tbj = genericDao.get(Trabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
-					if(tbj != null) {
+					if(tbj != null) {	
+						Prefacturas prefacturas = tbj.getPrefacturaTrabajo();
+						if (prefacturas != null) {
+							genericDao.deleteById(Prefacturas.class, prefacturas.getId());
+						}
 						tbj.setPrefactura(null);
 						genericDao.save(Trabajo.class, tbj);
 					}

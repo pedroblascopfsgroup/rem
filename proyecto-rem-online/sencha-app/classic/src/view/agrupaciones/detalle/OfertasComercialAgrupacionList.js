@@ -164,10 +164,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
          	
          	if(this.editOnSelect) {
 	            var estado = context.record.get("codigoEstadoOferta");  
-	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08';	            
-	            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
-	            	allowEdit = true;
-	            }
+	            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06';
+
 	            this.editOnSelect = allowEdit;
          	}
             return this.editOnSelect;

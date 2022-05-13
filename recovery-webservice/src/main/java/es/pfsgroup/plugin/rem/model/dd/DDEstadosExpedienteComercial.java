@@ -225,5 +225,29 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 		}
 		return is;
 	}
+	
+	public static boolean isEnTramitacion(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && EN_TRAMITACION.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPendienteSancion(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && PTE_SANCION.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isContraofertado(DDEstadosExpedienteComercial estado) {
+		boolean is = false;
+		if(estado != null && CONTRAOFERTADO.equals(estado.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

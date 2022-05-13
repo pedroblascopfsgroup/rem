@@ -645,7 +645,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.regimen.inmueble')
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.regimen.inmueble'),
+										readOnly: true
 					                },
 					    			{ 
 										xtype: 'comboboxfieldbasedd',
@@ -668,7 +669,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo',
-										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.ocupacional')
+										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.estado.ocupacional'),
+										readOnly: true
 					                },
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.info.comercial.anyo.construccion'),
@@ -865,7 +867,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										bind:		{
 											value:'{infoComercial.superficieUtil}',
 											hidden: '{infoComercial.isEdificioConstruccion}'
-										}
+										},
+										readOnly: true
 					                }
 								]
 						}

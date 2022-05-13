@@ -2967,9 +2967,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				replicateOfertaFlush(oferta);
 			}
 		}
-		
-		oferta = setEstadoOfertaByIsNecesarioDeposito(oferta);
-
+		if(!DDEstadoOferta.CODIGO_CADUCADA.equals(oferta.getEstadoOferta().getCodigo()) 
+				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+			oferta = setEstadoOfertaByIsNecesarioDeposito(oferta);
+		}
 
 		return oferta;
 	}

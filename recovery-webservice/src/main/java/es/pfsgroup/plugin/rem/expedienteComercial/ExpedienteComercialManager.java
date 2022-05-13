@@ -15285,8 +15285,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Boolean saltaPbc = false;
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		Oferta ofr = expedienteComercial.getOferta();
-
-		if (ofr != null && 20000.00 > ofr.getImporteOferta()) {
+		
+		Double importe = ofr.getImporteContraOferta() != null ? ofr.getImporteContraOferta()
+	            : ofr.getImporteOferta();
+		
+		if (ofr != null && 20000.00 > importe) {
 			Activo act = ofr.getActivoPrincipal();
 			if(act != null && act.getCartera() != null && (DDCartera.isCarteraCerberus(act.getCartera()))){
 				DDSubcartera scr = act.getSubcartera();

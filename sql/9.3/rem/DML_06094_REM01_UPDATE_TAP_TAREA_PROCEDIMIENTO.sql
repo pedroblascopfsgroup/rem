@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20200513
+--## FECHA_CREACION=20220513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-17754
@@ -10,7 +10,7 @@
 --## Finalidad: 
 --## VERSIONES:
 --##        0.1 Versión inicial Vicente Martinez HREOS-17749
---##        0.2 Agregar validacion decision T017_RespuestaOfertanteCES
+--##        0.2 Agregar validacion decision T017_RespuestaOfertanteCES y T017_RatificacionComiteCES
 --##########################################
 --*/
 
@@ -46,6 +46,16 @@ BEGIN
 	USUARIOMODIFICAR = ''HREOS-17754'', 
 	FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_CODIGO = ''T017_RespuestaOfertanteCES''';
+
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO]:'||SQL%ROWCOUNT||' REGISTROS MODIFICADOS CORRECTAMENTE');
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
+		SET TAP_SCRIPT_DECISION = ''esBBVA() ? valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReservaBbva'''' : ''''AceptaSinReservaBbva'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? saltaPBCReserva() ? ''''AceptaSaltaPbc'''' :  ''''AceptaConReserva'''' : ''''AceptaSinReserva'''' :  valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''''',
+		USUARIOMODIFICAR = ''HREOS-17754'', 
+		FECHAMODIFICAR = SYSDATE 
+		WHERE TAP_CODIGO = ''T017_RatificacionComiteCES''';
 
 	EXECUTE IMMEDIATE V_MSQL;
 	

@@ -847,7 +847,7 @@ public interface OfertaApi {
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 
-    DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta);
+    DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) throws Exception;
 
 	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);
 }

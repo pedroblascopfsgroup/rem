@@ -8986,7 +8986,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) {
+	public DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) throws Exception {
 		List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 
 		DDTipoComercializar tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_RETAIL));
@@ -8995,14 +8995,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", actOfr.getPrimaryKey().getActivo().getId()));
 			if(activoCaixa != null){
 				if(DDTipoOferta.isTipoVenta(tipoOferta)){
-					if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionVenta().getCodigo())){
-						tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
-						break;
+					if(activoCaixa.getCanalDistribucionVenta() != null) {
+						if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionVenta().getCodigo())){
+							tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
+							break;
+						}
+					}else {
+						throw new Exception("El activo no tiene canal de distribución");
 					}
 				} else if(DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)){
-					if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionAlquiler().getCodigo())){
-						tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
-						break;
+					if(activoCaixa.getCanalDistribucionVenta() != null) {
+						if (DDTipoComercializar.CODIGO_SINGULAR.equals(activoCaixa.getCanalDistribucionAlquiler().getCodigo())){
+							tipoComercializar = genericDao.get(DDTipoComercializar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializar.CODIGO_SINGULAR));
+							break;
+						}
+					}else {
+						throw new Exception("El activo no tiene canal de distribución");
 					}
 				}
 			}

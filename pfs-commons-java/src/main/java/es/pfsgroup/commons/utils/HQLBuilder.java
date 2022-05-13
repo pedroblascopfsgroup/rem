@@ -402,13 +402,27 @@ public class HQLBuilder {
 			int	posIni;
 			char charFin;
 			char charIni;
-			boolean esNulo = true;
+			boolean esNulo = false;
 			
+			for (Object ob : valor) {
+				if (ob == null) {
+					esNulo = true;
+					break;
+				}
+			}
+			
+			if (!esNulo) {
+				for (String val : campo) {
+					if (val == null) {
+						esNulo = true;
+						break;
+					}
+				}
+			}
+			if (!esNulo) {
 			for (int i = 0; i < campo.length; i++) {
 				String textoCampo = campo[i];
 				Object textoValor = valor[i];
-				if (textoCampo != null && textoValor != null) {
-					esNulo = false;
 					posFin = query.indexOf(claveBuscar)+claveBuscar.length();
 					posIni = query.indexOf(claveBuscar)-1;
 					charFin = query.charAt(posFin);
@@ -428,8 +442,7 @@ public class HQLBuilder {
 					}else {
 						hqlBuilder.getParametros().putObject(nombreParametro, textoValor);
 					}
-					
-				}
+			}
 			}
 				if (!esNulo)
 				hqlBuilder.appendWhere(query);		

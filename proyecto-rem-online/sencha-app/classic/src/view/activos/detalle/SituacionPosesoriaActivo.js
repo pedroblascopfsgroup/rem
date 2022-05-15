@@ -665,8 +665,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		var me = this,
    		errores = [],
    		error,
-   		fechaTomaPosesion = me.down('[reference=fechaTomaPosesion]'),
-   		fechaRevisionEstadoPosesorio = me.down('[reference=fechaRevisionEstadoPosesorio]'),
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
    		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
    		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]');
@@ -674,15 +672,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    	//	ocupadoRef = me.down('[reference=comboOcupadoRef]');
 //   	datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
 //   	datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
-
-   		
-   		
-   		
-   		if((!Ext.isEmpty(fechaTomaPosesion.getValue()) || !fechaTomaPosesion.getValue() == null)  && (!Ext.isEmpty(fechaRevisionEstadoPosesorio.getValue()) || !fechaRevisionEstadoPosesorio.getValue() == null)  && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
-		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
-   			errores.push(error);
-   			fechaTomaPosesion.markInvalid(error);   			
-   		}  		
 
    		if((!Ext.isEmpty(fechaLanzamiento.getValue()) || !fechaLanzamiento.getValue() == null)  && (!Ext.isEmpty(fechaSolDesahucio.getValue()) || !fechaSolDesahucio.getValue() == null) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue() ) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamiento.menor.fechaSolDesahucio");
@@ -702,9 +691,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    			errores.push(error);
    			ocupadoRef.markInvalid(error);   			
    		} */
-   		
-   		
-   		
 
 //   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
 //   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {

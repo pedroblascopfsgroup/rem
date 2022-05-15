@@ -144,7 +144,9 @@ public interface ActivoAgrupacionApi {
 	Boolean saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
 	
 	Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
-	
+
+	Usuario getGestorComercialBackOfficeAgrupacion(List<ActivosLoteOfertaDto> dtoActivos);
+
 	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones);
 	
 	public List<DtoTipoAgrupacion> getComboTipoAgrupacion();

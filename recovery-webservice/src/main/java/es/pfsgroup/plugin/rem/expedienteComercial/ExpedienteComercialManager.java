@@ -847,6 +847,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 
 			}
+			ofertaApi.setEstadoOfertaBC(oferta);
 		}
 		//En este array se van a introducir las ofertas afectadas en los cambios de clases de ofertas de LBK pra recalcular su comite sancionador tomando en cuenta las modificaciones
 		List<Oferta> listaOfertasLBK = new ArrayList<Oferta>();

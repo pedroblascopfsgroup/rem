@@ -30,11 +30,17 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
-	public static final String CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS= "500";
-	public static final String CODIGO_TRAMITE_PDTE_DOCUMENTACION= "510";
-	public static final String CODIGO_TRAMITE_PDTE_PAGO_DEPOSITO= "520";
-	public static final String CODIGO_TRAMITE_PDTE_TRAMITACION= "530";
-	public static final String CODIGO_TRAMITE_CONGELADA= "540";
+	public static final String CODIGO_C4C_TRAMITE_PDTE_TITULARES_SECUNDARIOS= "500";
+	public static final String CODIGO_C4C_TRAMITE_PDTE_DOCUMENTACION= "510";
+	public static final String CODIGO_C4C_TRAMITE_PDTE_PAGO_DEPOSITO= "520";
+	public static final String CODIGO_C4C_TRAMITE_PDTE_TRAMITACION= "530";
+	public static final String CODIGO_C4C_TRAMITE_CONGELADA= "540";
+	
+	public static final String CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS= "04";
+	public static final String CODIGO_TRAMITE_PDTE_DOCUMENTACION= "05";
+	public static final String CODIGO_TRAMITE_PDTE_PAGO_DEPOSITO= "06";
+	public static final String CODIGO_TRAMITE_PDTE_TRAMITACION= "07";
+	public static final String CODIGO_TRAMITE_CONGELADA= "08";
 
 	private static final long serialVersionUID = 1L;
 
@@ -142,7 +148,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
 	public static boolean isEnTramitePdteTitularesSecundarios(DDEstadoOfertaBC dd) {
 		boolean is = false;
-		if(dd != null && CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS.equals(dd.getCodigo())) {
+		if(dd != null && CODIGO_C4C_TRAMITE_PDTE_TITULARES_SECUNDARIOS.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;
@@ -150,7 +156,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
 	public static boolean isEnTramitePdteDocumentacion(DDEstadoOfertaBC dd) {
 		boolean is = false;
-		if(dd != null && CODIGO_TRAMITE_PDTE_DOCUMENTACION.equals(dd.getCodigo())) {
+		if(dd != null && CODIGO_C4C_TRAMITE_PDTE_DOCUMENTACION.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;
@@ -158,7 +164,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
 	public static boolean isEnTramitePdtePagoDeposito(DDEstadoOfertaBC dd) {
 		boolean is = false;
-		if(dd != null && CODIGO_TRAMITE_PDTE_PAGO_DEPOSITO.equals(dd.getCodigo())) {
+		if(dd != null && CODIGO_C4C_TRAMITE_PDTE_PAGO_DEPOSITO.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;
@@ -166,7 +172,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
 	public static boolean isEnTramitePdteTramitacion(DDEstadoOfertaBC dd) {
 		boolean is = false;
-		if(dd != null && CODIGO_TRAMITE_PDTE_TRAMITACION.equals(dd.getCodigo())) {
+		if(dd != null && CODIGO_C4C_TRAMITE_PDTE_TRAMITACION.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;
@@ -174,7 +180,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	
 	public static boolean isEnTramiteCongelada(DDEstadoOfertaBC dd) {
 		boolean is = false;
-		if(dd != null && CODIGO_TRAMITE_CONGELADA.equals(dd.getCodigo())) {
+		if(dd != null && CODIGO_C4C_TRAMITE_CONGELADA.equals(dd.getCodigo())) {
 			is = true;
 		}
 		return is;

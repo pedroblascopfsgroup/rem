@@ -362,6 +362,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
 		oferta.setEstadoOferta(estadoOferta);
+		ofertaApi.setEstadoOfertaBC(oferta);
 		
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 				&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());

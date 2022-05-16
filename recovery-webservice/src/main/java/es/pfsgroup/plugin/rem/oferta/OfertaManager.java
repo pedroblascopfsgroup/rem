@@ -199,6 +199,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOfertaBC;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -2952,6 +2953,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		
+		setEstadoOfertaBC(oferta);
+		
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
 		if(DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())
@@ -2995,6 +2998,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDEstadoOferta ddEstadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			oferta.setEstadoOferta(ddEstadoOferta);
+			setEstadoOfertaBC(oferta);
 		}
 
 		return oferta;
@@ -3255,6 +3259,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 									&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estado.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 						updateStateDispComercialActivosByOferta(oferta);
+						setEstadoOfertaBC(oferta);
 						genericDao.save(Oferta.class, oferta);
 						
 						if (pdteDocu) llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
@@ -3306,6 +3311,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						ofr.setEstadoOferta(estado);
 						updateStateDispComercialActivosByOferta(ofr);
+						setEstadoOfertaBC(ofr);
 						genericDao.save(Oferta.class, ofr);
 
 						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
@@ -3344,6 +3350,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 					oferta.setEstadoOferta(estado);
 					updateStateDispComercialActivosByOferta(oferta);
+					setEstadoOfertaBC(oferta);
 					genericDao.save(Oferta.class, oferta);
 					
 					ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
@@ -9278,6 +9285,49 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean cumpleCondicionesReplicarPorEstadoYOferta(Oferta oferta, String codEstado){
 		return (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado))
 				|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codEstado);
+	}
+	
+	/**
+	 * Este método setea el estado BC de una Oferta Caixa a partir del estado de la Oferta original.
+	 * 
+	 * @param oferta
+	 * @return OfertaCaixa
+	 */
+	@Override
+	public OfertaCaixa setEstadoOfertaBC(Oferta oferta) {
+		
+		if(!DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))
+			return null;
+		
+		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+		
+		if(ofertaCaixa == null)
+			return null;
+		
+		Filter filtroEstadoOferta = genericDao.createFilter(FilterType.EQUALS, "codigo", oferta.getEstadoOferta().getCodigo());
+		DDEstadoOferta estadoOferta = genericDao.get(DDEstadoOferta.class, filtroEstadoOferta);
+		Filter filtroEstadoOfertaBC = null;
+		
+		if(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta.getCodigo()))
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS);
+		else if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta.getCodigo()))
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_DOCUMENTACION);
+		else if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(estadoOferta.getCodigo()))
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_PAGO_DEPOSITO);
+		else if(DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo()))
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_TRAMITACION);
+		else if(DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo()))
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONGELADA);
+		
+		if(filtroEstadoOfertaBC != null) {
+			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, filtroEstadoOfertaBC);
+			if(estadoOfertaBC != null) {
+				ofertaCaixa.setEstadoOfertaBc(estadoOfertaBC);
+				genericDao.save(OfertaCaixa.class, ofertaCaixa);
+			}
+		}
+		
+		return ofertaCaixa;
 	}
 }
 	

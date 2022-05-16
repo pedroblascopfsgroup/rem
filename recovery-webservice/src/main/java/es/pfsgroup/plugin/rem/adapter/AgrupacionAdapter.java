@@ -1818,6 +1818,7 @@ public class AgrupacionAdapter {
 												ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
 										}
+										ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta());
 									}
 								} catch (Exception e) {
 									logger.error("error descongelando ofertas", e);
@@ -1992,6 +1993,7 @@ public class AgrupacionAdapter {
 												oferta.setEstadoOferta(estadoOferta);
 												if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 											}
+											ofertaApi.setEstadoOfertaBC(oferta);
 										}
 									}
 								}
@@ -2038,6 +2040,7 @@ public class AgrupacionAdapter {
 									if (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 										ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 								}
+								ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta());
 							}
 						}
 					}
@@ -3182,6 +3185,7 @@ public class AgrupacionAdapter {
 					genericDao.save(Oferta.class,ofertaNueva);
 				}
 					
+				ofertaApi.setEstadoOfertaBC(ofertaNueva);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
 				
 				if (dto.getCheckSubasta() != null){

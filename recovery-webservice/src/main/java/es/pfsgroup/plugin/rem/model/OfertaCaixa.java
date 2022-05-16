@@ -128,6 +128,10 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@JoinColumn(name="OFR_SANCION_PBC")
 	private DDSancionPBC sancionPbc;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_EOB_ID")
+	private DDEstadoOfertaBC estadoOfertaBc;
+	
     @Version
     private Integer version;
 
@@ -367,4 +371,13 @@ public class OfertaCaixa implements Serializable, Auditable {
 	public void setSancionPbc(DDSancionPBC sancionPbc) {
 		this.sancionPbc = sancionPbc;
 	}
+
+	public DDEstadoOfertaBC getEstadoOfertaBc() {
+		return estadoOfertaBc;
+	}
+
+	public void setEstadoOfertaBc(DDEstadoOfertaBC estadoOfertaBc) {
+		this.estadoOfertaBc = estadoOfertaBc;
+	}
+	
 }

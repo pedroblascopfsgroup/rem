@@ -945,6 +945,7 @@ public class AgendaAdapter {
 										oferta.setEstadoOferta(pendiente);
 										if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 									}
+									ofertaApi.setEstadoOfertaBC(oferta);
 									genericDao.save(Oferta.class, oferta);
 									
 								}

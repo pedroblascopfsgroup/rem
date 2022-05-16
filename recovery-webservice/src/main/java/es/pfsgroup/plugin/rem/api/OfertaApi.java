@@ -852,4 +852,7 @@ public interface OfertaApi {
 	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);
 	
 	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
+
+	public OfertaCaixa setEstadoOfertaBC(Oferta oferta);
+
 }

@@ -189,6 +189,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 			if(ofr != null && esNecesarioDeposito(ofr)){
 				generaDeposito(ofr);
 				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+				ofertaApi.setEstadoOfertaBC(ofr);
 				genericDao.save(Oferta.class, ofr);
 			}
 

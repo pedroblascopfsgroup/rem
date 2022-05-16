@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220513
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11683
+--## INCIDENCIA_LINK=REMVIP-11670
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -35,6 +35,7 @@
 --##	      0.23 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
 --##	      0.24 Corrección número anterior [HREOS-17614] - Daniel Algaba
 --##	      0.25 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
+--##	      0.26 Tipo/subtipo [REMVIP-11670] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -163,7 +164,11 @@ BEGIN
                                  ) us ON (us.act_id = act.act_id)
                                  when matched then update set
                                     act.DD_TPA_ID = COALESCE(us.DD_TPA_ID,act.DD_TPA_ID, us.TPA_NULL)
-                                    ,act.DD_SAC_ID = us.DD_SAC_ID
+                                    ,act.DD_SAC_ID = CASE 
+                                                         WHEN us.DD_SAC_ID IS NOT NULL THEN us.DD_SAC_ID 
+                                                         WHEN us.DD_TPA_ID IS NULL THEN act.DD_SAC_ID 
+                                                         WHEN us.DD_TPA_ID IS NOT NULL AND us.DD_SAC_ID IS NULL AND us.DD_TPA_ID = act.DD_TPA_ID THEN act.DD_SAC_ID 
+                                                      END
                                     ,act.DD_TTA_ID = NVL(us.DD_TTA_ID,act.DD_TTA_ID)
                                     ,act.DD_STA_ID = NVL(us.DD_STA_ID,act.DD_STA_ID)
                                     ,act.DD_PRP_ID = us.DD_PRP_ID

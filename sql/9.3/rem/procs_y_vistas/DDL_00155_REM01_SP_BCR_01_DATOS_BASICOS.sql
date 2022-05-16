@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220513
+--## FECHA_CREACION=20220406
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11683
@@ -17,36 +17,35 @@
 --##        0.5 Inclusión de cambios en modelo Fase 1 - [HREOS-14344] - Alejandra García
 --##        0.6 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - [HREOS-14545] - Daniel Algaba
 --##        0.7 Gestores de gestoría de admisión y administración - [HREOS-14545] - Daniel Algaba
---##	      0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
---##	      0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
---##	      0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
---##	      0.11 Uso dominante - [HREOS-14974] - Alejandra García
---##	      0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
---##	      0.13 Correcciones gestores - [HREOS-15254] - Daniel Algaba
---##	      0.14 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
---##	      0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
---##	      0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
---##	      0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
---##	      0.18 Añadir estado posesorio y fecha a la tabla ACT_ACTIVO_CAIXA [HREOS-17696] - Daniel Algaba
---##	      0.19 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
---##	      0.20 Cálculo del alquiler rotacional y alquiler alquilado para el DD_CBC_ID [HREOS-17155] - Alejandra García
---##	      0.21 Corección DD_CBC_ID [HREOS-17497] - Daniel Algaba
---##	      0.22 Corección DD_TPA por si no viniese o no hubiesa Clase uso registral [HREOS-17515] - Daniel Algaba
---##	      0.23 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
---##	      0.24 Corrección número anterior [HREOS-17614] - Daniel Algaba
---##	      0.25 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
+--##        0.8 Campos IND_ENTREGA_VOL_POSESI - HREOS-14745 - Alejandra García
+--##        0.9 Se añade comprobación para no machacar tipo y subtipo de activo si no viene - HREOS-14837
+--##        0.10 Nuevo campos Origen Regulatorio - HREOS-14838 - Daniel Algaba
+--##        0.11 Uso dominante - [HREOS-14974] - Alejandra García
+--##        0.12 Tipo de activo - [HREOS-15133] - Daniel Algaba
+--##        0.13 Correcciones gestores - [HREOS-15254] - Daniel Algaba
+--##        0.14 Corrección estado técnico - [HREOS-15423] - Daniel Algaba
+--##        0.15 Corrección tipo/subtipo activo cuando solo viene tipo [HREOS-15423] - Daniel Algaba
+--##        0.16 Motivo de arras, se lee con guiones se pasa a comas y se introduce en un campo de texto [HREOS-15634] - Daniel Algaba
+--##        0.17 Corrección subtipo de activo [HREOS-15634] - Daniel Algaba
+--##        0.18 Numero inmueble y segmentación cartera Caixa, y cambio CLASE_USO por CLASE_USO_REGISTRAL [HREOS-17150] - Javier Esbri
+--##        0.19 Cálculo del alquiler rotacional y alquiler alquilado para el DD_CBC_ID [HREOS-17155] - Alejandra García
+--##        0.20 Corección DD_CBC_ID [HREOS-17497] - Daniel Algaba
+--##        0.21 Corección DD_TPA por si no viniese o no hubiesa Clase uso registral [HREOS-17515] - Daniel Algaba
+--##        0.22 Añadimos Tipo vivienda y Tipología edificio [HREOS-17614] - Daniel Algaba
+--##        0.23 Corrección número anterior [HREOS-17614] - Daniel Algaba
+--##        0.24 Añadir merge a la ACT_ACTIVO_CAIXA para rellenar el DD_CBC_ID de los activos vendidos de Caixa [REMVIP-11683] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-SET DEFINE OFF;						
+SET DEFINE OFF;                  
 
 
 
 CREATE OR REPLACE PROCEDURE SP_BCR_01_DATOS_BASICOS
-	( FLAG_EN_REM IN NUMBER,
+   ( FLAG_EN_REM IN NUMBER,
    SALIDA OUT VARCHAR2, 
-	COD_RETORNO OUT NUMBER)
+   COD_RETORNO OUT NUMBER)
 
    AS
 
@@ -99,7 +98,7 @@ BEGIN
       SALIDA := SALIDA || '   [INFO] 2 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO'|| CHR(10);
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO act
-				using (				
+            using (           
                            
                   SELECT       
                   aux.NUM_INMUEBLE as ACT_NUM_ACTIVO,
@@ -222,7 +221,7 @@ BEGIN
    SALIDA := SALIDA || '   [INFO] 2.1 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO'|| CHR(10);
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO act
-				       using (	
+                   using ( 
                       SELECT
                          TUD.DD_TUD_ID AS DD_TUD_ID
                         ,ACT.ACT_ID
@@ -275,7 +274,7 @@ BEGIN
    END LOOP;
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA act1
-				using (		
+            using (     
                WITH APORTADOS AS (
                   SELECT
                   aux.NUM_IDENTIFICATIVO,
@@ -343,8 +342,6 @@ BEGIN
                tcr2.DD_TCR_ID as CBX_CANAL_DIST_ALQUILER,
                ctc.DD_CTC_ID as DD_CTC_ID,
                CAIXA.CBX_ID,
-               ETP.DD_ETP_ID,
-               TO_DATE(aux.FEC_ESTADO_POSESORIO,''yyyymmdd'') FEC_EST_POSESORIO_BC,
                APO.ACT_NUM_ACTIVO_CAIXA as CBX_NUMERO_INMUEBLE_ANTERIOR,
                CASE
                   WHEN AUX.SEGMENTACION_CARTERA = ''02'' AND DCA.DCA_ID IS NOT NULL AND DCA.DCA_FECHA_FIRMA < SYSDATE AND DCA.DCA_FECHA_FIN_CONTRATO >= SYSDATE  
@@ -379,8 +376,6 @@ BEGIN
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TVC_TIPO_VIVIENDA_CAIXA TVC ON TVC.DD_TVC_CODIGO = eqv11.DD_CODIGO_REM 
                LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv12 ON eqv12.DD_NOMBRE_CAIXA = ''TIPOLOGIA_EDIFICIO''  AND eqv12.DD_CODIGO_CAIXA = aux.TIPOLOGIA_EDIFICIO
                LEFT JOIN '|| V_ESQUEMA ||'.DD_TEC_TIPO_EDIFICIO_CAIXA TEC ON TEC.DD_TEC_CODIGO = eqv12.DD_CODIGO_REM  
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv13 ON eqv13.DD_NOMBRE_CAIXA = ''ESTADO_POSESORIO''  AND eqv13.DD_CODIGO_CAIXA = aux.ESTADO_POSESORIO
-               LEFT JOIN '|| V_ESQUEMA ||'.DD_ETP_ESTADO_POSESORIO ETP ON ETP.DD_ETP_CODIGO = eqv13.DD_CODIGO_REM   
                LEFT JOIN APORTADOS APO ON APO.NUM_IDENTIFICATIVO = aux.NUM_IDENTIFICATIVO              
                WHERE aux.FLAG_EN_REM = '|| FLAG_EN_REM ||'
                
@@ -406,9 +401,7 @@ BEGIN
                               ,act1.FECHA_EAT_EST_TECNICO=us.FECHA_EAT_EST_TECNICO
                               ,act1.CBX_CANAL_DIST_VENTA= us.CBX_CANAL_DIST_VENTA
                               ,act1.CBX_CANAL_DIST_ALQUILER= us.CBX_CANAL_DIST_ALQUILER
-                              ,act1.DD_CTC_ID = us.DD_CTC_ID    
-                              ,act1.DD_ETP_ID = us.DD_ETP_ID    
-                              ,act1.FEC_EST_POSESORIO_BC = us.FEC_EST_POSESORIO_BC                                                                                                                            
+                              ,act1.DD_CTC_ID = us.DD_CTC_ID       
                               ,act1.CBX_NUMERO_INMUEBLE_ANTERIOR = us.CBX_NUMERO_INMUEBLE_ANTERIOR   
                               ,act1.dd_cbc_id = us.dd_cbc_id
                               ,act1.DD_TVC_ID = NVL(US.DD_TVC_ID,act1.DD_TVC_ID)
@@ -439,9 +432,7 @@ BEGIN
                                           FECHA_EAT_EST_TECNICO,
                                           CBX_CANAL_DIST_VENTA,
                                           CBX_CANAL_DIST_ALQUILER,
-                                          DD_CTC_ID,  
-                                          DD_ETP_ID,
-                                          FEC_EST_POSESORIO_BC,                                                                      
+                                          DD_CTC_ID,   
                                           CBX_NUMERO_INMUEBLE_ANTERIOR,                                                                     
                                           dd_cbc_id,
                                           DD_TVC_ID,
@@ -472,8 +463,6 @@ BEGIN
                                           us.CBX_CANAL_DIST_VENTA,
                                           us.CBX_CANAL_DIST_ALQUILER,
                                           us.DD_CTC_ID,
-                                          us.DD_ETP_ID,
-                                          us.FEC_EST_POSESORIO_BC,
                                           us.CBX_NUMERO_INMUEBLE_ANTERIOR,
                                           us.dd_cbc_id,
                                           us.DD_TVC_ID,
@@ -483,8 +472,8 @@ BEGIN
 
    EXECUTE IMMEDIATE V_MSQL;
 
-   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
-
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
+   
    SALIDA := SALIDA || '   [INFO] 3.1 - ACTUALIZAR EN ACT_ACTIVO_CAIXA EL DD_CBC_ID PARA LOS VENDIDOS'|| CHR(10);  
    V_MSQL := 'MERGE INTO rem01.ACT_ACTIVO_CAIXA T1
                USING (
@@ -510,12 +499,12 @@ BEGIN
    ';
    EXECUTE IMMEDIATE V_MSQL;
 
-   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10); 
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
 
    SALIDA := SALIDA || '   [INFO] 4 - INSERTAR/ACTUALIZAR EN ACT_ABA_ACTIVO_BANCARIO'|| CHR(10);   
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ABA_ACTIVO_BANCARIO act1
-				using (		
+            using (     
 
                SELECT
                aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
@@ -961,7 +950,7 @@ BEGIN
    SALIDA := SALIDA || '   [INFO] 10 - INSERTAR/ACTUALIZAR EN ACT_SPS_SIT_POSESORIA'|| CHR(10);   
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA act1
-				using (		
+            using (     
                SELECT
                   CASE
                      WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1

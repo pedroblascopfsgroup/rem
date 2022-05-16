@@ -172,7 +172,7 @@
  	<transition to="T017_PBCVenta" name="AceptaSinReservaBbva"></transition>  
     <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
 	<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
-	<transition to="T017_InstruccionesReserva" name="AceptaSaltaPbc"></transition>
+	<transition to="forkReservaSiSaltaPbc" name="AceptaSaltaPbc"></transition>
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
 
     <fork name="forkReservaSi">  
@@ -184,6 +184,10 @@
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork><!--Fork Resolucion CES ACEPTA SIN RESERVA-->
 
+    <fork name="forkReservaSiSaltaPbc">  
+        <transition to="T017_AdvisoryNote" name="advisoryNote"></transition>
+        <transition to="T017_InstruccionesReserva" name="instruccionesReserva"></transition>
+    </fork>
 
     <state name="T017_AdvisoryNote">
 		<event type="node-enter">

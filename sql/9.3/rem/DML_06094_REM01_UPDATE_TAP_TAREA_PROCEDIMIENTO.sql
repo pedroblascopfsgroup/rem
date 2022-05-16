@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20220513
+--## FECHA_CREACION=202205136
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-17754
@@ -52,7 +52,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO]:'||SQL%ROWCOUNT||' REGISTROS MODIFICADOS CORRECTAMENTE');
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-		SET TAP_SCRIPT_DECISION = ''esBBVA() ? valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReservaBbva'''' : ''''AceptaSinReservaBbva'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? saltaPBCReserva() ? ''''AceptaSaltaPbc'''' :  ''''AceptaConReserva'''' : ''''AceptaSinReserva'''' :  valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''''',
+		SET TAP_SCRIPT_DECISION = ''esBBVA() ? valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? saltaPBCReserva() ? ''''AceptaSaltaPbc'''' : ''''AceptaConReservaBbva'''' : ''''AceptaSinReservaBbva'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''' : valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? saltaPBCReserva() ? ''''AceptaSaltaPbc'''' :  ''''AceptaConReserva'''' : ''''AceptaSinReserva'''' :  valores[''''T017_RatificacionComiteCES''''][''''comboRatificacion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta'''''',
 		USUARIOMODIFICAR = ''HREOS-17754'', 
 		FECHAMODIFICAR = SYSDATE 
 		WHERE TAP_CODIGO = ''T017_RatificacionComiteCES''';

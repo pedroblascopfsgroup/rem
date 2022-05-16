@@ -2869,71 +2869,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else{
 				if(estadoOferta != null && oferta.getEstadoOferta() != null) {
 					String estadoAnterior = oferta.getEstadoOferta().getCodigo();
-					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+					
+					oferta.setFechaAlta(fechaAccion);
+					oferta.setFechaEntradaCRMSF(fechaAccion);
+					
 					if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
 						oferta.setFechaAlta(null);
 					}else if(DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && depositoApi.esNecesarioDeposito(oferta) && !DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoAnterior) && !DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoAnterior) ){
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+						estadoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 					}
 					
-					oferta.setFechaEntradaCRMSF(fechaAccion);
-				}
-				
-				if (estadoOferta != null) {
-						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
-								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta))) {
-							oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-							
-							if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) 
-							|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
-
-								oferta.setFechaAlta(null);
-								oferta.setFechaEntradaCRMSF(fechaAccion);
-							}else if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) {
-								if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
-										DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())){
-									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-											genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
-								}
-								oferta.setFechaAlta(fechaAccion);
-								oferta.setFechaEntradaCRMSF(fechaAccion);
-							}
-							
-						}else if(oferta.getEstadoOferta() != null) {
-							//Cuando codigo es Pendiente Consentimiento
-							if (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)
-							&& (DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))) {
-								if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
-										DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())){
-									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-											genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
-								} else{
-									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-								}
-								
-							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) || DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
-									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
-								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo()))
-										|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())) {
-										
-										if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta)) {
-											depositoApi.modificarEstadoDepositoSiIngresado(oferta);
-										}
-										oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-							}else {
-								oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-							}
-						}
+					if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta) ||  DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta)) {
+						depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+					}
+					
+					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+					
 				}else {
-					if(DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
-							DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion() != null ? oferta.getActivoPrincipal().getEquipoGestion().getCodigo() : null )){
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
-					} else{
-						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+					if(depositoApi.esNecesarioDeposito(oferta)) {
+						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
 					}
 					oferta.setFechaAlta(fechaAccion);
-				}				
+				}
+				
+				
 			}
 		}
 

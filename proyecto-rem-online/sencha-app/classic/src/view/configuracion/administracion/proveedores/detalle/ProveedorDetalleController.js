@@ -331,20 +331,44 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 	    			id: me.getViewModel().getData().proveedor.getData().id
 				};
 	    		
-	    		personasContactosStore.load();
+		    		personasContactosStore.load();
+		    	
+		    		model = Ext.create('HreRem.model.DatosContactoModel');
+		    		model.setId(selection.getData().id);
+		    		model.load({
+		    					success : function(record) {
+		    						me.getViewModel().set("datosContacto", record);
+		    						}
+		    					
+		    				});
+		    		
+		    		if(selection.getData().tipoDireccion == '02') {
+		    			me.getView().lookupReference('cbLineaNegocio').setHidden(false);
+						me.getView().lookupReference('cbGestionClientes').setHidden(false);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(false);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(false);
+		    			me.getView().lookupReference('provinciaCombo').setHidden(false);
+		    			me.getView().lookupReference('municipioCombo').setHidden(false);
+		    			me.getView().lookupReference('codigoPostalCombo').setHidden(false);
+		    			me.getView().lookupReference('especialidadRef').setHidden(false);
+		    			me.getView().lookupReference('idiomasRef').setHidden(false);
+					} else {
+						me.getView().lookupReference('cbLineaNegocio').setHidden(true);
+		    			me.getView().lookupReference('cbGestionClientes').setHidden(true);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(true);
+		    			me.getView().lookupReference('numeroComercialesRef').setHidden(true);
+		    			me.getView().lookupReference('provinciaCombo').setHidden(true);
+		    			me.getView().lookupReference('municipioCombo').setHidden(true);
+		    			me.getView().lookupReference('codigoPostalCombo').setHidden(true);
+		    			me.getView().lookupReference('especialidadRef').setHidden(true);
+		    			me.getView().lookupReference('idiomasRef').setHidden(true);
+					}
 	    		
-	    		model = Ext.create('HreRem.model.DatosContactoModel');
-	    		model.setId(selection.getData().id);
-	    		model.load({
-	    					success : function(record) {
-	    						me.getViewModel().set("datosContacto", record);
-	    					}
-	    				});
+	    		
     		}
     	}
     	
     },
-    
     /**
      * Función que borra un documento del grid de documentos.
      */

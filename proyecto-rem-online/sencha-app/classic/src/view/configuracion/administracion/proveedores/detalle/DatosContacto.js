@@ -38,7 +38,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 								     bind : {
 								       store : '{comboLineaDeNegocio}',
 								       value : '{datosContacto.tipoLineaDeNegocioCodigo}',
-									   rawValue : '{datosContacto.tipoLineaDeNegocioDescripcion}'
+									   rawValue : '{datosContacto.tipoLineaDeNegocioDescripcion}',
+									   hidden: true
 								     }
 								},
 								{
@@ -48,14 +49,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 								     bind : {
 								       store : '{comboSinSino}',
 								       value : '{datosContacto.gestionClientesCodigo}',
-									   rawValue : '{datosContacto.gestionClientesDescripcion}'
+									   rawValue : '{datosContacto.gestionClientesDescripcion}',
+									   hidden: true 
 								     }
 								},
 					            {
 									xtype: 'numberfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.numero.comerciales'),				        	
+						        	reference: 'numeroComercialesRef',
 						        	bind: { 
-						        		value: '{datosContacto.numeroComerciales}'
+						        		value: '{datosContacto.numeroComerciales}',
+										hidden: true
 						        	}
 									
 						        },
@@ -64,7 +68,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 									fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 									reference: 'provinciaCombo',
 					            	bind: {
-					            	    value: '{datosContacto.provinciaCodigo}'
+					            	    value: '{datosContacto.provinciaCodigo}',
+										hidden: true
 					            	},
 					            	store: {
 						            	model: 'HreRem.model.ComboBase',
@@ -84,7 +89,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 									fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 									reference: 'municipioCombo',
 					            	bind: {
-					            	    value: '{datosContacto.municipioCodigo}'
+					            	    value: '{datosContacto.municipioCodigo}',
+										hidden: true
 					            	},
 					            	store: {
 						            	model: 'HreRem.model.ComboBase',
@@ -103,7 +109,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 									fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 									reference: 'codigoPostalCombo',
 					            	bind: {
-					            		value: '{datosContacto.codigoPostalCodigo}'
+					            		value: '{datosContacto.codigoPostalCodigo}',
+										hidden: true
 					            	},
 					        		store: {
 					        			model: 'HreRem.model.ComboBase',
@@ -117,6 +124,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 						        {
 								    xtype: 'itemselectorbase',
 								    fieldLabel: HreRem.i18n('fieldlabel.proveedor.especialidad'),
+								    reference: 'especialidadRef',
 								    store: {
 						            	model: 'HreRem.model.ComboBase',
 										proxy: {
@@ -127,12 +135,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 										autoLoad: true
 						            },									   
 								    bind: {
-								    	value: '{datosContacto.especialidadCodigo}'
+								    	value: '{datosContacto.especialidadCodigo}',
+										hidden: true
 								    }
 								},
 								{
 								    xtype: 'itemselectorbase',
 								    fieldLabel: HreRem.i18n('fieldlabel.proveedor.idiomas'),
+								    reference: 'idiomasRef',
 								    store: {
 						            	model: 'HreRem.model.ComboBase',
 										proxy: {
@@ -143,7 +153,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.DatosCo
 										autoLoad: true
 						            },
 								    bind: {
-								    	value: '{datosContacto.idiomaCodigo}'
+								    	value: '{datosContacto.idiomaCodigo}',
+								    	hidden: true
 								    }
 								}
 								]

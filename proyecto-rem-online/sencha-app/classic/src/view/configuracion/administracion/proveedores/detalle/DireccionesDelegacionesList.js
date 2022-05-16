@@ -322,7 +322,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		            flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
-		            	allowBlank: false,
 		            	maxLength: 100
 		            }
 		        }

@@ -1628,13 +1628,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		dto.setId(conducta.getId());
 		dto.setIdProveedor(conducta.getProveedor().getId());
 		
-		Date fechaAlta = !Checks.esNulo(conducta.getAuditoria().getFechaModificar()) 
-				? conducta.getAuditoria().getFechaModificar() : conducta.getAuditoria().getFechaCrear(); 
-		dto.setFechaAlta(fechaAlta);
 		
-		String username = !Checks.esNulo(conducta.getAuditoria().getUsuarioModificar()) 
-				? conducta.getAuditoria().getUsuarioModificar() : conducta.getAuditoria().getUsuarioCrear(); 
-		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+		dto.setFechaAlta(conducta.getAuditoria().getFechaCrear());
+		
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", conducta.getAuditoria().getUsuarioCrear()));
 		dto.setUsuarioAlta(usuario.getApellidoNombre());
 		
 		dto.setCategoriaConductaCodigo(conducta.getCategoriaConducta().getCodigo());

@@ -43,13 +43,9 @@ public interface AccionesCaixaApi {
 
     void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
-    void accionDevolReservaCont(DtoAccionRechazoCaixa dto);
-
     void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto);
 
     void accionRechazoModTitulares(DtoAccionRechazoCaixa dto);
-
-    void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws ParseException, Exception;
 

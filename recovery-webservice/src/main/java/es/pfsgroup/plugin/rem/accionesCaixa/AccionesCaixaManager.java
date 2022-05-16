@@ -570,11 +570,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 
-    @Override
-    @Transactional
-    public void accionDevolReservaCont(DtoAccionRechazoCaixa dto) {
-        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
-    }
+
 
     @Override
     @Transactional
@@ -585,26 +581,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     @Transactional
     public void accionRechazoModTitulares(DtoAccionRechazoCaixa dto) {
-        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
-    }
-
-    @Override
-    @Transactional
-    public void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) throws ParseException {
-        ExpedienteComercial expediente = expedienteComercialApi.findOne(dto.getIdExpediente());
-        Reserva reserva = expediente.getReserva();
-        DDDevolucionReserva devolucionReserva = genericDao.get(DDDevolucionReserva.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDDevolucionReserva.CODIGO_NO));
-        DDEstadoDevolucion estadoDevolucion = genericDao.get(DDEstadoDevolucion.class,
-                genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDevolucion.ESTADO_NO_PROCEDE));
-        reserva.setEstadoDevolucion(estadoDevolucion);
-        reserva.setDevolucionReserva(devolucionReserva);
-
-        expediente.setFechaDevolucionEntregas(sdfEntrada.parse(dto.getFechaReal()));
-
-        genericDao.save(Reserva.class, reserva);
-        genericDao.save(ExpedienteComercial.class, expediente);
-
         agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 

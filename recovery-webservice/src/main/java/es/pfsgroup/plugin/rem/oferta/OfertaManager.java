@@ -2926,7 +2926,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		
-		setEstadoOfertaBC(oferta);
+		this.setEstadoOfertaBC(oferta);
 		
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
@@ -2939,37 +2939,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if (previousState != oferta.getEstadoOferta())
 			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
-
-		if(!DDEstadoOferta.CODIGO_CADUCADA.equals(oferta.getEstadoOferta().getCodigo()) 
-				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-			oferta = setEstadoOfertaByIsNecesarioDeposito(oferta);
-		}
-
-		return oferta;
-	}
-
-	private Oferta setEstadoOfertaByIsNecesarioDeposito(Oferta oferta) {
-		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-		DDCartera cartera = null;
-		if(oferta.getActivoPrincipal() != null) {
-			cartera = oferta.getActivoPrincipal().getCartera();
-		}else if(oferta.getAgrupacion() != null) {
-			if(oferta.getAgrupacion().getActivoPrincipal() != null){
-				cartera = oferta.getAgrupacion().getActivoPrincipal().getCartera();	
-			}else if (oferta.getAgrupacion().getActivos() != null && !oferta.getAgrupacion().getActivos().isEmpty()) {
-				cartera = oferta.getAgrupacion().getActivos().get(0).getActivo().getCartera();
-			}
-		}
-		
-		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
-			if(depositoApi.esNecesarioDeposito(oferta)) {
-				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
-			}
-			DDEstadoOferta ddEstadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
-			oferta.setEstadoOferta(ddEstadoOferta);
-			setEstadoOfertaBC(oferta);
-		}
 
 		return oferta;
 	}

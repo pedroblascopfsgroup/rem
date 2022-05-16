@@ -1427,7 +1427,6 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name: 'identificadorTrastero'
->>>>>>> rem_mirror
             }
     ],
     

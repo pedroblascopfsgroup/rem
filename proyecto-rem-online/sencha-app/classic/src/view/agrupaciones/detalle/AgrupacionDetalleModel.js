@@ -816,16 +816,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
             }
             return false;
          },
-<<<<<<< HEAD
 	     esNecesarioDeposito: function(get) {
             return get('agrupacionficha.esNecesarioDeposito') == "true";
-=======
+	     },
+	     
          esAgrupacionCaixa: function(get) {
             var me = this;
             var tipoCartera = get('agrupacionficha.codigoCartera');
 
             return tipoCartera == CONST.CARTERA['BANKIA'];
->>>>>>> rem_mirror
          }
     },
 				

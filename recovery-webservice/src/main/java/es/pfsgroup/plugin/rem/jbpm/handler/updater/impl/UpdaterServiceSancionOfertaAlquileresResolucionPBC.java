@@ -59,6 +59,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
 		boolean pdteDocu = false;
+		boolean replicarOferta = false;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -80,6 +81,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
 					expedienteComercial.setOferta(oferta);
+					replicarOferta = true;
 							
 					//Descongelar Ofertas de activo
 					DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
@@ -107,6 +109,8 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 								genericDao.save(Oferta.class, ofertaCongelada);
 								
 								if (pdteDocu) ofertaApi.llamadaPbc(ofertaCongelada, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+								
+								ofertaApi.llamaReplicarCambioEstado(ofertaCongelada.getId(), ofertaCongelada.getEstadoOferta().getCodigo());
 							}
 						}
 					}
@@ -120,6 +124,8 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 		
 		
 		expedienteComercialApi.update(expedienteComercial,false);
+
+		if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 	}
 
 	public String[] getCodigoTarea() {

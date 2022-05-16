@@ -4187,6 +4187,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							}
 
 							genericDao.save(Oferta.class, oferta);
+							
+							ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 						}
 					}
 				}

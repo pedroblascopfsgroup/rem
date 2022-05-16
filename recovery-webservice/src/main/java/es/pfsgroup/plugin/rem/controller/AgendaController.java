@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
@@ -112,6 +113,9 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private SpPublicacionApi spPublicacionApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -821,6 +825,12 @@ public class AgendaController extends TareaController {
 			}
 			ActivoTramite tramite = activoTramiteApi.get(idTramite);
 			activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());
+			
+			if (anulado){
+				Oferta oferta = expedienteComercialApi.getExpedienteByIdTramite(idTramite).getOferta();
+				ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+			}
+			
 			model.put("success", anulado);
 			
 		} catch (JsonViewerException jve) {

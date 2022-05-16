@@ -740,6 +740,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				if (activo.getActivo() != null && activo.getActivo().getOfertas() != null
 						&& !activo.getActivo().getOfertas().isEmpty()) {
 					for (ActivoOferta activoOferta : activo.getActivo().getOfertas()) {
+						boolean replicarOferta = false;
 						Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 						if (oferta.getEstadoOferta() != null
 								&& oferta.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_CONGELADA)) {
@@ -755,14 +756,20 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 										DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
 								genericDao.save(Oferta.class, oferta);
 								ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+							
+								replicarOferta = true;
 							} else {
 								oferta.setEstadoOferta( genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
 										DDEstadoOferta.CODIGO_PENDIENTE)));
 								if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 								genericDao.save(Oferta.class, oferta);
+							
+								replicarOferta = true;
 							}
 							ofertaApi.setEstadoOfertaBC(oferta);
 							ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+
+							if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 						}
 
 					}

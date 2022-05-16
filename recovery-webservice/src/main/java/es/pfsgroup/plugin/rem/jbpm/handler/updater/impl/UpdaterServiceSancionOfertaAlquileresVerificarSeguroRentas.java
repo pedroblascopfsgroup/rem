@@ -95,6 +95,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 			seguroRentasAlquiler.setExpediente(expedienteComercial);
 		}
 		DDResultadoCampo resultadoCampo = null;
+		boolean replicarOferta = true;
 		for(TareaExternaValor valor :  valores){
 
 			if(RESULTADO_SEGURO_RENTAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -123,6 +124,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
 					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
 					seguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
+					replicarOferta = true;
 				}
 			}
 			
@@ -230,6 +232,8 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
+		} else if (replicarOferta){
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
 	}
 

@@ -2963,13 +2963,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		ofertaDao.saveOrUpdate(oferta);
+		
+		if (previousState != oferta.getEstadoOferta())
+			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 
-		if (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()) && previousState != oferta.getEstadoOferta()){
-			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(),CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-			if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
-				replicateOfertaFlush(oferta);
-			}
-		}
 		if(!DDEstadoOferta.CODIGO_CADUCADA.equals(oferta.getEstadoOferta().getCodigo()) 
 				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			oferta = setEstadoOfertaByIsNecesarioDeposito(oferta);
@@ -3214,6 +3211,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 
+			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
@@ -3278,6 +3276,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								}
 							}
 						}
+						
+						llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 					}
 				}
 			}
@@ -3326,6 +3326,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								tarea.getAuditoria().setBorrado(true);
 							}
 						}
+						
+						llamaReplicarCambioEstado(ofr.getId(), ofr.getEstadoOferta().getCodigo());
 					}
 				}
 			}
@@ -3345,28 +3347,29 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
 					deposito.setEstadoDeposito(estadoDeposito);
 					genericDao.save(Deposito.class, deposito);
-				}else {
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
-					DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-					oferta.setEstadoOferta(estado);
-					updateStateDispComercialActivosByOferta(oferta);
-					setEstadoOfertaBC(oferta);
-					genericDao.save(Oferta.class, oferta);
+				}
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+				oferta.setEstadoOferta(estado);
+				updateStateDispComercialActivosByOferta(oferta);
+				setEstadoOfertaBC(oferta);
+				genericDao.save(Oferta.class, oferta);
+				
+				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+				if (!Checks.esNulo(expediente)) {
+					Trabajo trabajo = expediente.getTrabajo();
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+					ActivoTramite tramite = tramites.get(0);
 					
-					ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-					if (!Checks.esNulo(expediente)) {
-						Trabajo trabajo = expediente.getTrabajo();
-						List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-						ActivoTramite tramite = tramites.get(0);
-						
-						Set<TareaActivo> tareasTramite = tramite.getTareas();
-						if(tareasTramite != null && !tareasTramite.isEmpty()) {
-							for (TareaActivo tarea : tareasTramite) {
-								tarea.getAuditoria().setBorrado(true);
-							}
+					Set<TareaActivo> tareasTramite = tramite.getTareas();
+					if(tareasTramite != null && !tareasTramite.isEmpty()) {
+						for (TareaActivo tarea : tareasTramite) {
+							tarea.getAuditoria().setBorrado(true);
 						}
 					}
 				}
+				
+				llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 			}
 				
 
@@ -3388,29 +3391,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
 				deposito.setEstadoDeposito(estadoDeposito);
 				genericDao.save(Deposito.class, deposito);
-			}else {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-				oferta.setEstadoOferta(estado);
-				updateStateDispComercialActivosByOferta(oferta);
-				genericDao.save(Oferta.class, oferta);
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
+			genericDao.save(Oferta.class, oferta);
+			
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if (!Checks.esNulo(expediente)) {
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
 				
-				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-				if (!Checks.esNulo(expediente)) {
-					Trabajo trabajo = expediente.getTrabajo();
-					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-					ActivoTramite tramite = tramites.get(0);
-					
-					Set<TareaActivo> tareasTramite = tramite.getTareas();
-					for (TareaActivo tarea : tareasTramite) {
-						if (Checks.esNulo(tarea.getFechaFin())) {
-							tarea.setFechaFin(new Date());
-							tarea.getAuditoria().setBorrado(true);
-						}
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for (TareaActivo tarea : tareasTramite) {
+					if (Checks.esNulo(tarea.getFechaFin())) {
+						tarea.setFechaFin(new Date());
+						tarea.getAuditoria().setBorrado(true);
 					}
 				}
-				descongelarOfertas(expediente);
 			}
+			descongelarOfertas(expediente);
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
@@ -9274,17 +9276,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public void llamaReplicarCambioEstado(Long idOferta, String codigoEstado){
 		Oferta oferta = getOfertaById(idOferta);
 		if(oferta != null){
-			caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado))
+				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
 
-			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado)) {
+			if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
 				replicateOfertaFlush(oferta);
 			}
 		}
 	}
 
 	public boolean cumpleCondicionesReplicarPorEstadoYOferta(Oferta oferta, String codEstado){
-		return (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado))
-				|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codEstado);
+		return !DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado);
 	}
 	
 	/**

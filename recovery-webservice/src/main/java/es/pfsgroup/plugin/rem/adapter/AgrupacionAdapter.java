@@ -1788,6 +1788,7 @@ public class AgrupacionAdapter {
 					if (!Checks.estaVacio(ofertasActivo)) {
 						// En cada oferta asignada al activo.
 						for (ActivoOferta ofertaActivo : ofertasActivo) {
+							boolean replicarOferta = false;
 							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
@@ -1809,6 +1810,8 @@ public class AgrupacionAdapter {
 													DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
 											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+										
+											replicarOferta = true;
 										} else {
 											ofertaActivo.getPrimaryKey().getOferta()
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1817,8 +1820,12 @@ public class AgrupacionAdapter {
 											if (!Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 												ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
+										
+											replicarOferta = true;
 										}
 										ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta());
+
+										if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(ofertaActivo.getPrimaryKey().getOferta().getId(), ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo());
 									}
 								} catch (Exception e) {
 									logger.error("error descongelando ofertas", e);
@@ -1994,6 +2001,8 @@ public class AgrupacionAdapter {
 												if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 											}
 											ofertaApi.setEstadoOfertaBC(oferta);
+											
+											ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 										}
 									}
 								}
@@ -3202,6 +3211,8 @@ public class AgrupacionAdapter {
 			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
 				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
 			}
+			
+			ofertaApi.llamaReplicarCambioEstado(ofertaNueva.getId(), ofertaNueva.getEstadoOferta().getCodigo());
 
 
 		} catch (Exception ex) {

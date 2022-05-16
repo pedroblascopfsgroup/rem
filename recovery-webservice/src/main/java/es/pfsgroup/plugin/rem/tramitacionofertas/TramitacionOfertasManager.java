@@ -401,6 +401,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 		transactionManager.commit(transaction);
 		
+		ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+		
 		return oferta;
 	}
 

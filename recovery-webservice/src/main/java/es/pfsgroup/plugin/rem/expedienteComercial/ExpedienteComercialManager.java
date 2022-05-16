@@ -830,6 +830,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							if (Checks.esNulo(o.getFechaOfertaPendiente())) o.setFechaOfertaPendiente(new Date());
 							genericDao.save(Oferta.class, o);
 							if (pdteDocu) ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+							
+							ofertaApi.llamaReplicarCambioEstado(o.getId(), o.getEstadoOferta().getCodigo());
 						}
 					}
 				}
@@ -848,6 +850,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			}
 			ofertaApi.setEstadoOfertaBC(oferta);
+			
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
 		//En este array se van a introducir las ofertas afectadas en los cambios de clases de ofertas de LBK pra recalcular su comite sancionador tomando en cuenta las modificaciones
 		List<Oferta> listaOfertasLBK = new ArrayList<Oferta>();

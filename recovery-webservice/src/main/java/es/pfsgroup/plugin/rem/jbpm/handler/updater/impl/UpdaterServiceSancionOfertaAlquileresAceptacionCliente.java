@@ -68,6 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 		Boolean aceptacionContraoferta = false;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
+		boolean replicarOferta = false;
 		
 		for(TareaExternaValor valor :  valores){
 			
@@ -137,6 +138,8 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 						expedienteComercial.setEstadoBc(estadoBc);	
 						estadoBcModificado = true;
 					}
+					
+					replicarOferta = true;
 				}
 			}
 			
@@ -172,6 +175,8 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 		if(estadoBcModificado) {
 			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
 		}
+
+		if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 	}
 
 	public String[] getCodigoTarea() {

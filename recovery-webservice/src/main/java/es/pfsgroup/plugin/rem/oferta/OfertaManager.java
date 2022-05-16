@@ -2867,6 +2867,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{
+				if(estadoOferta != null && oferta.getEstadoOferta() != null) {
+					String estadoAnterior = oferta.getEstadoOferta().getCodigo();
+					oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+					if (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta)) {
+						oferta.setFechaAlta(null);
+					}else if(DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta) && depositoApi.esNecesarioDeposito(oferta) && !DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoAnterior) && !DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoAnterior) ){
+						oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO)));
+					}
+					
+					oferta.setFechaEntradaCRMSF(fechaAccion);
+				}
+				
 				if (estadoOferta != null) {
 						if (oferta.getEstadoOferta() == null && (DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(estadoOferta) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(estadoOferta)
 								|| (DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta)) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(estadoOferta))) {
@@ -2898,13 +2910,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								} else{
 									oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 								}
-								oferta.setFechaAlta(new Date());
-							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) 
-										|| DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
-									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
-										|| DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
-								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()))
-										|| DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo())) {
+								
+							} else if((DDEstadoOferta.CODIGO_CADUCADA.equals(estadoOferta) || DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta))
+									&& ((DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) || DDEstadoOferta.CODIGO_PDTE_CONSENTIMIENTO.equals(oferta.getEstadoOferta().getCodigo())
+								 		|| DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(oferta.getEstadoOferta().getCodigo()))
+										|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())) {
+										
 										if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta)) {
 											depositoApi.modificarEstadoDepositoSiIngresado(oferta);
 										}

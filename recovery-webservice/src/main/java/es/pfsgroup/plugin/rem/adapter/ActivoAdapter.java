@@ -4619,13 +4619,14 @@ public class ActivoAdapter {
 			}
 			
 			codigoEstado = setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
-			
+			boolean necesitaDeposito = false;
 			if(depositoApi.esNecesarioDepositoNuevaOferta(activo)){
 				Double importe = depositoApi.getImporteDeposito(oferta);
+				necesitaDeposito = true;
 				if(importe == null) {
 					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
 				}
-				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+				
 				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
 				if(cuentaVirtual == null) {
 					throw new Exception("No hay cuentas virtuales libres.");
@@ -4634,6 +4635,9 @@ public class ActivoAdapter {
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
+			if(necesitaDeposito) {
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())

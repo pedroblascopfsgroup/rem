@@ -8227,43 +8227,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-	/*isGestorAdmisionAndSuperComboTipoAlta : function(combo, value, oldValue,
-			eOpts) {
-		var me = this;
-		var tipoAlta = me.lookupReference('tipoAltaRef');
-		
-		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER'])
-				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
-				|| $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-		//var comboActivoRecovery = me.lookupReference('idRecovery');
-		var tipoAltaCodigo = me.getViewModel().get('activo.tipoAltaCodigo');		
-		var activoRecovery=me.getViewModel().get('activo.idRecovery');
-		if (activoRecovery != null && !gestores) {
-			tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-			tipoAlta.setReadOnly(true);
-		} else {
-			//tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-			tipoAlta.setReadOnly(false);
-		}
-		if (gestores) {
-			if (activoRecovery == null) {
-				
-				tipoAlta.setReadOnly(false);
-			}else{
-				if (tipoAltaCodigo.getValue() != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] ) {
-					
-					tipoAlta.setReadOnly(false);
-				}else if (tipoAltaCodigo.getValue() == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] ){
-					
-					tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-					tipoAlta.setReadOnly(true);
-				}
-			}
-		}else{
-			tipoAlta.setReadOnly(true);
-		}
-
-	},*/
 
 	onClickBotonCancelarVentanaGastoAsociado : function(btn) {
 		var me = this;
@@ -8732,27 +8695,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this, record = grid.getStore().getAt(rowIndex);
 		me.getView().fireEvent('abrirDetalleGastoTasacion', record);
 
-	},/*,
-    onChangePublicarCaixa: function(get){
-    	var me = this;    	
-    	var carteraCaixa;
-    },
-    }
-
-    onClickModificarDeposito: function(btn){
-    	var me = this;
-    	var activo = me.getViewModel().get('activo');
-    	var deposito = me.getViewModel().get('detalleOfertaModel').get('dtoDeposito');
-    	var cuentaBancariaVirtual = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaVirtual');
-    	var cuentaBancariaCliente = me.getViewModel().get('detalleOfertaModel').get('cuentaBancariaCliente');
-    	var parent = btn.up('ofertascomercialactivo');
-		var ventana = Ext.create("HreRem.view.activos.comercial.ofertas.datosGenerales.EditarDeposito", {	
-			deposito: deposito, activo: activo, parent: parent, cuentaBancariaVirtual: cuentaBancariaVirtual,cuentaBancariaCliente: cuentaBancariaCliente
-		});
-    	
-		 ventana.show();
-    },*/
-    
+	},
+   
 	onClickCancelarModificarDeposito : function(btn) {
 		var window = btn.up('window');
 		window.destroy();

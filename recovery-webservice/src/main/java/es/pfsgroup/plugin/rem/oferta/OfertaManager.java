@@ -2724,6 +2724,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
 		DDEstadoOferta previousState = oferta.getEstadoOferta();
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
@@ -2936,6 +2937,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		ofertaDao.saveOrUpdate(oferta);
+		
+		transactionManager.commit(transaction);
 		
 		if (previousState != oferta.getEstadoOferta())
 			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());

@@ -4753,7 +4753,7 @@ public class ActivoAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
-			return ofertaCreada;
+			throw new Exception(ex.getMessage());
 		}
 		
 		return ofertaCreada;

@@ -1788,6 +1788,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
 				}
+				
+				setEstadoOfertaBC(oferta);
 
 				if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())){
 					llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
@@ -3181,7 +3183,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			darDebajaAgrSiOfertaEsLoteCrm(oferta);
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
-
+			setEstadoOfertaBC(oferta);
 			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
@@ -3384,6 +3386,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			descongelarOfertas(expediente);
+			setEstadoOfertaBC(oferta);
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
@@ -9291,6 +9294,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_PDTE_TRAMITACION);
 		else if(DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo()))
 			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOfertaBC.CODIGO_TRAMITE_CONGELADA);
+		else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
+			filtroEstadoOfertaBC = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOfertaByCondiciones(oferta));
+		}
 		
 		if(filtroEstadoOfertaBC != null) {
 			DDEstadoOfertaBC estadoOfertaBC = genericDao.get(DDEstadoOfertaBC.class, filtroEstadoOfertaBC);
@@ -9301,6 +9307,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return ofertaCaixa;
+	}
+	
+	private String estadoOfertaByCondiciones(Oferta oferta) {
+		ExpedienteComercial expediente = oferta.getExpedienteComercial();
+		if(depositoApi.isDepositoIngresado(oferta.getDeposito()) 
+				|| (!Checks.esNulo(expediente) && DDEstadosReserva.tieneReservaFirmada(expediente.getReserva()))) {
+			return DDEstadoOfertaBC.CODIGO_SOLICITAR_DEVOLUCION_RESERVA_ARRAS;
+		} else {
+			return DDEstadoOfertaBC.CODIGO_CANCELADA;
+		}
 	}
 }
 	

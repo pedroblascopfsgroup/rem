@@ -496,6 +496,10 @@ public class Oferta implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CVC_ID")
     private CuentasVirtuales cuentaVirtual;
+	
+	@OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Deposito deposito;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1604,6 +1608,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+
+	public Deposito getDeposito() {
+		return deposito;
+	}
+
+	public void setDeposito(Deposito deposito) {
+		this.deposito = deposito;
 	}
 	
 }

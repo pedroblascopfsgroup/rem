@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -4179,6 +4180,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						if (oferta.getEstadoOferta() != null
 								&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 							oferta.setEstadoOferta(estadoOferta);
+							
+							ofertaApi.setEstadoOfertaBC(oferta);
 							
 							Auditoria auditoriaOferta = oferta.getAuditoria();
 							if (auditoriaOferta != null) {

@@ -6234,6 +6234,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 //									activoApi.devolucionFasePublicacionAnterior(activoOferta.getPrimaryKey().getActivo());
 //								}								
 //							}
+							
+							ofertaApi.setEstadoOfertaBC(oferta);
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);

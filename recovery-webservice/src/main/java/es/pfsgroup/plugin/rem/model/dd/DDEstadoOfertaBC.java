@@ -35,12 +35,16 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	public static final String CODIGO_C4C_TRAMITE_PDTE_PAGO_DEPOSITO= "520";
 	public static final String CODIGO_C4C_TRAMITE_PDTE_TRAMITACION= "530";
 	public static final String CODIGO_C4C_TRAMITE_CONGELADA= "540";
+	public static final String CODIGO_C4C_CANCELADA= "20";
+	public static final String CODIGO_C4C_SOLICITAR_DEVOLUCION_RESERVA_ARRAS= "290";
 	
 	public static final String CODIGO_TRAMITE_PDTE_TITULARES_SECUNDARIOS= "04";
 	public static final String CODIGO_TRAMITE_PDTE_DOCUMENTACION= "05";
 	public static final String CODIGO_TRAMITE_PDTE_PAGO_DEPOSITO= "06";
 	public static final String CODIGO_TRAMITE_PDTE_TRAMITACION= "07";
 	public static final String CODIGO_TRAMITE_CONGELADA= "08";
+	public static final String CODIGO_SOLICITAR_DEVOLUCION_RESERVA_ARRAS= "09";
+	public static final String CODIGO_CANCELADA= "10";
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,7 +64,7 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 	private String descripcionLarga;
 	
 	@Column(name = "DD_EOB_CODIGO_C4C")   
-	private Boolean codigoC4c;
+	private String codigoC4c;
 	
 	@Column(name = "DD_EOB_FLAG_ALQUILER")   
 	private Boolean flagAlquiler;
@@ -122,11 +126,11 @@ public class DDEstadoOfertaBC implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 	
-	public Boolean getCodigoC4c() {
+	public String getCodigoC4c() {
 		return codigoC4c;
 	}
 
-	public void setCodigoC4c(Boolean codigoC4c) {
+	public void setCodigoC4c(String codigoC4c) {
 		this.codigoC4c = codigoC4c;
 	}
 

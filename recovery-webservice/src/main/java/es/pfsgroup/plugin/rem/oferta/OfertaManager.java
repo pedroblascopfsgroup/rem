@@ -8542,6 +8542,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(oferta != null && codigoEstado != null){
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
 			ofertaDao.saveOrUpdate(oferta);
+			
+			setEstadoOfertaBC(oferta);
 
 			return true;
 		}

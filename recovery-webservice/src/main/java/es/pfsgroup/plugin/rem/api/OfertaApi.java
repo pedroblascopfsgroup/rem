@@ -142,7 +142,7 @@ public interface OfertaApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
+	public ArrayList<DtoReplicarOferta> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos

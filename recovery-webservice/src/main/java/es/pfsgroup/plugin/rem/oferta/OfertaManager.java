@@ -160,6 +160,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoReplicarOferta;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
@@ -1796,6 +1797,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 
 			}
+			
+			errorsList.put("replicar", "true");
 
 		}
 
@@ -2121,6 +2124,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public HashMap<String, String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception {
 		HashMap<String, String> errorsList = null;
+		String estadoOferta = oferta.getEstadoOferta().getCodigo();
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		
@@ -2666,6 +2670,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					logger.error("No se ha podido crear/modificar el depósito");
 				}
 			}
+			
+			if (estadoOferta != oferta.getEstadoOferta().getCodigo())
+				errorsList.put("replicar", "true");
 
 		} else if(!Checks.esNulo(errorsList.get("origenComisionamiento"))) {
 			errorsList.remove("origenComisionamiento");
@@ -2724,7 +2731,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
 		DDEstadoOferta previousState = oferta.getEstadoOferta();
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		List<ActivoOferta> listaActivoOferta = oferta.getActivosOferta();
 
@@ -2937,11 +2943,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		ofertaDao.saveOrUpdate(oferta);
-		
-		transactionManager.commit(transaction);
-		
-		if (previousState != oferta.getEstadoOferta())
-			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 
 		return oferta;
 	}
@@ -3655,13 +3656,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto, JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)
+	public ArrayList<DtoReplicarOferta> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto, JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)
 			throws Exception {
 		Map<String, Object> map = null;
 		OfertaDto ofertaDto = null;
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
 		boolean error = false;
+		ArrayList<DtoReplicarOferta> listaReplica = new ArrayList<DtoReplicarOferta>();
 
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
@@ -3686,7 +3688,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if ((!Checks.esNulo(errorsList) && errorsList.isEmpty())
-					|| (!Checks.esNulo(errorsList) && !Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem")))) {
+					|| (!Checks.esNulo(errorsList) && (!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))
+													|| !Checks.esNulo(errorsList.get("replica"))))) {
 				if (oferta == null || oferta.getNumOferta() == null) {
 					if (ofertaDto.getIdOfertaWebcom() != null) {
 						oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
@@ -3719,6 +3722,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 
 				map.put("success", true);
+				
+				if (errorsList.get("replica") == "true") {
+					DtoReplicarOferta dtoReplica = new DtoReplicarOferta();
+					dtoReplica.setIdOferta(oferta.getId());
+					dtoReplica.setCodEstadoOferta(oferta.getEstadoOferta().getCodigo());
+					
+					listaReplica.add(dtoReplica);
+				}
 			} else {
 				if(ofertaDto.getEntidadOrigen() != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(ofertaDto.getEntidadOrigen())) {
 					map.put("idOfertaHayaHome", ofertaDto.getIdOfertaHayaHome());
@@ -3742,6 +3753,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (error) {
 			throw new UserException(new Exception());
 		}
+		return listaReplica;
 	}
 
 	@Override

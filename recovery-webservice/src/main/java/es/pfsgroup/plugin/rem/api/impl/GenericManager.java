@@ -2088,16 +2088,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		}
 		
-		if (cartera != null && subcartera != null && !DDCartera.CODIGO_CAIXA.equals(cartera.getCodigo())) {
-			listaDDEstadoOferta.addAll(estadosOferta);
-			
+		listaDDEstadoOferta.addAll(estadosOferta);
+		
+		if (subcartera != null) {
 			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
 					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
 			if(conDep != null && conDep.getDepositoNecesario()) {
 				depositoNecesario = true ;
 			}
 			
-			if(subcartera != null && !depositoNecesario) {
+			if(!depositoNecesario) {
 				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
 			}
 			

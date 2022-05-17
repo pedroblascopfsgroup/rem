@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20220412
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220517
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11493
+--## INCIDENCIA_LINK=HREOS-17818
 --## PRODUCTO=NO
 --## Finalidad: Vista para filtrar por los activos BBVA
 --##           
@@ -20,6 +20,7 @@
 --##        0.8 HREOS-17051 - JEG - cambio uic bbva y añadir nueva tabla act_bbva_uic
 --##        0.9 REMVIP-9459 - JAC - se modifica logica tipologia inmueble
 --##        1.0 REMVIP-11493 - JAC - Se modifica case when tipologia inmueble para añadir condicion
+--##        1.1 HREOS-17818 - JEG - Se modifica BBVA_CEXPER para aprovisionarlo de la nueva tabla act_bbva_uic
 --##########################################
 --*/
 
@@ -64,7 +65,7 @@ BEGIN
 	AS
        SELECT DISTINCT
         ACT.ACT_ID AS ACT_ID
-        , COALESCE(BBVA.BBVA_CEXPER,''NULL'') AS CEXPER_MORA
+        , COALESCE(UIC.BBVA_CEXPER,''NULL'') AS CEXPER_MORA
         , CASE
             WHEN COALESCE(PRO.PRO_TITULIZADO,PRO2.PRO_TITULIZADO) IS NOT NULL
             THEN ''0182''

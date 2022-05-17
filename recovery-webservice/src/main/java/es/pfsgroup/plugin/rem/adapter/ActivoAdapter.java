@@ -4754,8 +4754,6 @@ public class ActivoAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 			}
-			
-			ofertaApi.llamaReplicarCambioEstado(ofertaCreada.getId(), ofertaCreada.getEstadoOferta().getCodigo());
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);

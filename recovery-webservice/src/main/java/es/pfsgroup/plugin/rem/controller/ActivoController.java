@@ -2205,6 +2205,10 @@ public class ActivoController extends ParadiseJsonController {
 			dtoOferta.setVentaDirecta(false);
 			Oferta oferta = adapter.createOfertaActivo(dtoOferta);
 			boolean success = oferta != null;
+			
+			if (success) {
+				ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+			}
 
 			model.put(RESPONSE_SUCCESS_KEY, success);
 		} catch (Exception e) {

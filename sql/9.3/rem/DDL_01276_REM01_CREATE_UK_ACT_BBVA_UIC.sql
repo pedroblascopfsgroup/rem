@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Alejandra García
---## FECHA_CREACION=20220513
+--## FECHA_CREACION=20220514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17772
@@ -34,7 +34,8 @@ DECLARE
   TYPE T_COL IS TABLE OF VARCHAR2(250);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-    T_COL('CREATE_CONSTRAINT', 'ACT_BBVA_UIC', 'UK_ACT_UIC_CEXPER','ACT_ID, BBVA_UIC, BBVA_CEXPER, FECHABORRAR, BORRADO')
+    T_COL('CREATE_CONSTRAINT', 'ACT_BBVA_UIC', 'UK_ACT_UIC_CEXPER','ACT_ID, BBVA_UIC, BBVA_CEXPER, FECHABORRAR, BORRADO'),
+    T_COL('DROP_CONSTRAINT', 'ACT_BBVA_UIC', 'UK_ACT_BBVA_UIC','')
   );  
   V_TMP_COL T_COL;
 
@@ -63,7 +64,25 @@ BEGIN
                 END IF;          
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] La '||V_ESQUEMA||'.'||V_TMP_COL(2)||'... No existe.');
-            END IF;   
+            END IF; 
+        ELSIF  'DROP_CONSTRAINT' = ''||V_TMP_COL(1)||'' THEN
+            --Comprobacion de la tabla
+            V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TMP_COL(2)||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+            IF V_NUM_TABLAS = 1 THEN              
+                V_MSQL := 'SELECT COUNT(*) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TMP_COL(2)||''' AND CONSTRAINT_NAME = '''||V_TMP_COL(3)||'''';
+                EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+                IF V_NUM_TABLAS = 1 THEN
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] Borrando UK '||V_TMP_COL(3)||'');
+                    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TMP_COL(2)||' DROP CONSTRAINT '||V_TMP_COL(3)||'';
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' no existe.');
+                END IF;          
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('  [INFO] La '||V_ESQUEMA||'.'||V_TMP_COL(2)||'... No existe.');
+            END IF; 
+
         END IF; 
     
     END LOOP;

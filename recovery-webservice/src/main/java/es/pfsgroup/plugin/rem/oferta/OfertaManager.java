@@ -3689,7 +3689,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if ((!Checks.esNulo(errorsList) && errorsList.isEmpty())
 					|| (!Checks.esNulo(errorsList) && (!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))
-													|| !Checks.esNulo(errorsList.get("replica"))))) {
+													|| !Checks.esNulo(errorsList.get("replicar"))))) {
 				if (oferta == null || oferta.getNumOferta() == null) {
 					if (ofertaDto.getIdOfertaWebcom() != null) {
 						oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
@@ -3723,13 +3723,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				map.put("success", true);
 				
-				if (errorsList.get("replica") == "true") {
+				if (errorsList.get("replicar") == "true") {
 					DtoReplicarOferta dtoReplica = new DtoReplicarOferta();
 					dtoReplica.setIdOferta(oferta.getId());
 					dtoReplica.setCodEstadoOferta(oferta.getEstadoOferta().getCodigo());
 					
 					listaReplica.add(dtoReplica);
 				}
+				
 			} else {
 				if(ofertaDto.getEntidadOrigen() != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(ofertaDto.getEntidadOrigen())) {
 					map.put("idOfertaHayaHome", ofertaDto.getIdOfertaHayaHome());

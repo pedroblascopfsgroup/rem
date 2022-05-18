@@ -2135,12 +2135,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				Activo activo = aga.getActivo();
 				Long numActivo = activo.getNumActivo();
 
-				comprobarTramitarOferta(oferta, activo, esAlquiler, numActivo.toString());
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+					comprobarTramitarOferta(oferta, activo, esAlquiler, numActivo.toString());
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler
-						&& Checks.esNulo(activo.getTipoAlquiler())) {
-					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
-							+ " no permite la realización de una oferta");
+					if (esAlquiler && Checks.esNulo(activo.getTipoAlquiler())) {
+						throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
+								+ " no permite la realización de una oferta");
+					}
 				}
 			}
 		}

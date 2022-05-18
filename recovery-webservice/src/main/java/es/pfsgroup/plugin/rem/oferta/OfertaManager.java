@@ -3064,7 +3064,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			oferta.setUsuarioBaja(usu.getApellidoNombre());
 			updateStateDispComercialActivosByOferta(oferta);
-			darDebajaAgrSiOfertaEsLoteCrm(oferta);
+			darDebajaAgrSiOfertaEsLote(oferta);
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 
@@ -5697,16 +5697,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return idTarea;
 	}
 
-	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta) {
-		if (OfertaApi.ORIGEN_WEBCOM.equals(oferta.getOrigen())) {
+	public void darDebajaAgrSiOfertaEsLote(Oferta oferta) {
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
 			ActivoAgrupacion agr = oferta.getAgrupacion();
-			if (agr != null && agr.getTipoAgrupacion() != null
-					&& DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agr.getTipoAgrupacion().getCodigo())) {
-
+		
+			List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agr.getId());
+	
+			if ((agr.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)
+					|| agr.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+					&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
 				agr.setFechaBaja(new Date());
 				activoAgrupacionApi.saveOrUpdate(agr);
-
-			}
+			} 
 		}
 	}
 

@@ -72,7 +72,7 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	public boolean esNecesarioDeposito(Oferta oferta) {
 		
 		if(oferta != null && oferta.getActivoPrincipal() != null 
-				&& oferta.getActivoPrincipal().getSubcartera() != null ) {
+				&& oferta.getActivoPrincipal().getSubcartera() != null && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())) {
 			return esNecesarioDepositoBySubcartera(oferta.getActivoPrincipal().getSubcartera().getCodigo());
 		}
 		

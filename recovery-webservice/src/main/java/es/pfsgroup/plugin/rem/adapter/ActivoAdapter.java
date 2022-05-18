@@ -4620,7 +4620,7 @@ public class ActivoAdapter {
 			
 			codigoEstado = setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
 			boolean necesitaDeposito = false;
-			if(depositoApi.esNecesarioDepositoNuevaOferta(activo)){
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
 				Double importe = depositoApi.getImporteDeposito(oferta);
 				necesitaDeposito = true;
 				if(importe == null) {

@@ -570,6 +570,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
                 return false;
         }
 
+		if (codigoTipoOfertaAnterior != null && CONST.TIPOS_OFERTA['VENTA'] != codigoTipoOfertaAnterior && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
+            return false;
+		}
+
 		//Si no está en estado "Pendiente", no se puede tramitar
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PENDIENTE'] != codigoEstadoAnterior
 		    && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){

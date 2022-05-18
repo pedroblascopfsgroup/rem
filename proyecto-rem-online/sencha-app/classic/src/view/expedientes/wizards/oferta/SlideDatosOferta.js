@@ -155,6 +155,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var tipologivaVenta = form.down('field[name=tipologivaVentaCod]');
 	    								var buscaPrescriptores = form.down('field[name=buscadorPrescriptores]');
 	    								var nombrePrescriptor = form.down('field[name=nombrePrescriptor]');
+										var ibanDevolucion = form.down('field[name=ibanDevolucion]');
+										var esNecesarioDeposito = false;
 	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
 	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
 	    										    											    										
@@ -177,6 +179,20 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									tipologivaVenta.setDisabled(false);
 	    								}else{
 	    									tipologivaVenta.setDisabled(true);
+	    								}
+					
+										if(Ext.isEmpty(me.up('[reference="activosdetalle"]'))){
+											esNecesarioDeposito = me.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito");
+										}else{
+											esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
+										}
+					
+										if (CONST.TIPOS_OFERTA['VENTA'] == value) {											
+											ibanDevolucion.setHidden(!esNecesarioDeposito);
+											ibanDevolucion.allowBlank = !esNecesarioDeposito;
+	    								}else{
+											ibanDevolucion.setHidden(true);
+											ibanDevolucion.allowBlank = true;
 	    								}
 	    								
 	    								if(CONST.TIPOS_OFERTA['ALQUILER_NO_COMERCIAL'] == value){

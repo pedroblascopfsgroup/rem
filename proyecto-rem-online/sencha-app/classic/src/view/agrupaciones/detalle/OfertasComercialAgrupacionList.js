@@ -429,6 +429,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var me = this;
 		var hayOfertaAceptada=false;
 		var codigoEstadoAnterior;
+		var codigoTipoOferta;
 		
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
@@ -442,6 +443,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}else{
 				codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
+				codigoTipoOferta = me.getStore().getData().items[i].data.codigoTipoOferta;
 			}
 		}
 
@@ -450,6 +452,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoAnterior 
 				&& CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADO_DEPOSITO['COD_INGRESADO'] != record.get('codigoEstadoDeposito')){
 			return false;
+		}
+		
+		if (codigoTipoOfertaAnterior != null && CONST.TIPOS_OFERTA['VENTA'] != codigoTipoOferta && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
+            return false;
 		}
 		
 		if(codigoEstadoAnterior != null && CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] == codigoEstadoAnterior 

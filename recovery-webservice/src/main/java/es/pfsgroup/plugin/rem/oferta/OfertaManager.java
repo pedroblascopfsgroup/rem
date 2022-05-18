@@ -1571,7 +1571,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(ofertaDto.getIdActivoHaya()) && activo!= null && activo.getSubcartera() != null ) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya());
 				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtro);
-				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual)){
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
 					necesitaDeposito = true;
 					Double importe = depositoApi.getImporteDeposito(oferta);
 					if(importe == null) {

@@ -783,7 +783,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		if (!Checks.esNulo(ofertaDto.getCodEstadoOferta())) {
 			DDEstadoOferta estadoOferta = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));
-			if (Checks.esNulo(estadoOferta)) errorsList.put("codEstadoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+			if (Checks.esNulo(estadoOferta) || (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ofertaDto.getCodEstadoOferta()) 
+					&& (!Checks.esNulo(oferta) ? DDTipoOferta.isTipoVenta(oferta.getTipoOferta()) : DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())))) {
+				errorsList.put("codEstadoOferta", RestApi.REST_MSG_UNKNOWN_KEY);
+			} 
 		}
 		if (!Checks.esNulo(ofertaDto.getIdVisitaRem())) {
 			Visita visita = genericDao.get(Visita.class,

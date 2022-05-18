@@ -398,7 +398,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 			}
 
-			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
+			ofertaApi.darDebajaAgrSiOfertaEsLote(ofertaAceptada);
 			if(!Checks.esNulo(activo)) {
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}

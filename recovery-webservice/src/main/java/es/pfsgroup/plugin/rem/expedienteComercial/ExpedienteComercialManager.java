@@ -823,17 +823,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
-				if (!Checks.esNulo(oferta.getAgrupacion())) {
-					ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-					List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
-
-					if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
-							&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
-						agrupacion.setFechaBaja(new Date());
-						activoAgrupacionApi.saveOrUpdate(agrupacion);
-					} 
-				}
+				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
 		}

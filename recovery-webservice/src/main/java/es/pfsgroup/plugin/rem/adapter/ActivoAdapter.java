@@ -4775,7 +4775,7 @@ public class ActivoAdapter {
 			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
 			oferta.setEstadoOferta(estadoOferta);
-			ofertaApi.setEstadoOfertaBC(oferta);
+			ofertaApi.setEstadoOfertaBC(oferta, null);
 		}
 		return codigoEstado;
 	}
@@ -4808,7 +4808,7 @@ public class ActivoAdapter {
 
 		genericDao.save(OfertaCaixa.class,ofertaCaixa);
 		
-		ofertaApi.setEstadoOfertaBC(oferta);
+		ofertaApi.setEstadoOfertaBC(oferta, null);
 		
 		return ofertaCaixa;
 

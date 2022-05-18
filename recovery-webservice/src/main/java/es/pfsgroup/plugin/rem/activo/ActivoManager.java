@@ -4181,7 +4181,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 							oferta.setEstadoOferta(estadoOferta);
 							
-							ofertaApi.setEstadoOfertaBC(oferta);
+							ofertaApi.setEstadoOfertaBC(oferta, null);
 							
 							Auditoria auditoriaOferta = oferta.getAuditoria();
 							if (auditoriaOferta != null) {

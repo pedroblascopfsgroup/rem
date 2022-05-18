@@ -849,7 +849,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 
 			}
-			ofertaApi.setEstadoOfertaBC(oferta);
+			ofertaApi.setEstadoOfertaBC(oferta, null);
 			
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
@@ -6235,7 +6235,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 //								}								
 //							}
 							
-							ofertaApi.setEstadoOfertaBC(oferta);
+							ofertaApi.setEstadoOfertaBC(oferta, null);
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);

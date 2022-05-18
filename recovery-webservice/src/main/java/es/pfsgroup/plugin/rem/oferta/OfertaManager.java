@@ -1779,18 +1779,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			boolean esOfertaCaixa = particularValidatorApi.esOfertaCaixa(oferta.getNumOferta().toString());
 
+			
 			if (esOfertaCaixa){
+				OfertaCaixa ofertaCaixa = null;
 
 				if (oferta.getOfertaCaixa() == null ){
-					OfertaCaixa ofertaCaixa = new OfertaCaixa();
+					ofertaCaixa = new OfertaCaixa();
 					ofertaCaixa.setOferta(oferta);
 					ofertaCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(oferta, oferta.getTipoOferta()));
 					ofertaCaixa.setAuditoria(Auditoria.getNewInstance());
 
 					genericDao.save(OfertaCaixa.class,ofertaCaixa);
+				}else {
+					ofertaCaixa = oferta.getOfertaCaixa();
 				}
 				
-				setEstadoOfertaBC(oferta);
+				setEstadoOfertaBC(oferta, ofertaCaixa);
 
 				if(DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(oferta.getEstadoOferta().getCodigo())){
 					llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
@@ -2939,7 +2943,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		
-		this.setEstadoOfertaBC(oferta);
+		this.setEstadoOfertaBC(oferta, null);
 		
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
@@ -3162,7 +3166,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			darDebajaAgrSiOfertaEsLoteCrm(oferta);
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
-			setEstadoOfertaBC(oferta);
+			setEstadoOfertaBC(oferta, null);
 			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
@@ -3209,7 +3213,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 									&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estado.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 						updateStateDispComercialActivosByOferta(oferta);
-						setEstadoOfertaBC(oferta);
+						setEstadoOfertaBC(oferta, null);
 						genericDao.save(Oferta.class, oferta);
 						
 						if (pdteDocu) llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
@@ -3263,7 +3267,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						estado = genericDao.get(DDEstadoOferta.class, filtro);
 						ofr.setEstadoOferta(estado);
 						updateStateDispComercialActivosByOferta(ofr);
-						setEstadoOfertaBC(ofr);
+						setEstadoOfertaBC(ofr, null);
 						genericDao.save(Oferta.class, ofr);
 
 						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
@@ -3304,7 +3308,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 				oferta.setEstadoOferta(estado);
 				updateStateDispComercialActivosByOferta(oferta);
-				setEstadoOfertaBC(oferta);
+				setEstadoOfertaBC(oferta, null);
 				genericDao.save(Oferta.class, oferta);
 				
 				ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
@@ -3365,7 +3369,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			descongelarOfertas(expediente);
-			setEstadoOfertaBC(oferta);
+			setEstadoOfertaBC(oferta, null);
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
@@ -8549,7 +8553,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
 			ofertaDao.saveOrUpdate(oferta);
 			
-			setEstadoOfertaBC(oferta);
+			setEstadoOfertaBC(oferta, null);
 
 			return true;
 		}
@@ -9263,12 +9267,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	 * @return OfertaCaixa
 	 */
 	@Override
-	public OfertaCaixa setEstadoOfertaBC(Oferta oferta) {
+	public OfertaCaixa setEstadoOfertaBC(Oferta oferta, OfertaCaixa ofertaCaixa) {
 		
 		if(!DDCartera.CODIGO_CAIXA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))
 			return null;
 		
-		OfertaCaixa ofertaCaixa = oferta.getOfertaCaixa();
+		if(ofertaCaixa == null) {
+			ofertaCaixa = oferta.getOfertaCaixa();
+		}
 		
 		if(ofertaCaixa == null)
 			return null;

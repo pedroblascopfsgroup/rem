@@ -853,6 +853,6 @@ public interface OfertaApi {
 	
 	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
 
-	public OfertaCaixa setEstadoOfertaBC(Oferta oferta);
+	public OfertaCaixa setEstadoOfertaBC(Oferta oferta, OfertaCaixa ofertaCaixa);
 
 }

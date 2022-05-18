@@ -1823,7 +1823,7 @@ public class AgrupacionAdapter {
 										
 											replicarOferta = true;
 										}
-										ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta());
+										ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta(), null);
 
 										if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(ofertaActivo.getPrimaryKey().getOferta().getId(), ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo());
 									}
@@ -2000,7 +2000,7 @@ public class AgrupacionAdapter {
 												oferta.setEstadoOferta(estadoOferta);
 												if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 											}
-											ofertaApi.setEstadoOfertaBC(oferta);
+											ofertaApi.setEstadoOfertaBC(oferta, null);
 											
 											ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 										}
@@ -2049,7 +2049,7 @@ public class AgrupacionAdapter {
 									if (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 										ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 								}
-								ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta());
+								ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta(), null);
 							}
 						}
 					}
@@ -3194,7 +3194,7 @@ public class AgrupacionAdapter {
 					genericDao.save(Oferta.class,ofertaNueva);
 				}
 					
-				ofertaApi.setEstadoOfertaBC(ofertaNueva);
+				ofertaApi.setEstadoOfertaBC(ofertaNueva, null);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
 				
 				if (dto.getCheckSubasta() != null){

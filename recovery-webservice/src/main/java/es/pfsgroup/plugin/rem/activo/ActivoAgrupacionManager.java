@@ -766,7 +766,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 							
 								replicarOferta = true;
 							}
-							ofertaApi.setEstadoOfertaBC(oferta);
+							ofertaApi.setEstadoOfertaBC(oferta, null);
 							ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 							if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());

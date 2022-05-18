@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220520
+--## FECHA_CREACION=20220522
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11672
 --## PRODUCTO=NO
 --##
---## Finalidad: Insertar gestor
+--## Finalidad: Modificar gestor
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -27,24 +27,22 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(25 CHAR):= 'REMVIP-11672'; -- Usuario modificar
+    V_USUARIO_ORIGEN VARCHAR2(50 CHAR) := 'eperezc';
+    V_USUARIO_DESTINO VARCHAR2(50 CHAR) := 'jleandro';
 BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-  	V_MSQL := '  INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (ID,TIPO_GESTOR,COD_CARTERA,USERNAME,USUARIOCREAR,FECHACREAR)
-
-                VALUES(
-                '||V_ESQUEMA||'.S_ACT_GES_DIST_GESTORES.NEXTVAL,
-                ''SFORM'',
-                1,         
-                ''jleandro'',              
-                '''||V_USUARIO||''',
-                SYSDATE)
+  	V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET
+                    USERNAME = '''||V_USUARIO_DESTINO||''',
+                    USUARIOMODIFICAR = '''||V_USUARIO||''',
+                    FECHAMODIFICAR = SYSDATE
+                    WHERE TIPO_GESTOR = ''SFORM'' AND COD_CARTERA = 1 AND USERNAME = '''||V_USUARIO_ORIGEN||'''
                 ';
   	
 	EXECUTE IMMEDIATE V_MSQL;  
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS '|| SQL%ROWCOUNT ||' REGISTROS PARA BFA EN '||V_TEXT_TABLA);
+    DBMS_OUTPUT.PUT_LINE('[INFO] Modificados '|| SQL%ROWCOUNT ||' REGISTROS '||V_TEXT_TABLA);
 
    
 

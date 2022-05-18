@@ -520,11 +520,13 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@Override
 	public List<Localidad> getMunicipiosList(String codigoProvincia) {
 		
-		HQLBuilder hb = new HQLBuilder(
-				"select loc from Localidad loc "
-				+ "where loc.provincia = (select prv from DDProvincia prv where prv.codigo in("+codigoProvincia+") ");
-		
-		List<Localidad> localidadList = (List<Localidad>) getHibernateTemplate().find(hb.toString());
+		HQLBuilder hb = new HQLBuilder("select loc from Localidad loc, DDProvincia prv ");
+
+		hb.appendWhere("loc.provincia.id = prv.id");
+		hb.appendWhere("prv.codigo = :codigoProvincia");
+
+		List<Localidad> localidadList = (List<Localidad>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).setParameter("codigoProvincia", codigoProvincia).list();
 		
 		if (localidadList != null && !localidadList.isEmpty()) {
 			return localidadList;
@@ -537,11 +539,13 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@Override
 	public List<DDCodigoPostal> getCodigosPostalesList(String codigoMunicipio) {
 		
-		HQLBuilder hb = new HQLBuilder(
-				"select cdp from DDCodigoPostal cdp "
-				+ "where cdp.localidad = (select loc from Localidad loc where loc.codigo in("+codigoMunicipio+") ");
-		
-		List<DDCodigoPostal> codigoPostalList = (List<DDCodigoPostal>) getHibernateTemplate().find(hb.toString());
+		HQLBuilder hb = new HQLBuilder("select cdp from DDCodigoPostal cdp, Localidad loc ");
+
+		hb.appendWhere("cdp.localidad.id = loc.id");
+		hb.appendWhere("loc.codigo = :codigoMunicipio");
+
+		List<DDCodigoPostal> codigoPostalList = (List<DDCodigoPostal>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).setParameter("codigoMunicipio", codigoMunicipio).list();
 		
 		if (codigoPostalList != null && !codigoPostalList.isEmpty()) {
 			return codigoPostalList;

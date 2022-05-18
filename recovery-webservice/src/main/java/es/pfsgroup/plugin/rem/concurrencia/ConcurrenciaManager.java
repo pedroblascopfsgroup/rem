@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.concurrencia;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,13 +23,16 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.VGridHistoricoOfertasConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 
@@ -270,7 +275,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	@Transactional
 	public List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
-		String importeOculto = "*****";
+		//String importeOculto = "*****";
 		List<DtoPujaDetalle> dtoLista = new ArrayList<DtoPujaDetalle>();
 		List<Puja> listaPujas = new ArrayList<Puja>();		
 		Activo activo = activoAdapter.getActivoById(idActivo);
@@ -279,7 +284,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		listaPujas = genericDao.getListOrdered(Puja.class, order, filtroOferta);
 	
-		if (listaPujas != null) {					
+		if (listaPujas != null && !listaPujas.isEmpty()) {					
 			
 			for (Puja puja : listaPujas) {
 				DtoPujaDetalle dto = new DtoPujaDetalle();
@@ -293,9 +298,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
 				}
 				if (this.isActivoEnConcurrencia(activo)) {
-					if (puja.getImporte() != null) {
-						dto.setImportePuja(null);
-					}
+					dto.setImportePuja(null);
 				} else {
 					if (puja.getImporte() != null) {
 						dto.setImportePuja(puja.getImporte());
@@ -306,5 +309,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			}
 		}
 		return dtoLista;
+	}
+
+	@Override
+	public List<VGridHistoricoOfertasConcurrencia> getHistoricoConcurrencia(Long idActivo, Long idOferta) {
+		
+		List<VGridHistoricoOfertasConcurrencia> listaHistorico = null;
+		
+		if (idActivo != null && idOferta != null) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+			Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "idOferta", idOferta);
+			listaHistorico = genericDao.getList(VGridHistoricoOfertasConcurrencia.class, filtroIdActivo, filtroIdOferta);	
+		}
+		return listaHistorico;
 	}
 }

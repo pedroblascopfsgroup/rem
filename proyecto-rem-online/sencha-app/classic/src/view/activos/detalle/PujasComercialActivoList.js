@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'pujascomercialactivolist',
-    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle', 'HreRem.model.Pujas'],
+    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle', 
+    				'HreRem.model.Pujas', 'HreRem.model.HistoricoConcurrenciaGridModel'],
     reference	: 'pujascomercialactivolistref',
     bind: {
         store: '{storePujasActivo}'

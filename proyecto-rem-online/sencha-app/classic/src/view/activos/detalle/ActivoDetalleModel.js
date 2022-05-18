@@ -4352,6 +4352,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        }
  	    	 },
  			autoLoad: true
-     	}
+     	},
+     	storeHistoricoConcurrencia: {
+    		 model: 'HreRem.model.Pujas',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoConcurrencia',
+		        extraParams: {
+		        	idActivo: '{detallehistoricoconcurrencia.idActivo}',
+		        	idOferta: '{detallehistoricoconcurrencia.idOferta}'
+		        }
+	    	 },
+			autoLoad: true
+    	}
 	 }
 });

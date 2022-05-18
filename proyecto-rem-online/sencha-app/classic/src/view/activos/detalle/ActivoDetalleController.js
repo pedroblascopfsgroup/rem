@@ -8893,7 +8893,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			idOferta = record.get("id");
 		}
     	
-    	Ext.create('HreRem.view.activos.detalle.PujasComercialDetalle',{detallepuja: record}).show();
+    	Ext.create('HreRem.view.activos.detalle.PujasComercialDetalle',{detallepuja: record, detallehistoricoconcurrencia: record}).show();
     },
     
    	onClickBotonCerrarDetallePujas: function(btn) {

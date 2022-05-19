@@ -150,10 +150,14 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 	
 	@Override
-	public List<DtoActivoProveedor> getProveedoresByNif(String nif) {	
-		
-		List<ActivoProveedor> lista = proveedoresDao.getProveedoresByNifList(nif);
-   		List<DtoActivoProveedor> listaProveedores = new ArrayList<DtoActivoProveedor>();
+	public List<DtoActivoProveedor> getProveedoresByNif(String nif) {
+
+		List<ActivoProveedor> lista = new ArrayList<ActivoProveedor>();
+
+		if (nif != null){
+			lista = proveedoresDao.getProveedoresByNifList(nif);
+		}
+		List<DtoActivoProveedor> listaProveedores = new ArrayList<DtoActivoProveedor>();
    		
 		for(ActivoProveedor proveedor: lista) {
 			listaProveedores.add(proveedorToDto(proveedor));			

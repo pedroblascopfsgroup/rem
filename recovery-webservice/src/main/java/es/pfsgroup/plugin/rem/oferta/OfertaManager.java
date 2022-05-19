@@ -9260,7 +9260,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	public boolean cumpleCondicionesReplicarPorEstadoYOferta(Oferta oferta, String codEstado){
-		return !DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado);
+		return !DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && (DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado) || DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codEstado) || DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codEstado));
 	}
 	
 	/**

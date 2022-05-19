@@ -935,7 +935,8 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
-				dtoAgrupacion.setEsONDnd(activoAgrupacionApi.isAgrupacionONDnd(agrupacion));
+				dtoAgrupacion.setEsONDnd(activoAgrupacionApi.isAgrupacionONDnd(agrupacion) 
+						|| (!Checks.esNulo(agrupacion.getAgrupacionONDnd()) ? activoAgrupacionApi.isAgrupacionONDnd(agrupacion.getAgrupacionONDnd()) : false));
 			}
 			
 			
@@ -1329,6 +1330,8 @@ public class AgrupacionAdapter {
 					true, genericAdapter.getUsuarioLogado().getUsername()));
 
 			creacionAsincrona.start();
+		} else if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			saveAgrupacionRestringida(activo, agrupacion);
 		}else {
 			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
 			activoAgrupacionActivo.setActivo(activo);
@@ -1553,6 +1556,8 @@ public class AgrupacionAdapter {
 		List<Activo> activosList = new ArrayList<Activo>();
 		List<Activo> activosListActual = new ArrayList<Activo>();
 		List<ActivoAgrupacionActivo> activosAgrupacionActual = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(agrupacion.getId(), null);
+		ActivoAgrupacionActivo relacionObraNueva = null;
+		
 		if(!Checks.estaVacio(activosAgrupacionActual)) {
 			for(ActivoAgrupacionActivo aga : activosAgrupacionActual) {
 				activosListActual.add(aga.getActivo());
@@ -1595,6 +1600,9 @@ public class AgrupacionAdapter {
 							}
 						}
 					}
+					if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						relacionObraNueva = activoAgrupacionActivo;
+					}
 				}
 			}
 			
@@ -1616,6 +1624,9 @@ public class AgrupacionAdapter {
 			nuevaRelacionAgrupacionActivo.setAgrupacion(agrupacion);
 			Date today = new Date();
 			nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
+			if (relacionObraNueva != null) {
+				nuevaRelacionAgrupacionActivo.setPisoPiloto(relacionObraNueva.getPisoPiloto());
+			}
 			activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
 		}
 	}
@@ -5596,5 +5607,30 @@ public class AgrupacionAdapter {
 		}
 
 		return tipoComercializar;
+	}
+	
+	private void saveAgrupacionRestringida(Activo activo, ActivoAgrupacion agrupacion) {
+		ActivoAgrupacionActivo relacionObraNueva = null;
+		
+		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
+		if (!Checks.estaVacio(agrupacionesActivo)) {
+
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo) {
+				if (!Checks.esNulo(activoAgrupacionActivo.getAgrupacion())
+						&& !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
+						&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
+						relacionObraNueva = activoAgrupacionActivo;
+				}
+			}
+		}
+
+		ActivoAgrupacionActivo nuevaRelacionAgrupacionActivo = new ActivoAgrupacionActivo();
+		nuevaRelacionAgrupacionActivo.setActivo(activo);
+		nuevaRelacionAgrupacionActivo.setAgrupacion(agrupacion);
+		nuevaRelacionAgrupacionActivo.setFechaInclusion(new Date());
+		if (relacionObraNueva != null) {
+			nuevaRelacionAgrupacionActivo.setPisoPiloto(relacionObraNueva.getPisoPiloto());
+		}
+		activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
 	}
 }

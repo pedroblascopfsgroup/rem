@@ -1181,7 +1181,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Override
 	public Long numAgrupacionONDnd(ActivoAgrupacion agrupacion) {
-		if (!Checks.esNulo(agrupacion.getAgrupacionONDnd()) && DDTipoAgrupacion.isON(agrupacion.getTipoAgrupacion())) {
+		if (!Checks.esNulo(agrupacion.getAgrupacionONDnd())) {
 			return agrupacion.getAgrupacionONDnd().getNumAgrupRem();
 		}
 		return null;

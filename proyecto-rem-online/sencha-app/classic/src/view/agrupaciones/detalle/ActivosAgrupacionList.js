@@ -198,6 +198,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     			return value; 
     		}
     	};
+
+		var esONDnd = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha.esONDnd');
  
         me.columns= [
         	{
@@ -406,7 +408,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        xtype: 'actioncolumn',
 		        reference: 'esPisoPiloto',
 		        bind: {
-		        	hidden: '{!agrupacionONDnd}' 
+		        	hidden: !esONDnd 
 		        },
 		        flex: 1,
 		        width: 30,
@@ -416,10 +418,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				        	{ // Check si es piso piloto
 					            getClass: function(v, meta, rec) {
 					            	if (rec.get('esPisoPiloto') != 1) {
-					                	this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check';
 					                } else {
-			            				this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check green-color';
 					                }
 					            }
@@ -430,7 +430,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
             	text	 : HreRem.i18n('header.fecha.escrituracion'),
                 dataIndex: 'fechaEscrituracion',
                 bind: {
-                	 hidden: '{!agrupacionONDnd}'
+                	 hidden: !esONDnd
 		        },
 		        formatter: 'date("d/m/Y")',
 		        flex: 0.7,

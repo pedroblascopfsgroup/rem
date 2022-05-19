@@ -269,25 +269,20 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       },
 			       {
 				        xtype: 'actioncolumn',
-				        reference: 'esPisoPiloto',
-				        bind: {
+		    			text: HreRem.i18n('header.pisoPiloto'),
+						dataIndex: 'esPisoPiloto',
+						bind: {
 				        	hidden: !esActivoDnd
-				        }, 
-				        flex: 1,
-				        width: 30,
-				        text: HreRem.i18n('header.pisoPiloto'),
-						hideable: false,
-						items: [
-						        	{ // Check si es piso piloto
-							            getClass: function(v, meta, rec) {						            
-							            	if (rec.data.get('esPisoPiloto') != 1) {						                	
-							                    return 'fa fa-check';
-							                } else {
-							                    return 'fa fa-check green-color';
-							                }
-							            }
-						        	}
-						 ]
+				        },
+						items: [{ 
+				            getClass: function(v, meta, rec) {	
+				            	if (v == false) {						                	
+				                    return 'fa fa-check';
+				                } else {
+				                    return 'fa fa-check green-color';
+				                }
+				            }
+			        	}]
 		    		},
 			       {   
 		            	text	 : HreRem.i18n('header.fecha.escrituracion'),

@@ -880,8 +880,7 @@ public class GenericController extends ParadiseJsonController{
 
 		ModelMap modelMap = new ModelMap();
 
-		String respuesta = accionesCaixaController.accionComercialCaixa(model, request, response);
-		modelMap.put("error", respuesta);
+		modelMap = accionesCaixaController.accionComercialCaixa(model, request, response);
 
 		restApi.sendResponse(response, modelMap, request);
 	}

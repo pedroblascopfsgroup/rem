@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210607
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-9845
+--## INCIDENCIA_LINK=HREOS-17721
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -38,6 +38,7 @@
 --#	        0.24 Remus OVidiu - REMVIP-9765 - Añadido LEFT JOIN con la vista V_FECHA_POSESION_ACTIVO para el calculo correcto de la fecha de posesion
 --##		0.25 Juan Bautista Alfonso - REMVIP-9845 - Añadido LEFT JOIN con V_SIN_INFORME_APROBADO_REM para obtener el campo SIN_INFROME_APROBADO_REM
 --##		0.26 Juan Bautista Alfonso - REMVIP-9845 - Sustitución de obtención de campos ES_CONDICIONADO y SIN_INFORME_APROBADO_REM para que no usen la tabla V_COND_DISPONIBILIDAD
+--##		0.27 Alejandra García - HREOS-17721 - Modificar lógica del cálculo posesión
 --##########################################
 --*/
 
@@ -99,7 +100,7 @@ AS
           est_disp_com_codigo2,borrado
 
      FROM (SELECT act.act_id,
-				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) THEN 1
+        CASE WHEN (CAIXA.DD_ETP_ID is not null and ETP.INDICA_POSESION = 0) THEN 1
                 ELSE
                     CASE WHEN (FPOS.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) THEN 1
                     ELSE 0
@@ -152,7 +153,8 @@ AS
 				  LEFT JOIN REM01.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id
                   		  LEFT JOIN REM01.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id
 				  LEFT JOIN REM01.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
-				  LEFT JOIN REM01.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id
+          LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAIXA ON CAIXA.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+		      LEFT JOIN '||V_ESQUEMA||'.DD_ETP_ESTADO_POSESORIO ETP ON ETP.DD_ETP_ID = CAIXA.DD_ETP_ID AND ETP.BORRADO = 0
 				  LEFT JOIN (select  aga.act_id
                       from REM01.act_aga_agrupacion_activo aga
                       where AGA.AGA_PRINCIPAL = 1 AND EXISTS

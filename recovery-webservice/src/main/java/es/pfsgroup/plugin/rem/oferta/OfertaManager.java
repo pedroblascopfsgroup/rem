@@ -8410,6 +8410,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = ofertaDao.get(idOferta);
 
 		if(oferta != null && codigoEstado != null){
+			if(DDEstadoOferta.CODIGO_PENDIENTE.equals(codigoEstado) && debeCongelarOfertaCaixa(oferta)) {
+				codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+			}
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstado)));
 			ofertaDao.saveOrUpdate(oferta);
 
@@ -9100,6 +9103,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return tipoComercializar;
+	}
+	
+	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
+		
+		Activo activo = oferta.getActivoPrincipal();
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+			List<ActivoOferta> activosOferta = activo.getOfertas();
+			for(ActivoOferta actOf : activosOferta) {
+				if(isOfertaAceptadaConExpedienteBlocked(actOf.getPrimaryKey().getOferta())) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }
 

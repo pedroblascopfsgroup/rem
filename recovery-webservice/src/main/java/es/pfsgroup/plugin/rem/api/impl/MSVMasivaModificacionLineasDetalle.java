@@ -109,7 +109,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	@Transactional
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-		
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		try {
 			
 			if(nuevasLineasList == null) {
@@ -342,9 +342,9 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 						if (activo != null && activo.getId() != null) {
 							Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 							ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
-							if (activoCaixa != null) {
-								   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
-								   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
+							if (activoCaixa != null && activoCaixa.getSegmentacionCartera() != null) {
+								Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
+								DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 								   if (ddCarteraBc != null) {
 									   gastoLineaDetalleEntidad.setCarteraBc(ddCarteraBc);
 								   }
@@ -452,20 +452,30 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 		}catch (NumberFormatException e){
 			nuevasLineasList.clear();
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
 		}catch (ParseException e){
 			nuevasLineasList.clear();
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}catch (NonUniqueResultException e){
 			nuevasLineasList.clear();
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}catch (LazyInitializationException e){
 			nuevasLineasList.clear();
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}catch (Exception e) {
 			nuevasLineasList.clear();
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}	
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 
 	@Override

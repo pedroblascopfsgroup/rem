@@ -61,7 +61,7 @@ public interface AccionesCaixaApi {
     
     void sendReplicarOfertaAccion(Long numOferta);
 
-    void sendReplicarOfertaAccionesAvanzarTarea(Long idTarea, Boolean success);
+    void callSPPublicaciones(Long idTarea, Boolean success);
 
     @Transactional
     void sendReplicarOfertaByOferta(Long idOferta);

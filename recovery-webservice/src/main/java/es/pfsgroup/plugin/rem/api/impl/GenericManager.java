@@ -1283,6 +1283,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
 
 		Activo activo = activoApi.getByNumActivo(numActivo);
+		ActivoCaixa activoCaixa = activo.getActivoCaixa();
 		List<DDTipoTituloActivoTPA> combo = new ArrayList<DDTipoTituloActivoTPA>();
 		
 		DDTipoTituloActivoTPA tipoTituloSi = (DDTipoTituloActivoTPA) utilDiccionarioApi
@@ -1296,8 +1297,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if(!Checks.esNulo(activo.getCartera())) {
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-				if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
-					if (activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() == 1) {
+				if(!Checks.esNulo(activoCaixa) && !Checks.esNulo(activoCaixa.getEstadoPosesorio())) {
+					if (activoCaixa.getEstadoPosesorio().getIndicaPosesion() == 1) {
 						combo.add(tipoTituloNo);
 					} else {
 						combo.add(tipoTituloNoConIndicios);
@@ -2087,20 +2088,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				subcartera = agrupacion.getActivos().get(0).getActivo().getSubcartera();
 			}
 		}
-		
+
 		listaDDEstadoOferta.addAll(estadosOferta);
-		
+
 		if (subcartera != null) {
 			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
 					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
 			if(conDep != null && conDep.getDepositoNecesario()) {
 				depositoNecesario = true ;
 			}
-			
+
 			if(!depositoNecesario) {
 				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
 			}
-			
+
 		}
 
 		return listaDDEstadoOferta;

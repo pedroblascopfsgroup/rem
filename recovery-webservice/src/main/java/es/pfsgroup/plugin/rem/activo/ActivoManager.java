@@ -5937,6 +5937,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) {
 		Activo activo = this.get(id);
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+		ActivoCaixa activoCaixa = activo.getActivoCaixa();
 		Integer ocupado;
 		String conTitulo = "";
 		DDTipoTituloActivoTPA tituloActivoTPA = null;
@@ -5959,9 +5960,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(id)) {
 			if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					&& (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getSitaucionJuridica() != null 
-					&& activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() != null)
-					&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()))
+					&& (!Checks.esNulo(activoCaixa) && activoCaixa.getEstadoPosesorio() != null 
+					&& activoCaixa.getEstadoPosesorio().getIndicaPosesion() != null)
+					&& (1 == activoCaixa.getEstadoPosesorio().getIndicaPosesion()))
 					|| (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {

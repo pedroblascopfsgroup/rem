@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.PathParam;
 
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.ReplicacionOfertasManager;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
@@ -870,6 +871,11 @@ public class OfertasController {
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);
 
+						CaixaBcReplicationDataHolder dataHolder = new CaixaBcReplicationDataHolder();
+						dataHolder.setIdTarea(tareaId);
+						dataHolder.setNumOferta(Long.parseLong(ofrNumOferta));
+						dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromNumOferta(Long.parseLong(ofrNumOferta)));
+
 						if(!ofertaApi.bloqueoResolucionExpedienteCFV(tareaId)){
 							resultado = agendaAdapter.validationAndSave(datosTarea);
 						}else{
@@ -882,8 +888,10 @@ public class OfertasController {
 							error = null;
 							errorDesc = null;
 
+
+
 						if (particularValidatorApi.esOfertaCaixa(ofrNumOferta)){
-								replicacionOfertasManager.callReplicateOferta(tareaId,Boolean.TRUE);
+								replicacionOfertasManager.callReplicateOferta(dataHolder,Boolean.TRUE);
 							}
 						}						
 						model.put("id", id);

@@ -2,13 +2,15 @@ package es.pfsgroup.plugin.rem.controller;
 
 import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.ReplicacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaDtoData;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import net.sf.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -73,7 +75,10 @@ public class AccionesCaixaController extends ParadiseJsonController {
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
-    public String accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+    @Autowired
+    private ReplicacionOfertasApi replicacionOfertasApi;
+
+    public ModelMap accionComercialCaixa(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 
         AccionesCaixaRequestDto jsonData = null;
         ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
@@ -81,25 +86,37 @@ public class AccionesCaixaController extends ParadiseJsonController {
         JSONObject jsonDto = null;
         AccionesCaixaDtoData accionesCaixaDto = null;
 
+        ModelMap responseModel = new ModelMap();
         try {
 
             jsonFields = request.getJsonObject();
             jsonData = (AccionesCaixaRequestDto) request.getRequestData(AccionesCaixaRequestDto.class);
             accionesCaixaDto = jsonData.getData() != null ? jsonData.getData().get(0) : null;
+            jsonDto = JSONObject.fromObject(accionesCaixaDto);
+            CaixaBcReplicationDataHolder dataHolder = new CaixaBcReplicationDataHolder();
+
+            dataHolder.setNumOfrFromRequest(jsonDto);
+            dataHolder.setEsAccion(Boolean.TRUE);
+            dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromNumOferta(dataHolder.getNumOferta()));
 
             AccionesCaixaDispatcher dispatcher = new AccionesCaixaDispatcher(this);
-            dispatcher.dispatchAccion(JSONObject.fromObject(accionesCaixaDto), accionesCaixaDto.getIdAccion());
+            Boolean success = dispatcher.dispatchAccion(jsonDto, accionesCaixaDto.getIdAccion());
 
-            model.put("id", jsonFields.get("id"));
-            model.put("error", "null");
+            if (success) {
+                dataHolder.setCurrentStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromNumOferta(dataHolder.getNumOferta()));
+                replicacionOfertasApi.callReplicateOferta(dataHolder, success);
+            }
 
-        } catch (UserException e) {
-            return e.getMessage();
+            responseModel.put("replicar", dataHolder.getReplicateToBc());
+            responseModel.put("id", jsonFields.get("id"));
+
         } catch (Exception e) {
-            return e.getMessage();
+            responseModel.put("id", jsonFields.get("id"));
+            responseModel.put("error",e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+            e.printStackTrace();
         }
 
-        return null;
+        return responseModel;
 
     }
 
@@ -107,12 +124,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             Boolean success = accionesCaixaApi.accionAprobacion(dto);
-            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+            accionesCaixaApi.callSPPublicaciones(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -122,12 +139,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.accionRechazo(dto);
-            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+            accionesCaixaApi.callSPPublicaciones(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -137,12 +154,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             Boolean success = accionesCaixaApi.accionRechazoAvanzaRE(dto);
-            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+            accionesCaixaApi.callSPPublicaciones(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -152,12 +169,11 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionResultadoRiesgo(dto);
-            accionesCaixaApi.sendReplicarOfertaAccion(dto.getIdExpediente());
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -171,7 +187,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -185,7 +201,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -199,7 +215,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -213,7 +229,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -227,7 +243,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -241,7 +257,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -255,7 +271,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -269,7 +285,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -283,7 +299,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -297,7 +313,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -312,7 +328,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -322,12 +338,11 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionAprobarModTitulares(dto);
-            accionesCaixaApi.sendReplicarOfertaAccion(dto.getIdExpediente());
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -341,7 +356,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -355,7 +370,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -369,7 +384,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -383,7 +398,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -397,7 +412,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -411,7 +426,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -425,7 +440,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -439,7 +454,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -449,12 +464,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.accionContraoferta(dto);
-            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
+            accionesCaixaApi.callSPPublicaciones(dto.getIdTarea(), success);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -468,7 +483,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -478,12 +493,12 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.avanzarTareaGenerico(dto);
-            accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.containsKey("idTarea") ? Long.parseLong(dto.get("idTarea").toString()) : null, success);
+            accionesCaixaApi.callSPPublicaciones(dto.containsKey("idTarea") ? Long.parseLong(dto.get("idTarea").toString()) : null, success);
             model.put("success", success);
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -497,7 +512,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);
@@ -512,7 +527,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
         } catch (Exception e) {
             e.printStackTrace();
             model.put("success", false);
-            model.put("msgError", e.getMessage());
+            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
         }
 
         return createModelAndViewJson(model);

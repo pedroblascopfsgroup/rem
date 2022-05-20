@@ -593,6 +593,9 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_OBSERVACIONES_DISC_LOC")
     private String discrepanciasLocalizacionObservaciones;
+    
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private ActivoCaixa activoCaixa;
 
     // Getters del activo --------------------------------------------
     
@@ -2269,6 +2272,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
 		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
+	}
+
+	public ActivoCaixa getActivoCaixa() {
+		return activoCaixa;
+	}
+
+	public void setActivoCaixa(ActivoCaixa activoCaixa) {
+		this.activoCaixa = activoCaixa;
 	}
 
 }

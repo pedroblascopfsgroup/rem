@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.api.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -233,13 +234,15 @@ public class AgendaController extends TareaController {
 					cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
 				
 				if(!esBulk || (esBulk && cumpleCondiciones)) {
+
+					CaixaBcReplicationDataHolder dataHolder = new CaixaBcReplicationDataHolder();
+					dataHolder.setIdTarea(Long.parseLong(adapter.getIdTareaFormParameterMap(request.getParameterMap())));
+					dataHolder.setPreviousStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromIdTarea(dataHolder.getIdTarea()));
 					
 					success = adapter.save(request.getParameterMap());
 
 					if(success){
-						String idTarea = adapter.getIdTareaFormParameterMap(request.getParameterMap());
-
-						replicacionOfertasApi.callReplicateOferta(Long.parseLong(idTarea), success);
+						replicacionOfertasApi.callReplicateOferta(dataHolder, success);
 					}
 					
 					if(esBulk && cumpleCondiciones) {

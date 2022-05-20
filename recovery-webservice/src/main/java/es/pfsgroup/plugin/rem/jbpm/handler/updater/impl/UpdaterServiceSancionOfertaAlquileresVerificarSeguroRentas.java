@@ -229,10 +229,8 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		genericDao.update(SeguroRentasAlquiler.class, seguroRentasAlquiler);
 		historicoSeguroRentasAlquiler.setSeguroRentasAlquiler(seguroRentasAlquiler);
 		genericDao.save(HistoricoSeguroRentasAlquiler.class, historicoSeguroRentasAlquiler);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		} else if (replicarOferta){
+
+		if (replicarOferta){
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
 	}

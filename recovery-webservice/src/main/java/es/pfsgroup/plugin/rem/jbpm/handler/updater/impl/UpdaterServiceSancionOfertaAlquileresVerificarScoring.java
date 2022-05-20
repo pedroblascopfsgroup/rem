@@ -262,11 +262,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 		genericDao.save(ScoringAlquiler.class, scoringAlquiler);
 		histScoringAlquiler.setScoringAlquiler(scoringAlquiler);
 		genericDao.save(HistoricoScoringAlquiler.class, histScoringAlquiler);
-		
 
-		if(isBk) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndVerificarScoring(expedienteComercial,scoringAlquiler));
-		}
 	}
 
 	public String[] getCodigoTarea() {

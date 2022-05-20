@@ -1,19 +1,22 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## AUTOR=Juan José Sanjuan 
+--## FECHA_CREACION=20220422
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=REMVIP-11478
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##    0.1 Versión inicial
 --##		0.2 Se actualiza para nivelar los ID's de esta vista y V_ACTIVOS_SUBDIVISION
 --##		0.3 Se añade codigo subtipo activo
---##        0.4 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
+--##    0.4 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
+--##    0.5 Se limpia la subselect del FROM y se deja los joins necesarios, se cambia el numero de plantas y dormitorios
+--##        para que saquen la información de la tabla ACT_ICO_INFO_COMERCIAL - Juan José Sanjuan  - 20211115 - HREOS-15322
+--##    0.6 Se añade banyos al ora_hash para aumentar precision en el id - Juan Bautista Alfonso - 20220413 - REMVIP-11478
 --##########################################
 --*/
 
@@ -72,30 +75,28 @@ BEGIN
               SUBD.DORMITORIOS,
               SUBD.PLANTAS
 							FROM (
-									SELECT ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0) PLANTAS, NVL(SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)),0) DORMITORIOS, 
-									NVL(SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)),0) BANYOS,
+									SELECT ACT.ACT_ID, 
+                  ACT.DD_TPA_ID, 
+                  ACT.DD_SAC_ID, 
+                  ICO.ICO_NUM_PLANTAS as PLANTAS,
+                  ICO.ICO_NUM_DORMITORIOS as DORMITORIOS,
 									ORA_HASH(
-												  act.dd_tpa_id
-			                                   || act.dd_sac_id
-			                                   || NVL (viv.viv_num_plantas_interior, 0)
-			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
-			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
+                            act.dd_tpa_id
+                              || act.dd_sac_id
+                              || NVL (ICO.ICO_NUM_PLANTAS, 0)
+                              || NVL (ICO.ICO_NUM_DORMITORIOS, 0)
+                              || NVL (ICO.ICO_NUM_BANYOS, 0)
 											) ID
                                     FROM ' || V_ESQUEMA || '.act_activo act
                                     JOIN ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.V_MAX_ACT_HIC_EST_INF_COM MAXHIC ON (MAXHIC.ACT_ID = ACT.ACT_ID AND MAXHIC.POS = 1) 
-                                     LEFT JOIN ' || V_ESQUEMA || '.DD_AIC_ACCION_INF_COMERCIAL AIC ON AIC.DD_AIC_ID = MAXHIC.DD_AIC_ID AND AIC.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.BIE_DATOS_REGISTRALES BIEDREG ON ACT.BIE_ID = BIEDREG.BIE_ID AND BIEDREG.BORRADO = 0
-                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID 
-                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0
                                     WHERE ACT.BORRADO = 0
-									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
+									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, ICO.ICO_NUM_PLANTAS, ICO.ICO_NUM_DORMITORIOS,ICO.ICO_NUM_BANYOS
 							) SUBD
 							JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
 							LEFT JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
 			) ACT_SD
-		JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID
-		JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+		JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID AND (AGA.BORRADO IS NULL OR AGA.BORRADO = 0)
+		JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
 		WHERE ((AGR.DD_TAG_ID = (SELECT TA.DD_TAG_ID FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO = ''16'') AND AGA.AGA_PRINCIPAL = 0) OR ( EXISTS  (SELECT 1 FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO != ''16'' AND TA.DD_TAG_ID = AGR.DD_TAG_ID)))
 		GROUP BY ACT_SD.ID, AGA.AGR_ID, ACT_SD.DESCRIPCION,ACT_SD.COD_SUBTIPO_ACTIVO,ACT_SD.DORMITORIOS,ACT_SD.PLANTAS';
 

@@ -113,8 +113,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 						        	name: 'tipo',
 						        	editable: false,
 					            	store: comboTipoFoto,
-					            	displayField	: 'descripcion',
-								    							
+					            	displayField	: 'descripcion',			
 								    valueField		: 'codigo',
 									allowBlank: false,
 									msgTarget: 'side',
@@ -127,11 +126,19 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 			                					this.up('form').down('[name=principal]').disable();	
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').hide();
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').disable();
+			                					this.up('form').down('[name=suelos]').hide();
+			                					this.up('form').down('[name=suelos]').disable();	
+			                					this.up('form').down('[name=plano]').hide();
+			                					this.up('form').down('[name=plano]').disable();	
 			                				} else if (newValue == '01' && fileList.length < 2) {
 			                					this.up('form').down('[name=principal]').show();
 			                					this.up('form').down('[name=principal]').enable();	
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').show();
 			                					this.up('form').down('fieldcontainer[reference=radioInterior]').enable();
+			                					this.up('form').down('[name=suelos]').show();
+			                					this.up('form').down('[name=suelos]').enable();	
+			                					this.up('form').down('[name=plano]').show();
+			                					this.up('form').down('[name=plano]').enable();	
 			                				}
 			                			}
 			                		}
@@ -194,7 +201,23 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 						                    inputValue: false
 						                }
 						            ]
-						        }
+						        },
+						    	{ 
+			                		xtype : 'checkboxfield',
+			                		fieldLabel:  HreRem.i18n('fieldlabel.suelos'),
+			                		name: 'suelos',
+			                		displayField: 'suelos',
+			                		inputValue : true,
+			                	    valueField: 'suelos'
+						    	},
+			                	{ 
+				                	xtype : 'checkboxfield',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.plano'),
+				                	name: 'plano',
+				                	displayField: 'plano',
+				                	inputValue : true,
+				                    valueField: 'plano'
+						    	}  
     					  ]
     				}
     	];

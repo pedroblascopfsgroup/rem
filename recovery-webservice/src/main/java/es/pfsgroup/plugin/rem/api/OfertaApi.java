@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import net.sf.json.JSONObject;
@@ -483,7 +482,7 @@ public interface OfertaApi {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo) throws IllegalAccessException, InvocationTargetException;
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo,boolean reenvioPorMas180Dias) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que ratifica el comité de Bankia
@@ -791,7 +790,8 @@ public interface OfertaApi {
 	public Integer tieneTarea(ActivoTramite tramite, String codTarea);
 
 	public Integer isEpaAlquilado(Long idAgrupacion);
-
+	
+	public void comprobarFechasParaLanzarComisionamiento(Oferta oferta, Date fechaEntrada);
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) throws UserException;
 	
 	public Page getBusquedaOfertasGridUsuario(DtoOfertaGridFilter dto);
@@ -846,4 +846,8 @@ public interface OfertaApi {
 	public void llamadaPbc(Oferta oferta, String codAccion);
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
+
+    DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta);
+	
+	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
 }

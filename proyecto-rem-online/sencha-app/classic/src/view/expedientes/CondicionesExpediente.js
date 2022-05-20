@@ -112,14 +112,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}'
+								            		value: '{condiciones.tipoCalculo}',
+													disabled: '{esCarteraGaleonOZeus}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
 			                						change:  'onHaCambiadoTipoCalculo'
-			            						},
-			            						disabled: true
+			            						}
 									        },
 											{ 
 												xtype: 'numberfieldbase',

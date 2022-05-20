@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterService {
@@ -66,6 +67,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionTanteo.class);
 
@@ -164,6 +168,22 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 									gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);																	
 								}
 							}
+							
+							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
+
+							if((ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()
+									|| (ofertaAceptada.getCheckForzadoCajamar() == null && ofertaAceptada.getCheckFormCajamar() != null && ofertaAceptada.getCheckFormCajamar()))) {
+								GestorEntidadDto ge = new GestorEntidadDto();
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+								
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gestformcajamar")).getId());								
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialManager.insertarGestorAdicionalExpedienteComercial(ge);
+							}
+							
 						}
 						valorCampoEjerce = resultadoTanteo.getDescripcion();
 					}
@@ -199,6 +219,11 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 						}
 					}
 				}
+				
+				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+						|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+					notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 			}
 		}
 	}

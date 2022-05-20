@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20210908
+--## FECHA_CREACION=20210909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-14860
@@ -40,7 +40,6 @@ DECLARE
     V_OFR_ID NUMBER(16); -- Vble. que almacena el id de la oferta.
     V_OFR_ENTIDAD VARCHAR(10 CHAR); -- Vble. que almacena el nombre de la entidad origen.
     
-    CURSOR ENTIDAD_OFERTA IS SELECT OFR_ID, OFR_ORIGEN FROM #ESQUEMA#.OFR_OFERTAS WHERE OFR_ORIGEN in ('REM', 'WCOM');
     
 BEGIN
     
@@ -78,19 +77,28 @@ BEGIN
 			
 		-- Insertamos los valores en la tabla auxiliar mientras vamos dejando a null cada campo que ya hemos insertado
 		DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TABLA_AUX||'] ');
-		FOR ENTOFR IN ENTIDAD_OFERTA LOOP
-		
-			V_OFR_ID:=ENTOFR.OFR_ID;   
-			V_OFR_ENTIDAD:=ENTOFR.OFR_ORIGEN;
 	    		
-			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_AUX||' (OFR_ID, OFR_ENTIDAD_ORIGEN) VALUES ('||V_OFR_ID||', '''||V_OFR_ENTIDAD||''')';
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_AUX||' (OFR_ID, OFR_ENTIDAD_ORIGEN)
+			SELECT OFR_ID, OFR_ORIGEN FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_ORIGEN in (''REM'', ''WCOM'')
+			';
 			EXECUTE IMMEDIATE V_MSQL;
-			V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET OFR_ORIGEN = NULL WHERE OFR_ID = '||V_OFR_ID||'';
-			EXECUTE IMMEDIATE V_MSQL;
+			
+			V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
+		        USING (
+		           SELECT OFR_ID, OFR_ORIGEN FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_ORIGEN in (''REM'', ''WCOM'')
+
+		        ) T2
+		        ON (T1.OFR_ID = T2.OFR_ID)
+		        WHEN MATCHED THEN
+		        UPDATE SET 
+		            OFR_ORIGEN = NULL 		
+		        ';
+		
+			EXECUTE IMMEDIATE V_MSQL;  
+			
+			
 			DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA_AUX||' insertados correctamente.');
 		      
-	    	END LOOP;
-	    	
 	    	-- Cambiar el DATA_TYPE
 	    	V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and column_name = ''OFR_ORIGEN''';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;

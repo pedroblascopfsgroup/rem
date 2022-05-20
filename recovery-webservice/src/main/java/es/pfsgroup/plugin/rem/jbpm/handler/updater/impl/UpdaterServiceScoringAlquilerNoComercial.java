@@ -121,10 +121,7 @@ public class UpdaterServiceScoringAlquilerNoComercial implements UpdaterService 
 			expedienteComercial.setEstado(genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoEcoCodigo)));
 			expedienteComercial.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class,genericDao.createFilter(FilterType.EQUALS,"codigo", estadoEcoBcCodigo)));
 	
-			expedienteComercialApi.update(expedienteComercial,false);	
-			
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-	
+			expedienteComercialApi.update(expedienteComercial,false);
 
 		}catch(ParseException e) {
 			

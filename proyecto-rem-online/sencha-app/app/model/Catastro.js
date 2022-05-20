@@ -5,42 +5,19 @@ Ext.define('HreRem.model.Catastro', {
     extend: 'HreRem.model.Base',
     idProperty: 'idCatastro',
 
-    fields: [    
+    fields: 
+    	[    
+    		{
+    			name: 'idActivoCatastro'
+    		},
     		{
     			name: 'idActivo'
-    		},
-     		{
-    			name:'numActivo'
-    		},
-    		{
-    			name:'numActivoRem'
     		},
     		{
     			name:'refCatastral'
     		},
     		{
-    			name:'poligono'
-    		},
-    		{
-    			name:'parcela'
-    		},
-    		{
-    			name:'titularCatastral'
-    		},
-    		{
-    			name:'superficieConstruida'
-    		},
-    		{
-    			name:'superficieUtil'
-    		},
-    		{
-    			name:'superficieReperComun'
-    		},
-    		{
-    			name:'superficieParcela'
-    		},
-    		{
-    			name:'superficieSuelo'
+    			name: 'correcto'
     		},
     		{
     			name:'valorCatastralConst'
@@ -52,43 +29,77 @@ Ext.define('HreRem.model.Catastro', {
     			name:'fechaRevValorCatastral',
     			type:'date',
     			dateFormat: 'c'
-    			// FIXME SOLUCION PARA BORRAR FECHAS
-    			//dateWriteFormat: 'Y-m-d'
     		},
     		{
     			name:'fechaAltaCatastro',
     			type:'date',
     			dateFormat: 'c'    			
     		},
-    		{
-    			name:'fechaBajaCatastro',
-    			type:'date',
-    			dateFormat: 'c'    			
-    		},
-    		{
-    			name:'observaciones' 			
-    		},
-    		{
-    			name:'fechaSolicitud901',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name:'resultadoSiNO'
-    		},
-    		{
-    			name:'fechaAlteracion',
-    			type:'date',
-    			dateFormat: 'c'
-    		}
-    ],
+            {
+	            name: 'superficieParcela'
+	        },
+	        {   
+	        	name: 'superficieConstruida'
+	        },
+	        {
+	            name: 'anyoConstruccion'
+	        }, 
+	        {   
+	        	name: 'codigoPostal'
+	        }, 
+	        {
+	            name: 'tipoVia'
+	        },
+	        {   
+	        	name: 'nombreVia'
+	        },
+	        {  
+	        	name: 'numeroVia'
+	        },
+	        {   
+	        	name: 'puerta'
+	        },
+	        {   
+	        	name: 'planta'
+	        },
+	        {   
+	        	name: 'escalera'
+	        },
+	        {
+	        	name: 'provincia'
+	        },
+	        {   
+	        	name: 'municipio'
+	        },
+	        {   
+	        	name: 'latitud'
+	        },
+	        {   
+	        	name: 'longitud'
+	        },
+	        {   
+	        	name: 'origenDatosCatastrales'
+	        },
+	        {
+	        	name: 'claseUsoCatastral'
+	        },
+	        {   
+	        	name: 'tipoMoneda'
+	        },
+	        {   
+	        	name: 'catastroVigente'
+	        },
+	        {   
+	        	name: 'valorCatastral'
+	        }
+	  ],
     
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            create: 'activo/createCatastro',
-            update: 'activo/saveCatastro',
-            destroy: 'activo/deleteCatastro'
+            create: 'catastro/createCatastro',
+            update: 'catastro/saveCatastro',
+            destroy: 'catastro/deleteCatastro'
         }
     }
 });

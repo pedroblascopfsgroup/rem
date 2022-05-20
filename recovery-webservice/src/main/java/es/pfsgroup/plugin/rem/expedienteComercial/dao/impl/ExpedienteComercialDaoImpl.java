@@ -148,6 +148,13 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	
 		return expedienteComercial;
 	}
+
+	@Override
+	public ExpedienteComercial getExpedienteComercialByNumOferta(Long numOferta) {
+		HQLBuilder hql = new HQLBuilder("from ExpedienteComercial exp");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "exp.oferta.numOferta", numOferta);
+		return HibernateQueryUtils.uniqueResult(this,hql);
+	}
 	
 	@Override
 	public Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo) {

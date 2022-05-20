@@ -8719,6 +8719,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 	}
+
 	@Override
 	public Boolean esSubtipoTrabajoTomaPosesionPaquete(String subtrabajo) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -8737,6 +8738,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "0".equals(resultado);
 	}
+
 	@Override
 	public Boolean esTarifaEnCarteradelActivo(String codTarifa, String idActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -8755,6 +8757,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+
 	@Override
 	public Boolean existeProveedorEnCarteraActivo(String proveedor, String idActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -8774,7 +8777,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 
-	
 	@Override
 	public Boolean datosRegistralesRepetidos(String refCatastral,String finca, String folio, String libro, String tomo,  String numRegistro, String codigoLocalidad){
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -8805,7 +8807,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-	
 	@Override
 	public Boolean subtipoPerteneceTipoActivo(String subtipo, String tipo){
 		Map<String, Object> params = new HashMap<String, Object>();

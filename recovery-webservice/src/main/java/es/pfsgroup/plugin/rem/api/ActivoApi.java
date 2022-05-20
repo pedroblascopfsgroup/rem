@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.DtoTestigosOpcionales;
 import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -93,7 +94,6 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentesCaixa;
 import es.pfsgroup.plugin.rem.model.VSinInformeAprobadoRem;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
@@ -1484,7 +1484,7 @@ public interface ActivoApi {
 
 	List<Activo> getActivosNoPrincipalesByIdAgrupacionAndActivoPrincipal(Long idAgrupacion, Long idActivoPrincipal);
 
-	boolean esActivoHayaHome(Long idActivo);
+	List<DtoTestigosOpcionales> getTestigosOpcionales(Long id);
 
 	boolean esActivoAlquiler(Long idActivo);
 
@@ -1492,11 +1492,13 @@ public interface ActivoApi {
 
 	boolean isActivoConReservaAlquiler(Activo activo);
 
-	boolean esActivoHayaHomeToModel(Activo idActivo, ActivoAgrupacion idAgrupacion);
+	boolean esActivoHayaHome(Activo idActivo, ActivoAgrupacion idAgrupacion);
 	
     Page findTasaciones(DtoFiltroTasaciones dto);
 
     void anyadirCanalDistribucionOfertaCaixa(Long idActivo, OfertaCaixa ofertaCaixa, String tipoOferta);
 
 	boolean isPermiteOfertaNoComercialActivoAlquilado(Activo activo, String codTipoOferta);
+
+	Activo getActivoMatrizIfIsUA(Long idActivo);
 }

@@ -267,6 +267,14 @@ public class DtoFichaTrabajo {
 	
 	private Boolean perteneceGastoOPrefactura;
 	
+	private String refacturacionTrabajoDescripcion;
+	
+	private String tipoCalculoMargenDescripcion;
+	
+	private Double porcentajeMargen;
+	
+	private Double importeMargen;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -1357,4 +1365,35 @@ public class DtoFichaTrabajo {
 		this.perteneceGastoOPrefactura = perteneceGastoOPrefactura;
 	}
 	
+	public String getRefacturacionTrabajoDescripcion() {
+		return refacturacionTrabajoDescripcion;
+	}
+	
+	public void setRefacturacionTrabajoDescripcion(String refacturacionTrabajoDescripcion) {
+		this.refacturacionTrabajoDescripcion = refacturacionTrabajoDescripcion;
+	}
+	
+	public String getTipoCalculoMargenDescripcion() {
+		return tipoCalculoMargenDescripcion;
+	}
+	
+	public void setTipoCalculoMargenDescripcion(String tipoCalculoMargenDescripcion) {
+		this.tipoCalculoMargenDescripcion = tipoCalculoMargenDescripcion;
+	}
+	
+	public Double getPorcentajeMargen() {
+		return porcentajeMargen;
+	}
+	
+	public void setPorcentajeMargen(Double porcentajeMargen) {
+		this.porcentajeMargen = porcentajeMargen;
+	}
+	
+	public Double getImporteMargen() {
+		return importeMargen;
+	}
+	
+	public void setImporteMargen(Double importeMargen) {
+		this.importeMargen = importeMargen;
+	}
 }

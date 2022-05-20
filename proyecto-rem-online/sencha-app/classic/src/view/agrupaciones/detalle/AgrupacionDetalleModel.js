@@ -774,12 +774,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			return !perfiles;
 		},
 	     
-	     esAgrupacionCaixa: function(get) {
+	     esAgrupacionEditableCaixa: function(get) {
 	    	var me = this;
 	    	var tipoCartera = get('agrupacionficha.codigoCartera');
 	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 	    	
-    		if(tipoCartera == CONST.CARTERA['BANKIA']
+    		if(get('esAgrupacionCaixa')
     			&& (tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'] 
     			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_ALQUILER'] 
     			|| tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA_OBREM'])) {
@@ -789,7 +789,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     esAgrupacionCaixaOrPromocionAlquiler: function(get) {
-				return get('esAgrupacionCaixa') || get('esAgrupacionPromocionAlquiler'); 
+				return get('esAgrupacionEditableCaixa') || get('esAgrupacionPromocionAlquiler');
 	     },
 	     esAgrupacionCaixaComercial: function(get){
 	     	var me = this;
@@ -815,6 +815,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                     return true;
             }
             return false;
+         },
+         esAgrupacionCaixa: function(get) {
+            var me = this;
+            var tipoCartera = get('agrupacionficha.codigoCartera');
+
+            return tipoCartera == CONST.CARTERA['BANKIA'];
          }
     },
 				

@@ -123,8 +123,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 		}else{
 			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');
 		}
-	    
-	    
+
+        var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
+
 	    if(!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])) {
 
 		    $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
@@ -137,17 +138,16 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			}else{
 				$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
 			}
-	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
 	    	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
 	    	//if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
 	    	//Se comenta el IF anterior para que se pueda mostrar el check de calidad
-	    	var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
 	    	
 	    	if ($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && me.lookupController().getViewModel().get('activo').get('isCarteraLiberbank')) {
@@ -161,7 +161,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')})}, 'EDITAR_TAB_ACTIVO_PLUSVALIA');
 
 	    }else{
-	    	me.tabsDeBBVA(me,editable); 
+	    	me.tabsDeBBVA(me,editable, disabled);
 	    }
 
     	
@@ -184,7 +184,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	}
     },
     
-    tabsDeBBVA: function(me, editable){
+    tabsDeBBVA: function(me, editable, disabled){
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'datosgeneralesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DATOS_GENERALES');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
@@ -192,5 +192,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
+        $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMINISTRACION');
+        $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: true})}, 'EDITAR_TAB_ACTIVO_PLUSVALIA');
+        $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
     }
 });

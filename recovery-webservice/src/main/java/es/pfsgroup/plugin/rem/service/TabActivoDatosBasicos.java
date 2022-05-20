@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -1258,7 +1259,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (activoCaixa.getCategoriaComercializacion() != null) {
 				activoDto.setCategoriaComercializacionCod(activoCaixa.getCategoriaComercializacion().getCodigo());
 				activoDto.setCategoriaComercializacionDesc(activoCaixa.getCategoriaComercializacion().getDescripcion());
-			}			
+			}	
+			if (activoCaixa.getNumeroInmuebleAnterior() != null) {
+				activoDto.setNumeroInmuebleAnterior(activoCaixa.getNumeroInmuebleAnterior());
+			}
 		}
 
 		Filter filterPrinex = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -1286,7 +1290,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
 		}
 		
-		activoDto.setEsHayaHome(activoApi.esActivoHayaHomeToModel(activo, null));
+		activoDto.setEsHayaHome(activoApi.esActivoHayaHome(activo, null));
+		
+		Filter filterActivoInformeComercial = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoInfoComercial activoInfoComercial = genericDao.get(ActivoInfoComercial.class, filterActivoInformeComercial);
+		
+		if (activoInfoComercial != null) {
+			if (!Checks.esNulo(activoInfoComercial.getAnejoGaraje())) {
+				activoDto.setAnejoGarajeCodigo(activoInfoComercial.getAnejoGaraje().getCodigo());
+				activoDto.setAnejoGarajeDescripcion(activoInfoComercial.getAnejoGaraje().getDescripcion());
+			}
+			if (!Checks.esNulo(activoInfoComercial.getAnejoTrastero())) {
+				activoDto.setAnejoTrasteroCodigo(activoInfoComercial.getAnejoTrastero().getCodigo());
+				activoDto.setAnejoTrasteroDescripcion(activoInfoComercial.getAnejoTrastero().getDescripcion());
+			}
+			if (!Checks.esNulo(activoInfoComercial.getIdentificadorPlazaParking())) {
+				activoDto.setIdentificadorPlazaParking(activoInfoComercial.getIdentificadorPlazaParking());
+			}
+			if (!Checks.esNulo(activoInfoComercial.getIdentificadorTrastero())) {
+				activoDto.setIdentificadorTrastero(activoInfoComercial.getIdentificadorTrastero());
+			}
+		}
 		
 		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
 		
@@ -1505,6 +1529,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
 				DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class, filtroDDInfComercial);
 				activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				String personaLogada = usuarioLogado.getNombre() + " " + usuarioLogado.getApellidos();
+				activoEstadoInfComercialHistorico.setResponsableCambio(personaLogada);
 				activoEstadoInfComercialHistorico.setFecha(new Date());
 				activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
 				genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
@@ -1868,6 +1895,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if (dto.getCategoriaComercializacionCod() != null) {
 					DDCategoriaComercializacion categComerc = (DDCategoriaComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDCategoriaComercializacion.class, dto.getCategoriaComercializacionCod());
 					activoCaixa.setCategoriaComercializacion(categComerc);
+				}
+				if (dto.getNumeroInmuebleAnterior() != null) {
+					activoCaixa.setNumeroInmuebleAnterior(dto.getNumeroInmuebleAnterior());
 				}
 			}
 
@@ -2291,6 +2321,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				activoPrinexActivos.setActivo(activo);
 				genericDao.save(ActivoPrinexActivos.class, activoPrinexActivos);
+			}
+			
+			Filter filterActivoInformeComercial = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoInfoComercial activoInfoComercial = genericDao.get(ActivoInfoComercial.class, filterActivoInformeComercial);
+			
+			if (activoInfoComercial != null) {
+				if (!Checks.esNulo(dto.getAnejoGarajeCodigo())) {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getAnejoGarajeCodigo());
+					activoInfoComercial.setAnejoGaraje(genericDao.get(DDSinSiNo.class, filtro));
+				}
+				if (!Checks.esNulo(dto.getAnejoTrasteroCodigo())) {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getAnejoTrasteroCodigo());
+					activoInfoComercial.setAnejoTrastero(genericDao.get(DDSinSiNo.class, filtro));
+				}
+				if (!Checks.esNulo(dto.getIdentificadorPlazaParking())) {
+					activoInfoComercial.setIdentificadorPlazaParking(dto.getIdentificadorPlazaParking());
+				}
+				if (!Checks.esNulo(dto.getIdentificadorTrastero())) {
+					activoInfoComercial.setIdentificadorTrastero(dto.getIdentificadorTrastero());
+				}
 			}
 
 		} catch(JsonViewerException jve) {

@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -49,17 +50,6 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GenerarPdfAprobacionOfertasApi;
-import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
@@ -82,7 +72,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -220,6 +209,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private InterlocutorCaixaService interlocutorCaixaService;
+
+	@Autowired
+	private FuncionesTramitesApi funcionesTramitesApi;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -628,18 +620,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 
 		nuevoExpediente.setOferta(oferta);
+
+		String estadoEcoCod = DDEstadosExpedienteComercial.EN_TRAMITACION;
+		String subestadoCod = DDSubestadosExpedienteComercial.ENVIADO;
+
+		if (oferta.getIdOfertaHayaHome() != null){
+			estadoEcoCod = DDEstadosExpedienteComercial.BORRADOR;
+			subestadoCod = DDSubestadosExpedienteComercial.BORRADOR;
+		}
 		DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class,
-						DDEstadosExpedienteComercial.EN_TRAMITACION);
+						estadoEcoCod);
 		nuevoExpediente.setEstado(estadoExpediente);
 		
-		String subestado = DDSubestadosExpedienteComercial.ENVIADO;
 		if(!Checks.esNulo(oferta.getOrigen()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(oferta.getOrigen().getCodigo())) {
-			subestado = DDSubestadosExpedienteComercial.NO_ENVIADO;
+			subestadoCod = DDSubestadosExpedienteComercial.NO_ENVIADO;
 		}
 		
 		DDSubestadosExpedienteComercial subestadoExpediente = (DDSubestadosExpedienteComercial) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestado);
+				.dameValorDiccionarioByCod(DDSubestadosExpedienteComercial.class,subestadoCod);
 		nuevoExpediente.setSubestadoExpediente(subestadoExpediente);
 		
 		recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(nuevoExpediente.getOferta(), estadoExpediente);
@@ -865,7 +864,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 					&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
 				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
-						DDTiposArras.CONFIRMATORIAS);
+						DDTiposArras.PENITENCIALES);
 			if (tipoArras != null) {
 				if (Checks.esNulo(expedienteComercial.getReserva())) {
 					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
@@ -958,7 +957,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 				compradorBusqueda.setInfoAdicionalPersona(cliente.getInfoAdicionalPersona());
-				compradorBusqueda.setIdPersonaHayaCaixa(cliente.getInfoAdicionalPersona() != null ? cliente.getInfoAdicionalPersona().getIdPersonaHayaCaixa() : null);
 			}
 			if (!Checks.esNulo(cliente.getTipoPersona())
 					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
@@ -994,7 +992,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getEmail())) {
 				compradorBusqueda.setEmail(cliente.getEmail());
 			}
-			
+
+			compradorBusqueda.setIdPersonaHayaCaixa(cliente.getIdPersonaHayaCaixa());
 			compradorBusqueda.setFechaNacimientoConstitucion(cliente.getFechaNacimiento());
 			compradorBusqueda.setDireccion(cliente.getDireccion());
 			compradorBusqueda.setPaisNacimientoComprador(cliente.getPaisNacimiento());
@@ -1792,57 +1791,50 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS);
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
 					
-					if (DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codSubcartera)	|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codSubcartera)) {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
-					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
-						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-						Double umbralAskingPrice=200000.0;
-						String codComiteHaya = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_HAYA_APPLE : DDComiteSancion.CODIGO_HAYA_REMAINING;
-						String codComiteCes = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
-						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
-						
-						if(Checks.esNulo(agrupacion)) {
-							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);
-							} 
-						}else {
-							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes);
-							} 
-						}				
+					switch (Integer.valueOf(codSubcartera)) {
+						case 151: // DIVARIAN ARROW INMB
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
+							break;
 							
-					}else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
-						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-						Double umbralAskingPrice=200000.0;
-						String codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
-						String codComiteJaguar = DDComiteSancion.CODIGO_JAGUAR;
-						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
-						
-						if(Checks.esNulo(agrupacion)) {
-							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteJaguar);
-							} 
-						}else {
-							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
-							} else {
-								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteJaguar);
-							} 
-						}				
+						case 137: // AGORA FINANCIERO
+						case 135: // AGORA INMOBILIARIO
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
+							break;
 							
-					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
+						case 152: // DIVARIAN REMAINING INMB
+						case 138: // APPLE INMOBILIARIO
+						case 70: // JAGUAR
+							ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+							Double umbralAskingPrice = 200000.0;
+							String codComiteHaya = null;
+							String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) ? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
+							if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_APPLE;
+							} else if (DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_REMAINING;
+							} else if (DDSubcartera.CODIGO_JAGUAR.equals(codSubcartera)) {
+								codComiteHaya = DDComiteSancion.CODIGO_HAYA_JAGUAR;
+							}
+							Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+							if(Checks.esNulo(agrupacion)) {
+								if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+									filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+								} else {
+									filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComite);
+								} 
+							} else {
+								Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+								if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+									filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+								} else {
+									filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComite);
+								} 
+							}
+							break;
 							
-					}else {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+						default:
+							filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+							break;
 					}				
 					
 				} else {
@@ -2219,8 +2211,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
 		ActivoTramite activoTramite = null;
-		if(!activoManager.esActivoHayaHome(activo.getId()))
+		if(!activoManager.esActivoHayaHome(activo, null))
 			activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+		if (oferta.getOfertaExpress())
+			expedienteComercialApi.calculoFormalizacionCajamar(oferta);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);
@@ -2288,7 +2282,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			
 			//Creacion del tramite
-			if(!activoManager.esActivoHayaHome(activo.getId()))
+			if(!activoManager.esActivoHayaHome(activo, null))
 				trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -2450,5 +2444,59 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 
 		return cex;
+	}
+
+	@Override
+	public boolean debeCongelarseOferta(Long numOferta){
+		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+
+		return (oferta == null) ? false : debeCongelarseOferta(oferta.getNumOferta());
+	}
+
+	@Override
+	public boolean debeCongelarseOferta(Oferta oferta){
+		Activo activoPrincipal = oferta.getActivoPrincipal();
+		DDCartera cartera = activoPrincipal.getCartera();
+		DDSubcartera subcartera = activoPrincipal.getSubcartera();
+
+		List<ExpedienteComercial> restoExpedientes = getRestoExpedientesNoAnulados(oferta);
+
+		if(subcartera != null){
+			// En caso de ser divarian, se congela en caso de tener algun otro expediente en estado Aprobado.
+			if(DDSubcartera.isSubcarteraDivarianArrowInmob(subcartera)
+					|| DDSubcartera.isSubcarteraDivarianRemainingInmob(subcartera)){
+				for (ExpedienteComercial eco : restoExpedientes) {
+					if(funcionesTramitesApi.isTramiteAprobado(eco)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private List<ExpedienteComercial> getRestoExpedientesNoAnulados(Oferta oferta){
+		List<ExpedienteComercial> restoExpedientes = new ArrayList<ExpedienteComercial>();
+		if(oferta == null) return restoExpedientes;
+
+		// Revisamos todas las ofertas que tienen todos los activos implicados en la oferta actual.
+		List<ActivoOferta> activosOfertas = oferta.getActivosOferta();
+		for (ActivoOferta actofr: activosOfertas) {
+			//Recuperamos las ofertas del activo actual
+			List<ActivoOferta> ofertasActivoActual = actofr.getPrimaryKey().getActivo().getOfertas();
+			for (ActivoOferta ofrAct : ofertasActivoActual) {
+				Oferta ofertaActual = ofrAct.getPrimaryKey().getOferta();
+				//Si la oferta que estamos comprobando actualmente es la oferta original, la obviamos
+				if(ofertaActual.getId().equals(oferta.getId())) continue;
+				ExpedienteComercial eco = ofertaActual.getExpedienteComercial();
+				//Si la oferta no tiene expediente o la oferta est anulada, la obviamos tambien.
+				if(eco == null) continue;
+				else if(!DDEstadoOferta.isRechazada(ofertaActual.getEstadoOferta())){
+					restoExpedientes.add(eco);
+				}
+			}
+		}
+
+		return restoExpedientes;
 	}
 }

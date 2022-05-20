@@ -160,14 +160,14 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 							allowBlank: false
 		                },
 		                { 
-		                	xtype: 'comboboxfieldbase',
+		                	xtype: 'comboboxfieldbasedd',
 		                	name: 'codigoDescripcionFoto',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
 		                	editable: false,
-		                	queryMode: 'local',
 		                	bind: {
 		                		store: '{storeDescripcionFoto}',
-				        		value: '{codigoDescripcionFoto}'
+				        		value: '{codigoDescripcionFoto}',
+                                rawValue: '{descripcion}'
 							},
 							allowBlank: false
 		                },
@@ -200,6 +200,18 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 		                			}
 		                		}
 		                	}
+		                },
+		                { 
+		                	name: 'suelos',
+		                	xtype : 'checkboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.suelos'),
+		                	bind:		'{suelos}'
+		                },
+		                { 
+		                	name: 'plano',
+		                	xtype : 'checkboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.plano'),
+		                	bind:		'{plano}'
 		                },
 		                {
 		                	name: 'interiorExterior',

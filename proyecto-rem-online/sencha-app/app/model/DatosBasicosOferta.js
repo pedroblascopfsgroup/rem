@@ -220,16 +220,24 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'correoGestorBackoffice'
     		},
     		{
+    			name:'fechaCreacionOpSf',
+    			convert: function(value) {
+        				if (!Ext.isEmpty(value)) {
+    						if  ((typeof value) == 'string') {
+    	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    	    				} else {
+    	    					return value;
+    	    				}
+        				}
+        			}
+    		},
+    		{
     			name:'tipoResponsableCodigo'
     		},
     		{
     			name: 'isEmpleadoCaixa',
     			type: 'boolean'
     		},
-    		{
-                name: 'tieneInterlocutoresNoEnviados',
-                type: 'boolean'
-            },
     		{
     			name:'fechaOfertaPendiente',
     			convert: function(value) {
@@ -310,7 +318,30 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 			{
 
                 name: 'numeroVaiHavaiSareb'
+            },
+			{
+                name: 'enviarCorreoAprobacion'
+            },
+            {
+            	name:'checkFormCajamar'  			       	
+            },
+            {
+            	name:'checkForzadoCajamar'
+            },
+            {
+            	name:'usuarioForzadoCajamar'	
+            	
+            },
+            {
+            	name:'fechaForzadoCajamar',
+            	type:'date',
+        		dateFormat: 'c'
+            },
+            {
+            	name:'modificarFormalizacionCajamar',
+    			type: 'boolean'   	
             }
+            
     		
     ],
 

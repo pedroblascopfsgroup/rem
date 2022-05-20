@@ -37,6 +37,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 		{
 			xtype : 'fieldsettable',
 			defaultType : 'displayfieldbase',
+			collapsible: false,
+			border: false,
+			colspan: 3,
 			layout: {
 		        type: 'table',
 		        columns: 3,
@@ -52,30 +55,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 			},
 			
 			title : HreRem.i18n('title.detalle.oferta'),
-			items : [
-					
-					{
-					xtype : 'fieldsettable',
-					defaultType : 'displayfieldbase',
-					collapsible: false,
-					border: false,
-					colspan: 3,
-					layout: {
-				        type: 'table',
-				        columns: 3,
-				        tdAttrs: {
-				        	width: '33%',
-				        	style: 'vertical-align: top'
-				        },
-				        tableAttrs: {
-				            style: {
-				                width: '100%'
-								}
-				        }
-					},
-
-					items : [
-						{
+			items : [	{
 							fieldLabel : HreRem.i18n('fieldlabel.num.oferta'),
 							bind : '{datosbasicosoferta.numOferta}'
 	
@@ -143,14 +123,23 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								readOnly : 'true',
 								hidden : '{esAlquilerOAlquilerNoComercial}'
 							}
+						},{
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.incorporacion.rem'),
+							colspan: 3,
+							bind : {
+								value: '{datosbasicosoferta.fechaCreacionOpSf}'
+							},
+							readOnly: true
 						},
 						{
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						colspan: '{getcolSpanforSarebOrDefault}',
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
-						readOnly : true,
-						bind : '{datosbasicosoferta.fechaOfertaPendiente}'
+							xtype : 'datefieldbase',
+							formatter : 'date("d/m/Y")',
+							colspan: '{getcolSpanforSarebOrDefault}',
+							fieldLabel : HreRem.i18n('fieldlabel.fecha.oferta.pendiente'),
+							readOnly : true,
+							bind : '{datosbasicosoferta.fechaOfertaPendiente}'
 						},
 						{
                             xtype : 'textfieldbase',
@@ -226,10 +215,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							displayField: 'descripcion',
 							valueField: 'codigo'
 						},
-					{
-						bind : {hidden : '{!esTipoAlquiler}'}
-					}
-						]},
+						{
+							bind : {hidden : '{!esTipoAlquiler}'}
+						}
+					]},
 					{
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
@@ -480,7 +469,69 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								}
 							}
 						]
+					},											
+					
+					{
+						xtype : 'fieldsettable',	
+						colspan: 3,	
+						collapsible: false,					
+						title : HreRem.i18n('title.formalizacion.cajamar'),
+						bind : { hidden : '{!esCarteraCajamar}'},
+						layout: {
+					        type: 'table',
+					        columns: 3,
+					        tdAttrs: {
+					        	width: '33%'
+					        },
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
+						},
+						margin: '0 10 10 0',
+						items : [
+							
+							{
+								xtype : "textfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.check.form.cajamar'),						
+								bind : {value : '{datosbasicosoferta.checkFormCajamar}'},
+								readOnly : true,
+								colspan: 3
+							},
+							
+							{
+								xtype : "comboboxfieldbase",
+								fieldLabel : HreRem.i18n('fieldlabel.check.forzado.cajamar'),
+								bind : {
+									store : '{comboSiNoBoolean}',
+									value : '{datosbasicosoferta.checkForzadoCajamar}',
+									readOnly: '{!habilitarForzadoCajamar}'
+								}
+							},
+							
+							
+							{
+								xtype : 'textfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.usuario.forzado.cajamar'),							
+								bind : {value : '{datosbasicosoferta.usuarioForzadoCajamar}'},							
+								readOnly : true
+								
+							}, 
+						
+
+							{
+			    				xtype : 'datefieldbase',
+								formatter : 'date("d/m/Y")',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.forzado.cajamar'),
+								name : 'fechaForzadoCajamar',													
+								bind : {value: '{datosbasicosoferta.fechaForzadoCajamar}'},
+								readOnly : true						
+							}
+
+						]
 					},
+													
 					{
 					xtype : 'container',
 					layout: 'hbox',
@@ -892,9 +943,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem.i18n('btn.generar.ficha.comercial'),
 							handler : 'onClickGenerarFichaComercial',
 							margin : '10 10 10 10'
+						}, {
+							xtype : 'button',
+							reference : 'btnGeneraMailAprobacion',
+							bind : {
+								hidden : '{!habilitarBotonGeneraMailAprobacion}'
+							},
+							text : HreRem.i18n('btn.enviar.mail.aprobacion'),
+							handler : 'onClickEnviarMailAprobacionVenta',
+							margin : '10 10 10 10'
 						}]
 
-					}]
+					
 		},
 		{
 			xtype : 'fieldset',
@@ -937,6 +997,19 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					            var allowEdit = estado == '05' || estado == '06' || estado == '08' || estado == '09' || estado == '15';
 
 					            return !allowEdit;
+							},
+							rowdblclick: function(grid, record){
+								var cod = record.get("campoCodigo");
+								var allowCopy = cod == '08' || cod == '09';
+								if (allowCopy){
+									var elem = document.createElement('textarea');
+								    elem.value = record.get("texto");
+								    document.body.appendChild(elem);
+								    elem.select();
+								    document.execCommand('copy');
+								    document.body.removeChild(elem);
+									me.fireEvent("infoToast", "Texto copiado correctamente");
+								}
 							}
 						},
 						columns : [{
@@ -958,7 +1031,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					}]
 		}
 
-		];
+		]
 
 		me.addPlugin({
 					ptype : 'lazyitems',

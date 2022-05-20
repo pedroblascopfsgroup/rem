@@ -150,8 +150,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 						}					
 					}
+					
 				}
 				expediente.setFechaSancion(new Date());
+				
+				if(expediente.getOferta()!=null &&  expediente.getFechaSancion()!=null) {
+					ofertaApi.comprobarFechasParaLanzarComisionamiento(expediente.getOferta(), expediente.getFechaSancion());
+				}
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.APROBADO);
 
@@ -221,6 +226,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				DDEstadosExpedienteComercial estado;
 
 				String codSubCartera = null;
+				
 				if (!Checks.esNulo(activo.getSubcartera())) {
 					codSubCartera = activo.getSubcartera().getCodigo();
 				}
@@ -323,10 +329,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				
 				genericDao.save(HistoricoTareaPbc.class, htp);
 			}
-		}	
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 		}
 	}
 

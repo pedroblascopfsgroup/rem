@@ -36,8 +36,10 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDCalculoMargenTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
+import es.pfsgroup.plugin.rem.model.dd.DDRefacturacionTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
@@ -363,6 +365,24 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name = "TBJ_IMPORTE_ASEGURADO")
    	private Double importeAsegurado;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_RFT_ID")
+   	private DDRefacturacionTrabajo refacturacionTrabajo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_CMT_ID")
+   	private DDCalculoMargenTrabajo calculoMargenTrabajo;
+	
+	@Column(name = "TBJ_PORCENTAJE_MARGEN")
+   	private Double porcentajeMargen;
+	
+	@Column(name = "TBJ_IMPORTE_MARGEN")
+   	private Double importeMargen;
+	
+    @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    private Prefacturas prefacturaTrabajo;
+		
 	public Long getId() {
 		return id;
 	}
@@ -1219,5 +1239,43 @@ public class Trabajo implements Serializable, Auditable {
 		this.identificadorReam = identificadorReam;
 	}
     
-    
+	public DDRefacturacionTrabajo getRefacturacionTrabajo() {
+		return refacturacionTrabajo;
+	}
+	
+	public void setRefacturacionTrabajo(DDRefacturacionTrabajo refacturacionTrabajo) {
+		this.refacturacionTrabajo = refacturacionTrabajo;
+	}
+	
+	public DDCalculoMargenTrabajo getCalculoMargenTrabajo() {
+		return calculoMargenTrabajo;
+	}
+	
+	public void setCalculoMargenTrabajo(DDCalculoMargenTrabajo calculoMargenTrabajo) {
+		this.calculoMargenTrabajo= calculoMargenTrabajo;
+	}
+	
+	public Double getPorcentajeMargen() {
+		return porcentajeMargen;
+	}
+	
+	public void setPorcentajeMargen(Double porcentajeMargen) {
+		this.porcentajeMargen = porcentajeMargen;
+	}
+	
+	public Double getImporteMargen() {
+		return importeMargen;
+	}
+	
+	public void setImporteMargen(Double importeMargen) {
+		this.importeMargen = importeMargen;
+	}
+
+	public Prefacturas getPrefacturaTrabajo() {
+		return prefacturaTrabajo;
+	}
+
+	public void setPrefacturaTrabajo(Prefacturas prefacturaTrabajo) {
+		this.prefacturaTrabajo = prefacturaTrabajo;
+	}
 }

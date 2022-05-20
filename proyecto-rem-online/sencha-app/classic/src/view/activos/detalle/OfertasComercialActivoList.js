@@ -248,11 +248,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
-            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
-            	allowEdit = true;
-            }
-
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '09' && Ext.isEmpty(numAgrupacion);
+            
             this.editOnSelect = allowEdit;
             return allowEdit;
         }); 
@@ -622,12 +619,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 				return false;
 			}
-		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
-			return false;
-		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
-			return false;
 		} else if(hayOfertaAceptada && (CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CADUCADA'] != codigoEstadoNuevo)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
@@ -799,7 +790,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	calcularMostrarBotonClonarExpediente: function(){
 		var me = this;
-		
+        var activo = me.lookupController().getViewModel().get('activo'),
+
 		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTCOM') || $AU.userIsRol('HAYAGBOINM')
 										&& (me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA']
 											|| me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
@@ -812,6 +804,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 										 * === CONST.SUBCARTERA['DIVARIAN'])
 										 */
 	    								);
+	    mostrarCloneButtonExpediente = (activo.get('isCarteraBankia') == true) ? false : mostrarCloneButtonExpediente;
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
 	},
 	

@@ -201,9 +201,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaVenta;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -217,7 +219,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -225,7 +226,6 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -962,6 +962,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoFoto.setInteriorExterior(Boolean.FALSE);
 					}
 				}
+				
+				if (fileItem.getMetadata().containsKey("plano") 
+						&& fileItem.getMetadata().get("plano") != null) {
+					if (fileItem.getMetadata().get("plano").equals("1")) {
+						activoFoto.setPlano(true);
+					} else {
+						activoFoto.setPlano(false);
+					}
+				}
+				
+				if (fileItem.getMetadata().containsKey("suelos") 
+						&& fileItem.getMetadata().get("suelos") != null) {
+					if (fileItem.getMetadata().get("suelos").equals("1")) {
+						activoFoto.setSuelos(true);
+					} else {
+						activoFoto.setSuelos(false);
+					}
+				}
 
 				genericDao.save(ActivoFoto.class, activoFoto);
 
@@ -995,6 +1013,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ActivoFoto activoFoto = null;
 			SITUACION situacion;
 			PRINCIPAL principal;
+			SUELOS suelos;
+			PLANO plano;
 			Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
 			orden++;
 	
@@ -1023,13 +1043,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					} else {
 						situacion = SITUACION.EXTERIOR;
 					}
+					
+					if (Boolean.valueOf(fileItem.getParameter("suelos"))) {
+						suelos = SUELOS.SI;
+
+					} else {
+						suelos = SUELOS.NO;
+					}
+					
+					if (Boolean.valueOf(fileItem.getParameter("plano"))) {
+						plano = PLANO.SI;
+
+					} else {
+						plano = PLANO.NO;
+					}
 	
 					if (fileItem.getParameter("codigoDescripcionFoto") != null) {
 						
 						fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
 								fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
 								genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("codigoDescripcionFoto"))).getDescripcion(),
-								principal, situacion, orden);
+								principal, situacion, orden, suelos, plano);
 						
 					}
 					activoFoto = new ActivoFoto(fileReponse.getData());
@@ -1048,6 +1082,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoFoto.setFechaDocumento(new Date());
 				activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
 				activoFoto.setOrden(orden);
+				activoFoto.setSuelos(Boolean.valueOf(fileItem.getParameter("suelos")));
+				activoFoto.setPlano(Boolean.valueOf(fileItem.getParameter("plano")));
 	
 				Auditoria.save(activoFoto);
 	
@@ -1164,8 +1200,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	private Boolean comprobarCatastro(List<ActivoCatastro> listadoCatastro) {
 		for (ActivoCatastro catastro : listadoCatastro) {
-			if (Checks.esNulo(catastro.getRefCatastral()))
+			if(Checks.esNulo(catastro.getCatastro())&& Checks.esNulo(catastro.getRefCatastral())){
 				return false;
+			}
 		}
 
 		return true;
@@ -1598,7 +1635,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							estado.getEstadoInformeComercial().getDescripcion());
 				}
 				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "motivo", estado.getMotivo());
-				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());					
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "responsableCambio", estado.getResponsableCambio());
 
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
@@ -4394,6 +4432,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(cargaDto.getFechaPresentacionRpCarta())) {
 				cargaSeleccionada.setFechaPresentacionRpCarta(cargaDto.getFechaPresentacionRpCarta());
 			}
+			
+			if (!Checks.esNulo(cargaDto.getIndicadorPreferente())) {
+				cargaSeleccionada.setIndicadorPreferente(cargaDto.getIndicadorPreferente());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEjecutada())) {
+				cargaSeleccionada.setIdentificadorCargaEjecutada(cargaDto.getIdentificadorCargaEjecutada());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIgualdadRango())) {
+				cargaSeleccionada.setIgualdadRango(cargaDto.getIgualdadRango());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaIndefinida())) {
+				cargaSeleccionada.setIdentificadorCargaIndefinida(cargaDto.getIdentificadorCargaIndefinida());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEconomica())) {
+				cargaSeleccionada.setIdentificadorCargaEconomica(cargaDto.getIdentificadorCargaEconomica());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -5874,6 +5932,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) {
 		Activo activo = this.get(id);
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+		ActivoCaixa activoCaixa = activo.getActivoCaixa();
 		Integer ocupado;
 		String conTitulo = "";
 		DDTipoTituloActivoTPA tituloActivoTPA = null;
@@ -5896,9 +5955,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(id)) {
 			if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					&& (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getSitaucionJuridica() != null 
-					&& activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() != null)
-					&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()))
+					&& (!Checks.esNulo(activoCaixa) && activoCaixa.getEstadoPosesorio() != null 
+					&& activoCaixa.getEstadoPosesorio().getIndicaPosesion() != null)
+					&& (1 == activoCaixa.getEstadoPosesorio().getIndicaPosesion()))
 					|| (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
@@ -9605,7 +9664,48 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public boolean esActivoHayaHomeToModel(Activo activo, ActivoAgrupacion agrupacion) {
+	public List<DtoTestigosOpcionales> getTestigosOpcionales(Long idActivo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoInfoComercial infoComercial = genericDao.get(ActivoInfoComercial.class, filtro);
+		List<DtoTestigosOpcionales> listaDtoTestigosOpcionales = new ArrayList<DtoTestigosOpcionales>();
+		
+		if (!Checks.esNulo(infoComercial)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial);
+			List<InformeTestigosOpcionales> listaTestigosOpcionales = genericDao.getList(InformeTestigosOpcionales.class, filtro);
+
+			for (InformeTestigosOpcionales lista : listaTestigosOpcionales) {
+				DtoTestigosOpcionales dtoTestigosOpc = new DtoTestigosOpcionales();
+				try {
+					beanUtilNotNull.copyProperties(dtoTestigosOpc, lista);
+					beanUtilNotNull.copyProperty(dtoTestigosOpc, "id", lista.getId());
+					if (!Checks.esNulo(lista.getFuenteTestigos())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "fuenteTestigos",
+								lista.getFuenteTestigos().getDescripcion());
+					}
+					if (!Checks.esNulo(lista.getTipoActivo())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "tipoActivo",
+								lista.getTipoActivo().getDescripcion());
+					}	
+					if (!Checks.esNulo(lista.getSubtipoActivo())) {
+						beanUtilNotNull.copyProperty(dtoTestigosOpc, "subtipoActivo",
+								lista.getSubtipoActivo().getDescripcion());
+					}
+				} catch (IllegalAccessException e) {
+					logger.error("Error en activoManager", e);
+	
+				} catch (InvocationTargetException e) {
+					logger.error("Error en activoManager", e);
+				}
+	
+				listaDtoTestigosOpcionales.add(dtoTestigosOpc);
+			}
+		}
+
+		return listaDtoTestigosOpcionales;
+	}
+
+	@Override
+	public boolean esActivoHayaHome(Activo activo, ActivoAgrupacion agrupacion) {
 		boolean esMacc = false;
 		boolean esActivoAlquiler = false;	
 		boolean es1to1 = false;
@@ -9628,25 +9728,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			es1to1 = !Checks.esNulo(activoFinal.getSubcartera().getCodigo()) 
 					&& DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activoFinal.getSubcartera().getCodigo());
 		}		
-		
-		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
-
-		return esActivoHayaHome;
-	}
-	
-	@Override
-	public boolean esActivoHayaHome(Long idActivo) {
-		boolean esMacc = false;
-		boolean esActivoAlquiler = false;	
-		boolean es1to1 = false;
-		
-		Activo activo = get(idActivo);
-		
-		if (!Checks.esNulo(activo)) {
-			esMacc = !Checks.esNulo(activo.getPerimetroMacc()) && activo.getPerimetroMacc() == 1;
-			esActivoAlquiler = esActivoAlquiler(idActivo);
-			es1to1 = !Checks.esNulo(activo.getSubcartera().getCodigo()) && DDSubcartera.CODIGO_THIRD_PARTIES_1_TO_1.equals(activo.getSubcartera().getCodigo());
-		}
 		
 		boolean esActivoHayaHome = esActivoAlquiler && esMacc && !es1to1 ? true : false; 
 
@@ -9728,6 +9809,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public Activo getActivoMatrizIfIsUA(Long idActivo) {
+		Activo activo = this.get(idActivo);
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		
+		if(esUA) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activo=activoMatriz;
+					}
+			}
+		}
+		
+		return activo;
 	}
 }
 

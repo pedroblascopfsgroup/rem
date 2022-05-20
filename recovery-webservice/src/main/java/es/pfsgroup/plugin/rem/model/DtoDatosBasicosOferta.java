@@ -129,6 +129,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	private Boolean tareaAutorizacionPropiedadFinalizada;
 	
+	private Date fechaCreacionOpSf;
+
 	private String tipoResponsableCodigo;
 	
 	private Boolean isEmpleadoCaixa;
@@ -176,6 +178,18 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String riesgoOperacionBcCodigo;
 	
 	private String riesgoOperacionBcDescripcion;
+	
+	private Boolean enviarCorreoAprobacion;
+	
+	private String checkFormCajamar;
+	
+	private Boolean checkForzadoCajamar;
+	
+	private String usuarioForzadoCajamar;
+	
+	private Date fechaForzadoCajamar;
+	
+	private Boolean modificarFormalizacionCajamar;
 	
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -631,6 +645,15 @@ public class DtoDatosBasicosOferta extends WebDto {
 		return tipoResponsableCodigo;
 	}
 
+	public Date getFechaCreacionOpSf() {
+		return fechaCreacionOpSf;
+	}
+
+	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
+		this.fechaCreacionOpSf = fechaCreacionOpSf;
+	}
+
+
 	public void setTipoResponsableCodigo(String tipoResponsableCodigo) {
 		this.tipoResponsableCodigo = tipoResponsableCodigo;
 	}
@@ -866,4 +889,54 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
 		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
 	}
+
+	public Boolean getEnviarCorreoAprobacion() {
+		return enviarCorreoAprobacion;
+	}
+
+	public void setEnviarCorreoAprobacion(Boolean enviarCorreoAprobacion) {
+		this.enviarCorreoAprobacion = enviarCorreoAprobacion;
+	}
+
+	public String getCheckFormCajamar() {
+		return checkFormCajamar;
+	}
+
+	public void setCheckFormCajamar(String checkFormCajamar) {
+		this.checkFormCajamar = checkFormCajamar;
+	}
+
+	public Boolean getModificarFormalizacionCajamar() {
+		return modificarFormalizacionCajamar;
+	}
+
+	public void setModificarFormalizacionCajamar(Boolean modificarFormalizacionCajamar) {
+		this.modificarFormalizacionCajamar = modificarFormalizacionCajamar;
+	}
+
+	public Boolean getCheckForzadoCajamar() {
+		return checkForzadoCajamar;
+	}
+
+	public void setCheckForzadoCajamar(Boolean checkForzadoCajamar) {
+		this.checkForzadoCajamar = checkForzadoCajamar;
+	}
+
+
+	public String getUsuarioForzadoCajamar() {
+		return usuarioForzadoCajamar;
+	}
+
+	public void setUsuarioForzadoCajamar(String usuarioForzadoCajamar) {
+		this.usuarioForzadoCajamar = usuarioForzadoCajamar;
+	}
+
+	public Date getFechaForzadoCajamar() {
+		return fechaForzadoCajamar;
+	}
+
+	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
+		this.fechaForzadoCajamar = fechaForzadoCajamar;
+	}
+	
 }

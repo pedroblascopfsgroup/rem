@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
  */
@@ -411,9 +409,18 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String discrepanciasLocalizacionObservaciones;
 	
 	private Boolean enConcurrencia;
-	
+
 	private Boolean activoOfertasConcurrencia;
-	
+
+	private String numeroInmuebleAnterior;
+
+	private String anejoGarajeCodigo;
+	private String anejoGarajeDescripcion;
+	private String anejoTrasteroCodigo;
+	private String anejoTrasteroDescripcion;
+	private Long identificadorPlazaParking;
+	private Long identificadorTrastero;
+
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -3039,6 +3046,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.comunidadDescripcion = comunidadDescripcion;
 	}
 
+	public String getNumeroInmuebleAnterior() {
+		return numeroInmuebleAnterior;
+	}
+
+	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
+		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
+	}
+
 	public Boolean getDiscrepanciasLocalizacion() {
 		return discrepanciasLocalizacion;
 	}
@@ -3070,5 +3085,53 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setActivoOfertasConcurrencia(Boolean activoOfertasConcurrencia) {
 		this.activoOfertasConcurrencia = activoOfertasConcurrencia;
 	}
-	
+
+	public String getAnejoGarajeCodigo() {
+		return anejoGarajeCodigo;
+	}
+
+	public void setAnejoGarajeCodigo(String anejoGarajeCodigo) {
+		this.anejoGarajeCodigo = anejoGarajeCodigo;
+	}
+
+	public String getAnejoGarajeDescripcion() {
+		return anejoGarajeDescripcion;
+	}
+
+	public void setAnejoGarajeDescripcion(String anejoGarajeDescripcion) {
+		this.anejoGarajeDescripcion = anejoGarajeDescripcion;
+	}
+
+	public String getAnejoTrasteroCodigo() {
+		return anejoTrasteroCodigo;
+	}
+
+	public void setAnejoTrasteroCodigo(String anejoTrasteroCodigo) {
+		this.anejoTrasteroCodigo = anejoTrasteroCodigo;
+	}
+
+	public String getAnejoTrasteroDescripcion() {
+		return anejoTrasteroDescripcion;
+	}
+
+	public void setAnejoTrasteroDescripcion(String anejoTrasteroDescripcion) {
+		this.anejoTrasteroDescripcion = anejoTrasteroDescripcion;
+	}
+
+	public Long getIdentificadorPlazaParking() {
+		return identificadorPlazaParking;
+	}
+
+	public void setIdentificadorPlazaParking(Long identificadorPlazaParking) {
+		this.identificadorPlazaParking = identificadorPlazaParking;
+	}
+
+	public Long getIdentificadorTrastero() {
+		return identificadorTrastero;
+	}
+
+	public void setIdentificadorTrastero(Long identificadorTrastero) {
+		this.identificadorTrastero = identificadorTrastero;
+	}
+
 }

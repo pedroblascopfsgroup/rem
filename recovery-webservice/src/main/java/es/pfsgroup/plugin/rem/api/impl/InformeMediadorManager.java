@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,51 +14,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoBanyo;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
-import es.pfsgroup.plugin.rem.model.ActivoCocina;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
-import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
-import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
-import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
-import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoSolado;
-import es.pfsgroup.plugin.rem.model.ActivoVivienda;
-import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
+import es.pfsgroup.plugin.rem.model.InformeTestigosOpcionales;
+import es.pfsgroup.plugin.rem.model.dd.DDActivoAccesibilidad;
+import es.pfsgroup.plugin.rem.model.dd.DDAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacion;
+import es.pfsgroup.plugin.rem.model.dd.DDDisponibilidad;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacionEdificio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMobiliario;
+import es.pfsgroup.plugin.rem.model.dd.DDExteriorInterior;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingCocina;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSiniSiNoIndiferente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
-import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalefaccion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoClimatizacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPuerta;
+import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDUsoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDValoracionUbicacion;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
-import es.pfsgroup.plugin.rem.rest.dto.PlantaDto;
+import es.pfsgroup.plugin.rem.rest.dto.TestigosOpcionalesDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
 
@@ -71,9 +74,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private RestApi restApi;
-
-	@Autowired
-	private DtoToEntityApi dtoToEntity;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -1262,81 +1262,47 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	public ArrayList<Map<String, Object>> saveOrUpdateInformeMediador(List<InformeMediadorDto> informes,
 			JSONObject jsonFields) throws Exception {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		Map<String, Object> map = null;
 
 		int i = 0;
-		for (InformeMediadorDto informe : informes) {
-			// proveedor de confianza, puede editar el informe, sin tramite de
-			// aceptacion
-			boolean autorizacionWebProveedor = false;
-			Long idProveedorParche = null;
-			ActivoInfoComercial informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(
-					informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");	
+		for (InformeMediadorDto informe : informes) {	
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", informe.getIdInformeMediadorRem());
+			ActivoInfoComercial informeEntity = genericDao.get(ActivoInfoComercial.class, filtroId);
 			
-			parcheEspecificacionTablas(informe);
+			Activo activo = activoApi.getByNumActivo(informe.getIdActivoHaya());	
 			
-			map = new HashMap<String, Object>();
+			//parcheEspecificacionTablas(informe);
+			
+			Map<String, Object> map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
-			if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
+			if (!Checks.esNulo(informeEntity)) {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.UPDATE);
+				
 			} else {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 			}
-			Activo activo = activoApi.getByNumActivo(informe.getIdActivoHaya());
-			if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
-				for (PlantaDto planta : informe.getPlantas()) {
-					HashMap<String, String> errorsListPlanta = null;
-					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
-						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.UPDATE);
-					} else {
-						errorsListPlanta = restApi.validateRequestObject(planta, TIPO_VALIDACION.INSERT);
-					}
-					errorsList.putAll(errorsListPlanta);
-				}
-			}
-
-			// validamos que no existan plantas repetidas
-			if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
-				for (PlantaDto planta : informe.getPlantas()) {
-					if (planta.getNumero() != null && planta.getCodTipoEstancia() != null) {
-						int contOcurrencias = 0;
-						for (PlantaDto plantaAux : informe.getPlantas()) {
-							if (plantaAux.getNumero() != null && plantaAux.getCodTipoEstancia() != null
-									&& plantaAux.getNumero().equals(planta.getNumero())
-									&& plantaAux.getCodTipoEstancia().equals(planta.getCodTipoEstancia())) {
-								contOcurrencias++;
-							}
-						}
-						if (contOcurrencias > 1) {
-							errorsList.put("plantas", RestApi.REST_UNIQUE_VIOLATED);
-						}
-					}
-				}
-			}
-
-			if (informe.getFechaRecepcionLlavesApi() != null) {
-
-				if (informe.getFechaRecepcionLlavesApi().compareTo(new Date()) > 0) {
-
-					errorsList.put("fechaRecepcionLlavesApi", RestApi.REST_MSG_UNKNOWN_KEY);
-				}
-			}
-
-			if (informe.getIdProveedorRem() != null) {
-				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", informe.getIdProveedorRem()));
-				if (!Checks.esNulo(mediador)
-					&& mediador.getAutorizacionWeb() != null
-					&& mediador.getAutorizacionWeb().equals(Integer.valueOf(1))) {
-						autorizacionWebProveedor = true;
-				}
+			
+			if (Checks.esNulo(activo)) {
+				errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 			
+			errorsList = comprobarErroresDto(informe, errorsList);
+			
 			if (errorsList.size() == 0) {
-				boolean tieneInformeComercialAceptado = false;
-				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
+				
+				boolean autorizacionWebProveedor = false;
+				if (!Checks.esNulo(informeEntity) 
+						&& !Checks.esNulo(informeEntity.getMediadorInforme())) {
+					if (!Checks.esNulo(informeEntity.getMediadorInforme().getAutorizacionWeb())
+							&& informeEntity.getMediadorInforme().getAutorizacionWeb().equals(Integer.valueOf(1))) {
+						autorizacionWebProveedor = true;
+					}
+				}
+				
+				boolean tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
+				
 				HistoricoFasePublicacionActivo histFasePublicacionActivo = historicoFasePublicacionActivoDao
 						.getHistoricoFasesPublicacionActivoActualById(activo.getId());
+				
 				if (histFasePublicacionActivo != null
 						&& DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION
 								.equals(histFasePublicacionActivo.getFasePublicacion().getCodigo())
@@ -1346,220 +1312,40 @@ public class InformeMediadorManager implements InformeMediadorApi {
 										|| DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(
 												histFasePublicacionActivo.getSubFasePublicacion().getCodigo())))) {
 					if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
-						histFasePublicacionActivo.setFechaFin(new Date());
-						genericDao.save(HistoricoFasePublicacionActivo.class, histFasePublicacionActivo);					
 						
-						//nueva fase en estado clasificado
-						HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
-						nuevaFase.setActivo(activo);
-						nuevaFase.setUsuario(usuarioManager.getByUsername(REST_USER_USERNAME));
-						nuevaFase.setFasePublicacion(histFasePublicacionActivo.getFasePublicacion());
-						nuevaFase.setSubFasePublicacion(genericDao.get(DDSubfasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CLASIFICADO)));
-						nuevaFase.setFechaInicio(new Date());
+						nuevaFaseClasificado(activo, histFasePublicacionActivo);
 						
-						genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);					
-					
-						ArrayList<Serializable> entitys = new ArrayList<Serializable>();
-						
-						if (informeEntity.getActivo() == null) {
-							informeEntity.setActivo(activo);
-						}
-						
-						//LOCAL COMERCIAL
-						if (DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo()) 
-								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
-									&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
-									&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
-									&& DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo()))) {
-							ActivoLocalComercial informeEntityLocal = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoLocalComercial.class, "informeComercial.activo.numActivo");
-							
-							informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
-							
-							informeEntityLocal.setMtsAlturaLibre(informe.getAltura());
-							
-							informeEntityLocal.setInformeComercial(informeEntity);
-							entitys.add(informeEntity);
-							entitys.add(informeEntityLocal);
-							
-						//PLAZA APARCAMIENTO	
-						} else if (DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
-								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
-										&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
-										&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
-										&& DDSubtipoActivo.COD_GARAJE.equals(activo.getSubtipoActivo().getCodigo()))) {							
-							ActivoPlazaAparcamiento informeEntityPlazaAp = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "informeComercial.activo.numActivo");
-							
-							informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
-							
-							informeEntityPlazaAp.setAparcamientoAltura(informe.getAltura());
-							
-							informeEntityPlazaAp.setInformeComercial(informeEntity);
-							entitys.add(informeEntity);
-							entitys.add(informeEntityPlazaAp);
-							
-						//VIVIENDA	
-						} else if (DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo()) 
-								|| (!DDTipoActivo.COD_COMERCIAL.equals(informe.getCodTipoActivo())
-										&& !DDTipoActivo.COD_VIVIENDA.equals(informe.getCodTipoActivo())
-										&& !DDSubtipoActivo.COD_GARAJE.equals(informe.getCodSubtipoInmueble()) 
-										&& DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo()))) {
-							ActivoVivienda informeEntityVivienda = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoVivienda.class, "informeComercial.activo.numActivo");
-							
-							informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_VIVIENDA)));
-							
-							if (informe.getDistribucionInterior() != null) {
-								informeEntityVivienda.setDistribucionTxt(informe.getDistribucionInterior());
-							}
-							
-							ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
-									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
-											"infoComercial.activo.numActivo");
-							if(Checks.esNulo(activoInfraestructura.getInfoComercial())) {
-								activoInfraestructura.setInfoComercial(informeEntity);
-							}
-							ActivoCarpinteriaInterior activoCarpinteriaInt = (ActivoCarpinteriaInterior) dtoToEntity
-									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaInterior.class,
-											"infoComercial.activo.numActivo");
-							if(Checks.esNulo(activoCarpinteriaInt.getInfoComercial())) {
-								activoCarpinteriaInt.setInfoComercial(informeEntity);
-							}
-							ActivoCarpinteriaExterior activoCarpinteriaExterior = (ActivoCarpinteriaExterior) dtoToEntity
-									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaExterior.class,
-											"infoComercial.activo.numActivo");
-							if(Checks.esNulo(activoCarpinteriaExterior.getInfoComercial())) {
-								activoCarpinteriaExterior.setInfoComercial(informeEntity);
-							}
-							ActivoParamentoVertical paramientoVertical = (ActivoParamentoVertical) dtoToEntity
-									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoParamentoVertical.class,
-											"infoComercial.activo.numActivo");
-							if(Checks.esNulo(activoInfraestructura.getInfoComercial())) {
-								activoInfraestructura.setInfoComercial(informeEntity);
-							}
-							ActivoSolado solado = (ActivoSolado) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoSolado.class, "infoComercial.activo.numActivo");
-							if(Checks.esNulo(solado.getInfoComercial())) {
-								solado.setInfoComercial(informeEntity);
-							}
-							ActivoCocina cocina = (ActivoCocina) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoCocina.class, "infoComercial.activo.numActivo");
-							if(Checks.esNulo(cocina.getInfoComercial())) {
-								cocina.setInfoComercial(informeEntity);
-							}
-							ActivoBanyo banyo = (ActivoBanyo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoBanyo.class, "infoComercial.activo.numActivo");
-							if(Checks.esNulo(banyo.getInfoComercial())) {
-								banyo.setInfoComercial(informeEntity);
-							}
-							ActivoInstalacion instalacion = (ActivoInstalacion) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoInstalacion.class,
-									"infoComercial.activo.numActivo");
-							if(Checks.esNulo(instalacion.getInfoComercial())) {
-								instalacion.setInfoComercial(informeEntity);
-							}
-							ActivoZonaComun zonaComun = (ActivoZonaComun) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
-							if(Checks.esNulo(zonaComun.getInfoComercial())) {
-								zonaComun.setInfoComercial(informeEntity);
-							}
-							ActivoPropietarioActivo propActivo = (ActivoPropietarioActivo) dtoToEntity
-									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoPropietarioActivo.class,
-											"activo.numActivo");		
-							
-							informeEntityVivienda.setInformeComercial(informeEntity);
-							entitys.add(informeEntity);
-							entitys.add(informeEntityVivienda);
-							entitys.add(activoInfraestructura);
-							entitys.add(activoCarpinteriaInt);
-							entitys.add(activoCarpinteriaExterior);
-							entitys.add(paramientoVertical);
-							entitys.add(solado);
-							entitys.add(cocina);
-							entitys.add(banyo);
-							entitys.add(instalacion);
-							entitys.add(zonaComun);
-							entitys.add(propActivo);
-							
-						//NULL
-						} else {							
-							informeEntity.setTipoInfoComercial(null);
-							entitys.add(informeEntity);							
-						}
-						
-						ActivoEdificio edificioEntity = null;
-						if (informeEntity.getId() != null) {
-							edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoEdificio.class, "infoComercial.activo.numActivo");
-						} else {
-							edificioEntity = new ActivoEdificio();
-						}
-						entitys.add(edificioEntity);
-						
-						informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
-								(JSONObject) jsonFields.getJSONArray("data").get(i), idProveedorParche);
-						// Si viene información de las plantas lo guardamos
-						List<PlantaDto> plantas = informe.getPlantas();
-						if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
-
-							if (!Checks.esNulo(informeEntity) && !Checks.esNulo(informeEntity.getId())) {
-								Long idInfoComercial = informeEntity.getId();
-								activoApi.deleteActivoDistribucion(idInfoComercial);
-							}
-
-							for (PlantaDto planta : plantas) {
-								if (!Checks.esNulo(planta.getNumero()) || !Checks.esNulo(planta.getCodTipoEstancia())) {
-									ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-									activoDistribucion.setNumPlanta(planta.getNumero());
-									activoDistribucion.setInfoComercial(informeEntity);
-									DDTipoHabitaculo tipoHabitaculo = null;
-									if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()) {
-										tipoHabitaculo = genericDao.get(DDTipoHabitaculo.class, genericDao.createFilter(
-												FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
-									}
-									activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-									activoDistribucion.setCantidad(planta.getNumeroEstancias());
-									activoDistribucion.setSuperficie(planta.getEstancias());
-									activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
-									genericDao.save(ActivoDistribucion.class, activoDistribucion);
+						if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(activo.getSubtipoActivo())) {
+							if (!activo.getSubtipoActivo().getCodigo().equals(informe.getCodSubtipoInmueble())) {
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble());
+								DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+								if (!Checks.esNulo(subtipo)) {
+									activo.setTipoActivo(subtipo.getTipoActivo());
+									activo.setSubtipoActivo(subtipo);
+									genericDao.save(Activo.class, activo);
 								}
-
 							}
 						}
+						
+						if (Checks.esNulo(informeEntity)){
+							informeEntity = new ActivoInfoComercial();
+							informeEntity.setActivo(activo);
+							informeEntity.setIdWebcom(informe.getIdInformeMediadorWebcom());
+						}
+						
+						informeEntity = saveEntity(informe, informeEntity);
+						
+						genericDao.save(ActivoInfoComercial.class, informeEntity);
+						
+						saveTestigosComerciales(informe, informeEntity);
 					}
 
 					if (!tieneInformeComercialAceptado) {
 						adapter.crearTramiteAprobacionInformeComercial(activo.getId());
 					} else {
-						ActivoEstadosInformeComercialHistorico activoEstadoInfComercialHistorico = new ActivoEstadosInformeComercialHistorico();
-						activoEstadoInfComercialHistorico.setActivo(activo);
-						Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
-						DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class,
-								filtroDDInfComercial);
-						activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
-						activoEstadoInfComercialHistorico.setFecha(new Date());
-						if (autorizacionWebProveedor) {
-							// se inserta una fila en el histórico de estados
-							// del informe comercial de tipo 'Modificación',
-							// 'Modificación del proveedor'
-							activoEstadoInfComercialHistorico.setMotivo(
-									DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_PROVEEDOR);
-						} else {
-							// se inserta una fila en el histórico de estados
-							// del informe comercial de tipo 'Modificación',
-							// 'Modificación rechazada. El proveedor no tiene
-							// permisos para editar'
-							activoEstadoInfComercialHistorico.setMotivo(
-									DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_RECHAZADA);
-						}
-						genericDao.save(ActivoEstadosInformeComercialHistorico.class,
-								activoEstadoInfComercialHistorico);
-
+						
+						nuevoEstadoInfoComercial(activo, autorizacionWebProveedor);
+						
 						map.put("informeComercial", RestApi.REST_INF_COM_APROBADO);
 					}
 
@@ -1573,7 +1359,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())
 							&& DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
 							&& !Checks.esNulo(activo.getInfoComercial())
-							&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())) {
+							/*&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())*/) {
 						activoApi.calcularRatingActivo(activo.getId());
 					}
 
@@ -1603,6 +1389,476 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			i++;
 		}
 		return listaRespuesta;
+	}
+
+	private HashMap<String, String> comprobarErroresDto(InformeMediadorDto informe, HashMap<String, String> errorsList) {
+		
+		if (!Checks.esNulo(informe.getFechaUltimaVisita()) 
+				&& informe.getFechaUltimaVisita().compareTo(new Date()) > 0) {
+			errorsList.put("fechaUltimaVisita", RestApi.REST_MSG_UNKNOWN_KEY);
+		}
+
+		if (informe.getCodSubtipoInmueble() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble());
+			DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+			if (!Checks.esNulo(subtipo)) {
+				boolean error = subtipo.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()) ? true : false;
+				if (!error) errorsList.put("tipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+			}
+			
+		}
+		
+		if (!Checks.esNulo(informe.getTestigos()) && !Checks.estaVacio(informe.getTestigos())) {
+			for (TestigosOpcionalesDto testigo : informe.getTestigos()) {
+				if (testigo.getCodSubtipoInmueble() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble());
+					DDSubtipoActivo subtipo = genericDao.get(DDSubtipoActivo.class, filtro);
+					if (!Checks.esNulo(subtipo)) {
+						boolean error = subtipo.getTipoActivo().getCodigo().equals(testigo.getCodTipoActivo()) ? true : false;
+						if (!error) errorsList.put("testigosTipoAndSubtipoActivo", RestApi.REST_MSG_NO_RELATED_AT);
+					}
+				}
+			}
+			
+		}
+		
+		if (!Checks.esNulo(informe.getCodesOrientacion())) {
+			for (String codOrientacion : informe.getCodesOrientacion()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codOrientacion);
+				DDTipoOrientacion orientacion = genericDao.get(DDTipoOrientacion.class, filtro);
+				if (Checks.esNulo(orientacion)) {
+					errorsList.put("codesOrientacion", RestApi.REST_MSG_UNKNOWN_KEY);
+					break;
+				}
+			}
+		}
+		
+		if (!Checks.esNulo(informe.getCodCalefaccion())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion());
+			DDTipoClimatizacion calefaccion = genericDao.get(DDTipoClimatizacion.class, filtro);
+			if (Checks.esNulo(calefaccion)) {
+				errorsList.put("codCalefaccion", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
+		
+		return errorsList;
+	}
+
+	private ActivoInfoComercial saveEntity(InformeMediadorDto informe, ActivoInfoComercial informeEntity) {
+
+		Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+		Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+		DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class,filtroSi);
+		DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class,filtroNo);
+		
+		if (!Checks.esNulo(informe.getIdInformeMediadorWebcom())) {
+			informeEntity.setIdWebcom(informe.getIdInformeMediadorWebcom());
+		}
+				
+		/*informe.getCodEstadoInforme()
+		 		es para el historico pero no se sabe el diccionario*/
+		
+		//Direccion
+		informeEntity.setLatitud(BigDecimal.valueOf(informe.getLat()));
+		informeEntity.setLongitud(BigDecimal.valueOf(informe.getLng()));
+		
+		if (!Checks.esNulo(informe.getCodTipoActivo())) {
+			DDTipoActivo tipoAct = genericDao.get(DDTipoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoActivo()));
+			informeEntity.setTipoActivo(tipoAct);
+		}
+		if (!Checks.esNulo(informe.getCodSubtipoInmueble())) {
+			DDSubtipoActivo subtipoAct = genericDao.get(DDSubtipoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodSubtipoInmueble()));
+			informeEntity.setSubtipoActivo(subtipoAct);
+		}
+		if (!Checks.esNulo(informe.getCodTipoVia())) {
+			DDTipoVia tipoVia = genericDao.get(DDTipoVia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoVia()));
+			informeEntity.setTipoVia(tipoVia);
+		}
+		
+		informeEntity.setNombreVia(informe.getNombreCalle());
+		informeEntity.setNumeroVia(informe.getNumeroCalle());
+		informeEntity.setEscalera(informe.getEscalera());
+		informeEntity.setPlanta(informe.getPlanta());
+		informeEntity.setPuerta(informe.getPuerta());
+		
+		if (!Checks.esNulo(informe.getCodMunicipio())) {
+			Localidad municipio = genericDao.get(Localidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodMunicipio()));
+			informeEntity.setLocalidad(municipio);
+		}
+		if (!Checks.esNulo(informe.getCodProvincia())) {
+			DDProvincia prv = genericDao.get(DDProvincia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodProvincia()));
+			informeEntity.setProvincia(prv);
+		}
+		
+		informeEntity.setCodigoPostal(informe.getCodigoPostal());
+		
+		//Datos del activo
+		informeEntity.setFechaUltimaVisita(informe.getFechaUltimaVisita());
+		
+		/*DDTipoComercializacion tipoVenta = genericDao.get(DDTipoComercializacion.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoVenta()));
+				
+				el tipo comercializacion en informe debe modificar el del activo?*/
+		
+		//Caracteristicas del activo
+		informeEntity.setNumDormitorios(!Checks.esNulo(informe.getNumeroDormitorios())
+				? informe.getNumeroDormitorios().longValue() : null);
+		informeEntity.setNumBanyos(!Checks.esNulo(informe.getNumeroBanyos())
+				? informe.getNumeroBanyos().longValue() : null);
+		informeEntity.setNumAseos(!Checks.esNulo(informe.getNumeroAseos())
+				? informe.getNumeroAseos().longValue() : null);
+		informeEntity.setNumGaraje(!Checks.esNulo(informe.getNumeroPlazasGaraje())
+				? informe.getNumeroPlazasGaraje().longValue() : null);	
+		informeEntity.setTerraza(!Checks.esNulo(informe.getTerraza())
+				? informe.getTerraza() ? ddSi : ddNo : null);
+		informeEntity.setPatio(!Checks.esNulo(informe.getPatio())
+				? informe.getPatio() ? ddSi : ddNo : null);
+		informeEntity.setAscensor(!Checks.esNulo(informe.getAscensor())
+				? informe.getAscensor() ? ddSi : ddNo : null);
+		
+//		informeEntity.setSuperficieUtil(informe.getUtilSuperficie());
+		
+		informeEntity.setRehabilitado(!Checks.esNulo(informe.getRehabilitado())
+				? informe.getRehabilitado() ? ddSi : ddNo : null);
+		informeEntity.setAnyoRehabilitacion(informe.getAnyoRehabilitacion());
+		
+		if (!Checks.esNulo(informe.getCodEstadoConservacion())) {
+			DDEstadoConservacion ecv = genericDao.get(DDEstadoConservacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacion()));
+			informeEntity.setEstadoConservacion(ecv);
+		}
+		
+		informeEntity.setAnejoGaraje(!Checks.esNulo(informe.getAnejoGaraje())
+				? informe.getAnejoGaraje() ? ddSi : ddNo : null);
+		informeEntity.setAnejoTrastero(!Checks.esNulo(informe.getAnejoTrastero())
+				? informe.getAnejoTrastero() ? ddSi : ddNo : null);
+		informeEntity.setSuperficieTerraza(informe.getSuperficieTerraza());
+		informeEntity.setSuperficiePatio(informe.getSuperficiePatio());
+		informeEntity.setOcupado(!Checks.esNulo(informe.getOcupado())
+				? informe.getOcupado() ? ddSi : ddNo : null);
+		informeEntity.setVisitable(!Checks.esNulo(informe.getVisitableFechaVisita())
+				? informe.getVisitableFechaVisita() ? ddSi : ddNo : null);
+		informeEntity.setNumSalones(!Checks.esNulo(informe.getNumeroSalones())
+				? informe.getNumeroSalones().longValue() : null);
+		informeEntity.setNumEstancias(!Checks.esNulo(informe.getNumeroEstancias())
+				? informe.getNumeroEstancias().longValue() : null);
+		informeEntity.setNumPlantas(!Checks.esNulo(informe.getNumeroPlantas())
+				? informe.getNumeroPlantas().longValue() : null);
+		
+		//Descripcion comercial
+		informeEntity.setDescripcionComercial(informe.getDescripcionComercial());
+		
+		//Caracteristicas ppales activo
+		if (!Checks.esNulo(informe.getCocinaRating())) {
+			DDRatingCocina cocina = genericDao.get(DDRatingCocina.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCocinaRating()));
+			informeEntity.setRatingCocina(cocina);
+		}
+		
+		informeEntity.setCocinaAmueblada(!Checks.esNulo(informe.getCocinaAmueblada())
+				? informe.getCocinaAmueblada() ? ddSi : ddNo : null);
+		
+		String orientacion = "";
+		for (int i = 0; i < informe.getCodesOrientacion().size(); i++) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodesOrientacion().get(i));
+			DDTipoOrientacion ddOrientacion = genericDao.get(DDTipoOrientacion.class, filtro);
+			orientacion += ddOrientacion.getDescripcion();
+			if (i != informe.getCodesOrientacion().size()-1) orientacion += ",";
+		}
+		informeEntity.setOrientacion(orientacion);
+	
+		if (!Checks.esNulo(informe.getCodCalefaccion())) {
+			DDTipoClimatizacion ddClimatizacion = genericDao.get(DDTipoClimatizacion.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodCalefaccion()));
+			informeEntity.setCalefaccion(ddClimatizacion);
+		}
+		if (!Checks.esNulo(informe.getCodTipoCalefaccion())) {
+			DDTipoCalefaccion tca = genericDao.get(DDTipoCalefaccion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoCalefaccion()));
+			informeEntity.setTipoCalefaccion(tca);
+		}
+		if (!Checks.esNulo(informe.getCodAireAcondicionado())) {
+			DDTipoClimatizacion tcl = genericDao.get(DDTipoClimatizacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAireAcondicionado()));
+			informeEntity.setAireAcondicionado(tcl);
+		}
+		
+		informeEntity.setArmariosEmpotrados(!Checks.esNulo(informe.getExistenArmariosEmpotrados())
+				? informe.getExistenArmariosEmpotrados() ? ddSi : ddNo : null);
+		
+		if (!Checks.esNulo(informe.getExteriorInterior())) {
+			DDExteriorInterior ext = genericDao.get(DDExteriorInterior.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getExteriorInterior()));
+			informeEntity.setExteriorInterior(ext);
+		}
+		
+		//Otras caracteristicas vivienda
+		if (!Checks.esNulo(informe.getCodEstadoConservacionEdificio())) {
+			DDEstadoConservacionEdificio esc = genericDao.get(DDEstadoConservacionEdificio.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoConservacionEdificio()));
+			informeEntity.setEstadoConservacionEdificio(esc);
+		}
+		
+		informeEntity.setNumPlantasEdificio(!Checks.esNulo(informe.getNumeroPlantasEdificio())
+				? informe.getNumeroPlantasEdificio().longValue() : null);
+		
+		if (!Checks.esNulo(informe.getCodTipoPuertaAcceso())) {
+			DDTipoPuerta tpu = genericDao.get(DDTipoPuerta.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodTipoPuertaAcceso()));
+			informeEntity.setTipoPuerta(tpu);
+		}
+		DDEstadoMobiliario emo = null;
+		if (!Checks.esNulo(informe.getCodEstadoPuertasInteriores())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPuertasInteriores()));
+			informeEntity.setEstadoPuertasInteriores(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoVentanas())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoVentanas()));
+			informeEntity.setEstadoVentanas(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoPersianas())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPersianas()));
+			informeEntity.setEstadoPersianas(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoPintura())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoPintura()));
+			informeEntity.setEstadoPintura(emo);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoSolados())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoSolados()));
+			informeEntity.setEstadoSolados(emo);
+		}
+		if (!Checks.esNulo(informe.getCodAdmiteMascota())) {
+			DDAdmision adm = genericDao.get(DDAdmision.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAdmiteMascota()));
+			informeEntity.setAdmiteMascotas(adm);
+		}
+		if (!Checks.esNulo(informe.getCodEstadoBanyos())) {
+			emo = genericDao.get(DDEstadoMobiliario.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodEstadoBanyos()));
+			informeEntity.setEstadoBanyos(emo);
+		}
+		
+		//Otras caracteristicas otras tipologias
+		informeEntity.setLicenciaApertura(!Checks.esNulo(informe.getLicenciaApertura()) 
+				? informe.getLicenciaApertura() ? ddSi : ddNo : null);
+		informeEntity.setLicenciaObra(!Checks.esNulo(informe.getLicenciaObra()) 
+				? informe.getLicenciaObra() ? ddSi : ddNo : null);
+		informeEntity.setSalidaHumos(!Checks.esNulo(informe.getSalidaHumosOtrasCaracteristicas()) 
+				? informe.getSalidaHumosOtrasCaracteristicas() ? ddSi : ddNo : null);
+		informeEntity.setAptoUsoBruto(!Checks.esNulo(informe.getAptoUsoEnBruto()) 
+				? informe.getAptoUsoEnBruto() ? ddSi : ddNo : null);
+		if (!Checks.esNulo(informe.getCodAccesibilidad())) {
+			DDActivoAccesibilidad aac = genericDao.get(DDActivoAccesibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodAccesibilidad()));
+			informeEntity.setAccesibilidad(aac);
+		}
+		
+		//codAccesibilidad no tiene diccionario
+	
+		informeEntity.setEdificabilidad(informe.getEdificabilidadSuperficieTecho());
+		informeEntity.setSuperficieParcela(informe.getParcelaSuperficie());
+		informeEntity.setUrbanizacionEjecutado(informe.getPorcentajeUrbanizacionEjecutado());
+		
+		if (!Checks.esNulo(informe.getClasificacion())) {
+			DDClasificacion cla = genericDao.get(DDClasificacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getClasificacion()));
+			informeEntity.setClasificacion(cla);
+		}
+		if (!Checks.esNulo(informe.getCodUso())) {
+			DDUsoActivo usa = genericDao.get(DDUsoActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUso()));
+			informeEntity.setUsoActivo(usa);
+		}
+		
+		informeEntity.setMetrosFachada(informe.getMetrosLinealesFachadaPrincipal());
+		informeEntity.setAlmacen(!Checks.esNulo(informe.getAlmacen()) 
+				? informe.getAlmacen() ? ddSi : ddNo : null);
+		informeEntity.setSuperficieAlmacen(informe.getAlmacenSuperficie());
+		informeEntity.setVentaExposicion(!Checks.esNulo(informe.getSuperficieVentaExposicion()) 
+				? informe.getSuperficieVentaExposicion() ? ddSi : ddNo : null);
+		informeEntity.setSuperficieVentaExposicion(informe.getSuperficieVentaExposicionConstruido());
+		informeEntity.setEntreplanta(!Checks.esNulo(informe.getEntreplanta())
+				? informe.getEntreplanta() ? ddSi : ddNo : null);
+		informeEntity.setAlturaLibre(informe.getAltura());
+		informeEntity.setEdificacionEjecutada(informe.getPorcentajeEdificacionEjecutada());
+
+		//Equipamientos
+		informeEntity.setZonasVerdes(!Checks.esNulo(informe.getExistenZonasVerdes())
+				? informe.getExistenZonasVerdes() ? ddSi : ddNo : null);
+		informeEntity.setConserje(!Checks.esNulo(informe.getExisteConserjeVigilancia())
+				? informe.getExisteConserjeVigilancia() ? ddSi : ddNo : null);
+		
+		DDDisponibilidad dis = null;
+		if (!Checks.esNulo(informe.getJardin())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getJardin()));
+			informeEntity.setJardin(dis);
+		}
+		if (!Checks.esNulo(informe.getPiscina())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getPiscina()));
+			informeEntity.setPiscina(dis);
+		}
+		
+		informeEntity.setInstalacionesDeportivas(!Checks.esNulo(informe.getExistenInstalacionesDeportivas())
+				? informe.getExistenInstalacionesDeportivas() ? ddSi : ddNo : null);
+		
+		if (!Checks.esNulo(informe.getGimnasio())) {
+			dis = genericDao.get(DDDisponibilidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getGimnasio()));
+			informeEntity.setGimnasio(dis);
+		}
+		
+		informeEntity.setAccesoMinusvalidos(!Checks.esNulo(informe.getAccesoMinusvalidosOtrasCaracteristicas())
+				? informe.getAccesoMinusvalidosOtrasCaracteristicas() ? ddSi : ddNo : null);
+		
+		//Comunicaciones y servicios
+		if (!Checks.esNulo(informe.getCodValoracionUbicacion())) {
+			DDValoracionUbicacion val = genericDao.get(DDValoracionUbicacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodValoracionUbicacion()));
+			informeEntity.setValoracionUbicacion(val);
+		}
+		if (!Checks.esNulo(informe.getCodUbicacion())) {
+			DDUbicacionActivo uac = genericDao.get(DDUbicacionActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", informe.getCodUbicacion()));
+			informeEntity.setUbicacionActivo(uac);
+		}
+		
+		//Valoracion
+		informeEntity.setValorEstimadoVenta(informe.getValorEstimadoVenta());
+		informeEntity.setMinVenta(informe.getValorEstimadoMinVenta());
+		informeEntity.setMaxVenta(informe.getValorEstimadoMaxVenta());
+		informeEntity.setValorEstimadoRenta(informe.getValorEstimadoRenta());
+		informeEntity.setMinRenta(informe.getValorEstimadoMinRenta());
+		informeEntity.setMaxRenta(informe.getValorEstimadoMaxRenta());
+		
+		return informeEntity;
+	}
+
+	private void saveTestigosComerciales(InformeMediadorDto informe, ActivoInfoComercial informeEntity) {
+
+		// Si viene información de los testigos lo guardamos
+		List<TestigosOpcionalesDto> testigos = informe.getTestigos();
+		if (!Checks.esNulo(testigos) && !Checks.estaVacio(testigos)) {
+			if (!Checks.esNulo(informeEntity)){
+				for (TestigosOpcionalesDto testigo : testigos) {
+					InformeTestigosOpcionales infoTestOpc = new InformeTestigosOpcionales();
+					infoTestOpc.setInfoComercial(informeEntity);
+					infoTestOpc = saveTestigo(infoTestOpc,testigo);
+						
+					genericDao.save(InformeTestigosOpcionales.class, infoTestOpc);
+				}
+			}
+		}
+	}
+	
+	private InformeTestigosOpcionales saveTestigo(InformeTestigosOpcionales infoTestOpc, TestigosOpcionalesDto testigo) {
+		
+		if (!Checks.esNulo(testigo.getEnlace()) && !testigo.getEnlace().isEmpty()) {
+			infoTestOpc.setEnlace(testigo.getEnlace());
+		} else {
+			infoTestOpc.setEnlace(null);
+		}
+		if (!Checks.esNulo(testigo.getDireccion()) && !testigo.getDireccion().isEmpty()) {
+			infoTestOpc.setDireccion(testigo.getDireccion());
+		} else {
+			infoTestOpc.setDireccion(null);
+		}
+		if (!Checks.esNulo(testigo.getEurosPorMetro())) {
+			infoTestOpc.setEurosPorMetro(testigo.getEurosPorMetro());
+		}
+		if (!Checks.esNulo(testigo.getSuperficie())) {
+			infoTestOpc.setSuperficie(testigo.getSuperficie());
+		}
+		if (!Checks.esNulo(testigo.getPrecioMercado())) {
+			infoTestOpc.setPrecioMercado(testigo.getPrecioMercado());
+		}
+		if (!Checks.esNulo(testigo.getLat())) {
+			infoTestOpc.setLat(testigo.getLat());
+		}
+		if (!Checks.esNulo(testigo.getLng())) {
+			infoTestOpc.setLng(testigo.getLng());
+		}
+		if (!Checks.esNulo(testigo.getFechaTransaccionPublicacion())) {
+			infoTestOpc.setFechaTransaccionPublicacion(testigo.getFechaTransaccionPublicacion());
+		}
+		
+		DDFuenteTestigos fuenteTestigos = null;
+		if (!Checks.esNulo(testigo.getCodFuente()) && !testigo.getCodFuente().isEmpty()) {
+			fuenteTestigos = genericDao.get(DDFuenteTestigos.class, genericDao.createFilter(
+					FilterType.EQUALS, "codigo", testigo.getCodFuente()));
+		}
+		infoTestOpc.setFuenteTestigos(fuenteTestigos);
+		
+		DDTipoActivo tipoActivo = null;
+		if (!Checks.esNulo(testigo.getCodTipoActivo()) && !testigo.getCodTipoActivo().isEmpty()) {
+			tipoActivo = genericDao.get(DDTipoActivo.class, genericDao.createFilter(
+					FilterType.EQUALS, "codigo", testigo.getCodTipoActivo()));
+		}
+		infoTestOpc.setTipoActivo(tipoActivo);
+		
+		DDSubtipoActivo subtipoActivo = null;
+		if (!Checks.esNulo(testigo.getCodSubtipoInmueble()) && !testigo.getCodSubtipoInmueble().isEmpty()) {
+			subtipoActivo = genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(
+					FilterType.EQUALS, "codigo", testigo.getCodSubtipoInmueble()));
+		}
+		infoTestOpc.setSubtipoActivo(subtipoActivo);
+		
+		return infoTestOpc;
+	}
+
+	private void nuevaFaseClasificado(Activo activo, HistoricoFasePublicacionActivo histFasePublicacionActivo) {
+		
+		histFasePublicacionActivo.setFechaFin(new Date());
+		genericDao.save(HistoricoFasePublicacionActivo.class, histFasePublicacionActivo);		
+		
+		//nueva fase en estado clasificado
+		HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
+		nuevaFase.setActivo(activo);
+		nuevaFase.setUsuario(usuarioManager.getByUsername(REST_USER_USERNAME));
+		nuevaFase.setFasePublicacion(histFasePublicacionActivo.getFasePublicacion());
+		nuevaFase.setSubFasePublicacion(genericDao.get(DDSubfasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CLASIFICADO)));
+		nuevaFase.setFechaInicio(new Date());
+		
+		genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
+		
+	}
+
+	private void nuevoEstadoInfoComercial(Activo activo, boolean autorizacionWebProveedor) {
+		
+		ActivoEstadosInformeComercialHistorico activoEstadoInfComercialHistorico = new ActivoEstadosInformeComercialHistorico();
+		activoEstadoInfComercialHistorico.setActivo(activo);
+		Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
+		DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class,filtroDDInfComercial);
+		activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
+		activoEstadoInfComercialHistorico.setResponsableCambio("API");
+		activoEstadoInfComercialHistorico.setFecha(new Date());
+		if (autorizacionWebProveedor) {
+			// se inserta una fila en el histórico de estados
+			// del informe comercial de tipo 'Modificación',
+			// 'Modificación del proveedor'
+			activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_PROVEEDOR);
+		} else {
+			// se inserta una fila en el histórico de estados
+			// del informe comercial de tipo 'Modificación',
+			// 'Modificación rechazada. El proveedor no tiene
+			// permisos para editar'
+			activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_RECHAZADA);
+		}
+		genericDao.save(ActivoEstadosInformeComercialHistorico.class,activoEstadoInfComercialHistorico);
+		
 	}
 
 }

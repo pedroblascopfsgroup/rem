@@ -1349,8 +1349,6 @@ public interface ParticularValidatorApi {
 	Boolean esOfertaErronea(String numOferta);
 
 	Boolean existePais(String pais);
-
-	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 	
 	Boolean existeDiccionarioByTipoCampo(String codigoCampo, String valorCampo);
 	
@@ -1368,8 +1366,6 @@ public interface ParticularValidatorApi {
 	
 	public Boolean existePorcentajeConstruccion(String porcentajeConstruccion);
 
-	Boolean existeActivoConONMarcadoSi(String columnaActivo);
-	
 	boolean conEstadoGasto(String idGasto,String codigoEstado);
 
 	String devolverEstadoGasto(String idGasto);
@@ -1378,12 +1374,15 @@ public interface ParticularValidatorApi {
 
 	boolean tieneGastoFechaPagado(String idGasto);
 
-
 	Boolean estadoPrevioTrabajo(String celdaTrabajo);
 
 	Boolean fechaEjecucionCumplimentada(String celdaTrabajo);
 
 	Boolean resolucionComite(String celdaTrabajo);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+	
+	Boolean existeActivoConONMarcadoSi(String columnaActivo);
 
 	Boolean existeCodigoMotivoAdmision(String codMotivo);
 

@@ -1358,6 +1358,13 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'subcarteraCodigo'
 			},
+			{
+    			name: 'isSubcarteraMarina',
+    			calculate: function(data) {
+    				return data.subcarteraCodigo == CONST.SUBCARTERA['MARINA'];
+    			},
+    			depends: 'subcarteraCodigo'
+			},
     		{
     			name: 'isCarteraTitulizada',
     			calculate: function(data) { 
@@ -1374,11 +1381,11 @@ Ext.define('HreRem.model.Activo', {
     			depends: ['entidadPropietariaCodigo']
     		},
     		{
-    			name: 'isAppleOrDivarianOrJaguar',
+    			name: 'isAppleOrDivarianOrJaguarOrMarina',
     			calculate: function(data){
-    				return (data.isSubcarteraDivarian || data.isSubcarteraApple || data.isSubcarteraJaguar);
+    				return (data.isSubcarteraDivarian || data.isSubcarteraApple || data.isSubcarteraJaguar || data.isSubcarteraMarina);
     			},
-    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar']
+    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar', 'isSubcarteraMarina']
     		},
             {
                 name: 'codComunidadAutonoma'
@@ -1387,11 +1394,35 @@ Ext.define('HreRem.model.Activo', {
                 name: 'comunidadDescripcion'
             },
             {
+            	name: 'numeroInmuebleAnterior'
+            },
+            {
             	name:'discrepanciasLocalizacion',
             	type: 'boolean'
             },
             {
             	name:'discrepanciasLocalizacionObservaciones'
+            },
+            {
+            	name: 'numeroInmuebleAnterior'
+            },
+       	 	{
+            	name: 'anejoGarajeCodigo'
+            },
+            {
+            	name: 'anejoGarajeDescripcion'
+            },
+            {
+            	name: 'anejoTrasteroCodigo'
+            },
+            {
+            	name: 'anejoTrasteroDescripcion'
+            },
+            {
+            	name: 'identificadorPlazaParking'
+            },
+            {
+            	name: 'identificadorTrastero'
             },
             {
 				name: 'enConcurrencia',

@@ -14,6 +14,7 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterService {
@@ -61,6 +63,9 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionProManzana.class);
 
@@ -168,6 +173,11 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 				}
 				genericDao.update(ExpedienteComercial.class, expediente);
 				genericDao.update(Oferta.class, ofertaAceptada);
+				
+				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
+						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 
+						|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())))
+					notificationOfertaManager.notificationReservaVentaSobrePlano(ofertaAceptada);
 			}
 		}
 	}

@@ -286,11 +286,6 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoTrabajo()));
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtp.estadoTrabajo", estado.getDescripcion());
 		}
-		if(!Checks.esNulo(dto.getSort())) {
-			dto.setSort("vtp." + dto.getSort());
-		} else {
-			dto.setSort("vtp.id");
-		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

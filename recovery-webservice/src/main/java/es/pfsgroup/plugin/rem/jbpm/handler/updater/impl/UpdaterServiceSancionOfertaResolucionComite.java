@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -128,9 +129,11 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 							for (ActivoOferta activoOferta : listActivosOferta) {
 								ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+								Oferta oferta = expediente.getOferta();	
+								OfertaGencat ofertaGencat = null;
+								Date fSancion= expediente.getFechaSancion();
 								if(Checks.esNulo(expediente.getReserva()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
-									Oferta oferta = expediente.getOferta();	
-									OfertaGencat ofertaGencat = null;
+									
 									if (!Checks.esNulo(comunicacionGencat)) {
 										ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
 									}
@@ -139,10 +142,16 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 												gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 											}
 									}else{	
-										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-									}					
+										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());									
+									}	
+									
+								}
+								
+								if(oferta!=null && fSancion!=null) {
+									ofertaApi.comprobarFechasParaLanzarComisionamiento(oferta, fSancion);
 								}
 							}
+							
 							
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							
@@ -166,6 +175,21 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 									ofertaApi.congelarOferta(oferta);
 								}
+							}
+							
+							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
+							
+							if((ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()
+									|| (ofertaAceptada.getCheckForzadoCajamar() == null && ofertaAceptada.getCheckFormCajamar() != null && ofertaAceptada.getCheckFormCajamar()))) {
+								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+
+								ge.setIdEntidad(expediente.getId());
+								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+								ge.setIdUsuario(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", "gestformcajamar")).getId());
+								ge.setIdTipoGestor(tipoGestorComercial.getId());
+								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
+
 							}
 							
 							// Se comprueba si cada activo tiene KO de admisión o de gestión

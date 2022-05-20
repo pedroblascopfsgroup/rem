@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -122,6 +118,15 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						
 						dtoArras.setValidacionBC(DDMotivosEstadoBC.CODIGO_ANULADA);
 						dtoArras.setMotivoAnulacion(motivoAplazamiento);
+
+						CondicionanteExpediente condicionanteExpediente = expediente.getCondicionante();
+						condicionanteExpediente.setSolicitaReserva(0);
+						condicionanteExpediente.setTipoCalculoReserva(null);
+						condicionanteExpediente.setPorcentajeReserva(null);
+						condicionanteExpediente.setPlazoFirmaReserva(null);
+						condicionanteExpediente.setImporteReserva(null);
+						genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
+
 					}else {
 						estadoExpediente = DDEstadosExpedienteComercial.PTE_AGENDAR_ARRAS;
 						estadoBc = DDEstadoExpedienteBc.CODIGO_ARRAS_APROBADAS;
@@ -164,10 +169,6 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 						}					
 						
 					}
-				}
-				
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 				}
 				
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())

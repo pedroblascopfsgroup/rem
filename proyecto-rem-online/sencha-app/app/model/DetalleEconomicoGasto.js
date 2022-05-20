@@ -263,7 +263,11 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'tipoRetencionCodigo'
-		}
+		},
+		{
+   			name: 'pagoUrgente',
+   			type: 'boolean'
+   		}
 	],
     
 	proxy: {

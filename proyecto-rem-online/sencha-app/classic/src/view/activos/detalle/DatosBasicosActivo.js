@@ -1039,32 +1039,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                }
 					]               
           	},
-          	// Perimetros  BBVA-----------------------------------------------
-          	{    
-				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',
-				title: HreRem.i18n('title.perimetros'),
-				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
-				bind: {
-					hidden: '{esUsuarioTasadora}'
-				},
-				items :[					
-					{
-						xtype: 'datefieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-						colspan: 2,
-						bind:		'{activo.fechaAltaActivoRem}',
-						readOnly	: true
-					}
-				]
- 			},
           	// Perimetros -----------------------------------------------
             {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) || $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']) || $AU.userIsRol(CONST.PERFILES["TASADORA"]),
+				hidden: $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']) || $AU.userIsRol(CONST.PERFILES["TASADORA"]),
 				items :
 					[
 					{

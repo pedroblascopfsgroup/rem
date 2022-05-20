@@ -168,10 +168,7 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 			}
 		}
 		expedienteComercialApi.update(expedienteComercial,false);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
+
 	}
 
 	public String[] getCodigoTarea() {

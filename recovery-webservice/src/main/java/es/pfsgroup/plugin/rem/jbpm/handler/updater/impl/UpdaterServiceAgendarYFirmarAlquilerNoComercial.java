@@ -165,9 +165,6 @@ public class UpdaterServiceAgendarYFirmarAlquilerNoComercial implements UpdaterS
 			}
 		}
 		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expedienteComercial, fechaFirma));
-		
-		
 	}
 
 	public String[] getCodigoTarea() {

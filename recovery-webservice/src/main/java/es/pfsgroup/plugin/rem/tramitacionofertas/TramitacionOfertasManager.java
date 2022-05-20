@@ -300,6 +300,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		boolean resultado = true;
 		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
+		String codigoEstadoOferta = dto.getCodigoEstadoOferta();
 		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
@@ -307,8 +308,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
 		
+		if(ofertaApi.debeCongelarOfertaCaixa(oferta)) {
+			codigoEstadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
+		}
+		
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstadoOferta);
 
 		oferta.setEstadoOferta(estadoOferta);
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 

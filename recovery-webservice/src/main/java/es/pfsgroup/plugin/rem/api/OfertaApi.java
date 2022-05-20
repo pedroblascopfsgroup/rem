@@ -850,4 +850,6 @@ public interface OfertaApi {
     DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta);
 	
 	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
+
+	boolean debeCongelarOfertaCaixa(Oferta oferta);
 }

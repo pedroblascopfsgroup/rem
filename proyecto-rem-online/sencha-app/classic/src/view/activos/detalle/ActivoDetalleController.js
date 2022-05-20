@@ -4178,10 +4178,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onProveedoresListClick: function(gridView, record){
 		var me=this;
-		
-		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
-			return;
-		}
+
 		idProveedor= record.get('idFalso').id;
 		idActivo= record.get('idFalso').idActivo;
 		
@@ -4204,7 +4201,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if(idFalso != null){
 	    	idFalsoProv = record.get('idFalso').id;
 	    }
-	    
+	    if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+	        return;
+	    }
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	recordProveedor.set('id', idProveedor);
@@ -4226,6 +4225,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    
    	onClickAbrirGastoProveedor: function(grid, record){
 		var me = this;
+		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+            return;
+        }
 		record.setId(record.data.idGasto);
 		
     	me.getView().fireEvent('abrirDetalleGasto', record);

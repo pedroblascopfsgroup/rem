@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20210921
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-10481
+--## INCIDENCIA_LINK=HREOS-17721
 --## PRODUCTO=NO
 --## Finalidad: vista para alertas de publicacion y fases de activos
 --##           
@@ -14,6 +14,7 @@
 --##	    0.2 REMVIP-7722 - Se quita tipo alquiler "No definido" de la alerta de ALERTA_TIPO_ALQUILER
 --##        0.3 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##        0.4 Juan Bautista Alfonso - - REMVIP-10481 - Añadido distinct para quitar duplicados en la consulta
+--##		    0.5 Alejandra García - HREOS-17721 - Modificar lógica del cálculo posesión
 --##########################################
 --*/
 
@@ -77,7 +78,7 @@ BEGIN
         CASE WHEN TIT.ACT_ID IS NULL AND ADJ.BIE_ADJ_F_DECRETO_FIRME IS NULL AND ADN.ADN_FECHA_TITULO IS NULL THEN 1 ELSE 0 END AS ALERTA_FECHA_DECRETO,
 	NVL2 (VCG.CON_CARGAS, VCG.CON_CARGAS, 0) AS ALERTA_CARGAS,                   
 	CASE WHEN (ACT.DD_CRA_ID = 21) 
-             THEN (CASE WHEN SIJ.DD_SIJ_INDICA_POSESION = 1 THEN 0 ELSE 1 END) 
+             THEN (CASE WHEN ETP.INDICA_POSESION = 1 THEN 0 ELSE 1 END)
              ELSE (CASE WHEN FPA.FECHA_POSESION IS NOT NULL THEN 0 ELSE 1 END)           
     	END AS ALERTA_POSESION,     
 	CASE WHEN TAL.DD_TAL_CODIGO IN (''02'',''03'',''04'',''08'',''10'',''11'') THEN 1 ELSE 0 END AS ALERTA_TIPO_ALQUILER,
@@ -99,7 +100,8 @@ BEGIN
     	INNER JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON ACT.ACT_ID = PAC.ACT_ID AND PAC.BORRADO = 0 AND PAC.PAC_INCLUIDO = 1
     	INNER JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID
 	INNER JOIN '|| V_ESQUEMA ||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
-    	LEFT JOIN '|| V_ESQUEMA ||'.DD_SIJ_SITUACION_JURIDICA SIJ ON SPS.DD_SIJ_ID = SIJ.DD_SIJ_ID
+  LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO_CAIXA CAIXA ON CAIXA.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+	LEFT JOIN '||V_ESQUEMA||'.DD_ETP_ESTADO_POSESORIO ETP ON ETP.DD_ETP_ID = CAIXA.DD_ETP_ID AND ETP.BORRADO = 0
 	LEFT JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS.DD_TPA_ID
  	LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_CON_CARGAS VCG ON VCG.ACT_ID = ACT.ACT_ID 
     	LEFT JOIN 

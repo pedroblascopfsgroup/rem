@@ -5,13 +5,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -27,6 +32,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -52,12 +58,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-
-import javax.annotation.Resource;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -164,16 +164,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(activo.getCartera())) {
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-					if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
-						BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
-						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
-						
-						if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos())) {
-							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
-						}
-					}					
-				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
+				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
 						||DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
 						||DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
@@ -295,6 +286,16 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if (actCaixa != null) {
 				if (actCaixa.getNecesariaFuerzaPublica() != null) {
 					activoDto.setNecesariaFuerzaPublica(actCaixa.getNecesariaFuerzaPublica() ? "1" : "0");
+				}
+				
+				if(!Checks.esNulo(actCaixa.getEstadoPosesorio())) {
+					BeanUtils.copyProperty(activoDto, "estadoPosesorio", actCaixa.getEstadoPosesorio().getDescripcion());
+					BeanUtils.copyProperty(activoDto, "fechaEstadoPosesorio", actCaixa.getFechaEstadoPosesorio());
+					BeanUtils.copyProperty(activoDto, "indicaPosesion", actCaixa.getEstadoPosesorio().getIndicaPosesion());
+					
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos())) {
+						activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
+					}
 				}
 			}
 		}

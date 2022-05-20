@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -167,6 +168,13 @@ public class ActivoCaixa implements Serializable, Auditable {
     @JoinColumn(name = "DD_CTC_ID")
     private DDCategoriaComercializacion categoriaComercializacion;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ETP_ID")
+    private DDEstadoPosesorio estadoPosesorio;
+	
+	@Column(name = "FEC_EST_POSESORIO_BC")
+    private Date fechaEstadoPosesorio;
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CBC_ID")
     private DDCarteraBc segmentacionCartera;
@@ -493,6 +501,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 		this.categoriaComercializacion = categoriaComercializacion;
 	}
 
+	public DDEstadoPosesorio getEstadoPosesorio() {
+		return estadoPosesorio;
+	}
+
+	public void setEstadoPosesorio(DDEstadoPosesorio estadoPosesorio) {
+		this.estadoPosesorio = estadoPosesorio;
+	}
+
+	public Date getFechaEstadoPosesorio() {
+		return fechaEstadoPosesorio;
+	}
+
+	public void setFechaEstadoPosesorio(Date fechaEstadoPosesorio) {
+		this.fechaEstadoPosesorio = fechaEstadoPosesorio;
+	}
+	
 	public DDCarteraBc getSegmentacionCartera() {
 		return segmentacionCartera;
 	}

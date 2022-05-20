@@ -9105,6 +9105,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return tipoComercializar;
 	}
 	
+	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		
 		Activo activo = oferta.getActivoPrincipal();

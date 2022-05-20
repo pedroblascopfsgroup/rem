@@ -9838,7 +9838,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Long numAgrupacionONVentaSobrePlano(Activo activo) {
 		for (ActivoAgrupacionActivo agrupActivo : activo.getAgrupaciones()) {
-			if (activoAgrupacionApi.isONVentaSobrePlano(agrupActivo.getAgrupacion()))
+			if (DDTipoAgrupacion.isON(agrupActivo.getAgrupacion().getTipoAgrupacion()) && activoAgrupacionApi.isONVentaSobrePlano(agrupActivo.getAgrupacion()))
 				return agrupActivo.getAgrupacion().getNumAgrupRem();
 		}
 		return null;

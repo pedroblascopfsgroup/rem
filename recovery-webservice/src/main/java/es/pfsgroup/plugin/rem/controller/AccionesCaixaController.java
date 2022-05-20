@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
@@ -539,7 +538,6 @@ public class AccionesCaixaController extends ParadiseJsonController {
             boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
             if(success){
                 success = accionesCaixaApi.accionRechazo(dto);
-                accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
                 model.put("success", true);
             }else{
                 model.put("msgError", "Error al actualizar depósito");
@@ -560,7 +558,6 @@ public class AccionesCaixaController extends ParadiseJsonController {
             boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
             if(success){
                 success = accionesCaixaApi.accionRechazo(dto);
-                accionesCaixaApi.sendReplicarOfertaAccionesAvanzarTarea(dto.getIdTarea(), success);
                 model.put("success", true);
             }else{
                 model.put("msgError", "Error al actualizar depósito");

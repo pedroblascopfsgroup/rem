@@ -108,7 +108,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	reference: 'idufir',
 		                	bind: {
 		                		value: '{datosRegistrales.idufir}',
-		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                		readOnly: '{isCarteraBankiayUnidadAlquilable}'
 		                	},
 		                	maskRe: /^\d*$/, 
 		                	vtype: 'idufir',

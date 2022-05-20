@@ -24,9 +24,11 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDBancoOrigen;
+import es.pfsgroup.plugin.rem.model.dd.DDCarteraBc;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialAlquilerCaixa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComercialVentaCaixa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTecnicoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -165,6 +167,20 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CTC_ID")
     private DDCategoriaComercializacion categoriaComercializacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ETP_ID")
+    private DDEstadoPosesorio estadoPosesorio;
+	
+	@Column(name = "FEC_EST_POSESORIO_BC")
+    private Date fechaEstadoPosesorio;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CBC_ID")
+    private DDCarteraBc segmentacionCartera;
+	
+    @Column(name = "CBX_NUMERO_INMUEBLE_ANTERIOR")
+    private String numeroInmuebleAnterior;
 	
 	@Version   
 	private Long version;
@@ -483,6 +499,38 @@ public class ActivoCaixa implements Serializable, Auditable {
 
 	public void setCategoriaComercializacion(DDCategoriaComercializacion categoriaComercializacion) {
 		this.categoriaComercializacion = categoriaComercializacion;
+	}
+
+	public DDEstadoPosesorio getEstadoPosesorio() {
+		return estadoPosesorio;
+	}
+
+	public void setEstadoPosesorio(DDEstadoPosesorio estadoPosesorio) {
+		this.estadoPosesorio = estadoPosesorio;
+	}
+
+	public Date getFechaEstadoPosesorio() {
+		return fechaEstadoPosesorio;
+	}
+
+	public void setFechaEstadoPosesorio(Date fechaEstadoPosesorio) {
+		this.fechaEstadoPosesorio = fechaEstadoPosesorio;
+	}
+	
+	public DDCarteraBc getSegmentacionCartera() {
+		return segmentacionCartera;
+	}
+
+	public void setSegmentacionCartera(DDCarteraBc segmentacionCartera) {
+		this.segmentacionCartera = segmentacionCartera;
+	}
+
+	public String getNumeroInmuebleAnterior() {
+		return numeroInmuebleAnterior;
+	}
+
+	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
+		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
 	}
 	
 }

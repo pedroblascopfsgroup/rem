@@ -196,6 +196,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		            				var date = comprador.fechaNacimientoConstitucion.slice(0, 10);
 		            				slideDatos.getForm().findField('fechaNacimientoConstitucion').setValue(date);
 		            			}
+
+		            			if(!Ext.isEmpty(comprador.fechaNacimientoRepresentante)){
+                                	var date = comprador.fechaNacimientoRepresentante.slice(0, 10);
+                                    slideDatos.getForm().findField('fechaNacimientoRepresentante').setValue(date);
+                                }
 		            			
 		            			if(!Ext.isEmpty(comprador.paisNacimientoCompradorCodigo)){
 		            				slideDatos.getForm().findField('paisNacimientoCompradorCodigo').setValue(comprador.paisNacimientoCompradorCodigo);

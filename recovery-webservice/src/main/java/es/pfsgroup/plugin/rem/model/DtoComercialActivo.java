@@ -54,7 +54,6 @@ public class DtoComercialActivo extends DtoTabActivo{
     private Date fechaFinConcurrencia;    
     private String tipoTransmisionDescripcion;
     private String tipoTransmisionCodigo;
-
 	private String campanyaVenta;
 	private String campanyaAlquiler;
 
@@ -450,5 +449,6 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
 		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
-	}	
+	}
+	
 }

@@ -9428,7 +9428,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ " WHERE ACT.ACT_NUM_ACTIVO = :numActivo "
 					+ " AND ACT.BORRADO=0  AND BIE.BORRADO=0  AND BIE_LOC.BORRADO=0 AND ROWNUM = 1 ");
 	    	
-	    	if(Checks.esNulo(codigoProvincia)) {
+	    	if(!Checks.esNulo(codigoProvincia)) {
+	    		params = new HashMap<String, Object>();
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoProvincia", codigoProvincia);
 	    		rawDao.addParams(params);
@@ -9459,11 +9460,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    			"join dd_cra_cartera cra on cra.dd_Cra_id = act.dd_Cra_id and cra.borrado = 0\n" + 
 	    			"where act.act_num_activo = :numActivo ");
 	    	
-	    	if(Checks.esNulo(codigoCartera)) {
+	    	if(!Checks.esNulo(codigoCartera)) {
+	    		params = new HashMap<String, Object>();
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoCartera", codigoCartera);
 	    		rawDao.addParams(params);
-	    		
+	    	
 	    		resultado = rawDao.getExecuteSQL("SELECT count(*) FROM act_pve_proveedor pve\n" +
 	    				"join bap_bloqueo_apis bap on pve.pve_id = bap.pve_id and bap.borrado = 0\n" + 
 	    				"join bac_bloqueo_apis_cartera bac on bac.bap_id = bap.bap_id and bac.borrado = 0\n" + 
@@ -9489,7 +9491,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    			"join dd_tco_tipo_comercializacion tco on tco.dd_Tco_id = apu.dd_tco_id\n" + 
 	    			"where act.act_num_activo = :numActivo");
 	    	
-	    	if(Checks.esNulo(codigoComercializacion)) {
+	    	if(!Checks.esNulo(codigoComercializacion)) {
+	    		params = new HashMap<String, Object>();
 	    		params.put("codProveedor", codProveedor);
 	    		params.put("codigoComercializacion", codigoComercializacion);
 	    		rawDao.addParams(params);

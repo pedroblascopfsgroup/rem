@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20210713
+--## FECHA_CREACION=20220408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-14545
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -13,6 +13,8 @@
 --##        0.1 Versión inicial - [HREOS-14224] - Santi Monzó
 --##        0.2 Revisión - [HREOS-14344] - Alejandra García
 --##        0.3 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
+--##        0.4 Añadir campos VPO - HREOS-17611
+--##        0.5 Corrección campo IND_COMPRADOR_ACOGE_AYUDA, envían una X como Si - HREOS-17515
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -60,6 +62,13 @@ BEGIN
                WHEN aux.TANTEO_RETRACTO_TRANS IN (''S'',''1'') THEN 1
                WHEN aux.TANTEO_RETRACTO_TRANS IN (''N'',''0'') THEN 0
             END AS ADM_RENUNCIA_TANTEO_RETRAC,            
+            CASE
+               WHEN aux.IND_COMPRADOR_ACOGE_AYUDA IN (''S'',''1'',''X'') THEN 1
+               ELSE NULL
+            END AS COMPRADOR_ACOJE_AYUDA,
+            aux.IMP_AYUDA_FINANCIACION/100 as IMPORTE_AYUDA_FINANCIACION,
+            TO_DATE(aux.FEC_VENCIMIENTO_SEGURO,''yyyymmdd'') as FECHA_VENCIMIENTO_AVAL_SEGURO,
+            TO_DATE(aux.FEC_DEVOLUCION_AYUDA,''yyyymmdd'') as FECHA_DEVOLUCION_AYUDA,
             ADM.ADM_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK aux                             
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 ON act2.ACT_NUM_ACTIVO_CAIXA = aux.NUM_IDENTIFICATIVO AND act2.BORRADO=0
@@ -72,6 +81,10 @@ BEGIN
                             ,act1.ADM_MAX_PRECIO_MODULO_ALQUILER = us.ADM_MAX_PRECIO_MODULO_ALQUILER 
                             ,act1.ADM_OBLIG_AUT_ADM_VENTA = us.ADM_OBLIG_AUT_ADM_VENTA 
                             ,act1.ADM_RENUNCIA_TANTEO_RETRAC = us.ADM_RENUNCIA_TANTEO_RETRAC 
+                            ,act1.COMPRADOR_ACOJE_AYUDA = us.COMPRADOR_ACOJE_AYUDA
+                            ,act1.IMPORTE_AYUDA_FINANCIACION = us.IMPORTE_AYUDA_FINANCIACION
+                            ,act1.FECHA_VENCIMIENTO_AVAL_SEGURO = us.FECHA_VENCIMIENTO_AVAL_SEGURO
+                            ,act1.FECHA_DEVOLUCION_AYUDA = us.FECHA_DEVOLUCION_AYUDA
                             ,act1.USUARIOMODIFICAR = ''STOCK''
                             ,act1.FECHAMODIFICAR = sysdate
                             
@@ -82,6 +95,10 @@ BEGIN
                                         ADM_MAX_PRECIO_MODULO_ALQUILER,  
                                         ADM_OBLIG_AUT_ADM_VENTA,
                                         ADM_RENUNCIA_TANTEO_RETRAC,
+                                        COMPRADOR_ACOJE_AYUDA,
+                                        IMPORTE_AYUDA_FINANCIACION,
+                                        FECHA_VENCIMIENTO_AVAL_SEGURO,
+                                        FECHA_DEVOLUCION_AYUDA,
                                         USUARIOCREAR,
                                         FECHACREAR
                                         )
@@ -91,6 +108,10 @@ BEGIN
                                         us.ADM_MAX_PRECIO_MODULO_ALQUILER,   
                                         us.ADM_OBLIG_AUT_ADM_VENTA,   
                                         us.ADM_RENUNCIA_TANTEO_RETRAC,   
+                                        us.COMPRADOR_ACOJE_AYUDA,
+                                        us.IMPORTE_AYUDA_FINANCIACION,
+                                        us.FECHA_VENCIMIENTO_AVAL_SEGURO,
+                                        us.FECHA_DEVOLUCION_AYUDA,
                                         ''STOCK'',
                                         sysdate)';
 

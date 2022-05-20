@@ -78,7 +78,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		readOnly: '{esCarteraGaleonOZeus}'
 								            	},
 								            	listeners: {
-								            		select: 'onHaCambiadoSolicitaReserva'
+								            		change: 'onHaCambiadoSolicitaReserva'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo'

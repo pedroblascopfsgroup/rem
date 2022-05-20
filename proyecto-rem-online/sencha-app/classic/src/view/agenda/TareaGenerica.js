@@ -1679,6 +1679,7 @@
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        	me.ocultarCampo(me.down('[name=clonarYAnular]'));
         } else {
         	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
         	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
@@ -2983,6 +2984,7 @@
                 store.filter('visibleCaixa', true);
             });
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            me.ocultarCampo(me.down('[name=clonarYAnular]'));
         } else {
             storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
                 store.filter('visibleWeb', true);
@@ -3976,9 +3978,11 @@
 		var me = this;
 		var comboTipoOferta = me.down('[name=tipoOfertaAlquiler]');
 		var comboIsVulnerable = me.down('[name=isVulnerable]');
-		var textExpedienteAnterior = me.down('[name=expedienteAnterior]');
+		var numContratoAnterior = me.down('[name=numContratoAnterior]');
+		var fechaContratoAnt = me.down('[name=fechaContratoAnt]');
 		 
-		me.deshabilitarCampo(textExpedienteAnterior);
+		me.deshabilitarCampo(numContratoAnterior);
+		me.deshabilitarCampo(fechaContratoAnt);
 		
 		comboTipoOferta.addListener('change', function(combo) {
 			if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_ALQUILER_SOCIAL_DACION'] === comboTipoOferta.getValue()
@@ -3986,20 +3990,26 @@
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_OCUPA'] === comboTipoOferta.getValue()){
 
 				me.campoObligatorio(comboIsVulnerable);
-				textExpedienteAnterior.setValue('');
-				me.deshabilitarCampo(textExpedienteAnterior);
-				me.habilitarCampo(textExpedienteAnterior);
-				textExpedienteAnterior.allowBlank = true;	
+				numContratoAnterior.setValue('');
+				me.habilitarCampo(numContratoAnterior);
+				numContratoAnterior.allowBlank = true;
+				fechaContratoAnt.setValue('');
+				me.habilitarCampo(fechaContratoAnt);
+				fechaContratoAnt.allowBlank = true;	
 			}else if(CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_NOVACIONES'] === comboTipoOferta.getValue()
 					||CONST.SUBTIPO_OFERTA_ALQUILER_NO_COMERCIAL['CODIGO_RENOVACIONES'] === comboTipoOferta.getValue()){
-				me.habilitarCampo(textExpedienteAnterior);
-				textExpedienteAnterior.allowBlank = false;	
+				me.habilitarCampo(numContratoAnterior);
+				numContratoAnterior.allowBlank = false;
+				me.habilitarCampo(fechaContratoAnt);
+				fechaContratoAnt.allowBlank = false;		
 				me.campoNoObligatorio(comboIsVulnerable);
 			}else{
-				textExpedienteAnterior.setValue('');
+				numContratoAnterior.setValue('');
 				comboIsVulnerable.setValue('');
-				me.deshabilitarCampo(textExpedienteAnterior);
+				me.deshabilitarCampo(numContratoAnterior);
 				me.campoNoObligatorio(comboIsVulnerable);
+				fechaContratoAnt.setValue('');
+				me.deshabilitarCampo(fechaContratoAnt);
 			}
         });
 	},

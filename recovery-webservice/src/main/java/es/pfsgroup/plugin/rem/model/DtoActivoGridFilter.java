@@ -29,7 +29,7 @@ public class DtoActivoGridFilter extends WebDto {
 	private String codPromoPrinex;
 	private String numFinca;
 	private String refCatastral;
-	private String numAgrupacion;
+	private Long numAgrupacion;
 	private String numActivoSareb;
 	private String numActivoPrinex;
 	private String numActivoUvem;
@@ -63,8 +63,8 @@ public class DtoActivoGridFilter extends WebDto {
 	private Integer antiocupa;
 	private String tituloPosesorioCodigo;
 	private String tipoGestorCodigo;
-	private String usuarioGestor;
-	private String apiPrimarioId;
+	private Long usuarioGestor;
+	private Long apiPrimarioId;
 	private String situacionComercialCodigo;
 	private String tipoComercializacionCodigo;
 	private Integer conCargas;
@@ -221,10 +221,10 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setRefCatastral(String refCatastral) {
 		this.refCatastral = refCatastral;
 	}
-	public String getNumAgrupacion() {
+	public Long getNumAgrupacion() {
 		return numAgrupacion;
 	}
-	public void setNumAgrupacion(String numAgrupacion) {
+	public void setNumAgrupacion(Long numAgrupacion) {
 		this.numAgrupacion = numAgrupacion;
 	}
 	public String getNumActivoSareb() {
@@ -427,16 +427,16 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setTipoGestorCodigo(String tipoGestorCodigo) {
 		this.tipoGestorCodigo = tipoGestorCodigo;
 	}
-	public String getUsuarioGestor() {
+	public Long getUsuarioGestor() {
 		return usuarioGestor;
 	}
-	public void setUsuarioGestor(String usuarioGestor) {
+	public void setUsuarioGestor(Long usuarioGestor) {
 		this.usuarioGestor = usuarioGestor;
 	}
-	public String getApiPrimarioId() {
+	public Long getApiPrimarioId() {
 		return apiPrimarioId;
 	}
-	public void setApiPrimarioId(String apiPrimarioId) {
+	public void setApiPrimarioId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
 	}
 	public String getSituacionComercialCodigo() {

@@ -2080,10 +2080,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaAvanzadaCodigo() != null ?  dto.getProvinciaAvanzadaCodigo() : dto.getProvinciaCodigo());	
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numFinca", dto.getNumFincaAvanzada() != null ?  dto.getNumFincaAvanzada() : dto.getNumFinca());		
 	
-		if(dto.getNumAgrupacion() != null) 
-			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and vgrid.id = aga.activo.id) ");			
-		if(dto.getRefCatastral() != null) 
-			hb.appendWhere(" exists (select 1 from ActivoCatastro cat where upper(cat.catastro.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) ");
+		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = #PARAM# and vgrid.id = aga.activo.id) ", 
+				new String[] {"aga.agrupacion.numAgrupRem"},new Object[] {dto.getNumAgrupacion()},"#PARAM#", false);
+		
+		HQLBuilder.montaAppendWhere(hb," exists (select 1 from ActivoCatastro cat where upper(cat.catastro.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) or exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%'||#PARAM#||'%' and vgrid.id = cat.activo.id) ",
+					new String[] {"cat.catastro.refCatastral","cat.refCatastral"},
+					new Object[] {dto.getRefCatastral(),dto.getRefCatastral()},
+					"#PARAM#",true);			
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						
@@ -2135,12 +2138,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.antiocupa", dto.getAntiocupa());		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tituloPosesorioCodigo", dto.getTituloPosesorioCodigo());
 		
-		if(dto.getUsuarioGestor() !=null && dto.getTipoGestorCodigo() !=null) 
-			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and ga.usuario.id = " +   dto.getUsuarioGestor() + " and vgrid.id = ga.activo.id) ");		
-		if (dto.getGestoria() != null) 
-			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.id = bag.id) ");		
-		if(dto.getApiPrimarioId() !=null)
-			hb.appendWhere(" exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = " +  dto.getApiPrimarioId() + " and vgrid.id = aic.activo.id) ");
+		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = #PARAM# and ga.usuario.id = #PARAM# and vgrid.id = ga.activo.id) ",
+					new String[] {"ga.tipoGestor.codigo","ga.usuario.id"},
+					new Object[] {dto.getTipoGestorCodigo(),dto.getUsuarioGestor()}, "#PARAM#", false);
+		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = #PARAM# and vgrid.id = bag.id) ",
+					new String[] {"bag.gestoria"},
+					new Object[] {dto.getGestoria()}, "#PARAM#", false);
+		HQLBuilder.montaAppendWhere(hb, " exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = #PARAM# and vgrid.id = aic.activo.id) ",
+					new String[] {"aic.mediadorInforme.id"},
+					new Object[] {dto.getApiPrimarioId()}, "#PARAM#", false);
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.situacionComercialCodigo", dto.getSituacionComercialCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoComercializacionCodigo", dto.getTipoComercializacionCodigo());

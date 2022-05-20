@@ -4175,10 +4175,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onProveedoresListClick: function(gridView, record){
 		var me=this;
-		
-		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])){
-			return;
-		}
+
 		idProveedor= record.get('idFalso').id;
 		idActivo= record.get('idFalso').idActivo;
 		
@@ -4201,7 +4198,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if(idFalso != null){
 	    	idFalsoProv = record.get('idFalso').id;
 	    }
-	    
+	    if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+	        return;
+	    }
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	recordProveedor.set('id', idProveedor);
@@ -4223,6 +4222,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    
    	onClickAbrirGastoProveedor: function(grid, record){
 		var me = this;
+		if($AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+            return;
+        }
 		record.setId(record.data.idGasto);
 		
     	me.getView().fireEvent('abrirDetalleGasto', record);
@@ -8972,6 +8974,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(value.get('codigo') === 'false'){
 			textObservacionesLoc.setValue('');
     	}
+    },
+    
+    onChangeComboAnejoGaraje: function(combo){
+    	var me = this;
+		var identificadorPlazaParking = me.lookupReference('identificadorPlazaParkingRef');
+
+		if (combo.getValue() === '01') {
+			identificadorPlazaParking.setHidden(false);
+		} else {
+			identificadorPlazaParking.setHidden(true);
+		}
+    },
+    
+    onChangeComboAnejoTrastero: function(combo){
+    	var me = this;
+		var identificadorTrastero = me.lookupReference('identificadorTrasteroRef');
+
+		if (combo.getValue() === '01') {
+			identificadorTrastero.setHidden(false);
+		} else {
+			identificadorTrastero.setHidden(true);
+		}
     },
     
     onClickActualizarReferencia: function(btn) {

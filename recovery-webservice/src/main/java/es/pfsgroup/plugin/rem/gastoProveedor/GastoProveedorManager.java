@@ -966,7 +966,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoProveedor.setClaveFactura(dto.getClaveFactura());
 		}
 		
-		genericDao.update(GastoProveedor.class, gastoProveedor);
+		genericDao.save(GastoProveedor.class, gastoProveedor);
 		
 		if(actualizaSuplidos) {
 			Thread actualizaSuplidosAsync = new Thread(new ActualizaSuplidosAsync(gastoProveedor.getId(),
@@ -3123,6 +3123,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoGestion.getAuditoria().setFechaModificar(new Date());
+		gastoGestion.setFechaEnvioPropietario(null);
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		gasto.setProvision(null);

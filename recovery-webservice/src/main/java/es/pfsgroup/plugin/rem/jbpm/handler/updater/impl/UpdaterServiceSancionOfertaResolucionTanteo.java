@@ -170,8 +170,9 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							}
 							
 							expedienteComercialApi.calculoFormalizacionCajamar(ofertaAceptada);
-							
-							if(ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()) {
+
+							if((ofertaAceptada.getCheckForzadoCajamar() != null && ofertaAceptada.getCheckForzadoCajamar()
+									|| (ofertaAceptada.getCheckForzadoCajamar() == null && ofertaAceptada.getCheckFormCajamar() != null && ofertaAceptada.getCheckFormCajamar()))) {
 								GestorEntidadDto ge = new GestorEntidadDto();
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");

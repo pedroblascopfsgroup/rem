@@ -219,7 +219,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -227,7 +226,6 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -4434,6 +4432,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(cargaDto.getFechaPresentacionRpCarta())) {
 				cargaSeleccionada.setFechaPresentacionRpCarta(cargaDto.getFechaPresentacionRpCarta());
 			}
+			
+			if (!Checks.esNulo(cargaDto.getIndicadorPreferente())) {
+				cargaSeleccionada.setIndicadorPreferente(cargaDto.getIndicadorPreferente());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEjecutada())) {
+				cargaSeleccionada.setIdentificadorCargaEjecutada(cargaDto.getIdentificadorCargaEjecutada());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIgualdadRango())) {
+				cargaSeleccionada.setIgualdadRango(cargaDto.getIgualdadRango());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaIndefinida())) {
+				cargaSeleccionada.setIdentificadorCargaIndefinida(cargaDto.getIdentificadorCargaIndefinida());
+			}
+			
+			if (!Checks.esNulo(cargaDto.getIdentificadorCargaEconomica())) {
+				cargaSeleccionada.setIdentificadorCargaEconomica(cargaDto.getIdentificadorCargaEconomica());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -5914,6 +5932,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) {
 		Activo activo = this.get(id);
 		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+		ActivoCaixa activoCaixa = activo.getActivoCaixa();
 		Integer ocupado;
 		String conTitulo = "";
 		DDTipoTituloActivoTPA tituloActivoTPA = null;
@@ -5936,9 +5955,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(id)) {
 			if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					&& (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getSitaucionJuridica() != null 
-					&& activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() != null)
-					&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()))
+					&& (!Checks.esNulo(activoCaixa) && activoCaixa.getEstadoPosesorio() != null 
+					&& activoCaixa.getEstadoPosesorio().getIndicaPosesion() != null)
+					&& (1 == activoCaixa.getEstadoPosesorio().getIndicaPosesion()))
 					|| (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 							&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 									|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {

@@ -15432,6 +15432,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esTitulizada;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente) {
+		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByNumExpediente(numExpediente);
+		return eco != null && eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : null;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getEstadoExpedienteBcFromNumOferta(Long numOferta) {
+		if (numOferta == null)
+			return null;
+		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByNumOferta(numOferta);
+		return eco != null && eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : null;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public String getEstadoExpedienteBcFromIdTarea(Long idTarea) {
+		ExpedienteComercial eco = null;
+		TareaActivo tarea = tareaActivoApi.get(idTarea);
+		Long idTramite = tarea != null && tarea.getTramite() != null ? tarea.getTramite().getId() : null;
+		if(idTramite != null)
+			 eco = getExpedienteByIdTramite(idTramite);
+
+		return eco != null && eco.getEstadoBc()!= null ? eco.getEstadoBc().getCodigo() : null ;
+	}
+
+
+	public ExpedienteComercial getExpedienteComercyalByNumOferta(Long numOferta){
+		return expedienteComercialDao.getExpedienteComercialByNumOferta(numOferta);
+	}
+
+
 	private CompradorExpediente asignarFIORep(CompradorExpediente compradorExpediente){
 
 		DDInterlocutorOferta interlocutorRep = null;

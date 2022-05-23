@@ -101,7 +101,9 @@ public class AccionesCaixaController extends ParadiseJsonController {
             AccionesCaixaDispatcher dispatcher = new AccionesCaixaDispatcher(this);
             Boolean success = dispatcher.dispatchAccion(jsonDto, accionesCaixaDto.getIdAccion());
 
-            if (success) {
+            if(dataHolder.getPreviousStateExpedienteBcCod() == null){
+                dataHolder.setReplicateToBc(true);
+            } else if (success) {
                 dataHolder.setCurrentStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromNumOferta(dataHolder.getNumOferta()));
                 replicacionOfertasApi.callReplicateOferta(dataHolder, success);
             }

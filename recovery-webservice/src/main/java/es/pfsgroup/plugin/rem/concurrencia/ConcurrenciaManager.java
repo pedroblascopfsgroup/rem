@@ -51,9 +51,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
-
-	@Autowired
-	private OfertaApi ofertaApi;
 		
 	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
 		boolean bloquear = false;

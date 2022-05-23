@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;

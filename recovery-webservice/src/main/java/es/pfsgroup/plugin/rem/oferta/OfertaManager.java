@@ -1410,9 +1410,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
+			List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+			
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote() && !Checks.esNulo(agrup)
 					|| (agrup != null && ofertaDto.getEnConcurrencia())) {
-				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 			
 				listaActOfr = buildListaActivoOferta(null, agrup, oferta);			
 				oferta.setActivosOferta(listaActOfr);

@@ -491,9 +491,6 @@ public class Oferta implements Serializable, Auditable {
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
 
-    @Column(name = "OFR_CONCURRENCIA")
-	private Boolean concurrencia;
-
 	@Transient
 	private Boolean replicateBC;
 	

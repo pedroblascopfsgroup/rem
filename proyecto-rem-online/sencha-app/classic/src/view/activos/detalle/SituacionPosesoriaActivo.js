@@ -428,13 +428,23 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},
 				        {
 							xtype: 'textfieldbase',
-							reference: 'disponibilidadJuridicaRef',
-							fieldLabel: HreRem.i18n('fieldlabel.disponibilidad.juridica.bankia'),
+							reference: 'estadoPosesorioRef',
+							fieldLabel: HreRem.i18n('fieldlabel.estado.posesorio.caixabank'),
 							readOnly: true,
 				        	bind: {
 				        		hidden: '{!activo.isCarteraBankia}',				   
-			            		value: '{situacionPosesoria.situacionJuridica}'
+			            		value: '{situacionPosesoria.estadoPosesorio}'
 			            	}
+				        },
+				        { 
+							xtype:'datefieldbase', 
+							reference: 'fechaEstadoPosesorioRef',
+							fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.posesorio.caixabank'),
+	                		readOnly: true,
+		                	bind:{
+		                		hidden: '{!activo.isCarteraBankia}',
+		                		value: '{situacionPosesoria.fechaEstadoPosesorio}'
+		                	}
 				        },
 						{
 				        	xtype: 'comboboxfieldbase',

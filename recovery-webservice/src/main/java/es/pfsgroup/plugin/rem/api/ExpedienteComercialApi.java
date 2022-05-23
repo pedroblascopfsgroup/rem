@@ -1500,4 +1500,14 @@ public interface ExpedienteComercialApi {
 	boolean esTitulizada(TareaExterna tareaExterna);
 
 	void calculoFormalizacionCajamar(Oferta oferta);
+
+	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente);
+
+	public String getEstadoExpedienteBcFromNumOferta(Long numOferta);
+
+	public String getEstadoExpedienteBcFromIdTarea(Long idTarea);
+
+	public ExpedienteComercial getExpedienteComercyalByNumOferta(Long numOferta);
+
+
 }

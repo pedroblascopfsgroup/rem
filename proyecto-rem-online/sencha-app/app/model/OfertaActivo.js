@@ -100,6 +100,9 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
     	{
     		name: 'estadoDeposito'
+		},
+		{
+    		name: 'ordenGanador'
     	}
 
     ],

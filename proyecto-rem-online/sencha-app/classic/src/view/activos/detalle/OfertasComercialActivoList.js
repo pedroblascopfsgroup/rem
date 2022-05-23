@@ -27,6 +27,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
         var activo = me.lookupController().getViewModel().get('activo').getData();
         var isBk = activo.isCarteraBankia;
+		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
         
         me.columns= [
 		        {
@@ -98,7 +99,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1,                	
 			        decimalPrecision: 2,
 			        decimalSeparation: ',',
-			        thousandSeparation: '.'
+			        thousandSeparation: '.',
+			        hidden: enConcurrencia
 		        },
 		        {
 		        	xtype: 'numbercolumn',
@@ -252,9 +254,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         me.addListener ('beforeedit', function(editor, context) {
             var estado = context.record.get("codigoEstadoOferta");
             var numAgrupacion = context.record.get("numAgrupacionRem"); 
-            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '09' && Ext.isEmpty(numAgrupacion);
             
+            var allowEdit = estado != '01' && estado != '02' && estado != '05' && estado != '06' && estado != '08' && estado != '09' && Ext.isEmpty(numAgrupacion);
+            if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
+            	allowEdit = true;
+            }
+            
+			var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
+			if(bloqueoEditarOferta){
+				allowEdit = false;
+			}else{
+				allowEdit = true;
+			}
+			
             this.editOnSelect = allowEdit;
+            
             return allowEdit;
         }); 
       
@@ -356,13 +370,70 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
 	},
 	
+	decisionTramitarOferta: function(editor, context) {
+		var me = this;
+		var idActivo = me.lookupController().getViewModel().getData().activo.id;
+		var activo = me.lookupController().getViewModel().get('activo');
+		var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
+        var codigoTipoOferta = context.record.get('codigoTipoOferta');
+		var gencat = context.record.get('gencat');
+		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+		
+		var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo: idActivo},
+    		success: function(response, opts){
+    			var data = Ext.decode(response.responseText);
+    			if (me.ofertaActivoEpaAlquilado(activo) == 1){
+    				msg = HreRem.i18n('msg.activo.epa');
+    			} else if (me.ofertaActivoEpaAlquilado(activo)==2){
+    				msg = HreRem.i18n("msg.activo.alquilados");
+    			} else if (me.ofertaActivoEpaAlquilado(activo)==3){
+    				msg = HreRem.i18n("msg.activo.epa.alquilados");
+    			} else if (gencat === "true") {
+    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+    			} else if ((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
+    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+    			}
+    			
+    			if (msg == HreRem.i18n('msg.desea.aceptar.oferta') && enConcurrencia) {
+    				if (context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+						me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+					} else {
+						me.saveFn(editor, me, context);
+					}
+    			} else {
+    				Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: msg,
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
+								me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
+							} else if (buttonId == 'yes') {
+								me.saveFn(editor, me, context);
+							} else{
+								me.getStore().load(); 	
+							}
+						}
+					});	
+    			}
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+	},
+	
 	editFuncion: function(editor, context){
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
-		var gencat = context.record.get("gencat");
-		var idActivo = me.lookupController().getViewModel().getData().activo.id;
-		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
+        var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
 
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
@@ -426,51 +497,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					}
 				}
 			}
-			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
-				Ext.Ajax.request({
-		    		url: url,
-		    		params: {idActivo: idActivo},
-		    		success: function(response, opts){
-		    			var data = Ext.decode(response.responseText);
-		    			if(me.ofertaActivoEpaAlquilado(activo) == 1){
-		    				msg = HreRem.i18n('msg.activo.epa');
-		    			}else if(me.ofertaActivoEpaAlquilado(activo)==2){
-		    				msg = HreRem.i18n("msg.activo.alquilados");
-		    			}else if(me.ofertaActivoEpaAlquilado(activo)==3){
-		    				msg = HreRem.i18n("msg.activo.epa.alquilados");
-		    			}else if (gencat === "true") {
-		    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-		    			}else if((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
-		    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
-		    			}
-		    			
-		    			Ext.Msg.show({
-							   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-							   msg: msg,
-							   buttons: Ext.MessageBox.YESNO,
-							   fn: function(buttonId) {
-							        if (buttonId == 'yes' && context.record.get("descripcionTipoOferta") == CONST.TIPO_COMERCIALIZACION_ACTIVO['VENTA']) {
-										me.up('activosdetalle').lookupController().mostrarCrearOfertaTramitada(editor, me, context);
-										
-										// me.saveFn(editor, me, context);
-									} else if (buttonId == 'yes') {
-										me.saveFn(editor, me, context);
-									} else{
-										me.getStore().load(); 	
-									}
-								}
-							});		    			
-		    			
-		    		},
-				 	failure: function(record, operation) {
-				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-				    },
-				    callback: function(record, operation) {
-		    			me.getView().unmask();
-				    }
-		    	});
 			
-	
+			if(enConcurrencia && context.rowIdx != 0) {
+				Ext.Msg.show({
+				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+				   msg: HreRem.i18n('msg.desea.aceptar.oferta.concurrencia'),
+				   buttons: Ext.MessageBox.YESNO,
+				   fn: function(buttonId) {
+				        if (buttonId == 'yes') {
+				        	me.decisionTramitarOferta(editor, context);
+				        } else {
+							me.getStore().load(); 	
+						}
+					}
+				});	
+			} else {
+				me.decisionTramitarOferta(editor, context);
+			}
+			
 		} else {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el
 			// formulario de motivos de rechazo
@@ -729,6 +773,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.setTopBar(false);
 		} 
 		
+		if (activo.get('isConcurrencia') == true){
+			me.setTopBar(false);
+		}
+		
    },
 
 	onClickCloneExpedienteButton : function(btn) {
@@ -821,6 +869,5 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			return 0;
 		}
 	}
-
 
 });

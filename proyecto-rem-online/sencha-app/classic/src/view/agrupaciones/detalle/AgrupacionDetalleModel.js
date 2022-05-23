@@ -930,6 +930,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	   	     pageSize: $AC.getDefaultPageSize(),
 			 model: 'HreRem.model.OfertasAgrupacion',
 			 sorters: [
+				 		{
+				 			property: 'ordenGanador',
+			        		direction: 'ASC'
+				 		},
 			 			{
 			        		property: 'fechaCreacion',
 			        		direction: 'DESC'	

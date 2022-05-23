@@ -477,18 +477,22 @@ public class Oferta implements Serializable, Auditable {
     
     @Column(name = "OFR_CONCURRENCIA")
 	private Boolean concurrencia;
+	
     @Column(name = "CHECK_FORM_CAJAMAR")
     private Boolean checkFormCajamar;
-    
+
     @Column(name = "CHECK_FORZADO_CAJAMAR")
     private Boolean checkForzadoCajamar;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USUARIO_FORZADO_CAJAMAR")
     private Usuario usuarioForzadoCajamar;
-    
+
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
+
+    @Column(name = "OFR_CONCURRENCIA")
+	private Boolean concurrencia;
 
 	@Transient
 	private Boolean replicateBC;
@@ -1165,7 +1169,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaCreacionOpSf(Date fechaCreacionOpSf) {
 		this.fechaCreacionOpSf = fechaCreacionOpSf;
 	}
-		
+
 	public Date getFechaEntradaCRMSF() {
 		return fechaEntradaCRMSF;
 	}
@@ -1576,6 +1580,10 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setConcurrencia(Boolean concurrencia) {
 		this.concurrencia = concurrencia;
+	}
+
+	public boolean esOfertaAnulada(){
+		return DDEstadoOferta.isRechazada(this.estadoOferta);
 	}
 
 	public Boolean getCheckFormCajamar() {

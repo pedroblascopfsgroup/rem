@@ -1509,4 +1509,14 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeRecomendacionByCod(String recomendacion);
 
+	boolean isActivoEnConcurrencia(String numActivo);
+
+	boolean isActivoConOfertaEnConcurrencia(String numActivo);
+
+	boolean isAgrupacionEnConcurrencia(String agrupacion);
+
+	boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion);
+
+	String getCartera(String numActivo);
+
 }

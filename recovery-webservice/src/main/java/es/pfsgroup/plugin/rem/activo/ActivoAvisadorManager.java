@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	@Autowired 
     private ActivoApi activoApi;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 	
 
 	
@@ -83,6 +87,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean enPuja = false;
 		boolean conAlarma = false;
 		boolean conVigilancia = false;
+		boolean enConcurrencia = false;
+		boolean tieneOfertasConcurrencia = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -93,6 +99,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
 			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
 			enPuja = activoApi.isActivoEnPuja(activo);
+			enConcurrencia = concurrenciaApi.isActivoEnConcurrencia(activo);
+			tieneOfertasConcurrencia = concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -391,6 +400,20 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		if(activo.getDiscrepanciasLocalizacion() != null && activo.getDiscrepanciasLocalizacion()) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Discrepancias localización");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
+		if(enConcurrencia){
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo en concurrencia");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
+		if(tieneOfertasConcurrencia){
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo con ofertas de concurrencia");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

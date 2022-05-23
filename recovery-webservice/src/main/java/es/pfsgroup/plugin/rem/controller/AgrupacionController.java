@@ -14,9 +14,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,10 +38,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -54,13 +51,36 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdjuntosAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
 @Controller
@@ -108,6 +128,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private CaixaBcRestClient caixaBcRestClient;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Resource
 	private Properties appProperties;
@@ -363,12 +386,14 @@ public class AgrupacionController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
-
-		model.put("data", adapter.getListOfertasAgrupacion(id));
-
+		if(concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoAgrupacion(adapter.getAgrupacionObjectById(id))){
+			model.put("data", adapter.getListOfertasVivasConcurrenciaAgrupacion(id));
+		}else {
+			model.put("data", adapter.getListOfertasAgrupacion(id));
+		}
 		return createModelAndViewJson(model);
 	}
 

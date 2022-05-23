@@ -58,6 +58,10 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 	public static final class ACTIVOS_NO_MISMO_PROPIETARIO { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.propietario";};
 
 	public static final String ACTIVO_NO_MISMO_TIPO_COMERCIAL = "msg.error.masivo.agrupar.activos.asistida.activo.agrupacion.diferente.tipoComercial";
+	public static final String ACTIVO_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.concurrencia";
+	public static final String ACTIVO_OFERTA_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupar.activos.ofertas.concurrencia";
+	public static final String AGRUPACION_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupacion.concurrencia";
+	public static final String AGRUPACION_OFERTA_PERIODO_CONCURRENCIA = "msg.error.masivo.agrupacion.ofertas.concurrencia";
 
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -112,6 +116,10 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA), activosEnPeriodoDeConcurrencia(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTA_PERIODO_CONCURRENCIA), activosConOfertaEnPeriodoDeConcurrencia(exc));
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_PERIODO_CONCURRENCIA), agrupacionEnPeriodoDeConcurrencia(exc));
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_OFERTA_PERIODO_CONCURRENCIA), agrupacionConOfertaEnPeriodoDeConcurrencia(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS), activosConVentaOfertaRows(exc));
@@ -125,6 +133,10 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMO_PROPIETARIO.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMO_PROPIETARIO.codigoError));
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_PERIODO_CONCURRENCIA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTA_PERIODO_CONCURRENCIA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_PERIODO_CONCURRENCIA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_OFERTA_PERIODO_CONCURRENCIA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_ACEPTADAS)).isEmpty()
@@ -475,6 +487,78 @@ public class MSVAgrupacionAsistidaPDVExcelValidator extends MSVExcelValidatorAbs
 			e.printStackTrace();
 		}
 
+		return listaFilas;
+	}
+	
+	private List<Integer> activosEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosConOfertaEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isActivoConOfertaEnConcurrencia(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionEnConcurrencia(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> agrupacionConOfertaEnPeriodoDeConcurrencia(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.isAgrupacionConOfertaEnConcurrencia(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
 		return listaFilas;
 	}
 

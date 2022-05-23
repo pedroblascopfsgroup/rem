@@ -8985,7 +8985,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}else{
     		return true;
     	}
-    }
+    },
+	
+    onPujasListDobleClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex),
+    	activo = me.getViewModel().get('activo'),
+    	idOferta = null;
+    	
+    	if (!Ext.isEmpty(grid.selection)) {
+			idOferta = record.get("id");
+		}
+    	
+    	Ext.create('HreRem.view.activos.detalle.PujasComercialDetalle',{detallepuja: record, detallehistoricoconcurrencia: record}).show();
+    },
+    
+   	onClickBotonCerrarDetallePujas: function(btn) {
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	}
 
 });
 

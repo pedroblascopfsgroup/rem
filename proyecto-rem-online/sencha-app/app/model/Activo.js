@@ -1410,8 +1410,8 @@ Ext.define('HreRem.model.Activo', {
             {
             	name: 'numeroInmuebleAnterior'
             },
-       	 	{ 
-            	name: 'anejoGarajeCodigo' 
+       	 	{
+            	name: 'anejoGarajeCodigo'
             },
             {
             	name: 'anejoGarajeDescripcion'
@@ -1427,6 +1427,22 @@ Ext.define('HreRem.model.Activo', {
             },
             {
             	name: 'identificadorTrastero'
+            },
+            {
+				name: 'enConcurrencia',
+				type: 'boolean'
+			},
+			{
+				name: 'activoOfertasConcurrencia',
+				type: 'boolean'
+			},
+			{
+            	name:'isConcurrencia',
+            	type: 'boolean'
+            },
+            {
+            	name:'bloquearEdicionEstadoOfertas',
+            	type: 'boolean'
             }
     ],
     

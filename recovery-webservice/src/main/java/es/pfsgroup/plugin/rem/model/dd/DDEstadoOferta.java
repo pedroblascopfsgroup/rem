@@ -129,4 +129,51 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 		return is;
 	}
 
+	public static boolean isPendiente(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PENDIENTE.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isTramitada(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_ACEPTADA.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	public static boolean isPendienteConsentimiento(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_CONSENTIMIENTO.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPendienteDeposito(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_DEPOSITO.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPendienteDocumentacionTitularesAdicionales(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PENDIENTE_TITULARES.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isOfertaActiva(DDEstadoOferta dd) {
+		boolean is = false;
+		if(DDEstadoOferta.isPendiente(dd) || DDEstadoOferta.isTramitada(dd) || DDEstadoOferta.isPendienteConsentimiento(dd) || DDEstadoOferta.isPendienteDeposito(dd)
+		 || DDEstadoOferta.isPendienteDocumentacionTitularesAdicionales(dd)) {
+			is = true;
+		}
+		return is;
+	}
 }

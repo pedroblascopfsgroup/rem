@@ -171,18 +171,22 @@ public class ActivoCaixa implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ETP_ID")
     private DDEstadoPosesorio estadoPosesorio;
-	
+
 	@Column(name = "FEC_EST_POSESORIO_BC")
     private Date fechaEstadoPosesorio;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CBC_ID")
     private DDCarteraBc segmentacionCartera;
-	
+
     @Column(name = "CBX_NUMERO_INMUEBLE_ANTERIOR")
     private String numeroInmuebleAnterior;
-	
-	@Version   
+
+	@Column(name = "NUEVO_PRECIO_CONCURRENCIA")
+	private Boolean nuevoPrecioConcurrencia;
+
+
+	@Version
 	private Long version;
 	
 	@Embedded
@@ -501,6 +505,14 @@ public class ActivoCaixa implements Serializable, Auditable {
 		this.categoriaComercializacion = categoriaComercializacion;
 	}
 
+	public Boolean getNuevoPrecioConcurrencia() {
+		return nuevoPrecioConcurrencia;
+	}
+
+	public void setNuevoPrecioConcurrencia(Boolean nuevoPrecioConcurrencia) {
+		this.nuevoPrecioConcurrencia = nuevoPrecioConcurrencia;
+	}
+
 	public DDEstadoPosesorio getEstadoPosesorio() {
 		return estadoPosesorio;
 	}
@@ -516,7 +528,7 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setFechaEstadoPosesorio(Date fechaEstadoPosesorio) {
 		this.fechaEstadoPosesorio = fechaEstadoPosesorio;
 	}
-	
+
 	public DDCarteraBc getSegmentacionCartera() {
 		return segmentacionCartera;
 	}
@@ -532,5 +544,5 @@ public class ActivoCaixa implements Serializable, Auditable {
 	public void setNumeroInmuebleAnterior(String numeroInmuebleAnterior) {
 		this.numeroInmuebleAnterior = numeroInmuebleAnterior;
 	}
-	
+
 }

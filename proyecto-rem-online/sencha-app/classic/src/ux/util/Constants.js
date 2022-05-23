@@ -151,7 +151,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
 		PLUSVALIA:		'plusvaliaactivo',
-		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo'
+		PRECIOS_TASACION: 'preciosactivo.tasacionesactivo',
+		PUJAS:		'comercialactivo.pujascomercialactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 

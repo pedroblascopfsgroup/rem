@@ -24,6 +24,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -478,6 +480,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
@@ -11554,6 +11559,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
 							+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
 				}
+			}
+
+			if (concurrenciaApi.isOfertaEnConcurrencia(expediente.getOferta())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
+						+ "<div class='div-aviso red'> Oferta de concurrencia </div>");
 			}
 		}
 		return avisosFormateados;

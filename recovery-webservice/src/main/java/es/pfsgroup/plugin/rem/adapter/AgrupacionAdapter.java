@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -128,6 +129,7 @@ import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -257,7 +259,6 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
@@ -302,8 +303,13 @@ public class AgrupacionAdapter {
 	private DepositoApi depositoApi;
 
 	@Autowired
-	private TramitacionOfertasApi tramitacionOfertasApi;
+	private ConcurrenciaApi concurrenciaApi;
 
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -944,6 +950,7 @@ public class AgrupacionAdapter {
 				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 				dtoAgrupacion.setEsHayaHome(activoApi.esActivoHayaHome(null, agrupacion));
+				dtoAgrupacion.setEnConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion));
 			}
 			
 			
@@ -952,6 +959,10 @@ public class AgrupacionAdapter {
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
+			
+			dtoAgrupacion.setIsConcurrencia(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion) || concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion));
+			
+			dtoAgrupacion.setBloquearEdicionEstadoOfertas(concurrenciaApi.bloquearEditarOfertasPorConcurrenciaAgrupacion(agrupacion));
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en agrupacionAdapter", e);
@@ -1133,6 +1144,18 @@ public class AgrupacionAdapter {
 			}
 		}
 		
+		if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+		if(concurrenciaApi.isActivoEnConcurrencia(activo))
+			throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+		if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+		if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+			throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 		if (activo != null && activo.getNumActivo() != null) {
 			if (agrupacion != null && 
 					(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
@@ -1451,6 +1474,39 @@ public class AgrupacionAdapter {
 
 		try {
 			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+
+			Filter filterAga = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			List <ActivoAgrupacionActivo> activoAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filterAga);
+
+			if (activoAgrupacion != null) {
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activoAgrupacion) {
+					if (activoAgrupacionActivo != null) {
+						if (activoAgrupacionActivo.getActivo().getNumActivo().equals(activo.getNumActivo())) {
+							return;
+						}
+					}
+				}
+			}
+
+			if(concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar tiene ofertas en periodo de concurrencia");
+
+			if(concurrenciaApi.isActivoEnConcurrencia(activo))
+				throw new JsonViewerException("El activo que intenta insertar se encuetra en periodo de concurrencia");
+
+			if(concurrenciaApi.tieneAgrupacionOfertasDeConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación tiene ofertas en un periodo de concurrencia");
+
+			if(concurrenciaApi.isAgrupacionEnConcurrencia(agrupacion))
+				throw new JsonViewerException("La agrupación está en un periodo de concurrencia");
+
 			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
 
 			// Si es el primer activo, validamos si tenemos los datos necesarios
@@ -2912,7 +2968,7 @@ public class AgrupacionAdapter {
 				if (dto.getTelefono2Rte() != null) {
 					clienteComercial.setTelefonoRepresentante2(dto.getTelefono2Rte());
 				}
-				
+
 				if (dto.getProvinciaRteCodigo() != null && !dto.getProvinciaRteCodigo().trim().isEmpty())
 					clienteComercial.setProvinciaRepresentante(genericDao.get(
 							DDProvincia.class,genericDao.createFilter(
@@ -2933,9 +2989,9 @@ public class AgrupacionAdapter {
 											FilterType.EQUALS,"codigo",dto.getMunicipioRteCodigo())
 							)
 					);
-				
-				
-				
+
+
+
 				/*if (dto.getRepresentantePrp() != null) {
 					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
 				}
@@ -3196,7 +3252,7 @@ public class AgrupacionAdapter {
 					
 				ofertaApi.setEstadoOfertaBC(ofertaNueva, null);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
-				
+
 				if (dto.getCheckSubasta() != null){
 					ofrCaixa.setCheckSubasta(dto.getCheckSubasta());
 					genericDao.save(OfertaCaixa.class,ofrCaixa);
@@ -5577,6 +5633,16 @@ public class AgrupacionAdapter {
 	public DtoAgrupacionesCreateDelete createAgrupacionesGrid(DtoAgrupacionesCreateDelete dto) throws Exception {		
 		dto.setTipoAgrupacion(dto.getTipoAgrupacionDescripcion());
 		return this.createAgrupacion(dto);
+	}
+
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrenciaAgrupacion(Long idAgrupacion) {
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
+
+		List<VGridOfertasActivosAgrupacionConcurrencia> ofertasAgrupacion = genericDao.getList(VGridOfertasActivosAgrupacionConcurrencia.class, filtro);
+
+		return ofertasAgrupacion;
+
 	}
 
 

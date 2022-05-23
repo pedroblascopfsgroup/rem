@@ -571,4 +571,18 @@ public class AccionesCaixaController extends ParadiseJsonController {
 
         return createModelAndViewJson(model);
     }
+    
+    public ModelAndView accionIngresoDeposito(DtoAccionIngresoDeposito dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIngresoDeposito(dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
 }

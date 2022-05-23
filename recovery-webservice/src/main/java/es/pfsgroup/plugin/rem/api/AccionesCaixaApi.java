@@ -68,4 +68,6 @@ public interface AccionesCaixaApi {
 
     @Transactional
     boolean modificaEstadoDeposito(String codEstado, Long idOferta);
+
+	void accionIngresoDeposito(Long numOferta);
 }

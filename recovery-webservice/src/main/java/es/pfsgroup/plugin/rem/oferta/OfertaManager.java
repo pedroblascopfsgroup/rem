@@ -9320,5 +9320,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return DDEstadoOfertaBC.CODIGO_CANCELADA;
 		}
 	}
+	
+	@Override
+	@Transactional
+	public void actualizaEstadoOfertaRemAndBC(Oferta oferta) {
+		if (Checks.esNulo(oferta))
+			return;
+
+    	oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
+		genericDao.save(Oferta.class, oferta);
+		
+		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+	}
 }
 	

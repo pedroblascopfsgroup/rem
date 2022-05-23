@@ -52,4 +52,6 @@ public interface DepositoApi {
 
 	CuentasVirtuales vincularCuentaVirtual(String codigoSubTipoOferta);
 
+	void ingresarDeposito(Deposito deposito);
+
 }

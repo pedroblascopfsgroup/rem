@@ -772,6 +772,27 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
+        dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_INGRESAR_DEPOSITO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionIngresoDeposito>() {
+            @Override
+            public Class<DtoAccionIngresoDeposito> getArgumentType() {
+                return DtoAccionIngresoDeposito.class;
+            }
+
+            @Override
+            public Boolean execute(DtoAccionIngresoDeposito dto) {
+                if (dto != null) {
+                    ModelAndView model = this.controller.accionIngresoDeposito(dto);
+                    if ("false".equals(model.getModel().get("success").toString())
+                            && !Checks.esNulo(model.getModel().get("msgError"))) {
+                        throw new JsonViewerException(model.getModel().get("msgError").toString());
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private AccionesCaixaController controller;

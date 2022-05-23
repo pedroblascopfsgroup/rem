@@ -323,4 +323,15 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		return ibanCheck.isValid(iban);
 	}
 	
+	@Override
+	@Transactional
+	public void ingresarDeposito(Deposito deposito) {
+		if (Checks.esNulo(deposito))
+			return;
+
+		deposito.setFechaIngreso(new Date());
+		deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_INGRESADO)));
+			
+		genericDao.save(Deposito.class, deposito);
+	}
 }

@@ -855,4 +855,6 @@ public interface OfertaApi {
 
 	public OfertaCaixa setEstadoOfertaBC(Oferta oferta, OfertaCaixa ofertaCaixa);
 
+	void actualizaEstadoOfertaRemAndBC(Oferta oferta);
+
 }

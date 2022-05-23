@@ -794,5 +794,15 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
         Deposito dep = depositoApi.getDepositoByNumOferta(numOferta);
         return depositoApi.cambiaEstadoDeposito(dep, codEstado);
     }
+    
+    @Override
+    @Transactional
+    public void accionIngresoDeposito(Long numOferta){
+    	Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+		
+        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+        depositoApi.ingresarDeposito(deposito);
+    }
 
 }

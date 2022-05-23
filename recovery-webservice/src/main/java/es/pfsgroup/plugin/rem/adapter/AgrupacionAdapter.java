@@ -262,7 +262,6 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
@@ -307,11 +306,10 @@ public class AgrupacionAdapter {
 	private ConcurrenciaApi concurrenciaApi;
 
 	@Autowired
-	private ConcurrenciaApi concurrenciaApi;
-
-	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
-
+	
+	@Autowired
+	private ConcurrenciaDao concurrenciaDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 

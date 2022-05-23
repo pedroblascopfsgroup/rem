@@ -46,13 +46,23 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
 	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+
+	@Autowired
+	private OfertaApi ofertaApi;
+		
 	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
 		boolean bloquear = false;
 		if(activo != null) {
 			if(isActivoEnConcurrencia(activo)) {
 				return true;
 			}else {
-				bloquear = comprobarListaConcurrenciaActivo(activo.getId());
+				List<Oferta> listOfr = ofertaApi.getListaOfertasByActivo(activo);
+				bloquear = isOfertaEnPlazoDoc(bloquear, listOfr);
 			}	
 		}
 		
@@ -63,48 +73,30 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		boolean bloquear = false;
 		if(agr != null) {
 			if(isAgrupacionEnConcurrencia(agr)) {
-				return true;
+				bloquear = true;
 			}else {
-				bloquear = comprobarListaConcurrenciaAgrupacion(agr.getId());
+				List<Oferta> listOfertas = genericDao.getList(Oferta.class,
+						genericDao.createFilter(FilterType.EQUALS,"agrupacion.id",agr.getId())
+						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
+				bloquear = isOfertaEnPlazoDoc(bloquear, listOfertas);
 			}
 		}
 		return bloquear;
 	}
-	
-	private boolean comprobarListaConcurrenciaActivo(Long id) {
-		List<Concurrencia> concurrenciaList = new ArrayList<Concurrencia>(); 
-				
-		concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
-		
-		for (Concurrencia concurrencia : concurrenciaList) {
-			if(concurrencia.getImporteDeposito() == null) {
-				return true;
+
+	private boolean isOfertaEnPlazoDoc(boolean bloquear, List<Oferta> listOfertas) {
+		OfertaConcurrencia ofrConcurrencia = null;
+		if(listOfertas != null && !listOfertas.isEmpty()) {
+			for (Oferta oferta : listOfertas) {
+				ofrConcurrencia = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+				if(ofrConcurrencia != null && ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()) {
+					bloquear =  true;
+					break;
+				}
 			}
 		}
-		
-		return false;
+		return bloquear;
 	}
-	
-	private boolean comprobarListaConcurrenciaAgrupacion(Long id) {
-		List<Concurrencia> concurrenciaList = new ArrayList<Concurrencia>(); 
-				
-		concurrenciaList = genericDao.getList(Concurrencia.class, genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", id));
-		
-		for (Concurrencia concurrencia : concurrenciaList) {
-			if(concurrencia.getImporteDeposito() == null) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	
-	@Autowired
-	private OfertaApi ofertaApi;
-	
-	@Autowired
-	private ActivoAdapter activoAdapter;
 
 	@Override
 	public Concurrencia getUltimaConcurrenciaByActivo(Activo activo) {

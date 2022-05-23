@@ -208,10 +208,14 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 	
 	@Override
-	public List<DtoActivoProveedor> getProveedoresByNif(String nif) {	
-		
-		List<ActivoProveedor> lista = proveedoresDao.getProveedoresByNifList(nif);
-   		List<DtoActivoProveedor> listaProveedores = new ArrayList<DtoActivoProveedor>();
+	public List<DtoActivoProveedor> getProveedoresByNif(String nif) {
+
+		List<ActivoProveedor> lista = new ArrayList<ActivoProveedor>();
+
+		if (nif != null){
+			lista = proveedoresDao.getProveedoresByNifList(nif);
+		}
+		List<DtoActivoProveedor> listaProveedores = new ArrayList<DtoActivoProveedor>();
    		
 		for(ActivoProveedor proveedor: lista) {
 			listaProveedores.add(proveedorToDto(proveedor));			
@@ -606,11 +610,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				
 			}
-			if(!Checks.esNulo(dto.getCodProveedorUvem())) {
-				beanUtilNotNull.copyProperty(proveedor, "codProveedorUvem", dto.getCodProveedorUvem());
-			} else {
-				proveedor.setCodProveedorUvem(null);
-			}	
+			if(dto.getCodProveedorUvem() != null) {
+				if (dto.getCodProveedorUvem().trim().isEmpty()){
+					proveedor.setCodProveedorUvem(null);
+				}else {
+					beanUtilNotNull.copyProperty(proveedor, "codProveedorUvem", dto.getCodProveedorUvem());
+				}
+			}
 			
 			if(dto.getCodigoApiProveedor()!=null) {
 				beanUtilNotNull.copyProperty(proveedor, "codigoApiProveedor", dto.getCodigoApiProveedor());

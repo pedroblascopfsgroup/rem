@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -1381,6 +1382,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
 
 		Activo activo = activoApi.getByNumActivo(numActivo);
+		ActivoCaixa activoCaixa = activo.getActivoCaixa();
 		List<DDTipoTituloActivoTPA> combo = new ArrayList<DDTipoTituloActivoTPA>();
 		
 		DDTipoTituloActivoTPA tipoTituloSi = (DDTipoTituloActivoTPA) utilDiccionarioApi
@@ -1394,8 +1396,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if(!Checks.esNulo(activo.getCartera())) {
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-				if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
-					if (activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() == 1) {
+				if(!Checks.esNulo(activoCaixa) && !Checks.esNulo(activoCaixa.getEstadoPosesorio())) {
+					if (activoCaixa.getEstadoPosesorio().getIndicaPosesion() == 1) {
 						combo.add(tipoTituloNo);
 					} else {
 						combo.add(tipoTituloNoConIndicios);

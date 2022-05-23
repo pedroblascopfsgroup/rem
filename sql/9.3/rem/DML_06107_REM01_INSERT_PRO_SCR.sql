@@ -5,6 +5,7 @@
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-11736
+--## PRODUCTO=NO
 --##            
 --## INSTRUCCIONES:  Insertar nueva configuración de lógica aplica/no aplica
 --## VERSIONES:

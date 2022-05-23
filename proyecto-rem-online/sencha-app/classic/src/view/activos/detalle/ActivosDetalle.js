@@ -195,5 +195,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
         $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMINISTRACION');
         $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: true})}, 'EDITAR_TAB_ACTIVO_PLUSVALIA');
+        $AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
     }
 });

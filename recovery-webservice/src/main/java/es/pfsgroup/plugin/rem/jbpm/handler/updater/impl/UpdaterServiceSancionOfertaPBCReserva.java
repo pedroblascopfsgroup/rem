@@ -222,16 +222,13 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 						genericDao.save(CondicionanteExpediente.class, condicionanteExpediente);
 
 					}else if(anula && DDCartera.isCarteraBk(activoPrincipal.getCartera())) {
-						String estadoBcString = null;
+						String estadoBcString = expedienteComercialApi.devolverEstadoCancelacionBCEco(expediente.getOferta(),  expediente);
 						if(reservaApi.tieneReservaFirmada(expediente)) {
-							estadoBcString = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
 							if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
 					        	expediente.setFechaAnulacion(new Date());
 					        }
-						}else {
-							estadoBcString = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
 						}
-						
+							
 						Filter filtroEstadoBc = genericDao.createFilter(FilterType.EQUALS, "codigo", estadoBcString);
 						
 						expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, filtroEstadoBc));

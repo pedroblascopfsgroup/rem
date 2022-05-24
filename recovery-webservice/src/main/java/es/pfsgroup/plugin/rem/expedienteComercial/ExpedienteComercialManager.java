@@ -15518,4 +15518,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 
+	@Override
+	public String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco) {
+		String codigoEcoBc = null;
+		if(DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito())) {
+			codigoEcoBc =  DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DEPOSITO_BC;
+		} else if(funcionesTramitesApi.isTramiteAprobado(eco)){
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+		}else {
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+		}
+		
+		return codigoEcoBc;
+	}
 }

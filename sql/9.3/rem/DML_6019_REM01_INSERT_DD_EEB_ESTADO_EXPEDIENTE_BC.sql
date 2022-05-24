@@ -41,7 +41,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     			--  DD_EEB_CODIGO  	DD_EEB_DESCRIPCION  							DD_EEB_CODIGO_C4C
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-       T_TIPO_DATA('049', 			'Solicitar devolución de depósito a BC', 		'490')
+       T_TIPO_DATA('050', 			'Solicitar devolución de depósito a BC', 		'490')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

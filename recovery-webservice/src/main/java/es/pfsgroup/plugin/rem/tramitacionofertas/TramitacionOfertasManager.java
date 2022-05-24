@@ -288,6 +288,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expediente = doAceptaOferta(oferta, activo);
 			esAcepta = expediente != null;
 			oferta.setExpedienteComercial(expediente);
+			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
+				oferta.setReplicateBC(Boolean.TRUE);
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y

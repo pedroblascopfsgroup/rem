@@ -5769,7 +5769,12 @@ public class ActivoAdapter {
 				&& (!Checks.estaVacio(activo.getPropietariosActivo())
 						&& (Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
 								|| (!Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
-										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))) {
+										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))
+				&& !DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
+				&& !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+				&& !DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
+				&& !DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())
+				&& !DDSubcartera.CODIGO_CERB_INMOVILIARIO.equals(activo.getSubcartera().getCodigo())) {
 			return true;
 		}
 		return false;

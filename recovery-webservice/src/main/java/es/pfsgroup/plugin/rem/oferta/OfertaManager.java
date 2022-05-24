@@ -9313,9 +9313,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private String estadoOfertaByCondiciones(Oferta oferta) {
 		ExpedienteComercial expediente = oferta.getExpedienteComercial();
-		if(depositoApi.isDepositoIngresado(oferta.getDeposito()) 
-				|| (!Checks.esNulo(expediente) && DDEstadosReserva.tieneReservaFirmada(expediente.getReserva()))) {
+		if(!Checks.esNulo(expediente) && DDEstadosReserva.tieneReservaFirmada(expediente.getReserva())) {
 			return DDEstadoOfertaBC.CODIGO_SOLICITAR_DEVOLUCION_RESERVA_ARRAS;
+		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito())) {
+			return DDEstadoOfertaBC.CODIGO_DEVOLUCION_DEPOSITO;
 		} else {
 			return DDEstadoOfertaBC.CODIGO_CANCELADA;
 		}
@@ -9333,4 +9334,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
 	}
 }
+
 	

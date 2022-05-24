@@ -153,13 +153,14 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 							estadoBc = DDEstadoExpedienteBc.CODIGO_CONTRATO_FIRMADO;
 						}else {
 							estadoExp = DDEstadosExpedienteComercial.ANULADO;
+							estadoBc = expedienteComercialApi.devolverEstadoCancelacionBCEco(expediente.getOferta(),  expediente);
 							if(reservaApi.tieneReservaFirmada(expediente)) {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
 								if(Checks.isFechaNula(expediente.getFechaAnulacion())) {
 						        	expediente.setFechaAnulacion(new Date());
 						        }
-							}else {
-								estadoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+							}
+							
+							if(DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO.equals(estadoBc) || DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA.equals(estadoBc)) {
 								ofertaApi.finalizarOferta(ofertaAceptada);
 							}
 						}

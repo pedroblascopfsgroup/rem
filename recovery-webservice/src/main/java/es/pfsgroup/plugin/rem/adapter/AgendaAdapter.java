@@ -887,8 +887,8 @@ public class AgendaAdapter {
 						eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 						eco.setFechaAnulacion(new Date());
 						eco.setMotivoAnulacion(motivoRechazoAlquiler);
-						if (aprobadoComercial) 
-							estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO));
+						String codigoExpedienteBc = expedienteComercialApi.devolverEstadoCancelacionBCEco(eco.getOferta(), eco);
+						estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",codigoExpedienteBc));
 						eco.setEstadoBc(estadoExpedienteBc);
 						estadoOfertaBcMod = true;
 						if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {

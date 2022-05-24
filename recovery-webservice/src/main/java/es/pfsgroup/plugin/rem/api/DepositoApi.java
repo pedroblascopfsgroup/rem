@@ -1,13 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
-import es.pfsgroup.plugin.rem.model.Deposito;
-import es.pfsgroup.plugin.rem.model.DtoDeposito;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GeneraDepositoDto;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
+import es.pfsgroup.plugin.rem.model.*;
 
 public interface DepositoApi {
 	
@@ -54,4 +47,5 @@ public interface DepositoApi {
 
 	void ingresarDeposito(Deposito deposito);
 
+	boolean incautaODevuelveDeposito(Deposito dep, String codDeposito);
 }

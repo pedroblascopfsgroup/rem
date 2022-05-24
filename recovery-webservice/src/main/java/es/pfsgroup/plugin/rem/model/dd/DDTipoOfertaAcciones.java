@@ -1,22 +1,13 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.diccionarios.Dictionary;
+import javax.persistence.*;
 
 /**
  * Modelo que gestiona el diccionario de Tipos de acciones de una oferta.
@@ -59,6 +50,8 @@ public class DDTipoOfertaAcciones implements Auditable, Dictionary {
 	public static final String CODIGO_PENDIENTE_NEGOCIACION = "039";
 	public static final String CODIGO_PDTE_CL_ROD = "040";
 	public static final String CODIGO_RECHAZO_PBC = "041";
+	public static final String ACCION_DEVOLVER_RESERVA = "029";
+	public static final String ACCION_INCAUTAR_RESERVA = "030";
 	public static final String ACCION_RESERVA_CONTABILIZADA = "021";
 	public static final String ACCION_DEVOL_RESERVA_CONT = "033";
 	public static final String ACCION_INCAUTACION_RESERVA_CONT = "035";

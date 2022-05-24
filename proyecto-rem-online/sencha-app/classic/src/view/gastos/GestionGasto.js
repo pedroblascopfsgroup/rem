@@ -398,7 +398,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							grid.setHidden(false);
 							me.setHidden(false);
 							gestionMotivoRechazo.setHidden(true);
-							fechaGestorPropietario.colspan = 2;
+							fechaGestorPropietario.colspan = 4;
 						}												
 					}
 				},

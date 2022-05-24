@@ -269,7 +269,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 												formatter: 'date("d/m/Y")',
 												fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso'),
 												bind: {
-													value: '{detalleOfertaModel.dtoDeposito.fechaIngresoDeposito}'
+													value: '{detalleOfertaModel.dtoDeposito.fechaIngresoDepositoString}'
 												},
 							    				width: 410
 							    			},
@@ -288,7 +288,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 												reference: 'fechaDevolucionDeposito',
 												fieldLabel: HreRem.i18n('header.situacion.posesoria.llaves.fechaDevolucion'),
 												bind: {
-													value: '{detalleOfertaModel.dtoDeposito.fechaDevolucionDeposito}'
+													value: '{detalleOfertaModel.dtoDeposito.fechaDevolucionDepositoString}'
 												},
 							    				width: 410
 							    			},

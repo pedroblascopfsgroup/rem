@@ -9029,6 +9029,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private DtoDeposito depositoToDto(Deposito deposito) {
+		Date date = new Date();
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		
 		if(deposito == null) {
 			return null;
 		}
@@ -9037,11 +9040,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoDeposito.setEstadoCodigo(deposito.getEstadoDeposito().getCodigo());
 		dtoDeposito.setImporteDeposito(deposito.getImporte());
 		
+		
 		if(deposito.getFechaIngreso() != null) {
-			dtoDeposito.setFechaIngresoDeposito(deposito.getFechaIngreso());
+			date.setTime(deposito.getFechaIngreso().getTime());
+			dtoDeposito.setFechaIngresoDepositoString(formato.format(deposito.getFechaIngreso()));
 		}
 		if(deposito.getFechaDevolucion() != null) {
-			dtoDeposito.setFechaDevolucionDeposito(deposito.getFechaDevolucion());
+			date.setTime(deposito.getFechaDevolucion().getTime());
+			dtoDeposito.setFechaDevolucionDepositoString(formato.format(deposito.getFechaDevolucion()));
 		}
 		dtoDeposito.setIbanDevolucionDeposito(deposito.getIbanDevolucion());
 

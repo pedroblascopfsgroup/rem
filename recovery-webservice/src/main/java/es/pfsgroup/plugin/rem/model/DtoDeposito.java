@@ -17,6 +17,8 @@ public class DtoDeposito extends WebDto {
 	private Boolean ofertaConDeposito;
 	private Boolean usuCrearOfertaDepositoExterno;
 	
+	private String fechaIngresoDepositoString;
+	private String fechaDevolucionDepositoString;
 	
 	public Long getId() {
 		return id;
@@ -65,6 +67,18 @@ public class DtoDeposito extends WebDto {
 	}
 	public void setUsuCrearOfertaDepositoExterno(Boolean usuCrearOfertaDepositoExterno) {
 		this.usuCrearOfertaDepositoExterno = usuCrearOfertaDepositoExterno;
+	}
+	public String getFechaIngresoDepositoString() {
+		return fechaIngresoDepositoString;
+	}
+	public void setFechaIngresoDepositoString(String fechaIngresoDepositoString) {
+		this.fechaIngresoDepositoString = fechaIngresoDepositoString;
+	}
+	public String getFechaDevolucionDepositoString() {
+		return fechaDevolucionDepositoString;
+	}
+	public void setFechaDevolucionDepositoString(String fechaDevolucionDepositoString) {
+		this.fechaDevolucionDepositoString = fechaDevolucionDepositoString;
 	}
 	
 }

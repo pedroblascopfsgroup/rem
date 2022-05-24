@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220504
+--## AUTOR=Javier Esbri
+--## FECHA_CREACION=20220524
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17704
+--## INCIDENCIA_LINK=HREOS-17997
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INSERTAMOS SUBTIPO GASTO
@@ -19,6 +19,7 @@
 --##        0.6 Añadir nuevos subtipos: Comisión Alquiler Prorrata - [HREOS-17686] - Alejandra García
 --##        0.7 Añadir nuevos subtipos excel revisión - [HREOS-17704] - Alejandra García
 --##        0.8 Añadir nuevos subtipos después de la revisión del excel - [HREOS-17704] - Alejandra García
+--##        0.9 Añadir nuevos subtipos Alquiler PAO - [HREOS-17997] - Javier Esbri
 --#########################################
 --*/
 
@@ -152,7 +153,9 @@ DECLARE
       T_TIPO_DATA('313','Honorarios gestión activos prorrata 100%','12'),
       T_TIPO_DATA('314','Actuación post-venta','15'),
       T_TIPO_DATA('315','Tarifa plana Alquiler Prorrata 0%','13'),
-      T_TIPO_DATA('316','Tarifa plana Alquiler Prorrata 100%','13')
+      T_TIPO_DATA('316','Tarifa plana Alquiler Prorrata 100%','13'),
+      --Nuevos subtipos Alquiler PAO
+      T_TIPO_DATA('317','Alquiler PAO - 1ª Posesión','16')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

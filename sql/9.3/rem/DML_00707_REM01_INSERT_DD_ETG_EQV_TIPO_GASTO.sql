@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220520
+--## FECHA_CREACION=20220524
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17937
+--## INCIDENCIA_LINK=HREOS-17997
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -33,7 +33,8 @@
 --##        0.20 Añadir nuevas PEP, quitar algunas "--QUITAR************",  quitar columna 1º posesión y quitar algunas de IBI "QUITAR_IBI" después de la revisión del excel - [HREOS-17704] - Alejandra García
 --##        0.21 Quitar Alquiler PAO (XXXX-22-1-VIGILANCIA), quitar CBC a todos los del tipología comisión - [HREOS-17704] - Alejandra García
 --##        0.22 Añadir nuevas PEPs Certificado Deuda COmunidad con mismo PEP que Comunidad de propietario-Cuota ordinaria/extraordinaria(derrama) - [HREOS-17811] - Alejandra García
---##        0.22 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
+--##        0.23 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
+--##		0.24 Corrección Pep alquiler PAO y colocación puerta antiocupa - [HREOS-17997] - Javier Esbri
 --#########################################
 --*/
 
@@ -49,7 +50,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17937';
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17997';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -92,7 +93,7 @@ DECLARE
 		T_TABLA('211','XXXX-22-2-OTROS','22','00','45','09','38','01','','','null','','','','2022'),
 		T_TABLA('212','XXXX-22-2-A-OTROS','22','00','46','09','38','03','','','null','','','','2022'),
 		T_TABLA('213','XXXX-22-1-PUE','22','00','48','15','82','01','','','null','','','','2022'),
-		T_TABLA('397','XXXX-22-1-PUE','22','00','48','15','82','03','','','null','','','','2022'),
+		T_TABLA('397','XXXX-22-1-A_PUE','22','03','79','15','82','03','','','null','','','','2022'),
 		T_TABLA('214','XXXX-22-1-ALA','22','00','49','16','86','01','','','null','','','','2022'),
 		T_TABLA('398','XXXX-22-1-ALA','22','00','49','16','86','03','','','null','','','','2022'),
 		T_TABLA('215','XXXX-22-1-VIGILANCIA','22','00','50','16','85','','','','null','','','','2022'),
@@ -397,7 +398,7 @@ DECLARE
 		T_TABLA('1013','XXXX-22-3-A_T_J_OTRAS','22','03','95','02','16','03','','','null','','','','2022'),
 		T_TABLA('1014','OX-0015-22-3-ES_CAPA','22','02','76','11','95','01','','','null','','','','2022'),
 		T_TABLA('1015','XXXX-22-1-IAE_GEST','22','03','90','13','309','','','','null','','','','2022'),
-		T_TABLA('1016','XXXX-22-1-A_PUE','22','03','79','16','150','','','','null','','','','2022'),
+		T_TABLA('1016','XXXX-22-1-PUE','22','00','48','16','150','01','','','null','','','','2022'),
 		T_TABLA('1017','XXXX-22-1-A_ALA','22','03','80','16','86','03','','','null','','','','2022'),
 		T_TABLA('1018','XXXX-22-2-HGES0%','22','01','17','12','312','01','','','null','','','','2022'),
 		T_TABLA('1019','XXX-22-2-A_HGES0%','22','02','55','12','310','03','','','null','','','','2022'),
@@ -479,7 +480,12 @@ DECLARE
 		T_TABLA('1085','XXX-22-2-A_HGES100%','22','02','56','12','311','02','','','null','','','','2022'),
 		T_TABLA('1086','XXXX-22-3-A-I-CRT V','22','02','33','14','62','02','','','null','','','','2022'),
 		T_TABLA('1087','XXXX-22-3-A-I-CRT V','22','02','33','14','58','02','','','null','','','','2022'),
-		T_TABLA('1088','XXXX-22-2-A-COM','22','00','3','05','93','02','','','null','','','','2022')
+		T_TABLA('1088','XXXX-22-2-A-COM','22','00','3','05','93','02','','','null','','','','2022'),
+
+		--Corrección Pep alquiler PAO y colocación puerta antiocupa
+		T_TABLA('1089','XXXX-22-1-A_PUE','22','03','79','16','150','03','','','null','','','','2022'),
+		T_TABLA('1090','XXXX-22-3-I-PUE','22','02','26','16','317','01','','','null','','','','2022'),
+		T_TABLA('1091','XXXX-22-3-A-I-PUE','22','02','28','16','317','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

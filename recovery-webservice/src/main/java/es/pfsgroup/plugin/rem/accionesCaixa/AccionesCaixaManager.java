@@ -100,28 +100,31 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public boolean accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
-        ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
-        DDTipoOferta tipoOferta = ofr.getTipoOferta();
-        if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
-        	
-			TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
-			String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
-			dto.setEstadoBc(calcularEstadoBcRechazo(codigoTarea));
-			dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
-			
-			eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
-			eco.setFechaAnulacion(new Date());
+        if(dto.getIdExpediente() != null){
+            ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+            DDTipoOferta tipoOferta = ofr.getTipoOferta();
+            if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
 
-            genericDao.save(ExpedienteComercial.class, eco);
-			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
-			return true;
-        }else {
-            eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
-            genericDao.save(ExpedienteComercial.class, eco);
+                TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+                String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
+                dto.setEstadoBc(calcularEstadoBcRechazo(codigoTarea));
+                dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
 
-            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
-            return false;
-       }
+                eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
+                eco.setFechaAnulacion(new Date());
+
+                genericDao.save(ExpedienteComercial.class, eco);
+                adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
+                return true;
+            }else {
+                eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
+                genericDao.save(ExpedienteComercial.class, eco);
+
+                agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override

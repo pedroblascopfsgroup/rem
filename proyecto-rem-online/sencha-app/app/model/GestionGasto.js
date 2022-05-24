@@ -189,9 +189,12 @@ Ext.define('HreRem.model.GestionGasto', {
    			name: 'fechaEnvioInformativa',
    			type:'date',
     		dateFormat: 'c'
-   		}
+   		},
+		{
+			name: 'motivoRechazoHayaExtendido'
+		}
     ],
-    
+  
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'gestiongasto.json',

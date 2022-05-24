@@ -32,6 +32,7 @@ public class DtoGestionGasto extends WebDto {
 	private Date fechaAutorizacionHaya;
 	private String gestorAutorizacionHaya;
 	private String comboMotivoRechazoHaya;
+	private String motivoRechazoHayaExtendido;
 	private String comboEstadoAutorizacionPropietario;
 	private Date fechaAutorizacionPropietario;
 	private String gestorAutorizacionPropietario;
@@ -223,6 +224,12 @@ public class DtoGestionGasto extends WebDto {
 	}
 	public void setFechaEnvioInformativa(Date fechaEnvioInformativa) {
 		this.fechaEnvioInformativa = fechaEnvioInformativa;
+	}
+	public String getMotivoRechazoHayaExtendido() {
+		return motivoRechazoHayaExtendido;
+	}
+	public void setMotivoRechazoHayaExtendido(String motivoRechazoHayaExtendido) {
+		this.motivoRechazoHayaExtendido = motivoRechazoHayaExtendido;
 	}
 	
 }

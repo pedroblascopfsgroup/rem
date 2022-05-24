@@ -226,6 +226,17 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			{   
 				xtype:'fieldsettable',
 				title: HreRem.i18n('title.gasto.gestion.gestion'),
+			    layout: {
+			        type: 'table',
+			        // The total column count must be specified here
+			        columns: 4,
+			        tdAttrs: {width: '26%'},
+			        tableAttrs: {
+			            style: {
+			                width: '100%'
+							}
+			        }
+				},
 //				bind:{
 //					disabled: '{!esGastoAnulado}'
 //				},
@@ -237,7 +248,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							bind: {
 								value: '{gestion.fechaYGestorAltaRem}'
 							},
-							colspan: 3
+							colspan: 4
 						},
 			            { 
 							xtype: 'comboboxfieldbase',
@@ -263,7 +274,25 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 								store: '{comboMotivoRechazoHaya}',
 								value: '{gestion.comboMotivoRechazoHaya}'
 							}
+															
+						},
+						{ 
+							xtype: 'displayfieldbase',
+							readOnly: true,
+							bind: {
+								hidden: '{gestion.motivoRechazoHayaExtendido}'
+							}
 								
+						},
+						{ 
+							xtype: 'displayfieldbase',
+							readOnly: true,
+							reference: 'motivoRechazoDetalle',
+							fieldLabel:  HreRem.i18n('fieldlabel.gasto.motivo.otros'),
+							bind: {
+								value: '{gestion.motivoRechazoHayaExtendido}',
+								hidden: '{!gestion.motivoRechazoHayaExtendido}'
+							}
 						},
 						
 						////////////////////////
@@ -292,7 +321,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 							bind:		{
 								value: '{gestion.motivoRechazoAutorizacionPropietario}'/*,
 								readOnly: '{esGastoAnulado}'*/
-							}
+							},
+							colspan: 4
 							
 						},
 						
@@ -317,7 +347,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 								store: '{comboMotivoAnulado}',
 								value: '{gestion.comboMotivoAnulado}',
 								readOnly: '{esGastoAnulado}'
-							}
+							},
+							colspan: 4
 						},
 						///////////////////////////////
 						
@@ -356,7 +387,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						var grid = me.items.items[0];
 						var fechaGestorPropietario = me.up().items.items[2].child("[reference='fechaGestorPropietario']");
 						var gestionMotivoRechazo = me.up().items.items[2].child("[reference='gestionMotivoRechazoPropietario']");
-						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;
+						var cartera = me.up().lookupController().getViewModel().getData().gasto.getData().cartera;						
 						
 						if (cartera != CONST.CARTERA['BANKIA']) {
 							me.setHidden(true);
@@ -429,8 +460,8 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			}
     	];
     
-	    me.addPlugin({ptype: 'lazyitems', items: items });
-	    
+		me.addPlugin({ptype: 'lazyitems', items: items });
+		
 	    me.callParent(); 
     },
     

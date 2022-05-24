@@ -772,7 +772,7 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(DDTipoOfertaAcciones.CODIGO_INGRESAR_DEPOSITO, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionIngresoDeposito>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_RESERVA_CONTABILIZADA, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionIngresoDeposito>() {
             @Override
             public Class<DtoAccionIngresoDeposito> getArgumentType() {
                 return DtoAccionIngresoDeposito.class;

@@ -227,7 +227,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		return new DtoSaveAndReplicateResult(){{
 			setSuccess(true);
-			setReplicateToBc(true);
+			setReplicateToBc(oferta.getReplicateBC());
 			setNumOferta(oferta.getNumOferta());
 		}};
 	}

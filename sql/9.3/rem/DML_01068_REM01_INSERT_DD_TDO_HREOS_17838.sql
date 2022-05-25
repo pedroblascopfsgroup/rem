@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220511
+--## FECHA_CREACION=20220519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17848
@@ -37,19 +37,19 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- MATRICULA  			      PERFIL              
-        T_TIPO_DATA('0865', 'DNI'),          
-        T_TIPO_DATA('0866', 'NIE'),
-        T_TIPO_DATA('0867', 'Tarjeta de residente'),
-        T_TIPO_DATA('0868', 'Pasaporte'),
-        T_TIPO_DATA('0869', 'DNI país extranjero'),
-        T_TIPO_DATA('0870', 'TJ identifiación diplomática'),
-        T_TIPO_DATA('0871', 'Menor'),
-        T_TIPO_DATA('0872', 'Otros persona física'),
-        T_TIPO_DATA('0873', 'Otros persona jurídica'),
-        T_TIPO_DATA('0874', 'Ident Banco de España'),
-        T_TIPO_DATA('0875', 'NIE'),
-        T_TIPO_DATA('0876', 'NIF país origen'),
-        T_TIPO_DATA('0877', 'Otro')
+        T_TIPO_DATA('0865', 'DNI', 'OP-12-DOCI-01'),
+        T_TIPO_DATA('0866', 'NIE', null),
+        T_TIPO_DATA('0867', 'Tarjeta de residente', null),
+        T_TIPO_DATA('0868', 'Pasaporte', 'OP-12-DOCI-05'),
+        T_TIPO_DATA('0869', 'DNI país extranjero', null),
+        T_TIPO_DATA('0870', 'TJ identifiación diplomática', null),
+        T_TIPO_DATA('0871', 'Menor', null),
+        T_TIPO_DATA('0872', 'Otros persona física', null),
+        T_TIPO_DATA('0873', 'Otros persona jurídica', null),
+        T_TIPO_DATA('0874', 'Ident Banco de España', null),
+        T_TIPO_DATA('0875', 'NIE', 'OP-12-DOCI-06'),
+        T_TIPO_DATA('0876', 'NIF país origen', null),
+        T_TIPO_DATA('0877', 'Otro', 'OP-12-DOCI-02')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -75,17 +75,18 @@ BEGIN
 	      IF V_NUM_TABLAS > 0 THEN				
 	      
 	        DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' Insertado ANTERIORMENTE');
-	      */  
+	      */
 	      --Si no existe, lo insertamos   
 	      --ELSE
 			 DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO');
-		   	 V_MSQL := '  INSERT INTO  '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD (DD_TDO_ID, DD_TED_ID, DD_TDO_CODIGO, DD_TDO_DESCRIPCION, DD_TDO_DESCRIPCION_LARGA, USUARIOCREAR, FECHACREAR, BORRADO)
+		   	 V_MSQL := '  INSERT INTO  '||V_ESQUEMA||'.DD_TDO_TIPO_DOC_ENTIDAD (DD_TDO_ID, DD_TED_ID, DD_TDO_CODIGO, DD_TDO_DESCRIPCION, DD_TDO_DESCRIPCION_LARGA,
+		   	                USUARIOCREAR, FECHACREAR, BORRADO, DD_TDO_MATRICULA)
 		                    SELECT '||V_ESQUEMA||'.S_DD_TDO_TIPO_DOC_ENTIDAD.NEXTVAL,
 		                     (select dd_Ted_id from '||V_ESQUEMA||'.DD_TED_TIP_ENTIDAD_DOC where dd_ted_codigo = '''||V_TIPOENTIDAD||'''),
 							'''||TRIM(V_TMP_TIPO_DATA(1))||''',
 							 '''||TRIM(V_TMP_TIPO_DATA(2))||''', 
 							 '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-		            		 ''HREOS-17848'', SYSDATE, 0
+		            		 ''HREOS-17848'', SYSDATE, 0, '''||TRIM(V_TMP_TIPO_DATA(3))||'''
 		                    FROM DUAL';
 		                    
 		      DBMS_OUTPUT.PUT_LINE(V_MSQL);

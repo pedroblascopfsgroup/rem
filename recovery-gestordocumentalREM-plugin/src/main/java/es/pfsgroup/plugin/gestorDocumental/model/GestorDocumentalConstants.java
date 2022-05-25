@@ -30,6 +30,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_PROMOCIONES = "09";
 	public static final String CODIGO_CLASE_PROYECTO = "09";
 	public static final String CODIGO_CLASE_AGRUPACIONES = "08";
+	public static final String CODIGO_CLASE_OP = "12";
 	public static final String CODIGO_CLASE_ACTUACION_TECNICA = "13";
 	public static final String CODIGO_CLASE_TRABAJO = "13";
 

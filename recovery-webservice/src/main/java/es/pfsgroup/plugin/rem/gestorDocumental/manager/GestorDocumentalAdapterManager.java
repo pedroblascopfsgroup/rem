@@ -1,27 +1,5 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
-import es.pfsgroup.plugin.rem.model.dd.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -34,23 +12,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DtoMetadatosEspecificos;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.*;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.*;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.DDTdnTipoDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
@@ -61,45 +24,34 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosE
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.constants.FuncionesConstants;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
-import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProyecto;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoTributos;
-import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
-import es.pfsgroup.plugin.rem.model.AdjuntoGastoAsociado;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
-import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
-import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
-import es.pfsgroup.plugin.rem.model.TipoDocumentoSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.perfilAdministracion.dao.PerfilAdministracionDao;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -151,6 +103,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 	@Autowired
 	private PerfilAdministracionDao perfilAdministracionDao;
+
+	@Autowired
+	private FuncionesApi funcionesApi;
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
     
@@ -675,7 +630,76 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		return list;
 	}
-	
+
+	@Override
+	public List<DtoAdjunto> getAdjuntosExpedienteComercialMultiTipo(ExpedienteComercial expedienteComercial) throws GestorDocumentalException, UnsupportedEncodingException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+
+		String codigoEstado = null;
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())){
+			if(DDTipoOferta.isTipoVenta(expedienteComercial.getOferta().getTipoOferta())){
+				codigoEstado = "06";
+			} else {
+				codigoEstado = "08";
+			}
+		}
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		List<DocumentosExpedienteDto> listaDto = new ArrayList<DocumentosExpedienteDto>();
+		DocumentosExpedienteDto dto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		dto.setCabecera(cabecera);
+		listaDto.add(dto);
+		DocumentosExpedienteDto dtoPersona = generaDtoConWhitelistByUsuarioAndFuncion(userLogin, FuncionesConstants.FUN_VER_DOCUMENTOS_IDENTIDAD, recoveryToGestorDocAssembler);
+		dtoPersona.setCabecera(recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_JUNTA,
+				GestorDocumentalConstants.CODIGO_CLASE_OP));
+		listaDto.add(dtoPersona);
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpedienteMultiTipo(listaDto);
+
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
+			launchNewTasker(caru);
+		}*/
+
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
+					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc != null) {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+		}
+
+		return list;
+	}
+
+	private DocumentosExpedienteDto generaDtoConWhitelistByUsuarioAndFuncion(Usuario user, String funcion, RecoveryToGestorDocAssembler recoveryToGestorDocAssembler) {
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(user.getUsername());
+		String whitelist = null;
+		if(user != null && funcion != null && funcionesApi.elUsuarioTieneFuncion(funcion, user)){
+			List<WhiteListMatriculas> listaMatriculas = genericDao.getList(WhiteListMatriculas.class,
+					genericDao.createFilter(FilterType.EQUALS, "funcion.descripcion", funcion));
+			if(listaMatriculas != null){
+				for(WhiteListMatriculas wm: listaMatriculas){
+					String matricula = wm.getTipoDocumentoEntidad() != null ? wm.getTipoDocumentoEntidad().getMatricula() : null;
+					if(whitelist == null && matricula != null){
+						whitelist = matricula;
+					}else if (matricula != null){
+						whitelist = whitelist + "," + matricula;
+					}
+				}
+			}
+		}
+		if(whitelist == null || whitelist.isEmpty()){
+			whitelist = "whitelist";
+		}
+		docExpDto.setWhitelistmatriculas(whitelist);
+		return docExpDto;
+	}
+
 	@Override
 	public Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);

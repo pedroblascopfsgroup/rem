@@ -1,24 +1,17 @@
 package es.pfsgroup.plugin.gestorDocumental.api;
 
-import java.io.IOException;
-
 import es.capgemini.devon.exception.UserException;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DescargaDocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.ModificarMetadatosDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.*;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDocumental;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public interface GestorDocumentalApi {
 	
@@ -32,6 +25,8 @@ public interface GestorDocumentalApi {
 	 * @throws GestorDocumentalException 
 	 */
 	RespuestaDocumentosExpedientes documentosExpediente(CabeceraPeticionRestClientDto cabecera, DocumentosExpedienteDto docExpDto) throws GestorDocumentalException;
+
+	RespuestaDocumentosExpedientes documentosExpedienteMultiTipo(List<DocumentosExpedienteDto> docExpDto) throws GestorDocumentalException, UnsupportedEncodingException;
 
 	/**
 	 * Permite crear un documento en el gestor documental con el cuadro de clasificación de Haya

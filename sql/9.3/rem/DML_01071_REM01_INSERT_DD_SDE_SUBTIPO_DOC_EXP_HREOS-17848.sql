@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220511
+--## FECHA_CREACION=20220520
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17848
@@ -34,19 +34,19 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('92', 'DNI','10'),          
-        T_TIPO_DATA('93', 'NIE','10'),
-        T_TIPO_DATA('94', 'Tarjeta de residente','10'),
-        T_TIPO_DATA('95', 'Pasaporte','10'),
-        T_TIPO_DATA('96', 'DNI país extranjero','10'),
-        T_TIPO_DATA('97', 'TJ identifiación diplomática','10'),
-        T_TIPO_DATA('98', 'Menor','10'),
-        T_TIPO_DATA('99', 'Otros persona física','10'),
-        T_TIPO_DATA('100', 'Otros persona jurídica','10'),
-        T_TIPO_DATA('101', 'Ident Banco de España','10'),
-        T_TIPO_DATA('102', 'NIF','10'),
-        T_TIPO_DATA('103', 'NIF PAIS ORIGEN','10'),
-        T_TIPO_DATA('104', 'Otro','10')
+        T_TIPO_DATA('92', 'DNI','10', 'OP-12-DOCI-01'),
+        T_TIPO_DATA('93', 'NIE','10', 'OP-12-DOCI-06'),
+        T_TIPO_DATA('94', 'Tarjeta de residente','10', null),
+        T_TIPO_DATA('95', 'Pasaporte','10', 'OP-12-DOCI-05'),
+        T_TIPO_DATA('96', 'DNI país extranjero','10', null),
+        T_TIPO_DATA('97', 'TJ identifiación diplomática','10', null),
+        T_TIPO_DATA('98', 'Menor','10', null),
+        T_TIPO_DATA('99', 'Otros persona física','10', null),
+        T_TIPO_DATA('100', 'Otros persona jurídica','10', null),
+        T_TIPO_DATA('101', 'Ident Banco de España','10', null),
+        T_TIPO_DATA('102', 'NIF','10', null),
+        T_TIPO_DATA('103', 'NIF PAIS ORIGEN','10', null),
+        T_TIPO_DATA('104', 'Otro','10', 'OP-12-DOCI-02')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -80,13 +80,14 @@ BEGIN
 						,DD_'||V_TEXT_CHARS||'_CODIGO
 						, DD_'||V_TEXT_CHARS||'_DESCRIPCION
 						, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA
-						, USUARIOCREAR, FECHACREAR,BORRADO) 
+						, USUARIOCREAR, FECHACREAR, BORRADO
+						, DD_'||V_TEXT_CHARS||'_MATRICULA_GD)
                       SELECT '|| V_ID || '
 						, (SELECT DD_TDE_ID FROM '||V_ESQUEMA||'.DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')
                       	, '''||V_TMP_TIPO_DATA(1)||'''
 						,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
 						,'''||TRIM(V_TMP_TIPO_DATA(2))||'''
-						, ''HREOS-17848'',SYSDATE,0 FROM DUAL';
+						, ''HREOS-17848'',SYSDATE,0, '''||TRIM(V_TMP_TIPO_DATA(4))||''' FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 

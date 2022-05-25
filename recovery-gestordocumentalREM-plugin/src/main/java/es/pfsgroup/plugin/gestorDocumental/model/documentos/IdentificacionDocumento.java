@@ -230,4 +230,20 @@ public class IdentificacionDocumento {
 	public String getMatriculaCompleta() {
 		return tipoExpediente +"-"+ serieDocumental +"-"+ tdn1 +"-"+ tdn2;
 	}
+
+	public String getClase_expediente() {
+		return claseExpediente;
+	}
+
+	public void setClase_expediente(String clase_expediente) {
+		this.claseExpediente = clase_expediente;
+	}
+
+	public String getTipo_expediente() {
+		return tipoExpediente;
+	}
+
+	public void setTipo_expediente(String tipo_expediente) {
+		this.tipoExpediente = tipo_expediente;
+	}
 }

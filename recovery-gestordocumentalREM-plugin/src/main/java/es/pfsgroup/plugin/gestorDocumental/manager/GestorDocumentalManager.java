@@ -1,13 +1,19 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.*;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
+import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDocumental;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
@@ -21,29 +27,10 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.devon.files.FileItem;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
-import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DescargaDocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.ModificarMetadatosDto;
-import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
-import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
-import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDocumental;
-import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
-import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
-import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
-import net.sf.json.JSONObject;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class GestorDocumentalManager implements GestorDocumentalApi {
@@ -80,6 +67,12 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	public static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
 	private static final Map<String, String> contents;
 	private static final String ENTIDAD_ACTIVO = "activo";
+	private static final String EXPEDIENTES = "expedientes=";
+	private static final String TIPO = "tipo";
+	private static final String CLASE = "clase";
+	private static final String ACTIVOS = "tipo";
+	private static final String MATRICULAS = "matriculas";
+	private static final String BLACKLISTMATRICULAS = "blacklistmatriculas";
 	
 	static {
 		contents = new HashMap<String, String>();
@@ -158,6 +151,58 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		sb.append("&").append(BLACK_LIST_MATRICULAS_PATH).append(docExpDto.getBlacklistmatriculas());
 		sb.append("&").append(METADATA_TDN_1_PATH).append(true);
+		return sb.toString();
+	}
+
+	@Override
+	public RespuestaDocumentosExpedientes documentosExpedienteMultiTipo(List<DocumentosExpedienteDto> docExpDto) throws GestorDocumentalException, UnsupportedEncodingException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_GET);
+		serverRequest.setPath(getPathDocExpMultiTipo(docExpDto));
+		serverRequest.setResponseClass(RespuestaDocumentosExpedientes.class);
+		RespuestaDocumentosExpedientes respuesta = (RespuestaDocumentosExpedientes) getResponse(serverRequest);
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
+		}
+		if(!Checks.esNulo(respuesta.getCodigoError()) && respuesta.getDocumentos() == null) {
+			throw new GestorDocumentalException(respuesta.getCodigoError() + " - " + respuesta.getMensajeError(),respuesta.getCodigoError());
+		}
+		return respuesta;
+	}
+
+	private String getPathDocExpMultiTipo(List<DocumentosExpedienteDto> listaDocExpDto) throws UnsupportedEncodingException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/ListarDocumentosMultiTipo");
+		DocumentosExpedienteDto dto = listaDocExpDto.get(0);
+		sb.append("?").append(USUARIO_PATH).append(dto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(dto.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(dto.getUsuarioOperacional());
+		sb.append("&").append(METADATA_TDN_1_PATH).append(true);
+		sb.append("&").append(EXPEDIENTES).append("[");
+
+		int cont = 0;
+
+		for(DocumentosExpedienteDto docExpDto: listaDocExpDto){
+			if(docExpDto.getBlacklistmatriculas() == null) {
+				docExpDto.setBlacklistmatriculas("");
+			}
+			if(docExpDto.getWhitelistmatriculas() == null) {
+				docExpDto.setWhitelistmatriculas("");
+			}
+			if(cont > 0){
+				sb.append(",");
+			}
+
+			sb.append("{\"tipo\":\"" + docExpDto.getCabecera().getCodTipo() +
+					"\",\"clase\":\"" + docExpDto.getCabecera().getCodClase() + "\",\"activos\":\"" + docExpDto.getCabecera().getIdExpedienteHaya() +
+					"\",\"blackListmatriculas\":\"" + docExpDto.getBlacklistmatriculas() + "\"," +
+					"\"matriculas\":\"" + docExpDto.getWhitelistmatriculas() + "\"}");
+
+			cont ++;
+		}
+
+		sb.append("]");
+
 		return sb.toString();
 	}
 	

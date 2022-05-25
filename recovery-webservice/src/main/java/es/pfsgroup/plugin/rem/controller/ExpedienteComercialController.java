@@ -1,29 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -45,20 +21,9 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
-import es.pfsgroup.plugin.rem.api.GdprApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
-import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
-import es.pfsgroup.plugin.rem.excel.ExcelReport;
-import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.excel.OfertaAgrupadaListadoActivosExcelReport;
-import es.pfsgroup.plugin.rem.excel.PlantillaDistribucionPrecios;
+import es.pfsgroup.plugin.rem.excel.*;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -68,62 +33,34 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.DtoAccionAprobacionCaixa;
-import es.pfsgroup.plugin.rem.model.DtoActivosAlquiladosGrid;
-import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
-import es.pfsgroup.plugin.rem.model.DtoActualizacionRenta;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
-import es.pfsgroup.plugin.rem.model.DtoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
-import es.pfsgroup.plugin.rem.model.DtoDiccionario;
-import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
-import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
-import es.pfsgroup.plugin.rem.model.DtoGarantiasExpediente;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoGastoRepercutido;
-import es.pfsgroup.plugin.rem.model.DtoGridFechaArras;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
-import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
-import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
-import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
-import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
-import es.pfsgroup.plugin.rem.model.DtoReserva;
-import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
-import es.pfsgroup.plugin.rem.model.DtoScreening;
-import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
-import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
-import es.pfsgroup.plugin.rem.model.DtoTestigos;
-import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
-import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import net.minidev.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
@@ -641,7 +578,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model, HttpServletRequest request) {
 
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialAdapter.getAdjuntosExpedienteComercial(idExpediente));
+			model.put(RESPONSE_DATA_KEY, expedienteComercialAdapter.getAdjuntosExpedienteComercialMultiTipo(idExpediente));
 			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "adjuntos",
 					ACCION_CODIGO.CODIGO_VER);
 

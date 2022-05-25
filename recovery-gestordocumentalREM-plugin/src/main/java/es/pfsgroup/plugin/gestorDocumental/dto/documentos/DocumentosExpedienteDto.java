@@ -40,6 +40,10 @@ public class DocumentosExpedienteDto {
 	private String blacklistmatriculas;
 	
 	private Boolean metadatatdn1;
+
+	private String whitelistmatriculas;
+
+	private CabeceraPeticionRestClientDto cabecera;
 	
 
 	public String getUsuario() {
@@ -105,5 +109,20 @@ public class DocumentosExpedienteDto {
 	public void setMetadatatdn1(Boolean metadatatdn1) {
 		this.metadatatdn1 = metadatatdn1;
 	}
-	
+
+	public String getWhitelistmatriculas() {
+		return whitelistmatriculas;
+	}
+
+	public void setWhitelistmatriculas(String whitelistmatriculas) {
+		this.whitelistmatriculas = whitelistmatriculas;
+	}
+
+	public CabeceraPeticionRestClientDto getCabecera() {
+		return cabecera;
+	}
+
+	public void setCabecera(CabeceraPeticionRestClientDto cabecera) {
+		this.cabecera = cabecera;
+	}
 }

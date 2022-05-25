@@ -1067,6 +1067,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "nombreVia", dtoDireccionDelegacion.getNombreVia());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "numeroVia", dtoDireccionDelegacion.getNumeroVia());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "piso", direccionDelegacion.getPiso());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "puerta", dtoDireccionDelegacion.getPuerta());
 			if(!Checks.esNulo(dtoDireccionDelegacion.getProvincia())) {
 				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, dtoDireccionDelegacion.getProvincia());
@@ -1080,6 +1081,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "telefono", dtoDireccionDelegacion.getTelefono());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "email", dtoDireccionDelegacion.getEmail());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "otros", direccionDelegacion.getOtros());
+
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {
@@ -1116,6 +1119,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			beanUtilNotNull.copyProperty(direccionDelegacion, "nombreVia", dtoDireccionDelegacion.getNombreVia());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "numeroVia", dtoDireccionDelegacion.getNumeroVia());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "piso", dtoDireccionDelegacion.getPiso());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "puerta", dtoDireccionDelegacion.getPuerta());
 			if(!Checks.esNulo(dtoDireccionDelegacion.getProvincia())) {
 				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class, dtoDireccionDelegacion.getProvincia());
@@ -1129,6 +1133,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			beanUtilNotNull.copyProperty(direccionDelegacion, "codigoPostal", dtoDireccionDelegacion.getCodigoPostal());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "telefono", dtoDireccionDelegacion.getTelefono());
 			beanUtilNotNull.copyProperty(direccionDelegacion, "email", dtoDireccionDelegacion.getEmail());
+			beanUtilNotNull.copyProperty(direccionDelegacion, "otros", dtoDireccionDelegacion.getOtros());
 			
 			genericDao.save(ActivoProveedorDireccion.class, direccionDelegacion);
 		} catch (IllegalAccessException e) {

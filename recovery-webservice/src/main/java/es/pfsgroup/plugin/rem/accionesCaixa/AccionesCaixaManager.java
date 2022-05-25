@@ -117,7 +117,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
                 return true;
             }else {
-                eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
+                eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(ofr, eco))));
                 genericDao.save(ExpedienteComercial.class, eco);
 
                 agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());

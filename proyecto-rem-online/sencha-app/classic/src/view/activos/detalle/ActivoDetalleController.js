@@ -9060,7 +9060,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		window = btn.up('window');
     	window.close();
-	}
+	},
+	
+	onPujasListClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this, idOferta = null;
+		var activo = me.getViewModel().get('activo');
+		var idActivo = activo.get('id');
+
+		if (!Ext.isEmpty(grid.selection)) {
+			idOferta = record.get("idOferta");
+		}
+
+		var fieldset = me.lookupReference('historicoConcurrenciaref');
+
+		var storeHistoricoConcurrencia = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.Pujas',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoConcurrencia'
+	    	 }
+    	});
+		me.lookupReference('historicoConcurrenciaref').setStore(storeHistoricoConcurrencia);
+		storeHistoricoConcurrencia.getProxy().getExtraParams().idOferta = idOferta;
+		storeHistoricoConcurrencia.getProxy().getExtraParams().idActivo = idActivo;
+		storeHistoricoConcurrencia.load({
+			success : function(record) {
+				me.lookupReference('historicoConcurrenciaref').refresh();
+			}
+		});
+    }
 
 });
 

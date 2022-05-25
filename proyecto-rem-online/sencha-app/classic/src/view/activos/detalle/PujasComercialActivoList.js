@@ -13,7 +13,8 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
         var me = this;  
         
         me.listeners = {	    	
-			rowdblclick: 'onPujasListDobleClick'
+			rowdblclick: 'onPujasListDobleClick',
+			rowclick: 'onPujasListClick'
 	     }
         
         me.columns= [

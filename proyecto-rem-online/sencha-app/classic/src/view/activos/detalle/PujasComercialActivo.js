@@ -10,12 +10,11 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivo', {
 
     initComponent: function () {        
         var me = this;
-        me.setTitle(HreRem.i18n("title.activos.listado.pujas"));
+        me.setTitle(HreRem.i18n("title.activos.listado.concurrencia"));
 
         me.items = [      			
         	{
 				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.lista.ofertas.concurrencia'),
 				collapsible: true,
 				items :
@@ -25,7 +24,20 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivo', {
 		    				reference: 'pujascomercialactivolistref'        				
 		    			}
     			]
+        	},
+        		{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.lista.ofertas.concurrencia.historico'),
+				collapsible: true,
+				items :
+					[
+		    			{	
+		    				xtype: 'historicoconcurrenciagrid'        				
+		    			}
+    			]
         	}
+        	
         ];
 
         me.callParent();

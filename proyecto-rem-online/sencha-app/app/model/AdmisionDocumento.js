@@ -85,7 +85,13 @@ Ext.define('HreRem.model.AdmisionDocumento', {
     		},
     		{
     			name: 'registro'
-    		}
+    		},
+            {
+                name:'estadoDocumentoDescripcion'
+            },
+            {
+                name:'tipoCalificacionDescripcion'
+            }
     ],
     
     proxy: {

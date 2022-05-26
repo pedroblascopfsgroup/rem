@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -71,8 +70,8 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.CatastroApi;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
@@ -103,7 +102,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -124,8 +122,6 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDatosCatastro;
-import es.pfsgroup.plugin.rem.model.DtoDatosCatastroGrid;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
@@ -162,14 +158,12 @@ import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoSubirDocumento;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VGridBusquedaPublicaciones;
 import es.pfsgroup.plugin.rem.model.VGridDescuentoColectivos;
-import es.pfsgroup.plugin.rem.model.VGridHistoricoOfertasConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -1397,7 +1391,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		else {
 			if(concurrenciaApi.isConcurrenciaTerminadaOfertasEnProgresoActivo(activoDao.getActivoById(id))){
-				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id));
+				model.put("data", concurrenciaApi.getListOfertasVivasConcurrentes(id, null));
 			}else {
 				model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
 			}
@@ -4456,10 +4450,10 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
-
+	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListConcurrenciasActivoById(Long id, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListOfertasVivasConcurrentes(id));
+	public ModelAndView getListConcurrenciasActivoById(Long idActivo,Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListOfertasVivasConcurrentes(idActivo,idConcurrencia));
 
 		return createModelAndViewJson(model);
 	}
@@ -4483,11 +4477,11 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoConcurrencia(Long idActivo, Long idOferta) {
+	public ModelAndView getHistoricoConcurrencia(Long id) {
 		ModelMap model = new ModelMap();
 
 		try {
-			List<VGridHistoricoOfertasConcurrencia> listHistoricoConcurrencia = concurrenciaApi.getHistoricoConcurrencia(idActivo, idOferta);
+			List<DtoHistoricoConcurrencia> listHistoricoConcurrencia = concurrenciaApi.getHistoricoConcurrencia(id);
 			model.put("data", listHistoricoConcurrencia);
 			model.put("success", true);
 		} catch (Exception e) {

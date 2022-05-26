@@ -1,16 +1,18 @@
 Ext.define('HreRem.view.activos.detalle.HistoricoConcurrenciaGrid', {
-	extend: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
+	extend: 'HreRem.view.common.GridBase',
     xtype: 'historicoconcurrenciagrid',
-    idPrincipal: 'id',
-    topBar: false,
+    reference	: 'historicoConcurrenciaref',
     requires	: ['HreRem.model.HistoricoConcurrenciaGridModel'],
-	reference	: 'historicoConcurrenciaref',
     bind: {
-        store: '{storeHistoricoConcurrencia}'
+        store: '{storeConcurrenciaHistorico}'
     },  
     initComponent: function () {
         
         var me = this;
+        
+        me.listeners = {	    	
+			rowclick: 'onConcurrenciaListClick' 
+	     }
         
         me.columns = [
 	        	{
@@ -53,7 +55,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoConcurrenciaGrid', {
 		        }
         ];
         
-        
         me.dockedItems = [
 		        {
 		            xtype: 'pagingtoolbar',
@@ -62,7 +63,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoConcurrenciaGrid', {
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {
-		                store: '{storeHistoricoConcurrencia}'
+		                store: '{storeConcurrenciaHistorico}'
 		            }
 		        }
 		];

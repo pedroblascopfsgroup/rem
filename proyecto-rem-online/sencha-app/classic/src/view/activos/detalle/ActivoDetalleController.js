@@ -9062,30 +9062,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	window.close();
 	},
 	
-	onPujasListClick: function(grid,record,tr,rowIndex) {        	       
-    	var me = this, idOferta = null;
+	onConcurrenciaListClick: function(grid,record,tr,rowIndex) {        	       
+    	var me = this, idConcurrencia = null;
 		var activo = me.getViewModel().get('activo');
 		var idActivo = activo.get('id');
-
 		if (!Ext.isEmpty(grid.selection)) {
-			idOferta = record.get("idOferta");
+			idConcurrencia = record.get("id");
 		}
-
-		var fieldset = me.lookupReference('historicoConcurrenciaref');
-
-		var storeHistoricoConcurrencia = Ext.create('Ext.data.Store',{
-			model: 'HreRem.model.Pujas',
+		var fieldset = me.lookupReference('pujascomercialactivolistref');
+		var storeListaOfertasConcurrencia = Ext.create('Ext.data.Store',{
+			model: 'HreRem.model.PujasActivo',
 		     proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'activo/getHistoricoConcurrencia'
+		        remoteUrl: 'activo/getListConcurrenciasActivoById'
 	    	 }
     	});
-		me.lookupReference('historicoConcurrenciaref').setStore(storeHistoricoConcurrencia);
-		storeHistoricoConcurrencia.getProxy().getExtraParams().idOferta = idOferta;
-		storeHistoricoConcurrencia.getProxy().getExtraParams().idActivo = idActivo;
-		storeHistoricoConcurrencia.load({
+		me.lookupReference('pujascomercialactivolistref').setStore(storeListaOfertasConcurrencia);
+		storeListaOfertasConcurrencia.getProxy().getExtraParams().idActivo = idActivo;
+		storeListaOfertasConcurrencia.getProxy().getExtraParams().idConcurrencia = idConcurrencia;
+		storeListaOfertasConcurrencia.load({
 			success : function(record) {
-				me.lookupReference('historicoConcurrenciaref').refresh();
+				me.lookupReference('pujascomercialactivolistref').refresh();
 			}
 		});
     }

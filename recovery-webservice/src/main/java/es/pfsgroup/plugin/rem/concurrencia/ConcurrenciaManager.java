@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.concurrencia;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +21,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
@@ -32,7 +29,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
-import es.pfsgroup.plugin.rem.model.VGridHistoricoOfertasConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 
@@ -211,8 +207,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	}
 	
 	@Override
-	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo) {
-		return concurrenciaDao.getListOfertasVivasConcurrentes(idActivo);
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
+		return concurrenciaDao.getListOfertasVivasConcurrentes(idActivo,idConcurrencia);
 	}
 	
 	@Override
@@ -353,16 +349,29 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		}
 		return dtoLista;
 	}
-
+	
 	@Override
-	public List<VGridHistoricoOfertasConcurrencia> getHistoricoConcurrencia(Long idActivo, Long idOferta) {
-		
-		List<VGridHistoricoOfertasConcurrencia> listaHistorico = null;
-		
-		if (idActivo != null && idOferta != null) {
-			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-			Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "idOferta", idOferta);
-			listaHistorico = genericDao.getList(VGridHistoricoOfertasConcurrencia.class, filtroIdActivo, filtroIdOferta);	
+	public List<DtoHistoricoConcurrencia> getHistoricoConcurrencia(Long idActivo) {
+		List<DtoHistoricoConcurrencia> listaHistorico = new ArrayList<DtoHistoricoConcurrencia>();
+		List<Concurrencia> listaConcurrencia = new ArrayList<Concurrencia>();
+		if (idActivo != null) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			listaConcurrencia = genericDao.getList(Concurrencia.class, filtroIdActivo);
+			if(!listaConcurrencia.isEmpty()) {
+				for (Concurrencia concurrencia : listaConcurrencia) {
+					DtoHistoricoConcurrencia dto = new DtoHistoricoConcurrencia();
+					dto.setId(concurrencia.getId());
+					dto.setIdActivo(concurrencia.getActivo() != null ? concurrencia.getActivo().getId() : null);
+					dto.setNumActivo(concurrencia.getActivo() != null ? concurrencia.getActivo().getNumActivo() : null);
+					dto.setIdAgrupacion(concurrencia.getAgrupacion() != null ? concurrencia.getAgrupacion().getId() : null);
+					dto.setNumAgrupacion(concurrencia.getAgrupacion() != null ? concurrencia.getAgrupacion().getNumAgrupRem() : null);
+					dto.setImporteMinOferta(concurrencia.getImporteMinOferta());
+					dto.setImporteDeposito(concurrencia.getImporteDeposito());
+					dto.setFechaInicio(concurrencia.getFechaInicio());
+					dto.setFechaFin(concurrencia.getFechaFin());
+					listaHistorico.add(dto);
+				}
+			}
 		}
 		return listaHistorico;
 	}

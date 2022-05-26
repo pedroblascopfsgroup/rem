@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -75,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
@@ -185,7 +187,10 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
-
+	
+	@Autowired
+	private DepositoApi depositoApi;
+	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
@@ -890,6 +895,7 @@ public class AgendaAdapter {
 						String codigoExpedienteBc = expedienteComercialApi.devolverEstadoCancelacionBCEco(eco.getOferta(), eco);
 						estadoExpedienteBc = genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",codigoExpedienteBc));
 						eco.setEstadoBc(estadoExpedienteBc);
+						
 						estadoOfertaBcMod = true;
 						if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
 							eco.setFechaFinAlquiler(new Date());
@@ -901,6 +907,12 @@ public class AgendaAdapter {
 		                    ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));
 		                    oferta.setEstadoOferta(ddEstadoOferta);
 		                    genericDao.update(Oferta.class, oferta);
+		                    
+		                    Deposito deposito =  genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+							if(depositoApi.isDepositoIngresado(deposito)) {
+								deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
+								genericDao.save(Deposito.class, deposito);
+							}
 		                }
 		    			
 		    			activo.setSituacionComercial(situacionComercial);

@@ -124,6 +124,7 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
                 return false;
             }
         }
+        ofertaApi.setEstadoOfertaBC(ofr, null);
         return false;
     }
 

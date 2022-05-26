@@ -1326,7 +1326,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if (activo != null && activo.getId() != null) {
 						Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 						ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
-						if (activoCaixa != null) {
+						if (activoCaixa != null && activoCaixa.getSegmentacionCartera() != null ) {
 							   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 							   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 							   if (ddCarteraBc != null) {

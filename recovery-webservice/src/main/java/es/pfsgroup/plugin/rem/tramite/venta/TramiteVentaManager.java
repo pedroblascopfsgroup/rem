@@ -1,11 +1,16 @@
 package es.pfsgroup.plugin.rem.tramite.venta;
 
-import java.util.Date;
-import java.util.List;
-
+import edu.emory.mathcs.backport.java.util.Arrays;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -13,23 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import java.util.Date;
+import java.util.List;
 
 @Service("tramiteVentaManager")
 public class TramiteVentaManager implements TramiteVentaApi {
@@ -106,12 +96,16 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	}
 	
 	@Override
-	public boolean isTramiteT017Aprobado(List<String> tareasActivas){
+	public boolean isTramiteT017Aprobado(List<String> tareasActivas, TareaExterna resolucionComite){
 		boolean isAprobado = false;
 		String[] tareasParaAprobado = {ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, 
 				ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN};
 
-		if(!CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+		if(!tareasActivas.isEmpty() && !CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
+			isAprobado = true;
+		}
+
+		if(resolucionComite != null && resolucionComite.getTareaPadre().getFechaFin() != null){
 			isAprobado = true;
 		}
 		

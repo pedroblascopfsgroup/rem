@@ -534,12 +534,11 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionIncautacionDeposito(DtoAccionRechazoCaixa dto){
+    public ModelAndView accionIncautacionDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
         ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
             if(success){
-                success = accionesCaixaApi.accionRechazo(dto);
                 model.put("success", true);
             }else{
                 model.put("msgError", "Error al actualizar depósito");
@@ -554,12 +553,11 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionDevolucionDeposito(DtoAccionRechazoCaixa dto){
+    public ModelAndView accionDevolucionDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
         ModelMap model = new ModelMap();
         try {
             boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
             if(success){
-                success = accionesCaixaApi.accionRechazo(dto);
                 model.put("success", true);
             }else{
                 model.put("msgError", "Error al actualizar depósito");

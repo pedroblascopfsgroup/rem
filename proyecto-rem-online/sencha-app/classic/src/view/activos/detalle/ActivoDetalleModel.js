@@ -15,8 +15,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 'HreRem.model.CalidadDatoFasesGridModel','HreRem.model.SituacionOcupacionalGridModel',
 	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.CatastroGrid',
 	'HreRem.model.ComparativaReferenciaCatastralGridModel', 'HreRem.model.ReferenciaCatastralGridModel','HreRem.model.ReferenciaCatastralComboModel',
-	'HreRem.model.TestigosOpcionales',
-	'HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas', 'HreRem.model.PujasActivo'],
+	'HreRem.model.TestigosOpcionales','HreRem.model.DetalleOfertaModel', 'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.model.Pujas',
+	'HreRem.model.PujasActivo', 'HreRem.model.HistoricoConcurrenciaGridModel'],
 
     data: {
     	activo: null,
@@ -4633,16 +4633,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 			autoLoad: true
 		},
-		storePujasActivo: {
-      		 model: 'HreRem.model.PujasActivo',
-  		     proxy: {
-  		        type: 'uxproxy',
-  		        remoteUrl: 'activo/getListConcurrenciasActivoById',
-  		        extraParams: {
- 		        	id: '{activo.id}'
- 		        }
-  	    	 }
-      	},
+		
       	storePuja: {
      		 model: 'HreRem.model.Pujas',
  		     proxy: {
@@ -4655,18 +4646,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
  	    	 },
  			autoLoad: true
      	},
-     	storeHistoricoConcurrencia: {
-    		 model: 'HreRem.model.Pujas',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getHistoricoConcurrencia',
-		        extraParams: {
-		        	idActivo: '{detallehistoricoconcurrencia.idActivo}',
-		        	idOferta: '{detallehistoricoconcurrencia.idOferta}'
-		        }
-	    	 },
-			autoLoad: true
-    	},
 
 		comboSegmentacionCartera: {
 			model: 'HreRem.model.ComboBase',
@@ -4714,6 +4693,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'ofertas/getListTextosOfertaByActivoOferta'
+	    	 }
+    	},
+    	storeConcurrenciaHistorico: {
+    		 model: 'HreRem.model.HistoricoConcurrenciaGridModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoConcurrencia',
+		        extraParams: {
+		        	id: '{activo.id}'
+		        }
 	    	 }
     	}
 	 }

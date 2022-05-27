@@ -1,12 +1,9 @@
 Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'pujascomercialactivolist',
-    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle', 
-    				'HreRem.model.Pujas', 'HreRem.model.HistoricoConcurrenciaGridModel'],
+    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle'],
     reference	: 'pujascomercialactivolistref',
-    bind: {
-        store: '{storePujasActivo}'
-    },
+    
         
     initComponent: function () {
         
@@ -60,10 +57,7 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 		            dock: 'bottom',
 		            itemId: 'pujasListPaginationToolbar',
 		            inputItemWidth: 100,
-		            displayInfo: true,
-		            bind: {
-		                store: '{storePujasActivo}'
-		            }
+		            displayInfo: true
 		        }
 		];
 		    

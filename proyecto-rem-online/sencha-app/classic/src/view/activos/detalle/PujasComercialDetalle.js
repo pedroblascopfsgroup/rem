@@ -39,7 +39,6 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialDetalle', {
     	var me = this;
     	me.buttons = [ { itemId: 'btnCerrar', text: 'Cerrar', handler: 'onClickBotonCerrarDetallePujas'}];
     	var detallepuja= me.detallepuja.data;
-    	var detallehistoricoconcurrencia= me.detallehistoricoconcurrencia.data;
     	me.items = [
 			{	
 				xtype:'formBase',
@@ -49,9 +48,6 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialDetalle', {
 					[
 						{
 							xtype: 'pujadetalleofertagrid'
-						},
-						{
-							xtype: 'historicoconcurrenciagrid'
 						}
 					]
 			}
@@ -65,6 +61,5 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialDetalle', {
     resetWindow: function() {
 		var me = this;
     	me.getViewModel().set('detallepuja', me.detallepuja.data);
-    	me.getViewModel().set('detallehistoricoconcurrencia', me.detallehistoricoconcurrencia.data);
     }
 });

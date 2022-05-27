@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +10,6 @@ import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VGridHistoricoOfertasConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 
 public interface ConcurrenciaApi {
@@ -39,7 +36,7 @@ public interface ConcurrenciaApi {
 	
 	Oferta getOfertaGanadora(Activo activo);
 
-	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo);
+	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
 
 	boolean isConcurrenciaOfertasEnProgresoActivo(Activo activo);
 
@@ -56,5 +53,5 @@ public interface ConcurrenciaApi {
 	
 	List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta);
 
-	List<VGridHistoricoOfertasConcurrencia> getHistoricoConcurrencia(Long idActivo, Long idOferta);
+	List<DtoHistoricoConcurrencia> getHistoricoConcurrencia(Long idActivo);
 }

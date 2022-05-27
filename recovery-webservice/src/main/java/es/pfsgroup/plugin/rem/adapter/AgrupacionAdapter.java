@@ -308,9 +308,6 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
-	
-	@Autowired
-	private ConcurrenciaDao concurrenciaDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 

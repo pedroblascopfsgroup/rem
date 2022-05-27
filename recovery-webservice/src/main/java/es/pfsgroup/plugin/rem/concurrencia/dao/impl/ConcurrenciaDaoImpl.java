@@ -55,7 +55,7 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo) {
+	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
 
 		String hql = " from VGridOfertasActivosAgrupacionConcurrencia voa2 ";
 		String listaIdsOfertas = "";
@@ -75,6 +75,12 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 			listaIdsOfertas = listaIdsOfertas.concat("-1");
 
 			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
+			if(idConcurrencia != null) {
+				String periodo = getPeriodoConcurrencia(idConcurrencia);
+				if(periodo != null) {
+					hb.appendWhere(" voa2.periodoConcurrencia = "+Integer.parseInt(periodo));
+				}
+			}
 		}
 
 		return (List<VGridOfertasActivosAgrupacionConcurrencia>) this.getSessionFactory().getCurrentSession()
@@ -102,6 +108,14 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 				"AND ofr.OFR_id ="+idOferta);
 		
 		return Integer.parseInt(resultados) > 0;
+	}
+	
+	@Override
+	public String getPeriodoConcurrencia(Long idConcurrencia) {
+		
+		String resultados = rawDao.getExecuteSQL("SELECT ROUND(CON_FECHA_FIN-CON_FECHA_INI, 0) AS PERIODO_CONCURRENCIA FROM CON_CONCURRENCIA WHERE CON_ID="+idConcurrencia);
+		
+		return resultados;
 	}
 	
 	

@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 @Repository("concurrenciaDao")
 public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> implements ConcurrenciaDao{
@@ -55,35 +56,21 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
 
-		String hql = " from VGridOfertasActivosAgrupacionConcurrencia voa2 ";
-		String listaIdsOfertas = "";
+		String hql = " from VGridOfertasActivosConcurrencia voac ";
 
 		HQLBuilder hb = new HQLBuilder(hql);
 
-		if (!Checks.esNulo(idActivo)) {
-			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
-
-			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
-
-			for (ActivoOferta activoOferta : listaActivoOfertas) {
-				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString())
-						.concat(",");
-			}
-			listaIdsOfertas = listaIdsOfertas.concat("-1");
-
-			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
-			if(idConcurrencia != null) {
-				String periodo = getPeriodoConcurrencia(idConcurrencia);
-				if(periodo != null) {
-					hb.appendWhere(" voa2.periodoConcurrencia = "+Integer.parseInt(periodo));
-				}
-			}
+		if(idActivo != null) {
+			hb.appendWhere(" voac.idActivo = "+idActivo);
+		}
+		
+		if(idConcurrencia != null) {
+			hb.appendWhere(" voac.idConcurrencia = "+ idConcurrencia);
 		}
 
-		return (List<VGridOfertasActivosAgrupacionConcurrencia>) this.getSessionFactory().getCurrentSession()
+		return (List<VGridOfertasActivosConcurrencia>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 	}
 

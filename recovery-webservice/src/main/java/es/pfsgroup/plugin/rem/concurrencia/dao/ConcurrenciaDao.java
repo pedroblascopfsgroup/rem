@@ -5,7 +5,7 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 
 public interface ConcurrenciaDao extends AbstractDao<Concurrencia, Long>{
@@ -14,7 +14,7 @@ public interface ConcurrenciaDao extends AbstractDao<Concurrencia, Long>{
 
 	boolean isAgrupacionConOfertasDeConcurrencia(Long agrId);
 
-	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
+	List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
 	
 	boolean isActivoEnConcurrencia(Long idActivo);
 

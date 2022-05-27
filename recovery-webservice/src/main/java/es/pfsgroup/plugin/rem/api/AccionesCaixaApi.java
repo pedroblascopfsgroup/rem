@@ -70,4 +70,7 @@ public interface AccionesCaixaApi {
     boolean modificaEstadoDeposito(String codEstado, Long idOferta);
 
 	void accionIngresoDeposito(Long numOferta);
+
+    @Transactional
+    boolean incautaODevuelveDeposito(String codEstado, Long numOferta);
 }

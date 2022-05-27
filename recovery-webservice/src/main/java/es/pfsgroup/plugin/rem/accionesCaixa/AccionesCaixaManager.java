@@ -1,14 +1,17 @@
 package es.pfsgroup.plugin.rem.accionesCaixa;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.controller.AgendaController;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
@@ -19,17 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
-import es.pfsgroup.plugin.rem.controller.AgendaController;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("accionesCaixaManager")
 public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCaixaApi> implements AccionesCaixaApi {
@@ -105,28 +100,32 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Override
     public boolean accionRechazo(DtoAccionRechazoCaixa dto) throws Exception {
         Oferta ofr =  genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", dto.getNumOferta()));
-        ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
-        DDTipoOferta tipoOferta = ofr.getTipoOferta();
-        if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
-        	
-			TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
-			String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
-			dto.setEstadoBc(calcularEstadoBcRechazo(codigoTarea));
-			dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
-			
-			eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
-			eco.setFechaAnulacion(new Date());
+        if(dto.getIdExpediente() != null){
+            ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+            DDTipoOferta tipoOferta = ofr.getTipoOferta();
+            if (DDTipoOferta.isTipoAlquiler(tipoOferta) || DDTipoOferta.isTipoAlquilerNoComercial(tipoOferta)) {
 
-            genericDao.save(ExpedienteComercial.class, eco);
-			adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
-			return true;
-        }else {
-            eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoBc())));
-            genericDao.save(ExpedienteComercial.class, eco);
+                TareaExterna tarea = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", dto.getIdTarea()));
+                String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
+                dto.setEstadoBc(calcularEstadoBcRechazo(codigoTarea));
+                dto.setMotivoAnulacion(expedienteComercialApi.getMotivoRechazoAccionRechazo(tipoOferta, codigoTarea, dto.getMotivoAnulacion()));
 
-            agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
-            return false;
-       }
+                eco.setMotivoAnulacion(genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAnulacion())));
+                eco.setFechaAnulacion(new Date());
+
+                genericDao.save(ExpedienteComercial.class, eco);
+                adapter.save(calcularMapTareasRechazo(codigoTarea, dto));
+                return true;
+            }else {
+                eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(ofr, eco))));
+                genericDao.save(ExpedienteComercial.class, eco);
+
+                agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+                return false;
+            }
+        }
+        ofertaApi.setEstadoOfertaBC(ofr, null);
+        return false;
     }
 
     @Override
@@ -803,6 +802,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 		
         Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
         depositoApi.ingresarDeposito(deposito);
+    }
+
+    @Override
+    @Transactional
+    public boolean incautaODevuelveDeposito(String codEstado, Long numOferta){
+        Deposito dep = depositoApi.getDepositoByNumOferta(numOferta);
+        return depositoApi.incautaODevuelveDeposito(dep, codEstado);
     }
 
 }

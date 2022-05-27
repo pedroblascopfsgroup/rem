@@ -537,7 +537,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionIncautacionDeposito(DtoAccionRechazoCaixa dto){
         ModelMap model = new ModelMap();
         try {
-            boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
+            boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
             if(success){
                 success = accionesCaixaApi.accionRechazo(dto);
                 model.put("success", true);
@@ -557,7 +557,7 @@ public class AccionesCaixaController extends ParadiseJsonController {
     public ModelAndView accionDevolucionDeposito(DtoAccionRechazoCaixa dto){
         ModelMap model = new ModelMap();
         try {
-            boolean success = accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
+            boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
             if(success){
                 success = accionesCaixaApi.accionRechazo(dto);
                 model.put("success", true);
@@ -574,10 +574,38 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
     
-    public ModelAndView accionIngresoDeposito(DtoAccionIngresoDeposito dto){
+    public ModelAndView accionIngresoDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionIngresoDeposito(dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_PDTE_DEVOLUCION, dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_PDTE_INCAUTACION, dto.getNumOferta());
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

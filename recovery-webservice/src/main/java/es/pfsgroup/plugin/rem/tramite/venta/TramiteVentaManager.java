@@ -145,14 +145,22 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	public void guardarEstadoAnulacionExpedienteBK(Long ecoId) {
 		ExpedienteComercial eco = expedienteComercialApi.findOne(ecoId);
 		
-		if(eco.getOferta() != null && eco.getOferta().getActivoPrincipal() != null && DDCartera.isCarteraBk(eco.getOferta().getActivoPrincipal().getCartera()) && DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
-			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC)));
-			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
-			if(eco.getFechaAnulacion() != null) {
-	        	eco.setFechaAnulacion(new Date());
-	        }
-			genericDao.save(ExpedienteComercial.class, eco);
+		if(eco != null && eco.getOferta() != null) {
+			Oferta oferta = eco.getOferta();
+			Activo activo = oferta.getActivoPrincipal();
+			
+			if(DDCartera.isCarteraBk(activo.getCartera())) {
+				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+			}
 		}
+		
+
+		eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+		if(eco.getFechaAnulacion() != null) {
+        	eco.setFechaAnulacion(new Date());
+        }
+			genericDao.save(ExpedienteComercial.class, eco);
+		
 	}
 	
 	@Override

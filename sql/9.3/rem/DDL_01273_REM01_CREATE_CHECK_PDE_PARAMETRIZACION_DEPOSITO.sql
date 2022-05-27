@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220407
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20220526
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17625
+--## INCIDENCIA_LINK=HREOS-18005
 --## PRODUCTO=NO
 --## Finalidad: CREATE CHECK PDE_PARAMETRIZACION_DEPOSITO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial  Javier Esbri 20220407 HREOS-17625
+--##        0.2 Versión modificar check cambiar DD_EQG_ID por DD_TCR_ID
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -28,17 +29,16 @@ DECLARE
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.    
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
     
   --Array que contiene los registros que se van a crear
   TYPE T_COL IS TABLE OF VARCHAR2(250);
   TYPE T_ARRAY_COL IS TABLE OF T_COL;
   V_COL T_ARRAY_COL := T_ARRAY_COL(
-    T_COL('CREATE_CONSTRAINT', 'PDE_PARAMETRIZACION_DEPOSITO', 'UK_PDE_PARAMETRIZACION_DEPOSITO','DD_EQG_ID, DD_SCR_ID, PDE_PRECIO, FECHABORRAR, BORRADO'),
+    T_COL('DROP_CONSTRAINT', 'PDE_PARAMETRIZACION_DEPOSITO', 'UK_PDE_PARAMETRIZACION_DEPOSITO'),
+    T_COL('CREATE_CONSTRAINT', 'PDE_PARAMETRIZACION_DEPOSITO', 'UK_PDE_PARAMETRIZACION_DEPOSITO','DD_TCR_ID, DD_SCR_ID, PDE_PRECIO, FECHABORRAR, BORRADO'),
     T_COL('ADD_CHECK_CONSTRAINT', 'PDE_PARAMETRIZACION_DEPOSITO', 'CK_PDE_PARAMETRIZACION_DEPOSITO','(BORRADO = 0 AND FECHABORRAR IS NULL) OR BORRADO = 1')
   );  
   V_TMP_COL T_COL;
-
  
 BEGIN
 
@@ -149,7 +149,6 @@ BEGIN
     END LOOP;
     
     DBMS_OUTPUT.PUT_LINE('[FIN]');
-  
     
     COMMIT;  
     

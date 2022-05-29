@@ -1417,10 +1417,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
-			
+
+			boolean esVentaSobrePlanoCajamar = esOfertaCajamarVentaSobrePlano(oferta);
+
+			if (esVentaSobrePlanoCajamar)
+				oferta.setOfrDocRespPrescriptor(true);
+
 			if(oferta.getOfrDocRespPrescriptor() != null){
 				if(!oferta.getOfrDocRespPrescriptor()) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && esVentaSobrePlanoCajamar) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {

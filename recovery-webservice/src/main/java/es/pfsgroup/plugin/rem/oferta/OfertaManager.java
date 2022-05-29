@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.annotation.Resource;
+
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
@@ -1337,7 +1339,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
-				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+				if (ofertaDto.getIsExpress()){
+					if (!esOfertaCajamarVentaSobrePlano(oferta)){
+						oferta.setOfertaExpress(Boolean.TRUE);
+					}else{
+						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(ofertaDto.getEntidadOrigen())){
+							errorsList.put("codEstadoOferta",RestApi.REST_MSG_UNKNOWN_KEY);
+							errorsList.put("errorDesc", "Oferta con activos Venta sobre plano");
+							return errorsList;
+						}else {
+							oferta.setOfertaExpress(Boolean.FALSE);
+						}
+					}
+				} else {
+					oferta.setOfertaExpress(Boolean.FALSE);
+				}
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getCanalOrigenComisionamiento())) {
@@ -9105,5 +9121,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return tipoComercializar;
 	}
+
+	public boolean esOfertaCajamarVentaSobrePlano(Oferta oferta){
+
+		boolean esOfertaCajamarVentaSobrePlano = false;
+
+		if (oferta != null
+				&& oferta.getActivoPrincipal() != null
+				&& oferta.getActivoPrincipal().getCartera() != null
+				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+
+				//ActivoObraNueva aon = (ActivoObraNueva) oferta.getAgrupacion();
+
+				if (oferta.getAgrupacion() != null){
+					esOfertaCajamarVentaSobrePlano = activoAgrupacionActivoDao.tieneActivosConVentaSobrePlanoByAgrId(oferta.getAgrupacion().getId());
+				}
+
+		}
+
+		return esOfertaCajamarVentaSobrePlano;
+
+	}
+
+
 }
 	

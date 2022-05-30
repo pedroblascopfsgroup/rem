@@ -902,7 +902,10 @@ public class AgrupacionAdapter {
 					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal) && !Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
 
 				}else{
-					 if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					if(activoCero != null && activoCero.getSubcartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "esNecesarioDeposito", depositoApi.esNecesarioDepositoBySubcartera(activoCero.getSubcartera().getCodigo()));
+					}
+					if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activoCero.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", activoCero.getCartera().getCodigo());
 					}

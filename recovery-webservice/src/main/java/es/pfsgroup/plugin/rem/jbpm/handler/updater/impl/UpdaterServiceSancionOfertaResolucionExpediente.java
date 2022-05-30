@@ -113,6 +113,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			Activo activo = expediente.getOferta().getActivoPrincipal();
 			boolean checkFormalizar = false;
 			boolean clonarYAnular = false;
+			boolean rechazar = false;
+			
 			if(!Checks.esNulo(activo)){
 				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
 				checkFormalizar = pac.getAplicaFormalizar() != 0;
@@ -309,15 +311,15 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						}
 					}
 					// --- FIN --- HREOS-5052 ---
-					
+				
 					if (!tieneReserva) {
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
 						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 						genericDao.save(ActivoTramite.class, tramite);
-
+						rechazar = true;
 						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
+					
 						
 						if (mandaCorreo) {
 							if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(activo)) {
@@ -363,6 +365,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
 				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
 				ofertaApi.calculoComiteLBK(agrupada.getOfertaPrincipal().getId(), null);
+			}
+			
+			if(rechazar) {
+				ofertaApi.rechazarOferta(ofertaAceptada);
 			}
 		}
 	}

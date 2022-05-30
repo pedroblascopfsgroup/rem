@@ -966,9 +966,9 @@ public class AgendaAdapter {
 		                
 						ofertaApi.descongelarOfertas(eco);
 	
-						if (estadoOfertaBcMod){
-							ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
-						}
+//						if (estadoOfertaBcMod){
+//							ofertaApi.replicateOfertaFlushDto(eco.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
+//						}
 					}
 				}
 			}

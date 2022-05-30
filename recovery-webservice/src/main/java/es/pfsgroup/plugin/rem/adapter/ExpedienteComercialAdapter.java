@@ -506,9 +506,6 @@ public class ExpedienteComercialAdapter {
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
-		if(DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(dtoAdjunto.getCodigoTipo())){
-			throw new JsonViewerException("No se puede borrar este tipo de documentos");
-		}
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				dtoAdjunto = adjuntoExpedienteComercialDao.getAdjuntoByIdDocRest(dtoAdjunto);
 				if(DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(dtoAdjunto.getCodigoTipo())){

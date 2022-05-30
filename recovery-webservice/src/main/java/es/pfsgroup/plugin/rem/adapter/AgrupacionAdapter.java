@@ -932,7 +932,7 @@ public class AgrupacionAdapter {
 			
 			
 			if(agrupacion.getActivoPrincipal() != null) {
-				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+				dtoAgrupacion.setDireccion(agrupacion.getActivoPrincipal().getDireccionCompleta());
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}

@@ -22,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -77,6 +78,9 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 	@Autowired
 	private DepositoApi depositoApi;
+	
+	@Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionCES.class);
 	 
@@ -102,7 +106,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if (!Checks.esNulo(expediente)) {
-				
+				Boolean esOfertaAceptada = false;
 
 				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null 
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
@@ -154,6 +158,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								expediente.setEstadoBc(estadoBc);
 							}
 							dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
+							
+							esOfertaAceptada = true;
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								// Rechaza la oferta y descongela el resto
@@ -270,6 +276,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}
+				//CADUCAR OFERTAS
+				if(esOfertaAceptada) {
+					concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId());	
+				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
@@ -284,7 +294,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					
 					genericDao.save(HistoricoTareaPbc.class, htp);
 				}
-
 				
 				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);
 				

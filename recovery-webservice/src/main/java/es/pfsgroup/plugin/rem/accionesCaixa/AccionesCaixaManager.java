@@ -63,6 +63,9 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
 
     @Autowired
     private DepositoApi depositoApi;
+    
+    @Autowired
+	private ConcurrenciaApi concurrenciaApi;
 
     @Override
     public String managerName() {
@@ -799,9 +802,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionIngresoDeposito(Long numOferta){
     	Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
     	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
-		
+    	
         Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
         depositoApi.ingresarDeposito(deposito);
+        concurrenciaApi.caducaOfertasRelacionadasConcurrencia(oferta.getActivoPrincipal().getId(),oferta.getId());
     }
 
     @Override

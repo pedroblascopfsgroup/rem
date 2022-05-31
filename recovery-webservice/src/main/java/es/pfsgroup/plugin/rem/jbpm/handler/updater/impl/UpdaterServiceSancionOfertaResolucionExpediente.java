@@ -368,7 +368,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 			
 			if(rechazar) {
-				ofertaApi.rechazarOferta(ofertaAceptada);
+				ofertaApi.rechazarOfertaSinLlamadaBC(ofertaAceptada);
 			}
 		}
 	}

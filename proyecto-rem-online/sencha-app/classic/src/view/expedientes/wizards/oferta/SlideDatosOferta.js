@@ -184,7 +184,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								}
 					
 										if(Ext.isEmpty(me.up('[reference="activosdetalle"]'))){
-											esNecesarioDeposito = me.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito");
+											if(this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito") == "true"){
+												esNecesarioDeposito = true;
+											}
 										}else{
 											esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
 										}

@@ -857,4 +857,6 @@ public interface OfertaApi {
 
 	void actualizaEstadoOfertaRemAndBC(Oferta oferta);
 
+	Boolean rechazarOfertaSinLlamadaBC(Oferta oferta);
+
 }

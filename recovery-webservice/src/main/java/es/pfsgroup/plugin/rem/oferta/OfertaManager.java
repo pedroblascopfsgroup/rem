@@ -3170,7 +3170,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 			setEstadoOfertaBC(oferta, null);
-			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+			//llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;
@@ -9338,6 +9338,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		genericDao.save(Oferta.class, oferta);
 		
 		setEstadoOfertaBC(oferta, oferta.getOfertaCaixa());
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean rechazarOfertaSinLlamadaBC(Oferta oferta) {
+		try {
+			Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+			if(depositoApi.isDepositoIngresado(deposito)) {
+				Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+				DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+				deposito.setEstadoDeposito(estadoDeposito);
+				genericDao.save(Deposito.class, deposito);
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			oferta.setUsuarioBaja(usu.getApellidoNombre());
+			updateStateDispComercialActivosByOferta(oferta);
+			darDebajaAgrSiOfertaEsLoteCrm(oferta);
+			genericDao.save(Oferta.class, oferta);
+			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
+			setEstadoOfertaBC(oferta, null);
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return false;
+		}
+		return true;
+
 	}
 }
 

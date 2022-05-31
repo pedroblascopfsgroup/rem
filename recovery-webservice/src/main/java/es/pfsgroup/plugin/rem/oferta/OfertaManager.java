@@ -3170,7 +3170,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.save(Oferta.class, oferta);
 			descongelarOfertas(genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"oferta.id", oferta.getId())));
 			setEstadoOfertaBC(oferta, null);
-//			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+			llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;

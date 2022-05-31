@@ -52,7 +52,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		if(Ext.isEmpty(activosDetalle)){
 			esNecesarioDeposito = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito");
 		}else{
-			esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
+			if(me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito') == "true"){
+				esNecesarioDeposito = true;
+			}
 		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},

@@ -5760,7 +5760,10 @@ public class ActivoAdapter {
 	}
 	
 	private Boolean validacionesLegalReo (Activo activo) {
-		if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+		
+		ConfiguracionBloqueoAsuntosMinerva configuracionBloqueoAsuntosMinerva = genericDao.get(ConfiguracionBloqueoAsuntosMinerva.class, genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo()));
+				
+		if (configuracionBloqueoAsuntosMinerva == null && activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
 				&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
 				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
 						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))
@@ -5769,12 +5772,7 @@ public class ActivoAdapter {
 				&& (!Checks.estaVacio(activo.getPropietariosActivo())
 						&& (Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
 								|| (!Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
-										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))
-				&& !DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
-				&& !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& !DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())
-				&& !DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())
-				&& !DDSubcartera.CODIGO_CERB_INMOVILIARIO.equals(activo.getSubcartera().getCodigo())) {
+										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))) {
 			return true;
 		}
 		return false;

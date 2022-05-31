@@ -50,11 +50,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		}
 		
 		if(Ext.isEmpty(activosDetalle)){
-			esNecesarioDeposito = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito");
-		}else{
-			if(me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito') == "true"){
+			if(this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito") == "true"){
 				esNecesarioDeposito = true;
 			}
+		}else{
+			esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
 		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},

@@ -627,6 +627,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		boolean pdteDocu = false;
+		boolean cambioEstadoOferta = false;
+		
 		if(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(dto.getEstadoCodigo())) {
 			return false;
 		}
@@ -685,19 +687,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						Oferta o = ofertaApi.getOfertaById(idOferta);
 						DDEstadoOferta estOferta = o.getEstadoOferta();
 						if (DDEstadoOferta.CODIGO_CONGELADA.equals(estOferta.getCodigo())) {
-							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadoOferta.CODIGO_PENDIENTE);
-							if (DDCartera.isCarteraBk(act.getCartera()) && (Checks.esNulo(o.getCheckDocumentacion())
+							ExpedienteComercial e = o.getExpedienteComercial();
+							String codigoOferta = null;
+							if(e != null) {
+								codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
+							}else if (DDCartera.isCarteraBk(act.getCartera()) && (Checks.esNulo(o.getCheckDocumentacion())
 								|| !o.getCheckDocumentacion())) {
-								fil = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION);
+								codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 								pdteDocu = true;
+							}else {
+								codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;
 							}
+							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta);
 							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
 							o.setEstadoOferta(est);
-							if (Checks.esNulo(o.getFechaOfertaPendiente())) o.setFechaOfertaPendiente(new Date());
+							if (Checks.esNulo(o.getFechaOfertaPendiente())) {
+								o.setFechaOfertaPendiente(new Date());
+							}
 							genericDao.save(Oferta.class, o);
-							if (pdteDocu) ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
-							
+							if(pdteDocu) {
+								ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+							}
 							ofertaApi.llamaReplicarCambioEstado(o.getId(), o.getEstadoOferta().getCodigo());
 						}
 					}
@@ -717,6 +727,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			}
 			ofertaApi.setEstadoOfertaBC(oferta, null);
+			cambioEstadoOferta = true;
 			
 			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
@@ -1418,6 +1429,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (expedienteComercial != null && (dto.getNumeroVaiHavaiSareb() != null && !dto.getNumeroVaiHavaiSareb().trim().isEmpty())){
 			expedienteComercial.setNumeroVaiHavaiSareb(dto.getNumeroVaiHavaiSareb());
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		}
+		
+		if(cambioEstadoOferta) {
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
 
 		return true;

@@ -355,11 +355,11 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 			}
 
-			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
+			//ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
 			if(!Checks.esNulo(activo)) {
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
-			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			//ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 			
 			if(ofertaApi.isOfertaDependiente(ofertaAceptada)) {
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));

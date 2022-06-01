@@ -2330,15 +2330,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				clienteComercialDao.save(cliente);
 				modificado = true;
 
-				//CONCURRENCIA
-				List<Oferta> listOfertasCliente = genericDao.getList(Oferta.class,
-						genericDao.createFilter(FilterType.EQUALS,"cliente.id",cliente.getId())
-						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
-				if(listOfertasCliente != null && !listOfertasCliente.isEmpty()) {
-					for (Oferta ofertaClc : listOfertasCliente) {
-						if(concurrenciaDao.isOfertaEnPlazoEntrega(ofertaClc.getId())) {
-							errorsList.put("errorDesc", "No se puede tramitar. La oferta "+oferta.getNumOferta()+" sigue en plazo de entrega de documentación.");
-							return errorsList;
+				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta())) {
+					//CONCURRENCIA
+					List<Oferta> listOfertasCliente = genericDao.getList(Oferta.class,
+							genericDao.createFilter(FilterType.EQUALS,"cliente.id",cliente.getId())
+							,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
+					if(listOfertasCliente != null && !listOfertasCliente.isEmpty()) {
+						for (Oferta ofertaClc : listOfertasCliente) {
+							if(concurrenciaDao.isOfertaEnPlazoEntrega(ofertaClc.getId())) {
+								errorsList.put("errorDesc", "No se puede tramitar. La oferta "+oferta.getNumOferta()+" sigue en plazo de entrega de documentación.");
+								return errorsList;
+							}
 						}
 					}
 				}

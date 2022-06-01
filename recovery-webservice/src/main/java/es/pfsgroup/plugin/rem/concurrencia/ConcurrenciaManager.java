@@ -51,41 +51,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
 		boolean bloquear = false;
 		if(activo != null) {
-			if(isActivoEnConcurrencia(activo)) {
-				return true;
-			}else {
-				List<Oferta> listOfr = ofertaApi.getListaOfertasByActivo(activo);
-				bloquear = isOfertaEnPlazoDoc(bloquear, listOfr);
+			if(isActivoEnConcurrencia(activo) || tieneActivoOfertasDeConcurrencia(activo)) {
+				bloquear = true;
 			}	
 		}
-		
 		return bloquear;
 	}
 	
 	public boolean bloquearEditarOfertasPorConcurrenciaAgrupacion(ActivoAgrupacion agr) {
 		boolean bloquear = false;
 		if(agr != null) {
-			if(isAgrupacionEnConcurrencia(agr)) {
+			if(isAgrupacionEnConcurrencia(agr) || tieneAgrupacionOfertasDeConcurrencia(agr)) {
 				bloquear = true;
-			}else {
-				List<Oferta> listOfertas = genericDao.getList(Oferta.class,
-						genericDao.createFilter(FilterType.EQUALS,"agrupacion.id",agr.getId())
-						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
-				bloquear = isOfertaEnPlazoDoc(bloquear, listOfertas);
-			}
-		}
-		return bloquear;
-	}
-
-	private boolean isOfertaEnPlazoDoc(boolean bloquear, List<Oferta> listOfertas) {
-		OfertaConcurrencia ofrConcurrencia = null;
-		if(listOfertas != null && !listOfertas.isEmpty()) {
-			for (Oferta oferta : listOfertas) {
-				ofrConcurrencia = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-				if(ofrConcurrencia != null && ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()) {
-					bloquear =  true;
-					break;
-				}
 			}
 		}
 		return bloquear;

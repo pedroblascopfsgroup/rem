@@ -295,6 +295,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 				adNJUA.setValorAdquisicion(new Double (dto.getValorAdquisicion()));
 					
 				activo.setAdjNoJudicial(adNJUA);
+				genericDao.save(ActivoAdjudicacionNoJudicial.class, adNJUA);
 			}
 		}
 		

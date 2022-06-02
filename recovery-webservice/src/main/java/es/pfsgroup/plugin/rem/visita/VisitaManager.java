@@ -213,7 +213,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			Usuario user = (Usuario) genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", visitaDto.getIdUsuarioRemAccion()));
 			if (Checks.esNulo(user)) {
-				hashErrores.put("idUsuarioRemAccion", RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idUsuarioRemAccion", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 
@@ -229,11 +229,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			DDSubEstadosVisita subEstVis = (DDSubEstadosVisita) genericDao.get(DDSubEstadosVisita.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 			if (Checks.esNulo(subEstVis)) {
-				hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOW_KEY);
 			} else {
 				if (Checks.esNulo(subEstVis.getEstadoVisita()) || (!Checks.esNulo(subEstVis.getEstadoVisita())
 						&& !subEstVis.getEstadoVisita().getCodigo().equalsIgnoreCase(visitaDto.getCodEstadoVisita()))) {
-					hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
+					hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOW_KEY);
 				}
 			}
 		}
@@ -241,7 +241,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
-				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOW_KEY);
 			} else {
 				if (fdv.getTipoProveedor() == null
 						|| !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)) {
@@ -253,7 +253,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
 					.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
-				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
+				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		}
 
@@ -422,6 +422,21 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
 			}
 			
+			if(!Checks.esNulo(visitaDto.getCodOportunidad()) ) {
+				visita.setCodOportunidad(visitaDto.getCodOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodEstadoOportunidad())) {
+				visita.setCodEstadoOportunidad(visitaDto.getCodEstadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodSubestadoOportunidad())) {
+				visita.setCodSubestadoOportunidad(visitaDto.getCodSubestadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getFechaAltaOportunidad())) {
+				visita.setFechaAltaOportunidad(visitaDto.getFechaAltaOportunidad());
+
+			}
+
+
 		}
 
 		return errorsList;
@@ -627,6 +642,19 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
 			}
 			
+			if(!Checks.esNulo(visitaDto.getCodOportunidad()) ) {
+				visita.setCodOportunidad(visitaDto.getCodOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodEstadoOportunidad())) {
+				visita.setCodEstadoOportunidad(visitaDto.getCodEstadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getCodSubestadoOportunidad())) {
+				visita.setCodSubestadoOportunidad(visitaDto.getCodSubestadoOportunidad());
+			}
+			if(!Checks.esNulo(visitaDto.getFechaAltaOportunidad())) {
+				visita.setFechaAltaOportunidad(visitaDto.getFechaAltaOportunidad());
+
+			}
 		}
 
 		return errorsList;

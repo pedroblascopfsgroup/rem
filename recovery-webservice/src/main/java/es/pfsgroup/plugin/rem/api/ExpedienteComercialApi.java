@@ -468,6 +468,16 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+	
+	
+	/**
+	 * Método que actualiza la información de un expediente comercial en la pestaña detalle economico
+	 *
+	 * @param dto
+	 * @return
+	 */
+	boolean updateExpedienteComercialGestionEconomica(DtoExpedienteComercialGestionEconomica dto) throws Exception;
+	
 
 	/**
 	 * Método que elimina una entrega de reserva

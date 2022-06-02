@@ -300,6 +300,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		boolean resultado = true;
 		ExpedienteComercial expediente = null;
 		Boolean esAcepta = false;
+		String codigoEstadoOferta = dto.getCodigoEstadoOferta();
 		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
@@ -307,8 +308,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
 		
+		if(ofertaApi.debeCongelarOfertaCaixa(oferta)) {
+			codigoEstadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
+		}
+		
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstadoOferta);
 
 		oferta.setEstadoOferta(estadoOferta);
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
@@ -498,6 +503,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
 							+ " no permite la realización de una oferta");
 				}
+			}
+			
+			if (ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
+				throw new JsonViewerException("Un activo de la agrupación ya tiene una oferta aceptada y aprobada.");
 			}
 
 		}
@@ -2044,13 +2053,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))
 			throw new JsonViewerException(messageServices.getMessage(AGRUPACION_BAJA));
 
-		// Si el activo pertenece a un lote comercial, no se pueden aceptar
-		// ofertas de forma individual en el activo
-		if ((activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())
-				|| activoAgrupacionActivoDao.activoEnAgrupacionLoteComercialAlquiler(dto.getIdActivo()))
-				&& (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
-		}
 		if (!Checks.esNulo(oferta.getCliente())) {
 			if (Checks.esNulo(oferta.getCliente().getDocumento())
 					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
@@ -2138,12 +2140,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				Activo activo = aga.getActivo();
 				Long numActivo = activo.getNumActivo();
 
-				comprobarTramitarOferta(oferta, activo, esAlquiler, numActivo.toString());
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+					comprobarTramitarOferta(oferta, activo, esAlquiler, numActivo.toString());
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler
-						&& Checks.esNulo(activo.getTipoAlquiler())) {
-					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
-							+ " no permite la realización de una oferta");
+					if (esAlquiler && Checks.esNulo(activo.getTipoAlquiler())) {
+						throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
+								+ " no permite la realización de una oferta");
+					}
 				}
 			}
 		}

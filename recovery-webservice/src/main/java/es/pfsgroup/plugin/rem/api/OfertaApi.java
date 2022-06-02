@@ -617,7 +617,7 @@ public interface OfertaApi {
 	 * Anula la oferta si viene de un lote crm
 	 * @param oferta
 	 */
-	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+	public void darDebajaAgrSiOfertaEsLote(Oferta oferta);
 	
 	/**
 	 * Genera la excel de Ofertas CES
@@ -856,4 +856,6 @@ public interface OfertaApi {
 	Long numAgrupacionONVentaSobrePlano(Oferta oferta);
 	
 	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
+
+	boolean debeCongelarOfertaCaixa(Oferta oferta);
 }

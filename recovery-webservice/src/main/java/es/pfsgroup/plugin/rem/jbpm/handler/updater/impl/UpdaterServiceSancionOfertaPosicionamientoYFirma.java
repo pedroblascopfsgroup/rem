@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -82,6 +83,9 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private GenericaRestDaoImp genericaRestDaoImp;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -300,6 +304,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 			}
 			expedienteComercialApi.update(expediente, paseAVendido);
 		}
+		
+		genericaRestDaoImp.doFlush();
 
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion, true);
 

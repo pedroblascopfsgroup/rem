@@ -4639,6 +4639,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
 			}
 		},
+
+		comboBajasContablesBBVA: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'bajaContableBBVA'}
+			}
+		},
 		
 		comboSegmentacionCartera: {
 			model: 'HreRem.model.ComboBase',
@@ -4648,7 +4657,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'segmentacionCartera'}
 			}
 		},
-		
+
 		storeComparativaRefCatastral:{
 			model: 'HreRem.model.ComparativaReferenciaCatastralGridModel',
 			proxy: {

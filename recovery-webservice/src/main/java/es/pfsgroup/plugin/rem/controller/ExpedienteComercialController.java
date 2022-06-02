@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -1170,6 +1171,29 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView updateEntregaReserva(DtoEntregaReserva dto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.updateEntregaReserva(dto, idEntidad));
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+
+		/**
+		 * Actualiza los campos pertenecientes al objeto ExpedienteComercialGestionEconomica dependiente de
+		 * expedienteComercial, en la pestaña Detalle Economico en un Expediente.
+		 * 
+		 * @param idExpediente
+		 * @param model
+		 * @return
+		 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateExpedienteComercialGestionEconomica(DtoExpedienteComercialGestionEconomica dto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.updateExpedienteComercialGestionEconomica(dto));
 
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

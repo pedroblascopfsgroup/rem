@@ -1115,6 +1115,29 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+
+		/**
+		 * Actualiza los campos pertenecientes al objeto ExpedienteComercialGestionEconomica dependiente de
+		 * expedienteComercial, en la pestaña Detalle Economico en un Expediente.
+		 * 
+		 * @param idExpediente
+		 * @param model
+		 * @return
+		 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateExpedienteComercialGestionEconomica(DtoExpedienteComercialGestionEconomica dto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.updateExpedienteComercialGestionEconomica(dto));
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

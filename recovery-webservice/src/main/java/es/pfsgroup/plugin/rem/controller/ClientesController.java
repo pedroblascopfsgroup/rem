@@ -96,6 +96,8 @@ public class ClientesController {
 			model.put("id", jsonFields.get("id"));
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			String descError = e.getClass().toString();
+			model.put("descError", descError != null ? descError.substring(6) : null);
 		}
 
 		restApi.sendResponse(response, model,request);
@@ -159,6 +161,7 @@ public class ClientesController {
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("descError", e.getMessage());
 		}
 
 		restApi.sendResponse(response, model,request);

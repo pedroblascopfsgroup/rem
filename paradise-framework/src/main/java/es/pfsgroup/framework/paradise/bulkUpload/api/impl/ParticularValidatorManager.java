@@ -3761,7 +3761,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
 				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " +
 				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO =  :numActivo "+
-				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " +
+				" where agr.AGR_FECHA_BAJA IS NULL AND (agr.AGR_FIN_VIGENCIA IS NULL or agr.AGR_FIN_VIGENCIA >= sysdate) " +
 				" and act.borrado = 0" +
 				" and agr.borrado = 0" +
 				" and tag.borrado = 0" +

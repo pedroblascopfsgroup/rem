@@ -388,6 +388,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoClimatizacion", DDTipoClimatizacion.class);
 		mapa.put("activoAccesibilidad", DDActivoAccesibilidad.class);
 		mapa.put("tasadoraCaixa", DDTasadoraCaixa.class);
+		mapa.put("bajaContableBBVA", DDBajaContableBBVA.class);
 		mapa.put("comunidadAutonoma", DDComunidadAutonoma.class);
 		mapa.put("tipoActuacion", DDTAUTipoActuacion.class);
 		mapa.put("tipoOrganismo", DDOrganismos.class);

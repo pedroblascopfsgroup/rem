@@ -4629,6 +4629,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 		},
 
+		comboBajasContablesBBVA: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'bajaContableBBVA'}
+			}
+		},
+		
 		comboSegmentacionCartera: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4637,7 +4646,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'segmentacionCartera'}
 			}
 		},
-
 		comboTipoOrganismo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -4704,7 +4712,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				load: 'cargarReferenciaCatastral'
 			}
         },
-
 		storeTextosComercialActivo: {    
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.TextosOferta',

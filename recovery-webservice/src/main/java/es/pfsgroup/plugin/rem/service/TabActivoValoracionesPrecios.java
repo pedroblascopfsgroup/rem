@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -18,10 +20,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -256,6 +260,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 		ActivoInfoComercial actInfoComercial = activo.getInfoComercial();
 
 		DtoActivoValoraciones dto = (DtoActivoValoraciones) webDto;
+		ActivoValoraciones activoValoraciones = new ActivoValoraciones();
 		
 		if (Checks.esNulo(activo.getInfoComercial())){
 			actInfoComercial = new ActivoInfoComercial();
@@ -277,6 +282,20 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			{
 				activo.setBloqueoPrecioFechaIni(null);
 				activo.setGestorBloqueoPrecio(null);
+			}
+		}
+		
+		//Valores invariables
+		ActivoAdjudicacionNoJudicial adNJUA = new ActivoAdjudicacionNoJudicial();
+		if (!Checks.esNulo(dto.getValorAdquisicion())) {
+			if(!Checks.esNulo(activo.getAdjNoJudicial())) {
+				activo.getAdjNoJudicial().setValorAdquisicion(new Double (dto.getValorAdquisicion()));
+			} else {
+				adNJUA.setActivo(activo);
+				adNJUA.setValorAdquisicion(new Double (dto.getValorAdquisicion()));
+					
+				activo.setAdjNoJudicial(adNJUA);
+				genericDao.save(ActivoAdjudicacionNoJudicial.class, adNJUA);
 			}
 		}
 		

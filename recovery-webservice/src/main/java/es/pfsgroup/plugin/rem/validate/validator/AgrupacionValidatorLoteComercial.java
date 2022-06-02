@@ -86,33 +86,6 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 			}
 		}
 
-//		boolean tieneOfertasVivas = false;
-		if(!incluidoAgrupacionRestringida) {
-			// Validación ofertas activo.
-			List<ActivoOferta> ofertasActivo = activo.getOfertas();
-			if(!Checks.estaVacio(ofertasActivo)) {
-
-				for(ActivoOferta ofertaActivo : ofertasActivo) {
-					if(!Checks.esNulo(ofertaActivo.getPrimaryKey()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta()) && !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
-
-//						if (!DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())){
-//							tieneOfertasVivas = true;
-//						}
-						
-						if(ofertaApi.isOfertaAceptadaConExpedienteBlocked(ofertaActivo.getPrimaryKey().getOferta())) {
-							return ERROR_OFERTA_ACTIVO_EXPED_TRAMITADO;
-						} else if(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_PENDIENTE) || ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)) {
-							ofertaApi.congelarOferta(ofertaActivo.getPrimaryKey().getOferta());
-						}
-					}
-				}
-			}
-		}
-
-// Aunque el activo tenga ofertas vivas, puede incluirse/excluirse del lote		
-//		// Validacion activo con ofertas vivas (No rechazadas)
-//		if(tieneOfertasVivas)
-//			return ERROR_ACTIVO_CON_OFERTAS_VIVAS;
 		
 		ActivoAgrupacionActivo primerActivoAgrupacion = activoAgrupacionActivoApi.primerActivoPorActivoAgrupacion(agrupacion.getId());
 		if (primerActivoAgrupacion == null) return "";

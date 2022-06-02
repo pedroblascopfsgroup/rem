@@ -1387,6 +1387,12 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: ['isSubcarteraDivarian', 'isSubcarteraApple', 'isSubcarteraJaguar', 'isSubcarteraMarina']
     		},
+			{
+				name: 'bajaContableBBVACodigo'
+			},
+			{
+				name: 'bajaContableBBVADescripcion'
+			},
             {
                 name: 'codComunidadAutonoma'
             },

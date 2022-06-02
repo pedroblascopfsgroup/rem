@@ -242,6 +242,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_GARANTIAS = "garantias";
+	private static final String PESTANA_GESTION_ECONOMICA= "gestioneconomica";
 	private static final String PESTANA_PBC = "pbcexpediente";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
 	private static final String PESTANA_SEGURO_RENTAS = "segurorentasexpediente";
@@ -535,6 +536,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoDocumentos(expediente);
 		} else if (PESTANA_GARANTIAS.equals(tab)) {
 			dto = expedienteToDtoGarantias(expediente);
+		} else if (PESTANA_GESTION_ECONOMICA.equals(tab)) {
+			dto = expedienteComercialToDtoGestionEconomica(expediente);
 		} else if (PESTANA_PBC.equals(tab)) {
 			dto = getOfertaCaixaPbc(expediente);
 		}
@@ -805,17 +808,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
-				if (!Checks.esNulo(oferta.getAgrupacion())) {
-					ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-					List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
-
-					if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)
-							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
-							&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
-						agrupacion.setFechaBaja(new Date());
-						activoAgrupacionApi.saveOrUpdate(agrupacion);
-					} 
-				}
+				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
 		}
@@ -10237,6 +10230,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return documentosExpDto;
 	}
+	
+	private DtoExpedienteComercialGestionEconomica expedienteComercialToDtoGestionEconomica(ExpedienteComercial expediente) {
+
+		DtoExpedienteComercialGestionEconomica ExpedienteComercialGestionEconomicaDto = new DtoExpedienteComercialGestionEconomica();
+		
+		ExpedienteComercialGestionEconomicaDto.setRevisadoPorControllers(expediente.getRevisadoPorControllers());
+		ExpedienteComercialGestionEconomicaDto.setFechaRevision(expediente.getFechaRevision());
+
+		return ExpedienteComercialGestionEconomicaDto;
+	}
 
 	@Override
 	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring) {
@@ -15126,6 +15129,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 	}
 	
+	@Transactional(readOnly = false)
+	public boolean updateExpedienteComercialGestionEconomica(DtoExpedienteComercialGestionEconomica dto) throws Exception {
+		ExpedienteComercial expedienteComercial = this.findOne(dto.getId());
+		java.util.Date fechaHoy = new Date();
+		
+		if (!Checks.esNulo(dto)) {
+			if (!Checks.esNulo(dto.getRevisadoPorControllers()) && dto.getRevisadoPorControllers() == 1) {
+				expedienteComercial.setRevisadoPorControllers(dto.getRevisadoPorControllers());
+				expedienteComercial.setFechaRevision(fechaHoy);
+			}
+			
+			if (!Checks.esNulo(dto.getRevisadoPorControllers()) && dto.getRevisadoPorControllers() == 0) {
+				expedienteComercial.setRevisadoPorControllers(dto.getRevisadoPorControllers());
+				expedienteComercial.setFechaRevision(null);
+			}
+		} else {
+			throw new Exception("Error DtoExpedienteComercialGestionEconomica");
+		}
+
+		genericDao.update(ExpedienteComercial.class, expedienteComercial);
+		return true;
+	}
+
 	@Override
 	@Transactional(readOnly = false)
 	public void deleteGastoRepercutido(Long idGastoRepercutido) {

@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercialGestionEconomica;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -547,6 +548,16 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+	
+	
+	/**
+	 * Método que actualiza la información de un expediente comercial en la pestaña detalle economico
+	 *
+	 * @param dto
+	 * @return
+	 */
+	boolean updateExpedienteComercialGestionEconomica(DtoExpedienteComercialGestionEconomica dto) throws Exception;
+	
 
 	/**
 	 * Método que elimina una entrega de reserva
@@ -1500,4 +1511,14 @@ public interface ExpedienteComercialApi {
 	boolean esTitulizada(TareaExterna tareaExterna);
 
 	void calculoFormalizacionCajamar(Oferta oferta);
+
+	public String getEstadoExpedienteBcFromNumExpediente(Long numExpediente);
+
+	public String getEstadoExpedienteBcFromNumOferta(Long numOferta);
+
+	public String getEstadoExpedienteBcFromIdTarea(Long idTarea);
+
+	public ExpedienteComercial getExpedienteComercyalByNumOferta(Long numOferta);
+
+
 }

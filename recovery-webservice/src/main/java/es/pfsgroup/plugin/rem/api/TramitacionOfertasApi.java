@@ -39,4 +39,8 @@ public interface TramitacionOfertasApi {
 	boolean doTramitacionOferta(Long idOferta, Long idActivo, Long idAgrupacion) throws JsonViewerException, Exception, Error;
 
 	CompradorExpediente setInterlocutorOferta(CompradorExpediente cex, boolean isPrincipal, Oferta oferta);
+
+	boolean debeCongelarseOferta(Oferta oferta);
+
+	boolean debeCongelarseOferta(Long numOferta);
 }

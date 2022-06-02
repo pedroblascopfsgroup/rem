@@ -135,10 +135,7 @@ public class UpdaterServiceSancionOfertaAlquilerScoringBC implements UpdaterServ
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 		
 		genericDao.save(HistoricoSancionesBc.class, historico);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndScoringBc(expedienteComercial, resultadoScoring, fechaSancion));
-		}
+
 	}
 
 

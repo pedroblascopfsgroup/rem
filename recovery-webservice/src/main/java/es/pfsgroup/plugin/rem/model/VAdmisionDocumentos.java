@@ -84,6 +84,12 @@ public class VAdmisionDocumentos implements Serializable {
 
 	@Column(name = "REGISTRO")
 	private String registro;
+	
+	@Column(name = "MOTIVO_EXONERACION_CEE")
+	private String motivoExoneracionCee;
+	
+	@Column(name = "INCIDENCIA_CEE")
+	private String incidenciaCee;
 
 	public String getId() {
 		return id;
@@ -261,6 +267,20 @@ public class VAdmisionDocumentos implements Serializable {
 		this.letraEmisiones = letraEmisiones;
 	}
 
+	public String getMotivoExoneracionCee() {
+		return motivoExoneracionCee;
+	}
+
+	public void setMotivoExoneracionCee(String motivoExoneracionCee) {
+		this.motivoExoneracionCee = motivoExoneracionCee;
+	}
+
+	public String getIncidenciaCee() {
+		return incidenciaCee;
+	}
+
+	public void setIncidenciaCee(String incidenciaCee) {
+		this.incidenciaCee = incidenciaCee;
+	}
 	
-	 
 }

@@ -48,7 +48,7 @@ public class DDCarteraBc implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_CBC_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
 
 	@Version   
 	private Long version;

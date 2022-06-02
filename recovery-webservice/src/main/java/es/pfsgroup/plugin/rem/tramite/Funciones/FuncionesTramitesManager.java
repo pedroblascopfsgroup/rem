@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,8 +71,9 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
 		List<String> codigoTareasActivas = new ArrayList<String>();
 		boolean isAprobado = false;
-		
-		
+
+		DDSubcartera subcartera = eco.getOferta().getActivoPrincipal().getSubcartera();
+
 		for (TareaExterna tareaExterna : tareasActivas) {
 			codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
 		}
@@ -77,7 +81,12 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		if(tp != null) {
 			String codigoTp = tp.getCodigo();
 			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codigoTp)) {
-				isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas);
+				if (subcartera != null && (DDSubcartera.isSubcarteraDivarianRemainingInmob(subcartera) || DDSubcartera.isSubcarteraDivarianArrowInmob(subcartera))){
+					isAprobado = tramiteVentaApi.isTramiteT017DivarianAprobado(eco);
+				}else{
+					isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas);
+				}
+
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codigoTp)){
 				isAprobado = tramiteAlquilerApi.isTramiteT015Aprobado(codigoTareasActivas);
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codigoTp)){

@@ -161,7 +161,6 @@ public class InformeMediadorDto implements Serializable {
 	@NotNull(groups = { Insert.class, Update.class })
 	private String descripcionComercial;
 	
-	@NotNull(groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDEstadoConservacion.class, foreingField="codigo", message = "El codEstadoConservacion no existe", 
 				groups = {Insert.class, Update.class })
 	@EntityDefinition(propertyName = "estadoConservacion", classObj = DDEstadoConservacion.class)

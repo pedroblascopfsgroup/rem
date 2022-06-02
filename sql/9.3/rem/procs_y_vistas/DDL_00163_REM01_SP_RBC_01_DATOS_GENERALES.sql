@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17614
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -16,6 +16,7 @@
 --##	      0.4 Inclusión de cambios en modelo Fase 1, cambios en interfaz y añadidos - HREOS-14545
 --##	      0.5 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.6 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##        0.7 Añadido TIPO_VIVIENDA_INF y TIPOLOGIA_EDIFICIO - [HREOS-17614] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -112,7 +113,9 @@ BEGIN
                   act2.ACT_NUM_ACTIVO as NUM_INMUEBLE,
                   act2.ACT_NUM_ACTIVO_CAIXA as NUM_IDENTIFICATIVO,
                   eqv2.DD_CODIGO_CAIXA as TRIBUT_PROPUESTA_VENTA,
-                  eqv3.DD_CODIGO_CAIXA as TRIBUT_PROPUESTA_CLI_EXT_IVA
+                  eqv3.DD_CODIGO_CAIXA as TRIBUT_PROPUESTA_CLI_EXT_IVA,
+                  eqv4.DD_CODIGO_CAIXA as TIPO_VIVIENDA_INF,
+                  eqv5.DD_CODIGO_CAIXA as TIPOLOGIA_EDIFICIO
                   FROM '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA act
   
                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EAT_EST_TECNICO eat ON eat.DD_EAT_ID = act.DD_EAT_ID  
@@ -121,6 +124,10 @@ BEGIN
                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv2 ON eqv2.DD_NOMBRE_CAIXA = ''TRIBUT_PROPUESTA_VENTA''  AND eqv2.DD_CODIGO_REM =TPV.DD_TPV_CODIGO  AND eqv2.BORRADO=0  
                  LEFT JOIN '|| V_ESQUEMA ||'.DD_TPE_TRIB_PROP_CLI_EX_IVA TPE ON TPE.DD_TPE_ID = act.DD_TPE_ID  
                  LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv3 ON eqv3.DD_NOMBRE_CAIXA = ''TRIBUT_PROPUESTA_CLI_EXT_IVA''  AND eqv3.DD_CODIGO_REM =TPE.DD_TPE_CODIGO  AND eqv3.BORRADO=0  
+                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TVC_TIPO_VIVIENDA_CAIXA TVC ON TVC.DD_TVC_ID = act.DD_TVC_ID  
+                 LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv4 ON eqv4.DD_NOMBRE_CAIXA = ''TIPO_VIVIENDA_INF'' AND eqv4.DD_CODIGO_REM =TVC.DD_TVC_CODIGO AND eqv4.BORRADO=0  
+                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TEC_TIPO_EDIFICIO_CAIXA TEC ON TEC.DD_TEC_ID = act.DD_TEC_ID  
+                 LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv5 ON eqv5.DD_NOMBRE_CAIXA = ''TIPOLOGIA_EDIFICIO'' AND eqv5.DD_CODIGO_REM =TEC.DD_TEC_CODIGO AND eqv5.BORRADO=0  
                  JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO act2 on act2.ACT_ID = act.ACT_ID 
                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO pac ON pac.ACT_ID = act2.ACT_ID
                  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO ACT_PRO ON ACT_PRO.ACT_ID = ACT2.ACT_ID AND ACT_PRO.BORRADO = 0
@@ -138,7 +145,9 @@ BEGIN
                                     aux.ESTADO_TECNICO = us.ESTADO_TECNICO  
                                     ,aux.FEC_ESTADO_TECNICO = us.FEC_ESTADO_TECNICO
                                     ,aux.TRIBUT_PROPUESTA_VENTA = us.TRIBUT_PROPUESTA_VENTA
-                                    ,aux.TRIBUT_PROPUESTA_CLI_EXT_IVA = us.TRIBUT_PROPUESTA_CLI_EXT_IVA';
+                                    ,aux.TRIBUT_PROPUESTA_CLI_EXT_IVA = us.TRIBUT_PROPUESTA_CLI_EXT_IVA
+                                    ,aux.TIPO_VIVIENDA_INF = us.TIPO_VIVIENDA_INF
+                                    ,aux.TIPOLOGIA_EDIFICIO = us.TIPOLOGIA_EDIFICIO';
 
    EXECUTE IMMEDIATE V_MSQL;
 

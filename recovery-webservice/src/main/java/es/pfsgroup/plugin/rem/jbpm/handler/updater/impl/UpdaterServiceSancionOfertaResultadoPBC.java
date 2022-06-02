@@ -295,11 +295,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 					}
 					genericDao.save(ExpedienteComercial.class, expediente);
 				}
-				
-				if(estadoBcModificado) {
-					ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
-
-				}
 
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 					boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos ,BoardingComunicacionApi.TIMEOUT_1_MINUTO);

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20211221
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220315
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16758
+--## INCIDENCIA_LINK=HREOS-17155
 --## PRODUCTO=NO
 --##
 --## Finalidad: INSERTAR DD_CBC_CARTERA_BC
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Version inicial - [HREOS-16758] - Javier Esbri
+--##        0.2 Añadir Alquiler Rotacional - [HREOS-17155] - Alejandra García
 --##########################################
 --*/
 
@@ -31,14 +32,15 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CBC_CARTERA_BC'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_CHARS VARCHAR2(6 CHAR) := 'CBC';
-    V_USUARIO VARCHAR2(250 CHAR) := 'HREOS-16758';
+    V_USUARIO VARCHAR2(250 CHAR) := 'HREOS-17155';
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         --Codigo    Descripcion Corta   Descripcion Larga
         T_TIPO_DATA('01','Venta'),
-        T_TIPO_DATA('03','Alquiler')
+        T_TIPO_DATA('02','Alquiler Rotacional'),
+        T_TIPO_DATA('03','Alquiler Alquilado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -53,8 +55,21 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
 					WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
         IF V_NUM_TABLAS = 1 THEN
+         --Si existe se modifica
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+
+          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' 
+                    SET 
+                      DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                    , DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                    , USUARIOMODIFICAR = '''||V_USUARIO||''' 
+                    , FECHAMODIFICAR = SYSDATE 
+                    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''  /  '''||TRIM(V_TMP_TIPO_DATA(2))||''' ');
+
         ELSE 
           -- Si no existe se inserta.
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');

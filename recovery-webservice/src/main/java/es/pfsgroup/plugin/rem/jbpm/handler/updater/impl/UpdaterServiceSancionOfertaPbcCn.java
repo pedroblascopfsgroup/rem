@@ -108,10 +108,6 @@ public class UpdaterServiceSancionOfertaPbcCn implements UpdaterService {
 				genericDao.save(HistoricoTareaPbc.class, htp);
 			}
 		}
-		
-		if(estadoBcModificado && expediente != null) {
-			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
-		}
 
 	}
 

@@ -29,10 +29,8 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -76,7 +74,6 @@ import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import javassist.expr.NewArray;
 
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -827,6 +824,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		Usuario gestorComercial = null;
 		Usuario gestorAux = null;
 				
+		for (int i=0; i<dtoActivos.size(); i++) {
+			Activo activo = activoApi.getByNumActivo(dtoActivos.get(i).getIdActivoHaya());
+			if (i==0) {
+				gestorComercial = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+			} else {
+				gestorAux = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+				if (!gestorAux.equals(gestorComercial)) {
+					return null;
+				}
+			}
+		}
+		return gestorComercial;
+	}
+
+	@Override
+	public Usuario getGestorComercialBackOfficeAgrupacion(List<ActivosLoteOfertaDto> dtoActivos) {
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGBOINM"));
+		Usuario gestorComercial = null;
+		Usuario gestorAux = null;
+
 		for (int i=0; i<dtoActivos.size(); i++) {
 			Activo activo = activoApi.getByNumActivo(dtoActivos.get(i).getIdActivoHaya());
 			if (i==0) {

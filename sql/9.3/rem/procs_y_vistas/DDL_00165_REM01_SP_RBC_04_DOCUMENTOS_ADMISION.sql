@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220404
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=HREOS-17515
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -19,6 +19,9 @@
 --##        0.7 Revisión lógica equivalencia Calificación Energética- [HREOS-14974] - Alejandra García
 --##	      0.8 Filtramos las consultas para que no salgan los activos titulizados - HREOS-15423
 --##        0.9 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
+--##        0.10 Nuevos campos F1.1 - [HREOS-17151] - Daniel Algaba
+--##        0.11 Nuevos campos F1.1 - [HREOS-17414] - Daniel Algaba
+--##        0.12 Corrección Registro y cambios SST - [HREOS-17515] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -70,6 +73,9 @@ BEGIN
                         , NVL2(EDC.DD_EDC_CODIGO, ''S'', ''N'') REGISTRO
                         , CFD.CFD_OBLIGATORIO
                         , EDC.DD_EDC_CODIGO
+                        , MEC.DD_MEC_CODIGO
+                        , ICE.DD_ICE_CODIGO
+                        , ADO.DATA_ID_DOCUMENTO
                         , ROW_NUMBER() OVER (PARTITION BY ADO.ACT_ID, ADO.CFD_ID, CFD.DD_TPA_ID, CFD.DD_SAC_ID ORDER BY ADO.DD_EDC_ID NULLS LAST, ADO.ADO_ID DESC) RN
                      FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
                      JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON ADO.CFD_ID = CFD.CFD_ID AND CFD.BORRADO = 0
@@ -78,6 +84,8 @@ BEGIN
                         --AND EDC.DD_EDC_CODIGO = ''01''
                      LEFT JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA TCE ON ADO.DD_TCE_ID = TCE.DD_TCE_ID AND TCE.BORRADO = 0
                      LEFT JOIN '||V_ESQUEMA||'.DD_LEM_LISTA_EMISIONES LEM ON ADO.DD_LEM_ID = LEM.DD_LEM_ID AND LEM.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_MEC_MOTIVO_EXONERACION_CEE MEC ON ADO.DD_MEC_ID = MEC.DD_MEC_ID AND MEC.BORRADO = 0
+                     LEFT JOIN '||V_ESQUEMA||'.DD_ICE_INCIDENCIA_CEE ICE ON ADO.DD_ICE_ID = ICE.DD_ICE_ID AND ICE.BORRADO = 0
                      WHERE ADO.BORRADO = 0
                         AND TPD.DD_TPD_CODIGO IN (''11'')
                         AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
@@ -132,6 +140,18 @@ BEGIN
                      WHERE ADO.BORRADO = 0
                         AND TPD.DD_TPD_CODIGO IN (''27'', ''121'')
                         AND SYSDATE BETWEEN NVL(ADO.ADO_FECHA_SOLICITUD, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AND NVL(ADO.ADO_FECHA_CADUCIDAD, TO_DATE(''01/01/2099'',''DD/MM/YYYY''))
+                  ), SST AS (
+                    SELECT 
+                    PVE.PVE_DOCIDENTIF CODIGO_SST
+                    , ACT_TBJ.ACT_ID
+                    , ROW_NUMBER() OVER (PARTITION BY ACT_TBJ.ACT_ID ORDER BY TBJ.TBJ_FECHA_EJECUTADO desc) RN
+                    FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
+                    JOIN '||V_ESQUEMA||'.ACT_TBJ ON TBJ.TBJ_ID = ACT_TBJ.TBJ_ID
+                    JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON TBJ.DD_STR_ID = STR.DD_STR_ID AND STR.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC ON PVC.PVC_ID = TBJ.PVC_ID AND PVC.BORRADO = 0
+                    JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PVC.PVE_ID AND PVE.BORRADO = 0
+                    WHERE TBJ.BORRADO = 0
+                    AND STR.DD_STR_CODIGO = ''18''
                   )
                   SELECT DISTINCT 
                      ACT.ACT_NUM_ACTIVO_CAIXA NUM_IDENTIFICATIVO
@@ -155,6 +175,16 @@ BEGIN
                         WHEN ISU.DD_EDC_CODIGO = ''01'' THEN 5
                         WHEN CEH.DD_EDC_CODIGO NOT IN (''01'', ''02'') AND CEH.CFD_OBLIGATORIO = 0 THEN 2
                         END CEDULA_HABITABILIDAD
+                        , CASE WHEN EQV_MEC.DD_CODIGO_CAIXA IS NOT NULL THEN ''04''
+                           WHEN CEE.DD_EDC_CODIGO = ''01'' THEN ''01''
+                           WHEN CEE.DATA_ID_DOCUMENTO IS NOT NULL THEN ''02''
+                           WHEN EQV_ICE.DD_CODIGO_CAIXA IS NOT NULL THEN ''05''
+                           WHEN CEE.REGISTRO IS NOT NULL THEN ''03''
+                           END SITUACION_CEE
+                        , EQV_MEC.DD_CODIGO_CAIXA MOTIVO_EXONERACION_CEE
+                        , EQV_ICE.DD_CODIGO_CAIXA INCIDENCIA_CEE
+                        , CEE.DATA_ID_DOCUMENTO NUMERO_CEE
+                        , CASE WHEN EQV_MEC.DD_CODIGO_CAIXA IS NOT NULL OR CEE.DD_EDC_CODIGO = ''01'' OR CEE.DATA_ID_DOCUMENTO IS NOT NULL OR CEE.REGISTRO = ''S'' OR EQV_ICE.DD_CODIGO_CAIXA IS NOT NULL THEN SST.CODIGO_SST END CODIGO_SST
                   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                   JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                   JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID AND PAC.BORRADO = 0
@@ -166,12 +196,15 @@ BEGIN
                   LEFT JOIN ISU ON ISU.ACT_ID = ACT.ACT_ID AND ISU.DD_TPA_ID = ACT.DD_TPA_ID AND (ISU.DD_SAC_ID IS NULL OR ISU.DD_SAC_ID = ACT.DD_SAC_ID) AND ISU.RN = 1
                   LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_TCE ON EQV_TCE.DD_NOMBRE_CAIXA = ''CALIFICACION_ENERGETICA'' AND EQV_TCE.DD_CODIGO_REM = CEE.DD_TCE_CODIGO
                   LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_LEM ON EQV_LEM.DD_NOMBRE_CAIXA = ''LISTA_EMISIONES'' AND EQV_LEM.DD_CODIGO_REM = CEE.DD_LEM_CODIGO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_MEC ON EQV_MEC.DD_NOMBRE_CAIXA = ''MOTIVO_EXONERACION_CEE'' AND EQV_MEC.DD_CODIGO_REM = CEE.DD_MEC_CODIGO
+                  LEFT JOIN '||V_ESQUEMA||'.DD_EQV_CAIXA_REM EQV_ICE ON EQV_ICE.DD_NOMBRE_CAIXA = ''INCIDENCIA_CEE'' AND EQV_ICE.DD_CODIGO_REM = CEE.DD_ICE_CODIGO
+                  LEFT JOIN SST ON SST.ACT_ID = ACT.ACT_ID AND SST.RN = 1
                   WHERE ACT.BORRADO = 0
                      AND CRA.DD_CRA_CODIGO = ''03''
                      AND PAC.PAC_INCLUIDO = 1
                      AND ACT.ACT_EN_TRAMITE = 0
                      AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
-                     AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569''''A80352750'', ''A80514466'')
+                     AND PRO.PRO_DOCIDENTIF NOT IN (''V84966126'',''V85164648'',''V85587434'',''V84322205'',''V84593961'',''V84669332'',''V85082675'',''V85623668'',''V84856319'',''V85500866'',''V85143659'',''V85594927'',''V85981231'',''V84889229'',''V84916956'',''V85160935'',''V85295087'',''V84175744'',''V84925569'',''A80352750'',''A80514466'')
                   ) AUX
                   ON (APR.NUM_INMUEBLE = AUX.NUM_INMUEBLE AND APR.NUM_IDENTIFICATIVO = AUX.NUM_IDENTIFICATIVO)
                   WHEN MATCHED THEN
@@ -185,6 +218,11 @@ BEGIN
                   , APR.LISTA_ENERGIA = AUX.LISTA_ENERGIA
                   , APR.VALOR_ENERGIA = AUX.VALOR_ENERGIA
                   , APR.CEDULA_HABITABILIDAD = AUX.CEDULA_HABITABILIDAD
+                  , APR.SITUACION_CEE = AUX.SITUACION_CEE
+                  , APR.MOTIVO_EXONERACION_CEE = AUX.MOTIVO_EXONERACION_CEE
+                  , APR.INCIDENCIA_CEE = AUX.INCIDENCIA_CEE
+                  , APR.NUMERO_CEE = AUX.NUMERO_CEE
+                  , APR.CODIGO_SST = AUX.CODIGO_SST
                   WHEN NOT MATCHED THEN
                   INSERT 
                   (NUM_IDENTIFICATIVO
@@ -197,7 +235,12 @@ BEGIN
                   , VALORES_EMISIONES
                   , LISTA_ENERGIA
                   , VALOR_ENERGIA
-                  , CEDULA_HABITABILIDAD)
+                  , CEDULA_HABITABILIDAD
+                  , SITUACION_CEE
+                  , MOTIVO_EXONERACION_CEE
+                  , INCIDENCIA_CEE
+                  , NUMERO_CEE
+                  , CODIGO_SST)
                   VALUES 
                   (AUX.NUM_IDENTIFICATIVO
                   , AUX.NUM_INMUEBLE
@@ -209,7 +252,12 @@ BEGIN
                   , AUX.VALORES_EMISIONES
                   , AUX.LISTA_ENERGIA
                   , AUX.VALOR_ENERGIA
-                  , AUX.CEDULA_HABITABILIDAD)';
+                  , AUX.CEDULA_HABITABILIDAD
+                  , AUX.SITUACION_CEE
+                  , AUX.MOTIVO_EXONERACION_CEE
+                  , AUX.INCIDENCIA_CEE
+                  , AUX.NUMERO_CEE
+                  , AUX.CODIGO_SST)';
    
       EXECUTE IMMEDIATE V_MSQL;
 

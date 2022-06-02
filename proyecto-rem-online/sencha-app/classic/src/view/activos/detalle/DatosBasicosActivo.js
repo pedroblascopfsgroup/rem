@@ -18,6 +18,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var me = this;
         var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
+        
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [ 	
 			{
@@ -480,7 +481,74 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                		readOnly : '{!editarSegmentoDivarianandBbva}',
 										rawValue: '{activo.tipoSegmentoDescripcion}'
 				                	}
-				                }
+				                },
+				                {
+				                	xtype: 'textfieldbase',
+				                	fieldLabel: HreRem.i18n('fieldlabel.numero.inmueble.anterior'),
+				                	name: 'motivoActivo',
+				                	bind: {
+				                		readOnly : true,
+				                		value: '{activo.numeroInmuebleAnterior}',
+				                		hidden: '{!activo.isCarteraBankia}'
+				                	},
+				                	maxLength: 20
+				                },
+						        {
+						        	xtype: 'comboboxfieldbasedd',
+						        	fieldLabel: HreRem.i18n('fieldlabel.activo.anejo.garaje'),
+						        	reference: 'anejoGarajeCodRef',
+						        	listeners: {
+						        		change: 'onChangeComboAnejoGaraje'
+						        	},
+						        	bind: {
+						        		store: '{comboSinSino}',
+						        		value: '{activo.anejoGarajeCodigo}',
+						        		rawValue: '{activo.anejoGarajeDescripcion}',
+						        		readOnly: '{isEditableAnejo}'
+						        	},
+						        	displayField: 'descripcion',
+						    		valueField: 'codigo'
+						        },
+						        {
+									xtype:'numberfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activo.identificador.plaza.parking'),
+									reference: 'identificadorPlazaParkingRef',
+									bind:{
+										value: '{activo.identificadorPlazaParking}',
+										readOnly: '{isEditableIdentificador}',
+										hidden: '{isVisbleIndicadorPlazaParking}'
+									},
+									maskRe: /^\d*$/, 
+				                	maxLength: 3
+	                            },
+						        {
+						        	xtype: 'comboboxfieldbasedd',
+						        	fieldLabel: HreRem.i18n('fieldlabel.activo.anejo.trastero'),
+						        	reference: 'anejoTrasteroCodRef',
+						        	listeners: {
+						        		change: 'onChangeComboAnejoTrastero'
+						        	},
+						        	bind: {
+						        		store: '{comboSinSino}',
+						        		value: '{activo.anejoTrasteroCodigo}',
+						        		rawValue: '{activo.anejoTrasteroDescripcion}',
+						        		readOnly: '{isEditableAnejo}'
+						        	},
+						        	displayField: 'descripcion',
+						    		valueField: 'codigo'
+						        },
+						        {
+									xtype:'numberfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activo.identificador.trastero'),
+									reference: 'identificadorTrasteroRef',
+									bind:{
+										value: '{activo.identificadorTrastero}',
+										readOnly: '{isEditableIdentificador}',
+										hidden: '{isVisbleIndicadorTrastero}'
+									},
+									maskRe: /^\d*$/, 
+				                	maxLength: 3
+	                            }
 				               
 				            ]
 						}
@@ -972,32 +1040,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                }
 					]               
           	},
-          	// Perimetros  BBVA-----------------------------------------------
-          	{    
-				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',
-				title: HreRem.i18n('title.perimetros'),
-				hidden:!$AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']),
-				bind: {
-					hidden: '{esUsuarioTasadora}'
-				},
-				items :[					
-					{
-						xtype: 'datefieldbase',
-						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-						colspan: 2,
-						bind:		'{activo.fechaAltaActivoRem}',
-						readOnly	: true
-					}
-				]
- 			},
           	// Perimetros -----------------------------------------------
             {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.perimetros'),
-				hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']) || $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']) || $AU.userIsRol(CONST.PERFILES["TASADORA"]),
+				hidden: $AU.userIsRol(CONST.PERFILES['USUARIOS_BC']) || $AU.userIsRol(CONST.PERFILES["TASADORA"]),
 				items :
 					[
 					{
@@ -1010,9 +1059,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'datefieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.fecha.alta.activo'),
-						colspan: 2,
+						colspan: 1,
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
+					},
+					{
+						xtype: 'comboboxfieldbasedd',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.baja.contable.bbva'),
+						colspan: 2,
+						readOnly: !($AU.userIsRol(CONST.PERFILES['KAM_BBVA']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])),
+						bind: {
+							store: '{comboBajasContablesBBVA}',
+							value: '{activo.bajaContableBBVACodigo}',
+							rawValue: '{activo.bajaContableBBVADescripcion}',
+							hidden: '{!activo.isCarteraBbva}'
+						}
 					},
 					{
 						xtype: 'textfieldbase',
@@ -1033,7 +1094,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
-						colspan: 2,
+						colspan: 3,
 						bind: {
 							value: '{activo.trabajosVivos}',
 							hidden: $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA'])
@@ -1048,7 +1109,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						title: HreRem.i18n('title.perimetros.condiciones'),
 						border: true,
 						colapsible: false,
-						colspan: 3,
+						colspan: 4,
 						items :
 							[
 							//Fila cabecera

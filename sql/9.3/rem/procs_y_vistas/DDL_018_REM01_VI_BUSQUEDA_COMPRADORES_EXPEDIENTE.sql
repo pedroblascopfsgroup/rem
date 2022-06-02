@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20211027
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20220330
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-15898
@@ -20,6 +20,7 @@
 --##        0.8 HREOS-13407 Se añaden 2 campos Estado Contraste y fecha contraste.
 --##		0.9 HREOS-14394  Añadir estados bc
 --##		0.10 HREOS-14394  Modificar logica estados BC
+--##		0.11 HREOS-17522  Modificar campo fecha contraste
 --##########################################
 --*/
 		
@@ -107,11 +108,7 @@ BEGIN
 	      	END AS FECHA_ACEP_GDPR,
 	      	ECL.DD_ECL_CODIGO AS COD_ESTADO_ECL,
 	      	ECL.DD_ECL_DESCRIPCION AS DESC_ESTADO_ECL,
-	      	CASE WHEN (CEX.ECO_ECL_FECHA IS NOT NULL) 
-				THEN CAST(TO_CHAR(CEX.ECO_ECL_FECHA ,
-					''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
-			ELSE NULL
-			END 																				AS ECO_ECL_FECHA,
+	      	CEX.ECO_ECL_FECHA AS ECO_ECL_FECHA,
 			CASE WHEN EIC.DD_EIC_CODIGO NOT IN (''10'', ''20'') THEN EIC.DD_EIC_CODIGO ELSE ECC.DD_ECC_CODIGO END AS ESTADO_CODIGO,
 			CASE WHEN EIC.DD_EIC_CODIGO NOT IN (''10'', ''20'') THEN EIC.DD_EIC_DESCRIPCION ELSE ECC.DD_ECC_DESCRIPCION END AS ESTADO_DESCRIPCION
 		

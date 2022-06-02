@@ -169,8 +169,6 @@ public class UpdaterServiceFirmaContrato implements UpdaterService {
 					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo",estadoBc)));
 
 					genericDao.save(ExpedienteComercial.class, expediente);
-					
-			        ofertaApi.replicateOfertaFlushDto(expediente.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 
 			        if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())
 						boardingComunicacionApi.enviarBloqueoCompradoresCFV(ofertaAceptada, campos,BoardingComunicacionApi.TIMEOUT_1_MINUTO);

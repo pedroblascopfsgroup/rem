@@ -37,6 +37,8 @@ public class DtoAdmisionDocumento extends WebDto {
 	private String letraConsumo;
 	private String consumo;
 	private String letraEmisiones;
+	private String motivoExoneracionCee;
+	private String incidenciaCee;
 	private String emision;
 	private String registro;
 	
@@ -253,5 +255,20 @@ public class DtoAdmisionDocumento extends WebDto {
 		this.letraEmisiones = letraEmisiones;
 	}
 
+	public String getMotivoExoneracionCee() {
+		return motivoExoneracionCee;
+	}
+
+	public void setMotivoExoneracionCee(String motivoExoneracionCee) {
+		this.motivoExoneracionCee = motivoExoneracionCee;
+	}
+
+	public String getIncidenciaCee() {
+		return incidenciaCee;
+	}
+
+	public void setIncidenciaCee(String incidenciaCee) {
+		this.incidenciaCee = incidenciaCee;
+	}
 	
 }

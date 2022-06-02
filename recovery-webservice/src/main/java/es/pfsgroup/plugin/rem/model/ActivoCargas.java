@@ -117,6 +117,21 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name="CRG_FECHA_PRESENTACION_CARTA")
     private Date fechaPresentacionRpCarta;
     
+    @Column(name="CRG_INDICADOR_PREFERENTE")
+    private Boolean indicadorPreferente;
+    
+    @Column(name="CRG_IDENTIFICADOR_CARGA_EJECUTADA")
+    private Boolean identificadorCargaEjecutada;
+    
+    @Column(name="CRG_IGUALDAD_RANGO")
+    private Boolean igualdadRango;
+    
+    @Column(name="CRG_IDENTIFICADOR_CARGA_INDEFINIDA")
+    private Boolean identificadorCargaIndefinida;
+    
+    @Column(name="CRG_IDENTIFICADOR_CARGA_ECONOMICA")
+    private Boolean identificadorCargaEconomica;
+    
 	@Version   
 	private Long version;
 	
@@ -289,6 +304,46 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setFechaPresentacionRpCarta(Date fechaPresentacionRpCarta) {
 		this.fechaPresentacionRpCarta = fechaPresentacionRpCarta;
+	}
+
+	public Boolean getIndicadorPreferente() {
+		return indicadorPreferente;
+	}
+
+	public void setIndicadorPreferente(Boolean indicadorPreferente) {
+		this.indicadorPreferente = indicadorPreferente;
+	}
+
+	public Boolean getIdentificadorCargaEjecutada() {
+		return identificadorCargaEjecutada;
+	}
+
+	public void setIdentificadorCargaEjecutada(Boolean identificadorCargaEjecutada) {
+		this.identificadorCargaEjecutada = identificadorCargaEjecutada;
+	}
+
+	public Boolean getIgualdadRango() {
+		return igualdadRango;
+	}
+
+	public void setIgualdadRango(Boolean igualdadRango) {
+		this.igualdadRango = igualdadRango;
+	}
+
+	public Boolean getIdentificadorCargaIndefinida() {
+		return identificadorCargaIndefinida;
+	}
+
+	public void setIdentificadorCargaIndefinida(Boolean identificadorCargaIndefinida) {
+		this.identificadorCargaIndefinida = identificadorCargaIndefinida;
+	}
+
+	public Boolean getIdentificadorCargaEconomica() {
+		return identificadorCargaEconomica;
+	}
+
+	public void setIdentificadorCargaEconomica(Boolean identificadorCargaEconomica) {
+		this.identificadorCargaEconomica = identificadorCargaEconomica;
 	}
 	
 }

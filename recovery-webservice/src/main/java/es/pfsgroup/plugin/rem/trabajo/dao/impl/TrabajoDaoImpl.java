@@ -258,7 +258,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 					&& !DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(filtro.getSubcarteraCodigo())
 					&& !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(filtro.getSubcarteraCodigo())
 					&& !DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(filtro.getSubcarteraCodigo())
-					&& !DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(filtro.getSubcarteraCodigo())) {
+					&& !DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(filtro.getSubcarteraCodigo())
+					&& !DDSubcartera.CODIGO_JAGUAR.equals(filtro.getSubcarteraCodigo())) {
 				
 				page = getSeleccionTarifasTrabajoSinSubcartera(filtro, usuarioLogado);
 			}			

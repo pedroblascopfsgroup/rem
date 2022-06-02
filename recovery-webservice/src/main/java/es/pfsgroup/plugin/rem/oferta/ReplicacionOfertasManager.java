@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.activo.ActivoAgrupacionManager;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
@@ -41,25 +42,45 @@ public class ReplicacionOfertasManager extends BusinessOperationOverrider<Replic
 
     @Transactional
     @Override
-    public void callReplicateOferta(Long idTarea, Boolean success){
+    public void callReplicateOferta(CaixaBcReplicationDataHolder dataHolder, Boolean success){
         ExpedienteComercial eco = null;
         Boolean lanzarReplicate = false;
         TareaActivo tarea = null;
 
-        if(idTarea != null){
-            tarea = tareaActivoApi.get(idTarea);
+        if(dataHolder.getIdTarea() != null){
+            tarea = tareaActivoApi.get(dataHolder.getIdTarea());
             Long idTramite = tarea != null && tarea.getTramite() != null ? tarea.getTramite().getId() : null;
             if(idTramite != null)
                 eco = expedienteComercialApi.getExpedienteByIdTramite(idTramite);
         }
 
-        if(eco != null && tarea != null && success){
-            lanzarReplicate = calculaLanzarReplicateByEco(eco, tarea);
-            lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
-            if(lanzarReplicate)
-                ofertaApi.replicateOfertaFlushDto(eco.getOferta(), expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(eco));
-            	llamadaPBCApi.callPBC(eco, tarea);
+        if (eco == null && dataHolder.getNumOferta() != null){
+            eco = expedienteComercialApi.getExpedienteComercyalByNumOferta(dataHolder.getNumOferta());
         }
+
+        if(eco != null && success){
+            if (dataHolder.getCurrentStateExpedienteBcCod() == null)
+                dataHolder.setCurrentStateExpedienteBcCod(eco.getEstadoBc() != null ? eco.getEstadoBc().getCodigo() : null);
+            lanzarReplicate = dataHolder.haschangedExpedienteBCState();
+            if(lanzarReplicate){
+                if (dataHolder.getEsAccion() != null && dataHolder.getEsAccion()){
+                    dataHolder.setReplicateToBc(Boolean.TRUE);
+                }else {
+                    if (tarea != null){
+                        callSPPublicaciones(dataHolder.getIdTarea(),success);
+                        ofertaApi.replicateOfertaFlush(eco.getOferta());
+                        llamadaPBCApi.callPBC(eco, tarea);
+                    }
+                }
+            }else if (tarea != null && (dataHolder.getEsAccion() == null || !dataHolder.getEsAccion())){
+                callSPPublicaciones(dataHolder.getIdTarea(),success);
+            }
+        }
+    }
+
+    public void callSPPublicaciones(Long idTarea,Boolean success){
+        if (idTarea != null)
+        lanzarSPPublicaciones(idTarea != null ? idTarea.toString() : null,success);
     }
 
     private Boolean calculaLanzarReplicateByEco(ExpedienteComercial eco, TareaActivo tarea) {

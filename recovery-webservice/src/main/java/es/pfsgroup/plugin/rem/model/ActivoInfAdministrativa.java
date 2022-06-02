@@ -185,6 +185,18 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	@Column(name = "ADM_MAX_PRECIO_MODULO_ALQUILER") 
 	private Double maxPrecioModuloAlquiler; 
 	
+	@Column(name = "COMPRADOR_ACOJE_AYUDA") 
+	private Boolean compradorAcojeAyuda; 
+	
+	@Column(name = "IMPORTE_AYUDA_FINANCIACION") 
+	private Double importeAyudaFinanciacion; 
+	
+	@Column(name = "FECHA_VENCIMIENTO_AVAL_SEGURO")
+	private Date fechaVencimientoAvalSeguro;
+	
+	@Column(name = "FECHA_DEVOLUCION_AYUDA")
+	private Date fechaDevolucionAyuda;
+	
 	@Version
 	private Long version;
 	
@@ -554,7 +566,38 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 
 	public void setMaxPrecioModuloAlquiler(Double maxPrecioModuloAlquiler) { 
 		this.maxPrecioModuloAlquiler = maxPrecioModuloAlquiler; 
+	}
+
+	public Boolean getCompradorAcojeAyuda() {
+		return compradorAcojeAyuda;
+	}
+
+	public void setCompradorAcojeAyuda(Boolean compradorAcojeAyuda) {
+		this.compradorAcojeAyuda = compradorAcojeAyuda;
+	}
+
+	public Double getImporteAyudaFinanciacion() {
+		return importeAyudaFinanciacion;
+	}
+
+	public void setImporteAyudaFinanciacion(Double importeAyudaFinanciacion) {
+		this.importeAyudaFinanciacion = importeAyudaFinanciacion;
+	}
+
+	public Date getFechaVencimientoAvalSeguro() {
+		return fechaVencimientoAvalSeguro;
+	}
+
+	public void setFechaVencimientoAvalSeguro(Date fechaVencimientoAvalSeguro) {
+		this.fechaVencimientoAvalSeguro = fechaVencimientoAvalSeguro;
+	}
+
+	public Date getFechaDevolucionAyuda() {
+		return fechaDevolucionAyuda;
+	}
+
+	public void setFechaDevolucionAyuda(Date fechaDevolucionAyuda) {
+		this.fechaDevolucionAyuda = fechaDevolucionAyuda;
 	} 
 	
 }
-

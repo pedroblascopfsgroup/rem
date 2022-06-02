@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.devon.dto.WebDto;
-
-
 /**
  * Dto para el tab de cargas
  * @author Carlos Feliu
@@ -18,6 +15,8 @@ public class DtoActivoAdministracion extends DtoTabActivo {
     private Long numActivo;
     private Boolean ibiExento;
     private Boolean isUnidadAlquilable;
+	private String segmentacionCarteraCodigo;
+	private String segmentacionCarteraDescripcion;
     
     
 	public Long getNumActivo() {
@@ -38,7 +37,17 @@ public class DtoActivoAdministracion extends DtoTabActivo {
 	public void setIsUnidadAlquilable(Boolean isUnidadAlquilable) {
 		this.isUnidadAlquilable = isUnidadAlquilable;
 	}
-    
-    
-    
+	public String getSegmentacionCarteraCodigo() {
+		return segmentacionCarteraCodigo;
+	}
+	public void setSegmentacionCarteraCodigo(String segmentacionCarteraCodigo) {
+		this.segmentacionCarteraCodigo = segmentacionCarteraCodigo;
+	}
+	public String getSegmentacionCarteraDescripcion() {
+		return segmentacionCarteraDescripcion;
+	}
+	public void setSegmentacionCarteraDescripcion(String segmentacionCarteraDescripcion) {
+		this.segmentacionCarteraDescripcion = segmentacionCarteraDescripcion;
+	}
+	
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20211123
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16493
+--## INCIDENCIA_LINK=HREOS-17696
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -13,6 +13,15 @@
 --##        0.1 Versión 
 --##        0.2 Añadir mapeos nuevos y rellenar campo PRIORIDAD en COMPLEMENTO - [HREOS-15855] - Alejandra García
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
+--##        0.4 Añadir estado posesorio y fecha a la tabla ACT_ACTIVO_CAIXA [HREOS-17696] - Daniel Algaba
+--##        0.5 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
+--##        0.6 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
+--##        0.7 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.8 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
+--##        0.9 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.10 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
+--##        0.11 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
+--##	      0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -34,7 +43,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-15423';
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-17614';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -181,6 +190,13 @@ DECLARE
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA2','Retirado de la comercialización','DD_ECV_EST_COM_VENTA','VA2','0'),
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA3','En trámite de venta','DD_ECV_EST_COM_VENTA','VA3','0'),
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA4','Venta realizada','DD_ECV_EST_COM_VENTA','VA4','0'),
+        --Estado posesorio
+        T_TIPO_DATA('ESTADO_POSESORIO','P01','Sin posesión','DD_ETP_ESTADO_POSESORIO','P01','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P02','Alquilado','DD_ETP_ESTADO_POSESORIO','P02','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P03','Reocupado','DD_ETP_ESTADO_POSESORIO','P03','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P04','Cedido AAPP','DD_ETP_ESTADO_POSESORIO','P04','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P05','Vertical (posesión referida a SI)','DD_ETP_ESTADO_POSESORIO','P05','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P06','Con posesión','DD_ETP_ESTADO_POSESORIO','P06','0'),
       --Estado técnico
         T_TIPO_DATA('ESTADO_TECNICO','E01','Pendiente actuación técnica','DD_EAT_EST_TECNICO','E01','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E02','En Gestión entrada','DD_EAT_EST_TECNICO','E02','0'),
@@ -191,6 +207,8 @@ DECLARE
         T_TIPO_DATA('ESTADO_TECNICO','E07','Mantenimiento/actuación finalizada/anulada','DD_EAT_EST_TECNICO','E07','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E08','Desarrollo en gestión','DD_EAT_EST_TECNICO','E08','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E09','Desarrollo en tramitación final/finalizado','DD_EAT_EST_TECNICO','E09','0'),
+        T_TIPO_DATA('ESTADO_TECNICO','E10','Promoción En Estudio/Construcción','DD_EAT_EST_TECNICO','E10','0'),
+        T_TIPO_DATA('ESTADO_TECNICO','E11','Promoción Entregada/Estudiada','DD_EAT_EST_TECNICO','E11','0'),
       --Estado de titularidad  
         T_TIPO_DATA('ESTADO_TITULARIDAD','T01','Sin título','DD_ETI_ESTADO_TITULO','04','0'),
         T_TIPO_DATA('ESTADO_TITULARIDAD','T02','Título no inscrito','DD_ETI_ESTADO_TITULO','01','0'),
@@ -204,7 +222,17 @@ DECLARE
         T_TIPO_DATA('GRADO_PROPIEDAD','04', 'Concesión administrativa','DD_TGP_TIPO_GRADO_PROPIEDAD','04','0'),
         T_TIPO_DATA('GRADO_PROPIEDAD','05', 'Uso','DD_TGP_TIPO_GRADO_PROPIEDAD','06','0'),
         T_TIPO_DATA('GRADO_PROPIEDAD','06', 'Servidumbre','DD_TGP_TIPO_GRADO_PROPIEDAD','06','0'),
-        T_TIPO_DATA('GRADO_PROPIEDAD','07', 'Otros derechos','DD_TGP_TIPO_GRADO_PROPIEDAD','05','0'),      
+        T_TIPO_DATA('GRADO_PROPIEDAD','07', 'Otros derechos','DD_TGP_TIPO_GRADO_PROPIEDAD','05','0'), 
+        --Indicencia CEE
+        T_TIPO_DATA('INCIDENCIA_CEE','01','Alquilado','DD_ICE_INCIDENCIA_CEE','01','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','02','Falta documentación','DD_ICE_INCIDENCIA_CEE','02','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','03','Inaccesible','DD_ICE_INCIDENCIA_CEE','03','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','04','Invendible','DD_ICE_INCIDENCIA_CEE','04','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','05','No identificable','DD_ICE_INCIDENCIA_CEE','05','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','06','Ocupada','DD_ICE_INCIDENCIA_CEE','06','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','07','Parte indivisa','DD_ICE_INCIDENCIA_CEE','07','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','08','Sin posesión','DD_ICE_INCIDENCIA_CEE','08','0'),
+        T_TIPO_DATA('INCIDENCIA_CEE','09','Venta contabilizada','DD_ICE_INCIDENCIA_CEE','09','0'),
       --Lista energía 
         T_TIPO_DATA('LISTA_ENERGIA','01','A','DD_TCE_TIPO_CALIF_ENERGETICA','01','0'),
         T_TIPO_DATA('LISTA_ENERGIA','02','B','DD_TCE_TIPO_CALIF_ENERGETICA','02','0'),
@@ -247,6 +275,17 @@ DECLARE
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','16','Constitución préstamo promotor','DD_MEC_MOTIVO_EXCLU_CAIXA','16','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','17','Inmueble no vvda utilizado como vvda','DD_MEC_MOTIVO_EXCLU_CAIXA','17','0'),
         T_TIPO_DATA('MOTIVO_NO_COMERCIAL','18','Inmueble es una zona común','DD_MEC_MOTIVO_EXCLU_CAIXA','18','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','19','Posible invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','19','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','20','Inmueble dummy','DD_MEC_MOTIVO_EXCLU_CAIXA','20','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','21','Invendible','DD_MEC_MOTIVO_EXCLU_CAIXA','21','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','22','Posible destino reubicación','DD_MEC_MOTIVO_EXCLU_CAIXA','22','0'),
+        T_TIPO_DATA('MOTIVO_NO_COMERCIAL','23','Posible ocupacion pdte IO/Denuncia','DD_MEC_MOTIVO_EXCLU_CAIXA','23','0'),
+        --Motivo de exoneración CEE
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','01','Local en bruto','DD_MEC_MOTIVO_EXONERACION_CEE','01','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','02','Preciosa reformas +25% del total de su envolvente','DD_MEC_MOTIVO_EXONERACION_CEE','02','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','03','Precisa reformas importantes por la totalidad instalaciones térmicas','DD_MEC_MOTIVO_EXONERACION_CEE','03','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','04','Precisa reformas importantes por recomendación cambio tipo combustible','DD_MEC_MOTIVO_EXONERACION_CEE','04','0'),
+        T_TIPO_DATA('MOTIVO_EXONERACION_CEE','05','Nave sin oficina','DD_MEC_MOTIVO_EXONERACION_CEE','05','0'),
       --País
         T_TIPO_DATA('PAIS','AD','Andorra','DD_CIC_CODIGO_ISO_CIRBE_BKP','043','0'),
         T_TIPO_DATA('PAIS','ES','España','DD_CIC_CODIGO_ISO_CIRBE_BKP','011','0'),
@@ -771,27 +810,27 @@ DECLARE
         T_TIPO_DATA('SUBTIPO_SUELO','U13','Suelo urbano consolidado','DD_SAC_SUBTIPO_ACTIVO','04','0'),
         T_TIPO_DATA('SUBTIPO_SUELO','U16','Suelo urbanizable sectorizado','DD_SAC_SUBTIPO_ACTIVO','03','0'),
       --Función clase de uso Clase de uso
-        T_TIPO_DATA('CLASE_USO','0006','Oficina','DD_SAC_SUBTIPO_ACTIVO','14','0'),
-        T_TIPO_DATA('CLASE_USO','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','20','0'),
-        T_TIPO_DATA('CLASE_USO','0015','Edificio aparcamientos','DD_SAC_SUBTIPO_ACTIVO','19','0'),
-        T_TIPO_DATA('CLASE_USO','0011','Edificio comercial','DD_SAC_SUBTIPO_ACTIVO','22','0'),
-        T_TIPO_DATA('CLASE_USO','0014','Edificio residencial','DD_SAC_SUBTIPO_ACTIVO','43','0'),
-        T_TIPO_DATA('CLASE_USO','0005','Parking','DD_SAC_SUBTIPO_ACTIVO','24','0'),
-        T_TIPO_DATA('CLASE_USO','0099','Varios','DD_SAC_SUBTIPO_ACTIVO','26','0'),
-        T_TIPO_DATA('CLASE_USO','0004','Trastero','DD_SAC_SUBTIPO_ACTIVO','25','0'),
-        T_TIPO_DATA('CLASE_USO','0024','Instalaciones deportivas','DD_SAC_SUBTIPO_ACTIVO','30','0'),
-        T_TIPO_DATA('CLASE_USO','0023','Derechos','DD_SAC_SUBTIPO_ACTIVO','33','0'),
-        T_TIPO_DATA('CLASE_USO','0002','Local','DD_SAC_SUBTIPO_ACTIVO','13','0'),
-        T_TIPO_DATA('CLASE_USO','0003','Local comercial y vivienda','DD_SAC_SUBTIPO_ACTIVO','43','0'),
-        T_TIPO_DATA('CLASE_USO','0009','Suelo no urbanizable','DD_SAC_SUBTIPO_ACTIVO','27','0'),
-        T_TIPO_DATA('CLASE_USO','0010','Edificio','DD_SAC_SUBTIPO_ACTIVO','43','0'),
-        T_TIPO_DATA('CLASE_USO','0012','Edificio mixto','DD_SAC_SUBTIPO_ACTIVO','43','0'),
-        T_TIPO_DATA('CLASE_USO','0013','Edificio terciario','DD_SAC_SUBTIPO_ACTIVO','22','0'),
-        T_TIPO_DATA('CLASE_USO','0016','Edificio educativo','DD_SAC_SUBTIPO_ACTIVO','26','0'),
-        T_TIPO_DATA('CLASE_USO','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','37','0'),
-        T_TIPO_DATA('CLASE_USO','0018','Finca rústica','DD_SAC_SUBTIPO_ACTIVO','01','0'),
-        T_TIPO_DATA('CLASE_USO','0020','Portería','DD_SAC_SUBTIPO_ACTIVO','26','0'),
-        T_TIPO_DATA('CLASE_USO','0021','Amarres','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0006','Oficina','DD_SAC_SUBTIPO_ACTIVO','14','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','20','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0015','Edificio aparcamientos','DD_SAC_SUBTIPO_ACTIVO','19','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0011','Edificio comercial','DD_SAC_SUBTIPO_ACTIVO','22','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0014','Edificio residencial','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0005','Parking','DD_SAC_SUBTIPO_ACTIVO','24','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0099','Varios','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0004','Trastero','DD_SAC_SUBTIPO_ACTIVO','25','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0024','Instalaciones deportivas','DD_SAC_SUBTIPO_ACTIVO','30','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0023','Derechos','DD_SAC_SUBTIPO_ACTIVO','33','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0002','Local','DD_SAC_SUBTIPO_ACTIVO','13','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0003','Local comercial y vivienda','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0009','Suelo no urbanizable','DD_SAC_SUBTIPO_ACTIVO','27','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0010','Edificio','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0012','Edificio mixto','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0013','Edificio terciario','DD_SAC_SUBTIPO_ACTIVO','22','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0016','Edificio educativo','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','37','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0018','Finca rústica','DD_SAC_SUBTIPO_ACTIVO','01','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0020','Portería','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO_REGISTRAL','0021','Amarres','DD_SAC_SUBTIPO_ACTIVO','26','0'),
         --Tipo impuesto compra 
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','14','IVA Soportado Prorrata General 18%','DD_TIC_TIPO_IMPUESTO_COMPRA','IVA','0'),
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','14','IVA Soportado Prorrata General 18% ','DD_POI_PORCENTAJE_IMPUESTO','18','0'),
@@ -1252,7 +1291,71 @@ DECLARE
         --- Tipo de activo
         T_TIPO_DATA('TIPO_ACTIVO','0001','Vivienda','DD_TPA_TIPO_ACTIVO','02','0'),
         T_TIPO_DATA('TIPO_ACTIVO','0007','Suelo urbano','DD_TPA_TIPO_ACTIVO','01','0'),
-        T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01','0')
+        T_TIPO_DATA('TIPO_ACTIVO','0008','Suelo urbanizable','DD_TPA_TIPO_ACTIVO','01','0'),
+        --- Segmentación Cartera Caixa
+        T_TIPO_DATA('SEGMENTACION_CARTERA','02','Cartera alquiler','DD_CBC_CARTERA_BC','03','0'),
+        T_TIPO_DATA('SEGMENTACION_CARTERA','03','Cartera venta','DD_CBC_CARTERA_BC','01','0'),
+        --- Estado conservación
+        T_TIPO_DATA('EST_CONSERVACION','001901','Buen estado','DD_ECV_ESTADO_CONSERVACION','07','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001902','A reformar','DD_ECV_ESTADO_CONSERVACION','08','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001904','Malo','DD_ECV_ESTADO_CONSERVACION','04','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001905','Ruinoso','DD_ECV_ESTADO_CONSERVACION','05','0'),
+        T_TIPO_DATA('EST_CONSERVACION','001907','Actualizar','DD_ECV_ESTADO_CONSERVACION','03','0'),
+        --- Balcón
+        T_TIPO_DATA('BALCON','015201','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('BALCON','015202','No','DD_SIN_SINO','02','0'),
+        --- Calefacción
+        T_TIPO_DATA('CALEFACCION','001001','Sí','DD_TCL_TIPO_CLIMATIZACION','01','0'),
+        T_TIPO_DATA('CALEFACCION','001002','No','DD_TCL_TIPO_CLIMATIZACION','03','0'),
+        --- Cocina Equipada
+        T_TIPO_DATA('COCINA_EQUIPADA','070901','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('COCINA_EQUIPADA','070902','No','DD_SIN_SINO','02','0'),
+        --- Jardín
+        T_TIPO_DATA('JARDIN','002502','No','DD_DIS_DISPONIBILIDAD','01','0'),
+        --- Uso Jardín
+        T_TIPO_DATA('USO_JARDIN','009501','Uso Propio','DD_DIS_DISPONIBILIDAD','03','0'),
+        T_TIPO_DATA('USO_JARDIN','009502','Comunitario','DD_DIS_DISPONIBILIDAD','02','0'),
+        --- Piscina
+        T_TIPO_DATA('PISCINA','004201','Sí','DD_DIS_DISPONIBILIDAD','03','0'),
+        T_TIPO_DATA('PISCINA','004202','No','DD_DIS_DISPONIBILIDAD','01','0'),
+        --- Salida de humos
+        T_TIPO_DATA('SALIDA_HUMOS','079401','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('SALIDA_HUMOS','079402','No','DD_SIN_SINO','02','0'),
+        --- Terraza
+        T_TIPO_DATA('TERRAZA','005201','Sí','DD_SIN_SINO','01','0'),
+        T_TIPO_DATA('TERRAZA','005202','No','DD_SIN_SINO','02','0'),
+        --- Tipo vivienda
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005801','Casa aislada','DD_TVC_TIPO_VIVIENDA_CAIXA','005801','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005802','Casa adosada','DD_TVC_TIPO_VIVIENDA_CAIXA','005802','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005803','Casa pareada','DD_TVC_TIPO_VIVIENDA_CAIXA','005803','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005804','Piso','DD_TVC_TIPO_VIVIENDA_CAIXA','005804','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005805','Estudio','DD_TVC_TIPO_VIVIENDA_CAIXA','005805','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005806','Dúplex','DD_TVC_TIPO_VIVIENDA_CAIXA','005806','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005807','Tríplex','DD_TVC_TIPO_VIVIENDA_CAIXA','005807','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005808','Apartamento','DD_TVC_TIPO_VIVIENDA_CAIXA','005808','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005809','Loft','DD_TVC_TIPO_VIVIENDA_CAIXA','005809','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005810','Ático','DD_TVC_TIPO_VIVIENDA_CAIXA','005810','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005811','Planta baja','DD_TVC_TIPO_VIVIENDA_CAIXA','005811','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005812','Villa','DD_TVC_TIPO_VIVIENDA_CAIXA','005812','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005813','Comercial','DD_TVC_TIPO_VIVIENDA_CAIXA','005813','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005814','Industrial','DD_TVC_TIPO_VIVIENDA_CAIXA','005814','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005815','Almacén','DD_TVC_TIPO_VIVIENDA_CAIXA','005815','0'),
+        T_TIPO_DATA('TIPO_VIVIENDA_INF','005816','Entremedianeras','DD_TVC_TIPO_VIVIENDA_CAIXA','005816','0'),
+        --- Tipología edificio
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076401','Edificio Residencial (Incluido vivienda unifamiliar) ','DD_TEC_TIPO_EDIFICIO_CAIXA','076401','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076402','Edificio Terciario   ','DD_TEC_TIPO_EDIFICIO_CAIXA','076402','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076403','Edificio Comercial (Centro Comercial o Galería Comercial)','DD_TEC_TIPO_EDIFICIO_CAIXA','076403','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076404','Edificio Industrial','DD_TEC_TIPO_EDIFICIO_CAIXA','076404','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076405','Edificio Dotacional Hotelero ','DD_TEC_TIPO_EDIFICIO_CAIXA','076405','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076406','Edificio Dotacional Deportivo','DD_TEC_TIPO_EDIFICIO_CAIXA','076406','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076407','Edificio Dotacional Asistencial ','DD_TEC_TIPO_EDIFICIO_CAIXA','076407','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076408','Edificio Dotacional Sanitario   ','DD_TEC_TIPO_EDIFICIO_CAIXA','076408','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076409','Edificio Dotacional Religioso','DD_TEC_TIPO_EDIFICIO_CAIXA','076409','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076410','Edificio Dotacional Educativo','DD_TEC_TIPO_EDIFICIO_CAIXA','076410','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076411','Edificio Dotacional Lúdico','DD_TEC_TIPO_EDIFICIO_CAIXA','076411','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076412','Edificio de Aparcamientos ','DD_TEC_TIPO_EDIFICIO_CAIXA','076412','0'),
+        T_TIPO_DATA('TIPOLOGIA_EDIFICIO','076413','Otros','DD_TEC_TIPO_EDIFICIO_CAIXA','076413','0')
+
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

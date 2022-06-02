@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211105
+--## FECHA_CREACION=20220504
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16087
+--## INCIDENCIA_LINK=HREOS-17788
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -33,6 +33,8 @@
 --##        0.21 Se cambian los NIFs de titulizados - [HREOS-15634] - Daniel Algaba
 --##        0.22 Se añade el check de Perímetro alquiler, marcado cuando esté alquilar y desmarcado si es solo Venta - [HREOS-16087] - Daniel Algaba
 --##        0.23 Añadido posibilidad de revivir activos si vuelven a llegar - [HREOS-16087] - Daniel Algaba
+--##        0.24 Añadido tipo alquiler - [HREOS-17150] - Javier Esbri
+--##        0.25 Control de nulos en tabla de título - [HREOS-17788] - Daniel Algaba
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -135,18 +137,23 @@ BEGIN
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_TIT_TITULO ACT
 	USING (				
            SELECT 
-                 TO_DATE(AUX.FEC_PRESENTACION_REGISTRO,''yyyymmdd'') AS TIT_FECHA_PRESENT1_REG
-                ,TO_DATE(AUX.FEC_INSC_TITULO,''yyyymmdd'') AS TIT_FECHA_INSC_REG
+                 CASE WHEN AUX.FEC_PRESENTACION_REGISTRO IS NULL AND ETI.DD_ETI_CODIGO IN (''01'',''02'',''06'') THEN NVL(TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'', ''MM/DD/YYYY''))
+                 ELSE TO_DATE(AUX.FEC_PRESENTACION_REGISTRO,''yyyymmdd'') END TIT_FECHA_PRESENT1_REG
+                ,CASE WHEN AUX.FEC_INSC_TITULO IS NULL AND ETI.DD_ETI_CODIGO = ''02'' THEN NVL(TIT.TIT_FECHA_INSC_REG, TO_DATE(''01/01/1900'', ''MM/DD/YYYY'')) 
+                 ELSE TO_DATE(AUX.FEC_INSC_TITULO,''yyyymmdd'') END TIT_FECHA_INSC_REG
                 ,TO_DATE(AUX.FEC_PRESENTADO,''yyyymmdd'') AS TIT_FECHA_PRESENT2_REG
-                ,ETI.DD_ETI_ID AS DD_ETI_ID 
+                ,NVL(ETI.DD_ETI_ID, TIT.DD_ETI_ID) AS DD_ETI_ID 
                 ,TO_DATE(AUX.FEC_ESTADO_TITULARIDAD,''yyyymmdd'') AS FECHA_EST_TIT_ACT_INM
                 ,ACT2.ACT_ID AS ACT_ID 
+                ,TIT.TIT_ID
             FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
             JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2 ON ACT2.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO AND ACT2.BORRADO=0
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_TIT_TITULO TIT ON ACT2.ACT_ID = TIT.ACT_ID AND TIT.BORRADO = 0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_EQV_CAIXA_REM eqv1 ON eqv1.DD_NOMBRE_CAIXA = ''ESTADO_TITULARIDAD''  AND eqv1.DD_CODIGO_CAIXA = aux.ESTADO_TITULARIDAD AND EQV1.BORRADO=0
             LEFT JOIN '|| V_ESQUEMA ||'.DD_ETI_ESTADO_TITULO ETI ON ETI.DD_ETI_CODIGO = eqv1.DD_CODIGO_REM
             WHERE AUX.FLAG_EN_REM='|| FLAG_EN_REM||'
-            ) US ON (US.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0)
+            AND ACT2.BORRADO = 0
+            ) US ON (US.TIT_ID = ACT.TIT_ID)
             WHEN MATCHED THEN UPDATE SET
                  ACT.TIT_FECHA_PRESENT1_REG = US.TIT_FECHA_PRESENT1_REG
                 ,ACT.TIT_FECHA_INSC_REG = US.TIT_FECHA_INSC_REG
@@ -1075,6 +1082,9 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                      , CASE WHEN AUX.ESTADO_POSESORIO IN (''P02'',''P04'') THEN 1
                             WHEN AUX.DESTINO_COMERCIAL = ''VT'' THEN 0
                       END CHECK_HPM
+                     , CASE WHEN AUX.TIPO_ALQUILER = ''01'' THEN 1
+                        ELSE 0
+                      END CHECK_SUBROGADO
                   FROM '|| V_ESQUEMA ||'.AUX_APR_BCR_STOCK AUX
                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_CAIXA=AUX.NUM_IDENTIFICATIVO  AND ACT.BORRADO=0
                   JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID=SPS.ACT_ID
@@ -1083,8 +1093,26 @@ V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
                   WHEN MATCHED THEN UPDATE SET
                       ACT.DD_EAL_ID = US.DD_EAL_ID
                      ,ACT.CHECK_HPM = US.CHECK_HPM
+                     ,ACT.CHECK_SUBROGADO = US.CHECK_SUBROGADO
                      ,ACT.USUARIOMODIFICAR = ''STOCK_BC''
                      ,ACT.FECHAMODIFICAR = SYSDATE
+                  WHEN NOT MATCHED THEN 
+                    INSERT  
+                        ( ACT_PTA_ID
+                        , ACT_ID
+                        , DD_EAL_ID
+                        , CHECK_HPM
+                        , CHECK_SUBROGADO
+                        , USUARIOCREAR
+                        , FECHACREAR)
+                    VALUES 
+                        ('|| V_ESQUEMA ||'.S_ACT_PTA_PATRIMONIO_ACTIVO.NEXTVAL
+                        , US.ACT_ID
+                        , US.DD_EAL_ID
+                        , US.CHECK_HPM
+                        , US.CHECK_SUBROGADO
+                        , ''STOCK_BC''
+                        , SYSDATE)
                   ';
    EXECUTE IMMEDIATE V_MSQL;
    

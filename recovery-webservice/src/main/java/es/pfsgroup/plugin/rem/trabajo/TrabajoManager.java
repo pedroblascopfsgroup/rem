@@ -564,7 +564,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -1249,7 +1250,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+				&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 
@@ -3421,18 +3423,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setImportePrecio(trabajo.getImporteAsegurado());
 		}		
 		
-		Filter filtroPrefacturas = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		Prefacturas prefacturas = genericDao.get(Prefacturas.class, filtroPrefacturas);
-		if(prefacturas != null && prefacturas.getPrefactura() != null ) {
-			if (prefacturas.getPrefactura().getAlbaran() != null) {
-				Albaran albaran = prefacturas.getPrefactura().getAlbaran();
-				if (albaran.getNumAlbaran() != null) {
-					dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
-				}
+		if (!Checks.esNulo(trabajo.getPrefacturaTrabajo()) && !Checks.esNulo(trabajo.getPrefacturaTrabajo().getPrefactura()) ) {
+			Prefactura prefactura = trabajo.getPrefacturaTrabajo().getPrefactura();
+			if (DDEstEstadoPrefactura.CODIGO_VALIDA.equals(prefactura.getEstadoPrefactura().getCodigo()) ){
+				dtoTrabajo.setPerteneceGastoOPrefactura(true);
 			}
 			
-			if (!Checks.esNulo(prefacturas.getPrefactura()) && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(prefacturas.getPrefactura().getEstadoPrefactura().getCodigo())) {
-				dtoTrabajo.setPerteneceGastoOPrefactura(true);
+			if (prefactura.getAlbaran() != null && prefactura.getAlbaran().getNumAlbaran() != null) {
+					dtoTrabajo.setNumAlbaran(prefactura.getAlbaran().getNumAlbaran());
 			}
 			
 		}
@@ -3671,7 +3669,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 
@@ -3715,7 +3714,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -3757,7 +3757,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 
@@ -3832,7 +3833,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -3871,7 +3873,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null  
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -3901,7 +3904,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -5142,7 +5146,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 
@@ -5179,7 +5184,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null 
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		
@@ -5216,7 +5222,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.gasto"));
 		}
 		
-		if (trabajo.getPrefactura() != null && DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefactura().getEstadoPrefactura().getCodigo())) {
+		if (trabajo.getPrefacturaTrabajo() != null && trabajo.getPrefacturaTrabajo().getPrefactura() != null
+			&& DDEstEstadoPrefactura.CODIGO_VALIDA.equals(trabajo.getPrefacturaTrabajo().getPrefactura().getEstadoPrefactura().getCodigo())) {
 			throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.pertenece.prefactura"));
 		}
 		

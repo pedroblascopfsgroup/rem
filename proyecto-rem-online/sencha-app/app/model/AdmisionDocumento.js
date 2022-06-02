@@ -75,6 +75,12 @@ Ext.define('HreRem.model.AdmisionDocumento', {
     			name: 'letraEmisiones'
     		},
     		{
+    			name: 'motivoExoneracionCee'
+    		},
+    		{
+    			name: 'incidenciaCee'
+    		},
+    		{
     			name: 'emision'
     		},
     		{

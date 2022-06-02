@@ -486,7 +486,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
-				if(Checks.esNulo(exc.dameCelda(fila,19)) && Checks.esNulo(exc.dameCelda(fila,22))) {
+				if(Checks.esNulo(exc.dameCelda(fila,20)) && Checks.esNulo(exc.dameCelda(fila,22))) {
 					idListSinVisibilidadComercial.add(activo.getId());
 				}
 			}

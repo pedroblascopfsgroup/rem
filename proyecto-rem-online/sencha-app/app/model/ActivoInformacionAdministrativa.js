@@ -176,6 +176,23 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'maxPrecioModuloAlquiler'
     		},
+    		{
+    			name:'compradorAcojeAyuda',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'importeAyudaFinanciacion'
+    		},
+    		{
+    			name:'fechaVencimientoAvalSeguro',
+    			type: 'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaDevolucionAyuda',
+    			type: 'date',
+    			dateFormat: 'c'
+    		},
     		
 
     		

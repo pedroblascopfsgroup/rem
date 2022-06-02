@@ -245,10 +245,6 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			genericDao.save(Oferta.class, oferta);
 		}
 		expedienteComercialApi.update(expedienteComercial,false);
-		
-		if(modificadoEstadoBC) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndFechaFirma(expedienteComercial, fechaFirma));
-		}
 				
 	}
 

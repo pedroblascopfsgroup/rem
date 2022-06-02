@@ -179,6 +179,18 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			if (activo.getInfoAdministrativa().getMaxPrecioModuloAlquiler() != null) {
 				activoDto.setMaxPrecioModuloAlquiler(String.valueOf(activo.getInfoAdministrativa().getMaxPrecioModuloAlquiler()));
 			}
+			if (activo.getInfoAdministrativa().getCompradorAcojeAyuda() != null) {
+				activoDto.setCompradorAcojeAyuda(activo.getInfoAdministrativa().getCompradorAcojeAyuda());
+			}
+			if (activo.getInfoAdministrativa().getImporteAyudaFinanciacion() != null) {
+				activoDto.setImporteAyudaFinanciacion(activo.getInfoAdministrativa().getImporteAyudaFinanciacion());
+			}
+			if (activo.getInfoAdministrativa().getFechaVencimientoAvalSeguro() != null) {
+				activoDto.setFechaVencimientoAvalSeguro(activo.getInfoAdministrativa().getFechaVencimientoAvalSeguro());
+			}
+			if (activo.getInfoAdministrativa().getFechaDevolucionAyuda() != null) {
+				activoDto.setFechaDevolucionAyuda(activo.getInfoAdministrativa().getFechaDevolucionAyuda());
+			}
 		}
 		
 		
@@ -254,6 +266,22 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 				
 				if (dto.getMaxPrecioModuloAlquiler() != null) {
 					infoAdministrativa.setMaxPrecioModuloAlquiler(Double.parseDouble(dto.getMaxPrecioModuloAlquiler()));
+				}
+				
+				if (dto.getCompradorAcojeAyuda() != null) {
+					infoAdministrativa.setCompradorAcojeAyuda(dto.getCompradorAcojeAyuda());
+				}
+				
+				if (dto.getImporteAyudaFinanciacion() != null) {
+					infoAdministrativa.setImporteAyudaFinanciacion(dto.getImporteAyudaFinanciacion());
+				}
+				
+				if (dto.getFechaVencimientoAvalSeguro() != null) {
+					infoAdministrativa.setFechaVencimientoAvalSeguro(dto.getFechaVencimientoAvalSeguro());
+				}
+
+				if (dto.getFechaDevolucionAyuda() != null) {
+					infoAdministrativa.setFechaDevolucionAyuda(dto.getFechaDevolucionAyuda());
 				}
 			}
 			

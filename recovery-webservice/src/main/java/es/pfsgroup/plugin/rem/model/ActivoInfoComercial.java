@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -464,6 +465,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_AAC_ID")
 	private DDActivoAccesibilidad accesibilidad;
+	
+	@Column(name="ICO_IDEF_PLAZA_PARKING")
+	private Long identificadorPlazaParking;
+	
+	@Column(name="ICO_IDEF_TRASTERO")
+	private Long identificadorTrastero;
 
 	public Long getId() {
 		return id;
@@ -1360,4 +1367,21 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	public void setAccesibilidad(DDActivoAccesibilidad accesibilidad) {
 		this.accesibilidad = accesibilidad;
 	}
+
+	public Long getIdentificadorPlazaParking() {
+		return identificadorPlazaParking;
+	}
+
+	public void setIdentificadorPlazaParking(Long identificadorPlazaParking) {
+		this.identificadorPlazaParking = identificadorPlazaParking;
+	}
+
+	public Long getIdentificadorTrastero() {
+		return identificadorTrastero;
+	}
+
+	public void setIdentificadorTrastero(Long identificadorTrastero) {
+		this.identificadorTrastero = identificadorTrastero;
+	}
+	
 }

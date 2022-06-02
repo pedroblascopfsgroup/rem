@@ -329,10 +329,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				
 				genericDao.save(HistoricoTareaPbc.class, htp);
 			}
-		}	
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expediente.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expediente));
 		}
 	}
 

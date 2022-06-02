@@ -328,6 +328,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
       
     @Column(name="ECO_DETALLE_ANUL_ALQ")
   	private String detalleAnulacionCntAlquiler;
+    
+    @Column(name="ECO_REVISADO_CONTROLLERS")
+	private Integer revisadoPorControllers;
+    
+    @Column(name="ECO_FECHA_REVISION")
+	private Date fechaRevision;
 
 	@OneToMany(mappedBy = "expedienteComercial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ECO_ID")
@@ -342,6 +348,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name = "ECO_EDICION_COMPRADORES_CBX")
     private String motivoEdicionCompradores;
+
+	@Column(name = "ECO_NUM_CONTRATO_ANT")
+	private String numContratoAnterior;
+
+	@Column(name = "ECO_FECHA_FIN_CONTRATO_ANT")
+	private Date fechaFinContratoAnterior;
+
     
     @Version   
 	private Long version;
@@ -1044,6 +1057,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.interlocutoresExpediente = interlocutoresExpediente;
 	}
 	
+	public Integer getRevisadoPorControllers() {
+		return revisadoPorControllers;
+	}
+
+	public void setRevisadoPorControllers(Integer revisadoPorControllers) {
+		this.revisadoPorControllers = revisadoPorControllers;
+	}
+
+	public Date getFechaRevision() {
+		return fechaRevision;
+	}
+
+	public void setFechaRevision(Date fechaRevision) {
+		this.fechaRevision = fechaRevision;
+	}
+
 	public BigDecimal getImporteParticipacionTotal() {
 		BigDecimal importe = new BigDecimal(0);
 		
@@ -1074,5 +1103,21 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setNumeroVaiHavaiSareb(String numeroVaiHavaiSareb) {
 		this.numeroVaiHavaiSareb = numeroVaiHavaiSareb;
+	}
+
+	public String getNumContratoAnterior() {
+		return numContratoAnterior;
+	}
+
+	public void setNumContratoAnterior(String numContratoAnterior) {
+		this.numContratoAnterior = numContratoAnterior;
+	}
+
+	public Date getFechaFinContratoAnterior() {
+		return fechaFinContratoAnterior;
+	}
+
+	public void setFechaFinContratoAnterior(Date fechaFinContratoAnterior) {
+		this.fechaFinContratoAnterior = fechaFinContratoAnterior;
 	}
 }

@@ -118,7 +118,7 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	private String descripcionEstadoECL;
 	
 	@Column(name = "ECO_ECL_FECHA")
-	private String fechaContraste;
+	private Date fechaContraste;
 	
 	@Column(name = "FECHA_ACEP_GDPR")
 	private String fechaAcepGdpr;
@@ -403,11 +403,11 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.descripcionEstadoECL = descripcionEstadoECL;
 	}
 
-	public String getFechaContraste() {
+	public Date getFechaContraste() {
 		return fechaContraste;
 	}
 
-	public void setFechaContraste(String fechaContraste) {
+	public void setFechaContraste(Date fechaContraste) {
 		this.fechaContraste = fechaContraste;
 	}
 

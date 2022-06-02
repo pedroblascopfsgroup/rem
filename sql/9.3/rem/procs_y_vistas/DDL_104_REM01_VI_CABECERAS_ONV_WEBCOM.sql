@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20211018
+--## FECHA_CREACION=20220422
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-15634
+--## INCIDENCIA_LINK=REMVIP-11478
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las cabeceras de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##	    0.2: 20210720 Daniel Algaba. Añadir nuevas agrupaciones Restringida Alquiler y Restringida OB-REM - HREOS-14686
 --##        0.3 Se añade un LEFT JOIN al cruce con la DD_SAC - Daniel Algaba - 20211018 - HREOS-15634
+--##        0.4 Se añade banyos al ora_hash para aumentar precision en el id - Juan Bautista Alfonso - 20220413 - REMVIP-11478
 --##########################################
 --*/
 
@@ -101,7 +102,7 @@ BEGIN
 		CAST(ACT_SD.FECHA_ACCION AS VARCHAR2(50 CHAR))           										AS FECHA_ACCION,  
 		CAST(ACT_SD.ID_USUARIO_REM_ACCION AS NUMBER(16,0))                             					AS ID_USUARIO_REM_ACCION 
 		FROM(
-			SELECT 
+			SELECT
 		  	SUBD.ID, 		
 		  	AGR.AGR_NUM_AGRUP_REM,
 			TPA.DD_TPA_CODIGO,
@@ -126,21 +127,19 @@ BEGIN
 			FROM (
 					SELECT 
 					ORA_HASH ( ACT.DD_TPA_ID
-						|| ACT.DD_SAC_ID
-						|| NVL (VIV.VIV_NUM_PLANTAS_INTERIOR, 0)
-						|| NVL (SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)), 0)
-						|| NVL (SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)), 0)
+                            || ACT.DD_SAC_ID
+                            || NVL (ICO.ICO_NUM_PLANTAS, 0)
+                            || NVL (ICO.ICO_NUM_DORMITORIOS, 0)
+							|| NVL (ICO.ICO_NUM_BANYOS, 0)
 					) ID,
 					ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, 
-					NVL (SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)), 0) DORMITORIOS,
-					NVL (SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)), 0) BANYOS,
-					NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0) PLANTAS					
+					NVL (ICO.ICO_NUM_DORMITORIOS, 0) DORMITORIOS,
+					NVL (ICO.ICO_NUM_BANYOS, 0) BANYOS,
+					NVL (ICO.ICO_NUM_PLANTAS, 0) PLANTAS					
 					FROM '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO 
 					INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID
-					LEFT JOIN '||V_ESQUEMA||'.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
-					LEFT JOIN '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0 
 					WHERE ACT.BORRADO = 0 
-					GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, VIV.VIV_NUM_PLANTAS_INTERIOR
+					GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, ICO.ICO_NUM_PLANTAS, ICO.ICO_NUM_DORMITORIOS, ICO.ICO_NUM_BANYOS
 			) SUBD
 			INNER JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID
 			LEFT JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID

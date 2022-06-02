@@ -64,6 +64,13 @@ public class DtoActivoCargas {
     private Date fechaSolicitudCarta;
     private Date fechaRecepcionCarta;
     private Date fechaPresentacionRpCarta;
+    
+    //HREOS-17165
+    private Boolean indicadorPreferente;
+    private Boolean identificadorCargaEjecutada;
+    private Boolean igualdadRango;
+    private Boolean identificadorCargaIndefinida;
+    private Boolean identificadorCargaEconomica;
  
 
     
@@ -266,6 +273,35 @@ public class DtoActivoCargas {
 	public void setFechaPresentacionRpCarta(Date fechaPresentacionRpCarta) {
 		this.fechaPresentacionRpCarta = fechaPresentacionRpCarta;
 	}
-	
+	public Boolean getIndicadorPreferente() {
+		return indicadorPreferente;
+	}
+	public void setIndicadorPreferente(Boolean indicadorPreferente) {
+		this.indicadorPreferente = indicadorPreferente;
+	}
+	public Boolean getIdentificadorCargaEjecutada() {
+		return identificadorCargaEjecutada;
+	}
+	public void setIdentificadorCargaEjecutada(Boolean identificadorCargaEjecutada) {
+		this.identificadorCargaEjecutada = identificadorCargaEjecutada;
+	}
+	public Boolean getIgualdadRango() {
+		return igualdadRango;
+	}
+	public void setIgualdadRango(Boolean igualdadRango) {
+		this.igualdadRango = igualdadRango;
+	}
+	public Boolean getIdentificadorCargaIndefinida() {
+		return identificadorCargaIndefinida;
+	}
+	public void setIdentificadorCargaIndefinida(Boolean identificadorCargaIndefinida) {
+		this.identificadorCargaIndefinida = identificadorCargaIndefinida;
+	}
+	public Boolean getIdentificadorCargaEconomica() {
+		return identificadorCargaEconomica;
+	}
+	public void setIdentificadorCargaEconomica(Boolean identificadorCargaEconomica) {
+		this.identificadorCargaEconomica = identificadorCargaEconomica;
+	}
 	
 }

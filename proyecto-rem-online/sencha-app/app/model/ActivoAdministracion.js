@@ -19,6 +19,12 @@ Ext.define('HreRem.model.ActivoAdministracion', {
     		{
     			name:'isUnidadAlquilable',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'segmentacionCarteraCodigo;'
+    		},
+    		{
+    			name: 'segmentacionCarteraDescripcion'
     		}
     		
     ],

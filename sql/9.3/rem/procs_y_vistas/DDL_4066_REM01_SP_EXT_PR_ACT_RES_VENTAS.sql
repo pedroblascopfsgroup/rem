@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220427
+--## FECHA_CREACION=20220505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=version-2.35.3-rem
---## INCIDENCIA_LINK=REMVIP-7058
+--## INCIDENCIA_LINK=REMVIP-11465
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -33,6 +33,7 @@
 --##		1.14 (20200422) - REMVIP-7058 - Se añade subcartera 151 y 152 (Divarian para cartera Cerberus)
 --##		1.15 (20220210) - Juan alfonso - REMVIP-11136 - Se añade subcartera 70 (Jaguar para cartera cerberus)
 --##		1.16 (20220426) - IVAN REPISO - HREOS-17732 - Se añade filtro formalizacion cajamar para estado expediente
+--##		1.17 (20220505) - Juan alfonso - REMVIP-11465 - Se añade join con expediente comercial a la hora de tramitar expedientes
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1059,6 +1060,7 @@ BEGIN
                                             INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR1 ON ACT_OFR1.OFR_ID = OFR1.OFR_ID
                                             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT1 ON ACT1.ACT_ID = ACT_OFR1.ACT_ID
                                             INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF1 ON EOF1.DD_EOF_ID = OFR1.DD_EOF_ID
+                                            INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR1.OFR_ID AND ECO.BORRADO = 0
                                             WHERE ACT1.ACT_ID in (   
                                                             SELECT
                                                             ACT.ACT_ID

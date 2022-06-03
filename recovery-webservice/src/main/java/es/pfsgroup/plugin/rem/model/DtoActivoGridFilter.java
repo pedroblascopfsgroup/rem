@@ -63,8 +63,8 @@ public class DtoActivoGridFilter extends WebDto {
 	private Integer antiocupa;
 	private String tituloPosesorioCodigo;
 	private String tipoGestorCodigo;
-	private String usuarioGestor;
-	private String apiPrimarioId;
+	private Long usuarioGestor;
+	private Long apiPrimarioId;
 	private String situacionComercialCodigo;
 	private String tipoComercializacionCodigo;
 	private Integer conCargas;
@@ -427,16 +427,16 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setTipoGestorCodigo(String tipoGestorCodigo) {
 		this.tipoGestorCodigo = tipoGestorCodigo;
 	}
-	public String getUsuarioGestor() {
+	public Long getUsuarioGestor() {
 		return usuarioGestor;
 	}
-	public void setUsuarioGestor(String usuarioGestor) {
+	public void setUsuarioGestor(Long usuarioGestor) {
 		this.usuarioGestor = usuarioGestor;
 	}
-	public String getApiPrimarioId() {
+	public Long getApiPrimarioId() {
 		return apiPrimarioId;
 	}
-	public void setApiPrimarioId(String apiPrimarioId) {
+	public void setApiPrimarioId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
 	}
 	public String getSituacionComercialCodigo() {

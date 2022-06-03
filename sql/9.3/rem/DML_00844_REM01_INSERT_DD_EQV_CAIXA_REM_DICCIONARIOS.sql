@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20220426
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20220511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17614
+--## INCIDENCIA_LINK=HREOS-17696
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -13,14 +13,15 @@
 --##        0.1 Versión 
 --##        0.2 Añadir mapeos nuevos y rellenar campo PRIORIDAD en COMPLEMENTO - [HREOS-15855] - Alejandra García
 --##        0.3 Añadir mapeos nuevos de PAIS - [HREOS-16493] - Alejandra García
---##        0.4 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
---##        0.5 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
---##        0.6 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
---##        0.7 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
---##        0.8 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
---##        0.9 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
---##        0.10 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
---##	      0.11 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
+--##        0.4 Añadir estado posesorio y fecha a la tabla ACT_ACTIVO_CAIXA [HREOS-17696] - Daniel Algaba
+--##        0.5 Añadir mapeos nuevos de Segmentación Cartera Caixa y cambio CLASE_USO por CLASE_USO_REGISTRAL - [HREOS-17150] - Javier Esbrí
+--##        0.6 Añadir mapeos nuevos de Estado conservación - [HREOS-17351] - Javier Esbrí
+--##        0.7 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.8 Nuevos mapeos - [HREOS-17515] - Daniel Algaba
+--##        0.9 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
+--##        0.10 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
+--##        0.11 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
+--##	      0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -189,6 +190,13 @@ DECLARE
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA2','Retirado de la comercialización','DD_ECV_EST_COM_VENTA','VA2','0'),
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA3','En trámite de venta','DD_ECV_EST_COM_VENTA','VA3','0'),
         T_TIPO_DATA('ESTADO_COMERCIAL_VENTA','VA4','Venta realizada','DD_ECV_EST_COM_VENTA','VA4','0'),
+        --Estado posesorio
+        T_TIPO_DATA('ESTADO_POSESORIO','P01','Sin posesión','DD_ETP_ESTADO_POSESORIO','P01','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P02','Alquilado','DD_ETP_ESTADO_POSESORIO','P02','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P03','Reocupado','DD_ETP_ESTADO_POSESORIO','P03','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P04','Cedido AAPP','DD_ETP_ESTADO_POSESORIO','P04','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P05','Vertical (posesión referida a SI)','DD_ETP_ESTADO_POSESORIO','P05','0'),
+        T_TIPO_DATA('ESTADO_POSESORIO','P06','Con posesión','DD_ETP_ESTADO_POSESORIO','P06','0'),
       --Estado técnico
         T_TIPO_DATA('ESTADO_TECNICO','E01','Pendiente actuación técnica','DD_EAT_EST_TECNICO','E01','0'),
         T_TIPO_DATA('ESTADO_TECNICO','E02','En Gestión entrada','DD_EAT_EST_TECNICO','E02','0'),

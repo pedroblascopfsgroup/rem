@@ -1,0 +1,85 @@
+--/*
+--#########################################
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220519
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-17918
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion registros 
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial - [HREOS-17918]- Alejandra García
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	V_TABLA VARCHAR2(100 CHAR) := 'DD_ETG_EQV_TIPO_GASTO'; -- Tabla 
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17918';
+	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
+	V_NUM NUMBER;
+	
+BEGIN
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TABLA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
+  
+  	IF V_NUM_REGISTROS > 0 THEN
+
+		V_SQL := 'MERGE INTO '||V_ESQUEMA||'.DD_ETG_EQV_TIPO_GASTO T1
+					USING(
+						SELECT
+							ETG.DD_ETG_ID
+							,ETG.COGRUG_POS
+							,ETG.COTACA_POS
+							,ETG.COSBAC_POS
+						FROM '||V_ESQUEMA||'.DD_ETG_EQV_TIPO_GASTO ETG
+						JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = ETG.EJE_ID
+							AND EJE.BORRADO = 0
+						WHERE ETG.BORRADO = 0
+						AND EJE.EJE_ANYO = ''2021''
+						AND ETG.COGRUG_NEG IS NULL
+						AND ETG.COTACA_NEG IS NULL
+						AND ETG.COSBAC_NEG IS NULL
+					) T2 ON (T1.DD_ETG_ID = T2.DD_ETG_ID)
+					WHEN MATCHED THEN UPDATE SET
+						 T1.COGRUG_NEG = T2.COGRUG_POS
+						,T1.COTACA_NEG = T2.COTACA_POS
+						,T1.COSBAC_NEG = T2.COSBAC_POS
+						,T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+						,T1.FECHAMODIFICAR = SYSDATE
+				';
+		EXECUTE IMMEDIATE V_SQL;	
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] Se han modificado en la tabla '||V_ESQUEMA||'.'||V_TABLA||' (' || sql%rowcount || ') registros');
+
+		
+	END IF;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+	commit;
+
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

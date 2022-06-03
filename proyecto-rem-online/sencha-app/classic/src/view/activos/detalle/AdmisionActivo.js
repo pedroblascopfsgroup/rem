@@ -104,7 +104,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	     var me = this;
 	     me.setTitle(HreRem.i18n('title.admision'));
 
-		 var ocultarAdmisionCheckEdicion = !($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+		 var ocultarAdmisionCheckEdicion = (!$AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['CARTERA_BBVA']));
+		 ocultarAdmisionCheckEdicion = ($AU.userIsRol(CONST.PERFILES['HAYASUPER'])) ? false : ocultarAdmisionCheckEdicion;
 
 	     var items = [];
 	     //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);

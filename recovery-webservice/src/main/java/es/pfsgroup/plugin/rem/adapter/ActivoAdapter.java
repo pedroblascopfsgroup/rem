@@ -4954,22 +4954,15 @@ public class ActivoAdapter {
 	
 
 	private String getEstadoNuevaOferta(Activo activo) {
-		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
-//		if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
-//				DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
-//			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
-//		}
 
 		if (DDCartera.isCarteraBk(activo.getCartera())) {
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			return DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
-		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
-				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
-			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+		if (ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
+			return DDEstadoOferta.CODIGO_CONGELADA;
 		}
 
-		return codigoEstado;
+		return DDEstadoOferta.CODIGO_PENDIENTE;
 	}
 
 	public List<DtoUsuario> getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(ActivoAgrupacion activoAgrupacion, Long tipoGestor) {
@@ -5736,10 +5729,7 @@ public class ActivoAdapter {
 		if (numActivosList != null && !numActivosList.isEmpty()) {
 			for (Long numActivo : numActivosList) {
 				Activo activo = activoDao.getActivoByNumActivo(numActivo);
-				if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
-						&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
-						&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) || 
-								DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))) {
+				if (validacionesLegalReo(activo)) {
 					numActivosListFinal.add(activo.getNumActivo());
 				}
 			}
@@ -5762,6 +5752,21 @@ public class ActivoAdapter {
 		return filters;
 	}
 	
+	private Boolean validacionesLegalReo (Activo activo) {
+		if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+				&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
+				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
+						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))
+				&& !DDSubtipoActivo.COD_GARAJE.equals(activo.getSubtipoActivo().getCodigo())
+				&& !DDSubtipoActivo.COD_TRASTERO.equals(activo.getSubtipoActivo().getCodigo())
+				&& (!Checks.estaVacio(activo.getPropietariosActivo())
+						&& (Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
+								|| (!Checks.esNulo(activo.getPropietariosActivo().get(0).getPorcPropiedad())
+										&& new Float(100.0).equals(activo.getPropietariosActivo().get(0).getPorcPropiedad()))))) {
+			return true;
+		}
+		return false;
+	}
 }
 
 

@@ -932,7 +932,7 @@ public class AgrupacionAdapter {
 			
 			
 			if(agrupacion.getActivoPrincipal() != null) {
-				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+				dtoAgrupacion.setDireccion(agrupacion.getActivoPrincipal().getDireccionCompleta());
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
@@ -2355,6 +2355,7 @@ public class AgrupacionAdapter {
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			loteComercial.setUsuarioGestorComercial(dtoAgrupacion.getGestorComercial());
+			loteComercial.setUsuarioGestorComercialBackOffice(dtoAgrupacion.getGestorComercialBackOffice());
 			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(dtoAgrupacion.getTipoAgrupacion())){
 				DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO));
@@ -5023,7 +5024,7 @@ public class AgrupacionAdapter {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			return DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
 				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)

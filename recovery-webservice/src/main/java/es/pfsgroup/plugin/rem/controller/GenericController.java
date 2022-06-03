@@ -873,6 +873,8 @@ public class GenericController extends ParadiseJsonController{
 			}
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			String descError = e.getClass().toString();
+			model.put("descError", descError != null ? descError.substring(6) : null);
 		}
 
 		restApi.sendResponse(response, model, request);
@@ -883,8 +885,7 @@ public class GenericController extends ParadiseJsonController{
 
 		ModelMap modelMap = new ModelMap();
 
-		String respuesta = accionesCaixaController.accionComercialCaixa(model, request, response);
-		modelMap.put("error", respuesta);
+		modelMap = accionesCaixaController.accionComercialCaixa(model, request, response);
 
 		restApi.sendResponse(response, modelMap, request);
 	}

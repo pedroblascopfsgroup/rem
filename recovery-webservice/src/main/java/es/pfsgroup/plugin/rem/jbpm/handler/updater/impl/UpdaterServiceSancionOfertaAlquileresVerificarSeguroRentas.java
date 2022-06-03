@@ -227,10 +227,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		genericDao.update(SeguroRentasAlquiler.class, seguroRentasAlquiler);
 		historicoSeguroRentasAlquiler.setSeguroRentasAlquiler(seguroRentasAlquiler);
 		genericDao.save(HistoricoSeguroRentasAlquiler.class, historicoSeguroRentasAlquiler);
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
+
 	}
 
 	public String[] getCodigoTarea() {

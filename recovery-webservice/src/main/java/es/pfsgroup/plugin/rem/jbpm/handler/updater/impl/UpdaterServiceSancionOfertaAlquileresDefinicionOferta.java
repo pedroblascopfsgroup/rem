@@ -231,10 +231,6 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 				}
 			}
 		}
-		
-		if(estadoBcModificado) {
-			ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpediente(expedienteComercial));
-		}
 	}
 
 	public String[] getCodigoTarea() {

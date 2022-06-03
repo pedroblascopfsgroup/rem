@@ -36,7 +36,8 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Integer necesarias;
 	private Integer llaveHre;
 	private String numJuegos;
-	private String situacionJuridica;
+	private String estadoPosesorio;
+	private Date fechaEstadoPosesorio;
 	private Integer indicaPosesion;
 	private Boolean tieneOkTecnico;
 	private String tipoEstadoAlquiler;
@@ -193,12 +194,6 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	public void setNumJuegos(String numJuegos) {
 		this.numJuegos = numJuegos;
 	}
-	public String getSituacionJuridica() {
-		return situacionJuridica;
-	}
-	public void setSituacionJuridica(String situacionJuridica) {
-		this.situacionJuridica = situacionJuridica;
-	}
 	public Integer getIndicaPosesion() {
 		return indicaPosesion;
 	}
@@ -331,6 +326,18 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setVertical(Integer vertical) {
 		this.vertical = vertical;
+	}
+	public String getEstadoPosesorio() {
+		return estadoPosesorio;
+	}
+	public void setEstadoPosesorio(String estadoPosesorio) {
+		this.estadoPosesorio = estadoPosesorio;
+	}
+	public Date getFechaEstadoPosesorio() {
+		return fechaEstadoPosesorio;
+	}
+	public void setFechaEstadoPosesorio(Date fechaEstadoPosesorio) {
+		this.fechaEstadoPosesorio = fechaEstadoPosesorio;
 	}
 	
 }

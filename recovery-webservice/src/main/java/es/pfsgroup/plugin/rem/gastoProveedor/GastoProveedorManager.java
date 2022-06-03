@@ -3123,6 +3123,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
 		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoGestion.getAuditoria().setFechaModificar(new Date());
+		gastoGestion.setFechaEnvioPropietario(null);
 		gasto.setGastoGestion(gastoGestion);
 		updaterStateApi.updaterStates(gasto, DDEstadoGasto.AUTORIZADO_ADMINISTRACION);
 		gasto.setProvision(null);

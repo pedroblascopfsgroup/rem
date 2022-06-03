@@ -96,6 +96,8 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return Devuelve un objeto ExpedienteComercial si coincide con el número de expediente pasado por parámetro.
 	 */
 	ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente);
+
+	ExpedienteComercial getExpedienteComercialByNumOferta(Long numOferta);
 	
 	List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta);
 
@@ -104,5 +106,5 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	void flush();
 
 	List<VGridIntervinientes> getIntervinientesByOferta(Long numOferta);
-	
+
 }

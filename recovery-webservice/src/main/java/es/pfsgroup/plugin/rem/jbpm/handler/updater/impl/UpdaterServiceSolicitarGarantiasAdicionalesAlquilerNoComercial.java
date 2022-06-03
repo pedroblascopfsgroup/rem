@@ -62,10 +62,7 @@ public class UpdaterServiceSolicitarGarantiasAdicionalesAlquilerNoComercial impl
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		expedienteComercial.setEstadoBc(estadoExpedienteBc);
 		
-		expedienteComercialApi.update(expedienteComercial,false);	
-		
-		ofertaApi.replicateOfertaFlushDto(expedienteComercial.getOferta(),expedienteComercialApi.buildReplicarOfertaDtoFromExpedienteAndRespuestaComprador(expedienteComercial, respuestaComprador));
-
+		expedienteComercialApi.update(expedienteComercial,false);
 	}
 
 	public String[] getCodigoTarea() {

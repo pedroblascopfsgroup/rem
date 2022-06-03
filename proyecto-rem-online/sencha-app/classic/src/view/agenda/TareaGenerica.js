@@ -1679,6 +1679,7 @@
         me.deshabilitarCampo(me.down('[name=comboProcede]'));
         if(CONST.CARTERA['BANKIA'] == codigoCartera) {
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        	me.ocultarCampo(me.down('[name=clonarYAnular]'));
         } else {
         	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
         	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
@@ -2983,6 +2984,7 @@
                 store.filter('visibleCaixa', true);
             });
         	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            me.ocultarCampo(me.down('[name=clonarYAnular]'));
         } else {
             storeMotivoAnulacion.addListener('load', function(store, records, successful, operation, eOpts){
                 store.filter('visibleWeb', true);

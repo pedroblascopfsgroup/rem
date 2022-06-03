@@ -860,4 +860,8 @@ public interface OfertaApi {
 	Boolean rechazarOfertaSinLlamadaBC(Oferta oferta);
 
 	boolean debeCongelarOfertaCaixa(Oferta oferta);
+
+	void revivirOfertasAsync(List<Long> idOfertaList);
+
+	void revivirOferta(Oferta oferta);
 }

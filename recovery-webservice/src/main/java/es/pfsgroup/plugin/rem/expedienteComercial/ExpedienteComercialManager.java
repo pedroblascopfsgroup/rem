@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -92,6 +93,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
@@ -681,41 +683,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(dto.getEstadoCodigo())) {
 				
 				depositoApi.modificarEstadoDepositoSiIngresado(oferta);
-				
-				Activo act=expedienteComercial.getOferta().getActivoPrincipal();
-				List<ActivoOferta> ofertasActivo=act.getOfertas();
-				for(ActivoOferta ofer : ofertasActivo) {
-					Long idOferta= ofer.getOferta();
-					if(!idOferta.equals(oferta.getId())) {
-						Oferta o = ofertaApi.getOfertaById(idOferta);
-						DDEstadoOferta estOferta = o.getEstadoOferta();
-						if (DDEstadoOferta.CODIGO_CONGELADA.equals(estOferta.getCodigo())) {
-							ExpedienteComercial e = o.getExpedienteComercial();
-							String codigoOferta = null;
-							if(e != null) {
-								codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
-							}else if (DDCartera.isCarteraBk(act.getCartera()) && (Checks.esNulo(o.getCheckDocumentacion())
-								|| !o.getCheckDocumentacion())) {
-								codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
-								pdteDocu = true;
-							}else {
-								codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;
-							}
-							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta);
-							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
-							o.setEstadoOferta(est);
-							if (Checks.esNulo(o.getFechaOfertaPendiente())) {
-								o.setFechaOfertaPendiente(new Date());
-							}
-							genericDao.save(Oferta.class, o);
-							if(pdteDocu) {
-								ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
-							}
-							ofertaApi.llamaReplicarCambioEstado(o.getId(), o.getEstadoOferta().getCodigo());
-						}
-					}
-				}
-
+				ofertaApi.revivirOferta(ofertaPrincipal);
 				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}

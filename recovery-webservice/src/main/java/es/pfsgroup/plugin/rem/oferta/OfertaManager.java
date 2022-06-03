@@ -269,6 +269,7 @@ import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
+import es.pfsgroup.plugin.rem.thread.DescongelarOfertasAsync;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
@@ -9402,6 +9403,68 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return false;
+	}
+	
+	
+	
+	@Override
+	public void revivirOferta(Oferta oferta) {
+		List<Long> idOfertaList = new ArrayList<Long>();
+		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
+		for (ActivoOferta activoOferta : activoOfertaList) {
+			idOfertaList.add(activoOferta.getActivoId());
+		}
+		Thread llamadaAsincrona = new Thread(new DescongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
+		llamadaAsincrona.start();
+	}
+	
+	@Override
+	public void revivirOfertasAsync(List<Long>idOfertaList) {
+		List<Oferta> ofertaListPteDoc = new ArrayList<Oferta>();
+		List<Oferta> ofertaList = new ArrayList<Oferta>();
+		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
+		
+		for (Long idOferta : idOfertaList) {
+			Oferta oferta = this.getOfertaById(idOferta);
+			if(DDEstadoOferta.isCongelada(oferta.getEstadoOferta())) {
+				oferta.setEstadoOferta(this.devolverEstadoAlDescongelar(oferta));
+				if (Checks.esNulo(oferta.getFechaOfertaPendiente())) {
+					oferta.setFechaOfertaPendiente(new Date());
+				}
+				if(DDEstadoOferta.isPteDoc(oferta.getEstadoOferta())) {
+					ofertaListPteDoc.add(oferta);
+				}
+				
+				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
+			}
+		}
+		
+		
+		for (Oferta oferta : ofertaListPteDoc) {
+			this.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+		}
+		
+		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+			this.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+		}					
+			
+	}
+	
+	public DDEstadoOferta devolverEstadoAlDescongelar(Oferta oferta) {
+		String codigoOferta = null;
+		ExpedienteComercial eco= oferta.getExpedienteComercial();
+		
+		if(eco != null) {
+			codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
+		}else if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
+			codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito())){
+			codigoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
+		}else {
+			codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;
+		}
+		
+		return genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta));
 	}
 }
 

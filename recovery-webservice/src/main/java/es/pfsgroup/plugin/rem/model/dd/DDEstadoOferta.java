@@ -128,5 +128,21 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 		}
 		return is;
 	}
+	
+	public static boolean isCongelada(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_CONGELADA.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
+	public static boolean isPteDoc(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PDTE_DOCUMENTACION.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

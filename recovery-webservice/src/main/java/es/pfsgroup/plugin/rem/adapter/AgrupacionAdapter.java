@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
@@ -3071,6 +3072,20 @@ public class AgrupacionAdapter {
 			}
 			
 			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			
+			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado) 
+					&& depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				Double importe = depositoApi.getImporteDeposito(oferta);
+				if(importe == null) {
+					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
+				}
+				
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+				if(cuentaVirtual == null) {
+					throw new Exception("No hay cuentas virtuales libres.");
+				}
+				oferta.setCuentaVirtual(cuentaVirtual);
+			}
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 			

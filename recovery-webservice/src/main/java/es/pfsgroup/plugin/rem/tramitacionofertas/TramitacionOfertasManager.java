@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -305,6 +306,22 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				oferta.setReplicateBC(Boolean.TRUE);
 			
 			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+		}
+		
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
+			boolean necesitaDeposito = false;
+			if(!Checks.esNulo(dto.getIdAgrupacion()) && agrupacion != null && activo.getSubcartera() != null ) {
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getNumActivo());
+				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtroActivo);
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+					necesitaDeposito = true;
+					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+					oferta.setCuentaVirtual(cuentaVirtual);
+				}
+			}
+			if(necesitaDeposito) {
+				depositoApi.generaDeposito(oferta);
+			}
 		}
 
 		if (!resultado) {

@@ -50,7 +50,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		}
 		
 		if(Ext.isEmpty(activosDetalle)){
-			if(this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito") == "true"){
+			if(this.up("agrupacionesdetalle").lookupController().getViewModel().get('agrupacionficha').get('esNecesarioDeposito') == true){
 				esNecesarioDeposito = true;
 			}
 		}else{
@@ -184,13 +184,13 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								}
 					
 										if(Ext.isEmpty(me.up('[reference="activosdetalle"]'))){
-											if(this.up("agrupacionesdetalle").lookupController().getViewModel().get("esNecesarioDeposito") == "true"){
+											if(this.up("agrupacionesdetalle").lookupController().getViewModel().get('agrupacionficha').get('esNecesarioDeposito') == true){
 												esNecesarioDeposito = true;
 											}
 										}else{
 											esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
 										}
-					
+										
 										if (CONST.TIPOS_OFERTA['VENTA'] == value) {											
 											ibanDevolucion.setHidden(!esNecesarioDeposito);
 											ibanDevolucion.allowBlank = !esNecesarioDeposito;
@@ -211,6 +211,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			    				colspan: 2
 							},
 							{
+								xtype: 'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.iban.devolucion'),
 		            	    	name:		'ibanDevolucion',
 								hidden: !esNecesarioDeposito,

@@ -9554,7 +9554,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoOferta>activoOfertaList = activo.getOfertas();
 		for (ActivoOferta activoOferta : activoOfertaList) {
 			if(!activoOferta.getOferta().equals(oferta.getId())) {
-				idOfertaList.add(activoOferta.getOferta());
+				Oferta ofr = this.getOfertaById(activoOferta.getOferta());
+				if(DDEstadoOferta.isRechazada(ofr.getEstadoOferta()) && DDEstadoOferta.isCaducada(ofr.getEstadoOferta())) {
+					idOfertaList.add(activoOferta.getOferta());
+				}
 			}
 		}
 		

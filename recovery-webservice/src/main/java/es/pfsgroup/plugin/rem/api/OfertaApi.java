@@ -863,5 +863,9 @@ public interface OfertaApi {
 
 	void revivirOfertasAsync(List<Long> idOfertaList);
 
-	void revivirOferta(Oferta oferta);
+	void congelarOfertasThread(List<Long> idOfertaList);
+
+	void inicioThreadCongelarOfertas(Activo activo, Oferta oferta);
+
+	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta);
 }

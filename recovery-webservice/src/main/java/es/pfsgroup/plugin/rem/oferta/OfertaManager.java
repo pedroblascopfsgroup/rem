@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -199,6 +200,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOfertaBC;
@@ -269,6 +271,7 @@ import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
+import es.pfsgroup.plugin.rem.thread.CongelarOfertasAsync;
 import es.pfsgroup.plugin.rem.thread.DescongelarOfertasAsync;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -320,6 +323,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_ERROR_KEY = "error";
+	
+	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	
 	@Resource
 	MessageService messageServices;
@@ -9417,31 +9422,95 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	
 	@Override
-	public void revivirOferta(Oferta oferta) {
+	@Transactional(readOnly = false)
+	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta) {
 		List<Long> idOfertaList = new ArrayList<Long>();
-		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
-		for (ActivoOferta activoOferta : activoOfertaList) {
-			idOfertaList.add(activoOferta.getActivoId());
+		Activo activo = oferta.getActivoPrincipal();
+		ExpedienteComercial eco = oferta.getExpedienteComercial();
+		
+		
+		
+		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
+		if(depositoApi.isDepositoIngresado(deposito)) {
+			Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
+			DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
+			deposito.setEstadoDeposito(estadoDeposito);
+			genericDao.save(Deposito.class, deposito);
 		}
-		Thread llamadaAsincrona = new Thread(new DescongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
-		llamadaAsincrona.start();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+		DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+		oferta.setEstadoOferta(estado);
+		updateStateDispComercialActivosByOferta(oferta);
+		this.setEstadoOfertaBC(oferta, null);
+		genericDao.save(Oferta.class, oferta);
+		
+		
+		if(eco != null) {
+			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+				
+			if(eco.getTrabajo() != null) {
+				Trabajo trabajo = eco.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+				Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+				tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+				
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for (TareaActivo tarea : tareasTramite) {
+					if (Checks.esNulo(tarea.getFechaFin())) {
+						tarea.setFechaFin(new Date());
+						tarea.getAuditoria().setBorrado(true);
+					}
+				}
+				
+				genericDao.save(ActivoTramite.class, tramite);
+			}
+			
+			genericDao.save(ExpedienteComercial.class, eco);
+		}
+		
+		
+		if(activo != null) {
+			List<ActivoOferta> activoOfertaList = activo.getOfertas();
+			for (ActivoOferta activoOferta : activoOfertaList) {
+				idOfertaList.add(activoOferta.getActivoId());
+			}
+			Thread llamadaAsincrona = new Thread(new DescongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
+			llamadaAsincrona.start();
+		}
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void revivirOfertasAsync(List<Long>idOfertaList) {
 		List<Oferta> ofertaListPteDoc = new ArrayList<Oferta>();
-		List<Oferta> ofertaList = new ArrayList<Oferta>();
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
 		
 		for (Long idOferta : idOfertaList) {
 			Oferta oferta = this.getOfertaById(idOferta);
 			if(DDEstadoOferta.isCongelada(oferta.getEstadoOferta())) {
+				ExpedienteComercial eco = oferta.getExpedienteComercial();
 				oferta.setEstadoOferta(this.devolverEstadoAlDescongelar(oferta));
 				if (Checks.esNulo(oferta.getFechaOfertaPendiente())) {
 					oferta.setFechaOfertaPendiente(new Date());
 				}
 				if(DDEstadoOferta.isPteDoc(oferta.getEstadoOferta())) {
 					ofertaListPteDoc.add(oferta);
+				}
+				
+				updateStateDispComercialActivosByOferta(oferta);
+				
+				if (!Checks.esNulo(eco) && !Checks.esNulo(eco.getTrabajo())) {
+					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
+					if (!Checks.estaVacio(tramites)) {
+						List<TareaActivo> tareasTramite = tareaActivoDao.getTareasActivoTramiteBorrados(tramites.get(0).getId());
+						for (TareaActivo tarea : tareasTramite) {
+							if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
+								tarea.getAuditoria().setBorrado(false);
+							}
+						}
+					}
 				}
 				
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
@@ -9475,5 +9544,75 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta));
 	}
+	
+
+	@Override
+	public void inicioThreadCongelarOfertas(Activo activo, Oferta oferta) {
+		List<Long> idOfertaList = new ArrayList<Long>();
+		List<ActivoOferta>activoOfertaList = activo.getOfertas();
+		for (ActivoOferta activoOferta : activoOfertaList) {
+			if(activoOferta.getOferta() != oferta.getId()) {
+				idOfertaList.add(activoOferta.getOferta());
+			}
+		}
+		
+		Thread llamadaAsincrona = new Thread(new CongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
+		llamadaAsincrona.start();
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void congelarOfertasThread(List<Long> idOfertaList) {
+		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
+		
+		for (Long id : idOfertaList) {
+			String estadoOferta = null;
+			Oferta oferta = this.getOfertaById(id);
+			ExpedienteComercial expediente = oferta.getExpedienteComercial();
+			Deposito deposito = oferta.getDeposito();
+			if(depositoApi.isDepositoIngresado(deposito)) {
+				estadoOferta = DDEstadoOferta.CODIGO_RECHAZADA;
+				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
+				genericDao.save(Deposito.class, deposito);
+			}else {
+				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
+			}
+			
+			if(expediente != null) {
+				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
+				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, expediente))));
+				
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+				
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				if(tareasTramite != null && !tareasTramite.isEmpty()) {
+					for (TareaActivo tarea : tareasTramite) {
+						tarea.getAuditoria().setBorrado(true);
+					}
+				}
+				
+				
+				genericDao.save(ExpedienteComercial.class, expediente);
+			}
+			
+			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
+			updateStateDispComercialActivosByOferta(oferta);
+			this.setEstadoOfertaBC(oferta, null);
+			genericDao.save(Oferta.class, oferta);
+			
+			
+			ofertaEstadoHash.put(id,oferta.getEstadoOferta().getCodigo());
+
+		}
+		
+		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+			this.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+		}
+		
+	}
+
 }
 

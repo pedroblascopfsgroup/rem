@@ -47,7 +47,7 @@ public class DescongelarOfertasAsync implements Runnable {
 			ofertaApi.revivirOfertasAsync(idOfertaList);
 			
 		} catch (Exception e) {
-			logger.error("error creando expediente comercial", e);
+			logger.error("Error descongelar async", e);
 		}
 
 	}

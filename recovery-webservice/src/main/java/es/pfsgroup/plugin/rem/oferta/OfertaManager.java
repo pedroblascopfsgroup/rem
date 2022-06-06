@@ -9440,8 +9440,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
 		DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 		oferta.setEstadoOferta(estado);
-		updateStateDispComercialActivosByOferta(oferta);
 		this.setEstadoOfertaBC(oferta, null);
+		updateStateDispComercialActivosByOferta(oferta);
+		
 		genericDao.save(Oferta.class, oferta);
 		
 		
@@ -9499,7 +9500,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					ofertaListPteDoc.add(oferta);
 				}
 				
-				updateStateDispComercialActivosByOferta(oferta);
+				
 				
 				if (!Checks.esNulo(eco) && !Checks.esNulo(eco.getTrabajo())) {
 					List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
@@ -9513,6 +9514,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
+				updateStateDispComercialActivosByOferta(oferta);
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
 			}
 		}
@@ -9551,7 +9553,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<Long> idOfertaList = new ArrayList<Long>();
 		List<ActivoOferta>activoOfertaList = activo.getOfertas();
 		for (ActivoOferta activoOferta : activoOfertaList) {
-			if(activoOferta.getOferta() != oferta.getId()) {
+			if(!activoOferta.getOferta().equals(oferta.getId())) {
 				idOfertaList.add(activoOferta.getOferta());
 			}
 		}
@@ -9562,7 +9564,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void congelarOfertasThread(List<Long> idOfertaList) {
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
 		
@@ -9599,8 +9601,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-			updateStateDispComercialActivosByOferta(oferta);
 			this.setEstadoOfertaBC(oferta, null);
+			updateStateDispComercialActivosByOferta(oferta);
+			
 			genericDao.save(Oferta.class, oferta);
 			
 			

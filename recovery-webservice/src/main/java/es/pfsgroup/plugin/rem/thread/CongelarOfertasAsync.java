@@ -47,7 +47,7 @@ public class CongelarOfertasAsync implements Runnable {
 			ofertaApi.congelarOfertasThread(idOfertaList);
 			
 		} catch (Exception e) {
-			logger.error("error creando expediente comercial", e);
+			logger.error("Error en la congelación asyn", e);
 		}
 
 	}

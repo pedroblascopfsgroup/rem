@@ -9570,6 +9570,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional
 	public void congelarOfertasThread(List<Long> idOfertaList) {
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		for (Long id : idOfertaList) {
 			String estadoOferta = null;
@@ -9598,21 +9599,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						tarea.getAuditoria().setBorrado(true);
 					}
 				}
-				
-				
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}
 			
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
 			this.setEstadoOfertaBC(oferta, null);
-			updateStateDispComercialActivosByOferta(oferta);
-			
 			genericDao.save(Oferta.class, oferta);
-			
+			//updateStateDispComercialActivosByOferta(oferta);
+
 			
 			ofertaEstadoHash.put(id,oferta.getEstadoOferta().getCodigo());
 
 		}
+		
+		transactionManager.commit(transaction);
 		
 		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
 			this.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());

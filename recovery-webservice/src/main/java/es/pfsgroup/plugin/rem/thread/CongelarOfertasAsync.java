@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.thread;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -12,7 +14,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 
 
 
@@ -44,7 +45,11 @@ public class CongelarOfertasAsync implements Runnable {
 		try {
 			restApi.doSessionConfig(this.userName);
 			
-			ofertaApi.congelarOfertasThread(idOfertaList);
+			HashMap<Long,String> ofertaEstadoHash = ofertaApi.congelarOfertasThread(idOfertaList);
+			
+			for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+				ofertaApi.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+			}
 			
 		} catch (Exception e) {
 			logger.error("Error en la congelación asyn", e);

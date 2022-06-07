@@ -9568,9 +9568,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	@Transactional
-	public void congelarOfertasThread(List<Long> idOfertaList) {
+	public HashMap<Long,String> congelarOfertasThread(List<Long> idOfertaList) {
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		for (Long id : idOfertaList) {
 			String estadoOferta = null;
@@ -9603,7 +9602,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-			this.setEstadoOfertaBC(oferta, null);
+			//this.setEstadoOfertaBC(oferta, null);
 			genericDao.save(Oferta.class, oferta);
 			//updateStateDispComercialActivosByOferta(oferta);
 
@@ -9612,11 +9611,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		}
 		
-		transactionManager.commit(transaction);
+		hibernateUtils.flushSession();
 		
-		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
-			this.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
-		}
+		return ofertaEstadoHash;
 		
 	}
 

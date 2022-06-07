@@ -863,7 +863,7 @@ public interface OfertaApi {
 
 	void revivirOfertasAsync(List<Long> idOfertaList);
 
-	void congelarOfertasThread(List<Long> idOfertaList);
+	HashMap<Long, String> congelarOfertasThread(List<Long> idOfertaList);
 
 	void inicioThreadCongelarOfertas(Activo activo, Oferta oferta);
 

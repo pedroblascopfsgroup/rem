@@ -868,4 +868,6 @@ public interface OfertaApi {
 	void inicioThreadCongelarOfertas(Activo activo, Oferta oferta);
 
 	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta);
+
+	void llamaReplicarCambioEstadoForThread(Long idOferta, String codigoEstado);
 }

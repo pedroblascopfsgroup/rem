@@ -9602,9 +9602,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoOferta)));
-			//this.setEstadoOfertaBC(oferta, null);
+			this.setEstadoOfertaBC(oferta, null);
 			genericDao.save(Oferta.class, oferta);
-			//updateStateDispComercialActivosByOferta(oferta);
+			updateStateDispComercialActivosByOferta(oferta);
 
 			
 			ofertaEstadoHash.put(id,oferta.getEstadoOferta().getCodigo());
@@ -9617,5 +9617,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	}
 
+	@Override
+	public void llamaReplicarCambioEstadoForThread(Long idOferta, String codigoEstado){
+		Oferta oferta = getOfertaById(idOferta);
+		if(oferta != null){
+			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado)) {
+				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
+			}
+			caixaBcRestClient.callReplicateOfertaNoSession(oferta.getNumOferta());
+		}
+	}
+	
+	
 }
 

@@ -13,6 +13,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 
@@ -48,7 +50,10 @@ public class CongelarOfertasAsync implements Runnable {
 			HashMap<Long,String> ofertaEstadoHash = ofertaApi.congelarOfertasThread(idOfertaList);
 			
 			for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
-				ofertaApi.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+				Oferta oferta = ofertaApi.getOfertaById(Long.parseLong(ofertaEstado.getKey().toString()));
+				if(!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
+					ofertaApi.llamaReplicarCambioEstadoForThread(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+				}
 			}
 			
 		} catch (Exception e) {

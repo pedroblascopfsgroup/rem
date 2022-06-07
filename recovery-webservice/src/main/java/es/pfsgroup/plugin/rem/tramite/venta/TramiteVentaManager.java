@@ -140,12 +140,12 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		ExpedienteComercial eco = expedienteComercialApi.findOne(ecoId);
 		
 		if(eco != null && eco.getOferta() != null) {
-//			Oferta oferta = eco.getOferta();
-//			Activo activo = oferta.getActivoPrincipal();
-//			
-//			if(DDCartera.isCarteraBk(activo.getCartera())) {
-//				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
-//			}
+			Oferta oferta = eco.getOferta();
+			Activo activo = oferta.getActivoPrincipal();
+			
+			if(DDCartera.isCarteraBk(activo.getCartera())) {
+				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+			}
 		}
 		
 
@@ -153,7 +153,8 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(eco.getFechaAnulacion() != null) {
         	eco.setFechaAnulacion(new Date());
         }
-			genericDao.save(ExpedienteComercial.class, eco);
+		
+		genericDao.save(ExpedienteComercial.class, eco);
 		
 	}
 	

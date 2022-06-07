@@ -105,8 +105,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 			if (!Checks.esNulo(expediente)) {
 				
 
-				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null 
-						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
+				Boolean reserva = expediente.getCondicionante().getSolicitaReserva() != null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) ? true : false;
 						
 				DtoRespuestaBCGenerica dtoHistoricoBC = new DtoRespuestaBCGenerica();
 				dtoHistoricoBC.setComiteBc(DDComiteBc.CODIGO_COMITE_COMERCIAL);
@@ -173,12 +172,13 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 								
 								dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
-							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
+							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES);
+							}
 						}
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
+						expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, filtro));
 						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 	
 					}

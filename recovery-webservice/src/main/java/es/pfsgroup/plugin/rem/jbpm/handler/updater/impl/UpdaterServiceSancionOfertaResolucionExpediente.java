@@ -167,8 +167,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
 							&& COMBO_PROCEDE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 							valorComboProcede= valor.getValor();
-							
-							updaterStateOfertaApi.updaterStateDevolucionReserva(valorComboProcede, tramite, ofertaAceptada, expediente);
 					}
 					
 					if(MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
@@ -313,25 +311,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					// --- FIN --- HREOS-5052 ---
 				
 					if (!tieneReserva) {
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
 						rechazar = true;
-						//Rechaza la oferta y descongela el resto
-					
 						
 						if (mandaCorreo) {
 							if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(activo)) {
 								Oferta oferta = expediente.getOferta();
 								notificationOfertaManager.sendNotificationDND(oferta, activo);
 							}
-						}
-
-						try {
-							ofertaApi.descongelarOfertas(expediente);
-						} catch (Exception e) {
-							logger.error("Error descongelando ofertas.", e);
 						}
 					}
 					
@@ -355,11 +341,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 			}
 
-			//ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
 			if(!Checks.esNulo(activo)) {
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
-			//ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 			
 			if(ofertaApi.isOfertaDependiente(ofertaAceptada)) {
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));

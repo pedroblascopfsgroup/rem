@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220524
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220607
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17997
+--## INCIDENCIA_LINK=REMVIP-11829
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -35,6 +35,7 @@
 --##        0.22 Añadir nuevas PEPs Certificado Deuda COmunidad con mismo PEP que Comunidad de propietario-Cuota ordinaria/extraordinaria(derrama) - [HREOS-17811] - Alejandra García
 --##        0.23 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
 --##		0.24 Corrección Pep alquiler PAO y colocación puerta antiocupa - [HREOS-17997] - Javier Esbri
+--##		0.25 Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas - [REMVIP-11829] - Alejandra García
 --#########################################
 --*/
 
@@ -50,7 +51,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17997';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11829';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -485,7 +486,14 @@ DECLARE
 		--Corrección Pep alquiler PAO y colocación puerta antiocupa
 		T_TABLA('1089','XXXX-22-1-A_PUE','22','03','79','16','150','03','','','null','','','','2022'),
 		T_TABLA('1090','XXXX-22-3-I-PUE','22','02','26','16','317','01','','','null','','','','2022'),
-		T_TABLA('1091','XXXX-22-3-A-I-PUE','22','02','28','16','317','03','','','null','','','','2022')
+		T_TABLA('1091','XXXX-22-3-A-I-PUE','22','02','28','16','317','03','','','null','','','','2022'),
+		
+		--Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas 
+		T_TABLA('1100','XXXX-22-2-COM','22','00','2','05','132','01','','','null','','','','2022'),
+		T_TABLA('1101','XXXX-22-2-A-COM','22','00','3','05','132','03','','','null','','','','2022'),
+		T_TABLA('1102','XXXX-22-3-A-DES','22','01','1','11','162','01','','','null','','','','2022'),
+		T_TABLA('1103','XXXX-22-2-COM VT GS','22','01','59','12','54','01','','','null','','','','2022'),
+		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220524
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220607
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17997
+--## INCIDENCIA_LINK=REMVIP-11789
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INSERTAMOS SUBTIPO GASTO
@@ -20,6 +20,7 @@
 --##        0.7 Añadir nuevos subtipos excel revisión - [HREOS-17704] - Alejandra García
 --##        0.8 Añadir nuevos subtipos después de la revisión del excel - [HREOS-17704] - Alejandra García
 --##        0.9 Añadir nuevos subtipos Alquiler PAO - [HREOS-17997] - Javier Esbri
+--##        0.10 Añadir nuevos subtipos para PEPs 2021 - [REMVIP-11789] - Alejandra García
 --#########################################
 --*/
 
@@ -34,7 +35,7 @@ DECLARE
 	V_MSQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
  	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
  	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17704'; -- USUARIO CREAR/MODIFICAR
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11789'; -- USUARIO CREAR/MODIFICAR
 	V_COUNT NUMBER(16); -- Vble. para comprobar
 	V_TGA_ID NUMBER(16); 
 	err_num NUMBER; -- Numero de errores
@@ -155,8 +156,9 @@ DECLARE
       T_TIPO_DATA('315','Tarifa plana Alquiler Prorrata 0%','13'),
       T_TIPO_DATA('316','Tarifa plana Alquiler Prorrata 100%','13'),
       --Nuevos subtipos Alquiler PAO
-      T_TIPO_DATA('317','Alquiler PAO - 1ª Posesión','16')
-
+      T_TIPO_DATA('317','Alquiler PAO - 1ª Posesión','16'),
+      --Nuevos subtipos para PEPs 2021
+      T_TIPO_DATA('318','Gastos generales','05')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 	

@@ -94,8 +94,7 @@ public class ComunidadesPropietariosAdapter {
 			 
 			genericDao.save(ActivoGestion.class, nuevaGestion);
 
-			ActivoComunidadPropietarios activoComunidadPropietarios = genericDao.get(ActivoComunidadPropietarios.class, genericDao.createFilter(FilterType.EQUALS, "id", activo.getComunidadPropietarios().getId()),
-					genericDao.createFilter(FilterType.EQUALS,"codigoComPropUvem", idComunidadPropietarios));
+			ActivoComunidadPropietarios activoComunidadPropietarios = activo.getComunidadPropietarios();
 
 			if (activoComunidadPropietarios != null && !Checks.isFechaNula(fechaEnvioCarta)) {
 				 Date dateEnvioCarta = new SimpleDateFormat("dd/MM/yyyy").parse(fechaEnvioCarta);  

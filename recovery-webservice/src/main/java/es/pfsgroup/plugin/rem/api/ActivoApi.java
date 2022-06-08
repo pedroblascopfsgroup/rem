@@ -1317,7 +1317,7 @@ public interface ActivoApi {
 
 	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
 
-	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
+	void crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);

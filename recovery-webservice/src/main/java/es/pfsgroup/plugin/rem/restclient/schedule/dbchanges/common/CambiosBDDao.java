@@ -574,41 +574,20 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 												  List<Object[]> resultado) throws CambiosBDDaoError{
 		List<Object[]> historicos = null;
 
-
 		if (resultado != null && !resultado.isEmpty()) {
-
-			String selectDatoHistoricoString = null;
-
-			StringBuilder selectDatoHistorico = new StringBuilder();
-			 selectDatoHistorico.append(SELECT)
-					.append(columns)
-					.append(FROM)
-					.append(infoTablas.nombreTablaDatosHistoricos())
-					.append(WHERE)
-					.append(infoTablas.clavePrimaria())
-					.append(IN);
-
-			 //String selectDatoHistorico = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos() + WHERE + infoTablas.clavePrimaria() + IN + "(";
-			final String coma = ",";
-			final String abreParentesis = " (";
-			final String cierraParentesis = ") ";
+			String selectDatoHistorico = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos() + WHERE;
 			int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
-
 			boolean primeraIteracion = true;
 			for (Object[] r : resultado) {
+				String condicion = infoTablas.clavePrimaria() + " = " + r[posPk];
 				if (!primeraIteracion) {
-					selectDatoHistorico = selectDatoHistorico.append(r[posPk])
-							.append(coma);
+					selectDatoHistorico = selectDatoHistorico.concat(OR);
 				} else {
-					selectDatoHistorico.append(abreParentesis)
-							.append(r[posPk])
-							.append(coma);;
 					primeraIteracion = false;
 				}
+				selectDatoHistorico = selectDatoHistorico.concat(condicion);
 			}
-
-			selectDatoHistoricoString = selectDatoHistorico.deleteCharAt(selectDatoHistorico.length() -1).append(cierraParentesis).toString();
-			historicos = queryExecutor.sqlRunList(session, selectDatoHistoricoString, infoTablas);
+			historicos = queryExecutor.sqlRunList(session, selectDatoHistorico, infoTablas);
 
 		}
 

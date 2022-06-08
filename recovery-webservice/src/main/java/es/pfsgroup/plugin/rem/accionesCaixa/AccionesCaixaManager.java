@@ -809,13 +809,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public boolean incautaODevuelveDeposito(String codEstado, Long numOferta){
         Deposito dep = depositoApi.getDepositoByNumOferta(numOferta);
         depositoApi.incautaODevuelveDeposito(dep, codEstado);
-        Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(numOferta);
-        ofertaApi.setEstadoOfertaBC(ofr, null);
-        ExpedienteComercial eco = ofr.getExpedienteComercial();
-        if(eco != null){
-            eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(ofr, eco))));
-            genericDao.save(ExpedienteComercial.class, eco);
-        }
         return true;
     }
 

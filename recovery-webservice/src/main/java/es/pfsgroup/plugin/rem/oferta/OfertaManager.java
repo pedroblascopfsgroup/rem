@@ -9561,8 +9561,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		Thread llamadaAsincrona = new Thread(new CongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
-		llamadaAsincrona.start();
+//		Thread llamadaAsincrona = new Thread(new CongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
+//		llamadaAsincrona.start();
+		
+		HashMap<Long,String> ofertaEstadoHash = this.congelarOfertasThread(idOfertaList);
+
+		
+		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+			Oferta ofr = this.getOfertaById(Long.parseLong(ofertaEstado.getKey().toString()));
+			if(!DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
+				this.llamaReplicarCambioEstadoForThread(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+			}
+		}
 		
 	}
 	
@@ -9611,7 +9621,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		}
 		
-		hibernateUtils.flushSession();
+		//hibernateUtils.flushSession();
+		
+		
 		
 		return ofertaEstadoHash;
 		

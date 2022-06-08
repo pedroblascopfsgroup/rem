@@ -129,7 +129,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-							ofertaApi.inicioThreadCongelarOfertas(activo, ofertaAceptada);
+							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 							
 							
 							
@@ -164,7 +164,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 
 								
 								try {
-									ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+									//ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}

@@ -137,5 +137,13 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 		return is;
 	}
 	
+	public static final boolean tieneReservaPendiente(Reserva reserva) {
+		boolean is = false;
+		if(reserva != null && reserva.getEstadoReserva() != null && CODIGO_PENDIENTE_FIRMA.equals(reserva.getEstadoReserva().getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
 	
 }

@@ -861,13 +861,8 @@ public interface OfertaApi {
 
 	boolean debeCongelarOfertaCaixa(Oferta oferta);
 
-	void revivirOfertasAsync(List<Long> idOfertaList);
-
-	HashMap<Long, String> congelarOfertasThread(List<Long> idOfertaList);
-
-	void inicioThreadCongelarOfertas(Activo activo, Oferta oferta);
-
 	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta);
 
-	void llamaReplicarCambioEstadoForThread(Long idOferta, String codigoEstado);
+	void congelarOfertasAndReplicate(Activo activo, Oferta oferta);
+
 }

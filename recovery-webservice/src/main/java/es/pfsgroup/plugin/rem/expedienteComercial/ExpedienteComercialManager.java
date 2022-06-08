@@ -15382,7 +15382,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		String codigoEcoBc = null;
 		if(DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
 			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
-		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito())) {
+		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito()) && (eco.getReserva() == null || DDEstadosReserva.tieneReservaPendiente(eco.getReserva()))) {
 			codigoEcoBc =  DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DEPOSITO_BC;
 		} else if(funcionesTramitesApi.isTramiteAprobado(eco)){
 			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;

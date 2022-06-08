@@ -271,13 +271,10 @@ import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
-import es.pfsgroup.plugin.rem.thread.CongelarOfertasAsync;
-import es.pfsgroup.plugin.rem.thread.DescongelarOfertasAsync;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
@@ -9286,8 +9283,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	public boolean cumpleCondicionesReplicarPorEstadoYOferta(Oferta oferta, String codEstado){
-		return !DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && (DDEstadoOferta.CODIGO_PENDIENTE.equals(codEstado) || DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codEstado)
-				|| DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION.equals(codEstado) || DDEstadoOferta.CODIGO_RECHAZADA.equals(codEstado) || DDEstadoOferta.CODIGO_CONGELADA.equals(codEstado));
+		return !DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta()) && !DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(codEstado);
 	}
 	
 	/**
@@ -9422,13 +9418,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	
 	@Override
-	@Transactional(readOnly = false)
 	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta) {
 		List<Long> idOfertaList = new ArrayList<Long>();
 		Activo activo = oferta.getActivoPrincipal();
+		
+		this.rechazoOfertaNew(oferta);
+	
+		if(activo != null) {
+			List<ActivoOferta> activoOfertaList = activo.getOfertas();
+			for (ActivoOferta activoOferta : activoOfertaList) {
+				idOfertaList.add(activoOferta.getActivoId());
+			}
+			
+			HashMap<Long,String> ofertaEstadoHash = this.revivirOfertasAsync(idOfertaList);
+
+			for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+				this.llamarCambioEstadoReplicarNoSession(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+			}
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	private void rechazoOfertaNew(Oferta oferta) {
+
 		ExpedienteComercial eco = oferta.getExpedienteComercial();
-		
-		
 		
 		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
 		if(depositoApi.isDepositoIngresado(deposito)) {
@@ -9471,20 +9484,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			genericDao.save(ExpedienteComercial.class, eco);
 		}
 		
-		
-		if(activo != null) {
-			List<ActivoOferta> activoOfertaList = activo.getOfertas();
-			for (ActivoOferta activoOferta : activoOfertaList) {
-				idOfertaList.add(activoOferta.getActivoId());
-			}
-			Thread llamadaAsincrona = new Thread(new DescongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
-			llamadaAsincrona.start();
-		}
 	}
-	
-	@Override
+
 	@Transactional(readOnly = false)
-	public void revivirOfertasAsync(List<Long>idOfertaList) {
+	private HashMap<Long,String> revivirOfertasAsync(List<Long>idOfertaList) {
 		List<Oferta> ofertaListPteDoc = new ArrayList<Oferta>();
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
 		
@@ -9524,13 +9527,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			this.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 		}
 		
-		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
-			this.llamaReplicarCambioEstado(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
-		}					
+		return ofertaEstadoHash;
 			
 	}
 	
-	public DDEstadoOferta devolverEstadoAlDescongelar(Oferta oferta) {
+	private DDEstadoOferta devolverEstadoAlDescongelar(Oferta oferta) {
 		String codigoOferta = null;
 		ExpedienteComercial eco= oferta.getExpedienteComercial();
 		
@@ -9549,7 +9550,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 
 	@Override
-	public void inicioThreadCongelarOfertas(Activo activo, Oferta oferta) {
+	public void congelarOfertasAndReplicate(Activo activo, Oferta oferta) {
 		List<Long> idOfertaList = new ArrayList<Long>();
 		List<ActivoOferta>activoOfertaList = activo.getOfertas();
 		for (ActivoOferta activoOferta : activoOfertaList) {
@@ -9560,25 +9561,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-		
-//		Thread llamadaAsincrona = new Thread(new CongelarOfertasAsync(idOfertaList, genericAdapter.getUsuarioLogado().getUsername()));
-//		llamadaAsincrona.start();
-		
-		HashMap<Long,String> ofertaEstadoHash = this.congelarOfertasThread(idOfertaList);
+
+		HashMap<Long,String> ofertaEstadoHash = this.congelarOfertasNew(idOfertaList);
 
 		
 		for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
-			Oferta ofr = this.getOfertaById(Long.parseLong(ofertaEstado.getKey().toString()));
-			if(!DDTipoOferta.isTipoAlquilerNoComercial(ofr.getTipoOferta())) {
-				this.llamaReplicarCambioEstadoForThread(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
-			}
+			this.llamarCambioEstadoReplicarNoSession(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
 		}
 		
 	}
 	
-	@Override
+
 	@Transactional
-	public HashMap<Long,String> congelarOfertasThread(List<Long> idOfertaList) {
+	private HashMap<Long,String> congelarOfertasNew(List<Long> idOfertaList) {
 		HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
 		
 		for (Long id : idOfertaList) {
@@ -9590,7 +9585,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				estadoOferta = DDEstadoOferta.CODIGO_RECHAZADA;
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
-			}else {
+			}else if(/*!DDEstadoOferta.isPteDoc(oferta.getEstadoOferta()) && */!DDEstadoOferta.isPteTit(oferta.getEstadoOferta())){
 				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 			}
 			
@@ -9620,26 +9615,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ofertaEstadoHash.put(id,oferta.getEstadoOferta().getCodigo());
 
 		}
-		
-		//hibernateUtils.flushSession();
-		
-		
-		
+	
 		return ofertaEstadoHash;
 		
 	}
 
-	@Override
-	public void llamaReplicarCambioEstadoForThread(Long idOferta, String codigoEstado){
+
+	private void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado){
 		Oferta oferta = getOfertaById(idOferta);
 		if(oferta != null){
 			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado)) {
 				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
 			}
-			caixaBcRestClient.callReplicateOfertaNoSession(oferta.getNumOferta());
+			
+			if(!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
+				caixaBcRestClient.callReplicateOfertaNoSession(oferta.getNumOferta());
+			}
 		}
 	}
-	
-	
+		
 }
 

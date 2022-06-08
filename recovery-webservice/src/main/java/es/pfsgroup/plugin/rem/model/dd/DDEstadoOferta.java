@@ -152,5 +152,13 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 		}
 		return is;
 	}
+	
+	public static boolean isPteTit(DDEstadoOferta dd) {
+		boolean is = false;
+		if(dd != null && CODIGO_PENDIENTE_TITULARES.equals(dd.getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
 
 }

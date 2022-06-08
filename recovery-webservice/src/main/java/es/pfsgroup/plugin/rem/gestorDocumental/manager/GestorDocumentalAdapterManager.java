@@ -655,7 +655,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto dtoPersona = generaDtoConWhitelistByUsuarioAndFuncion(userLogin, FuncionesConstants.FUN_VER_DOCUMENTOS_IDENTIDAD, recoveryToGestorDocAssembler);
 		dtoPersona.setCabecera(recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_JUNTA,
-				GestorDocumentalConstants.CODIGO_CLASE_OP));
+				GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA));
 		listaDto.add(dtoPersona);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpedienteMultiTipo(listaDto);
 

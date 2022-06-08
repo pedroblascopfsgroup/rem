@@ -9427,12 +9427,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(activo != null) {
 			List<ActivoOferta> activoOfertaList = activo.getOfertas();
 			for (ActivoOferta activoOferta : activoOfertaList) {
-				idOfertaList.add(activoOferta.getActivoId());
+				idOfertaList.add(activoOferta.getOferta());
 			}
 			
 			HashMap<Long,String> ofertaEstadoHash = this.revivirOfertasAsync(idOfertaList);
 
+			hibernateUtils.flushSession();
+			
 			for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+				Oferta ofr = this.getOfertaById(Long.parseLong(ofertaEstado.getKey().toString()));
+				this.llamadaPbc(ofr, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				this.llamarCambioEstadoReplicarNoSession(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
 			}
 		}
@@ -9521,12 +9525,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
 			}
 		}
-		
-		
-		for (Oferta oferta : ofertaListPteDoc) {
-			this.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
-		}
-		
+			
 		return ofertaEstadoHash;
 			
 	}

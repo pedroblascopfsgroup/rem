@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -106,6 +109,10 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 	
 	@Column(name = "PRD_NUMERO_COMERCIALES")
 	private Integer numeroComerciales;
+	
+	@OneToMany(mappedBy = "direccion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRD_ID")
+    private List<DelegacionesProvincia> provinciasDelegacion;	
 
 	@Version   
 	private Long version;
@@ -279,5 +286,13 @@ public class ActivoProveedorDireccion implements Serializable, Auditable {
 
 	public void setNumeroComerciales(Integer numeroComerciales) {
 		this.numeroComerciales = numeroComerciales;
+	}
+
+	public List<DelegacionesProvincia> getProvinciasDelegacion() {
+		return provinciasDelegacion;
+	}
+
+	public void setProvinciasDelegacion(List<DelegacionesProvincia> provinciasDelegacion) {
+		this.provinciasDelegacion = provinciasDelegacion;
 	}
 }

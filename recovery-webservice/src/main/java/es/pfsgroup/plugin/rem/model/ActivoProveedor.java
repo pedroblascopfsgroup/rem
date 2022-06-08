@@ -273,6 +273,9 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_MOTIVO_BAJA")
     private String motivoBaja;
 	
+	@OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private List<ProveedorTerritorial> territorios;	
 	
 	@Version   
 	private Long version;
@@ -811,6 +814,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setMotivoBaja(String motivoBaja) {
 		this.motivoBaja = motivoBaja;
+	}
+
+	public List<ProveedorTerritorial> getTerritorios() {
+		return territorios;
+	}
+
+	public void setTerritorios(List<ProveedorTerritorial> territorios) {
+		this.territorios = territorios;
 	}
 	
 	

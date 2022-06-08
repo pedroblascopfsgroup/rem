@@ -72,9 +72,9 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		}
 		if(!Checks.esNulo(dto.getProvinciaCodigo())) {
 			if(!hasJoinDireccion)from += ",ActivoProveedorDireccion apd";
-			from += ",DelegacionesProvincia dpr, DDProvincia ddprv";
+			from += " left join apd.provinciasDelegacion dpr, DDProvincia ddprv, ActivoProveedor pve2 left join pve2.territorios pte";
 			where += (haswhere ? " and " : " where ");
-			where += "dpr.direccion.id = apd.id and dpr.provincia.id = ddprv.id ";
+			where += " (dpr.provincia.id = ddprv.id or pte.provincia.id = ddprv.id) and pve2.id = pve.id ";
 			if(!hasJoinDireccion)where += "and apd.proveedor.id = pve.id";
 			haswhere = true;
 			hasJoinDireccion = true;

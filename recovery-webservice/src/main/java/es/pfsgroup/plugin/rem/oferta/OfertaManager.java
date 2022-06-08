@@ -212,6 +212,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoIndisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
@@ -9585,6 +9586,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				estadoOferta = DDEstadoOferta.CODIGO_RECHAZADA;
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
+				oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
 			}else if(/*!DDEstadoOferta.isPteDoc(oferta.getEstadoOferta()) && */!DDEstadoOferta.isPteTit(oferta.getEstadoOferta())){
 				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 			}

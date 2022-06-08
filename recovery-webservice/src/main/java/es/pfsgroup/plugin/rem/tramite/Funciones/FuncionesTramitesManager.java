@@ -73,12 +73,7 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 		if(tp != null) {
 			String codigoTp = tp.getCodigo();
 			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codigoTp)) {
-				if (subcartera != null && (DDSubcartera.isSubcarteraDivarianRemainingInmob(subcartera) || DDSubcartera.isSubcarteraDivarianArrowInmob(subcartera))){
-					isAprobado = tramiteVentaApi.isTramiteT017DivarianAprobado(eco);
-				}else{
-					isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas, resolucionComite);
-				}
-
+				isAprobado = tramiteVentaApi.isTramiteT017Aprobado(eco);
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codigoTp)){
 				isAprobado = tramiteAlquilerApi.isTramiteT015Aprobado(codigoTareasActivas);
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codigoTp)){

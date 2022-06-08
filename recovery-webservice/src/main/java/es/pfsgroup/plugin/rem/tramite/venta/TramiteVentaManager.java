@@ -96,23 +96,6 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	}
 	
 	@Override
-	public boolean isTramiteT017Aprobado(List<String> tareasActivas, TareaExterna resolucionComite){
-		boolean isAprobado = false;
-		String[] tareasParaAprobado = {ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, 
-				ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN};
-
-		if(!tareasActivas.isEmpty() && !CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
-			isAprobado = true;
-		}
-
-		if(resolucionComite != null && resolucionComite.getTareaPadre().getFechaFin() != null){
-			isAprobado = true;
-		}
-		
-		return isAprobado;
-	}
-	
-	@Override
 	public boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna){
 		boolean tieneFechaVencimientoReserva = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
@@ -207,7 +190,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	}
 
 	@Override
-	public boolean isTramiteT017DivarianAprobado(ExpedienteComercial eco) {
+	public boolean isTramiteT017Aprobado(ExpedienteComercial eco) {
 		Trabajo trabajo = eco.getTrabajo();
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 		List<TareaExterna> tareasExpediente = activoTramiteApi.getListaTareaExternaByIdTramite(tramite.getId());

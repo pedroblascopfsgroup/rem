@@ -15,8 +15,6 @@ public interface TramiteVentaApi {
 
 	boolean userHasPermisoParaAvanzarTareas(TareaExterna tareaExterna);
 
-	boolean isTramiteT017Aprobado(List<String> tareasActivas, TareaExterna resolucionComite);
-
 	boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna);
 
 	boolean checkArrasEstadoBCIngreso(TareaExterna tareaExterna);
@@ -29,7 +27,7 @@ public interface TramiteVentaApi {
 
 	DtoDocPostVenta getDatosDocPostventa(Long idExpediente);
 
-	boolean isTramiteT017DivarianAprobado(ExpedienteComercial eco);
+	boolean isTramiteT017Aprobado(ExpedienteComercial eco);
 	
 	boolean isExpedienteAntesAprobadoT013(DDEstadosExpedienteComercial estado);
 

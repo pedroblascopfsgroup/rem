@@ -9411,5 +9411,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						);
 		return !"0".equals(resultado);
     }
+	
+	@Override
+	public Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion) {
+		String resultado = "0";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("codEstadoLoc", codEstadoLoc);
+		params.put("codSubestadoGestion", codSubestadoGestion);
+		rawDao.addParams(params);
+	
+		if(codEstadoLoc == null || codSubestadoGestion == null) {
+			return false;
+		}
+		
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM ACT_LGE_LOCALIZACION_GEST LGE WHERE "
+					+ "		 LGE.DD_ELO_ID IN (SELECT DD_ELO_ID FROM DD_ELO_ESTADO_LOCALIZACION WHERE DD_ELO_CODIGO = :codEstadoLoc AND BORRADO = 0) AND "
+					+ " 	 LGE.DD_SEG_ID IN (SELECT DD_SEG_ID FROM DD_SEG_SUBESTADO_GESTION WHERE DD_SEG_CODIGO = :codSubestadoGestion AND BORRADO = 0) "
+					+ "		 AND LGE.BORRADO = 0");
+
+			return !"0".equals(resultado);
+	}
 }
 

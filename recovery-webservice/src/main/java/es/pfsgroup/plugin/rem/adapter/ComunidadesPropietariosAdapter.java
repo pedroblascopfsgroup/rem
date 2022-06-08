@@ -163,7 +163,7 @@ public class ComunidadesPropietariosAdapter {
 				 genericDao.save(GestionCCPP.class, gestionAnterior);
 			} 
 			
-			if (!Checks.esNulo(activoComunidadPropietarios)) 
+			if (!Checks.esNulo(activoComunidadPropietarios) && !Checks.isFechaNula(fechaEnvioCarta)) 
 			{				
 			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaEnvioCarta);  
 				activoComunidadPropietarios.setFechaEnvioCarta(date1);

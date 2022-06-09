@@ -2056,7 +2056,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    
 	    isCamposEnabledByTipoAlquiler: function(get) {
 	    	var me = this,
-	    	tipoAlquiler = get('patrimonio.tipoAlquilerCodigo'),
+	    	tipoAlquiler = get('patrimonio.tipoAlquilerCodigo');
 	    	
 	    	if (CONST.TIPO_ALQUILER['CON_OPCION_COMPRA'] === tipoAlquiler) {
 				return true;

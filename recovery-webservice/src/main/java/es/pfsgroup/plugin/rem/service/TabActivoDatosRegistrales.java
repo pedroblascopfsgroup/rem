@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoGestion;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
@@ -71,6 +72,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
@@ -82,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
@@ -756,12 +760,38 @@ public class TabActivoDatosRegistrales implements TabActivoService {
                      
 			if (activo.getTipoTitulo() != null) {
 				
+				Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());	
+				List<ActivoGestion> actGestion = genericDao.getList(ActivoGestion.class, activoFilter);
+				
 				if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloNoJudicial)) {
 					
 					if (activo.getAdjNoJudicial() == null) {
 						activo.setAdjNoJudicial(new ActivoAdjudicacionNoJudicial());
 						activo.getAdjNoJudicial().setActivo(activo);
 					}
+					
+					if (!Checks.isFechaNula(dto.getFechaTitulo())) {
+						if (activo.getAdjNoJudicial() != null 
+								&& Checks.isFechaNula(activo.getAdjNoJudicial().getFechaTitulo())) {
+							if (actGestion != null || !actGestion.isEmpty()) {
+								for (ActivoGestion activoGestion : actGestion) {
+									if ((Checks.esNulo(activoGestion.getEstadoLocalizacion()) 
+											|| DDEstadoLocalizacion.CODIGO_SDF.equals(activoGestion.getEstadoLocalizacion().getCodigo()))
+										&& (Checks.esNulo(activoGestion.getSubestadoGestion()) 
+												|| DDSubestadoGestion.CODIGO_SDF.equals(activoGestion.getSubestadoGestion().getCodigo()))) {
+										Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoLocalizacion.CODIGO_PDTE);
+										DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLoc);
+										activoGestion.setEstadoLocalizacion(estadoLocalizacion);
+										Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoGestion.CODIGO_GEST_LOC);
+										DDSubestadoGestion subEstadoGestion = genericDao.get(DDSubestadoGestion.class, filtroSeg);
+										activoGestion.setSubestadoGestion(subEstadoGestion);
+									}
+								}
+							}
+						}
+					}
+					
+					
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
 					activo.setAdjNoJudicial((genericDao.save(ActivoAdjudicacionNoJudicial.class, activo.getAdjNoJudicial())));
@@ -794,6 +824,27 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					if (activo.getAdjJudicial().getAdjudicacionBien() == null) {
 						activo.getAdjJudicial().setAdjudicacionBien(new NMBAdjudicacionBien());
 						activo.getAdjJudicial().getAdjudicacionBien().setBien(activo.getBien());
+					}
+					
+					if (!Checks.isFechaNula(dto.getFechaDecretoFirme())) {
+						if (activo.getAdjJudicial().getAdjudicacionBien() != null 
+								&& Checks.isFechaNula(activo.getAdjJudicial().getAdjudicacionBien().getFechaDecretoFirme())) {
+							if (actGestion != null || !actGestion.isEmpty()) {
+								for (ActivoGestion activoGestion : actGestion) {
+									if ((Checks.esNulo(activoGestion.getEstadoLocalizacion()) 
+											|| DDEstadoLocalizacion.CODIGO_SDF.equals(activoGestion.getEstadoLocalizacion().getCodigo()))
+										&& (Checks.esNulo(activoGestion.getSubestadoGestion()) 
+												|| DDSubestadoGestion.CODIGO_SDF.equals(activoGestion.getSubestadoGestion().getCodigo()))) {
+										Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoLocalizacion.CODIGO_PDTE);
+										DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLoc);
+										activoGestion.setEstadoLocalizacion(estadoLocalizacion);
+										Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoGestion.CODIGO_GEST_LOC);
+										DDSubestadoGestion subEstadoGestion = genericDao.get(DDSubestadoGestion.class, filtroSeg);
+										activoGestion.setSubestadoGestion(subEstadoGestion);
+									}
+								}
+							}
+						}
 					}
 						
 					beanUtilNotNull.copyProperties(activo.getAdjJudicial().getAdjudicacionBien(), dto);
@@ -1142,7 +1193,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activoCaixa.setBancoOrigen(bancoOrigen);
 				}
 			}
-			
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

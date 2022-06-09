@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -68,7 +67,6 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 
     private static final String COMBO_EJERCE = "comboEjerce";
     private static final String CAMPO_ADMINISTRACION = "administracion";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
    	private static final Integer RESERVA_SI = 1;
 
@@ -91,19 +89,15 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 				for(TareaExternaValor valor :  valores) {
 
 					if(COMBO_EJERCE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						Filter filtro = null;
 						DDEstadosExpedienteComercial estado = null;
 						if(DDSiNo.SI.equals(valor.getValor())){
 							rechazar = true;
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
 							
 							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
 							resultadoTanteo = genericDao.get(DDResultadoTanteo.class, filtroTanteo);
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);
 						} else {
+							Filter filtro = null;
 							Reserva reserva = expediente.getReserva();
 							if (!Checks.esNulo(reserva)) {
 								if (DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) {
@@ -196,7 +190,7 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 				}
 				
 				if (rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 				}
 				
 				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 

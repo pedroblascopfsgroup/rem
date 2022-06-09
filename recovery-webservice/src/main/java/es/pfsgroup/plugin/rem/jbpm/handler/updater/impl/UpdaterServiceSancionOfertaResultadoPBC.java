@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -78,7 +77,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
     private static final String COMBO_RESULTADO = "comboResultado";
     private static final String COMBO_RESPUESTA = "comboRespuesta";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
     public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
@@ -126,11 +124,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
-								//Finaliza el trámite
-								
-								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-								genericDao.save(ActivoTramite.class, tramite);
 
 							}
 
@@ -251,7 +244,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 				}
 				
 				if (anulacion) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 				}
 
 				if (!campos.isEmpty() && boardingComunicacionApi.modoRestClientBloqueoCompradoresActivado())

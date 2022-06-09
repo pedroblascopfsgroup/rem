@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -81,7 +80,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	private static final String COMBO_RESOLUCION = "comboResolucion";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
-	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	private static final String COMITE_SANCIONADOR = "comiteSancionador";
  	private static final Integer RESERVA_SI = 1;
@@ -116,7 +114,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 					}
 					
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+						Filter filtro = null;
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 							for (ActivoOferta activoOferta : listActivosOferta) {
@@ -184,15 +182,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								rechazar = true;
-								// Deniega el expediente
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 	
 								//finalizamos las posibles tareas de validación pendientes
 								expedienteComercialApi.finalizarTareaValidacionClientes(expediente);
-								// Finaliza el trámite
-								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-								genericDao.save(ActivoTramite.class, tramite);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -212,9 +204,11 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							}
 						}
 	
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						if (!Checks.esNulo(filtro)) {
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						}	
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -234,7 +228,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if(rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada,DDEstadosExpedienteComercial.DENEGADO);
 				}
 			}
 		}

@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -75,7 +74,6 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
     private static final String COMBO_RATIFICACION = "comboRatificacion";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
    	private static final String CODIGO_T013_RATIFICACION_COMITE = "T013_RatificacionComite";
    	private static final String MOTIVO_NO_RATIFICADA = "604"; //NO RATIFICADA
@@ -158,11 +156,6 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
 							expediente.setFechaVenta(null);
 
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
-
 							// Motivo anulacion: NO RATIFICADA
 							DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 									(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, MOTIVO_NO_RATIFICADA);
@@ -184,7 +177,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if (rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 				}
 			}
 		}

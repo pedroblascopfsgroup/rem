@@ -10,13 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -53,7 +51,6 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 	 
 	private static final String COMBO_RESOLUCION = "comboRespuesta";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
-	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_RECOMENDACION_CES = "T017_RecomendCES";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -82,7 +79,6 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 							
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
 							rechazar = true;
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES); 
 							if(((!Checks.esNulo(expediente.getReserva()))
 									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
 									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
@@ -90,10 +86,6 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 									|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
-								
-								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-								genericDao.save(ActivoTramite.class, tramite);
 									
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
 										.dameValorDiccionarioByCod(DDTipoRechazoOferta.class,
@@ -113,13 +105,12 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if (rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 				}
 			}
 		}

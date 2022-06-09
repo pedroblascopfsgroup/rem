@@ -9419,11 +9419,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	
 	@Override
-	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta) {
+	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta, String codEstadoExp) {
 		List<Long> idOfertaList = new ArrayList<Long>();
 		Activo activo = oferta.getActivoPrincipal();
 		
-		this.rechazoOfertaNew(oferta);
+		this.rechazoOfertaNew(oferta, codEstadoExp);
 	
 		if(activo != null) {
 			List<ActivoOferta> activoOfertaList = activo.getOfertas();
@@ -9440,7 +9440,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	private void rechazoOfertaNew(Oferta oferta) {
+	private void rechazoOfertaNew(Oferta oferta, String codEstadoExp) {
 
 		ExpedienteComercial eco = oferta.getExpedienteComercial();
 		
@@ -9461,7 +9461,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		if(eco != null) {
-			DDEstadosExpedienteComercial ecoEstado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+			DDEstadosExpedienteComercial ecoEstado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoExp));
 			eco.setEstado(ecoEstado);
 			if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
 				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
@@ -9647,6 +9647,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+    public void rechazoOfertasMotivoVendido(Oferta oferta) {
+        Activo activo = oferta.getActivoPrincipal();
+        Long idOfertaVendida = oferta.getId();
+        HashMap<Long,String> ofertaEstadoHash = new HashMap<Long,String>();
+    
+        if(activo != null) {
+            List<ActivoOferta> activoOfertaList = activo.getOfertas();
+            for (ActivoOferta activoOferta : activoOfertaList) {
+                if(!activoOferta.getOferta().equals(idOfertaVendida)) {
+                    Oferta ofertaRechazar = getOfertaById(activoOferta.getOferta());
+                    Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
+					ofertaRechazar.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, filtroMotivo));
+                    
+					rechazoOfertaNew(ofertaRechazar, DDEstadosExpedienteComercial.ANULADO);
+                    ofertaEstadoHash.put(ofertaRechazar.getId(),ofertaRechazar.getEstadoOferta().getCodigo());
+                }
+            }
+
+            for(Map.Entry ofertaEstado : ofertaEstadoHash.entrySet()){
+                llamarCambioEstadoReplicarNoSession(Long.parseLong(ofertaEstado.getKey().toString()), ofertaEstado.getValue().toString());
+            }
+        }
+    }
 		
 }
 

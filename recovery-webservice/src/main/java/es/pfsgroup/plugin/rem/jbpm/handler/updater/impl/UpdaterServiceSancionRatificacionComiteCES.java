@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -69,7 +68,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 	private static final String COMBO_RATIFICACION = "comboRatificacion";
 	private static final String FECHA_RATIFICACION = "fechaRatificacion";
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
-	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
  	private static final Integer RESERVA_SI = 1;
 
@@ -123,13 +121,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								rechazar = true;
-								// Deniega el expediente
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
-	
-								// Finaliza el trámite
-								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-								genericDao.save(ActivoTramite.class, tramite);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -147,10 +138,12 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_CES);
 						}
-	
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						
+						if (!Checks.esNulo(filtro)) {
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						}
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -214,7 +207,7 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if (rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 				}
 			}
 		}

@@ -352,7 +352,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 			
 			if(rechazar) {
-				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 			}
 		}
 	}

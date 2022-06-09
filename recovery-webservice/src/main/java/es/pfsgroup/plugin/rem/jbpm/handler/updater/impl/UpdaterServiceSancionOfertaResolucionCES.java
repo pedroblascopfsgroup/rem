@@ -142,8 +142,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 								rechazar = true;
-
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 								
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRechazoOferta.class,DDTipoRechazoOferta.CODIGO_DENEGADA);
 								
@@ -158,10 +156,12 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES);
 							}
 						}
-	
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, filtro));
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						
+						if (!Checks.esNulo(filtro)) {
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						}						
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -248,7 +248,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				genericDao.save(HistoricoSancionesBc.class, historico);
 				
 				if(rechazar) {
-	                ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+	                ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 	            }
 			}
 		}

@@ -861,8 +861,9 @@ public interface OfertaApi {
 
 	boolean debeCongelarOfertaCaixa(Oferta oferta);
 
-	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta);
+	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta, String codEstadoExp);
 
 	void congelarOfertasAndReplicate(Activo activo, Oferta oferta);
 
+	void rechazoOfertasMotivoVendido(Oferta oferta);
 }

@@ -31,10 +31,8 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
@@ -119,21 +117,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							activoApi.saveOrUpdate(activo);
 						}
 						
-						//Rechazamos el resto de ofertas
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						Filter filtroMotivo;
-						
-						for(Oferta oferta : listaOfertas){
-							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
-								filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
-										DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
-								DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
-										filtroMotivo);
-								
-								oferta.setMotivoRechazo(motivo);
-								ofertaApi.rechazarOferta(oferta);
-							}
-						}
+						ofertaApi.rechazoOfertasMotivoVendido(ofertaAceptada);
 						
 						genericDao.save(Oferta.class, ofertaAceptada);
 						
@@ -141,11 +125,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						rechazar = true;
 
 						expediente.setFechaVenta(null);
-						
-						//Finaliza el trámite
-						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-						genericDao.save(ActivoTramite.class, tramite);
 					}
 				}
 				
@@ -171,7 +150,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 			genericDao.save(Oferta.class, ofertaAceptada);
 			
 			if (rechazar) {
-				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 			}
 		}
 	}

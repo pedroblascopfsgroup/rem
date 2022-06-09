@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -94,7 +93,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 
     private static final String COMBO_RESPUESTA = "comboRespuesta";
     private static final String IMPORTE_OFERTANTE = "importeOfertante";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
    	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
    	private static final String MOTIVO_COMPRADOR_NO_INTERES = "100"; //EL COMPRADOR NO ESTÁ INTERESADO EN LA OPERACIÓN
    	private static final Integer RESERVA_SI = 1;
@@ -113,7 +111,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 				for(TareaExternaValor valor :  valores) {
 
 					if(COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						Filter filtro = null;
 						if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(valor.getValor()) || DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valor.getValor())){
 							//Si el activo es de Bankia, se ratifica el comité
 							if(!trabajoApi.checkBankia(expediente.getTrabajo())){
@@ -136,7 +133,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 										}					
 									}
 								}
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								
 								expediente.setEstado(estado);
@@ -182,19 +179,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 														
 						}else {
 							rechazar = true;
-							//Resuelve el expediente
-							if(DDCartera.CODIGO_CARTERA_GIANTS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTA_DENEGADA);
-							}
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							
 							expediente.setFechaVenta(null);
-							expediente.setEstado(estado);
-							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
 
 							// Motivo anulacion: EL COMPRADOR NO ESTÁ INTERESADO EN LA OPERACIÓN
 							DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
@@ -244,7 +230,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				if (rechazar) {
-					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada,
+							DDCartera.CODIGO_CARTERA_GIANTS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) ? 
+							DDEstadosExpedienteComercial.CONTRAOFERTA_DENEGADA : DDEstadosExpedienteComercial.ANULADO);
 				}
 			}
 		}

@@ -38,10 +38,8 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
@@ -146,22 +144,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 							activoApi.saveOrUpdate(activo);
 						}
-
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						Filter filtroMotivo;
 						
-						// Rechazamos el resto de ofertas
-						for (Oferta oferta : listaOfertas) {
-							if (DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) {
-								filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
-										DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
-								DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
-										filtroMotivo);
-								
-								oferta.setMotivoRechazo(motivo);
-								ofertaApi.rechazarOferta(oferta);
-							}
-						}
+						ofertaApi.rechazoOfertasMotivoVendido(ofertaAceptada);
 
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 								filtro);
@@ -294,7 +278,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion, true);
 		
 		if (rechazar) {
-			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 		}
 
 	}

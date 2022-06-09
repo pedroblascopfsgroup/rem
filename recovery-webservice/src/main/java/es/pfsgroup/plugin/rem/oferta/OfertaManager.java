@@ -9497,6 +9497,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(DDEstadoOferta.isCongelada(oferta.getEstadoOferta())) {
 				ExpedienteComercial eco = oferta.getExpedienteComercial();
 				oferta.setEstadoOferta(this.devolverEstadoAlDescongelar(oferta));
+				this.setEstadoOfertaBC(oferta, null);
 				if (Checks.esNulo(oferta.getFechaOfertaPendiente())) {
 					oferta.setFechaOfertaPendiente(new Date());
 				}
@@ -9519,6 +9520,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				updateStateDispComercialActivosByOferta(oferta);
+				genericDao.save(Oferta.class, oferta);
 				ofertaEstadoHash.put(idOferta,oferta.getEstadoOferta().getCodigo());
 			}
 		}

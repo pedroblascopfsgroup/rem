@@ -9428,7 +9428,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(activo != null) {
 			List<ActivoOferta> activoOfertaList = activo.getOfertas();
 			for (ActivoOferta activoOferta : activoOfertaList) {
-				idOfertaList.add(activoOferta.getActivoId());
+				idOfertaList.add(activoOferta.getOferta());
 			}
 			
 			HashMap<Long,String> ofertaEstadoHash = this.revivirOfertasAsync(idOfertaList);

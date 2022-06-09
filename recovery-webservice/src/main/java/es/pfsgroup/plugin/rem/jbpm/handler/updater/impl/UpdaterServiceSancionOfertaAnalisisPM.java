@@ -59,6 +59,7 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean rechazar = false;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -78,6 +79,7 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
+							rechazar = true;
 							// Deniega el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_PM);
 
@@ -85,9 +87,6 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 							genericDao.save(ActivoTramite.class, tramite);
-
-							// Rechaza la oferta y descongela el resto
-							ofertaApi.rechazarOferta(ofertaAceptada);
 							
 							// Tipo rechazo y motivo rechazo ofertas cajamar
 							DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -101,13 +100,6 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 							motivoRechazo.setTipoRechazo(tipoRechazo);
 							ofertaAceptada.setMotivoRechazo(motivoRechazo);
 							genericDao.save(Oferta.class, ofertaAceptada);
-							
-							
-							try {
-								ofertaApi.descongelarOfertas(expediente);
-							} catch (Exception e) {
-								logger.error("Error descongelando ofertas.", e);
-							}
 
 						} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_PM);
@@ -137,6 +129,10 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				}
 			}
 		}
 

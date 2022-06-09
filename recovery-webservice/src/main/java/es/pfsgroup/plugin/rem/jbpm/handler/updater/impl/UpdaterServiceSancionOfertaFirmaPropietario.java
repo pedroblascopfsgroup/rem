@@ -65,7 +65,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
-    private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -74,6 +73,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		boolean pasaAVendido = false;
+		boolean rechazar = false;
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
@@ -138,12 +138,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						genericDao.save(Oferta.class, ofertaAceptada);
 						
 					}else{
-
-						// Se anula el expediente
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						rechazar = true;
 
 						expediente.setFechaVenta(null);
 						
@@ -151,15 +146,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 						genericDao.save(ActivoTramite.class, tramite);
-
-						//Rechaza la oferta y descongela el resto
-						ofertaApi.rechazarOferta(ofertaAceptada);
-						try {
-							ofertaApi.descongelarOfertas(expediente);
-							ofertaApi.finalizarOferta(ofertaAceptada);
-						} catch (Exception e) {
-							logger.error("Error descongelando ofertas.", e);
-						}
 					}
 				}
 				
@@ -183,9 +169,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 			}
 			expedienteComercialApi.update(expediente, pasaAVendido);
 			genericDao.save(Oferta.class, ofertaAceptada);
+			
+			if (rechazar) {
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+			}
 		}
-
-
 	}
 
 	public String[] getCodigoTarea() {

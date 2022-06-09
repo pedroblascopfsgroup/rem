@@ -33,7 +33,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
@@ -53,9 +52,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-	
-	@Autowired
-	private OfertaDao ofertaDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -81,6 +77,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 		
 	 		Activo activo = ofertaAceptada.getActivoPrincipal();
 	 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
+	 		boolean rechazar = false;
 	 		
 	 		for (TareaExternaValor valor : valores) {			
 	 			if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -89,14 +86,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				genericDao.save(Oferta.class, ofertaAceptada);
 	 			}else if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-						// Una vez aprobado el expediente, se congelan el resto de ofertas que no
-						// estén rechazadas (aceptadas y pendientes)
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for (Oferta oferta : listaOfertas) {
-							if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-								ofertaApi.congelarOferta(oferta);
-							}
-						}
+	 					ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 
 						Filter f1 = null;
 						if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {
@@ -123,7 +113,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 						}
 
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
-	 					ofertaApi.rechazarOferta(ofertaAceptada);
+	 					rechazar = true;
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 	 					DDEstadosExpedienteComercial denegado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(denegado);
@@ -197,6 +187,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 			}
 	 		genericDao.save(Oferta.class, ofertaAceptada);
 	 		genericDao.save(ExpedienteComercial.class, expediente);
+	 		
+	 		if (rechazar) {
+	 			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+	 		}
 	 	}catch(ParseException e) {
 	 		 e.printStackTrace();
 	 	}

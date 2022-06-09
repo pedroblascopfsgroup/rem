@@ -82,6 +82,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {	
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean rechazar = false;
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
@@ -108,6 +109,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							}
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
+							rechazar = true;
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
 							if(((expediente.getReserva() != null)
 									&& expediente.getReserva().getEstadoReserva() != null
@@ -120,14 +122,6 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
-								// Rechaza la oferta y descongela el resto
-								ofertaApi.rechazarOferta(ofertaAceptada);
-								try {
-									ofertaApi.descongelarOfertas(expediente);
-									ofertaApi.finalizarOferta(ofertaAceptada);
-								} catch (Exception e) {
-									logger.error("Error descongelando ofertas.", e);
-								}
 								notificatorRechazo.notificatorFinTareaConValores(tramite, valores);
 							}
 						}
@@ -173,6 +167,10 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 				}
 				genericDao.update(ExpedienteComercial.class, expediente);
 				genericDao.update(Oferta.class, ofertaAceptada);
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				}
 				
 				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
 						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 

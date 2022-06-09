@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -23,7 +22,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -35,14 +33,12 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
@@ -63,16 +59,7 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private OfertaDao ofertaDao;
-		
-	@Autowired
-	private ComunicacionGencatApi comunicacionGencatApi;
-	
-	@Autowired
 	private  GestorExpedienteComercialApi gestorExpedienteComercialApi;
-	
-	@Autowired
-	private UsuarioApi usuarioApi;
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
@@ -92,7 +79,8 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
-		GestorEntidadDto ge = new GestorEntidadDto();	
+		GestorEntidadDto ge = new GestorEntidadDto();
+		boolean rechazar = false;
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -118,14 +106,7 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 						}
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 	
-							// Una vez aprobado el expediente, se congelan el resto de ofertas que no
-							// estén rechazadas (aceptadas y pendientes)
-							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-							for (Oferta oferta : listaOfertas) {
-								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-									ofertaApi.congelarOferta(oferta);
-								}
-							}
+							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 							
 							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
 									&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
@@ -141,6 +122,7 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
+								rechazar = true;
 								// Deniega el expediente
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 	
@@ -148,9 +130,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
-	
-								// Rechaza la oferta y descongela el resto
-								ofertaApi.rechazarOferta(ofertaAceptada);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -164,14 +143,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 								motivoRechazo.setTipoRechazo(tipoRechazo);
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
-								
-								
-								try {
-									ofertaApi.descongelarOfertas(expediente);
-									ofertaApi.finalizarOferta(ofertaAceptada);
-								} catch (Exception e) {
-									logger.error("Error descongelando ofertas.", e);
-								}
 	
 							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_CES);
@@ -180,7 +151,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
 						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
-
 	
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -242,6 +212,10 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				}
 			}
 		}
 

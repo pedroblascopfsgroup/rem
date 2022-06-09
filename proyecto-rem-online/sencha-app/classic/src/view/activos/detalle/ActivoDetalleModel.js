@@ -2054,23 +2054,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 return false;
 		 },
 	    
-	    isCarteraCajamarYUnicaja: function(get) {
-	    	var me = this,
-	    	isUnicaja = get('isCarteraLiberbank'),
-	    	isCajamar = get('isCarteraCajamar');
-	    	
-	    	if (isUnicaja || isCajamar) {
-				return true;
-			}
-	    	return false;
-	    },
-	    
-	    isCamposEnabledByTipoAlquilerAndCarteras: function(get) {
+	    isCamposEnabledByTipoAlquiler: function(get) {
 	    	var me = this,
 	    	tipoAlquiler = get('patrimonio.tipoAlquilerCodigo'),
-	    	isCajamaryUnicaja = get('isCarteraCajamarYUnicaja');
 	    	
-	    	if (isCajamaryUnicaja && CONST.TIPO_ALQUILER['CON_OPCION_COMPRA'] === tipoAlquiler) {
+	    	if (CONST.TIPO_ALQUILER['CON_OPCION_COMPRA'] === tipoAlquiler) {
 				return true;
 			}
 	    	return false;

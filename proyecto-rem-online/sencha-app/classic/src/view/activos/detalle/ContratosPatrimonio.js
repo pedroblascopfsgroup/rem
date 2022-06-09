@@ -120,8 +120,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 											readOnly: true,
 											store: '{comboSuborigenContrato}',
 											value: '{contrato.suborigenContrato}',
-											rawValue: '{contrato.suborigenContratoDescripcion}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											rawValue: '{contrato.suborigenContratoDescripcion}'
 										}
 									},
 									{
@@ -129,8 +128,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.obligado.cumplimiento'),
 										bind : {
-											value: '{contrato.fechaObligadoCumplimiento}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											value: '{contrato.fechaObligadoCumplimiento}'
 											},
 										readOnly : true
 										
@@ -139,8 +137,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype : 'currencyfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.fianza.obligatoria'),
 										bind: {
-											value: '{contrato.fianzaObligatoria}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											value: '{contrato.fianzaObligatoria}'
 										}
 									},
 									{
@@ -148,8 +145,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.registro.aval.bancario'),
 										bind : {
-											value: '{contrato.fechaAvalBancario}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											value: '{contrato.fechaAvalBancario}'
 											},
 										readOnly : true
 									},
@@ -157,8 +153,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype : 'currencyfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.importe.aval.bancario'),
 										bind: {
-											value: '{contrato.importeAvalBancario}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											value: '{contrato.importeAvalBancario}'
 										}
 									},
 									{
@@ -166,8 +161,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										fieldLabel: HreRem.i18n('fieldlabel.importe.deposito.bancario'),
 										colspan: 1,
 										bind: {
-											value: '{contrato.importeDepositoBancario}',
-											hidden: '{!isCarteraCajamarYUnicaja}'
+											value: '{contrato.importeDepositoBancario}'
 										}
 									},
 									{ //Oferta REM

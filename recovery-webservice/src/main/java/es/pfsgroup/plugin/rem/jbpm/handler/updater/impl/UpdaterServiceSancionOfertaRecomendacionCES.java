@@ -26,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -62,6 +61,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		Filter filtro = null;	
+		boolean rechazar = false;
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -78,14 +78,10 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {		
 						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
 
-							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-							for (Oferta oferta : listaOfertas) {
-								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-									ofertaApi.congelarOferta(oferta);
-								}
-							}
+							ofertaApi.congelarOfertasAndReplicate(ofertaAceptada.getActivoPrincipal(), ofertaAceptada);
 							
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
+							rechazar = true;
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES); 
 							if(((!Checks.esNulo(expediente.getReserva()))
 									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
@@ -98,9 +94,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
-	
-								ofertaApi.rechazarOferta(ofertaAceptada);
-								
+									
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
 										.dameValorDiccionarioByCod(DDTipoRechazoOferta.class,
 												DDTipoRechazoOferta.CODIGO_DENEGADA);
@@ -110,13 +104,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 												DDMotivoRechazoOferta.CODIGO_DECISION_COMITE);
 								
 								motivoRechazo.setTipoRechazo(tipoRechazo);
-								ofertaAceptada.setMotivoRechazo(motivoRechazo);								
-								try {
-									ofertaApi.descongelarOfertas(expediente);
-									ofertaApi.finalizarOferta(ofertaAceptada);
-								} catch (Exception e) {
-									logger.error("Error descongelando ofertas.", e);
-								}
+								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 							}
 						}
 					}
@@ -129,6 +117,10 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+				}
 			}
 		}
 	}

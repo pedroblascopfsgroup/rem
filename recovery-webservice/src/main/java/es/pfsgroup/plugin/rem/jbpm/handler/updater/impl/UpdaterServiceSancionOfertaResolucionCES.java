@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -23,16 +21,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoRespuestaBCGenerica;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoSancionesBc;
@@ -43,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
@@ -76,9 +70,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 	
 	@Autowired
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
-	
-	@Autowired
-	private DepositoApi depositoApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionCES.class);
 	 
@@ -99,6 +90,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		GestorEntidadDto ge = new GestorEntidadDto();	
 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
+		boolean rechazar = false;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -131,8 +123,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 							
-							
-							
 							if(reserva && ge!=null && gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
@@ -151,6 +141,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 							dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_APRUEBA);
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
+								rechazar = true;
 
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 								
@@ -161,15 +152,6 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								motivoRechazo.setTipoRechazo(tipoRechazo);
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
-
-								
-								try {
-									//ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
-								} catch (Exception e) {
-									logger.error("Error descongelando ofertas.", e);
-								}
-									
-
 								
 								dtoHistoricoBC.setRespuestaBC(DDApruebaDeniega.CODIGO_DENIEGA);
 							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
@@ -264,6 +246,10 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expediente);
 				
 				genericDao.save(HistoricoSancionesBc.class, historico);
+				
+				if(rechazar) {
+	                ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada);
+	            }
 			}
 		}
 

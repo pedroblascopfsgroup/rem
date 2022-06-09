@@ -9461,8 +9461,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		if(eco != null) {
-			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
-			eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+			DDEstadosExpedienteComercial ecoEstado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+			eco.setEstado(ecoEstado);
+			if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
+				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+			}
+
+			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), ecoEstado);
 				
 			if(eco.getTrabajo() != null) {
 				Trabajo trabajo = eco.getTrabajo();
@@ -9594,8 +9599,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			if(expediente != null) {
-				expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
-				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, expediente))));
+				DDEstadosExpedienteComercial ecoEstado = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+				expediente.setEstado(ecoEstado);
+				if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera())){
+					expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, expediente))));
+				}
+
+				recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), ecoEstado);
 				
 				Trabajo trabajo = expediente.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());

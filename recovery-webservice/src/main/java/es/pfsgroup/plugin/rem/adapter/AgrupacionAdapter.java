@@ -3059,7 +3059,8 @@ public class AgrupacionAdapter {
 			}
 			
 			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
-			
+
+			boolean necesitaDeposito = false;
 			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
 				Double importe = depositoApi.getImporteDeposito(oferta);
 				if(importe == null) {
@@ -3071,6 +3072,7 @@ public class AgrupacionAdapter {
 					throw new Exception("No hay cuentas virtuales libres.");
 				}
 				oferta.setCuentaVirtual(cuentaVirtual);
+				necesitaDeposito = true;
 			}
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
 			oferta.setEstadoOferta(estadoOferta);
@@ -3079,6 +3081,10 @@ public class AgrupacionAdapter {
 			}
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
+			
+			if(necesitaDeposito) {
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())

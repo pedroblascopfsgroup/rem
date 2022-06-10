@@ -1510,5 +1510,11 @@ public interface ParticularValidatorApi {
 	Boolean existeRecomendacionByCod(String recomendacion);
 
 	Boolean existeRelacionCodLocCodSubGes(String codEstadoLoc, String codSubestadoGestion);
+	
+	Boolean isActivoMaccMarina(String numActivo);
+
+	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);
+
+	Boolean isPerimetroMacc(String numActivo);
 
 }

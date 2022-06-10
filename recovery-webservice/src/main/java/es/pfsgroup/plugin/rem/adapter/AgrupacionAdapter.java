@@ -2939,13 +2939,6 @@ public class AgrupacionAdapter {
 					);
 				
 				
-				
-				/*if (dto.getRepresentantePrp() != null) {
-					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
-				}
-
-				 */
-
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
@@ -2994,12 +2987,6 @@ public class AgrupacionAdapter {
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
 			oferta.setCliente(clienteComercial);
 
@@ -3073,8 +3060,7 @@ public class AgrupacionAdapter {
 			
 			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
 			
-			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado) 
-					&& depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
 				Double importe = depositoApi.getImporteDeposito(oferta);
 				if(importe == null) {
 					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
@@ -3085,6 +3071,11 @@ public class AgrupacionAdapter {
 					throw new Exception("No hay cuentas virtuales libres.");
 				}
 				oferta.setCuentaVirtual(cuentaVirtual);
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
 			}
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
@@ -3224,10 +3215,6 @@ public class AgrupacionAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
-			}
-			
-			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
-				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
 			}
 			
 			ofertaApi.llamaReplicarCambioEstado(ofertaNueva.getId(), ofertaNueva.getEstadoOferta().getCodigo());

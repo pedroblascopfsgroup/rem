@@ -4529,12 +4529,6 @@ public class ActivoAdapter {
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			
 			oferta.setCliente(clienteComercial);
 
@@ -4632,6 +4626,11 @@ public class ActivoAdapter {
 					throw new Exception("No hay cuentas virtuales libres.");
 				}
 				oferta.setCuentaVirtual(cuentaVirtual);
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())	&& DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);

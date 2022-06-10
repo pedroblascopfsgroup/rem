@@ -41,6 +41,9 @@ public class TramiteVentaManager implements TramiteVentaApi {
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	public class AvanzaTareaFuncion{
 		public static final String FUNCION_AVANZA_POSICIONAMIENTO = "AV_CONF_F_ESC";
@@ -128,6 +131,12 @@ public class TramiteVentaManager implements TramiteVentaApi {
 			
 			if(DDCartera.isCarteraBk(activo.getCartera())) {
 				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
+			}
+			
+			Deposito deposito = oferta.getDeposito();
+			if(depositoApi.isDepositoIngresado(deposito)) {
+				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
+				genericDao.save(Deposito.class, deposito);
 			}
 		}
 		

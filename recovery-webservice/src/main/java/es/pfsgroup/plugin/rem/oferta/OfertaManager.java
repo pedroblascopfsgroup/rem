@@ -9445,7 +9445,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		ExpedienteComercial eco = oferta.getExpedienteComercial();
 		
 		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
-		if(depositoApi.isDepositoIngresado(deposito)) {
+		if(depositoApi.isDepositoIngresado(deposito) && !depositoApi.isDepositoDecidido(deposito)) {
 			Filter filtroDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION);
 			DDEstadoDeposito estadoDeposito = genericDao.get(DDEstadoDeposito.class, filtroDeposito);
 			deposito.setEstadoDeposito(estadoDeposito);

@@ -48,4 +48,6 @@ public interface DepositoApi {
 	void ingresarDeposito(Deposito deposito);
 
 	boolean incautaODevuelveDeposito(Deposito dep, String codDeposito);
+
+	boolean isDepositoDecidido(Deposito deposito);
 }

@@ -115,4 +115,14 @@ public class DDFasePublicacion implements Auditable, Dictionary {
 		
 		return esLaMisma;
 	}
+	
+	public static boolean isFaseCinco(DDFasePublicacion fase) {
+		boolean esLaMisma = false;
+		
+		if(fase != null && CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fase.getCodigo())) {
+			esLaMisma = true;
+		}
+		
+		return esLaMisma;
+	}
 }

@@ -213,7 +213,7 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	
 	private BooleanDataType ocupado;
 	
-	private DateDataType visitableFechaVisita;
+	private BooleanDataType visitableFechaVisita;
 	
 	private DoubleDataType valorEstimadoMinVenta;
 	
@@ -857,10 +857,10 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setOcupado(BooleanDataType ocupado) {
 		this.ocupado = ocupado;
 	}
-	public DateDataType getVisitableFechaVisita() {
+	public BooleanDataType getVisitableFechaVisita() {
 		return visitableFechaVisita;
 	}
-	public void setVisitableFechaVisita(DateDataType visitableFechaVisita) {
+	public void setVisitableFechaVisita(BooleanDataType visitableFechaVisita) {
 		this.visitableFechaVisita = visitableFechaVisita;
 	}
 	public DoubleDataType getValorEstimadoMinVenta() {

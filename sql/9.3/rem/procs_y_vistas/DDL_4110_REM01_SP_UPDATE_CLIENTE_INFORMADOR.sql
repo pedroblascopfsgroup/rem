@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220308
+--## FECHA_CREACION=20220525
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-17266
+--## INCIDENCIA_LINK=HREOS-
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-17157] - PIER GOTTA
 --##        0.2 Modificación consulta - [HREOS-17266] - Alejandra García
+--##        0.3 Añadir tipos de gastos Pendiente autorizar y Incompleto - [HREOS-] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -142,7 +143,7 @@ BEGIN
 			LEFT JOIN ACTIVOS_NO_MIGRADOS ACTIV ON ACTIV.GPV_ID = GPV.GPV_ID
             LEFT JOIN GASTOS_SIN_ACTIVOS SIN_ACTIVOS ON SIN_ACTIVOS.GPV_ID = GPV.GPV_ID
 			WHERE GGE.GGE_CLIENTE_PAGADOR IS NULL 
-			AND EGA.DD_EGA_CODIGO NOT IN (''05'',''04'',''06'',''13'') 
+			AND EGA.DD_EGA_CODIGO NOT IN (''05'',''04'',''06'',''13'',''01'',''12'') 
 			AND CRA.DD_CRA_CODIGO = ''03''
 			AND GPV.BORRADO = 0
 			AND DEG.DD_DEG_CODIGO = ''01''

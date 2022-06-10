@@ -57,6 +57,7 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	public static final String COD_SALESFORCE = "33";
 	public static final String COD_OFICINA_LIBERBANK = "38";
 	public static final String COD_SUELOS_DND = "43";
+	public static final String COD_COMUNIDAD_PROPIETARIOS = "07";
 	
 	public static final String COD_COMUNIDAD_DE_PROPIETARIOS = "07";
 	public static final String COD_COMPLEJO_INMOBILIARIO = "08";

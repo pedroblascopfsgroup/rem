@@ -33,6 +33,8 @@ public class DDEstadoAutorizacionPropietario implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String CODIGO_PENDIENTE = "01";
+	public static final String CODIGO_RECHAZADO_MOTIVO_FORMAL = "02";
+	public static final String CODIGO_RECHAZADO_CONTROL_PRESUPUESTO = "03";
 	public static final String CODIGO_RECHAZADO_CONTABILIDAD = "04";
 	public static final String CODIGO_AUTORIZADO_POR_CONTABILIDAD = "07";
 

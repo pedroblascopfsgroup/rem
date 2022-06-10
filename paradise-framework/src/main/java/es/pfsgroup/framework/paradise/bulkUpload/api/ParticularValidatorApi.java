@@ -1514,5 +1514,11 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionContieneONDnd(Long numAgrupacion);
 
 	Boolean isActivoAgrupacionONDnd(Long numAgrupacion, Long numActivo);
+	
+	Boolean isActivoMaccMarina(String numActivo);
+
+	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);
+
+	Boolean isPerimetroMacc(String numActivo);
 
 }

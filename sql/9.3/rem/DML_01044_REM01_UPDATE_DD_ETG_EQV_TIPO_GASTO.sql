@@ -1,0 +1,115 @@
+--/*
+--#########################################
+--## AUTOR=Alejandra García
+--## FECHA_CREACION=20220513
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-17886
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion registros 
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial - [HREOS-17886]- Alejandra García
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	V_TABLA VARCHAR2(100 CHAR) := 'DD_ETG_EQV_TIPO_GASTO'; -- Tabla 
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-17886';
+	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
+	V_NUM NUMBER;
+	V_FLAG_VACIADO NUMBER := 0;
+    TYPE T_TABLA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_TABLA IS TABLE OF T_TABLA;
+	
+    M_TABLA T_ARRAY_TABLA := T_ARRAY_TABLA(															
+      --QUE_HACER  DD_TGA_CODIGO  DD_STG_CODIGO  GRUPO(VIEJO)  TIPO(VIEJO)  SUBTIPO(VIEJO)  GRUPO(NUEVO)  TIPO(NUEVO)  SUBTIPO(NUEVO)  EJE_ANYO  PRO_DOCIDENTIF
+		T_TABLA('UPDATE','11','44','3','60','2','3','49','3','2021','null'), 
+		T_TABLA('UPDATE','17','88','3','48','7','3','48','2','2021','null'), 
+		T_TABLA('DELETE','13','56','3','2','0','','','','2021','B46644290'),
+		T_TABLA('DELETE','13','55','3','2','0','','','','2021','B46644290')
+    ); 
+    V_TMP_TABLA T_TABLA;
+	
+BEGIN
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_TABLA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
+
+    
+  
+  	IF V_NUM_REGISTROS > 0 THEN
+
+	FOR I IN M_TABLA.FIRST .. M_TABLA.LAST
+    LOOP
+	V_TMP_TABLA := M_TABLA(I);	
+
+			IF V_TMP_TABLA(1) = 'UPDATE' THEN
+
+				V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' ETG
+							SET ETG.COGRUG_POS = '''||V_TMP_TABLA(7)||'''
+							,ETG.COTACA_POS = '''||V_TMP_TABLA(8)||'''
+							,ETG.COSBAC_POS = '''||V_TMP_TABLA(9)||'''
+							,ETG.USUARIOMODIFICAR = '''||V_USUARIO||'''
+							,ETG.FECHAMODIFICAR = SYSDATE
+							WHERE ETG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(2)||''' AND BORRADO = 0)
+							AND ETG.DD_STG_ID = (SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TABLA(3)||''' AND BORRADO = 0)
+							AND ETG.COGRUG_POS = '''||V_TMP_TABLA(4)||'''
+							AND ETG.COTACA_POS = '''||V_TMP_TABLA(5)||'''
+							AND ETG.COSBAC_POS = '''||V_TMP_TABLA(6)||'''
+							AND ETG.EJE_ID = (SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO='''||V_TMP_TABLA(10)||''' AND BORRADO = 0)
+							AND ETG.PRO_ID IS '||V_TMP_TABLA(11)||'
+						';
+				EXECUTE IMMEDIATE V_SQL;	
+				
+				DBMS_OUTPUT.PUT_LINE('[INFO] Se han modificado en la tabla '||V_ESQUEMA||'.'||V_TABLA||' (' || sql%rowcount || ') registros');
+
+			ELSIF V_TMP_TABLA(1) = 'DELETE' THEN
+
+				V_SQL := 'DELETE
+					FROM '||V_ESQUEMA||'.'||V_TABLA||' ETG
+					WHERE ETG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TABLA(2)||''' AND BORRADO = 0)
+					AND ETG.DD_STG_ID = (SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||V_TMP_TABLA(3)||''' AND BORRADO = 0)
+					AND ETG.COGRUG_POS = '''||V_TMP_TABLA(4)||'''
+					AND ETG.COTACA_POS = '''||V_TMP_TABLA(5)||'''
+					AND ETG.COSBAC_POS = '''||V_TMP_TABLA(6)||'''
+					AND ETG.EJE_ID = (SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO='''||V_TMP_TABLA(10)||''' AND BORRADO = 0)
+					AND ETG.PRO_ID = (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF='''||V_TMP_TABLA(11)||''' AND BORRADO = 0)
+				';
+				EXECUTE IMMEDIATE V_SQL;	
+				
+				DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado en la tabla '||V_ESQUEMA||'.'||V_TABLA||' (' || sql%rowcount || ') registros');
+
+			END IF;
+  	
+    END LOOP;	
+
+	END IF;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+	commit;
+
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

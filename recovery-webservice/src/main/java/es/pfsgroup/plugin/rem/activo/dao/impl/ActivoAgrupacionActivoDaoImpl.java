@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -338,4 +340,22 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		return (list.size() > 0);
 	}
+
+	@Override
+	public boolean tieneActivosConVentaSobrePlanoByAgrId(Long idAgrupacion){
+
+		try {
+			HQLBuilder hb = new HQLBuilder("select count( distinct aga.id ) from ActivoAgrupacionActivo aga ");
+			hb.appendWhere("aga.activo.ventaSobrePlano.codigo = :codVentaPlano");
+			hb.appendWhere("aga.agrupacion.id = :idAgrupacion");
+			Query q = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+			q.setParameter("codVentaPlano", DDSinSiNo.CODIGO_SI);
+			q.setParameter("idAgrupacion", idAgrupacion);
+			return ((Long) q.uniqueResult()) > 0;
+		}catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 }

@@ -40,14 +40,14 @@
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-SET DEFINE OFF;						
+SET DEFINE OFF;                  
 
 
 
 CREATE OR REPLACE PROCEDURE SP_BCR_01_DATOS_BASICOS
-	( FLAG_EN_REM IN NUMBER,
+   ( FLAG_EN_REM IN NUMBER,
    SALIDA OUT VARCHAR2, 
-	COD_RETORNO OUT NUMBER)
+   COD_RETORNO OUT NUMBER)
 
    AS
 
@@ -100,7 +100,7 @@ BEGIN
       SALIDA := SALIDA || '   [INFO] 2 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO'|| CHR(10);
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO act
-				using (				
+            using (           
                            
                   SELECT       
                   aux.NUM_INMUEBLE as ACT_NUM_ACTIVO,
@@ -227,7 +227,7 @@ BEGIN
    SALIDA := SALIDA || '   [INFO] 2.1 - INSERTAR/ACTUALIZAR EN ACT_ACTIVO'|| CHR(10);
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO act
-				       using (	
+                   using ( 
                       SELECT
                          TUD.DD_TUD_ID AS DD_TUD_ID
                         ,ACT.ACT_ID
@@ -280,7 +280,7 @@ BEGIN
    END LOOP;
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ACTIVO_CAIXA act1
-				using (		
+            using (     
                WITH APORTADOS AS (
                   SELECT
                   aux.NUM_IDENTIFICATIVO,
@@ -488,7 +488,34 @@ BEGIN
 
    EXECUTE IMMEDIATE V_MSQL;
 
-   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);   
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
+   
+   SALIDA := SALIDA || '   [INFO] 3.1 - ACTUALIZAR EN ACT_ACTIVO_CAIXA EL DD_CBC_ID PARA LOS VENDIDOS'|| CHR(10);  
+   V_MSQL := 'MERGE INTO rem01.ACT_ACTIVO_CAIXA T1
+               USING (
+                  SELECT
+                        ACT.ACT_ID
+                     ,CBC.DD_CBC_ID
+                  FROM REM01.ACT_ACTIVO ACT
+                  JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                     AND SCM.BORRADO = 0
+                  JOIN REM01.DD_CBC_CARTERA_BC CBC ON CBC.DD_CBC_CODIGO = ''01''
+                     AND CBC.BORRADO = 0
+                  JOIN REM01.ACT_ACTIVO_CAIXA CAIXA ON CAIXA.ACT_ID = ACT.ACT_ID
+                     AND CAIXA.BORRADO = 0
+                  WHERE ACT.BORRADO = 0
+                  AND SCM.DD_SCM_CODIGO = ''05''
+                  AND ACT.ACT_NUM_ACTIVO_CAIXA IS NOT NULL
+                  AND CAIXA.DD_CBC_ID IS NULL
+               ) T2 ON (T1.ACT_ID = T2.ACT_ID)
+               WHEN MATCHED THEN UPDATE SET
+                     T1.DD_CBC_ID = T2.DD_CBC_ID
+                  , T1.USUARIOMODIFICAR = ''STOCK_BC''
+                  , T1.FECHAMODIFICAR = SYSDATE
+   ';
+   EXECUTE IMMEDIATE V_MSQL;
+
+   SALIDA := SALIDA || '   [INFO] ACTUALIZADOS '|| SQL%ROWCOUNT|| CHR(10);  
 
    SALIDA := SALIDA || '   [INFO] 3.1 - ACTUALIZAR EN ACT_ACTIVO_CAIXA EL DD_CBC_ID PARA LOS VENDIDOS'|| CHR(10);  
    V_MSQL := 'MERGE INTO rem01.ACT_ACTIVO_CAIXA T1
@@ -520,7 +547,7 @@ BEGIN
    SALIDA := SALIDA || '   [INFO] 4 - INSERTAR/ACTUALIZAR EN ACT_ABA_ACTIVO_BANCARIO'|| CHR(10);   
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_ABA_ACTIVO_BANCARIO act1
-				using (		
+            using (     
 
                SELECT
                aux.NUM_IDENTIFICATIVO as ACT_NUM_ACTIVO_CAIXA,
@@ -966,7 +993,7 @@ BEGIN
    SALIDA := SALIDA || '   [INFO] 10 - INSERTAR/ACTUALIZAR EN ACT_SPS_SIT_POSESORIA'|| CHR(10);   
 
        V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA act1
-				using (		
+            using (     
                SELECT
                   CASE
                      WHEN aux.IND_ENTREGA_VOL_POSESI IN (''S'',''1'') THEN 1

@@ -181,4 +181,14 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 		return isGestionApi;
 	}
 	
+	public static boolean isHistoricoFasesPendienteInformacion(DDSubfasePublicacion subfasePublicacion) {
+		boolean isGestionApi = false;
+		
+		if(subfasePublicacion != null && CODIGO_PENDIENTE_DE_INFORMACION.equals(subfasePublicacion.getCodigo())) {
+			isGestionApi = true;
+		}
+		
+		return isGestionApi;
+	}
+	
 }

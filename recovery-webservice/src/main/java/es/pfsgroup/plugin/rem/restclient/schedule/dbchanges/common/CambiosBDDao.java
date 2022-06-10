@@ -569,8 +569,9 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @return
 	 * @throws CambiosBDDaoError
 	 */
+
 	public List<Object[]> obtenerHistoricosBloque(Session session, String columns, InfoTablasBD infoTablas,
-			List<Object[]> resultado) throws CambiosBDDaoError{
+												  List<Object[]> resultado) throws CambiosBDDaoError{
 		List<Object[]> historicos = null;
 
 		if (resultado != null && !resultado.isEmpty()) {
@@ -587,7 +588,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				selectDatoHistorico = selectDatoHistorico.concat(condicion);
 			}
 			historicos = queryExecutor.sqlRunList(session, selectDatoHistorico, infoTablas);
-			
+
 		}
 
 		return historicos;

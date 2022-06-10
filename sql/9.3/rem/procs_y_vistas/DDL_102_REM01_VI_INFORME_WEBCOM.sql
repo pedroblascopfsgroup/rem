@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20220610
+--## FECHA_CREACION=20220611
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-16330

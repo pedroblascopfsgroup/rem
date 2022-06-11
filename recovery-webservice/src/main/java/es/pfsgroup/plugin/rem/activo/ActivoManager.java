@@ -24,6 +24,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -3604,6 +3605,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Long.parseLong(dto.getIdActivo()));
 				Activo activo = genericDao.get(Activo.class, filterActivo);
 				activoIntegrado.setActivo(activo);
+				ActivoComunidadPropietarios activoComunidadPropietarios = activo.getComunidadPropietarios();
+				ActivoProveedor proveedor = activoIntegrado.getProveedor();
+				if (activoComunidadPropietarios != null
+						&& activoComunidadPropietarios.getNif() == null
+						&& proveedor != null
+						&& DDTipoProveedor.COD_COMUNIDAD_PROPIETARIOS.equals(proveedor.getTipoProveedor() != null ? proveedor.getTipoProveedor().getCodigo() : "")
+						&& DDEstadoProveedor.ESTADO_BIGENTE.equals(proveedor.getEstadoProveedor() != null ? proveedor.getEstadoProveedor().getCodigo() : "")){
+
+					activoComunidadPropietarios.setNif(proveedor.getDocIdentificativo());
+					genericDao.update(ActivoComunidadPropietarios.class,activoComunidadPropietarios);
+
+				}
 			}
 
 			if (!Checks.esNulo(dto.getObservaciones())) {

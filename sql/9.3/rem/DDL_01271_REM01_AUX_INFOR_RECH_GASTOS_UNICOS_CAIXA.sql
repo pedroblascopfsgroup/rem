@@ -1,17 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220309
+--## AUTOR=DAP
+--## FECHA_CREACION=20220329
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17301
 --## PRODUCTO=NO
 --## 
---## Finalidad: Creación de tablas AUX_INFOR_RECH_GASTOS_CAIXA
+--## Finalidad: Creación de tablas AUX_INFOR_RECH_UNICOS_CAIXA
 --##
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial - [HREOS-17301]- Alejandra García
+--##        0.1 Versión inicial - [HREOS-17301]- DAP
 --#########################################
 --*/
 
@@ -25,15 +25,15 @@ DECLARE
 
 TABLE_COUNT NUMBER(1,0) := 0;
 V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
-V_TABLA VARCHAR2(40 CHAR) := 'AUX_INFOR_RECH_GASTOS_CAIXA';
+V_TABLA VARCHAR2(40 CHAR) := 'AUX_INFOR_RECH_UNICOS_CAIXA';
 
 BEGIN
 	
 
 
-	/***** AUX_INFOR_RECH_GASTOS_CAIXA *****/
+	/***** AUX_INFOR_RECH_UNICOS_CAIXA *****/
 
-	V_TABLA := 'AUX_INFOR_RECH_GASTOS_CAIXA';
+	V_TABLA := 'AUX_INFOR_RECH_UNICOS_CAIXA';
 	
 	SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA||'';
 
@@ -68,16 +68,9 @@ BEGIN
                                , IMPORTE_TOTAL                    NUMBER(16,2)
                                , RETENCION_IRPF                   NUMBER(16,2)
                                , LINEA_GASTO_MARCADA_SIN_ACTIVOS  VARCHAR2(2 CHAR)
-                               , ACTIVO			                  NUMBER(16,0)
-                               , ACTIVO_CAIXA		              VARCHAR2(55 CHAR)
-                               , ACTIVO_UVEM                      NUMBER(16,0)
-                               , SITUACION_COMERCIAL              VARCHAR2(100 CHAR)
-                               , SITUACION_ALQUILER               VARCHAR2(10 CHAR)
-                               , PARTICIPACION_ACTIVO             NUMBER(16,4)
-                               , IMPORTE_LINEA                    NUMBER(16,2)
                                , MENSAJE_ERROR                    VARCHAR2(500 CHAR)
                                , RETORNO_RECIBIDO                 VARCHAR2(300 CHAR)
-                               , FECHA_PROCESADO                  DATE
+                               , FECHA_PROCESADO                  VARCHAR2(100 CHAR)
                                , SISTEMA_CLIENTE                  VARCHAR2(100 CHAR)
                            )';
 

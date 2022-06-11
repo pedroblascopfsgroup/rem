@@ -9463,6 +9463,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 DD_TAU_CODIGO = :codActuacion "
 				+ "		 	AND BORRADO = 0");
 		return "0".equals(resultado);
+	}
 	public Boolean isActivoMaccMarina(String numActivo) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);

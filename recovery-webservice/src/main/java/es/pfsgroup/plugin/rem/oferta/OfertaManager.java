@@ -19,6 +19,15 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1401,7 +1410,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
-				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+				if (ofertaDto.getIsExpress()){
+					if (!esOfertaCajamarVentaSobrePlano(oferta)){
+						oferta.setOfertaExpress(Boolean.TRUE);
+					}else{
+						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(ofertaDto.getEntidadOrigen())){
+							errorsList.put("codEstadoOferta",RestApi.REST_MSG_UNKNOWN_KEY);
+							errorsList.put("errorDesc", "Oferta con activos Venta sobre plano");
+							return errorsList;
+						}else {
+							oferta.setOfertaExpress(Boolean.FALSE);
+						}
+					}
+				} else {
+					oferta.setOfertaExpress(Boolean.FALSE);
+				}
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getCanalOrigenComisionamiento())) {
@@ -1465,10 +1488,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
-			
+
+			boolean esVentaSobrePlanoCajamar = esOfertaCajamarVentaSobrePlano(oferta);
+
+			if (esVentaSobrePlanoCajamar)
+				oferta.setOfrDocRespPrescriptor(true);
+
 			if(oferta.getOfrDocRespPrescriptor() != null){
 				if(!oferta.getOfrDocRespPrescriptor()) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && esVentaSobrePlanoCajamar) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
@@ -9400,6 +9430,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	public boolean esOfertaCajamarVentaSobrePlano(Oferta oferta){
+
+		boolean esOfertaCajamarVentaSobrePlano = false;
+
+		if (oferta != null
+				&& oferta.getActivoPrincipal() != null
+				&& oferta.getActivoPrincipal().getCartera() != null
+				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+
+				//ActivoObraNueva aon = (ActivoObraNueva) oferta.getAgrupacion();
+
+				if (oferta.getAgrupacion() != null){
+					esOfertaCajamarVentaSobrePlano = activoAgrupacionActivoDao.tieneActivosConVentaSobrePlanoByAgrId(oferta.getAgrupacion().getId());
+				}
+
+		}
+
+		return esOfertaCajamarVentaSobrePlano;
+
+	}
+
+
 	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		

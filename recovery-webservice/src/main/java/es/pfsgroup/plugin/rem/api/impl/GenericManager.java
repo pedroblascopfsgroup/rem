@@ -1,5 +1,33 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.security.Key;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.annotation.Resource;
+import javax.crypto.spec.SecretKeySpec;
+
+import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LazyInitializationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -448,6 +476,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
 	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo) {
+		List<DDSubtipoActivo> listaSubtipos;
 		Activo act = null;
 		if (idActivo != null) {
 			act = activoApi.get(Long.parseLong(idActivo));
@@ -458,15 +487,30 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroNoEsEnBbva = genericDao.createFilter(FilterType.EQUALS, "enBbva",false);
 		
 		if (act != null && DDCartera.CODIGO_CARTERA_BBVA.equals(act.getCartera().getCodigo())) {
-			return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+			listaSubtipos = genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
 		}else {
 			if (act != null) {
-				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
 			}else {
-				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+				listaSubtipos = genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
 			}		
 		}
 
+		if(DDTipoActivo.COD_EDIFICIO_COMPLETO.equals(codigoTipo)){
+			listaSubtipos.add(genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_SUBTIPO_RESIDENCIAL_VIVIENDAS_LOCALES_TRASTEROS_GARAJES)));
+		}else if(DDTipoActivo.COD_OTROS.equals(codigoTipo)){
+			listaSubtipos.add(genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_SUBTIPO_HOSTELERO)));
+			listaSubtipos.add(genericDao.get(DDSubtipoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubtipoActivo.CODIGO_SUBTIPO_APARTAMENTO_TURISTICO)));
+		}
+
+		Collections.sort(listaSubtipos, new Comparator<DDSubtipoActivo>() {
+			@Override
+			public int compare(DDSubtipoActivo u1, DDSubtipoActivo u2) {
+				return u1.getDescripcion().compareToIgnoreCase(u2.getDescripcion());
+			}
+		});
+
+		return listaSubtipos;
 	}
 
 	@Override

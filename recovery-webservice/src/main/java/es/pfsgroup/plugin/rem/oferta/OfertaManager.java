@@ -17,6 +17,7 @@ import java.util.Properties;
 import java.util.Set;
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
@@ -91,7 +92,6 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.BoardingComunicacionApi;
-import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -255,63 +255,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
-import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
-import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
-import es.pfsgroup.plugin.rem.model.dd.DDFuenteTestigos;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoIndisponibilidad;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoJustificacionOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoRCDC;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDRecomendacionRCDC;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenLaboral;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
-import es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSnsSiNoNosabe;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTfnTipoFinanciacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
-import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VListadoOfertasAgrupadasLbkDao;
@@ -330,7 +273,6 @@ import es.pfsgroup.plugin.rem.rest.dto.TestigosOfertaDto;
 import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.EnviarOfertaHayaHomeRem3;
@@ -1535,7 +1477,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
-				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+				if (ofertaDto.getIsExpress()){
+					if (!esOfertaCajamarVentaSobrePlano(oferta)){
+						oferta.setOfertaExpress(Boolean.TRUE);
+					}else{
+						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta()) && DDSistemaOrigen.CODIGO_WEBCOM.equals(ofertaDto.getEntidadOrigen())){
+							errorsList.put("codEstadoOferta",RestApi.REST_MSG_UNKNOWN_KEY);
+							errorsList.put("errorDesc", "Oferta con activos Venta sobre plano");
+							return errorsList;
+						}else {
+							oferta.setOfertaExpress(Boolean.FALSE);
+						}
+					}
+				} else {
+					oferta.setOfertaExpress(Boolean.FALSE);
+				}
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getCanalOrigenComisionamiento())) {
@@ -1599,10 +1555,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				oferta.setOfrDocRespPrescriptor(true);
 			}
-			
+
+			boolean esVentaSobrePlanoCajamar = esOfertaCajamarVentaSobrePlano(oferta);
+
+			if (esVentaSobrePlanoCajamar)
+				oferta.setOfrDocRespPrescriptor(true);
+
 			if(oferta.getOfrDocRespPrescriptor() != null){
 				if(!oferta.getOfrDocRespPrescriptor()) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_COMPRADORES;
+				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && esVentaSobrePlanoCajamar) {
+					codigo = DDResponsableDocumentacionCliente.CODIGO_PRESCRIPTOR;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() == 2321) {
 					codigo = DDResponsableDocumentacionCliente.CODIGO_GESTORCOMERCIAL;
 				} else if(oferta.getOfrDocRespPrescriptor() && oferta.getPrescriptor() != null && oferta.getPrescriptor().getCodigoProveedorRem() != 2321) {
@@ -9357,7 +9320,29 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return tipoComercializar;
 	}
-	
+
+	public boolean esOfertaCajamarVentaSobrePlano(Oferta oferta){
+
+		boolean esOfertaCajamarVentaSobrePlano = false;
+
+		if (oferta != null
+				&& oferta.getActivoPrincipal() != null
+				&& oferta.getActivoPrincipal().getCartera() != null
+				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+
+				//ActivoObraNueva aon = (ActivoObraNueva) oferta.getAgrupacion();
+
+				if (oferta.getAgrupacion() != null){
+					esOfertaCajamarVentaSobrePlano = activoAgrupacionActivoDao.tieneActivosConVentaSobrePlanoByAgrId(oferta.getAgrupacion().getId());
+				}
+
+		}
+
+		return esOfertaCajamarVentaSobrePlano;
+
+	}
+
+
 	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		
@@ -9374,4 +9359,3 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 }
-

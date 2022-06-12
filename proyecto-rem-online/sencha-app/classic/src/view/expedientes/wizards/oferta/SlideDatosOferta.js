@@ -510,7 +510,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				            		store: '{comboVinculoCaixa}',
 				            		value: '{oferta.vinculoCaixaCodigo}',
 				            		hidden: !isBk,
-				            		allowBlank: isBk
+				            		allowBlank: !isBk
 				            	},
 				            	displayField: 'descripcion',
 	    						valueField: 'codigo',

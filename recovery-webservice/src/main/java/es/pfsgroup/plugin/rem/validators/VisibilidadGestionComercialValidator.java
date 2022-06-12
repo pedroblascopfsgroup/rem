@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -126,8 +127,12 @@ public class VisibilidadGestionComercialValidator {
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroIdActivo);
 		ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroIdActivo);
 		ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroIdActivo);
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activoActual.getId());
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
 		
 		List<String> erroresActivo = new ArrayList<String>();
+		
+		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activoActual.getId());
 
 		if(activoPublicacion != null) {
 			if(!Checks.esNulo(activoActual.getSituacionComercial()) 
@@ -158,7 +163,9 @@ public class VisibilidadGestionComercialValidator {
 				erroresActivo.add(VALID_ACTIVO_TIPO_COMERCIALIZACION);
 			}else if(DDTipoComercializacion.isDestinoComercialSoloAlquiler(activoPublicacion.getTipoComercializacion())){
 				if(!DDEstadoPublicacionAlquiler.isPublicadoAlquiler(activoPublicacion.getEstadoPublicacionAlquiler())) {
-					erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+					if(activo != null && !(activo.getPerimetroMacc() != null && activo.getPerimetroMacc() == 1 && DDFasePublicacion.isFaseCinco(fasePublicacionActivoVigente.getFasePublicacion()) && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
+						erroresActivo.add(VALID_ACTIVO_ESTADO_PUBLICACION);
+					}
 				}
 			}else if((DDTipoComercializacion.isDestinoComercialVenta(activoPublicacion.getTipoComercializacion()) && !DDEstadoPublicacionVenta.isPublicadoVenta(activoPublicacion.getEstadoPublicacionVenta()))
 			|| (DDTipoComercializacion.isDestinoComercialAlquilerVenta(activoPublicacion.getTipoComercializacion()) 
@@ -187,13 +194,14 @@ public class VisibilidadGestionComercialValidator {
 					erroresActivo.add(VALID_ACTIVO_ALQUILER_SOCIAL);
 				}
 				
-				HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(activoActual.getId());
 				
 				if(fasePublicacionActivoVigente != null) {
 					if(DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()) 
 					|| DDSubfasePublicacion.isHistoricoFasesReqLegAdm(fasePublicacionActivoVigente.getSubFasePublicacion()) 
 					|| DDSubfasePublicacion.isHistoricoFasesSinValor(fasePublicacionActivoVigente.getSubFasePublicacion())) {
-						erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+						if(activo != null && !(activo.getPerimetroMacc() != null && activo.getPerimetroMacc() == 1 && DDFasePublicacion.isFaseCinco(fasePublicacionActivoVigente.getFasePublicacion()) && DDSubfasePublicacion.isHistoricoFasesExcPubEstrategiaCl(fasePublicacionActivoVigente.getSubFasePublicacion()))) {
+							erroresActivo.add(VALID_SUBFASE_PUBLICACION);
+						}
 					}else if(DDCartera.isCarteraCerberus(activoActual.getCartera()) && DDSubfasePublicacion.isHistoricoFasesGestionApi(fasePublicacionActivoVigente.getSubFasePublicacion())) {
 						erroresActivo.add(VALID_SUBFASE_PUBLICACION);
 					}

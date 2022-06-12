@@ -1,10 +1,10 @@
 --/* 
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220422
+--## FECHA_CREACION=20220510
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17704
+--## INCIDENCIA_LINK=HREOS-17802
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,6 +21,7 @@
 --##        0.9 Modificar el cálculo de las PEP para desligar los gastos de tipo 'Carta de pago conjunta' del ejercicio - [HREOS-17468] - Alejandra García
 --##        0.10 Corrección cálculo para PEP Tarifa plana Prorrata 0% y Tarifa plana Prorrata 100% - [HREOS-17495] - Alejandra García
 --##        0.11 Quitar la versión 1.10 - [HREOS-17704] - Alejandra García
+--##        0.12 Quitar cálculo primera toma de posesion en la ETG- [HREOS-17802] - Alejandra García
 --##########################################
 --*/
 
@@ -107,7 +108,6 @@ BEGIN
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
-                    AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
                     AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)
@@ -239,7 +239,6 @@ BEGIN
                                         WHEN TGA.DD_TGA_CODIGO = ''26'' THEN 0
                                         ELSE (SELECT EJE2.EJE_ID FROM '|| V_ESQUEMA ||'.ACT_EJE_EJERCICIO EJE2 WHERE EJE2.EJE_ANYO = ''2022'')
                                     END
-                    AND NVL(ETG.PRIM_TOMA_POSESION, NVL(GEN.PRIM_TOMA_POSESION, 0)) = NVL(GEN.PRIM_TOMA_POSESION, 0)
                     AND NVL(ETG.DD_SED_ID, NVL(GEN.DD_SED_ID, 0)) = NVL(GEN.DD_SED_ID, 0)
                     AND NVL(ETG.DD_PRO_ID, NVL(GEN.DD_PRO_ID, 0)) = NVL(GEN.DD_PRO_ID, 0)
                     AND NVL(ETG.DD_SCM_ID, NVL(GEN.DD_SCM_ID, 0)) = NVL(GEN.DD_SCM_ID, 0)

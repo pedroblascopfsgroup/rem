@@ -1956,7 +1956,7 @@
     	me.down('[name=fechaFirma]').noObligatorio=false;
     	me.campoObligatorio(me.down('[name=fechaFirma]'));
     },
-    
+	
     T015_VerificarScoringValidacion: function(){
     	var me = this;
 		var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
@@ -2032,7 +2032,6 @@
 	    			
 	    			me.habilitarCampo(me.down('[name=nMesesFianza]'));
 	    			me.habilitarCampo(me.down('[name=importeFianza]'));
-	    			me.habilitarCampo(me.down('[name=motivoRechazo]'));
 	    			
 	    			me.campoObligatorio(me.down('[name=nMesesFianza]'));
 	    			me.campoObligatorio(me.down('[name=importeFianza]'));
@@ -2047,7 +2046,6 @@
 	            	me.down('[name=porcentajeImpuesto]').noObligatorio=true;
 	            	me.down('[name=tipoImpuesto]').noObligatorio=true;
     			}
-            	
     			
     		}else{
     			me.down('[name=nExpediente]').noObligatorio=true;
@@ -2060,7 +2058,6 @@
             	me.deshabilitarCampo(me.down('[name=nExpediente]'));
 				me.deshabilitarCampo(me.down('[name=ratingHaya]'));
             	me.borrarCampo(me.down('[name=ratingHaya]'));
-
 
     			if(CONST.CARTERA['BANKIA'] != codigoCartera){
 	    			me.down('[name=nMesesFianza]').noObligatorio=true;

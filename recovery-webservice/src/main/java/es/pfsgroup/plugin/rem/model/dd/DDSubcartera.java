@@ -167,6 +167,14 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+	
+	public static boolean isSubCarteraMaccMarina(DDSubcartera subcartera) {
+		boolean is = false;
+		if(subcartera != null && ( CODIGO_MACC_MARINA.equals(subcartera.getCodigo()))) {
+			is = true;
+		}
+		return is;
+	}
 
 	public static boolean isSubcarteraApple (DDSubcartera subcartera) {
 		boolean isSubcartera = false;

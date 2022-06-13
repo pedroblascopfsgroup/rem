@@ -278,7 +278,6 @@ BEGIN
 			THEN CAST(1 AS NUMBER(1,0))
 			ELSE CAST(0 AS NUMBER(1,0))
 		END																					AS EXCLUSION_IF,
-		DEP.DEP_IBAN_DEVOLUCION                                                             AS IBAN_DEVOLUCION,
 		CVC.CVC_CUENTA_VIRTUAL                                                              AS CUENTA_VIRTUAL
 
 		FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR

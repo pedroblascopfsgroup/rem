@@ -9149,9 +9149,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 
-
-
-	
 	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		

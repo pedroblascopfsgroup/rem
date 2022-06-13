@@ -2306,7 +2306,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dtoGestion.setFechaAutorizacionPropietario(gastoGestion.getFechaEstadoAutorizacionPropietario());
 				}
 				
-				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionPropietario()) && !DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE.equals(gastoGestion.getEstadoAutorizacionPropietario().getCodigo())) {
+				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionPropietario()) && !Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario()) && (gastoGestion.getEstadoAutorizacionPropietario().getCodigo().equals(DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD) 
+						|| gastoGestion.getEstadoAutorizacionPropietario().getCodigo().equals(DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTROL_PRESUPUESTO) || gastoGestion.getEstadoAutorizacionPropietario().getCodigo().equals(DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_MOTIVO_FORMAL))) {
 					dtoGestion.setMotivoRechazoAutorizacionPropietario(gastoGestion.getMotivoRechazoAutorizacionPropietario());
 				}
 

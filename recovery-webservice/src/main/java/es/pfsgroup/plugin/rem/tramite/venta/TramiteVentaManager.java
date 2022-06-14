@@ -128,15 +128,16 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(eco != null && eco.getOferta() != null) {
 			Oferta oferta = eco.getOferta();
 			Activo activo = oferta.getActivoPrincipal();
-			
-			if(DDCartera.isCarteraBk(activo.getCartera())) {
-				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
-			}
-			
 			Deposito deposito = oferta.getDeposito();
+			
+			
 			if(depositoApi.isDepositoIngresado(deposito)) {
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
+			}
+						
+			if(DDCartera.isCarteraBk(activo.getCartera())) {
+				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
 			}
 		}
 		

@@ -131,7 +131,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 			Deposito deposito = oferta.getDeposito();
 			
 			
-			if(depositoApi.isDepositoIngresado(deposito)) {
+			if(depositoApi.isDepositoIngresado(deposito) &&	(eco.getReserva() == null || DDEstadosReserva.tieneReservaPendiente(eco.getReserva()) || DDEstadosReserva.tieneReservaAnulada(eco.getReserva()))) {
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
 			}

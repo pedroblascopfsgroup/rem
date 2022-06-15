@@ -520,7 +520,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException {
     	ExpedienteComercial eco = expedienteComercialApi.findOne(dto.getIdExpediente());
     	if(eco != null) {
-    	    eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
 			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
 
             Reserva reserva = eco.getReserva();
@@ -567,7 +566,6 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     public void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto) throws ParseException  {
     	ExpedienteComercial eco = expedienteComercialApi.findOne(dto.getIdExpediente());
     	if(eco != null) {
-    	    eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO)));
 			eco.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO)));
 
             Reserva reserva = eco.getReserva();

@@ -35,7 +35,7 @@ V_NUM NUMBER(25);
 --Tabla ACTIVOS
 V_TABLA_ACT VARCHAR2 (30 CHAR) := 'ACT_ACTIVO';
 V_TABLA_AUX VARCHAR2 (30 CHAR) := 'AUX_ACT_GCP_GESTION_CCPP';
-V_TABLA_ACT_GCP VARCHAR2 (30 CHAR) := 'ACT_GCP_GESTION_CCPP';
+V_TABLA_ACT_GCP VARCHAR2 (30 CHAR) := 'ACT_AGE_ACTIVO_GESTION';
 V_SENTENCIA VARCHAR2(2600 CHAR);
 
 
@@ -43,14 +43,14 @@ BEGIN
 
 
 
-	--INSERT EN ACT_GCP_GESTION_CCPP
+	--INSERT EN ACT_AGE_ACTIVO_GESTION
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_ACT_GCP||' (
-			GCP_ID,
-            CPR_ID,
+			AGE_ID,
+            ACT_ID,
             DD_ELO_ID,
             DD_SEG_ID,
             USU_ID,
-            GCP_FECHA_INI,
+            AGE_FECHA_INICIO,
 			VERSION,
 			USUARIOCREAR,
 			FECHACREAR,
@@ -61,12 +61,12 @@ BEGIN
 			BORRADO			
 		)
 		SELECT
-			'||V_ESQUEMA||'.S_ACT_GCP_GESTION_CCPP.NEXTVAL              GCP_ID,
-			ACT.CPR_ID                                                  CPR_ID,
+			'||V_ESQUEMA||'.S_ACT_AGE_ACTIVO_GESTION.NEXTVAL              AGE_ID,
+			ACT.ACT_ID													ACT_ID,
             (SELECT ELO.DD_ELO_ID FROM '||V_ESQUEMA||'.DD_ELO_ESTADO_LOCALIZACION ELO WHERE ELO.DD_ELO_CODIGO = AUX.DD_ELO_CODIGO)      DD_ELO_ID,
 			(SELECT SEG.DD_SEG_ID FROM '||V_ESQUEMA||'.DD_SEG_SUBESTADO_GESTION SEG WHERE SEG.DD_SEG_CODIGO = AUX.DD_SEG_CODIGO)        DD_SEG_ID,
             1      														 USU_ID,
-            SYSDATE     												 GCP_FECHA_INI,
+            SYSDATE     												 AGE_FECHA_INICIO,
 			''0''                                                            VERSION,
 			'''||V_USUARIO||'''                                          USUARIOCREAR,
 			SYSDATE                                                      FECHACREAR,
@@ -76,8 +76,7 @@ BEGIN
 			NULL                                                         FECHABORRAR,
 			0                                                            BORRADO
 		FROM '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
-		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO
-		INNER JOIN '||V_ESQUEMA||'.ACT_CPR_COM_PROPIETARIOS CPR ON CPR.CPR_ID = ACT.CPR_ID
+		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO		
 		WHERE ACT.BORRADO = 0';
       EXECUTE IMMEDIATE V_SQL;
 				

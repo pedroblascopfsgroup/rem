@@ -543,10 +543,10 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             }
             
             genericDao.save(ExpedienteComercial.class, eco);
+            
+          
     	}
-
-
-        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+    	
     }
 
 
@@ -566,10 +566,17 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             }
             
             genericDao.save(ExpedienteComercial.class, eco);
+            
+            Set<TareaExterna> tareasActivas =  activoTramiteApi.getTareasActivasByExpediente(eco);
+            if(tareasActivas != null) {
+            	Filter filtroResolucionExpediente = genericDao.createFilter(FilterType.EQUALS, "tareaProcedimiento.codigo", TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017);
+                boolean resolucionEcoActiva = tareasActivas.contains(filtroResolucionExpediente);
+                if(!resolucionEcoActiva) {
+                    agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+                }
+            }
     	}
 
-
-        agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
     }
 
     @Override

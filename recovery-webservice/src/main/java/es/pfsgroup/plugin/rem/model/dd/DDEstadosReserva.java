@@ -145,5 +145,13 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 		return is;
 	}
 	
+	public static final boolean tieneReservaAnulada(Reserva reserva) {
+		boolean is = false;
+		if(reserva != null && reserva.getEstadoReserva() != null && CODIGO_ANULADA.equals(reserva.getEstadoReserva().getCodigo())) {
+			is = true;
+		}
+		return is;
+	}
+	
 	
 }

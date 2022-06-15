@@ -131,7 +131,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
 				}
 
-				expediente.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(ofertaAceptada, expediente))));
 
 				for(TareaExternaValor valor :  valores) {
 					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {

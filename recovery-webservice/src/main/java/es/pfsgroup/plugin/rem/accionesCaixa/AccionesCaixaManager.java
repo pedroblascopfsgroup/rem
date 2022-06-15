@@ -544,11 +544,22 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             
             genericDao.save(ExpedienteComercial.class, eco);
             
-          
+            Set<TareaExterna> tareasActivas =  activoTramiteApi.getTareasActivasByExpediente(eco);
+            if(tareasActivas != null) {
+            	boolean resolucionEcoActiva = false;
+            	for (TareaExterna tareaExterna : tareasActivas) {
+					if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						resolucionEcoActiva = true;
+						break;
+					}
+				}
+                if(!resolucionEcoActiva) {
+                    agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
+                }
+            }
     	}
     	
     }
-
 
 
     @Override
@@ -569,8 +580,13 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
             
             Set<TareaExterna> tareasActivas =  activoTramiteApi.getTareasActivasByExpediente(eco);
             if(tareasActivas != null) {
-            	Filter filtroResolucionExpediente = genericDao.createFilter(FilterType.EQUALS, "tareaProcedimiento.codigo", TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017);
-                boolean resolucionEcoActiva = tareasActivas.contains(filtroResolucionExpediente);
+            	boolean resolucionEcoActiva = false;
+            	for (TareaExterna tareaExterna : tareasActivas) {
+					if(TareaProcedimientoConstants.CODIGO_RESOLUCION_EXPEDIENTE_T017.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						resolucionEcoActiva = true;
+						break;
+					}
+				}
                 if(!resolucionEcoActiva) {
                     agendaController.saltoResolucionExpedienteByIdExp(dto.getIdExpediente(), new ModelMap());
                 }

@@ -3804,7 +3804,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 			}
-		}
+
 		if (!tienePrincipal) {
 			var url = $AC.getRemoteUrl('activo/updateFotosById');
 			var tienePrincipal = false;
@@ -3881,6 +3881,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("errorToast", "Ya dispone de una foto principal");
 			btn.up('tabpanel').unmask();
 		}
+	  }
 	},
 
 	onClickMostrarPrescriptorVisita : function(btn) {

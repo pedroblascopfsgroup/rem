@@ -41,22 +41,27 @@ BEGIN
 
 	--INSERT EN CVC_CUENTAS_VIRTUALES
 
-	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.CVC_CUENTAS_VIRTUALES(
-					CVC_ID,
-					CVC_CUENTA_VIRTUAL,
-					DD_SCR_ID,
-					USUARIOCREAR,
-					FECHACREAR
-					)
-					
-					SELECT 
-						 '||V_ESQUEMA||'.S_CVC_CUENTAS_VIRTUALES.NEXTVAL AS CVC_ID
-						,AUX.AUX_CVC_CUENTA_VIRTUAL AS CVC_CUENTA_VIRTUAL
-						,(SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = AUX.AUX_DD_SCR_CODIGO) AS DD_SCR_ID
-						,'''||V_USUARIO||'''
-						,SYSDATE
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.CVC_CUENTAS_VIRTUALES CVC
+        using (
+                SELECT 					 
+						AUX.AUX_CVC_CUENTA_VIRTUAL AS CVC_CUENTA_VIRTUAL
+						,(SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = AUX.AUX_DD_SCR_CODIGO) AS DD_SCR_ID		
 						
-					FROM '||V_ESQUEMA||'.AUX_HREOS_18145 AUX';
+					FROM '||V_ESQUEMA||'.AUX_HREOS_18145 AUX
+                        ) us ON (us.CVC_CUENTA_VIRTUAL = CVC.CVC_CUENTA_VIRTUAL AND us.DD_SCR_ID = CVC.DD_SCR_ID)
+                                                        
+                                WHEN NOT MATCHED THEN
+                                INSERT  (CVC_ID, 
+                                        CVC_CUENTA_VIRTUAL,
+                                        DD_SCR_ID,                                                                                                              
+                                        USUARIOCREAR,
+                                        FECHACREAR
+                                        )
+                                VALUES ('||V_ESQUEMA||'.S_CVC_CUENTAS_VIRTUALES.NEXTVAL,
+                                        us.CVC_CUENTA_VIRTUAL,
+                                        us.DD_SCR_ID,                                                                      
+                                        '''||V_USUARIO||''',
+                                        SYSDATE)';
       EXECUTE IMMEDIATE V_SQL;
 			
   COMMIT;

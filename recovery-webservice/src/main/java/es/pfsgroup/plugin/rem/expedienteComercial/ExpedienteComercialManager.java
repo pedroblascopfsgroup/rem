@@ -11207,7 +11207,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
 					String flagNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
 
-					if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())) {
+					if (!Checks.esNulo(expediente.getTipoAlquiler())) {
 						DDSubtipoDocumentoExpediente codigoContrato = null;
 						if (expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerOpcionCompra)) {
 							codigoContrato = (DDSubtipoDocumentoExpediente) utilDiccionarioApi

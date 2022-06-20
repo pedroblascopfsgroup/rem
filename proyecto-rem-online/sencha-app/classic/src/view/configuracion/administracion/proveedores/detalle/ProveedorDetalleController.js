@@ -342,7 +342,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		    					
 		    				});
 		    		
-		    		if(selection.getData().tipoDireccion == '02') {
+		    		if(selection.getData().tipoDireccion == '02' || selection.getData().tipoDireccion == '01') {
 		    			me.getView().lookupReference('cbLineaNegocio').setHidden(false);
 						me.getView().lookupReference('cbGestionClientes').setHidden(false);
 		    			me.getView().lookupReference('numeroComercialesRef').setHidden(false);
@@ -352,19 +352,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		    			me.getView().lookupReference('codigoPostalCombo').setHidden(false);
 		    			me.getView().lookupReference('especialidadRef').setHidden(false);
 		    			me.getView().lookupReference('idiomasRef').setHidden(false);
-					} else {
-						me.getView().lookupReference('cbLineaNegocio').setHidden(true);
-		    			me.getView().lookupReference('cbGestionClientes').setHidden(true);
-		    			me.getView().lookupReference('numeroComercialesRef').setHidden(true);
-		    			me.getView().lookupReference('numeroComercialesRef').setHidden(true);
-		    			me.getView().lookupReference('provinciaCombo').setHidden(true);
-		    			me.getView().lookupReference('municipioCombo').setHidden(true);
-		    			me.getView().lookupReference('codigoPostalCombo').setHidden(true);
-		    			me.getView().lookupReference('especialidadRef').setHidden(true);
-		    			me.getView().lookupReference('idiomasRef').setHidden(true);
-					}
-	    		
-	    		
+					} 
     		}
     	}
     	

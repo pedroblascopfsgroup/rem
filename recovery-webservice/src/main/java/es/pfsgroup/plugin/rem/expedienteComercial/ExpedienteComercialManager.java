@@ -15376,19 +15376,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		Oferta ofr = expedienteComercial.getOferta();
 
-		Double importe = ofr.getImporteContraOferta() != null ? ofr.getImporteContraOferta()
-	            : ofr.getImporteOferta();
-
-		if (ofr != null && 20000.00 > importe) {
-			Activo act = ofr.getActivoPrincipal();
-			if(act != null && act.getCartera() != null && (DDCartera.isCarteraCerberus(act.getCartera()))){
-				DDSubcartera scr = act.getSubcartera();
-				if(scr != null && (DDSubcartera.isSubcarteraApple(scr) || DDSubcartera.isSubcarteraDivarian(scr) || DDSubcartera.isSubcarteraJaguar(scr))){
-					saltaPbc = true;
+		if(expedienteComercial.getCondicionante() != null) {
+			Double importe = expedienteComercial.getCondicionante().getImporteReserva();
+	
+			if (ofr != null && importe != null && 20000.00 > importe) {
+				Activo act = ofr.getActivoPrincipal();
+				if(act != null && act.getCartera() != null && (DDCartera.isCarteraCerberus(act.getCartera()))){
+					DDSubcartera scr = act.getSubcartera();
+					if(scr != null && (DDSubcartera.isSubcarteraApple(scr) || DDSubcartera.isSubcarteraDivarian(scr) || DDSubcartera.isSubcarteraJaguar(scr))){
+						saltaPbc = true;
+					}
 				}
 			}
 		}
-
 		return saltaPbc;
 	}
 

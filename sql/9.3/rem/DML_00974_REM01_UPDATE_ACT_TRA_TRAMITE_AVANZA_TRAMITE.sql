@@ -32,6 +32,8 @@ DECLARE
     V_USUARIO VARCHAR2(25 CHAR) := 'HREOS-17749';
     V_ECO_NUM VARCHAR(50 CHAR); -- Vble. que almacena el num de expediente
     V_CONTADOR NUMBER(16,0) := 1;
+    ECO_NUM_EXPEDIENTE VARCHAR2(50);-- ECO_NUM_EXPEDIENTE;
+
     
 BEGIN
 	

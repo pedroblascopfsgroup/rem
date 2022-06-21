@@ -41,19 +41,11 @@ public interface AccionesCaixaApi {
 
     void accionIncautarArras(DtoOnlyExpedienteOfertaCaixaYFecha dto) throws ParseException;
 
-    void accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto);
-
-    void accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto);
-
     void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
-    void accionDevolReservaCont(DtoAccionRechazoCaixa dto);
-
-    void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto);
+    void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionRechazoModTitulares(DtoAccionRechazoCaixa dto);
-
-    void accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionFirmaArrasRechazadas(DtoFirmaArrasCaixa dto) throws ParseException, Exception;
 
@@ -70,4 +62,15 @@ public interface AccionesCaixaApi {
     void sendReplicarOfertaAccion(Long numOferta);
 
     void callSPPublicaciones(Long idTarea, Boolean success);
+
+    @Transactional
+    void sendReplicarOfertaByOferta(Long idOferta);
+
+    @Transactional
+    boolean modificaEstadoDeposito(String codEstado, Long idOferta);
+
+	void accionIngresoDeposito(Long numOferta);
+
+    @Transactional
+    boolean incautaODevuelveDeposito(String codEstado, Long numOferta);
 }

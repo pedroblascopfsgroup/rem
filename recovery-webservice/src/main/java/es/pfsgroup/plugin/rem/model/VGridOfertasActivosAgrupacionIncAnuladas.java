@@ -84,6 +84,12 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
     
     @Column(name="EST_CODIGO_C4C")
     private String codigoEstadoC4C;
+    
+    @Column(name="ESTADODEPOSITOCODIGO")
+    private String codigoEstadoDeposito;
+    
+    @Column(name="ESTADODEPOSITO")
+    private String estadoDeposito;
 
 	public Long getId() {
 		return id;
@@ -267,6 +273,22 @@ public class VGridOfertasActivosAgrupacionIncAnuladas implements Serializable {
 
 	public void setCodigoEstadoC4C(String codigoEstadoC4C) {
 		this.codigoEstadoC4C = codigoEstadoC4C;
+	}
+
+	public String getCodigoEstadoDeposito() {
+		return codigoEstadoDeposito;
+	}
+
+	public void setCodigoEstadoDeposito(String codigoEstadoDeposito) {
+		this.codigoEstadoDeposito = codigoEstadoDeposito;
+	}
+
+	public String getEstadoDeposito() {
+		return estadoDeposito;
+	}
+
+	public void setEstadoDeposito(String estadoDeposito) {
+		this.estadoDeposito = estadoDeposito;
 	}	
 	
 

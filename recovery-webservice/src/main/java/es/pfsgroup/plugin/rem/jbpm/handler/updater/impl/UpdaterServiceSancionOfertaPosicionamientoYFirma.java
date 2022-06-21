@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -40,19 +38,13 @@ import es.pfsgroup.plugin.rem.model.HistoricoOcupadoTitulo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaAlaska;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -77,12 +69,6 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-
-	@Autowired
-	private AlaskaComunicacionManager alaskaComunicacionManager;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
 	
 	@Autowired
 	private GenericaRestDaoImp genericaRestDaoImp;
@@ -111,6 +97,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 		
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean rechazar = false;
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -157,22 +144,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 							activoApi.saveOrUpdate(activo);
 						}
-
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						Filter filtroMotivo;
 						
-						// Rechazamos el resto de ofertas
-						for (Oferta oferta : listaOfertas) {
-							if (DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) {
-								filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
-										DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
-								DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
-										filtroMotivo);
-								
-								oferta.setMotivoRechazo(motivo);
-								ofertaApi.rechazarOferta(oferta);
-							}
-						}
+						ofertaApi.rechazoOfertasMotivoVendido(ofertaAceptada);
 
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 								filtro);
@@ -181,12 +154,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 						expediente.setFechaGrabacionVenta(new Date());
 					} else {
-						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								DDEstadosExpedienteComercial.ANULADO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
-								filtro);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
+						rechazar = true;
 
 						expediente.setFechaVenta(null);
 					}
@@ -308,6 +276,10 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 		genericaRestDaoImp.doFlush();
 
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion, true);
+		
+		if (rechazar) {
+			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
+		}
 
 	}
 

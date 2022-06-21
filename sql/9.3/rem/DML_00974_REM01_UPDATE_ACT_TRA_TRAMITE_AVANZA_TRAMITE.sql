@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20220621
+--## FECHA_CREACION=20220622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17749
@@ -35,38 +35,37 @@ DECLARE
     
 BEGIN
 	
-	BEGIN
-	  FOR r_product IN (
-	        select distinct eco.eco_num_expediente
-			from #ESQUEMA#.eco_expediente_comercial eco
-			inner join #ESQUEMA#.act_ofr actofr on actofr.ofr_id = eco.ofr_id
-			inner join #ESQUEMA#.ofr_ofertas ofr on ofr.ofr_id = actofr.ofr_id
-			inner join #ESQUEMA#.coe_condicionantes_expediente coe on eco.eco_id = coe.eco_id
-			inner join #ESQUEMA#.act_activo act on act.act_id = actofr.act_id
-			inner join #ESQUEMA#.act_tra_tramite atr on eco.tbj_id = atr.tbj_id
-			inner join #ESQUEMA#.tac_tareas_activos tac on atr.tra_id = tac.tra_id
-			inner join #ESQUEMA#.tar_tareas_notificaciones tar on tar.tar_id = tac.tar_id
-			inner join #ESQUEMA#.tex_tarea_externa txt on txt.tar_id = tar.tar_id
-			inner join #ESQUEMA#.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id 
-			where tar.tar_tarea_finalizada in (0)
-			and tap.tap_codigo in ('T017_PBCReserva')
-			AND coe.coe_importe_reserva < 20000.00
-			and act.dd_cra_id in (SELECT dd_cra_id FROM #ESQUEMA#.DD_CRA_CARTERA WHERE dd_cra_codigo = '07')
-			and act.dd_scr_id in (SELECT dd_scr_id FROM #ESQUEMA#.DD_SCR_SUBCARTERA WHERE dd_scr_codigo IN ('138','150','70'))
-	    )
-	  LOOP
-	     IF V_CONTADOR = 10 THEN
-			COMMIT;
-			V_CONTADOR := 1;
-		ELSE
-			DBMS_OUTPUT.PUT_LINE('[INFO]: AVANZAR TRAMITE DE EXPEDIENTE '||r_product);
-			#ESQUEMA#.AVANCE_TRAMITE(V_USUARIO,r_product,'T017_InstruccionesReserva',null,null,PL_OUTPUT);
-			DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
-			DBMS_OUTPUT.PUT_LINE('[INFO]: Nº EXPEDIENTES AVANZADOS '||V_CONTADOR);
-			V_CONTADOR := V_CONTADOR +1;
-		END IF;
-	  END LOOP;
-	END;
+	 FOR r_product IN (
+	       select distinct TO_CHAR(eco.eco_num_expediente) ECO_NUM_EXPEDIENTE
+				from #ESQUEMA#.eco_expediente_comercial eco
+				inner join #ESQUEMA#.act_ofr actofr on actofr.ofr_id = eco.ofr_id
+				inner join #ESQUEMA#.ofr_ofertas ofr on ofr.ofr_id = actofr.ofr_id
+				inner join #ESQUEMA#.coe_condicionantes_expediente coe on eco.eco_id = coe.eco_id
+				inner join #ESQUEMA#.act_activo act on act.act_id = actofr.act_id
+				inner join #ESQUEMA#.act_tra_tramite atr on eco.tbj_id = atr.tbj_id
+				inner join #ESQUEMA#.tac_tareas_activos tac on atr.tra_id = tac.tra_id
+				inner join #ESQUEMA#.tar_tareas_notificaciones tar on tar.tar_id = tac.tar_id
+				inner join #ESQUEMA#.tex_tarea_externa txt on txt.tar_id = tar.tar_id
+				inner join #ESQUEMA#.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id
+				where tar.tar_tarea_finalizada in (0)
+				and tap.tap_codigo in ('T017_PBCReserva')
+				AND coe.coe_importe_reserva < 20000.00
+				and act.dd_cra_id in (SELECT dd_cra_id FROM #ESQUEMA#.DD_CRA_CARTERA WHERE dd_cra_codigo = '07')
+				and act.dd_scr_id in (SELECT dd_scr_id FROM #ESQUEMA#.DD_SCR_SUBCARTERA WHERE dd_scr_codigo IN ('138','150','70'))
+		   )
+	 LOOP
+	    ECO_NUM_EXPEDIENTE := r_product.eco_num_expediente;
+	    IF V_CONTADOR = 10 THEN
+	        COMMIT;
+	        V_CONTADOR := 1;
+	    ELSE
+	        DBMS_OUTPUT.PUT_LINE('[INFO]: AVANZAR TRAMITE DE EXPEDIENTE '|| ECO_NUM_EXPEDIENTE);
+	        REM01.AVANCE_TRAMITE(V_USUARIO,ECO_NUM_EXPEDIENTE,'T017_InstruccionesReserva', null, null, PL_OUTPUT);
+	        DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+	        DBMS_OUTPUT.PUT_LINE('[INFO]: Nº EXPEDIENTES AVANZADOS '|| V_CONTADOR);
+	        V_CONTADOR := V_CONTADOR +1;
+	    END IF;
+	 END LOOP;
 
 
 

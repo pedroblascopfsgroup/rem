@@ -9600,7 +9600,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
 		}else if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 			codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
-		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito())){
+		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito()) && oferta.getDeposito() != null){
 			codigoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 		}else {
 			codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;

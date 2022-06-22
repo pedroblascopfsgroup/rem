@@ -52,17 +52,13 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 			name:'importeDeposito'
 		},
 		{
-			name:'fechaIngresoDeposito',
-			type:'date',
-    		dateFormat: 'c'
+			name:'fechaIngresoDepositoString'
 		},
 		{
 			name: 'estadoCodigo'
 		},
 		{
-			name:'fechaDevolucionDeposito',
-			type:'date',
-    		dateFormat: 'c'
+			name:'fechaDevolucionDepositoString'
 		},
 		{
 			name: 'ibanDevolucionDeposito'

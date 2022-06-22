@@ -1240,11 +1240,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 	} else if (label == "null"){
 		    	 		rec.setVisible(false);
 		    	 	} else if(label == "venta"){
-		    	 		if(rec.lookupController().getView().getViewModel().get('expediente.esBankia')){
-		    	 			rec.setFieldLabel(HreRem.i18n('title.grid.fecha.arras'));
-		    	 		}else{
-		    	 			rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
-		    	 		}
+		    	 		rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
 		    	 	}
             },
             
@@ -5899,6 +5895,28 @@ comprobarFormatoModificar: function() {
 					});
 				}
 			});
+	},
+
+	checkIbanDevolucion: function(campo){
+		var me = this;
+		Ext.Ajax.request({
+	 		url: $AC.getRemoteUrl('expedientecomercial/validarIban'),
+	   		params: {iban : campo.getValue()},
+	    	
+	   		success: function(response, opts) {
+	   			data = Ext.decode(response.responseText);
+				if (data.success == "true"){
+					me.fireEvent("infoToast", HreRem.i18n("msg.validacion.iban.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.validacion.iban.ko"));
+					campo.setValue(null);
+				}
+	   		},
+	   		failure: function(response) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				campo.setValue(null);
+	    	} 		     
+		});	 
 	}
 	
 });

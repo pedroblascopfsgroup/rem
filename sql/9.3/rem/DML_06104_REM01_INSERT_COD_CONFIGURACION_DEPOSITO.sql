@@ -32,13 +32,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('05'),
         T_TIPO_DATA('06'),
-        T_TIPO_DATA('08'),
-        T_TIPO_DATA('09'),
-        T_TIPO_DATA('14'),
-        T_TIPO_DATA('15'),
-        T_TIPO_DATA('19'),
         T_TIPO_DATA('160'),
         T_TIPO_DATA('161')
     ); 

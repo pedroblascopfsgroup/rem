@@ -3106,6 +3106,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setActivoOfertasConcurrencia(Boolean activoOfertasConcurrencia) {
 		this.activoOfertasConcurrencia = activoOfertasConcurrencia;
+	}
 	public Boolean getEsNecesarioDeposito() {
 		return esNecesarioDeposito;
 	}

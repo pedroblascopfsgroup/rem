@@ -2056,6 +2056,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 	////////////////////////////////////////////////////////////////
 		
+		ofertaApi.llamaReplicarCambioEstado(nuevaOferta.getId(), nuevaOferta.getEstadoOferta().getCodigo());
+		
 	}
 	
 	@SuppressWarnings("static-access")

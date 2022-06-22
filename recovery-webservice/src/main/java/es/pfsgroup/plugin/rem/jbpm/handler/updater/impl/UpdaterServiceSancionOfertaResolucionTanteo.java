@@ -9,8 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -27,15 +25,12 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
@@ -49,9 +44,6 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 
     @Autowired
     private OfertaApi ofertaApi;
-
-    @Autowired
-    private UvemManagerApi uvemManagerApi;
 
     @Autowired
     private NotificacionAdapter notificacionAdapter;
@@ -75,7 +67,6 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 
     private static final String COMBO_EJERCE = "comboEjerce";
     private static final String CAMPO_ADMINISTRACION = "administracion";
-    private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     private static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
    	private static final Integer RESERVA_SI = 1;
 
@@ -88,48 +79,25 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 		String valorCampoEjerce= null;
 		String valorCampoAdministracion="";
 		DDResultadoTanteo resultadoTanteo = new DDResultadoTanteo();
+		boolean rechazar = false;
 
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			Activo activo = ofertaAceptada.getActivoPrincipal();
 
 			if(!Checks.esNulo(expediente)) {
 
 				for(TareaExternaValor valor :  valores) {
 
 					if(COMBO_EJERCE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-						Filter filtro;
+						DDEstadosExpedienteComercial estado = null;
 						if(DDSiNo.SI.equals(valor.getValor())){
-							//Anula el expediente
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-
-							//Finaliza el trámite
-							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-							genericDao.save(ActivoTramite.class, tramite);
-
-							//Rechaza la oferta y descongela el resto
-							ofertaApi.rechazarOferta(ofertaAceptada);
-							try {
-								ofertaApi.descongelarOfertas(expediente);
-							} catch (Exception e) {
-								logger.error("Error descongelando ofertas.", e);
-							}
-							
-							/*if(!ofertaApi.checkReserva(ofertaAceptada) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-								// Notificar del rechazo de la oferta a Bankia.
-								try {
-									uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION_OFERTA.COMPRADOR_NO_INTERESADO_OPERACION);
-								} catch (Exception e) {
-									logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-									throw new UserException(e.getMessage());
-								}
-							}*/
+							rechazar = true;
 							
 							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_EJERCIDO);
 							resultadoTanteo = genericDao.get(DDResultadoTanteo.class, filtroTanteo);
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);
 						} else {
+							Filter filtro = null;
 							Reserva reserva = expediente.getReserva();
 							if (!Checks.esNulo(reserva)) {
 								if (DDEstadosReserva.CODIGO_FIRMADA.equals(reserva.getEstadoReserva().getCodigo())) {
@@ -147,10 +115,11 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							Filter filtroTanteo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoTanteo.CODIGO_RENUNCIADO);
 							resultadoTanteo = genericDao.get(DDResultadoTanteo.class, filtroTanteo);
 							ofertaAceptada.setResultadoTanteo(resultadoTanteo);
+							
+							estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+							recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 						}
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
-						recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), estado);
 						
 						if(DDEstadosExpedienteComercial.ANULADO.equals(estado.getCodigo())){
 							expediente.setFechaVenta(null);
@@ -218,6 +187,10 @@ public class UpdaterServiceSancionOfertaResolucionTanteo implements UpdaterServi
 							logger.error(e.getMessage());
 						}
 					}
+				}
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.ANULADO);
 				}
 				
 				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 

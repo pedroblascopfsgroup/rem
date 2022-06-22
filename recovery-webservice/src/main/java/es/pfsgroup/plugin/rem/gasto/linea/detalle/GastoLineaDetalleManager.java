@@ -1326,7 +1326,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if (activo != null && activo.getId() != null) {
 						Filter filtroActivoCaixa = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 						ActivoCaixa activoCaixa = genericDao.get(ActivoCaixa.class, filtroActivoCaixa);
-						if (activoCaixa != null) {
+						if (activoCaixa != null && activoCaixa.getSegmentacionCartera() != null ) {
 							   Filter filtroCarteraBc = genericDao.createFilter(FilterType.EQUALS, "codigo", activoCaixa.getSegmentacionCartera().getCodigo());
 							   DDCarteraBc ddCarteraBc = genericDao.get(DDCarteraBc.class, filtroCarteraBc);
 							   if (ddCarteraBc != null) {
@@ -1488,11 +1488,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleEntidad.setParticipacionGasto(dto.getParticipacion());
 		gastoLineaDetalleEntidad.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalleEntidad.getAuditoria().setFechaModificar(new Date());
-		
-		
-		if (!Checks.esNulo(dto.getPrimeraPosesion())) {
-			gastoLineaDetalleEntidad.setPrimeraPosesion(dto.getPrimeraPosesion().equals("1") ? true : false);
-		}
 		
 		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 		
@@ -2100,10 +2095,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						   gldEnt.setTipoTransmision(tipoTransmision);
 						}
 					}
-					
-					if (activoTrabajo.getTrabajo().getTomaPosesion() != null) {
-						gldEnt.setPrimeraPosesion(activoTrabajo.getTrabajo().getTomaPosesion());
-					}
 					if (activoTrabajo.getTrabajo().getCodigoSubpartida() != null) {
 						Filter filtroCodigoSubpartida = genericDao.createFilter(FilterType.EQUALS, "codigo", activoTrabajo.getTrabajo().getCodigoSubpartida());
 						DDSubpartidasEdificacion subpartida = genericDao.get(DDSubpartidasEdificacion.class, filtroCodigoSubpartida);
@@ -2496,11 +2487,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				vElementoLineaDetalle.setGrupo(gastoLineaDetalle.getGrupo());
 				vElementoLineaDetalle.setTipo(gastoLineaDetalle.getTipo());
 				vElementoLineaDetalle.setSubtipo(gastoLineaDetalle.getSubtipo());
-				if (gastoLineaDetalle.getPrimeraPosesion() != null) {
-					vElementoLineaDetalle.setPrimeraPosesion(gastoLineaDetalle.getPrimeraPosesion() == true ? "Si" : "No");
-				} else {
-					vElementoLineaDetalle.setPrimeraPosesion("No");
-				}
 				if (gastoLineaDetalle.getSubpartidasEdificacion() != null) {
 					vElementoLineaDetalle.setSubpartidaEdif(gastoLineaDetalle.getSubpartidasEdificacion().getDescripcion());
 					vElementoLineaDetalle.setSubpartidaEdifCodigo(gastoLineaDetalle.getSubpartidasEdificacion().getCodigo());

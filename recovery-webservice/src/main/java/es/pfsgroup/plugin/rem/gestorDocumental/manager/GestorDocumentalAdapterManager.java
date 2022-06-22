@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecover
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.perfilAdministracion.dao.PerfilAdministracionDao;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -656,6 +657,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		dtoPersona.setCabecera(recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_JUNTA,
 				GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA));
+		dtoPersona.setListaPersonas(generateListadoPersonas(expedienteComercial.getOferta(), expedienteComercial.getCompradores()));
 		listaDto.add(dtoPersona);
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpedienteMultiTipo(listaDto);
 
@@ -674,6 +676,34 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return list;
+	}
+
+	private String generateListadoPersonas(Oferta oferta, List<CompradorExpediente> compradores) {
+		String personas = null;
+
+		for(CompradorExpediente cex: compradores){
+			String idPersonaHaya = getIdPersonaHayaByCarteraAndDocumento(oferta.getActivoPrincipal().getCartera(),
+					oferta.getActivoPrincipal().getSubcartera(), cex.getPrimaryKey().getComprador().getDocumento());
+
+			if(idPersonaHaya != null){
+				if(personas == null){
+					personas = oferta.getNumOferta().toString() + "-" + idPersonaHaya;
+				}else{
+					personas = personas + "," + oferta.getNumOferta().toString() + "-" + idPersonaHaya;
+				}
+			}
+		}
+
+		return personas;
+	}
+
+	public String getIdPersonaHayaByCarteraAndDocumento(DDCartera cartera, DDSubcartera subcartera, String documento){
+
+		if (cartera != null && documento != null){
+			MaestroDePersonas maestroDePersonas = new MaestroDePersonas(getMaestroPersonasByCarteraySubcarterayPropietario(cartera,subcartera,null));
+			return maestroDePersonas.getIdPersonaHayaByDocumento(documento);
+		}
+		return null;
 	}
 
 	private DocumentosExpedienteDto generaDtoConWhitelistByUsuarioAndFuncion(Usuario user, String funcion, RecoveryToGestorDocAssembler recoveryToGestorDocAssembler) {

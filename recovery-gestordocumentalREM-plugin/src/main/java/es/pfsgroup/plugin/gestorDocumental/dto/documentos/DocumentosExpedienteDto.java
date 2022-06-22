@@ -44,6 +44,8 @@ public class DocumentosExpedienteDto {
 	private String whitelistmatriculas;
 
 	private CabeceraPeticionRestClientDto cabecera;
+
+	private String listaPersonas;
 	
 
 	public String getUsuario() {
@@ -124,5 +126,13 @@ public class DocumentosExpedienteDto {
 
 	public void setCabecera(CabeceraPeticionRestClientDto cabecera) {
 		this.cabecera = cabecera;
+	}
+
+	public String getListaPersonas() {
+		return listaPersonas;
+	}
+
+	public void setListaPersonas(String listaPersonas) {
+		this.listaPersonas = listaPersonas;
 	}
 }

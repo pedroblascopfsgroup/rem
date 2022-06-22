@@ -2914,7 +2914,7 @@
 			me.habilitarCampo(comboQuitar);
 			me.campoObligatorio(comboQuitar);
 			comboQuitar.setValue('02');
-			
+			me.bloquearCampo(cartera);
 			
 	        me.down('[name=comboResultado]').addListener('change', function(combo) {
 	            if (combo.value == '01') { //SI
@@ -2922,15 +2922,12 @@
 					me.campoObligatorio(motivoAplazamiento);
 					me.deshabilitarCampo(fechaFirma);
 					me.borrarCampo(fechaFirma);
-					me.deshabilitarCampo(cartera);
+					me.bloquearCampo(cartera);
 					me.deshabilitarCampo(oficinaReserva);
 	            } else { //NO
 					me.deshabilitarCampo(motivoAplazamiento);
 					me.borrarCampo(motivoAplazamiento);
-					me.habilitarCampo(cartera);
-					me.campoNoObligatorio(cartera);					
-					me.habilitarCampo(cartera);
-					me.campoNoObligatorio(cartera);
+					me.bloquearCampo(cartera);		
 					me.habilitarCampo(fechaFirma);					
 	            }
         	});
@@ -2941,8 +2938,7 @@
 					me.borrarCampo(comboResultado);
 					me.deshabilitarCampo(motivoAplazamiento);
 					me.borrarCampo(motivoAplazamiento);
-					me.deshabilitarCampo(cartera);
-					me.borrarCampo(cartera);
+					me.bloquearCampo(cartera);
 					me.deshabilitarCampo(oficinaReserva);
 					me.borrarCampo(oficinaReserva);
 					me.deshabilitarCampo(fechaFirma);
@@ -2951,9 +2947,8 @@
 					me.habilitarCampo(comboResultado);
 					me.campoObligatorio(comboResultado);
 					me.habilitarCampo(motivoAplazamiento);
-					me.campoNoObligatorio(motivoAplazamiento);					
-					me.habilitarCampo(cartera);
-					me.campoNoObligatorio(cartera);
+					me.campoNoObligatorio(motivoAplazamiento);			
+					me.bloquearCampo(cartera);
 					me.habilitarCampo(oficinaReserva);
 					me.campoNoObligatorio(oficinaReserva);	
 					me.habilitarCampo(fechaFirma);					

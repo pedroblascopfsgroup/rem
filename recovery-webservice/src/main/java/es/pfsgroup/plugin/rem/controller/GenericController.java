@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.rest.dto.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +40,6 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -51,12 +48,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
-import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaDto;
-import es.pfsgroup.plugin.rem.rest.dto.CierreOficinaBankiaRequestDto;
-import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
-import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
-import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
 import es.pfsgroup.plugin.rem.utils.ImagenWebDto;
@@ -94,7 +85,8 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
     public AccionesCaixaApi accionesCaixaApi;
 	
-
+	@Autowired
+	private DepositoApi depositoApi;
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO = "tiposDocumento";
 	
@@ -753,8 +745,13 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion)));	
+	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion, idActivo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertasAgrupacion(idAgrupacion)));	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -970,6 +967,27 @@ public class GenericController extends ParadiseJsonController{
 			model.put("error", e.getMessage());
 			model.put("descError", "No se ha podido avanzar la tarea");
 			model.put("success", false);
+		}
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/generaDeposito")
+	public void generaDeposito(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+		GeneraDepositoRequestDto jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		JSONObject jsonFields = null;
+		GeneraDepositoDto dto = null;
+
+		try {
+			jsonFields = request.getJsonObject();
+			jsonData = (GeneraDepositoRequestDto) request.getRequestData(GeneraDepositoRequestDto.class);
+			dto = jsonData.getData() != null ? jsonData.getData().get(0) : null;
+			model.put("success", depositoApi.generaDepositoFromRem3(dto));
+			model.put("id", jsonFields.get("id"));
+			accionesCaixaApi.sendReplicarOfertaByOferta(dto.getIdOferta());
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se ha podido generar deposito para la oferta solicitada");
+			model.put("success", false);
+			e.printStackTrace();
 		}finally {
 			restApi.sendResponse(response, model, request);
 

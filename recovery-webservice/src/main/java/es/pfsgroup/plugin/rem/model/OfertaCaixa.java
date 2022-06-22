@@ -113,9 +113,6 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@Column(name="OFR_SANC_LANZAMIENTOS")
 	private String sancionComiteLanzamientos;
 	
-	@Column(name="OFR_CUENTA_BANC_VIRTUAL")
-	private String cuentaBancariaVirtual;
-	
 	@Column(name="OFR_CUENTA_BANC_CLIENTE")
 	private String cuentaBancariaCliente;
 	
@@ -130,6 +127,10 @@ public class OfertaCaixa implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="OFR_SANCION_PBC")
 	private DDSancionPBC sancionPbc;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_EOB_ID")
+	private DDEstadoOfertaBC estadoOfertaBc;
 	
     @Version
     private Integer version;
@@ -339,14 +340,6 @@ public class OfertaCaixa implements Serializable, Auditable {
 		this.sancionComiteLanzamientos = sancionComiteLanzamientos;
 	}
 
-	public String getCuentaBancariaVirtual() {
-		return cuentaBancariaVirtual;
-	}
-
-	public void setCuentaBancariaVirtual(String cuentaBancariaVirtual) {
-		this.cuentaBancariaVirtual = cuentaBancariaVirtual;
-	}
-
 	public String getCuentaBancariaCliente() {
 		return cuentaBancariaCliente;
 	}
@@ -378,4 +371,13 @@ public class OfertaCaixa implements Serializable, Auditable {
 	public void setSancionPbc(DDSancionPBC sancionPbc) {
 		this.sancionPbc = sancionPbc;
 	}
+
+	public DDEstadoOfertaBC getEstadoOfertaBc() {
+		return estadoOfertaBc;
+	}
+
+	public void setEstadoOfertaBc(DDEstadoOfertaBC estadoOfertaBc) {
+		this.estadoOfertaBc = estadoOfertaBc;
+	}
+	
 }

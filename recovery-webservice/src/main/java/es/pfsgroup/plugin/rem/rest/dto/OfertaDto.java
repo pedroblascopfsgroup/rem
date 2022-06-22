@@ -178,6 +178,7 @@ public class OfertaDto implements Serializable {
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codMotivoRechazoRCDC;
+	private String ibanDevolucion;
 	
 	private Boolean enConcurrencia;
 	
@@ -762,5 +763,12 @@ public class OfertaDto implements Serializable {
 	}
 	public void setEnConcurrencia(Boolean enConcurrencia) {
 		this.enConcurrencia = enConcurrencia;
+	}
+	public String getIbanDevolucion() {
+		return ibanDevolucion;
+	}
+
+	public void setIbanDevolucion(String ibanDevolucion) {
+		this.ibanDevolucion = ibanDevolucion;
 	}
 }

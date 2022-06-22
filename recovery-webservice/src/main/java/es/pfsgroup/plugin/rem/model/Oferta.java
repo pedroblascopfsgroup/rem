@@ -474,7 +474,10 @@ public class Oferta implements Serializable, Auditable {
     @OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private OfertaCaixa ofertaCaixa;
-
+    
+    @Column(name = "OFR_CONCURRENCIA")
+	private Boolean concurrencia;
+	
     @Column(name = "CHECK_FORM_CAJAMAR")
     private Boolean checkFormCajamar;
 
@@ -488,12 +491,16 @@ public class Oferta implements Serializable, Auditable {
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
 
-    @Column(name = "OFR_CONCURRENCIA")
-	private Boolean concurrencia;
-
 	@Transient
 	private Boolean replicateBC;
-
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CVC_ID")
+    private CuentasVirtuales cuentaVirtual;
+	
+	@OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Deposito deposito;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1556,6 +1563,14 @@ public class Oferta implements Serializable, Auditable {
 		this.replicateBC = replicateBC;
 	}
 
+	public CuentasVirtuales getCuentaVirtual() {
+		return cuentaVirtual;
+	}
+
+	public void setCuentaVirtual(CuentasVirtuales cuentaVirtual) {
+		this.cuentaVirtual = cuentaVirtual;
+	}
+
 	public Boolean getConcurrencia() {
 		return concurrencia;
 	}
@@ -1600,4 +1615,12 @@ public class Oferta implements Serializable, Auditable {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
 	}
 
+	public Deposito getDeposito() {
+		return deposito;
+	}
+
+	public void setDeposito(Deposito deposito) {
+		this.deposito = deposito;
+	}
+	
 }

@@ -1,28 +1,5 @@
 package es.pfsgroup.plugin.rem.tramitacionofertas;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
-import es.pfsgroup.plugin.rem.api.*;
-import es.pfsgroup.plugin.rem.model.*;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
-
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -50,48 +27,36 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionC4C;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoContrasteListas;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoInterlocutor;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDInterlocutorOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDRiesgoOperacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
@@ -209,6 +174,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private InterlocutorCaixaService interlocutorCaixaService;
+	
+	@Autowired
+	DepositoApi depositoApi;
 
 	@Autowired
 	private FuncionesTramitesApi funcionesTramitesApi;
@@ -258,16 +226,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		final Oferta oferta = saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
 
-		if(oferta != null)
-			return new DtoSaveAndReplicateResult(){{
-				setSuccess(true);
-				setReplicateToBc(oferta.getReplicateBC());
-				setNumOferta(oferta.getNumOferta());
-			}};
-		else
-			return new DtoSaveAndReplicateResult(){{
-				setSuccess(false);
-			}};
+		return new DtoSaveAndReplicateResult(){{
+			setSuccess(true);
+			setReplicateToBc(oferta.getReplicateBC());
+			setNumOferta(oferta.getNumOferta());
+		}};
 	}
 
 
@@ -316,6 +279,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstadoOferta);
 
 		oferta.setEstadoOferta(estadoOferta);
+		ofertaApi.setEstadoOfertaBC(oferta, null);
+		
 		if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 				&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
@@ -329,6 +294,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expediente = doAceptaOferta(oferta, activo);
 			esAcepta = expediente != null;
 			oferta.setExpedienteComercial(expediente);
+			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
+				oferta.setReplicateBC(Boolean.TRUE);
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
@@ -337,6 +304,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			resultado = doRechazaOferta(dto, oferta);
 			if (oferta.getActivoPrincipal() != null && DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()))
 				oferta.setReplicateBC(Boolean.TRUE);
+			
+			depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+		}
+		
+		if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(dto.getCodigoEstadoOferta())) {
+			boolean necesitaDeposito = false;
+			if(!Checks.esNulo(dto.getIdAgrupacion()) && agrupacion != null && activo.getSubcartera() != null ) {
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getNumActivo());
+				Activo ActivoCuentaVirtual = genericDao.get(Activo.class, filtroActivo);
+				if(depositoApi.esNecesarioDepositoNuevaOferta(ActivoCuentaVirtual) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+					necesitaDeposito = true;
+					CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+					oferta.setCuentaVirtual(cuentaVirtual);
+				}
+			}
+			if(necesitaDeposito) {
+				depositoApi.generaDeposito(oferta);
+			}
 		}
 
 		if (!resultado) {

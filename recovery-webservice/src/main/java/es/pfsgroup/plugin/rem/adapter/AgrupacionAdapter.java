@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -100,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
@@ -300,6 +302,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ConcurrenciaApi concurrenciaApi;
+
+	@Autowired
+	private DepositoApi depositoApi;
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
@@ -826,6 +831,7 @@ public class AgrupacionAdapter {
 					
 					if(!Checks.esNulo(activoPrincipal.getSubcartera())){
 						BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", activoPrincipal.getSubcartera().getCodigo());
+						BeanUtils.copyProperty(dtoAgrupacion, "esNecesarioDeposito", depositoApi.esNecesarioDepositoBySubcartera(activoPrincipal.getSubcartera().getCodigo()));
 					}
 					
 					if (perimetroActivo != null) {
@@ -900,7 +906,10 @@ public class AgrupacionAdapter {
 					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal) && !Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
 
 				}else{
-					 if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					if(activoCero != null && activoCero.getSubcartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "esNecesarioDeposito", depositoApi.esNecesarioDepositoBySubcartera(activoCero.getSubcartera().getCodigo()));
+					}
+					if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activoCero.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", activoCero.getCartera().getCodigo());
 					}
@@ -1836,6 +1845,7 @@ public class AgrupacionAdapter {
 					if (!Checks.estaVacio(ofertasActivo)) {
 						// En cada oferta asignada al activo.
 						for (ActivoOferta ofertaActivo : ofertasActivo) {
+							boolean replicarOferta = false;
 							if (!Checks.esNulo(ofertaActivo.getPrimaryKey())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta())
 									&& !Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta())) {
@@ -1857,6 +1867,8 @@ public class AgrupacionAdapter {
 													DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION)));
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
 											ofertaApi.llamadaPbc(ofertaActivo.getPrimaryKey().getOferta(), DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
+										
+											replicarOferta = true;
 										} else {
 											ofertaActivo.getPrimaryKey().getOferta()
 													.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
@@ -1865,7 +1877,12 @@ public class AgrupacionAdapter {
 											if (!Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 												ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 											genericDao.save(Oferta.class, ofertaActivo.getPrimaryKey().getOferta());
+										
+											replicarOferta = true;
 										}
+										ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta(), null);
+
+										if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(ofertaActivo.getPrimaryKey().getOferta().getId(), ofertaActivo.getPrimaryKey().getOferta().getEstadoOferta().getCodigo());
 									}
 								} catch (Exception e) {
 									logger.error("error descongelando ofertas", e);
@@ -2040,6 +2057,9 @@ public class AgrupacionAdapter {
 												oferta.setEstadoOferta(estadoOferta);
 												if (Checks.esNulo(oferta.getFechaOfertaPendiente())) oferta.setFechaOfertaPendiente(new Date());
 											}
+											ofertaApi.setEstadoOfertaBC(oferta, null);
+											
+											ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 										}
 									}
 								}
@@ -2086,6 +2106,7 @@ public class AgrupacionAdapter {
 									if (Checks.esNulo(ofertaActivo.getPrimaryKey().getOferta().getFechaOfertaPendiente())) 
 										ofertaActivo.getPrimaryKey().getOferta().setFechaOfertaPendiente(new Date());
 								}
+								ofertaApi.setEstadoOfertaBC(ofertaActivo.getPrimaryKey().getOferta(), null);
 							}
 						}
 					}
@@ -2969,15 +2990,8 @@ public class AgrupacionAdapter {
 											FilterType.EQUALS,"codigo",dto.getMunicipioRteCodigo())
 							)
 					);
-
-
-
-				/*if (dto.getRepresentantePrp() != null) {
-					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
-				}
-
-				 */
-
+				
+				
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
@@ -3026,12 +3040,6 @@ public class AgrupacionAdapter {
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
 			oferta.setCliente(clienteComercial);
 
@@ -3103,7 +3111,33 @@ public class AgrupacionAdapter {
 				oferta.setRespDocCliente(respCodCliente);
 			}
 			
+			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+
+			boolean necesitaDeposito = false;
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				Double importe = depositoApi.getImporteDeposito(oferta);
+				if(importe == null) {
+					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
+				}
+				
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+				if(cuentaVirtual == null) {
+					throw new Exception("No hay cuentas virtuales libres.");
+				}
+				oferta.setCuentaVirtual(cuentaVirtual);
+				necesitaDeposito = true;
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
+			}
+			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
+			
+			if(necesitaDeposito) {
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
@@ -3227,7 +3261,8 @@ public class AgrupacionAdapter {
 					oferta.setOfertaCaixa(ofrCaixa);
 					genericDao.save(Oferta.class,ofertaNueva);
 				}
-
+					
+				ofertaApi.setEstadoOfertaBC(ofertaNueva, null);
 				ofrCaixa.setCanalDistribucionBc(calcularCanalDistribucionBcOfrCaixa(agrupacion, oferta.getTipoOferta()));
 
 				if (dto.getCheckSubasta() != null){
@@ -3240,6 +3275,8 @@ public class AgrupacionAdapter {
 				}
 
 			}
+			
+			ofertaApi.llamaReplicarCambioEstado(ofertaNueva.getId(), ofertaNueva.getEstadoOferta().getCodigo());
 
 
 		} catch (Exception ex) {

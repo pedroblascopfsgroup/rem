@@ -97,6 +97,12 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
     	{
     		name: 'ordenGanador'
+		},
+    	{
+    		name: 'codigoEstadoDeposito'
+    	},
+    	{
+    		name: 'estadoDeposito'
     	}
 
     ],

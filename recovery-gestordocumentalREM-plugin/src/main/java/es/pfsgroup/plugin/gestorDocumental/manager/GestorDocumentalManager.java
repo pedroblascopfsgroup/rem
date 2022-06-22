@@ -193,8 +193,10 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 				sb.append(",");
 			}
 
+			String activo = docExpDto.getListaPersonas() != null ? docExpDto.getListaPersonas() : docExpDto.getCabecera().getIdExpedienteHaya();
+
 			sb.append("{\"tipo\":\"" + docExpDto.getCabecera().getCodTipo() +
-					"\",\"clase\":\"" + docExpDto.getCabecera().getCodClase() + "\",\"activos\":\"" + docExpDto.getCabecera().getIdExpedienteHaya() +
+					"\",\"clase\":\"" + docExpDto.getCabecera().getCodClase() + "\",\"activos\":\"" + activo +
 					"\",\"blackListmatriculas\":\"" + docExpDto.getBlacklistmatriculas() + "\"," +
 					"\"matriculas\":\"" + docExpDto.getWhitelistmatriculas() + "\"}");
 

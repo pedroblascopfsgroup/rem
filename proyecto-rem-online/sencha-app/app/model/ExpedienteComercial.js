@@ -382,7 +382,15 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             },
             {
             	name: 'peticionarioAnulacion'
-            }
+            },
+            {
+    			name: 'ofertaConDeposito',
+       			type: 'boolean'
+    		},
+            {
+    			name: 'usuCrearOfertaDepositoExterno',
+       			type: 'boolean'
+    		}
     		
     ],
     formulas: {

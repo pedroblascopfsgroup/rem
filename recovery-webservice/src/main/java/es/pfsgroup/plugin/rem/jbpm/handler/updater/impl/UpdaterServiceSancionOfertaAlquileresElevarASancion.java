@@ -157,6 +157,10 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		HistoricoSancionesBc historico = expedienteComercialApi.dtoRespuestaToHistoricoSancionesBc(dtoHistoricoBC, expedienteComercial);
 				
 		genericDao.save(HistoricoSancionesBc.class, historico);
+
+
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()))
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 	}
 
 	public String[] getCodigoTarea() {

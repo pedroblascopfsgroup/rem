@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoReplicarOferta;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -347,6 +348,7 @@ public class OfertasController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 		List<OfertaDto> listaOfertaDto = null;
+		ArrayList<DtoReplicarOferta> listaReplica = new ArrayList<DtoReplicarOferta>();
 
 		try {
 
@@ -359,11 +361,22 @@ public class OfertasController {
 
 			} else {
 
-				ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
+				listaReplica = ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
 
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
+				
+				if (listaReplica != null && !listaReplica.isEmpty()) {
+					for (DtoReplicarOferta oferta : listaReplica) {
+						try {
+							ofertaApi.llamaReplicarCambioEstado(oferta.getIdOferta(), oferta.getCodEstadoOferta());
+						}catch (Exception e){
+							logger.error("Error replicando oferta a BC", e);
+						}
+					}
+				}	
+					
 			}
 
 		} catch (UserException e) {
@@ -1083,12 +1096,8 @@ public class OfertasController {
 	public ModelAndView actualizaEstadoOferta(Long idOferta, String codigoEstado, ModelMap model) {
 		try {
 			Boolean actualizado = ofertaApi.actualizaEstadoOferta(idOferta, codigoEstado);
-			if (actualizado && DDEstadoOferta.CODIGO_PENDIENTE.equals(codigoEstado)){
-				Oferta oferta = ofertaApi.getOfertaById(idOferta);
-				caixaBcRestClient.callReplicateClient(oferta.getNumOferta(), CaixaBcRestClient.CLIENTE_TITULARES_DATA);
-				if (!DDTipoOferta.isTipoAlquilerNoComercial(oferta.getTipoOferta())) {
-					ofertaApi.replicateOfertaFlush(oferta);
-				}
+			if (actualizado){
+				ofertaApi.llamaReplicarCambioEstado(idOferta, codigoEstado);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, actualizado);
 

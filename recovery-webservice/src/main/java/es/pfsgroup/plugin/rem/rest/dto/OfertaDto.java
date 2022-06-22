@@ -759,18 +759,17 @@ public class OfertaDto implements Serializable {
 		this.codMotivoRechazoRCDC = codMotivoRechazoRCDC;
 	}
 
+	public Boolean getEnConcurrencia() {
+		return enConcurrencia;
+	}
+	public void setEnConcurrencia(Boolean enConcurrencia) {
+		this.enConcurrencia = enConcurrencia;
+	}
 	public String getIbanDevolucion() {
 		return ibanDevolucion;
 	}
 
 	public void setIbanDevolucion(String ibanDevolucion) {
 		this.ibanDevolucion = ibanDevolucion;
-	}
-	
-	public Boolean getEnConcurrencia() {
-		return enConcurrencia;
-	}
-	public void setEnConcurrencia(Boolean enConcurrencia) {
-		this.enConcurrencia = enConcurrencia;
 	}
 }

@@ -1,11 +1,16 @@
 package es.pfsgroup.plugin.rem.tramite.venta;
 
-import java.util.Date;
-import java.util.List;
-
+import edu.emory.mathcs.backport.java.util.Arrays;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.constants.TareaProcedimientoConstants;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -13,23 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.DtoDocPostVenta;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.FechaArrasExpediente;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivosEstadoBC;
+import java.util.Date;
+import java.util.List;
 
 @Service("tramiteVentaManager")
 public class TramiteVentaManager implements TramiteVentaApi {
@@ -51,6 +41,9 @@ public class TramiteVentaManager implements TramiteVentaApi {
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	public class AvanzaTareaFuncion{
 		public static final String FUNCION_AVANZA_POSICIONAMIENTO = "AV_CONF_F_ESC";
@@ -106,19 +99,6 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	}
 	
 	@Override
-	public boolean isTramiteT017Aprobado(List<String> tareasActivas){
-		boolean isAprobado = false;
-		String[] tareasParaAprobado = {ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, 
-				ComercialUserAssigantionService.TramiteVentaAppleT017.CODIGO_T017_PBC_CN};
-
-		if(!CollectionUtils.containsAny(tareasActivas, Arrays.asList(tareasParaAprobado))) {
-			isAprobado = true;
-		}
-		
-		return isAprobado;
-	}
-	
-	@Override
 	public boolean tieneFechaVencimientoReserva(TareaExterna tareaExterna){
 		boolean tieneFechaVencimientoReserva = false;
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
@@ -148,7 +128,14 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(eco != null && eco.getOferta() != null) {
 			Oferta oferta = eco.getOferta();
 			Activo activo = oferta.getActivoPrincipal();
+			Deposito deposito = oferta.getDeposito();
 			
+			
+			if(depositoApi.isDepositoIngresado(deposito) &&	(eco.getReserva() == null || DDEstadosReserva.tieneReservaPendiente(eco.getReserva()) || DDEstadosReserva.tieneReservaAnulada(eco.getReserva()))) {
+				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
+				genericDao.save(Deposito.class, deposito);
+			}
+						
 			if(DDCartera.isCarteraBk(activo.getCartera())) {
 				eco.setEstadoBc(genericDao.get(DDEstadoExpedienteBc.class, genericDao.createFilter(FilterType.EQUALS, "codigo", expedienteComercialApi.devolverEstadoCancelacionBCEco(oferta, eco))));
 			}
@@ -159,7 +146,8 @@ public class TramiteVentaManager implements TramiteVentaApi {
 		if(eco.getFechaAnulacion() != null) {
         	eco.setFechaAnulacion(new Date());
         }
-			genericDao.save(ExpedienteComercial.class, eco);
+		
+		genericDao.save(ExpedienteComercial.class, eco);
 		
 	}
 	
@@ -212,7 +200,7 @@ public class TramiteVentaManager implements TramiteVentaApi {
 	}
 
 	@Override
-	public boolean isTramiteT017DivarianAprobado(ExpedienteComercial eco) {
+	public boolean isTramiteT017Aprobado(ExpedienteComercial eco) {
 		Trabajo trabajo = eco.getTrabajo();
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 		List<TareaExterna> tareasExpediente = activoTramiteApi.getListaTareaExternaByIdTramite(tramite.getId());

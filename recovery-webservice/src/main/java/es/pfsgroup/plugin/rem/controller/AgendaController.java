@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.restclient.caixabc.CaixaBcRestClient;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
@@ -117,6 +118,9 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private CaixaBcRestClient caixaBcRestClient;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -531,6 +535,10 @@ public class AgendaController extends TareaController {
 					}
 				}								
 			}
+			
+			Oferta oferta = eco.getOferta();
+			
+			caixaBcRestClient.callReplicateOferta(oferta.getNumOferta());
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {

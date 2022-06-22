@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 
 
@@ -184,7 +185,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	}
 	
 	@Override
-	public List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
+	public List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia) {
 		return concurrenciaDao.getListOfertasVivasConcurrentes(idActivo,idConcurrencia);
 	}
 	

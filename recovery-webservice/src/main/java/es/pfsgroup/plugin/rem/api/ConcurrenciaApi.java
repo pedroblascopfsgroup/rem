@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 public interface ConcurrenciaApi {
 	
@@ -36,7 +37,7 @@ public interface ConcurrenciaApi {
 	
 	Oferta getOfertaGanadora(Activo activo);
 
-	List<VGridOfertasActivosAgrupacionConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
+	List<VGridOfertasActivosConcurrencia> getListOfertasVivasConcurrentes(Long idActivo, Long idConcurrencia);
 
 	boolean isConcurrenciaOfertasEnProgresoActivo(Activo activo);
 

@@ -26,13 +26,13 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estadoOferta',
+		            dataIndex: 'descripcionEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
 		            reference: 'estadoOfertaRef',
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estadoDeposito',
+		            dataIndex: 'descripcionEstadoDeposito',
 		            text: HreRem.i18n('header.pujas.estado.deposito'),
 		            reference: 'estadoDepositoRef',
 		            flex: 1
@@ -44,7 +44,7 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'periodoConcurrencia',
+		            dataIndex: 'diasConcurrencia',
 		            text: HreRem.i18n('header.periodo.concurrencia'),
 		            flex: 1
 		        }

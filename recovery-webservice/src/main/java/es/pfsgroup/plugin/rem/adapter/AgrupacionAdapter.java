@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
@@ -301,10 +302,10 @@ public class AgrupacionAdapter {
 	private ParticularValidatorApi particularValidatorApi;
 	
 	@Autowired
-	private DepositoApi depositoApi;
+	private ConcurrenciaApi concurrenciaApi;
 
 	@Autowired
-	private ConcurrenciaApi concurrenciaApi;
+	private DepositoApi depositoApi;
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
@@ -906,7 +907,10 @@ public class AgrupacionAdapter {
 					dtoAgrupacion.setPerimetroMacc(!Checks.esNulo(activoPrincipal) && !Checks.esNulo(activoPrincipal.getPerimetroMacc()) && activoPrincipal.getPerimetroMacc() == 1);
 
 				}else{
-					 if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					if(activoCero != null && activoCero.getSubcartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "esNecesarioDeposito", depositoApi.esNecesarioDepositoBySubcartera(activoCero.getSubcartera().getCodigo()));
+					}
+					if (!Checks.esNulo(activoCero) && !Checks.esNulo(activoCero.getCartera()) && !DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activoCero.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", activoCero.getCartera().getCodigo());
 					}
@@ -953,7 +957,7 @@ public class AgrupacionAdapter {
 			
 			
 			if(agrupacion.getActivoPrincipal() != null) {
-				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
+				dtoAgrupacion.setDireccion(agrupacion.getActivoPrincipal().getDireccionCompleta());
 			}else if(activoCero != null) {
 				dtoAgrupacion.setDireccion(activoCero.getDireccionCompleta());
 			}
@@ -2987,15 +2991,8 @@ public class AgrupacionAdapter {
 											FilterType.EQUALS,"codigo",dto.getMunicipioRteCodigo())
 							)
 					);
-
-
-
-				/*if (dto.getRepresentantePrp() != null) {
-					clienteComercial.getInfoAdicionalPersona().setPrp(dto.getRepresentantePrp());
-				}
-
-				 */
-
+				
+				
 				if (clienteComercial.getIdPersonaHayaCaixaRepresentante() == null || clienteComercial.getIdPersonaHayaCaixaRepresentante().trim().isEmpty())
 				clienteComercial.setIdPersonaHayaCaixaRepresentante(interlocutorCaixaService.getIdPersonaHayaCaixa(null,activo,clienteComercial.getDocumentoRepresentante(), null));
 
@@ -3044,12 +3041,6 @@ public class AgrupacionAdapter {
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 
 			oferta.setCliente(clienteComercial);
 
@@ -3122,8 +3113,32 @@ public class AgrupacionAdapter {
 			}
 			
 			codigoEstado = activoAdapter.setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+
+			boolean necesitaDeposito = false;
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				Double importe = depositoApi.getImporteDeposito(oferta);
+				if(importe == null) {
+					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
+				}
+				
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+				if(cuentaVirtual == null) {
+					throw new Exception("No hay cuentas virtuales libres.");
+				}
+				oferta.setCuentaVirtual(cuentaVirtual);
+				necesitaDeposito = true;
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA :codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) && DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
+			}
 			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
+			
+			if(necesitaDeposito) {
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
@@ -3260,10 +3275,6 @@ public class AgrupacionAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 
-			}
-			
-			if(DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(codigoEstado)){
-				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
 			}
 			
 			ofertaApi.llamaReplicarCambioEstado(ofertaNueva.getId(), ofertaNueva.getEstadoOferta().getCodigo());
@@ -5115,7 +5126,7 @@ public class AgrupacionAdapter {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
 		String tipoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 		if (DDCartera.isCarteraBk(agrupacion.getActivos().get(0).getActivo().getCartera())) {
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			return DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)
 				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA_ALQUILER)

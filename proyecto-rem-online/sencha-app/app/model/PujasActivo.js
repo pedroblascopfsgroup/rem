@@ -5,27 +5,23 @@ Ext.define('HreRem.model.PujasActivo', {
     extend: 'HreRem.model.Base',
 
     fields: [
-    	
     	{
-    		name : 'idOferta'
+    		name : 'id'
     	},
     	{
     		name : 'numOferta'
     	},
     	{
+    		name : 'descripcionTipoOferta'
+    	},
+    	{
     		name : 'ofertante'
     	},
     	{
-    		name : 'estadoOferta'
+    		name : 'descripcionEstadoOferta'
     	},  
     	{
-    		name : 'codigoEstadoOferta'
-    	}, 
-    	{
-    		name : 'estadoDeposito'
-    	},
-    	{
-    		name : 'codigoEstadoDeposito'
+    		name : 'descripcionEstadoDeposito'
     	}, 
     	{
     		name : 'fechaCreacion',
@@ -33,16 +29,9 @@ Ext.define('HreRem.model.PujasActivo', {
     		dateFormat: 'c'
     	},
     	{
-    		name : 'periodoConcurrencia'
+    		name : 'diasConcurrencia'
     	}
 
-    ]/*,
-    
-    proxy: {
-		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById'
-        
-    }*/
+    ]
 
 });

@@ -43,7 +43,7 @@ public interface AccionesCaixaApi {
 
     void accionDevolArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
-    void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto);
+    void accionIncautacionArrasCont(DtoAccionRechazoCaixa dto) throws ParseException;
 
     void accionRechazoModTitulares(DtoAccionRechazoCaixa dto);
 

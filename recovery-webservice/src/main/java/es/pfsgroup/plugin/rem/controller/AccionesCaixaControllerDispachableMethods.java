@@ -730,14 +730,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_DEVOL_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_DEVOL_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
             @Override
-            public Class<DtoAccionRechazoCaixa> getArgumentType() {
-                return DtoAccionRechazoCaixa.class;
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
             }
 
             @Override
-            public Boolean execute(DtoAccionRechazoCaixa dto) {
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionDevolucionDeposito(dto);
                     if ("false".equals(mm.getModel().get("success").toString())
@@ -751,14 +751,14 @@ class AccionesCaixaControllerDispachableMethods {
             }
         });
 
-        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_INCAUTACION_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoAccionRechazoCaixa>() {
+        dispachableMethods.put(DDTipoOfertaAcciones.ACCION_INCAUTACION_RESERVA_CONT, new AccionesCaixaControllerDispachableMethods.DispachableMethod<DtoOnlyExpedienteYOfertaCaixa>() {
             @Override
-            public Class<DtoAccionRechazoCaixa> getArgumentType() {
-                return DtoAccionRechazoCaixa.class;
+            public Class<DtoOnlyExpedienteYOfertaCaixa> getArgumentType() {
+                return DtoOnlyExpedienteYOfertaCaixa.class;
             }
 
             @Override
-            public Boolean execute(DtoAccionRechazoCaixa dto) {
+            public Boolean execute(DtoOnlyExpedienteYOfertaCaixa dto) {
                 if (dto != null) {
                     ModelAndView mm = this.controller.accionIncautacionDeposito(dto);
                     if ("false".equals(mm.getModel().get("success").toString())

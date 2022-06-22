@@ -91,6 +91,16 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 	}
 	
 	@Override
+	public boolean isDepositoDecidido(Deposito deposito) {
+		boolean isDecidido = false;
+		if(deposito != null && (DDEstadoDeposito.isPendienteDevolucion(deposito.getEstadoDeposito()) || DDEstadoDeposito.isPendienteIncautacion(deposito.getEstadoDeposito()))) {
+			isDecidido= true;
+		}
+		
+		return isDecidido;
+	}
+	
+	@Override
 	@Transactional
 	public synchronized CuentasVirtuales vincularCuentaVirtual(String codigoSubTipoOferta) {
 			CuentasVirtuales cuentaVirtual = null;

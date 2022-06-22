@@ -358,7 +358,6 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            }
     ],
     
-	proxy: {
 		type: 'uxproxy',
 		timeout: 180000,
 		api: {

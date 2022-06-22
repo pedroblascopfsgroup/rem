@@ -501,7 +501,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			return false;
 		}
 		
-		if (codigoTipoOfertaAnterior != null && CONST.TIPOS_OFERTA['VENTA'] != codigoTipoOferta && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoNuevo){
+		if (codigoTipoOferta != null && CONST.TIPOS_OFERTA['VENTA'] != codigoTipoOferta && CONST.ESTADOS_OFERTA['PDTE_DEPOSITO'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
             return false;
 		}

@@ -145,7 +145,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				        		if(!Ext.isEmpty(record)) {								        			
 				        			return record.get("descripcion");								        		
 				        		} else {
-				        			comboEditor.setValue(value);	
+				        			if(value == "03"){
+				        				store.add({codigo:"03", descripcion:HreRem.i18n('fieldlabel.congelada')})
+				        				record = store.findRecord("codigo", value);
+				        				return record.get("descripcion");
+				        			}else{
+					        			comboEditor.setValue(value);	
+				        			}
 				        		}
 			        		}
 			        },

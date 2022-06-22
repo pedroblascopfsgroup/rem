@@ -33,7 +33,6 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 			this.down("[reference=gestionAutorizacionPropietario]").setReadOnly(me.editableSoloAnulacion());
 			this.down("[reference=gestionObservaciones]").setReadOnly(me.editableSoloAnulacion());
 			this.down("[reference=gestionMotivoRetenerGasto]").setReadOnly(me.editableSoloAnulacion());
-			this.down("[reference=gestionMotivoRechazoPropietario]").setReadOnly(me.editableSoloAnulacion());
 			
 		}
 	},
@@ -287,6 +286,7 @@ Ext.define('HreRem.view.gastos.GestionGasto', {
 						
 						{
 							xtype: 'textfieldbase',
+							readOnly: true,
 							reference: 'gestionMotivoRechazoPropietario',
 							fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
 							bind:		{

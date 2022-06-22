@@ -96,6 +96,9 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name: 'codRiesgoOperacion'
     	},
     	{
+    		name: 'ordenGanador'
+		},
+    	{
     		name: 'codigoEstadoDeposito'
     	},
     	{

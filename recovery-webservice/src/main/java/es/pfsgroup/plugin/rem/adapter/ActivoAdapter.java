@@ -4529,12 +4529,6 @@ public class ActivoAdapter {
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			
 			oferta.setCliente(clienteComercial);
 
@@ -4632,6 +4626,11 @@ public class ActivoAdapter {
 					throw new Exception("No hay cuentas virtuales libres.");
 				}
 				oferta.setCuentaVirtual(cuentaVirtual);
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())	&& DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
 			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
@@ -5011,22 +5010,15 @@ public class ActivoAdapter {
 	
 
 	private String getEstadoNuevaOferta(Activo activo) {
-		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
-//		if(DDCartera.CODIGO_CAIXA.equals(activo.getCartera().getCodigo()) &&
-//				DDEquipoGestion.CODIGO_MINORISTA.equals(activo.getEquipoGestion().getCodigo())){
-//			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
-//		}
 
 		if (DDCartera.isCarteraBk(activo.getCartera())) {
-			codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
+			return DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 		}
-		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
-				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
-			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
+		if (ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
+			return DDEstadoOferta.CODIGO_CONGELADA;
 		}
 
-		return codigoEstado;
+		return DDEstadoOferta.CODIGO_PENDIENTE;
 	}
 
 	public List<DtoUsuario> getComboUsuariosPorTipoGestorYCarteraDelLoteComercial(ActivoAgrupacion activoAgrupacion, Long tipoGestor) {

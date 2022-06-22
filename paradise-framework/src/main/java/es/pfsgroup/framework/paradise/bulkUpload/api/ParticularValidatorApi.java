@@ -1518,5 +1518,11 @@ public interface ParticularValidatorApi {
 	boolean isAgrupacionConOfertaEnConcurrencia(String agrupacion);
 
 	String getCartera(String numActivo);
+	
+	Boolean isActivoMaccMarina(String numActivo);
+
+	Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo);
+
+	Boolean isPerimetroMacc(String numActivo);
 
 }

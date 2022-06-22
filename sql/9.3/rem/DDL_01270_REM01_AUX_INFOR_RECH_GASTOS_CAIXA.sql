@@ -45,7 +45,8 @@ BEGIN
 	EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
                             ( 
                                  NUM_GASTO                        NUMBER(16,0)
-                               , EMISOR	                          VARCHAR2(50 CHAR)
+                               , EMISOR	                          VARCHAR2(250 CHAR)
+                               , COD_EMISOR                       VARCHAR2(50 CHAR)
                                , NIF_EMISOR		                  VARCHAR2(20 CHAR)
                                , PROPIETARIO                      VARCHAR2(100 CHAR)
                                , DESTINATARIO_GASTO               VARCHAR2(100 CHAR)

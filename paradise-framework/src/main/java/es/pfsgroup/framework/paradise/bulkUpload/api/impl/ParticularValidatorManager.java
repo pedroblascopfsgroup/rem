@@ -3780,7 +3780,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
 				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " +
 				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO =  :numActivo "+
-				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " +
+				" where agr.AGR_FECHA_BAJA IS NULL AND (agr.AGR_FIN_VIGENCIA IS NULL or agr.AGR_FIN_VIGENCIA >= sysdate) " +
 				" and act.borrado = 0" +
 				" and agr.borrado = 0" +
 				" and tag.borrado = 0" +
@@ -9479,6 +9479,69 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 								"where agr.borrado = 0 and eof.dd_eof_codigo in ('01', '04', '08', '07', '09') AND ofr.OFR_CONCURRENCIA = 1 AND agr.agr_num_agrup_rem =" + agrupacion);
 					
 		return !"0".equals(resultados);
+	}
+	public Boolean isActivoMaccMarina(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID"
+					+"			AND CRA.BORRADO = 0"
+					+"		JOIN DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID"
+					+"			AND SCR.BORRADO = 0"
+					+"		WHERE CRA.DD_CRA_CODIGO = '07'"
+					+"		AND SCR.DD_SCR_CODIGO = '71' "
+					+"		AND ACT.BORRADO = 0 "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isFasePublicacionVySubfaseExcluidoPublicacionEstrategiaCliente(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_HFP_HIST_FASES_PUB HFP "
+				+ "		 JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = HFP.ACT_ID"
+				+"			AND ACT.BORRADO = 0"
+				+ "		 JOIN DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID"
+				+"			AND FSP.BORRADO = 0"
+				+ "		 JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID"
+				+"			AND SFP.BORRADO = 0"
+				+ "		 WHERE FSP.DD_FSP_CODIGO = '09'  "
+				+ "		 AND SFP.DD_SFP_CODIGO = '14'  "
+				+ "		 AND HFP.BORRADO = 0"
+				+ "		 AND HFP.HFP_FECHA_FIN IS NULL"
+				+ "		 AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isPerimetroMacc(String numActivo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("numActivo", numActivo);
+		rawDao.addParams(params);
+		
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.BORRADO = 0"
+					+"		AND ACT.ACT_PERIMETRO_MACC = 1 "
+					+"		AND ACT.ACT_NUM_ACTIVO = :numActivo ");
+
+		return !"0".equals(resultado);
 	}
 }
 

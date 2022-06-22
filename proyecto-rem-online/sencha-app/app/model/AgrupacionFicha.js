@@ -367,5 +367,5 @@ Ext.define('HreRem.model.AgrupacionFicha', {
             destroy: 'agrupacion/getAgrupacionById'
         },
 		extraParams: {pestana: '1'}
-    }    
+   
 });

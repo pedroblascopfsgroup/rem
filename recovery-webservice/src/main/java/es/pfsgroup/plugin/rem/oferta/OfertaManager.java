@@ -39,6 +39,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import edu.emory.mathcs.backport.java.util.Collections;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;

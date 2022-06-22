@@ -727,7 +727,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
 
-			if(ofertaDto.getIbanDevolucion() == null){
+			if(ofertaDto.getIbanDevolucion() == null && DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())){
 				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
 				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
 			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {

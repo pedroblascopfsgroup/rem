@@ -401,6 +401,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean discrepanciasLocalizacion;
 	private String discrepanciasLocalizacionObservaciones;
+	private Boolean esNecesarioDeposito;
 	
 	private String numeroInmuebleAnterior;
 	
@@ -3010,6 +3011,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setDiscrepanciasLocalizacionObservaciones(String discrepanciasLocalizacionObservaciones) {
 		this.discrepanciasLocalizacionObservaciones = discrepanciasLocalizacionObservaciones;
+	}
+
+	public Boolean getEsNecesarioDeposito() {
+		return esNecesarioDeposito;
+	}
+
+	public void setEsNecesarioDeposito(Boolean esNecesarioDeposito) {
+		this.esNecesarioDeposito = esNecesarioDeposito;
 	}
 
 	public String getAnejoGarajeCodigo() {

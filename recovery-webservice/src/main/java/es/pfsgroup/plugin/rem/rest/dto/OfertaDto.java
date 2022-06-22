@@ -179,6 +179,7 @@ public class OfertaDto implements Serializable {
 			Update.class },foreingField="codigo")
 	@Size(max=20,groups = { Insert.class, Update.class })
 	private String codMotivoRechazoRCDC;
+	private String ibanDevolucion;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -755,5 +756,13 @@ public class OfertaDto implements Serializable {
 	}
 	public void setCodMotivoRechazoRCDC(String codMotivoRechazoRCDC) {
 		this.codMotivoRechazoRCDC = codMotivoRechazoRCDC;
+	}
+
+	public String getIbanDevolucion() {
+		return ibanDevolucion;
+	}
+
+	public void setIbanDevolucion(String ibanDevolucion) {
+		this.ibanDevolucion = ibanDevolucion;
 	}
 }

@@ -69,6 +69,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 		Oferta oferta = expedienteComercial.getOferta();
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
+		boolean replicarOferta = false;
 	
 		for(TareaExternaValor valor :  valores){
 
@@ -92,6 +93,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 						}
 					}
 
+					replicarOferta = true;
 				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
@@ -99,6 +101,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
+					replicarOferta = true;
 
 				}else if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO));
@@ -142,6 +145,8 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 		}
 		expedienteComercial.setOferta(oferta);
 		expedienteComercialApi.update(expedienteComercial,false);
+
+		if (replicarOferta) ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 	}
 
 	public String[] getCodigoTarea() {

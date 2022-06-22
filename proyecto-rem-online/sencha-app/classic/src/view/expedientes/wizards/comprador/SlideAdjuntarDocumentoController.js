@@ -717,14 +717,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					window.destroy();
 				},
 				failure : function(record, operation) {
-					var msg =  Ext.decode(operation.getResponse().responseText).msg;
-					if(msg != null){
-						me.fireEvent("errorToast", msg);
-					}
-					else{
+					var data = Ext.decode(operation._response.responseText);
+					if(!Ext.isEmpty(data.error)){
+						me.fireEvent("errorToast", data.error);
+					}else{
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 					}
-					window.unmask();
+						window.unmask();
 				}
 
 			});
@@ -805,7 +804,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            antiguoDeudor:bindRecord.antiguoDeudor,
 	            nacionalidadCodigo:bindRecord.nacionalidadCodigo,
 	            nacionalidadRprCodigo:bindRecord.nacionalidadRprCodigo,
-	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores
+	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores,
+				ibanDevolucion:bindRecord.ibanDevolucion
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -870,7 +870,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	            antiguoDeudor:bindRecord.antiguoDeudor,
 	            nacionalidadCodigo:bindRecord.nacionalidadCodigo,
 	            nacionalidadRprCodigo:bindRecord.nacionalidadRprCodigo,
-	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores
+	            motivoEdicionCompradores:bindRecord.motivoEdicionCompradores,
+				ibanDevolucion:bindRecord.ibanDevolucion
 			});
 		}
  

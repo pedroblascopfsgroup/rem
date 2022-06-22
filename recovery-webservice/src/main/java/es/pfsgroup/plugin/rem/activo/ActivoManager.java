@@ -24,6 +24,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,6 +103,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -116,90 +118,6 @@ import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
-import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
-import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDDistritoCaixa;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
-import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
-import es.pfsgroup.plugin.rem.model.dd.DDSegmentoCarteraSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCorrectivoSareb;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCuotaComunidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeticionPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
-import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaClienteExentoIva;
-import es.pfsgroup.plugin.rem.model.dd.DDTributacionPropuestaVenta;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
@@ -3607,6 +3525,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Long.parseLong(dto.getIdActivo()));
 				Activo activo = genericDao.get(Activo.class, filterActivo);
 				activoIntegrado.setActivo(activo);
+				ActivoComunidadPropietarios activoComunidadPropietarios = activo.getComunidadPropietarios();
+				ActivoProveedor proveedor = activoIntegrado.getProveedor();
+				if (activoComunidadPropietarios != null
+						&& activoComunidadPropietarios.getNif() == null
+						&& proveedor != null
+						&& DDTipoProveedor.COD_COMUNIDAD_PROPIETARIOS.equals(proveedor.getTipoProveedor() != null ? proveedor.getTipoProveedor().getCodigo() : "")
+						&& DDEstadoProveedor.ESTADO_BIGENTE.equals(proveedor.getEstadoProveedor() != null ? proveedor.getEstadoProveedor().getCodigo() : "")){
+
+					activoComunidadPropietarios.setNif(proveedor.getDocIdentificativo());
+					genericDao.update(ActivoComunidadPropietarios.class,activoComunidadPropietarios);
+
+				}
 			}
 
 			if (!Checks.esNulo(dto.getObservaciones())) {
@@ -4186,6 +4116,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
 							oferta.setEstadoOferta(estadoOferta);
 							
+							ofertaApi.setEstadoOfertaBC(oferta, null);
+							
 							Auditoria auditoriaOferta = oferta.getAuditoria();
 							if (auditoriaOferta != null) {
 								auditoriaOferta.setFechaModificar(new Date());
@@ -4193,6 +4125,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							}
 
 							genericDao.save(Oferta.class, oferta);
+							
+							ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 						}
 					}
 				}

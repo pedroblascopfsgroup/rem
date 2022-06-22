@@ -199,4 +199,12 @@ public class DDCartera implements Auditable, Dictionary {
 		}
 		return isCarteraTitulizada;
 	}
+	
+	public static boolean isCarteraCaixaBank(DDCartera cartera) {
+		boolean isCarteraBBVA = false;
+		if(cartera != null && (CODIGO_CAIXA.equals(cartera.getCodigo()))) {
+			isCarteraBBVA = true;
+		}
+		return isCarteraBBVA;
+	}
 }

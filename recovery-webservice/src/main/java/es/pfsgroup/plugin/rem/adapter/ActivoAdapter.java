@@ -15,8 +15,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.api.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -84,6 +82,22 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.AltaAsuntosLegalReoApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.PerfilApi;
+import es.pfsgroup.plugin.rem.api.PresupuestoApi;
+import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
@@ -158,6 +172,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -331,6 +346,9 @@ public class ActivoAdapter {
 	
 	@Autowired
 	private AltaAsuntosLegalReoApi altaAsuntosLegalReoApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -347,7 +365,7 @@ public class ActivoAdapter {
 	public static final String T_APROBACION_INFORME_COMERCIAL= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
-	
+	public static final String ERROR_CREAR_OFERTA = "No se ha podido crear la oferta debido a falta de configuración.";
 	//Se añaden aqui tambien, ya que no se por que esta cogiendo el diccionario de gestores de un .class que no es editable, en vez del .java que si que lo es
 	public static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
@@ -4194,6 +4212,7 @@ public class ActivoAdapter {
 			if (permiteOfertaNoComercialActivoAlquilado) {
 				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
 			}
+			
 
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class,
 					dto.getTipoOferta());
@@ -4510,12 +4529,6 @@ public class ActivoAdapter {
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
-
-			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
-			oferta.setEstadoOferta(estadoOferta);
-			if (Checks.esNulo(oferta.getFechaOfertaPendiente())
-					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			
 			oferta.setCliente(clienteComercial);
 
@@ -4599,7 +4612,31 @@ public class ActivoAdapter {
 				oferta.setRespDocCliente(respCodCliente);
 			}
 			
+			codigoEstado = setEstadoOfertaByEsNecesarioDeposito(dto, codigoEstado, oferta);
+			boolean necesitaDeposito = false;
+			if(depositoApi.esNecesarioDepositoNuevaOferta(activo) && DDTipoOferta.isTipoVenta(oferta.getTipoOferta())){
+				Double importe = depositoApi.getImporteDeposito(oferta);
+				necesitaDeposito = true;
+				if(importe == null) {
+					throw new Exception("Error al crear oferta, no existe configuración de importe para crear el depósito.");
+				}
+				
+				CuentasVirtuales cuentaVirtual = depositoApi.vincularCuentaVirtual(activo.getSubcartera().getCodigo());
+				if(cuentaVirtual == null) {
+					throw new Exception("No hay cuentas virtuales libres.");
+				}
+				oferta.setCuentaVirtual(cuentaVirtual);
+			}
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, tramitacionOfertasApi.debeCongelarseOferta(oferta) ? DDEstadoOferta.CODIGO_CONGELADA : codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			if (Checks.esNulo(oferta.getFechaOfertaPendiente())	&& DDEstadoOferta.isPte(estadoOferta)) {
+				oferta.setFechaOfertaPendiente(new Date());
+			}
+			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
+			if(necesitaDeposito) {
+				depositoApi.generaDepositoAndIban(oferta, dto.getIbanDevolucion());
+			}
 			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
@@ -4716,13 +4753,30 @@ public class ActivoAdapter {
 					ofertaApi.llamadaPbc(oferta, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
 				}
 			}
-			
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
-			return ofertaCreada;
+			throw new Exception(ex.getMessage());
 		}
 		
 		return ofertaCreada;
+	}
+
+	public String setEstadoOfertaByEsNecesarioDeposito(DtoOfertasFilter dto, String codigoEstado, Oferta oferta) {
+		DDEstadoOferta estadoOferta;
+		DDCartera cartera = oferta.getActivoPrincipal().getCartera();
+		if(cartera != null && !DDCartera.isCarteraCaixaBank(cartera)) {
+			if(depositoApi.esNecesarioDeposito(oferta)) {
+				codigoEstado = DDEstadoOferta.CODIGO_PDTE_DEPOSITO;	
+			}else {
+				codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
+			}
+			estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDEstadoOferta.class, codigoEstado);
+			oferta.setEstadoOferta(estadoOferta);
+			ofertaApi.setEstadoOfertaBC(oferta, null);
+		}
+		return codigoEstado;
 	}
 
 
@@ -4752,6 +4806,8 @@ public class ActivoAdapter {
 		oferta.setOfertaCaixa(ofertaCaixa);
 
 		genericDao.save(OfertaCaixa.class,ofertaCaixa);
+		
+		ofertaApi.setEstadoOfertaBC(oferta, null);
 		
 		return ofertaCaixa;
 

@@ -32,9 +32,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 
@@ -163,22 +161,9 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 						
 						
 					}
-		
-					// Rechazamos el resto de ofertas
-					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-					Filter filtroMotivo;
 					
-					for (Oferta oferta : listaOfertas) {
-						if (DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) {
-							filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
-							DDMotivoRechazoOferta motivo = genericDao.get(DDMotivoRechazoOferta.class,
-									filtroMotivo);
-							
-							oferta.setMotivoRechazo(motivo);
-							ofertaApi.rechazarOferta(oferta);
-						}
-					}
+					ofertaApi.rechazoOfertasMotivoVendido(ofertaAceptada);
+					
 					if (expediente.getOferta() != null && DDCartera.isCarteraBBVA(expediente.getOferta().getActivoPrincipal().getCartera())) {
 						try {
 							notificatorServiceContabilidadBbva.notificatorFinTareaConValores(expediente,false);

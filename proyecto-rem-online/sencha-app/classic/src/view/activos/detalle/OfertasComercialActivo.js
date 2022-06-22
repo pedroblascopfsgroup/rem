@@ -269,7 +269,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 												formatter: 'date("d/m/Y")',
 												fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso'),
 												bind: {
-													value: '{detalleOfertaModel.dtoDeposito.fechaIngresoDeposito}'
+													value: '{detalleOfertaModel.dtoDeposito.fechaIngresoDepositoString}'
 												},
 							    				width: 410
 							    			},
@@ -288,7 +288,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 												reference: 'fechaDevolucionDeposito',
 												fieldLabel: HreRem.i18n('header.situacion.posesoria.llaves.fechaDevolucion'),
 												bind: {
-													value: '{detalleOfertaModel.dtoDeposito.fechaDevolucionDeposito}'
+													value: '{detalleOfertaModel.dtoDeposito.fechaDevolucionDepositoString}'
 												},
 							    				width: 410
 							    			},
@@ -304,32 +304,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 							    			{
 												xtype: "displayfieldbase",
 												fieldLabel: HreRem.i18n('fieldlabel.cuenta.virtual'),
-												//formatter: 'date("d/m/Y")',
 												bind: {
 													value: '{detalleOfertaModel.cuentaBancariaVirtual}'
 												},
 							    				width: 410
-							    			},
-							    			{
-												xtype: "displayfieldbase",
-												fieldLabel: HreRem.i18n('fieldlabel.cuenta.cliente'),
-												//formatter: 'date("d/m/Y")',
-												bind: {
-													value: '{detalleOfertaModel.cuentaBancariaCliente}'
-												},
-							    				width: 410
-							    			},
-							    			{
-							    				text :  HreRem.i18n('fieldlabel.modificar.deposito'),
-							                	xtype: 'button',
-							                	reference: 'modificarDeposito',
-							                	handler: 'onClickModificarDeposito',
-							                	margin: '0 0 6 -5',
-							                	bind: {
-							                		disabled: '{!detalleOfertaModel.id}'
-							                	}
-							                }
-							    			
+							    			}
 							    		]
 					    			}
 		                    ]

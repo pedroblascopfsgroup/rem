@@ -442,6 +442,36 @@ merge_bloqueadas() {
 
 }
 
+function vproperties_rules () {
+	result=0
+	ficheros=$(git diff --cached --name-only --diff-filter=ACM | grep versiones.properties)
+	ruta_ini=$(pwd)
+	ruta_fin=$(echo $(git rev-parse --show-toplevel))
+
+	cd $ruta_fin
+
+	for fichero in $ficheros
+	do
+		num_total=$(cat $fichero | cut -d ":" -f-2 | sort | wc -l)
+		num_fin=$(cat $fichero | cut -d ":" -f-2 | sort | uniq | wc -l)
+
+		if [ "$num_total" -ne "$num_fin" ]; then
+			repetidos=$(cat $fichero | cut -d ":" -f-2 | sort | uniq -d)
+			etls=$(cat $fichero | sort | grep "$repetidos")
+			echo -e "\nEn el fichero $fichero tiene las siguientes repeticiones."
+			echo -e "Por favor, modificalos antes de subir los cambios:\n"
+			echo -e "$etls\n"
+			result=1
+		fi
+	done
+
+	cd $ruta_ini
+
+	if [ "$result" -eq 1 ]; then
+		exit 1;
+	fi
+}
+
 ########################################################
 ##### MAIN
 ########################################################
@@ -457,5 +487,6 @@ SQL_rules
 SQL_rules2
 Schema_rules
 Commit_rules
+vproperties_rules
 
 exit 0

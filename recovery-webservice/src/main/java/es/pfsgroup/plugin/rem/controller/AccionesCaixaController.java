@@ -1,12 +1,12 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.accionesCaixa.CaixaBcReplicationDataHolder;
 import es.pfsgroup.plugin.rem.api.AccionesCaixaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ReplicacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDeposito;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaDtoData;
 import es.pfsgroup.plugin.rem.rest.dto.AccionesCaixaRequestDto;
@@ -101,7 +101,9 @@ public class AccionesCaixaController extends ParadiseJsonController {
             AccionesCaixaDispatcher dispatcher = new AccionesCaixaDispatcher(this);
             Boolean success = dispatcher.dispatchAccion(jsonDto, accionesCaixaDto.getIdAccion());
 
-            if (success) {
+            if(dataHolder.getPreviousStateExpedienteBcCod() == null){
+                dataHolder.setReplicateToBc(true);
+            } else if (success) {
                 dataHolder.setCurrentStateExpedienteBcCod(expedienteComercialApi.getEstadoExpedienteBcFromNumOferta(dataHolder.getNumOferta()));
                 replicacionOfertasApi.callReplicateOferta(dataHolder, success);
             }
@@ -375,52 +377,10 @@ public class AccionesCaixaController extends ParadiseJsonController {
         return createModelAndViewJson(model);
     }
 
-    public ModelAndView accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionDevolverReserva(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
-    public ModelAndView accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionIncautarReserva(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
     public ModelAndView accionDevolArrasCont(DtoAccionRechazoCaixa dto) {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionDevolArrasCont(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
-    public ModelAndView accionDevolReservaCont(DtoAccionRechazoCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionDevolReservaCont(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -449,20 +409,6 @@ public class AccionesCaixaController extends ParadiseJsonController {
         ModelMap model = new ModelMap();
         try {
             accionesCaixaApi.accionRechazoModTitulares(dto);
-            model.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.put("success", false);
-            model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
-        }
-
-        return createModelAndViewJson(model);
-    }
-
-    public ModelAndView accionIncautacionReservaCont(DtoAccionRechazoCaixa dto) {
-        ModelMap model = new ModelMap();
-        try {
-            accionesCaixaApi.accionIncautacionReservaCont(dto);
             model.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -583,6 +529,86 @@ public class AccionesCaixaController extends ParadiseJsonController {
             e.printStackTrace();
             model.put("success", false);
             model.put("msgError", e.getMessage() == null ? RestApi.REST_MSG_UNEXPECTED_ERROR : e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautacionDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_INCAUTADO, dto.getNumOferta());
+            if(success){
+                model.put("success", true);
+            }else{
+                model.put("msgError", "Error al actualizar depósito");
+                model.put("success", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolucionDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            boolean success = accionesCaixaApi.incautaODevuelveDeposito(DDEstadoDeposito.CODIGO_DEVUELTO, dto.getNumOferta());
+            if(success){
+                model.put("success", true);
+            }else{
+                model.put("msgError", "Error al actualizar depósito");
+                model.put("success", false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+    
+    public ModelAndView accionIngresoDeposito(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.accionIngresoDeposito(dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionDevolverReserva(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_PDTE_DEVOLUCION, dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
+        }
+
+        return createModelAndViewJson(model);
+    }
+
+    public ModelAndView accionIncautarReserva(DtoOnlyExpedienteYOfertaCaixa dto){
+        ModelMap model = new ModelMap();
+        try {
+            accionesCaixaApi.modificaEstadoDeposito(DDEstadoDeposito.CODIGO_PDTE_INCAUTACION, dto.getNumOferta());
+            model.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.put("success", false);
+            model.put("msgError", e.getMessage());
         }
 
         return createModelAndViewJson(model);

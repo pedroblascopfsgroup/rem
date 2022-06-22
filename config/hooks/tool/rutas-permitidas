@@ -326,3 +326,5 @@ func-rem-edicionPestañaInformeComercial|R-Freezer
 func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-verDocsIdentifEco
+rem_mirror|func-rem-deposito
+func-rem-deposito|R-Baal

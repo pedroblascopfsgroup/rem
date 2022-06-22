@@ -144,6 +144,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@Autowired
 	private TramiteVentaApi tramiteVentaApi;
 	
+	@Autowired
+	private DepositoApi depositoApi;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model, HttpServletRequest request) {
@@ -3151,6 +3154,36 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDeposito(DtoDeposito dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, depositoApi.saveDeposito(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView validarIban(String iban, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, depositoApi.validarIban(iban));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (validarIban)", e);
+		}
 		return createModelAndViewJson(model);
 	}
 }

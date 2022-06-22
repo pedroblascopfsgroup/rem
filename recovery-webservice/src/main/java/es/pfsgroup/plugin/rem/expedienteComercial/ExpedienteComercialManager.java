@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
+import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -89,7 +90,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-
+import org.springframework.ui.ModelMap;
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -151,6 +152,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String OFERTA_DICCIONARIO_CODIGO_NULO = "0";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";
 	private static final String OPERACION_ALTA = "Alta";
+	private static final String PESTANA_DEPOSITO = "deposito";
 
 	// Codigo Estdo Civil URSUS
 	private static final String DESCONOCIDO = "5";
@@ -332,11 +334,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Autowired
-	InterlocutorCaixaService interlocutorCaixaService;
+	private InterlocutorCaixaService interlocutorCaixaService;
 
 	@Autowired
-	ParticularValidatorApi particularValidatorApi;
+	private ParticularValidatorApi particularValidatorApi;
 	
+	@Autowired
+	private DepositoApi depositoApi;
+
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
 
@@ -406,6 +411,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoTanteoYRetractoOferta(expediente);
 		} else if (PESTANA_RESERVA.equals(tab)) {
 			dto = expedienteToDtoReserva(expediente);
+		} else if (PESTANA_DEPOSITO.equals(tab)) {
+			dto = depositoApi.expedienteToDtoDeposito(expediente);
 		} else if (PESTANA_CONDICIONES.equals(tab)) {
 			dto = expedienteToDtoCondiciones(expediente);
 		} else if (PESTANA_FORMALIZACION.equals(tab)) {
@@ -621,6 +628,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDRiesgoOperacion riesgoOperacion = null;
 		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		boolean pdteDocu = false;
+		boolean cambioEstadoOferta = false;
+		
 		if(DDEstadoOferta.CODIGO_PENDIENTE_TITULARES.equals(dto.getEstadoCodigo())) {
 			return false;
 		}
@@ -668,33 +677,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (Checks.esNulo(oferta.getFechaOfertaPendiente()) 
 					&& DDEstadoOferta.CODIGO_PENDIENTE.equals(estado.getCodigo())) oferta.setFechaOfertaPendiente(new Date());
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(dto.getEstadoCodigo())) {
-				Activo act=expedienteComercial.getOferta().getActivoPrincipal();
-				List<ActivoOferta> ofertasActivo=act.getOfertas();
-				for(ActivoOferta ofer : ofertasActivo) {
-					Long idOferta= ofer.getOferta();
-					if(!idOferta.equals(oferta.getId())) {
-						Oferta o = ofertaApi.getOfertaById(idOferta);
-						DDEstadoOferta estOferta = o.getEstadoOferta();
-						if (DDEstadoOferta.CODIGO_CONGELADA.equals(estOferta.getCodigo())) {
-							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo",
-									DDEstadoOferta.CODIGO_PENDIENTE);
-							if (DDCartera.isCarteraBk(act.getCartera()) && (Checks.esNulo(o.getCheckDocumentacion())
-								|| !o.getCheckDocumentacion())) {
-								fil = genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION);
-								pdteDocu = true;
-							}
-							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
-							o.setEstadoOferta(est);
-							if (Checks.esNulo(o.getFechaOfertaPendiente())) o.setFechaOfertaPendiente(new Date());
-							genericDao.save(Oferta.class, o);
-							if (pdteDocu) ofertaApi.llamadaPbc(o, DDTipoOfertaAcciones.ACCION_SOLICITUD_DOC_MINIMA);
-						}
-					}
-				}
-
+				
+				depositoApi.modificarEstadoDepositoSiIngresado(oferta);
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaPrincipal, DDEstadosExpedienteComercial.ANULADO);
 				ofertaApi.darDebajaAgrSiOfertaEsLote(oferta);
 
 			}
+			ofertaApi.setEstadoOfertaBC(oferta, null);
+			cambioEstadoOferta = true;
+			
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
 		}
 		//En este array se van a introducir las ofertas afectadas en los cambios de clases de ofertas de LBK pra recalcular su comite sancionador tomando en cuenta las modificaciones
 		List<Oferta> listaOfertasLBK = new ArrayList<Oferta>();
@@ -1395,6 +1387,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			expedienteComercial.setNumeroVaiHavaiSareb(dto.getNumeroVaiHavaiSareb());
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
+		
+		if(cambioEstadoOferta) {
+			ofertaApi.llamaReplicarCambioEstado(oferta.getId(), oferta.getEstadoOferta().getCodigo());
+		}
 
 		return true;
 	}
@@ -1874,6 +1870,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
 				}
 			}
+			dto.setOfertaConDeposito(depositoApi.esOfertaConDeposito(oferta));
+			dto.setUsuCrearOfertaDepositoExterno(depositoApi.esUsuarioCrearOfertaDepositoExterno(oferta));
 		}
 		return dto;
 	}
@@ -6077,6 +6075,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 //									activoApi.devolucionFasePublicacionAnterior(activoOferta.getPrimaryKey().getActivo());
 //								}								
 //							}
+							
+							ofertaApi.setEstadoOfertaBC(oferta, null);
 						}
 						// Descongelamos el resto de ofertas del activo.
 						ofertaApi.descongelarOfertas(expedienteComercial);
@@ -11205,7 +11205,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
 					String flagNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
 
-					if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())) {
+					if (!Checks.esNulo(expediente.getTipoAlquiler())) {
 						DDSubtipoDocumentoExpediente codigoContrato = null;
 						if (expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerOpcionCompra)) {
 							codigoContrato = (DDSubtipoDocumentoExpediente) utilDiccionarioApi
@@ -14800,26 +14800,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	private Boolean updateEstadoInterlocutorCompradores(ExpedienteComercial eco, CompradorExpediente compradorExpediente, String codigoEstadoInterlocutor,
 													 Boolean llamaReplicarClientes,DtoCompradorLLamadaBC dtoCompradorLLamadaBC){
-		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
-		List<String> codigoTareasActivas = new ArrayList<String>();
-		boolean isAprobado = false;
-		
-		
-		for (TareaExterna tareaExterna : tareasActivas) {
-			codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
-		}
-		TipoProcedimiento tp = activoTramiteApi.getTipoTramiteByExpediente(eco);
-		if(tp != null) {
-			String codigoTp = tp.getCodigo();
-			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codigoTp)) {
-				isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas);
-			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codigoTp)){
-				isAprobado = tramiteAlquilerApi.isTramiteT015Aprobado(codigoTareasActivas);
-			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codigoTp)){
-				isAprobado = tramiteAlquilerNoComercialApi.isTramiteT018Aprobado(codigoTareasActivas);
-			}
-		}
-		
+
+		boolean isAprobado = funcionesTramitesApi.isTramiteAprobado(eco);
+
 		if(isAprobado) {
 			this.updateAndReplicate(eco, compradorExpediente, codigoEstadoInterlocutor, llamaReplicarClientes,dtoCompradorLLamadaBC);
 		}else {
@@ -15370,6 +15353,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return compradorExpediente;
 	}
 
+
 	@Override
 	@Transactional()
 	public void calculoFormalizacionCajamar(Oferta oferta) {
@@ -15391,4 +15375,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 
+	@Override
+	public String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco) {
+		String codigoEcoBc = null;
+		if(DDEstadosReserva.tieneReservaFirmada(eco.getReserva())) {
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DE_RESERVA_Y_O_ARRAS_A_BC;
+		} else if (depositoApi.isDepositoIngresado(oferta.getDeposito()) && (eco.getReserva() == null || DDEstadosReserva.tieneReservaPendiente(eco.getReserva()) || DDEstadosReserva.tieneReservaAnulada(eco.getReserva()))) {
+			codigoEcoBc =  DDEstadoExpedienteBc.CODIGO_SOLICITAR_DEVOLUCION_DEPOSITO_BC;
+		} else if(funcionesTramitesApi.isTramiteAprobado(eco)){
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_COMPROMISO_CANCELADO;
+		}else {
+			codigoEcoBc = DDEstadoExpedienteBc.CODIGO_OFERTA_CANCELADA;
+		}
+		
+		return codigoEcoBc;
+	}
 }

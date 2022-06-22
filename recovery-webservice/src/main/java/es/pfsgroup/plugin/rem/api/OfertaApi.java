@@ -142,7 +142,7 @@ public interface OfertaApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
+	public ArrayList<DtoReplicarOferta> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos
@@ -847,9 +847,23 @@ public interface OfertaApi {
 
     boolean bloqueoResolucionExpedienteCFV(Long idTarea);
 
-    DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta);
+    DDTipoComercializar calcularCanalDistribucionBcOfrCaixa(Oferta oferta, DDTipoOferta tipoOferta) throws Exception;
+
+	void llamaReplicarCambioEstado(Long idOferta, String codigoEstado);
 	
 	public List<DtoTextosOferta> getListTextosOfertaByOferta(Long idOferta);
 
+	public OfertaCaixa setEstadoOfertaBC(Oferta oferta, OfertaCaixa ofertaCaixa);
+
+	void actualizaEstadoOfertaRemAndBC(Oferta oferta);
+
+	Boolean rechazarOfertaSinLlamadaBC(Oferta oferta);
+
 	boolean debeCongelarOfertaCaixa(Oferta oferta);
+
+	void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta, String codEstadoExp);
+
+	void congelarOfertasAndReplicate(Activo activo, Oferta oferta);
+
+	void rechazoOfertasMotivoVendido(Oferta oferta);
 }

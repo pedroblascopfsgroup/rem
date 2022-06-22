@@ -185,6 +185,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private String codigoEstadoComunicacionC4C;
 	
+	private Date fechaLiquida;
+	
 	public Long getId() {
 		return id;
 	}
@@ -954,4 +956,13 @@ public class DtoFichaExpediente extends WebDto {
 	public void setEstadoPbcAlquiler(Integer estadoPbcAlquiler) {
 		this.estadoPbcAlquiler = estadoPbcAlquiler;
 	}
+
+	public Date getFechaLiquida() {
+		return fechaLiquida;
+	}
+
+	public void setFechaLiquida(Date fechaLiquida) {
+		this.fechaLiquida = fechaLiquida;
+	}
+	
 }

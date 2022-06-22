@@ -1966,6 +1966,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else {
 					dto.setTieneTramiteComercial(false);
 				}
+				
+				dto.setFechaLiquida(oferta.getFechaLiquida());
 			}
 			
 			if(expediente.getEstadoBc() != null) {
@@ -2007,7 +2009,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (valorPbcAlquiler != null) {
 					dto.setEstadoPbcAlquiler(Integer.parseInt(valorPbcAlquiler));
 				}
-			}
+			}				
 		}
 		return dto;
 	}

@@ -340,7 +340,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
             {
             	name:'modificarFormalizacionCajamar',
     			type: 'boolean'   	
-            }
+            },
+            {
+    			name: 'fechaLiquida',
+    			type:'date', 
+        		dateFormat: 'c'
+    		}
             
     		
     ],

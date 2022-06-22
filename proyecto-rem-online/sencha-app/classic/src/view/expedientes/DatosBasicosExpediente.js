@@ -317,7 +317,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                		readOnly: true
 	                	}
 	                },
-	                
+     
 	                { 
 						xtype: 'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -414,7 +414,19 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        		hidden: '{!esCarteraAppleoLiberbank}'
 			        	},
 			        	readOnly: true
-	            	 }
+	            	 },
+	            	 
+	            	 {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.liquida'),
+	                	
+	                	bind: {
+	                		value: '{expediente.fechaLiquida}',
+	                		readOnly: true
+		                		
+		                	}		
+		                }
 				]	
            },
            {    

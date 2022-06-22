@@ -487,6 +487,9 @@ public class Oferta implements Serializable, Auditable {
     
     @Column(name="FECHA_FORZADO_CAJAMAR")
 	private Date fechaForzadoCajamar;
+    
+    @Column(name="OFR_FECHA_LIQUIDA")
+	private Date fechaLiquida;
 
 	@Transient
 	private Boolean replicateBC;
@@ -1584,5 +1587,14 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaForzadoCajamar(Date fechaForzadoCajamar) {
 		this.fechaForzadoCajamar = fechaForzadoCajamar;
 	}
+
+	public Date getFechaLiquida() {
+		return fechaLiquida;
+	}
+
+	public void setFechaLiquida(Date fechaLiquida) {
+		this.fechaLiquida = fechaLiquida;
+	}
+	
 	
 }

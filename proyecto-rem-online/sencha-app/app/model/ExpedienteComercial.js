@@ -386,8 +386,15 @@ Ext.define('HreRem.model.ExpedienteComercial', {
             {
             	name: 'esActivoDnd',
             	type: 'boolean'
-            }
-    		
+            },
+            {
+    			name: 'ofertaConDeposito',
+       			type: 'boolean'
+    		},
+            {
+    			name: 'usuCrearOfertaDepositoExterno',
+       			type: 'boolean'
+    		}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

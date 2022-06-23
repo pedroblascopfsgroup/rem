@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.rest.dto.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +47,6 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
-import es.pfsgroup.plugin.rem.model.AuthenticationData;
-import es.pfsgroup.plugin.rem.model.AvanzarDatosPBCDto;
-import es.pfsgroup.plugin.rem.model.DtoMenuItem;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -101,7 +100,8 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
 	private RemCorreoUtils remCorreoUtils;
 	
-
+	@Autowired
+	private DepositoApi depositoApi;
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO = "tiposDocumento";
 	
@@ -760,8 +760,13 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion)));	
+	public ModelAndView getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertas(cartera, equipoGestion, idActivo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioEstadosOfertasAgrupacion(idAgrupacion)));	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -990,6 +995,31 @@ public class GenericController extends ParadiseJsonController{
 		}
 		
 		restApi.sendResponse(response, model, request);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/generaDeposito")
+	public void generaDeposito(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+		GeneraDepositoRequestDto jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		JSONObject jsonFields = null;
+		GeneraDepositoDto dto = null;
+
+		try {
+			jsonFields = request.getJsonObject();
+			jsonData = (GeneraDepositoRequestDto) request.getRequestData(GeneraDepositoRequestDto.class);
+			dto = jsonData.getData() != null ? jsonData.getData().get(0) : null;
+			model.put("success", depositoApi.generaDepositoFromRem3(dto));
+			model.put("id", jsonFields.get("id"));
+			accionesCaixaApi.sendReplicarOfertaByOferta(dto.getIdOferta());
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se ha podido generar deposito para la oferta solicitada");
+			model.put("success", false);
+			e.printStackTrace();
+		}finally {
+			restApi.sendResponse(response, model, request);
+
+		}
 	}
  }
 

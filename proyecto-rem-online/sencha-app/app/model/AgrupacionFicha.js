@@ -383,7 +383,11 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    	},
 		    	{
 					name: 'idActivoPisoPiloto'
-				}
+				},
+    			{
+                	name: 'esNecesarioDeposito',
+    	 			type: 'boolean'
+                }
     ],
     
 	proxy: {

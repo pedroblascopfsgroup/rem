@@ -100,7 +100,8 @@ public class DtoAgrupaciones extends WebDto {
 	private Date fechaEscrituraHasta;
 	private String idActivoPisoPiloto;
 	
-	
+	private Boolean esNecesarioDeposito;
+
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
 	}
@@ -584,6 +585,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setIdOnvDnd(String idOnvDnd) {
 		this.idOnvDnd = idOnvDnd;
+	}
+	public Boolean getEsNecesarioDeposito() {
+		return esNecesarioDeposito;
+	}
+	public void setEsNecesarioDeposito(Boolean esNecesarioDeposito) {
+		this.esNecesarioDeposito = esNecesarioDeposito;
 	}
 	
 	public Date getFechaPrevFinalizacion() {

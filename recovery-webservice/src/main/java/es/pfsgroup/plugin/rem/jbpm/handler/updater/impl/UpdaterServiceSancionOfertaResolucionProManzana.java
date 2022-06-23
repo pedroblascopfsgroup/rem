@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -72,7 +71,6 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
-	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T017_PBCVENTA = "T017_PBCVenta";
 	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
@@ -82,6 +80,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 
 	public void saveValues(ActivoTramite tramite, TareaExterna tareaExternaActual, List<TareaExternaValor> valores) {	
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean rechazar = false;
 		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
@@ -108,7 +107,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							}
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
+							rechazar = true;
 							if(((expediente.getReserva() != null)
 									&& expediente.getReserva().getEstadoReserva() != null
 									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
@@ -116,18 +115,6 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 									|| !solicitaReserva) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
-								// Finaliza el trámite
-								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-								genericDao.save(ActivoTramite.class, tramite);
-								// Rechaza la oferta y descongela el resto
-								ofertaApi.rechazarOferta(ofertaAceptada);
-								try {
-									ofertaApi.descongelarOfertas(expediente);
-									ofertaApi.finalizarOferta(ofertaAceptada);
-								} catch (Exception e) {
-									logger.error("Error descongelando ofertas.", e);
-								}
 								notificatorRechazo.notificatorFinTareaConValores(tramite, valores);
 							}
 						}
@@ -173,6 +160,10 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 				}
 				genericDao.update(ExpedienteComercial.class, expediente);
 				genericDao.update(Oferta.class, ofertaAceptada);
+				
+				if (rechazar) {
+					ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
+				}
 				
 				if (!Checks.esNulo(ofertaAceptada.getVentaSobrePlano()) && ofertaAceptada.getVentaSobrePlano() 
 						&& (DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) 

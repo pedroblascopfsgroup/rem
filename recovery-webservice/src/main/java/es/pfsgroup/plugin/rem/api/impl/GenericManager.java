@@ -14,7 +14,6 @@ import java.util.*;
 
 import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,15 +53,7 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
-import es.pfsgroup.plugin.rem.api.GenericApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.PerfilApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -135,6 +126,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -150,6 +143,27 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LazyInitializationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+
+import javax.annotation.Resource;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.security.Key;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -1971,22 +1985,33 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}	
 	
 	@Override
-	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion) {
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertas(String cartera, String equipoGestion, Long idActivo) {
 
 		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
 		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
-		
-		if (DDCartera.CODIGO_CAIXA.equals(cartera)) {
-			Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
-			Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
-			for (DDEstadoOferta ddEstadoOferta : estadosOferta) {
-				listaDDEstadoOferta.add(ddEstadoOferta);
-				if (DDEstadoOferta.CODIGO_PDTE_DEPOSITO.equals(ddEstadoOferta.getCodigo())) {
-					listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
-				}
-			}
-		} else {
+		Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+		Activo activo = activoApi.get(idActivo);
+		DDSubcartera subcartera = null;
+		if(activo != null) {
+			subcartera = activo.getSubcartera();
+		}
+
+		if(subcartera != null){
+
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo());
+			Filter filtroAplica = genericDao.createFilter(FilterType.EQUALS,"depositoNecesario", true);
+
+			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+					,filtroSubcartera, filtroAplica);
+
 			listaDDEstadoOferta.addAll(estadosOferta);
+
+			if(conDep == null) {
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+			}else if(conDep != null){
+				Filter filtroCongelada = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_CONGELADA);
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroCongelada));
+			}
 		}
 
 		return listaDDEstadoOferta;
@@ -2152,6 +2177,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	    map.put("comboResultado", comboResultado);
 	    
 	    return map;
+	}
+
+	@Override
+	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion) {
+
+		List<DDEstadoOferta> estadosOferta = genericDao.getList(DDEstadoOferta.class);
+		List<DDEstadoOferta> listaDDEstadoOferta =  new ArrayList<DDEstadoOferta>();
+		Filter filtroPdteDeposito = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PDTE_DEPOSITO);
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		DDCartera cartera = null;
+		DDSubcartera subcartera = null;
+		boolean depositoNecesario = false;
+		if(agrupacion != null) {
+			if(agrupacion.getActivoPrincipal() != null) {
+				cartera = agrupacion.getActivoPrincipal().getCartera();
+				subcartera = agrupacion.getActivoPrincipal().getSubcartera();
+			}else if(agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()) {
+				cartera = agrupacion.getActivos().get(0).getActivo().getCartera();
+				subcartera = agrupacion.getActivos().get(0).getActivo().getSubcartera();
+			}
+		}
+
+		listaDDEstadoOferta.addAll(estadosOferta);
+
+		if (subcartera != null) {
+			ConfiguracionDeposito conDep = genericDao.get(ConfiguracionDeposito.class
+					,genericDao.createFilter(FilterType.EQUALS,"subcartera.codigo", subcartera.getCodigo()));
+			if(conDep != null && conDep.getDepositoNecesario()) {
+				depositoNecesario = true ;
+			}
+
+			if(!depositoNecesario) {
+				listaDDEstadoOferta.remove(genericDao.get(DDEstadoOferta.class, filtroPdteDeposito));
+			}
+
+		}
+
+		return listaDDEstadoOferta;
 	}
 
 }

@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -45,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -539,6 +541,10 @@ public class GenericAdapter {
 				Filter filtroExpedienteOfertaNueva = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCreada.getId());
 				expedienteOfertaNueva = genericDao.get(ExpedienteComercial.class, filtroExpedienteOfertaNueva);	
 				
+				Filter filtroDdSitcomercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA);
+				DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, filtroDdSitcomercial);
+				expedienteOfertaNueva.getOferta().getActivoPrincipal().setSituacionComercial(situacionComercial);
+				
 				List<CompradorExpediente> compradoresOfertaOrigen = expedienteOrigen.getCompradores();
 				List<CompradorExpediente> compradoresOfertaNueva = expedienteOfertaNueva.getCompradores();
 				
@@ -605,7 +611,7 @@ public class GenericAdapter {
 						genericDao.update(CompradorExpediente.class, compradorNuevo);
 					}
 				}
-				
+
 				expedienteOfertaNueva.setCompradores(compradoresOfertaNueva);
 								
 				genericDao.update(ExpedienteComercial.class, expedienteOfertaNueva);

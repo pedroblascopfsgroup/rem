@@ -322,7 +322,9 @@ func-rem-volcadoPagosUrgentesASPRO|R-Ortanique
 rem_mirror|func-rem-visibleComercialDespublicar
 rem_mirror|func-rem-primTomaPosGastos
 func-rem-desvincularCierreEconomico|R-Navelate
-func-rem-edicionPestañaInformeComercial|R-Freezer
+func-rem-edicionPestañaInformeComercial|R-Freezers
 func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-modificacionesBulk
+rem_mirror|func-rem-deposito
+func-rem-deposito|R-Baal

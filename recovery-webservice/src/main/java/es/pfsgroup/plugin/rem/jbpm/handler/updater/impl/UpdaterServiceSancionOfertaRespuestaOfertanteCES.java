@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -33,7 +32,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
@@ -55,9 +53,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	private RecalculoVisibilidadComercialApi recalculoVisibilidadComercialApi;
 	
 	@Autowired
-	private OfertaDao ofertaDao;
-	
-	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
@@ -66,7 +61,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertanteCES.class);
 	 
  	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES = "T017_RespuestaOfertanteCES";
- 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
  	private static final String COMBO_RESPUESTA = "comboRespuesta";
  	private static final String FECHA_RESPUESTA = "fechaRespuesta";
  	private static final String IMPORTE_CONTRAOFERTA_OFERTANTE = "importeContraofertaOfertante";
@@ -81,6 +75,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 		
 	 		Activo activo = ofertaAceptada.getActivoPrincipal();
 	 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
+	 		boolean rechazar = false;
 	 		
 	 		for (TareaExternaValor valor : valores) {			
 	 			if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -89,14 +84,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				genericDao.save(Oferta.class, ofertaAceptada);
 	 			}else if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-						// Una vez aprobado el expediente, se congelan el resto de ofertas que no
-						// estén rechazadas (aceptadas y pendientes)
-						List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-						for (Oferta oferta : listaOfertas) {
-							if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-								ofertaApi.congelarOferta(oferta);
-							}
-						}
+	 					ofertaApi.congelarOfertasAndReplicate(activo, ofertaAceptada);
 
 						Filter f1 = null;
 						if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())) {
@@ -123,15 +111,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 						}
 
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
-	 					ofertaApi.rechazarOferta(ofertaAceptada);
-	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
-	 					DDEstadosExpedienteComercial denegado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
-	 					expediente.setEstado(denegado);
-	 					recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(expediente.getOferta(), denegado);
-
-	 					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
-	 					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-	 					genericDao.save(ActivoTramite.class, tramite);
+	 					rechazar = true;
 	 				}else if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 	 					DDEstadosExpedienteComercial contraoferta = genericDao.get(DDEstadosExpedienteComercial.class, f1);
@@ -198,6 +178,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 			}
 	 		genericDao.save(Oferta.class, ofertaAceptada);
 	 		genericDao.save(ExpedienteComercial.class, expediente);
+	 		
+	 		if (rechazar) {
+	 			ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofertaAceptada, DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
+	 		}
 	 	}catch(ParseException e) {
 	 		 e.printStackTrace();
 	 	}

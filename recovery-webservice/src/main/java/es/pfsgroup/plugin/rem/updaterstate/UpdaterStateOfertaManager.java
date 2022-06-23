@@ -86,8 +86,7 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 				
 				genericDao.save(Reserva.class, reserva);
 			}
-//			HREOS-13592 Se bloquea el evolutivo de ocultación de activos para la subida 
-//			activoApi.devolucionFasePublicacionAnterior(tramite.getActivo());
+
 		} else {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

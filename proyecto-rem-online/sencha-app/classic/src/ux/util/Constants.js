@@ -190,6 +190,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		CONDICIONES:		'condicionesexpediente',
 		ACTIVOS:			'activosexpediente',
 		RESERVA:			'reservaexpediente',
+		DEPOSITO:			'depositoexpediente',
 		COMPRADOR:			'compradoresexpediente',
 		DIARIO:				'diariogestionesexpediente',
 		TRAMITES:			'tramitestareasexpediente',
@@ -393,7 +394,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	PENDIENTE: '04',
     	PDTE_TITULARES: '05',
     	CADUCADA: '06',
-    	PDTE_DOCUMENTACION: '08'
+    	PDTE_DOCUMENTACION: '08',
+    	PDTE_DEPOSITO: '07'
     },
 
     ESTADOS_EXPEDIENTE: {

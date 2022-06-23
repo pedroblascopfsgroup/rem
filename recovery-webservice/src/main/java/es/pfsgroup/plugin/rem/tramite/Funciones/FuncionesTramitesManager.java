@@ -1,17 +1,5 @@
 package es.pfsgroup.plugin.rem.tramite.Funciones;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -19,20 +7,20 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerApi;
-import es.pfsgroup.plugin.rem.api.TramiteAlquilerNoComercialApi;
-import es.pfsgroup.plugin.rem.api.TramiteVentaApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService.TramiteAlquilerT015;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTareaPbc;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTareaPbc;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service("funcionesTramitesManager")
 public class FuncionesTramitesManager implements FuncionesTramitesApi {
@@ -69,24 +57,23 @@ public class FuncionesTramitesManager implements FuncionesTramitesApi {
 	@Override
 	public boolean isTramiteAprobado(ExpedienteComercial eco) {
 		Set<TareaExterna> tareasActivas = activoTramiteApi.getTareasActivasByExpediente(eco);
+		TareaExterna resolucionComite = null;
 		List<String> codigoTareasActivas = new ArrayList<String>();
 		boolean isAprobado = false;
 
 		DDSubcartera subcartera = eco.getOferta().getActivoPrincipal().getSubcartera();
 
 		for (TareaExterna tareaExterna : tareasActivas) {
+			if(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(tareaExterna.getTareaProcedimiento().getCodigo())){
+				resolucionComite = tareaExterna;
+			}
 			codigoTareasActivas.add(tareaExterna.getTareaProcedimiento().getCodigo());
 		}
 		TipoProcedimiento tp = activoTramiteApi.getTipoTramiteByExpediente(eco);
 		if(tp != null) {
 			String codigoTp = tp.getCodigo();
 			if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(codigoTp)) {
-				if (subcartera != null && (DDSubcartera.isSubcarteraDivarianRemainingInmob(subcartera) || DDSubcartera.isSubcarteraDivarianArrowInmob(subcartera))){
-					isAprobado = tramiteVentaApi.isTramiteT017DivarianAprobado(eco);
-				}else{
-					isAprobado = tramiteVentaApi.isTramiteT017Aprobado(codigoTareasActivas);
-				}
-
+				isAprobado = tramiteVentaApi.isTramiteT017Aprobado(eco);
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(codigoTp)){
 				isAprobado = tramiteAlquilerApi.isTramiteT015Aprobado(codigoTareasActivas);
 			}else if(ActivoTramiteApi.CODIGO_TRAMITE_ALQUILER_NO_COMERCIAL.equals(codigoTp)){

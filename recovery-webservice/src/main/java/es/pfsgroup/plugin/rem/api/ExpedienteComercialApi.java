@@ -1520,5 +1520,7 @@ public interface ExpedienteComercialApi {
 
 	public ExpedienteComercial getExpedienteComercyalByNumOferta(Long numOferta);
 
+	String devolverEstadoCancelacionBCEco(Oferta oferta, ExpedienteComercial eco);
+
 
 }

@@ -12,7 +12,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1752,6 +1751,21 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isProveedorIncompleto(Long idGasto, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.isProveedorIncompleto(idGasto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error("Error en isProveedorIncompleto", e);
+			model.put("success", false);
+		}
 		return createModelAndViewJson(model);
 	}
 }

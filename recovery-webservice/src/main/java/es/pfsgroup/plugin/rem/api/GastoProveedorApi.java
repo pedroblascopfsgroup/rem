@@ -420,6 +420,7 @@ public interface GastoProveedorApi {
 
     boolean deleteGastoTasacion(Long id);
 
+	boolean isProveedorIncompleto(Long idGasto);
 	List<HistoricoEnvioPedidos> getHistoricoEnvioPedidosByIdGasto(Long idGasto);
 }
 

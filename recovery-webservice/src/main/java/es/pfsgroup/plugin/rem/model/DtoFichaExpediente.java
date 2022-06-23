@@ -186,6 +186,10 @@ public class DtoFichaExpediente extends WebDto {
 	private String codigoEstadoComunicacionC4C;
 	
 	private Date fechaLiquida;
+
+	private Boolean ofertaConDeposito;
+	
+	private Boolean usuCrearOfertaDepositoExterno;
 	
 	public Long getId() {
 		return id;
@@ -956,13 +960,29 @@ public class DtoFichaExpediente extends WebDto {
 	public void setEstadoPbcAlquiler(Integer estadoPbcAlquiler) {
 		this.estadoPbcAlquiler = estadoPbcAlquiler;
 	}
-
+	
 	public Date getFechaLiquida() {
 		return fechaLiquida;
 	}
 
 	public void setFechaLiquida(Date fechaLiquida) {
 		this.fechaLiquida = fechaLiquida;
+	}
+
+	public Boolean getOfertaConDeposito() {
+		return ofertaConDeposito;
+	}
+
+	public void setOfertaConDeposito(Boolean ofertaConDeposito) {
+		this.ofertaConDeposito = ofertaConDeposito;
+	}
+
+	public Boolean getUsuCrearOfertaDepositoExterno() {
+		return usuCrearOfertaDepositoExterno;
+	}
+
+	public void setUsuCrearOfertaDepositoExterno(Boolean usuCrearOfertaDepositoExterno) {
+		this.usuCrearOfertaDepositoExterno = usuCrearOfertaDepositoExterno;
 	}
 	
 }

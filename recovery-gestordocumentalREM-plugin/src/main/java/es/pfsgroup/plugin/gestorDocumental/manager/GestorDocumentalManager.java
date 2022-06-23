@@ -205,6 +205,9 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 
 		sb.append("]");
 
+
+		logger.error(sb.toString());
+
 		return sb.toString();
 	}
 	

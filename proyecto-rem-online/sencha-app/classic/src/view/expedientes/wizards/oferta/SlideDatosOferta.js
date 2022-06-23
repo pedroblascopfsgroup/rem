@@ -34,6 +34,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		var isBk = false;
 		var isBkOrTitlizada = false;
 		var activosDetalle = me.up('[reference="activosdetalle"]');
+		var esNecesarioDeposito = false;
 		
 		if(Ext.isEmpty(activosDetalle)){
 			isBk = this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionCaixa");
@@ -46,6 +47,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			isBkOrTitlizada = isBk || this.up("agrupacionesdetalle").lookupController().getViewModel().get("esAgrupacionTitulizada");
 		}else{
 			isBkOrTitlizada = isBk || me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('isCarteraTitulizada');
+		}
+		
+		if(Ext.isEmpty(activosDetalle)){
+			if(this.up("agrupacionesdetalle").lookupController().getViewModel().get('agrupacionficha').get('esNecesarioDeposito') == true){
+				esNecesarioDeposito = true;
+			}
+		}else{
+			esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
 		}
 
 		me.buttons = [ { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickCancelar'},
@@ -148,6 +157,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var tipologivaVenta = form.down('field[name=tipologivaVentaCod]');
 	    								var buscaPrescriptores = form.down('field[name=buscadorPrescriptores]');
 	    								var nombrePrescriptor = form.down('field[name=nombrePrescriptor]');
+										var ibanDevolucion = form.down('field[name=ibanDevolucion]');
+										var esNecesarioDeposito = false;
 	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
 	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
 	    										    											    										
@@ -171,6 +182,22 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								}else{
 	    									tipologivaVenta.setDisabled(true);
 	    								}
+					
+										if(Ext.isEmpty(me.up('[reference="activosdetalle"]'))){
+											if(this.up("agrupacionesdetalle").lookupController().getViewModel().get('agrupacionficha').get('esNecesarioDeposito') == true){
+												esNecesarioDeposito = true;
+											}
+										}else{
+											esNecesarioDeposito = me.up('[reference="activosdetalle"]').lookupController().getViewModel().get('activo').get('esNecesarioDeposito');
+										}
+										
+										if (CONST.TIPOS_OFERTA['VENTA'] == value) {											
+											ibanDevolucion.setHidden(!esNecesarioDeposito);
+											ibanDevolucion.allowBlank = !esNecesarioDeposito;
+	    								}else{
+											ibanDevolucion.setHidden(true);
+											ibanDevolucion.allowBlank = true;
+	    								}
 	    								
 	    								if(CONST.TIPOS_OFERTA['ALQUILER_NO_COMERCIAL'] == value){
 	    									buscaPrescriptores.allowBlank = true;
@@ -183,6 +210,20 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    						},
 			    				colspan: 2
 							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.iban.devolucion'),
+		            	    	name:		'ibanDevolucion',
+								hidden: !esNecesarioDeposito,
+								allowBlank: !esNecesarioDeposito,
+								bind: {
+									value: '{oferta.ibanDevolucion}'
+								},
+			    				colspan: 2,
+								listeners: {
+								 	'focusleave': 'checkIbanDevolucion'
+								}						
+		            	    },
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),
 		            	    	name:		'nombreCliente',

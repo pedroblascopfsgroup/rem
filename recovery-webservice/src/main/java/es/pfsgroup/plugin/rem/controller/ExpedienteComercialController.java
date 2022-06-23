@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.adapter.ExpedienteAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.DepositoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.FuncionesTramitesApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
@@ -82,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDeposito;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
@@ -207,6 +209,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private TramiteVentaApi tramiteVentaApi;
+	
+	@Autowired
+	private DepositoApi depositoApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -3215,6 +3220,36 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDeposito(DtoDeposito dto, @RequestParam Long id, ModelMap model,
+			HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, depositoApi.saveDeposito(dto, id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView validarIban(String iban, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, depositoApi.validarIban(iban));
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (validarIban)", e);
+		}
 		return createModelAndViewJson(model);
 	}
 }

@@ -328,3 +328,5 @@ func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-deposito
 func-rem-deposito|R-Baal
+func-rem-proveedoresNoHomologables|R-Nagami
+func-rem-datosProveedores|R-Nagami

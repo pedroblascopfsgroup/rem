@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220607
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220624
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11829
+--## INCIDENCIA_LINK=REMVIP-11962
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -36,6 +36,7 @@
 --##        0.23 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
 --##		0.24 Corrección Pep alquiler PAO y colocación puerta antiocupa - [HREOS-17997] - Javier Esbri
 --##		0.25 Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas - [REMVIP-11829] - Alejandra García
+--##		0.26 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
 --#########################################
 --*/
 
@@ -51,7 +52,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11829';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11962';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -493,7 +494,12 @@ DECLARE
 		T_TABLA('1101','XXXX-22-2-A-COM','22','00','3','05','132','03','','','null','','','','2022'),
 		T_TABLA('1102','XXXX-22-3-A-DES','22','01','1','11','162','01','','','null','','','','2022'),
 		T_TABLA('1103','XXXX-22-2-COM VT GS','22','01','59','12','54','01','','','null','','','','2022'),
-		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022')
+		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022'),
+
+		--DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    DD_PRO_ID	DD_SCM_CODIGO  EJE_ANYO
+		--Añadir PEPs Impuesto - IBI rústica
+		T_TABLA('1105','XXXX-22-2-IBI','22','00','7','01','02','01','','','null','','','','2022'),
+		T_TABLA('1106','XXXX-22-2-A-IBI','22','00','9','01','02','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

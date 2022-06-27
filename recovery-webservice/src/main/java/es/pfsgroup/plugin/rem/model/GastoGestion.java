@@ -160,6 +160,9 @@ public class GastoGestion implements Serializable, Auditable {
     @Column(name="GGE_FECHA_ENVIO_INFORMATIVA")
     private Date fechaEnvioInformativa;
     
+    @Column(name="GGE_MOTIVO_RECHAZO_HAYA")
+    private String motivoRechazoDescripcionHaya;
+    
 	@Version   
 	private Long version;
 
@@ -431,6 +434,14 @@ public class GastoGestion implements Serializable, Auditable {
 
 	public void setFechaEnvioInformativa(Date fechaEnvioInformativa) {
 		this.fechaEnvioInformativa = fechaEnvioInformativa;
+	}
+
+	public String getMotivoRechazoDescripcionHaya() {
+		return motivoRechazoDescripcionHaya;
+	}
+
+	public void setMotivoRechazoDescripcionHaya(String motivoRechazoDescripcionHaya) {
+		this.motivoRechazoDescripcionHaya = motivoRechazoDescripcionHaya;
 	}
 	
 }

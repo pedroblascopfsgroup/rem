@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220308
+--## FECHA_CREACION=20220610
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17266
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial - [HREOS-17266] - Alejandra García
+--##        0.2 Añadir a la retención los gastos con propietario BH anteriores a 2018 (fecha emisión) - [REMVIP-11767] - Alejandra García
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -110,6 +111,11 @@ V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GASTOS_RETENIDOS_BC (GPV_ID)
 						  	AND PVE2.BORRADO = 0
 						  WHERE PVE2.PVE_ID = PVE.PVE_ID
 						 )
+                OR                
+					(PRO.PRO_SOCIEDAD_PAGADORA = ''3148''
+						AND
+					 TRUNC(GPV.GPV_FECHA_EMISION) < TO_DATE(''01/01/18'',''dd/MM/yy'')
+					)
 			)	
 				
 				';
@@ -272,6 +278,11 @@ WHERE GPV.BORRADO = 0
 					AND PVE2.BORRADO = 0
 					WHERE PVE2.PVE_ID = PVE.PVE_ID
 					)
+		OR                
+			(PRO.PRO_SOCIEDAD_PAGADORA = ''3148''
+				AND
+			 TRUNC(GPV.GPV_FECHA_EMISION) < TO_DATE(''01/01/18'',''dd/MM/yy'')
+			)
 	)	
 		';
 EXECUTE IMMEDIATE V_MSQL;

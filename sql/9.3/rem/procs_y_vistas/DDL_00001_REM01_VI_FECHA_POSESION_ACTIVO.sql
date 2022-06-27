@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Santi Monzó
---## FECHA_CREACION=20211217
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20220618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-16597
+--## INCIDENCIA_LINK=REMVIP-11856
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para obtener la fecha de posesión de los activos
@@ -16,6 +16,7 @@
 --##        0.3 [REMVIP-9856] Juan Bautista Alfonso - Actualizacion condiciones para sareb
 --##	    0.4 [REMVIP-10845] Juan Bautista Alfonso - Nueva logica de calculo fecha toma posesion para caixabank
 --##	    0.5 [HREOS-16597] Santi Monzó - Añadir la subcartera Jaguar
+--##	    0.6 [REMVIP-11856] Cristian Montoya - Anyadido campo calculado Con Posesión
 --#########################################
 --*/
 
@@ -96,7 +97,20 @@ BEGIN
                     END 
                 ELSE
 	                SPS.SPS_FECHA_TOMA_POSESION
-            END AS FECHA_POSESION
+            END AS FECHA_POSESION,
+			CASE WHEN CRA.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'', ''151'', ''152'', ''70'', ''02'') AND ADN.ACT_ID IS NOT NULL THEN
+			    (CASE WHEN ADN.FECHA_POSESION IS NOT NULL THEN
+			        1
+			    ELSE
+			        0
+			    END )  
+			ELSE
+			    CASE WHEN SPS.SPS_FECHA_REVISION_ESTADO IS NOT NULL OR SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL THEN
+			        1
+			    ELSE
+			        0
+			    END    
+			END AS CON_POSESION
             FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
             INNER JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR ON ACT.DD_SCR_ID = SCR.DD_SCR_ID AND SCR.BORRADO = 0
             JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID=CRA.DD_CRA_ID AND CRA.BORRADO = 0

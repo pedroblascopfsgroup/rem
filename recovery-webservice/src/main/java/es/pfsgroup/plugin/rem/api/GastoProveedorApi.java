@@ -226,7 +226,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo);
+		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo, String motivoRechazoDescripcion);
 
 		/**
 		 * Método que autoriza un gasto, validandolo antes si validarAutorizacion = true
@@ -242,7 +242,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
+		public boolean rechazarGasto(Long idGasto, String motivoRechazo, String motivoRechazoDescripcion);
 		
 		
 		/**

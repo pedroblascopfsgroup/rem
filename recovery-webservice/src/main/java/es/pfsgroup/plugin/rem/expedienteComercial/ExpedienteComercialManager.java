@@ -5318,11 +5318,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpComComprador);
 			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
 
-			if((dto.getApellidos() != null && !dto.getApellidos().equals(comprador.getApellidos())) || !dto.getNumDocumento().equals(comprador.getDocumento()) || !dto.getNombreRazonSocial().equals(comprador.getNombre())) {
-				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
-				compradorExpediente.setFechaContrasteListas(new Date());
-			}
-
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);
 			}
@@ -5356,6 +5351,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				esNuevo = true;
 				
 
+			}
+
+			if((dto.getApellidos() != null && !dto.getApellidos().equals(comprador.getApellidos())) || !dto.getNumDocumento().equals(comprador.getDocumento()) || !dto.getNombreRazonSocial().equals(comprador.getNombre())) {
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
 			}
 
 			oldDataComprador.cexToDto(compradorExpediente);
@@ -15362,7 +15362,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if(expedienteComercial.getCondicionante() != null) {
 			Double importe = expedienteComercial.getCondicionante().getImporteReserva();
-	
+
 			if (ofr != null && importe != null && 20000.00 > importe) {
 				Activo act = ofr.getActivoPrincipal();
 				if(act != null && act.getCartera() != null && (DDCartera.isCarteraCerberus(act.getCartera()))){

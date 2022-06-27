@@ -56,6 +56,7 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -404,7 +405,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
 
-
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
@@ -533,6 +533,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
+
+	private static final String usuarioSuper = "HAYASUPER";
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -761,7 +763,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("enConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 			}
 
-			if(ofertaDto.getIbanDevolucion() == null){
+			if(ofertaDto.getIbanDevolucion() == null && DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())){
 				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
 				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
 			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
@@ -4450,7 +4452,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (oferta.getFechaEntradaCRMSF() != null) {
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
-				
+		 		Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(oferta.getActivoPrincipal().getId());
+				Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+				if (!isHayaSuper && isConcurrencia) {
+					dtoResponse.setImporteOferta(null);
+				} else if (oferta.getImporteOferta() != null) {
+					dtoResponse.setImporteOferta(oferta.getImporteOferta().toString());
+				}
+
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
 				
 				Filter filterOfrId = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
@@ -9644,7 +9654,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 
-
 	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		
@@ -9661,7 +9670,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 
-	
+
 	@Override
 	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta, String codEstadoExp) {
 		List<Long> idOfertaList = new ArrayList<Long>();
@@ -9791,7 +9800,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
 		}else if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 			codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
-		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito())){
+		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito()) && oferta.getDeposito() != null){
 			codigoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 		}else {
 			codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;

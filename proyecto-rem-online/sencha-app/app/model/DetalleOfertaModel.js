@@ -78,6 +78,9 @@ Ext.define('HreRem.model.DetalleOfertaModel', {
 		},
 		{
 			name:'titularesConfirmados'
+		},
+		{
+			name:'importeOferta'
 		}
     ],
 

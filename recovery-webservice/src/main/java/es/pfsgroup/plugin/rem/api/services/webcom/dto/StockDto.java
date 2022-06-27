@@ -88,12 +88,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	private DateDataType publicadoDesde;
 	
-	private BooleanDataType reformas;
-	
 	private StringDataType codRegimenProteccion;
-	
-	@WebcomRequired
-	private StringDataType distribucion;
 	
 	@WebcomRequired
 	private StringDataType codDetallePublicacion;
@@ -155,8 +150,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	private StringDataType anejoTrastero;
 	
-	private BooleanDataType existePiscina;
-	
+
 	//HREOS-1479
 	@WebcomRequired
 	private LongDataType codigoAgrupacionRestringidaVenta;
@@ -579,12 +573,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setPublicadoDesde(DateDataType publicadoDesde) {
 		this.publicadoDesde = publicadoDesde;
 	}
-	public BooleanDataType getReformas() {
-		return reformas;
-	}
-	public void setReformas(BooleanDataType reformas) {
-		this.reformas = reformas;
-	}
 	public StringDataType getCodRegimenProteccion() {
 		return codRegimenProteccion;
 	}
@@ -596,12 +584,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setDescripcion(StringDataType descripcion) {
 		this.descripcion = descripcion;
-	}
-	public StringDataType getDistribucion() {
-		return distribucion;
-	}
-	public void setDistribucion(StringDataType distribucion) {
-		this.distribucion = distribucion;
 	}
 	public StringDataType getCondicionesEspecificas() {
 		return condicionesEspecificas;
@@ -791,12 +773,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setAnejoTrastero(StringDataType anejoTrastero) {
 		this.anejoTrastero = anejoTrastero;
-	}
-	public BooleanDataType getExistePiscina() {
-		return existePiscina;
-	}
-	public void setExistePiscina(BooleanDataType existePiscina) {
-		this.existePiscina = existePiscina;
 	}
 	public DoubleDataType getActualImporteDescuentoWeb() {
 		return actualImporteDescuentoWeb;

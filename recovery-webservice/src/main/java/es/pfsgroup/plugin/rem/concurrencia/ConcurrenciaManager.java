@@ -9,13 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ConcurrenciaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
@@ -32,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 
 @Service("concurrenciaManager")
@@ -42,12 +47,21 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
+
+	@Autowired
+	private OfertaManager ofertaManager;
 	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
 	@Autowired
 	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 		
 	public boolean bloquearEditarOfertasPorConcurrenciaActivo(Activo activo) {
 		boolean bloquear = false;
@@ -314,12 +328,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				if (!Checks.isFechaNula(puja.getAuditoria().getFechaCrear())) {
 					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
 				}
-				if (this.isActivoEnConcurrencia(activo)) {
-					dto.setImportePuja(null);
-				} else {
+				Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+				if (!isHayaSuper && this.isActivoEnConcurrencia(activo)) {
 					if (puja.getImporte() != null) {
-						dto.setImportePuja(puja.getImporte());
-					}
+						dto.setImportePuja(null);
+					} 
+				} else {
+					dto.setImportePuja(puja.getImporte());
 				}
 				
 				dtoLista.add(dto);

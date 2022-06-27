@@ -322,6 +322,15 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 		                    },*/
 		                    colspan: 3,
 		                    items: [
+			                    	{
+										xtype: "textfield",
+										fieldLabel: HreRem.i18n('header.oferta.importeOferta'),
+										bind: {
+											value: '{detalleOfertaModel.importeOferta}'
+										},
+									    readOnly: true,
+					    				width: 410
+					    			},
 									{
 									    xtype: 'textfield',
 									    fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.minimoAutorizado'),

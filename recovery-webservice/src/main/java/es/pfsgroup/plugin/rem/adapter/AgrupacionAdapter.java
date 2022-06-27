@@ -1389,20 +1389,6 @@ public class AgrupacionAdapter {
 			if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
 				throw new JsonViewerException(BusinessValidators.ERROR_ACTIVO_CARTERA_BANKIA_TO_AGR_RESTRINGIDAS);
 			}
-
-			boolean errorFlag = false;
-			Activo activoP = agrupacion.getActivoPrincipal();
-			if(activoP != null) {
-				Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
-				PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
-				PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
-				errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
-						
-				if(errorFlag) {
-					throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
-				}
-			}
 			
 			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
@@ -1558,36 +1544,6 @@ public class AgrupacionAdapter {
 			logger.error(e);
 			e.printStackTrace();
 		}
-	}
-	
-	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
-		boolean errorFlag = false;	
-		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
-		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
-		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
-		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
-		boolean perimetroActivoPrincipalBool = false;
-		boolean perimetroActualPrincipalBool = false;
-		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
-			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
-		}
-		if(perimetroActivoActual.getCheckGestorComercial() != null) {
-			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
-		}
-		
-		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
-		
-		if(!errorFlag) {
-			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
-			if(!errorFlag) {
-				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
-					errorFlag = true;
-				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
-					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
-				}
-			}
-		}
-		return errorFlag;
 	}
 
 	/**

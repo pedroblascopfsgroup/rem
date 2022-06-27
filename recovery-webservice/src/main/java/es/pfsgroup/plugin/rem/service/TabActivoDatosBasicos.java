@@ -1337,7 +1337,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTieneGestionDndDescripcion(activo.getTieneGestionDnd().getDescripcion());
 		}		
 
-		DDBajaContableBBVA bajaContableBBVA = (DDBajaContableBBVA) diccionarioApi.dameValorDiccionarioByCod(DDBajaContableBBVA.class,  perimetroActivo.getBajaContable().getCodigo());
+		DDBajaContableBBVA bajaContableBBVA = (perimetroActivo.getBajaContable() != null) ? (DDBajaContableBBVA) diccionarioApi.dameValorDiccionarioByCod(DDBajaContableBBVA.class,  perimetroActivo.getBajaContable().getCodigo()) : null;
 		if (bajaContableBBVA != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
 			activoDto.setBajaContableBBVACodigo(bajaContableBBVA.getCodigo());
 			activoDto.setBajaContableBBVADescripcion(bajaContableBBVA.getDescripcion());

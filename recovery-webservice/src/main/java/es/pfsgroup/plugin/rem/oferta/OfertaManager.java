@@ -756,7 +756,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("enConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 			}
 
-			if(ofertaDto.getIbanDevolucion() == null){
+			if(ofertaDto.getIbanDevolucion() == null && DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())){
 				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
 				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
 			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
@@ -9633,7 +9633,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 
-
 	@Override
 	public boolean debeCongelarOfertaCaixa(Oferta oferta) {
 		
@@ -9650,7 +9649,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 
-	
+
 	@Override
 	public void inicioRechazoDeOfertaSinLlamadaBC(Oferta oferta, String codEstadoExp) {
 		List<Long> idOfertaList = new ArrayList<Long>();
@@ -9780,7 +9779,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
 		}else if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 			codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
-		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito())){
+		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito()) && oferta.getDeposito() != null){
 			codigoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 		}else {
 			codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;

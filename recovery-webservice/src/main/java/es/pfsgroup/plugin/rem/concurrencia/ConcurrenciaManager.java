@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 
 @Service("concurrenciaManager")
@@ -42,7 +43,10 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
-	
+
+	@Autowired
+	private OfertaManager ofertaManager;
+
 	@Autowired
 	private OfertaApi ofertaApi;
 	
@@ -337,12 +341,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				if (!Checks.isFechaNula(puja.getAuditoria().getFechaCrear())) {
 					dto.setFechaCrear(puja.getAuditoria().getFechaCrear());
 				}
-				if (this.isActivoEnConcurrencia(activo)) {
-					dto.setImportePuja(null);
-				} else {
+				if (this.isActivoEnConcurrencia(activo) == true && ofertaManager.isHayaSuper() == true) {
 					if (puja.getImporte() != null) {
 						dto.setImportePuja(puja.getImporte());
+					} else {
+						dto.setImportePuja(null);
 					}
+				} else {
+					dto.setImportePuja(null);
 				}
 				
 				dtoLista.add(dto);

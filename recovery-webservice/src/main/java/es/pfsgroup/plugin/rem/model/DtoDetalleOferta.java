@@ -25,6 +25,7 @@ public class DtoDetalleOferta {
 	private String numOfertaCaixa;
 	private Boolean checkSubasta;
 	private String titularesConfirmados;
+	private String importeOferta;
 
 
 	public String getId() {
@@ -147,6 +148,12 @@ public class DtoDetalleOferta {
 	}
 	public void setTitularesConfirmados(String titularesConfirmados) {
 		this.titularesConfirmados = titularesConfirmados;
+	}
+	public String getImporteOferta() {
+		return importeOferta;
+	}
+	public void setImporteOferta(String importeOferta) {
+		this.importeOferta = importeOferta;
 	}
 	
 }

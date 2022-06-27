@@ -56,6 +56,7 @@ import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -403,7 +404,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
 
-
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
@@ -532,6 +532,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasApi;
+
+	private static final String usuarioSuper = "HAYASUPER";
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -4436,7 +4438,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (oferta.getFechaEntradaCRMSF() != null) {
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
-				
+		 		Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(oferta.getActivoPrincipal().getId());
+				if (oferta.getImporteOferta() != null && isHayaSuper() == true && isConcurrencia) {
+					dtoResponse.setImporteOferta(oferta.getImporteOferta().toString());
+				}
+
 				dtoResponse.setEmpleadoCaixa(isEmpleadoCaixaCliTit(oferta));
 				
 				Filter filterOfrId = genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId());
@@ -4462,6 +4468,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return dtoResponse;
+	}
+
+	public Boolean isHayaSuper() {
+		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		List <Perfil> perfiles = usuPef.getPerfiles();
+		if(!Checks.estaVacio(perfiles)) {
+			for (Perfil perfil : perfiles) {
+				if(usuarioSuper.equals(perfil.getCodigo())) {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
 	}
 
 	@Override

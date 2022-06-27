@@ -70,6 +70,7 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 			hb.appendWhere(" voac.idConcurrencia = "+ idConcurrencia);
 		}
 
+		
 		return (List<VGridOfertasActivosConcurrencia>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 	}

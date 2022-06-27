@@ -7812,101 +7812,86 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo) {
 		Activo activo = activoDao.getActivoById(idActivo);
 		List<DtoHistoricoDiarioGestion> listaDtoHistoricoDiarioGestion = new ArrayList<DtoHistoricoDiarioGestion>();
-		if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-			Long idComunidadPropietarios = activo.getComunidadPropietarios().getId();
-			List<GestionCCPP> listaHistoricoDiarioGestion = genericDao.getList(GestionCCPP.class,
-					genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", idComunidadPropietarios));
 
-			for (GestionCCPP historicoDiarioGestion : listaHistoricoDiarioGestion) {
-				DtoHistoricoDiarioGestion dtoHistoricoDiarioGestion = new DtoHistoricoDiarioGestion();
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoGestion> listaHistoricoDiarioGestion = genericDao.getListOrdered(ActivoGestion.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		for (ActivoGestion historicoDiarioGestion : listaHistoricoDiarioGestion) {
+			DtoHistoricoDiarioGestion dtoHistoricoDiarioGestion = new DtoHistoricoDiarioGestion();
 
-				if (!Checks.esNulo(historicoDiarioGestion.getEstadoLocalizacion())) {
-					dtoHistoricoDiarioGestion
-							.setEstadoLocDesc(historicoDiarioGestion.getEstadoLocalizacion().getDescripcion());
-				}
-				if (!Checks.esNulo(historicoDiarioGestion.getSubestadoGestion())) {
-					dtoHistoricoDiarioGestion
-							.setSubEstadoDesc(historicoDiarioGestion.getSubestadoGestion().getDescripcion());
-				}
-				if (!Checks.esNulo(historicoDiarioGestion.getUsuario())) {
-					dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getUsuario().getUsername());
-				}
-				dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaInicio());
+			dtoHistoricoDiarioGestion.setId(String.valueOf(historicoDiarioGestion.getId()));
+			
+			if (historicoDiarioGestion.getEstadoLocalizacion() != null)
+				dtoHistoricoDiarioGestion.setEstadoLocDesc(historicoDiarioGestion.getEstadoLocalizacion().getDescripcion());
+			
+			if (historicoDiarioGestion.getSubestadoGestion() != null)
+				dtoHistoricoDiarioGestion.setSubEstadoDesc(historicoDiarioGestion.getSubestadoGestion().getDescripcion());
+			
+			if (historicoDiarioGestion.getUsuario() != null)
+				dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getUsuario().getUsername());
+			
+			dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaInicio());
 
-				listaDtoHistoricoDiarioGestion.add(dtoHistoricoDiarioGestion);
-			}
-
+			listaDtoHistoricoDiarioGestion.add(dtoHistoricoDiarioGestion);
 		}
+		
 		return listaDtoHistoricoDiarioGestion;
 
 	}
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo) {
+	public void crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo) {
+		
 		Activo activo = activoDao.getActivoById(idActivo);
 
-		if (!Checks.esNulo(activo.getComunidadPropietarios())) {
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
 
-			Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id",
-					activo.getComunidadPropietarios().getId());
-			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+		ActivoGestion gestionAnterior = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
+		DDEstadoLocalizacion estadoLocalizacion = null;
+		DDSubestadoGestion subestadoGestion = null;
+		
+		if(gestionAnterior != null) {
+			if(gestionAnterior.getEstadoLocalizacion() != null)
+				estadoLocalizacion = gestionAnterior.getEstadoLocalizacion();
+			
+			if(gestionAnterior.getSubestadoGestion() != null)
+				subestadoGestion = gestionAnterior.getSubestadoGestion();
+			
+			gestionAnterior.setFechaFin(new Date());
+			gestionAnterior.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			gestionAnterior.getAuditoria().setFechaModificar(new Date());
+			genericDao.save(ActivoGestion.class, gestionAnterior);
+		}			
 
-			GestionCCPP gestionAnterior = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios,
-					filtroFechaFin);
-			DDEstadoLocalizacion estadoAnterior = null;
-			DDSubestadoGestion subEstadoAnterior = null;
+		ActivoGestion nuevaGestion = new ActivoGestion();
+		
+		nuevaGestion.setActivo(activo);
 
-			if (!Checks.esNulo(gestionAnterior)) {
+		if(activoDto.getEstadoLocalizacion() != null)
+			estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getEstadoLocalizacion()));
+		
+		if(estadoLocalizacion != null)
+			nuevaGestion.setEstadoLocalizacion(estadoLocalizacion);
 
-				if (!Checks.esNulo(gestionAnterior.getEstadoLocalizacion())) {
-					estadoAnterior = gestionAnterior.getEstadoLocalizacion();
-				}
-				if (!Checks.esNulo(gestionAnterior.getSubestadoGestion())) {
-					subEstadoAnterior = gestionAnterior.getSubestadoGestion();
-				}
-				gestionAnterior.setFechaFin(new Date());
-				gestionAnterior.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
-				gestionAnterior.getAuditoria().setFechaModificar(new Date());
+		if(activoDto.getSubestadoGestion() != null)
+			subestadoGestion = genericDao.get(DDSubestadoGestion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getSubestadoGestion()));
 
-				genericDao.save(GestionCCPP.class, gestionAnterior);
-			}
+		if(subestadoGestion != null)
+			nuevaGestion.setSubestadoGestion(subestadoGestion);
+ 
+		nuevaGestion.setFechaInicio(new Date());
+		nuevaGestion.setUsuario(usuarioApi.getUsuarioLogado());
 
-			GestionCCPP gestion = new GestionCCPP();
+		Auditoria auditoria = new Auditoria();
+		auditoria.setFechaCrear(new Date());
+		auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+		auditoria.setBorrado(false);
 
-			gestion.setComunidadPropietarios(activo.getComunidadPropietarios());
-			if (!Checks.esNulo(activoDto.getEstadoLocalizacion())) {
-				DDEstadoLocalizacion estado = genericDao.get(DDEstadoLocalizacion.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getEstadoLocalizacion()));
-				gestion.setEstadoLocalizacion(estado);
-			} else {
-				gestion.setEstadoLocalizacion(estadoAnterior);
-			}
-
-			if (!Checks.esNulo(activoDto.getSubestadoGestion())) {
-				DDSubestadoGestion subEstado = genericDao.get(DDSubestadoGestion.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getSubestadoGestion()));
-				gestion.setSubestadoGestion(subEstado);
-			} else {
-				gestion.setSubestadoGestion(subEstadoAnterior);
-			}
-
-			gestion.setFechaInicio(new Date());
-			gestion.setUsuario(usuarioApi.getUsuarioLogado());
-
-			Auditoria auditoria = new Auditoria();
-			auditoria.setFechaCrear(new Date());
-			auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-			auditoria.setBorrado(false);
-
-			gestion.setAuditoria(auditoria);
-
-			genericDao.save(GestionCCPP.class, gestion);
-
-			return true;
-
-		}
-		return false;
+		nuevaGestion.setAuditoria(auditoria);
+		 
+		genericDao.save(ActivoGestion.class, nuevaGestion);
 	}
 
 	@Override

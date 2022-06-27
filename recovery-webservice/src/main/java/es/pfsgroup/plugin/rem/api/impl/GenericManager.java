@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoCaixa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoGestion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -100,7 +101,6 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
@@ -1497,8 +1497,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtroLocCod = genericDao.createFilter(FilterType.EQUALS, "codigo", codLocalizacion);
 			DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLocCod);
 			
-			Filter filtroRelacion = genericDao.createFilter(FilterType.EQUALS, "estadoLocalizacion", estadoLocalizacion.getId());
-			List<LocalizacionSubestadoGestion> listRelaciones = genericDao.getList(LocalizacionSubestadoGestion.class, filtroRelacion);
+			List<LocalizacionSubestadoGestion> listRelaciones = activoDao.getLocalizacionSubestadoGestionByIdEstadoLocalizacion(estadoLocalizacion.getId());
 			
 			for (LocalizacionSubestadoGestion lsg : listRelaciones) {
 				Filter filtroSegId = genericDao.createFilter(FilterType.EQUALS, "id", lsg.getSubestadoGestion());
@@ -1511,15 +1510,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo) {
-		GestionCCPP gestion = null;
+		ActivoGestion gestion = null;
 		Activo activo = activoApi.get(idActivo);
 		if(!Checks.esNulo(activo)) {
-			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
-				Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
-				Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
-				
-				gestion = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin);
-			}
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+
+			gestion = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
 		}
 		
 		return gestion != null ? gestion.getSubestadoGestion() : null;

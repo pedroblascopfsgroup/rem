@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20220511
+--## FECHA_CREACION=20220615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17696
+--## INCIDENCIA_LINK=REMVIP-11860
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_EQV_CAIXA_REM los datos añadidos en T_ARRAY_DATA para todos los diccionarios
@@ -21,7 +21,8 @@
 --##        0.9 Nuevos estados técnicos - [HREOS-17515] - Daniel Algaba
 --##        0.10 Valores Motivo de exoneración CEE y Incidencia CEE - [HREOS-17515] - Daniel Algaba
 --##        0.11 Valores Balcón, Tipo vivienda y tipología edificio - [HREOS-17614] - Daniel Algaba
---##	      0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
+--##	     0.12 Nuevos motivos no comercializacion - [REMVIP-11574] - Juan Bautista Alfonso
+--##	     0.13 Añadir valores CLASE_USO - [REMVIP-11860] - Juan Bautista Alfonso
 --##########################################
 --*/
 
@@ -809,7 +810,7 @@ DECLARE
         T_TIPO_DATA('SUBTIPO_SUELO','U14','Suelo urbano no consolidado','DD_SAC_SUBTIPO_ACTIVO','42','0'),
         T_TIPO_DATA('SUBTIPO_SUELO','U13','Suelo urbano consolidado','DD_SAC_SUBTIPO_ACTIVO','04','0'),
         T_TIPO_DATA('SUBTIPO_SUELO','U16','Suelo urbanizable sectorizado','DD_SAC_SUBTIPO_ACTIVO','03','0'),
-      --Función clase de uso Clase de uso
+      --Función clase de uso Clase de uso Registral
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0006','Oficina','DD_SAC_SUBTIPO_ACTIVO','14','0'),
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','20','0'),
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0015','Edificio aparcamientos','DD_SAC_SUBTIPO_ACTIVO','19','0'),
@@ -831,6 +832,28 @@ DECLARE
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0018','Finca rústica','DD_SAC_SUBTIPO_ACTIVO','01','0'),
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0020','Portería','DD_SAC_SUBTIPO_ACTIVO','26','0'),
         T_TIPO_DATA('CLASE_USO_REGISTRAL','0021','Amarres','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        --Funcion clase de uso
+        T_TIPO_DATA('CLASE_USO','0006','Oficina','DD_SAC_SUBTIPO_ACTIVO','14','0'),
+        T_TIPO_DATA('CLASE_USO','0019','Hotel','DD_SAC_SUBTIPO_ACTIVO','20','0'),
+        T_TIPO_DATA('CLASE_USO','0015','Edificio aparcamientos','DD_SAC_SUBTIPO_ACTIVO','19','0'),
+        T_TIPO_DATA('CLASE_USO','0011','Edificio comercial','DD_SAC_SUBTIPO_ACTIVO','22','0'),
+        T_TIPO_DATA('CLASE_USO','0014','Edificio residencial','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO','0005','Parking','DD_SAC_SUBTIPO_ACTIVO','24','0'),
+        T_TIPO_DATA('CLASE_USO','0099','Varios','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO','0004','Trastero','DD_SAC_SUBTIPO_ACTIVO','25','0'),
+        T_TIPO_DATA('CLASE_USO','0024','Instalaciones deportivas','DD_SAC_SUBTIPO_ACTIVO','30','0'),
+        T_TIPO_DATA('CLASE_USO','0023','Derechos','DD_SAC_SUBTIPO_ACTIVO','33','0'),
+        T_TIPO_DATA('CLASE_USO','0002','Local','DD_SAC_SUBTIPO_ACTIVO','13','0'),
+        T_TIPO_DATA('CLASE_USO','0003','Local comercial y vivienda','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO','0009','Suelo no urbanizable','DD_SAC_SUBTIPO_ACTIVO','27','0'),
+        T_TIPO_DATA('CLASE_USO','0010','Edificio','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO','0012','Edificio mixto','DD_SAC_SUBTIPO_ACTIVO','43','0'),
+        T_TIPO_DATA('CLASE_USO','0013','Edificio terciario','DD_SAC_SUBTIPO_ACTIVO','22','0'),
+        T_TIPO_DATA('CLASE_USO','0016','Edificio educativo','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO','0017','Edificio industrial','DD_SAC_SUBTIPO_ACTIVO','37','0'),
+        T_TIPO_DATA('CLASE_USO','0018','Finca rústica','DD_SAC_SUBTIPO_ACTIVO','01','0'),
+        T_TIPO_DATA('CLASE_USO','0020','Portería','DD_SAC_SUBTIPO_ACTIVO','26','0'),
+        T_TIPO_DATA('CLASE_USO','0021','Amarres','DD_SAC_SUBTIPO_ACTIVO','26','0'),
         --Tipo impuesto compra 
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','14','IVA Soportado Prorrata General 18%','DD_TIC_TIPO_IMPUESTO_COMPRA','IVA','0'),
         T_TIPO_DATA('TIPO_IMPUESTO_COMPRA','14','IVA Soportado Prorrata General 18% ','DD_POI_PORCENTAJE_IMPUESTO','18','0'),

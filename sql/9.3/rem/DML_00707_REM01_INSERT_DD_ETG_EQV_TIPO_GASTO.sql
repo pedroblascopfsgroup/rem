@@ -36,7 +36,10 @@
 --##        0.23 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
 --##		0.24 Corrección Pep alquiler PAO y colocación puerta antiocupa - [HREOS-17997] - Javier Esbri
 --##		0.25 Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas - [REMVIP-11829] - Alejandra García
---##		0.26 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
+--##		0.26 Cambiar código Actuación post-venta de 314 a 84 - [REMVIP-11869] - Alejandra García
+--##		0.27 DD_ETG_CODIGO = 1022 porque es lo mismo que el 198  - [REMVIP-11869] - Alejandra García
+--##		0.28 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
+
 --#########################################
 --*/
 
@@ -406,7 +409,6 @@ DECLARE
 		T_TABLA('1019','XXX-22-2-A_HGES0%','22','02','55','12','310','03','','','null','','','','2022'),
 		T_TABLA('1020','XXXX-22-2-HGES100%','22','02','54','12','313','01','','','null','','','','2022'),
 		T_TABLA('1021','XXX-22-2-A_HGES100%','22','02','56','12','311','03','','','null','','','','2022'),
-		T_TABLA('1022','XXXX-22-2-REP POST 2','22','00','17','15','314','','','TR2','null','','','','2022'),
 		T_TABLA('1023','XXXX-22-3-I-CERT V','22','02','31','14','62','01','','','null','','','','2022'),
 		T_TABLA('1024','XXXX-22-3-A-I-CRT V','22','02','33','14','62','03','','','null','','','','2022'),
 		T_TABLA('1025','XXXX-22-3-I-CERT V','22','02','31','14','58','01','','','null','','','','2022'),
@@ -496,7 +498,6 @@ DECLARE
 		T_TABLA('1103','XXXX-22-2-COM VT GS','22','01','59','12','54','01','','','null','','','','2022'),
 		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022'),
 
-		--DD_ETG_CODIGO  Elemento PEP	CLASE/GRUPO	  TIPO	SUBTIPO	DD_TGA_CODIGO	DD_STG_CODIGO	DD_CBC_CODIGO	DD_EAL_CODIGO	DD_TTR_CODIGO	PRIMERA POSESION    DD_SED_CODIGO    DD_PRO_ID	DD_SCM_CODIGO  EJE_ANYO
 		--Añadir PEPs Impuesto - IBI rústica
 		T_TABLA('1105','XXXX-22-2-IBI','22','00','7','01','02','01','','','null','','','','2022'),
 		T_TABLA('1106','XXXX-22-2-A-IBI','22','00','9','01','02','03','','','null','','','','2022')

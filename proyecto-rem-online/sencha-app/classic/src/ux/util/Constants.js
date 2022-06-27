@@ -1086,5 +1086,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		T015_BLOQUEOSCREENING: 'T015_BloqueoScreening',
 		T017_BLOQUEOSCREENING: 'T017_BloqueoScreening',
 		T018_BLOQUEOSCREENING: 'T018_BloqueoScreening'
+	},
+	MOTIVOS_RECHAZO_GASTO:{
+		OTROS: '07'
 	}
 });

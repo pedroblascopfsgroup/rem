@@ -504,10 +504,13 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 				publicarSinPrecio = exc.dameCelda(i, COL_PUBLICAR_SIN_PRECIO);				
 				String[] listaNo = { "NO", "N" };
 				
-				Long numAgrupacion = particularValidator.obtenerNumAgrupacionRestringidaPorNumActivo(celdaActivo);
-				if(Arrays.asList(listaNo).contains(publicarSinPrecio.toUpperCase()) &&!Checks.esNulo(numAgrupacion) && !particularValidator.esAgrupacionAlquilerConPrecio(String.valueOf(numAgrupacion))) {
-					listaFilas.add(i);
+				List<Long> listAgrupacion = particularValidator.obtenerNumAgrupacionRestringidaPorNumActivo(celdaActivo);
+				for (Long numAgrupacion : listAgrupacion) {
+					if(Arrays.asList(listaNo).contains(publicarSinPrecio.toUpperCase()) &&!Checks.esNulo(numAgrupacion) && !particularValidator.esAgrupacionAlquilerConPrecio(String.valueOf(numAgrupacion))) {
+						listaFilas.add(i);
+					}
 				}
+
 				
 			} catch (ParseException e) {
 				listaFilas.add(i);

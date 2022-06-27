@@ -875,10 +875,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, String motivoRechazoDescripcion, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo, motivoRechazoDescripcion);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {
@@ -913,10 +913,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGasto(Long idGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGasto(Long idGasto, String motivoRechazo, String motivoRechazoDescripcion, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGasto(idGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGasto(idGasto, motivoRechazo, motivoRechazoDescripcion);
 			model.put("success", success);
 		
 		} catch (JsonViewerException ex) {

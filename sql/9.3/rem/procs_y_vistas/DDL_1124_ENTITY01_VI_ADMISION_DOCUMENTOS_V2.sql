@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20220228
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20220424
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-17278
+--## INCIDENCIA_LINK=REMVIP-11688
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista V_ADMISION_DOCUMENTOS
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Versión - Jesus Jativa - HREOS-13379 modificacion vista V_ADMISION_DOCUMENTO para mostrar nuevos documentos ln 75 y 87
 --##		0.6 Versión - Sergio Gomez - HREOS-13379 modificacion vista para mostrar lista de emisiones
 --##		0.7 Versión - Javier Esbrí - HREOS-17278 modificacion vista para mostrar motivo exoneración cee y incidencia cee
+--##		0.8 Versión - Cristian Montoya - REMVIP-11688 modificacion vista para mostrar descripcion combos sin permisos de edicion
 --##########################################
 --*/
 
@@ -56,6 +57,7 @@ BEGIN
 	                		ELSE CFD.CFD_OBLIGATORIO END)     
                     		END AS FLAG_APLICA,
 			    	EDC.DD_EDC_CODIGO,
+			    	EDC.DD_EDC_DESCRIPCION,
 			    	ADO.ADO_FECHA_SOLICITUD,
 			    	ADO.ADO_FECHA_OBTENCION,
 			    	ADO.ADO_FECHA_VERIFICADO,
@@ -65,6 +67,7 @@ BEGIN
 				ADO.ADO_FECHA_CADUCIDAD,
 				ADO.ADO_FECHA_ETIQUETA,
 				TCE.DD_TCE_CODIGO,
+				TCE.DD_TCE_DESCRIPCION,
 				ADO.DATA_ID_DOCUMENTO,
 				ADO.LETRA_CONSUMO,
 				ADO.CONSUMO,

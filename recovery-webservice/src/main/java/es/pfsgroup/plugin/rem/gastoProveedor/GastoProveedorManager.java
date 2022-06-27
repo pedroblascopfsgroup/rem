@@ -2284,6 +2284,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(gastoGestion.getEstadoAutorizacionHaya())) {
 					dtoGestion.setComboEstadoAutorizacionHaya(gastoGestion.getEstadoAutorizacionHaya().getCodigo());
 				}
+				if (!Checks.esNulo(gastoGestion.getMotivoRechazoAutorizacionHaya())) {
+					dtoGestion.setMotivoRechazoHayaExtendido(gastoGestion.getMotivoRechazoDescripcionHaya());				
+				}
 
 				dtoGestion.setFechaAutorizacionHaya(gastoGestion.getFechaEstadoAutorizacionHaya());
 
@@ -3288,10 +3291,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo) {
+	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo, String motivoRechazoDescripcion) {
 
 		for (Long id : idsGastos) {
-			rechazarGasto(id, motivoRechazo);
+			rechazarGasto(id, motivoRechazo, motivoRechazoDescripcion);
 		}
 
 		return true;
@@ -3299,7 +3302,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean rechazarGasto(Long idGasto, String motivoRechazo) {
+	public boolean rechazarGasto(Long idGasto, String motivoRechazo, String motivoRechazoDescripcion) {
 
 		
 		
@@ -3336,7 +3339,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoGestion.setUsuarioEstadoAutorizacionHaya(genericAdapter.getUsuarioLogado());
 		gastoGestion.setFechaEstadoAutorizacionHaya(new Date());
 		gastoGestion.setMotivoRechazoAutorizacionHaya(motivo);
-
+		if(!Checks.esNulo(motivo) && DDMotivoRechazoAutorizacionHaya.OTROS.equals(motivo.getCodigo()))
+			gastoGestion.setMotivoRechazoDescripcionHaya(motivoRechazoDescripcion);
+		
+		gastoGestion.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoGestion.getAuditoria().setFechaModificar(new Date());
+		
 		gasto.setGastoGestion(gastoGestion);
 		
 		if(Checks.esNulo(gastoGestion.getEstadoAutorizacionPropietario())){
@@ -3348,7 +3356,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		gasto.setProvision(null);
 
-		genericDao.update(GastoProveedor.class, gasto);
+		genericDao.save(GastoProveedor.class, gasto);
 
 		return true;
 	}

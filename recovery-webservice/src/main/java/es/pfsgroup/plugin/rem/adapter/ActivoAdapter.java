@@ -5810,7 +5810,10 @@ public class ActivoAdapter {
 	}
 	
 	private Boolean validacionesLegalReo (Activo activo) {
-		if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+		
+		ConfiguracionBloqueoAsuntosMinerva configuracionBloqueoAsuntosMinerva = genericDao.get(ConfiguracionBloqueoAsuntosMinerva.class, genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo()));
+				
+		if (configuracionBloqueoAsuntosMinerva == null && activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
 				&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
 				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
 						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))

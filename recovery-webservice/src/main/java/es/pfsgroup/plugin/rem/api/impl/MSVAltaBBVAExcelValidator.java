@@ -1,56 +1,35 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.AltaActivoTPFactoryApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
-import es.pfsgroup.plugin.rem.model.ActivoBbvaUic;
-import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
-import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implements MSVLiberator{
@@ -324,6 +303,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			//Perimetro Activo
 			PerimetroActivo pac = activoApi.getPerimetroByIdActivo(activo.getId());		
 			pac.setAplicaAdmision(true);
+			pac.setBajaContable(genericDao.get(DDBajaContableBBVA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDBajaContableBBVA.CODIGO_NO)));
 			genericDao.save(PerimetroActivo.class,pac);
 			
 			//ACT_BBVA_ACTIVOS

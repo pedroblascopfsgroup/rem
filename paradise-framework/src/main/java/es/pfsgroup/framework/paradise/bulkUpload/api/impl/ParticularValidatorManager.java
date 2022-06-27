@@ -1,26 +1,16 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Checksum;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 @Transactional()
@@ -5877,7 +5867,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
+	public List<Long> obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);
 		rawDao.addParams(params);
@@ -5885,7 +5875,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return null;
 		}
-		String sql = rawDao.getExecuteSQL("SELECT agr.AGR_NUM_AGRUP_REM "
+		List<Object> resultados = rawDao.getExecuteSQLList("SELECT DISTINCT agr.AGR_NUM_AGRUP_REM "
 				+ "FROM ACT_AGA_AGRUPACION_ACTIVO aga, " 
 				+ "ACT_AGR_AGRUPACION agr, " 
 				+ "DD_TAG_TIPO_AGRUPACION tag, "
@@ -5900,7 +5890,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND agr.BORRADO  = 0 " 
 				+ "AND act.BORRADO  = 0 ");
 		
-		return Checks.esNulo(sql)? null: Long.valueOf(sql);
+		List<Long> listaAgrupaciones = new ArrayList<Long>();
+		
+		for(Object o: resultados){
+			BigDecimal numAgrup = (BigDecimal) o;
+			listaAgrupaciones.add(numAgrup.longValue());
+		}
+		
+		return listaAgrupaciones.isEmpty() ? null: listaAgrupaciones;
 	}
 	
 	@Override

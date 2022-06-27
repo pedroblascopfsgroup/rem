@@ -103,7 +103,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								            editor: {
 								        		xtype: 'combobox',
 								        		cls: 'grid-no-seleccionable-field-editor',
-								        		store: Ext.create('Ext.data.Store',{								        		
+								        		store: Ext.create('Ext.data.Store',{
 								        			model: 'HreRem.model.ComboBase',
 													proxy: {
 														type: 'uxproxy',
@@ -111,11 +111,11 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 														extraParams: {diccionario: 'estadoDocumento'}
 													},
 													autoLoad: true
-												}),								            	
+												}),
 								            	displayField: 'descripcion',
     											valueField: 'codigo'    											
 								        	},
-								        	renderer: function(value) {								        		
+								        	renderer: function(value, grid, rowData) {
 								        		var me = this,
 								        		comboEditor = me.columns && me.columns[2].getEditor ? me.columns[2].getEditor() : me.getEditor ? me.getEditor():null;
 								        		if(!Ext.isEmpty(comboEditor)) {
@@ -126,6 +126,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 									        		} else {
 									        			comboEditor.setValue(value);								        			
 									        		}
+								        		}else{
+                                                    return rowData.data.estadoDocumentoDescripcion;
 								        		}
 								        	}
 								        },
@@ -226,9 +228,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								            	displayField: 'descripcion',
     											valueField: 'codigo'    											
 								        	},
-								        	renderer: function(value) {								        		
+								        	renderer: function(value, grid, rowData) {
 								        		var me = this,
 								        		comboEditor = me.columns && me.columns[8].getEditor ? me.columns[8].getEditor() : me.getEditor ? me.getEditor():null;
+
 								        		if(!Ext.isEmpty(comboEditor)) {
 									        		store = comboEditor.getStore(),							        		
 									        		record = store.findRecord("codigo", value);
@@ -237,6 +240,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 									        		} else {
 									        			comboEditor.setValue(value);								        			
 									        		}
+								        		}else{
+                                                    return rowData.data.tipoCalificacionDescripcion;
 								        		}
 								        	}
 								        },{   

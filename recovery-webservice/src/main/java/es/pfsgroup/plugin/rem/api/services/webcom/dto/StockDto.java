@@ -1,16 +1,12 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.*;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
+
+import java.util.List;
 
 public class StockDto implements WebcomRESTDto{
 	@WebcomRequired //No se puede quitar
@@ -88,12 +84,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	private DateDataType publicadoDesde;
 	
-	private BooleanDataType reformas;
-	
 	private StringDataType codRegimenProteccion;
-	
-	@WebcomRequired
-	private StringDataType distribucion;
 	
 	@WebcomRequired
 	private StringDataType codDetallePublicacion;
@@ -155,8 +146,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	private StringDataType anejoTrastero;
 	
-	private BooleanDataType existePiscina;
-	
+
 	//HREOS-1479
 	@WebcomRequired
 	private LongDataType codigoAgrupacionRestringidaVenta;
@@ -579,12 +569,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setPublicadoDesde(DateDataType publicadoDesde) {
 		this.publicadoDesde = publicadoDesde;
 	}
-	public BooleanDataType getReformas() {
-		return reformas;
-	}
-	public void setReformas(BooleanDataType reformas) {
-		this.reformas = reformas;
-	}
 	public StringDataType getCodRegimenProteccion() {
 		return codRegimenProteccion;
 	}
@@ -596,12 +580,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setDescripcion(StringDataType descripcion) {
 		this.descripcion = descripcion;
-	}
-	public StringDataType getDistribucion() {
-		return distribucion;
-	}
-	public void setDistribucion(StringDataType distribucion) {
-		this.distribucion = distribucion;
 	}
 	public StringDataType getCondicionesEspecificas() {
 		return condicionesEspecificas;
@@ -791,12 +769,6 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setAnejoTrastero(StringDataType anejoTrastero) {
 		this.anejoTrastero = anejoTrastero;
-	}
-	public BooleanDataType getExistePiscina() {
-		return existePiscina;
-	}
-	public void setExistePiscina(BooleanDataType existePiscina) {
-		this.existePiscina = existePiscina;
 	}
 	public DoubleDataType getActualImporteDescuentoWeb() {
 		return actualImporteDescuentoWeb;

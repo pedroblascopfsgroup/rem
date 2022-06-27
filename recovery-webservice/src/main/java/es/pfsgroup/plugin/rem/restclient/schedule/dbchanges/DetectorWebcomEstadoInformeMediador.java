@@ -1,15 +1,5 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.InformeMediadorDto;
@@ -18,6 +8,14 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 @Component
 public class DetectorWebcomEstadoInformeMediador extends DetectorCambiosBD<InformeMediadorDto> {
@@ -73,7 +71,7 @@ public class DetectorWebcomEstadoInformeMediador extends DetectorCambiosBD<Infor
 
 	@Override
 	public String clavePrimariaJson() {
-		return "ID_INFORME_MEDIADOR_WEBCOM";
+		return "ID_INFORME_MEDIADOR_REM";
 	}
 
 	@Override

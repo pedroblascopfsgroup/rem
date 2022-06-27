@@ -1,30 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -75,29 +50,9 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.activo.dao.*;
 import es.pfsgroup.plugin.rem.alaskaComunicacion.AlaskaComunicacionManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.AltaAsuntosLegalReoApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.PerfilApi;
-import es.pfsgroup.plugin.rem.api.PresupuestoApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
@@ -111,86 +66,14 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDDesarrolloPlanteamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDFaseGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
-import es.pfsgroup.plugin.rem.model.dd.DDIncidenciaCee;
-import es.pfsgroup.plugin.rem.model.dd.DDListaEmisiones;
-import es.pfsgroup.plugin.rem.model.dd.DDMetodoValoracion;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoExoneracionCee;
-import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDProductoDesarrollar;
-import es.pfsgroup.plugin.rem.model.dd.DDProximidadRespectoNucleoUrbano;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
-import es.pfsgroup.plugin.rem.model.dd.DDRolInterlocutor;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
-import es.pfsgroup.plugin.rem.model.dd.DDTasadoraCaixa;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDatoUtilizadoInmuebleComparable;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipologiaVentaBc;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.model.dd.DDVinculoCaixa;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PLANO;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SUELOS;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.*;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
-import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
-import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
-import es.pfsgroup.plugin.rem.service.TabActivoCargas;
-import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
-import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.service.TabActivoPatrimonio;
-import es.pfsgroup.plugin.rem.service.TabActivoSaneamiento;
-import es.pfsgroup.plugin.rem.service.TabActivoService;
-import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
+import es.pfsgroup.plugin.rem.service.*;
 import es.pfsgroup.plugin.rem.thread.AltaAsuntosLegalReoAsync;
 import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
@@ -198,6 +81,21 @@ import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ActivoAdapter {
@@ -5809,7 +5707,10 @@ public class ActivoAdapter {
 	}
 	
 	private Boolean validacionesLegalReo (Activo activo) {
-		if (activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
+		
+		ConfiguracionBloqueoAsuntosMinerva configuracionBloqueoAsuntosMinerva = genericDao.get(ConfiguracionBloqueoAsuntosMinerva.class, genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo()));
+				
+		if (configuracionBloqueoAsuntosMinerva == null && activo != null && activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null 
 				&& activo.getSituacionPosesoria().getOcupado() == 1 && activo.getSituacionPosesoria().getConTitulo() != null 
 				&& (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) 
 						|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()))

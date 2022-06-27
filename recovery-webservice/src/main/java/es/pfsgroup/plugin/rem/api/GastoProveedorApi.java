@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -11,6 +8,9 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 
 public interface GastoProveedorApi {
@@ -226,7 +226,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo);
+		public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo, String motivoRechazoDescripcion);
 
 		/**
 		 * Método que autoriza un gasto, validandolo antes si validarAutorizacion = true
@@ -242,7 +242,7 @@ public interface GastoProveedorApi {
 		 * @param motivoRechazo
 		 * @return
 		 */
-		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
+		public boolean rechazarGasto(Long idGasto, String motivoRechazo, String motivoRechazoDescripcion);
 		
 		
 		/**

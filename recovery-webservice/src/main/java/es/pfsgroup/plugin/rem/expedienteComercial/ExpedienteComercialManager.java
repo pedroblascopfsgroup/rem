@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.restclient.caixabc.ReplicarOfertaDto;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
 import es.pfsgroup.plugin.rem.service.InterlocutorGenericService;
 import es.pfsgroup.plugin.rem.tareasactivo.ValorTareaBC;
-import es.pfsgroup.plugin.rem.thread.ConvivenciaRecovery;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -93,7 +92,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import javax.annotation.Resource;
 import java.io.BufferedWriter;
@@ -5321,11 +5319,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
 			DDEstadoContrasteListas estadoNoSolicitado = genericDao.get(DDEstadoContrasteListas.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoContrasteListas.NO_SOLICITADO));
-
-			if((dto.getApellidos() != null && !dto.getApellidos().equals(comprador.getApellidos())) || !dto.getNumDocumento().equals(comprador.getDocumento()) || !dto.getNombreRazonSocial().equals(comprador.getNombre())) {
-				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);		
-				compradorExpediente.setFechaContrasteListas(new Date());
-			}
 			
 			if((DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA).equals(dto.getCodTipoPersona())) {
 				comprador.setApellidos(null);
@@ -5360,6 +5353,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				esNuevo = true;
 				
 
+			}
+			
+			if((dto.getApellidos() != null && !dto.getApellidos().equals(comprador.getApellidos())) || !dto.getNumDocumento().equals(comprador.getDocumento()) || !dto.getNombreRazonSocial().equals(comprador.getNombre())) {
+				compradorExpediente.setEstadoContrasteListas(estadoNoSolicitado);
+				compradorExpediente.setFechaContrasteListas(new Date());
 			}
 
 			oldDataComprador.cexToDto(compradorExpediente);

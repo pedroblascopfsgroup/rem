@@ -1,10 +1,6 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.*;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class InformeMediadorDto implements WebcomRESTDto {
@@ -183,7 +179,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	
 	private BooleanDataType aptoUsoEnBruto;
 	
-	private StringDataType accesibilidad;
+	@WebcomRequired
+	private StringDataType codAccesibilidad;
 	
 	private DoubleDataType edificabilidadSuperficieTecho;
 	
@@ -767,11 +764,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setAptoUsoEnBruto(BooleanDataType aptoUsoEnBruto) {
 		this.aptoUsoEnBruto = aptoUsoEnBruto;
 	}
-	public StringDataType getAccesibilidad() {
-		return accesibilidad;
+	public StringDataType getCodAccesibilidad() {
+		return codAccesibilidad;
 	}
-	public void setAccesibilidad(StringDataType accesibilidad) {
-		this.accesibilidad = accesibilidad;
+	public void setCodAccesibilidad(StringDataType codAccesibilidad) {
+		this.codAccesibilidad = codAccesibilidad;
 	}
 	public DoubleDataType getEdificabilidadSuperficieTecho() {
 		return edificabilidadSuperficieTecho;

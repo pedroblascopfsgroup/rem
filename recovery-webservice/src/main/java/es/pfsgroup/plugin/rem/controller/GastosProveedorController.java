@@ -1,29 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import es.pfsgroup.plugin.rem.model.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -48,45 +24,31 @@ import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.excel.ElementosLineasExcelReport;
-import es.pfsgroup.plugin.rem.excel.ExcelReport;
-import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
-import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
-import es.pfsgroup.plugin.rem.excel.TasasImpuestosExcelReport;
-import es.pfsgroup.plugin.rem.excel.TrabajosGastoExcelReport;
+import es.pfsgroup.plugin.rem.excel.*;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
-import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
-import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
-import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
-import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
-import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
-import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
-import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
-import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
-import es.pfsgroup.plugin.rem.model.VGridMotivosRechazoGastoCaixa;
-import es.pfsgroup.plugin.rem.model.VTasacionesGastos;
-import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -876,10 +838,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, String motivoRechazoDescripcion, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGastos(idsGasto, motivoRechazo, motivoRechazoDescripcion);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {
@@ -914,10 +876,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView rechazarGasto(Long idGasto, String motivoRechazo, ModelMap model) {
+	public ModelAndView rechazarGasto(Long idGasto, String motivoRechazo, String motivoRechazoDescripcion, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.rechazarGasto(idGasto, motivoRechazo);
+			boolean success = gastoProveedorApi.rechazarGasto(idGasto, motivoRechazo, motivoRechazoDescripcion);
 			model.put("success", success);
 		
 		} catch (JsonViewerException ex) {

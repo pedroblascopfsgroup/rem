@@ -1,25 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
@@ -53,111 +33,13 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.*;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
-import es.pfsgroup.plugin.rem.api.DepositoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.RecalculoVisibilidadComercialApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
+import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
-import es.pfsgroup.plugin.rem.model.ActivoAsistida;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoCaixa;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
-import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPromocionAlquiler;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProyecto;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
-import es.pfsgroup.plugin.rem.model.ActivoRestringida;
-import es.pfsgroup.plugin.rem.model.ActivoRestringidaAlquiler;
-import es.pfsgroup.plugin.rem.model.ActivoRestringidaObrem;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.CuentasVirtuales;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoUsuario;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
-import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaCaixa;
-import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
-import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VAgrupacionActivosGestorComercial;
-import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
-import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.VCambioActivoPrecioPublicacionAgrupaciones;
-import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
-import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionIncAnuladas;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoGestionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDPaises;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDResponsableDocumentacionCliente;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSistemaOrigen;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.service.InterlocutorCaixaService;
@@ -172,6 +54,19 @@ import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AgrupacionAdapter {
@@ -1368,20 +1263,6 @@ public class AgrupacionAdapter {
 			if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
 				throw new JsonViewerException(BusinessValidators.ERROR_ACTIVO_CARTERA_BANKIA_TO_AGR_RESTRINGIDAS);
 			}
-
-			boolean errorFlag = false;
-			Activo activoP = agrupacion.getActivoPrincipal();
-			if(activoP != null) {
-				Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroprincipal = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoP.getId());
-				PerimetroActivo perimetroActivoActual = genericDao.get(PerimetroActivo.class, filtroactivo);
-				PerimetroActivo perimetroActivoPrincipal = genericDao.get(PerimetroActivo.class, filtroprincipal);
-				errorFlag = calculateEqualsPerimetros(perimetroActivoPrincipal, perimetroActivoActual);
-						
-				if(errorFlag) {
-					throw new JsonViewerException("Los activos no tienen la misma situación para la visibilidad de gestión comercial");
-				}
-			}
 			
 			if (particularValidator.isMismoTcoActivoPrincipalAgrupacion(String.valueOf(numActivo),
 					String.valueOf(agrupacion.getNumAgrupRem()))) {
@@ -1504,36 +1385,6 @@ public class AgrupacionAdapter {
 			logger.error(e);
 			e.printStackTrace();
 		}
-	}
-	
-	private boolean calculateEqualsPerimetros(PerimetroActivo perimetroActivoPrincipal, PerimetroActivo perimetroActivoActual) {
-		boolean errorFlag = false;	
-		Boolean excluirValidacionesPrincipal = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoPrincipal.getExcluirValidaciones());
-		Boolean excluirValidacionesActual = DDSinSiNo.cambioDiccionarioaBooleanoNativo(perimetroActivoActual.getExcluirValidaciones());
-		DDMotivoGestionComercial motivoGestionPrincipal = perimetroActivoPrincipal.getMotivoGestionComercial();
-		DDMotivoGestionComercial motivoGestionActual = perimetroActivoActual.getMotivoGestionComercial();
-		boolean perimetroActivoPrincipalBool = false;
-		boolean perimetroActualPrincipalBool = false;
-		if(perimetroActivoPrincipal.getCheckGestorComercial() != null) {
-			perimetroActivoPrincipalBool = perimetroActivoPrincipal.getCheckGestorComercial();
-		}
-		if(perimetroActivoActual.getCheckGestorComercial() != null) {
-			perimetroActualPrincipalBool = perimetroActivoActual.getCheckGestorComercial();
-		}
-		
-		errorFlag = !(perimetroActivoPrincipalBool == perimetroActualPrincipalBool);
-		
-		if(!errorFlag) {
-			errorFlag = !excluirValidacionesPrincipal == excluirValidacionesActual;
-			if(!errorFlag) {
-				if((motivoGestionPrincipal == null && motivoGestionActual != null) || (motivoGestionPrincipal != null && motivoGestionActual == null)) {
-					errorFlag = true;
-				}else if(motivoGestionPrincipal != null && motivoGestionActual != null) {
-					errorFlag = !(motivoGestionPrincipal.getCodigo() == motivoGestionActual.getCodigo());
-				}
-			}
-		}
-		return errorFlag;
 	}
 
 	/**

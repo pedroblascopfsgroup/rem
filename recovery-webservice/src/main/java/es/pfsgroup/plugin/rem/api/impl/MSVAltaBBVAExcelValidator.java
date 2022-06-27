@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 
@@ -323,6 +313,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			//Perimetro Activo
 			PerimetroActivo pac = activoApi.getPerimetroByIdActivo(activo.getId());		
 			pac.setAplicaAdmision(true);
+			pac.setBajaContable(genericDao.get(DDBajaContableBBVA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDBajaContableBBVA.CODIGO_NO)));
 			genericDao.save(PerimetroActivo.class,pac);
 			
 			//ACT_BBVA_ACTIVOS

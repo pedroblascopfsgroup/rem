@@ -1692,7 +1692,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     	
     },
-    
     onClickRechazar: function(btn) {
     	
     	var me = this;
@@ -1703,61 +1702,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
  				if (buttonId == 'yes') {
- 					
- 					var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase", {
- 						addUxReadOnlyEditFieldPlugin: false, store: {model: 'HreRem.model.ComboBase',proxy: {type: 'uxproxy',remoteUrl: 'generic/getDiccionario',extraParams: {diccionario: 'motivosRechazoHaya'}}}
- 					});
- 						
-					HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"", function(btn, text){    
-					    if (btn == 'ok'){
-							
-							var url =  $AC.getRemoteUrl('gastosproveedor/rechazarGasto'),		
-							idGasto = me.getViewModel().get("gasto.id");		
-							me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			
-							Ext.Ajax.request({
-						    			
-							     url: url,
-							     params: {idGasto: idGasto, motivoRechazo: text},
-							
-							     success: function(response, opts) {
-							        me.getView().unmask();							        
-							        var data = {};
-						            try {
-						               	data = Ext.decode(response.responseText);
-						            }
-						            catch (e){ };
-						            
-						            if(data.success === "false") {
-							            if (!Ext.isEmpty(data.msg)) {
-							               	me.fireEvent("errorToast", data.msg);
-							            } else {
-							             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-							            }
-						            } else {
-								         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								         me.refrescarGasto(true);								    
-						            }
-							     },
-							     failure: function(response) {
-							     	me.getView().unmask();
-						     		var data = {};
-					                try {
-					                	data = Ext.decode(response.responseText);
-					                }
-					                catch (e){ };
-					                if (!Ext.isEmpty(data.msg)) {
-					                	me.fireEvent("errorToast", data.msg);
-					                } else {
-					                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					                }
-							     }
-						    		    
-						    });
-					    	 
-							
-					    }
-		    		}, null, null, null, combo);
+				    parent= btn.up('gestiongastos');
+					var gasto = me.getViewModel().get("gasto");
+			    	var anyadirGastoWindow = Ext.create('HreRem.view.administracion.gastos.RechazoGasto',{parent: parent, listaGastos: gasto });
+			    	me.getView().up('tabpanel').add(anyadirGastoWindow);
+			    	anyadirGastoWindow.show();
 		        }
 		   }
 		});

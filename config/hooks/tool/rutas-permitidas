@@ -323,8 +323,5 @@ rem_mirror|func-rem-gestionAPIs
 rem_mirror|func-rem-visibleComercialDespublicar
 rem_mirror|func-rem-primTomaPosGastos
 func-rem-desvincularCierreEconomico|R-Navelate
-func-rem-edicionPestañaInformeComercial|R-Freezer
-func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
-rem_mirror|func-rem-deposito
-func-rem-deposito|R-Baal
+rem_mirror|func-rem-formalizacionAlquileres

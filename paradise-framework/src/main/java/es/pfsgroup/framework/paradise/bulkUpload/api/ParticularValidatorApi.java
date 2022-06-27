@@ -1003,7 +1003,7 @@ public interface ParticularValidatorApi {
 	 * @param numActivo
 	 * @return Devuelve el número de Agrupacion Restringida a la que pertenece el Activo 
 	 */
-	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo);
+	public List<Long> obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo);
 
 	/**
 	 * @param numAgrupacion

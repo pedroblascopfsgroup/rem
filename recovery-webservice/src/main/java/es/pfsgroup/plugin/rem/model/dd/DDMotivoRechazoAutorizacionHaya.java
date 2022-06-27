@@ -31,6 +31,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDMotivoRechazoAutorizacionHaya implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	public static final String OTROS = "07";
 
 	@Id
 	@Column(name = "DD_MRH_ID")

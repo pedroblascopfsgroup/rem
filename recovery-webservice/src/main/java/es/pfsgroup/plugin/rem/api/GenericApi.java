@@ -409,5 +409,5 @@ public interface GenericApi {
 
 	public List<DDEstadoOferta> getDiccionarioEstadosOfertasAgrupacion(Long idAgrupacion);
 	
-	List<DDTipoApunte> getTipoApunteByUsuarioLog();
+	public List<DDTipoApunte> getTipoApunteByUsuarioLog();
 }

@@ -308,14 +308,12 @@ R-Jaffa|R-Jaffa-ContrasteListas
 rem_mirror|func-rem-volcadoPagosUrgentesASPRO
 func-rem-cambioJerarquiaPrefacturasBBVA|R-Ortanique
 func-rem-volcadoPagosUrgentesASPRO|R-Ortanique
-rem_mirror|func-rem-visibleComercialDespublicar
 rem_mirror|func-rem-primTomaPosGastos
 func-rem-desvincularCierreEconomico|R-Navelate
-func-rem-edicionPestañaInformeComercial|R-Freezer
-func-rem-desligarDisponibilidadJuridicaBankia|R-Freezer
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-agendaIdentificarEstado
 rem_mirror|func-rem-NNRRActualizacionCCPP
 func-rem-viviendaVaciaVPO|R-Annie
 func-rem-agendaIdentificarEstado|R-Annie
 func-rem-NNRRActualizacionCCPP|R-Annie
+

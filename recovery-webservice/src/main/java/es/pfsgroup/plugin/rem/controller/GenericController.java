@@ -954,6 +954,12 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model, request);
 	}
 
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTipoApunteByUsuarioLog(){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTipoApunteByUsuarioLog()));	
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/generaDeposito")
 	public void generaDeposito(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		GeneraDepositoRequestDto jsonData = null;
@@ -979,9 +985,6 @@ public class GenericController extends ParadiseJsonController{
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTipoApunteByUsuarioLog(){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getTipoApunteByUsuarioLog()));	
-	}
+
  }
 

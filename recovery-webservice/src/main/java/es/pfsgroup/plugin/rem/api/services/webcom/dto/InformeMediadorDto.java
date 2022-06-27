@@ -183,7 +183,8 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	
 	private BooleanDataType aptoUsoEnBruto;
 	
-	private StringDataType accesibilidad;
+	@WebcomRequired
+	private StringDataType codAccesibilidad;
 	
 	private DoubleDataType edificabilidadSuperficieTecho;
 	
@@ -767,11 +768,11 @@ public class InformeMediadorDto implements WebcomRESTDto {
 	public void setAptoUsoEnBruto(BooleanDataType aptoUsoEnBruto) {
 		this.aptoUsoEnBruto = aptoUsoEnBruto;
 	}
-	public StringDataType getAccesibilidad() {
-		return accesibilidad;
+	public StringDataType getCodAccesibilidad() {
+		return codAccesibilidad;
 	}
-	public void setAccesibilidad(StringDataType accesibilidad) {
-		this.accesibilidad = accesibilidad;
+	public void setCodAccesibilidad(StringDataType codAccesibilidad) {
+		this.codAccesibilidad = codAccesibilidad;
 	}
 	public DoubleDataType getEdificabilidadSuperficieTecho() {
 		return edificabilidadSuperficieTecho;

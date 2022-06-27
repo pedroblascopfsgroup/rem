@@ -954,6 +954,21 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model, request);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "/generic/avanzaTarea")
+	public void avanzaTarea(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+
+		JSONObject jsonData = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+
+		try {
+			jsonData = (JSONObject) request.getRequestData(JSONObject.class);
+			accionesCaixaApi.avanzarTareaGenerico(jsonData);
+		} catch (Exception e) {
+			model.put("error", e.getMessage());
+			model.put("descError", "No se ha podido avanzar la tarea");
+			model.put("success", false);
+		}
+	}
 	@RequestMapping(method = RequestMethod.POST, value = "/generic/generaDeposito")
 	public void generaDeposito(ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		GeneraDepositoRequestDto jsonData = null;

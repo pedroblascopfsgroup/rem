@@ -306,10 +306,10 @@ rem_mirror|func-rem-bloqueoScoring
 rem_mirror|func-rem-hydra-modificacionesEnero
 func-rem-hydra-modificacionesEnero|R-Ellendale
 func-rem-bloqueoScoring|R-Ellendale
+rem_mirror|func-rem-reposicionamientoCalculoRiesgo
 func-rem-automatizacionBajasContablesBBVA|R-Navelate
 rem_mirror|func-rem-onuFase2
 func-rem-onuFase2|R-Navelate
-rem_mirror|func-rem-onuFase2
 func-rem-informeMediador|R-Jaffa
 func-rem-stockHydra-F1.1|R-Jaffa
 func-rem-catastro|R-Jaffa

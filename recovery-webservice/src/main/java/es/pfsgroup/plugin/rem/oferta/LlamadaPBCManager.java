@@ -1,14 +1,5 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.plugin.rem.api.LlamadaPBCApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -18,6 +9,14 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOfertaAcciones;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("llamadaPBCManager")
 public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi> implements LlamadaPBCApi{
@@ -69,6 +68,9 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
     	codigos.add(this.calcularLlamadaPBCT015GarantiasAdicionales(codTarea, codEstado));
         codigos.add(this.calcularLlamadaPBCT015SancionBC(codTarea, codEstado));
         codigos.add(this.calcularLlamadaPBCT018TrasladarOfertaCliente(codTarea, codEstado));
+        codigos.add(this.calculaLlamadaPBCT017ConfirmarFechaEscritura(codTarea, codEstado));
+        codigos.add(this.calculaLlamadaPBCT017AgendarPosicionamiento(codTarea, codEstado));
+        codigos.add(this.calculaLlamadaPBCT017FirmaContrato(codTarea, codEstado));
         
         return codigos;
     }
@@ -90,6 +92,33 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
     private String calcularLlamadaPBCT018TrasladarOfertaCliente(String codTarea, String codEstado) {
         if(TareaProcedimientoConstants.TramiteAlquilerNoCmT018.CODIGO_T018_TRASLADAR_OFERTA_CLIENTE.equals(codTarea) && DDEstadoExpedienteBc.PTE_PBC_ALQUILER_HRE.equals(codEstado))
             return  DDTipoOfertaAcciones.ACCION_TAREA_DATOS_PBC;
+
+        return null;
+    }
+
+    private String calculaLlamadaPBCT017ConfirmarFechaEscritura(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+
+            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
+
+        return null;
+    }
+
+    private String calculaLlamadaPBCT017AgendarPosicionamiento(String codTarea, String codEstado) {
+        if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_AGENDAR_POSICIONAMIENTO.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+
+            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
+
+        return null;
+    }
+
+    private String calculaLlamadaPBCT017FirmaContrato(String codTarea, String codEstado) {
+        if (TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T107_FIRMA_CONTRATO.equals(codTarea)
+                && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
+
+            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
 
         return null;
     }

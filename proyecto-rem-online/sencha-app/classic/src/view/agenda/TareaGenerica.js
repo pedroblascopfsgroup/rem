@@ -3278,6 +3278,7 @@
 		var importeFianza = me.down('[name=importeFianza]');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var fechaPropuestaFC = me.down('[name=fechaPropuestaFC]');
+		var cambioRiesgo = me.down('[name=cambioRiesgo]');
 		
 		fechaEnvio.setValue($AC.getCurrentDate());
 		me.bloquearCampo(fechaEnvio);
@@ -3310,6 +3311,27 @@
 			me.habilitarCampo(importeFianza);
 			me.campoObligatorio(importeFianza);
 			comboArras.setValue('02');
+
+			if(!$AU.userHasFunction('CAMBIAR_RIESGO_BC')){
+			    me.bloquearCampo(cambioRiesgo);
+			}
+
+            me.down('[name=cambioRiesgo]').addListener('change', function(combo) {
+                if (combo.value == '01') { //SI
+                    me.campoNoObligatorio(comboArras);
+                    me.campoNoObligatorio(mesesFianza);
+                    me.campoNoObligatorio(importeFianza);
+                    me.campoNoObligatorio(fechaPropuestaFC);
+                } else { //NO
+                    me.deshabilitarCampo(mesesFianza);
+                    me.borrarCampo(mesesFianza);
+                    me.deshabilitarCampo(importeFianza);
+                    me.borrarCampo(importeFianza);
+                    me.habilitarCampo(fechaPropuestaFC);
+                    me.campoObligatorio(fechaPropuestaFC);
+                    comboArras.setValue('02');
+                }
+            });
 			
 			me.down('[name=comboArras]').addListener('change', function(combo) {
 				if (combo.value == '01') { //SI
@@ -3335,6 +3357,7 @@
 			me.ocultarCampo(mesesFianza);
 			me.deshabilitarCampo(importeFianza);
 			me.ocultarCampo(importeFianza);
+			me.ocultarCampo(cambioRiesgo);
 		}
 		
 	},
@@ -3350,6 +3373,7 @@
 		var comboArras = me.down('[name=comboArras]');
 		var mesesFianza = me.down('[name=mesesFianza]');
 		var importeFianza = me.down('[name=importeFianza]');
+		var cambioRiesgo = me.down('[name=cambioRiesgo]');
 		
 		me.bloquearCampo(fechaPropuesta);
 		me.campoObligatorio(fechaPropuesta);
@@ -3388,6 +3412,25 @@
 			me.habilitarCampo(importeFianza);
 			me.campoObligatorio(importeFianza);
 			comboArras.setValue('02');
+
+			if(!$AU.userHasFunction('CAMBIAR_RIESGO_BC')){
+			    me.bloquearCampo(cambioRiesgo);
+			}
+            me.down('[name=cambioRiesgo]').addListener('change', function(combo) {
+                if (combo.value == '01') { //SI
+                    me.campoNoObligatorio(comboArras);
+                    me.campoNoObligatorio(mesesFianza);
+                    me.campoNoObligatorio(importeFianza);
+                    me.campoNoObligatorio(fechaValidacionBc);
+                } else { //NO
+                    me.campoObligatorio(fechaValidacionBc);
+                    me.deshabilitarCampo(mesesFianza);
+                    me.borrarCampo(mesesFianza);
+                    me.deshabilitarCampo(importeFianza);
+                    me.borrarCampo(importeFianza);
+                    comboArras.setValue('02');
+                }
+            });
 			
 			me.down('[name=comboArras]').addListener('change', function(combo) {
 				if (combo.value == '01') { //SI
@@ -3413,6 +3456,7 @@
 			me.ocultarCampo(mesesFianza);
 			me.deshabilitarCampo(importeFianza);
 			me.ocultarCampo(importeFianza);
+			me.ocultarCampo(cambioRiesgo);
 		}
 	},
 	
@@ -3672,6 +3716,7 @@
 		var comboFirma = me.down('[name=comboFirma]');
 		var fechaFirma = me.down('[name=fechaFirma]');
 		var numeroProtocolo = me.down('[name=numeroProtocolo]');
+		var cambioRiesgo = me.down('[name=cambioRiesgo]');
 		
 		if (CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.habilitarCampo(comboResultado);
@@ -3684,6 +3729,28 @@
 			me.deshabilitarCampo(fechaFirma);
 			me.deshabilitarCampo(motivoAplazamiento);
 			comboArras.setValue(CONST.COMBO_SIN_SINO['NO']);
+
+			if(!$AU.userHasFunction('CAMBIAR_RIESGO_BC')){
+                me.bloquearCampo(cambioRiesgo);
+            }
+            me.down('[name=cambioRiesgo]').addListener('change', function(combo) {
+                if (combo.value == '01') { //SI
+                    me.campoNoObligatorio(comboArras);
+                    me.campoNoObligatorio(mesesFianza);
+                    me.campoNoObligatorio(importeFianza);
+                    me.campoNoObligatorio(comboResultado);
+                    me.campoNoObligatorio(comboFirma);
+                } else { //NO
+                    me.deshabilitarCampo(mesesFianza);
+                    me.borrarCampo(mesesFianza);
+                    me.deshabilitarCampo(importeFianza);
+                    me.borrarCampo(importeFianza);
+                    me.habilitarCampo(comboResultado);
+                    me.campoObligatorio(comboResultado);
+                    me.borrarCampo(comboResultado);
+                    comboArras.setValue('02');
+                }
+            });
 			
 			me.down('[name=comboArras]').addListener('change', function(combo) {
 				if (combo.value == CONST.COMBO_SIN_SINO['SI']) { 
@@ -3749,6 +3816,7 @@
 			me.ocultarCampo(mesesFianza);
 			me.deshabilitarCampo(importeFianza);
 			me.ocultarCampo(importeFianza);
+			me.ocultarCampo(cambioRiesgo);
 		}
 	},
 	T017_PBCReservaValidacion: function(){

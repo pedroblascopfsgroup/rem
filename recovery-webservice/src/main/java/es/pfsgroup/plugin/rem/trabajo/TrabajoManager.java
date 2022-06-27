@@ -50,7 +50,6 @@ import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -61,17 +60,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.TareaAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVProcesoDao;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.http.client.HttpSimpleGetRequest;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -113,7 +109,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -167,6 +162,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.VUsuarioGestorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
@@ -6400,7 +6396,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
 					dto.setIdAgenda(agendaTrabajo.getId());
 					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
-					dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+					if (agendaTrabajo.getGestor().getId() != null) {
+						Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", agendaTrabajo.getGestor().getId());
+						VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+						if (usuarioGestorOrProveedor != null) {
+							if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+								dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+							} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+								dto.setProveedorAgenda(agendaTrabajo.getGestor().getUsername());
+							}
+						}
+					}
+					//dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
 					dto.setFechaAgenda(agendaTrabajo.getFecha());
 					dto.setTipoGestion(agendaTrabajo.getTipoGestion().getCodigo());
 					dto.setObservacionesAgenda(agendaTrabajo.getObservaciones());
@@ -6420,6 +6427,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
 		AgendaTrabajo agenda = new AgendaTrabajo();
 		Trabajo trabajo = null;
+		Boolean proveedor = false;
+		Boolean gestor = false;
 		
 		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
 			trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
@@ -6462,7 +6471,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 		}
-
+		
+		
+		if (usuarioManager.getUsuarioLogado() != null) {
+			Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getId());
+			VUsuarioGestorProveedor usuarioGestorOrProveedor = genericDao.get(VUsuarioGestorProveedor.class, filterTipo);
+			if (usuarioGestorOrProveedor != null) {
+				if (usuarioGestorOrProveedor.getIsGestor() != null && usuarioGestorOrProveedor.getIsGestor() == true) {
+					if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_ENVIADAS_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())
+							|| DDTipoApunte.CODIGO_PTO_APROBADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+						gestor = true;
+						this.enviarCorreoAgendaTrabajo(agenda, trabajo, dtoAgendaTrabajo, proveedor, gestor);
+					}
+				} else if(usuarioGestorOrProveedor.getIsProveedor() != null && usuarioGestorOrProveedor.getIsProveedor() == true) {
+					if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())
+							|| DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion()) || DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+						proveedor = true;
+						this.enviarCorreoAgendaTrabajo(agenda, trabajo, dtoAgendaTrabajo, proveedor, gestor);
+					}
+				}
+			}
+		}
+		
 		return true;
 	}
 	
@@ -7012,5 +7042,74 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return false;
 	}
 	
+	@Override
+	public void enviarCorreoAgendaTrabajo(AgendaTrabajo agenda, Trabajo trabajo, DtoAgendaTrabajo dtoAgendaTrabajo, Boolean proveedor, Boolean gestor) {
+		
+		if(trabajo == null) {
+			return;
+		}
+		
+		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
+		List<String> mailsPara = new ArrayList<String>();
+		//List<String> mailsCC = new ArrayList<String>();
+		
+	    String correos = "";
+		String contenido = "";
+		String titulo = "";
+		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
+	   
+	    if (proveedor) {
+	    	if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
+		    	correos = trabajo.getProveedorContacto().getEmail();
+			}
+	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Sin acceso por falta de llaves.</p>"
+	    				+"<p>Urgente envío</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_PTE_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Pte. Instrucciones.</p>"
+	    				+"<p>Urgente envío</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_PTE_APR_PRESUPUESTO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Pte de aprobación presupuesto.</p>"
+	    				+"<p>Urgente envío</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_FINALIZADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Finalizado.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
+		}
+	    if (gestor) {
+			if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())) {
+				correos = trabajo.getUsuarioResponsableTrabajo().getEmail();
+			}
+			if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Llaves gestionadas.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_ENVIADAS_INSTRUCCIONES.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Enviadas instrucciones.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			} else if (DDTipoApunte.CODIGO_PTO_APROBADO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
+	    				+"<p>Pto. Aprobado.</p>";
+				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
+		}
+	    
+		if(!Checks.esNulo(correos) && !correos.equals("")) {
+			Collections.addAll(mailsPara, correos.split(";"));
+		}
+	   
+		//mailsCC.add(this.getCorreoFrom());  
+		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
+		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
+		
+	}
 
 }

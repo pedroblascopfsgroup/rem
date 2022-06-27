@@ -23,6 +23,9 @@ Ext.define('HreRem.model.AgendaTrabajoModel', {
     		},
     		{
     			name:'observacionesAgenda'
+    		},
+    		{
+    			name:'proveedorAgenda'
     		}
     ],
 

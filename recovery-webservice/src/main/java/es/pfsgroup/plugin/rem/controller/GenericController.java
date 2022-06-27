@@ -978,5 +978,10 @@ public class GenericController extends ParadiseJsonController{
 
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTipoApunteByUsuarioLog(){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTipoApunteByUsuarioLog()));	
+	}
  }
 

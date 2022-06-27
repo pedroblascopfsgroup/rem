@@ -73,7 +73,7 @@ public class DetectorWebcomEstadoInformeMediador extends DetectorCambiosBD<Infor
 
 	@Override
 	public String clavePrimariaJson() {
-		return "ID_INFORME_MEDIADOR_WEBCOM";
+		return "ID_INFORME_MEDIADOR_REM";
 	}
 
 	@Override

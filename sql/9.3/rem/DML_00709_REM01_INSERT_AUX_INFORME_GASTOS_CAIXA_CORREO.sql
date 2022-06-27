@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220310
+--## FECHA_CREACION=20220608
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17301
+--## INCIDENCIA_LINK=REMVIP-11768
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade AUX_INFORME_GASTOS_CAIXA_CORREO
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Ver1ón inicial
+--##        0.1 Ver1ón inicial - [HREOS-17301] - Alejandra García
+--##        0.2 Añadir dos nuevos correos - [REMVIP-11768] - Alejandra García
 --##########################################
 --*/
 
@@ -36,7 +37,7 @@ DECLARE
     V_ID_PVC NUMBER(16);
     V_ID_ETP NUMBER(16);
     V_BOOLEAN NUMBER(16);
-    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-17301';
+    V_ITEM VARCHAR2(25 CHAR):= 'REMVIP-11768';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
@@ -47,7 +48,9 @@ DECLARE
       T_TIPO_DATA('adelgado@haya.es','0'),
       T_TIPO_DATA('jrodriguezb@haya.es','0'),
       T_TIPO_DATA('amolinam@haya.es','1'),
-      T_TIPO_DATA('dgutierrez@haya.es','1')
+      T_TIPO_DATA('dgutierrez@haya.es','1'),
+      T_TIPO_DATA('juanantonio.morenoortiz@zelenza.com','0'),
+      T_TIPO_DATA('rperezf@haya.es','0')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

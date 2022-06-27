@@ -727,7 +727,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						ofertaDto.getIdClienteRem(), ofertaDto.getIdClienteRemRepresentante(), ofertaDto.getIdClienteContacto(), true));
 			}
 
-			if(ofertaDto.getIbanDevolucion() == null){
+			if(ofertaDto.getIbanDevolucion() == null && DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())){
 				Long idActivo = ofertaDto.getIdActivoHaya() != null ? ofertaDto.getIdActivoHaya() : ofertaDto.getActivosLote().get(0).getIdActivoHaya();
 				errorsList.putAll(validateIbanDevolucionNecesario(idActivo));
 			} else if (!Checks.esNulo(ofertaDto.getIbanDevolucion()) && !depositoApi.validarIban(ofertaDto.getIbanDevolucion())) {
@@ -9453,7 +9453,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	}
 
-
 	@Override
 	public boolean isOfertaONVentaSobrePlano(Oferta oferta) {
 		if (!Checks.esNulo(oferta.getAgrupacion())) {
@@ -9642,7 +9641,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			codigoOferta =  DDEstadoOferta.CODIGO_ACEPTADA;
 		}else if (DDCartera.isCarteraBk(oferta.getActivoPrincipal().getCartera()) && (Checks.esNulo(oferta.getCheckDocumentacion()) || !oferta.getCheckDocumentacion())) {
 			codigoOferta = DDEstadoOferta.CODIGO_PDTE_DOCUMENTACION;
-		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito())){
+		}else if(!depositoApi.isDepositoIngresado(oferta.getDeposito()) && oferta.getDeposito() != null){
 			codigoOferta =  DDEstadoOferta.CODIGO_PDTE_DEPOSITO;
 		}else {
 			codigoOferta =  DDEstadoOferta.CODIGO_PENDIENTE;

@@ -1173,32 +1173,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		List<VGridOfertasActivosAgrupacionIncAnuladas> listOfertasActivo = (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
 		.list();
-		
-		for (VGridOfertasActivosAgrupacionIncAnuladas listOfertaActivo : listOfertasActivo) {
-			Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
-			if (listOfertaActivo.getImporteOferta() != null && (isHayaSuper() == false || (isHayaSuper() == false && isConcurrencia == false))) {
+		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+		boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
+		if (!isHayaSuper && isConcurrencia) {
+			for (VGridOfertasActivosAgrupacionIncAnuladas listOfertaActivo : listOfertasActivo) {
 				listOfertaActivo.setImporteOferta(null);
 			}
 		}
 		
 		return listOfertasActivo;
-		/*
-		return (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
-				.list();
-		*/
-	}
-	
-	public Boolean isHayaSuper() {
-		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		List <Perfil> perfiles = usuPef.getPerfiles();
-		if(!Checks.estaVacio(perfiles)) {
-			for (Perfil perfil : perfiles) {
-				if(usuarioSuper.equals(perfil.getCodigo())) {
-					return Boolean.TRUE;
-				}
-			}
-		}
-		return Boolean.FALSE;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1228,21 +1212,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		List<VGridOfertasActivosAgrupacion> listOfertasTramitadasPendientesActivo = this.getSessionFactory().getCurrentSession()
 		.createQuery(hb.toString()).list();
-		
-		for (VGridOfertasActivosAgrupacion ofertaTramitadasPendientesActivo : listOfertasTramitadasPendientesActivo) {
-			Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
-			//if (listOfertaActivo.getImporteOferta() != null && isHayaSuper() == false && isConcurrencia == false) {
-			if (ofertaTramitadasPendientesActivo.getImporteOferta() != null && (isHayaSuper() == false || (isHayaSuper() == false && isConcurrencia == false))) {
+		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+		boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);
+		if (!isHayaSuper && isConcurrencia) {
+			for (VGridOfertasActivosAgrupacion ofertaTramitadasPendientesActivo : listOfertasTramitadasPendientesActivo) {
 				ofertaTramitadasPendientesActivo.setImporteOferta(null);
 			}
 		}
 		
 		return listOfertasTramitadasPendientesActivo;
-
-		/*
-		return (List<VGridOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
-		*/
 	}
 
 	@Override

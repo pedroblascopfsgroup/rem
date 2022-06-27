@@ -4439,7 +4439,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoResponse.setFechaEntradaCRMSF(oferta.getFechaEntradaCRMSF());
 				}
 		 		Boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(oferta.getActivoPrincipal().getId());
-				if (oferta.getImporteOferta() != null && isHayaSuper() == true && isConcurrencia) {
+				Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
+				if (!isHayaSuper && isConcurrencia) {
+					dtoResponse.setImporteOferta(null);
+				} else if (oferta.getImporteOferta() != null) {
 					dtoResponse.setImporteOferta(oferta.getImporteOferta().toString());
 				}
 
@@ -4468,19 +4472,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		return dtoResponse;
-	}
-
-	public Boolean isHayaSuper() {
-		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		List <Perfil> perfiles = usuPef.getPerfiles();
-		if(!Checks.estaVacio(perfiles)) {
-			for (Perfil perfil : perfiles) {
-				if(usuarioSuper.equals(perfil.getCodigo())) {
-					return Boolean.TRUE;
-				}
-			}
-		}
-		return Boolean.FALSE;
 	}
 
 	@Override

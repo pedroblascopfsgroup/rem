@@ -5882,7 +5882,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
+	public List<Long> obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("numActivo", numActivo);
 		rawDao.addParams(params);
@@ -5890,7 +5890,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return null;
 		}
-		String sql = rawDao.getExecuteSQL("SELECT agr.AGR_NUM_AGRUP_REM "
+		List<Object> resultados = rawDao.getExecuteSQLList("SELECT DISTINCT agr.AGR_NUM_AGRUP_REM "
 				+ "FROM ACT_AGA_AGRUPACION_ACTIVO aga, " 
 				+ "ACT_AGR_AGRUPACION agr, " 
 				+ "DD_TAG_TIPO_AGRUPACION tag, "
@@ -5905,7 +5905,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND agr.BORRADO  = 0 " 
 				+ "AND act.BORRADO  = 0 ");
 		
-		return Checks.esNulo(sql)? null: Long.valueOf(sql);
+		List<Long> listaAgrupaciones = new ArrayList<Long>();
+		
+		for(Object o: resultados){
+			BigDecimal numAgrup = (BigDecimal) o;
+			listaAgrupaciones.add(numAgrup.longValue());
+		}
+		
+		return listaAgrupaciones.isEmpty() ? null: listaAgrupaciones;
 	}
 	
 	@Override

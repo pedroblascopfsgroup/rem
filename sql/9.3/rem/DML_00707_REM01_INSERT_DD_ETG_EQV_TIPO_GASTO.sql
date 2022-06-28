@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220607
+--## FECHA_CREACION=20220610
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11829
+--## INCIDENCIA_LINK=REMVIP-11869
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -36,6 +36,8 @@
 --##        0.23 Añadir nuevas PEPs Alquiler Rotacional(02) para los mismos tipos y subtipos del Alquiler Alquilado(03) - [HREOS-17937] - Javier Esbri
 --##		0.24 Corrección Pep alquiler PAO y colocación puerta antiocupa - [HREOS-17997] - Javier Esbri
 --##		0.25 Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas - [REMVIP-11829] - Alejandra García
+--##		0.26 Cambiar código Actuación post-venta de 314 a 84 - [REMVIP-11869] - Alejandra García
+--##		0.27 DD_ETG_CODIGO = 1022 porque es lo mismo que el 198  - [REMVIP-11869] - Alejandra García
 --#########################################
 --*/
 
@@ -405,7 +407,6 @@ DECLARE
 		T_TABLA('1019','XXX-22-2-A_HGES0%','22','02','55','12','310','03','','','null','','','','2022'),
 		T_TABLA('1020','XXXX-22-2-HGES100%','22','02','54','12','313','01','','','null','','','','2022'),
 		T_TABLA('1021','XXX-22-2-A_HGES100%','22','02','56','12','311','03','','','null','','','','2022'),
-		T_TABLA('1022','XXXX-22-2-REP POST 2','22','00','17','15','314','','','TR2','null','','','','2022'),
 		T_TABLA('1023','XXXX-22-3-I-CERT V','22','02','31','14','62','01','','','null','','','','2022'),
 		T_TABLA('1024','XXXX-22-3-A-I-CRT V','22','02','33','14','62','03','','','null','','','','2022'),
 		T_TABLA('1025','XXXX-22-3-I-CERT V','22','02','31','14','58','01','','','null','','','','2022'),

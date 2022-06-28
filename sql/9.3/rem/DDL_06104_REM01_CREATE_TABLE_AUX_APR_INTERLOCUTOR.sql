@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Santi Monzó
---## FECHA_CREACION=20220628
+--## FECHA_CREACION=20220629
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-18224
@@ -58,7 +58,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
     V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
     (
-        TREGISTRO	VARCHAR2(2 CHAR),
+        TREGISTRO	VARCHAR2(2 CHAR) DEFAULT ''6'',
         ZZEXTERNALID	VARCHAR2(20 CHAR),
         PARTNER	VARCHAR2(20 CHAR),
         ROLE	VARCHAR2(6 CHAR),
@@ -80,6 +80,15 @@ BEGIN
     
     
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
+
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TREGISTRO IS '' Tipo de registro''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ZZEXTERNALID IS '' Objeto inmobiliario origen''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.PARTNER IS '' Interlocutor comercial''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ROLE IS '' Rol interlocutor comercial''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VALIDFROM IS '' Fecha inicio relación''';
+
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VALIDTO IS '' Fecha fin relación''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.ADDRTYPE IS '' Clase de dirección''';
 
    
 COMMIT;

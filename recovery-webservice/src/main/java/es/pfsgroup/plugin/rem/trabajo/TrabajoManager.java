@@ -7063,7 +7063,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	   
 	    if (proveedor) {
 	    	if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
-		    	correos = trabajo.getProveedorContacto().getEmail();
+	    		if(!Checks.esNulo(trabajo.getProveedorContacto())) {
+	    			mailsPara.add(trabajo.getProveedorContacto().getEmail());
+	    		}
+		    	if(!Checks.esNulo(trabajo.getProveedorContacto().getProveedor()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor().getEmail())) {
+		    		mailsPara.add(trabajo.getProveedorContacto().getProveedor().getEmail());
+		    	}
+
 			}
 	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
 	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
@@ -7088,7 +7094,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	    if (gestor) {
 			if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())) {
-				correos = trabajo.getUsuarioResponsableTrabajo().getEmail();
+				mailsPara.add(trabajo.getUsuarioResponsableTrabajo().getEmail());
 			}
 			if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
 				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
@@ -7104,13 +7110,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				titulo = "Notificación de inserción de registro en la agenda de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			}
 		}
-	    
-		if(!Checks.esNulo(correos) && !correos.equals("")) {
-			Collections.addAll(mailsPara, correos.split(";"));
-		}
 	   
-		//mailsCC.add(this.getCorreoFrom());  
-		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
 		
 	}

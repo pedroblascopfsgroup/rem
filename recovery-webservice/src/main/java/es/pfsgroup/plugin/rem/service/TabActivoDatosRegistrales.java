@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -761,7 +762,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (activo.getTipoTitulo() != null) {
 				
 				Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());	
-				List<ActivoGestion> actGestion = genericDao.getList(ActivoGestion.class, activoFilter);
 				
 				if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloNoJudicial)) {
 					
@@ -770,27 +770,43 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activo.getAdjNoJudicial().setActivo(activo);
 					}
 					
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+
+					ActivoGestion gestionAnterior = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
+					
 					if (!Checks.isFechaNula(dto.getFechaTitulo())) {
-						if (activo.getAdjNoJudicial() != null 
-								&& Checks.isFechaNula(activo.getAdjNoJudicial().getFechaTitulo())) {
-							if (actGestion != null || !actGestion.isEmpty()) {
-								for (ActivoGestion activoGestion : actGestion) {
-									if ((Checks.esNulo(activoGestion.getEstadoLocalizacion()) 
-											|| DDEstadoLocalizacion.CODIGO_SDF.equals(activoGestion.getEstadoLocalizacion().getCodigo()))
-										&& (Checks.esNulo(activoGestion.getSubestadoGestion()) 
-												|| DDSubestadoGestion.CODIGO_SDF.equals(activoGestion.getSubestadoGestion().getCodigo()))) {
-										Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoLocalizacion.CODIGO_PDTE);
-										DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLoc);
-										activoGestion.setEstadoLocalizacion(estadoLocalizacion);
-										Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoGestion.CODIGO_GEST_LOC);
-										DDSubestadoGestion subEstadoGestion = genericDao.get(DDSubestadoGestion.class, filtroSeg);
-										activoGestion.setSubestadoGestion(subEstadoGestion);
-									}
-								}
+						
+						if (gestionAnterior != null) {
+							
+							if (DDEstadoLocalizacion.CODIGO_SDF.equals(gestionAnterior.getEstadoLocalizacion().getCodigo()) 
+									&& DDSubestadoGestion.CODIGO_SDF.equals(gestionAnterior.getSubestadoGestion().getCodigo())) {	
+									
+								DtoComunidadpropietariosActivo activoDto = new DtoComunidadpropietariosActivo();
+									
+								activoDto.setEstadoLocalizacion(DDEstadoLocalizacion.CODIGO_PDTE);
+								activoDto.setSubestadoGestion(DDSubestadoGestion.CODIGO_GEST_LOC);
+									
+								if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+										 activoApi.crearHistoricoDiarioGestion(activoDto,activo.getId());
+									
+								}	
 							}
+							
+						} else {
+							
+							DtoComunidadpropietariosActivo activoDto = new DtoComunidadpropietariosActivo();
+							
+							activoDto.setEstadoLocalizacion(DDEstadoLocalizacion.CODIGO_PDTE);
+							activoDto.setSubestadoGestion(DDSubestadoGestion.CODIGO_GEST_LOC);
+								
+							if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+									 activoApi.crearHistoricoDiarioGestion(activoDto,activo.getId());
+								
+							}	
+							
 						}
 					}
-					
 					
 					beanUtilNotNull.copyProperties(activo.getAdjNoJudicial(), dto);
 					
@@ -810,8 +826,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						beanUtilNotNull.copyProperties(pdv, dto);
 						genericDao.update(ActivoPlanDinVentas.class, pdv);
 					}
-
-
+	
 				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.tipoTituloJudicial)) {
 					
 					if (activo.getAdjJudicial() == null) {
@@ -826,25 +841,43 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activo.getAdjJudicial().getAdjudicacionBien().setBien(activo.getBien());
 					}
 					
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+
+					ActivoGestion gestionAnterior = genericDao.get(ActivoGestion.class, filtroActivo, filtroFechaFin);
+					
 					if (!Checks.isFechaNula(dto.getFechaDecretoFirme())) {
-						if (activo.getAdjJudicial().getAdjudicacionBien() != null 
-								&& Checks.isFechaNula(activo.getAdjJudicial().getAdjudicacionBien().getFechaDecretoFirme())) {
-							if (actGestion != null || !actGestion.isEmpty()) {
-								for (ActivoGestion activoGestion : actGestion) {
-									if ((Checks.esNulo(activoGestion.getEstadoLocalizacion()) 
-											|| DDEstadoLocalizacion.CODIGO_SDF.equals(activoGestion.getEstadoLocalizacion().getCodigo()))
-										&& (Checks.esNulo(activoGestion.getSubestadoGestion()) 
-												|| DDSubestadoGestion.CODIGO_SDF.equals(activoGestion.getSubestadoGestion().getCodigo()))) {
-										Filter filtroLoc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoLocalizacion.CODIGO_PDTE);
-										DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLoc);
-										activoGestion.setEstadoLocalizacion(estadoLocalizacion);
-										Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoGestion.CODIGO_GEST_LOC);
-										DDSubestadoGestion subEstadoGestion = genericDao.get(DDSubestadoGestion.class, filtroSeg);
-										activoGestion.setSubestadoGestion(subEstadoGestion);
-									}
+						
+						if (gestionAnterior != null) {
+							
+							if (DDEstadoLocalizacion.CODIGO_SDF.equals(gestionAnterior.getEstadoLocalizacion().getCodigo()) && 
+									DDSubestadoGestion.CODIGO_SDF.equals(gestionAnterior.getSubestadoGestion().getCodigo())) {	
+									
+								DtoComunidadpropietariosActivo activoDto = new DtoComunidadpropietariosActivo();
+									
+								activoDto.setEstadoLocalizacion(DDEstadoLocalizacion.CODIGO_PDTE);
+								activoDto.setSubestadoGestion(DDSubestadoGestion.CODIGO_GEST_LOC);
+									
+								if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+										 activoApi.crearHistoricoDiarioGestion(activoDto,activo.getId());
+										
 								}
 							}
+
+						} else {
+							
+							DtoComunidadpropietariosActivo activoDto = new DtoComunidadpropietariosActivo();
+							
+							activoDto.setEstadoLocalizacion(DDEstadoLocalizacion.CODIGO_PDTE);
+							activoDto.setSubestadoGestion(DDSubestadoGestion.CODIGO_GEST_LOC);
+								
+							if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+									 activoApi.crearHistoricoDiarioGestion(activoDto,activo.getId());
+									
+							}
+
 						}
+							
 					}
 						
 					beanUtilNotNull.copyProperties(activo.getAdjJudicial().getAdjudicacionBien(), dto);

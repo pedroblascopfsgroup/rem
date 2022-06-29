@@ -107,7 +107,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		if(Ext.isEmpty(tab.funPermEdition)) {
     		editionEnabled();
     	} else if (me.permiteProveedorNoHomologable()) {
-    		if ($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
+    		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
     			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     		} else {
     			$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);

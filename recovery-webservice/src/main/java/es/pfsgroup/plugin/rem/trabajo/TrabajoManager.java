@@ -7054,23 +7054,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
 		List<String> mailsPara = new ArrayList<String>();
-		//List<String> mailsCC = new ArrayList<String>();
 		
-	    String correos = "";
 		String contenido = "";
 		String titulo = "";
 		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
 	   
 	    if (proveedor) {
-	    	if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
-	    		if(!Checks.esNulo(trabajo.getProveedorContacto())) {
-	    			mailsPara.add(trabajo.getProveedorContacto().getEmail());
-	    		}
-		    	if(!Checks.esNulo(trabajo.getProveedorContacto().getProveedor()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor().getEmail())) {
-		    		mailsPara.add(trabajo.getProveedorContacto().getProveedor().getEmail());
-		    	}
-
+	    	if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())) {
+				mailsPara.add(trabajo.getUsuarioResponsableTrabajo().getEmail());
 			}
+	    	
 	    	if (DDTipoApunte.CODIGO_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
 	    		contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"
 	    				+"<p>Sin acceso por falta de llaves.</p>"
@@ -7093,8 +7086,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 	    if (gestor) {
-			if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo()) && !Checks.esNulo(trabajo.getUsuarioResponsableTrabajo().getEmail())) {
-				mailsPara.add(trabajo.getUsuarioResponsableTrabajo().getEmail());
+			
+			if (!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getEmail())) {
+	    		if(!Checks.esNulo(trabajo.getProveedorContacto())) {
+	    			mailsPara.add(trabajo.getProveedorContacto().getEmail());
+	    		}
+		    	if(!Checks.esNulo(trabajo.getProveedorContacto().getProveedor()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor().getEmail())) {
+		    		mailsPara.add(trabajo.getProveedorContacto().getProveedor().getEmail());
+		    	}
+
 			}
 			if (DDTipoApunte.CODIGO_GESTION_LLAVES_ACCESO.equals(dtoAgendaTrabajo.getTipoGestion())) {
 				contenido = "<p>Activo "+  trabajo.getActivo().getNumActivo() + " OT " + trabajo.getNumTrabajo() + "</p>"

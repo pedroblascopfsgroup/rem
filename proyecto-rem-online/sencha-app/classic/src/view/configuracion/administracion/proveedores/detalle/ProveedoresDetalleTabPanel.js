@@ -106,24 +106,24 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		// Si la pestaña recibida no tiene asignados roles de edicion 
 		if(Ext.isEmpty(tab.funPermEdition)) {
     		editionEnabled();
-    	} else if(!this.permiteProveedorNoHomologable()){
-    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
-    	}
-    	else {
+    	} else if (me.permiteProveedorNoHomologable()) {
+    		if ($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
+    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+    		} else {
+    			$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+    		}
+    	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
     },
     permiteProveedorNoHomologable: function () {
     	 var me = this;
     	 var subTipoProveedor =  me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
-    	 var tipoProveedor =  me.lookupController().getViewModel().get('proveedor.tipoProveedorCodigo');
-    	 if($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO']) &&
-    		(subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] ||
+    	 if((subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] ||
     				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['JUNTA_DE_COMPENSACION'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AGRUPACION_DE_INTERES_URBANISTICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AYUNTAMIENTO_MUNICIPAL'] ||
     				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['DIPUTACION_PROVINCIAL'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['CONSEJERIA_AUTONOMICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['HACIENDA_ESTATAL'] ||
     				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['OTRA_ADMINISTRACION_PUBLICA'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['NOTARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['REGISTRO'] ||
-    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])
-    	 ) {
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])) {
     		 return true;
     	 }
     	 return false;

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alejandra García
---## FECHA_CREACION=20220503
+--## FECHA_CREACION=20220629
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17766
+--## INCIDENCIA_LINK=HREOS-18196
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario AUX_API_PRIN_DELEGACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-17766 - Alejandra García
+--##        0.2 Modificar campos ZONA - HREOS-18196 - Alejandra García
 --##########################################
 --*/
 
@@ -104,9 +105,9 @@ BEGIN
 		,D_IDIOMAS							VARCHAR2(255 CHAR)
 		,D_GESTION_CLIENTES_RESIDENTES		VARCHAR2(2 CHAR)
 		,D_NUMERO_COMERCIALES				NUMBER(16,0)
-		,D_ZONA_ACTUACION_PROVINCIAS		VARCHAR2(255 CHAR) 
-		,D_ZONA_ACTUACION_MUNICIPIOS		VARCHAR2(255 CHAR) 
-		,D_ZONA_ACTUACION_CP				VARCHAR2(255 CHAR) 
+		,D_ZONA_ACTUACION_PROVINCIAS		VARCHAR2(1000 CHAR) 
+		,D_ZONA_ACTUACION_MUNICIPIOS		VARCHAR2(1000 CHAR) 
+		,D_ZONA_ACTUACION_CP				VARCHAR2(1000 CHAR) 
 
 	)
 	LOGGING 

@@ -39,7 +39,7 @@
 --##		0.26 Cambiar código Actuación post-venta de 314 a 84 - [REMVIP-11869] - Alejandra García
 --##		0.27 DD_ETG_CODIGO = 1022 porque es lo mismo que el 198  - [REMVIP-11869] - Alejandra García
 --##		0.28 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
---##		0.29 Añadir nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - [REMVIP-11899] - Juan Bautista Alfonso
+--##		0.29 Añadir nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales  - [REMVIP-11899] - Juan Bautista Alfonso
 --#########################################
 --*/
 
@@ -502,11 +502,13 @@ DECLARE
 		T_TABLA('1105','XXXX-22-2-IBI','22','00','7','01','02','01','','','null','','','','2022'),
 		T_TABLA('1106','XXXX-22-2-A-IBI','22','00','9','01','02','03','','','null','','','','2022'),
 
-		--Nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales- REMVIP-11899
+		--Nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales- REMVIP-11899
 		T_TABLA('1107','XXXX-22-2-COM','22','00','2','08','34','01','','','null','','','','2022'),
 		T_TABLA('1108','XXXX-22-2-A-COM','22','00','3','08','34','03','','','null','','','','2022'),
 		T_TABLA('1109','XXXX-22-2-COM','22','00','2','08','32','01','','','null','','','','2022'),
-		T_TABLA('1110','XXXX-22-2-A-COM','22','00','3','08','32','03','','','null','','','','2022')
+		T_TABLA('1110','XXXX-22-2-A-COM','22','00','3','08','32','03','','','null','','','','2022'),
+		T_TABLA('1111','XXXX-22-2-COM','22','00','2','07','30','01','','','null','','','','2022'),
+		T_TABLA('1112','XXXX-22-2-A-COM','22','00','3','07','30','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

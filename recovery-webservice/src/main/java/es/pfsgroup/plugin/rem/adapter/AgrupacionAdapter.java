@@ -3516,7 +3516,7 @@ public class AgrupacionAdapter {
 				agrupacion.setEliminado(BooleanUtils.toInteger(dto.getAgrupacionEliminada()));
 			}
 		}
-		
+				
 		// SI ES TIPO PROMOCION ALQUILER
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
 	
@@ -5144,11 +5144,11 @@ public class AgrupacionAdapter {
 
 		if(DDTipoComercializacion.CODIGO_VENTA.equals(codigoActivo))
 		{
-			return DDTipoOferta.CODIGO_ALQUILER;
+			return DDTipoOferta.CODIGO_VENTA;
 		}
 		else if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(codigoActivo))
 		{
-			return DDTipoOferta.CODIGO_VENTA;
+			return DDTipoOferta.CODIGO_ALQUILER;
 		}
 		return null;
 	}

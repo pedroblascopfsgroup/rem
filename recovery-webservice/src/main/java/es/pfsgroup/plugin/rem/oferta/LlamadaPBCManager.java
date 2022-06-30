@@ -100,7 +100,7 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
         if(TareaProcedimientoConstants.CODIGO_CONFIRMAR_FECHA_ESCRITURA_T017.equals(codTarea)
                 && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
 
-            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
+            return DDTipoOfertaAcciones.CONFIRMACION_REPOSICIONAMIENTO_PBC;
 
         return null;
     }
@@ -109,7 +109,7 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
         if(TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T017_AGENDAR_POSICIONAMIENTO.equals(codTarea)
                 && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
 
-            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
+            return DDTipoOfertaAcciones.CONFIRMACION_REPOSICIONAMIENTO_PBC;
 
         return null;
     }
@@ -118,7 +118,7 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
         if (TareaProcedimientoConstants.TramiteComercialT017.CODIGO_T107_FIRMA_CONTRATO.equals(codTarea)
                 && (DDEstadoExpedienteBc.PTE_SANCION_PBC_SERVICER.equals(codEstado)))
 
-            return DDTipoOfertaAcciones.ACCION_CONFIRMACION_REP_OFERTAS;
+            return DDTipoOfertaAcciones.CONFIRMACION_REPOSICIONAMIENTO_PBC;
 
         return null;
     }

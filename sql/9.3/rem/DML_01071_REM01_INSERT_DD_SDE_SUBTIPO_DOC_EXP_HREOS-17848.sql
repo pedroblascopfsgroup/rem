@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220520
+--## FECHA_CREACION=20220521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17848
@@ -34,10 +34,10 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('92', 'DNI','10', 'OP-12-DOCI-01'),
-        T_TIPO_DATA('93', 'NIE','10', 'OP-12-DOCI-06'),
+        T_TIPO_DATA('92', 'DNI','10', 'OP-14-DOCI-01'),
+        T_TIPO_DATA('93', 'NIE','10', 'OP-14-DOCI-06'),
         T_TIPO_DATA('94', 'Tarjeta de residente','10', null),
-        T_TIPO_DATA('95', 'Pasaporte','10', 'OP-12-DOCI-05'),
+        T_TIPO_DATA('95', 'Pasaporte','10', 'OP-14-DOCI-05'),
         T_TIPO_DATA('96', 'DNI país extranjero','10', null),
         T_TIPO_DATA('97', 'TJ identifiación diplomática','10', null),
         T_TIPO_DATA('98', 'Menor','10', null),
@@ -46,7 +46,7 @@ DECLARE
         T_TIPO_DATA('101', 'Ident Banco de España','10', null),
         T_TIPO_DATA('102', 'NIF','10', null),
         T_TIPO_DATA('103', 'NIF PAIS ORIGEN','10', null),
-        T_TIPO_DATA('104', 'Otro','10', 'OP-12-DOCI-02')
+        T_TIPO_DATA('104', 'Otro','10', 'OP-14-DOCI-02')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

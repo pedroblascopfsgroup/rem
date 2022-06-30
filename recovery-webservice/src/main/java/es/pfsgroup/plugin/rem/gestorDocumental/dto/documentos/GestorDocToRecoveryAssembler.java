@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,7 +89,9 @@ public class GestorDocToRecoveryAssembler {
 			for (IdentificacionDocumento idnDoc : documentosExp.getDocumentos()) {
 				DtoAdjunto dtoAdj = new DtoAdjunto();
 				dtoAdj.setId(new Long(idnDoc.getIdentificadorNodo()));
-				dtoAdj.setIdEntidad(new Long(idnDoc.getId_activo()));
+				if(GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA.equals(idnDoc.getClaseExpediente())){
+					dtoAdj.setIdEntidad(new Long(idnDoc.getId_activo()));
+				}
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo(idnDoc.getTdn2_desc());

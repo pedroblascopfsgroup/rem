@@ -21,6 +21,18 @@ Ext.define('HreRem.model.Pujas', {
     	{	
     		name: 'importePuja'
     	},
+		{
+			name:'importePujaFormateado',
+			convert: function(value, record) {
+				//if (Ext.isEmpty(record.get('importeOferta'))) {
+					if (record.get('importePuja') === undefined) {
+					return "*****";
+				} else {
+					return  record.get('importePuja');
+				}
+			},
+			depends: 'importePuja'
+		},
    		{
    			name: 'fechaCrear',
 			type: 'date',

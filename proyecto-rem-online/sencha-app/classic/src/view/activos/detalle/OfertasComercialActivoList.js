@@ -93,14 +93,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
-		        	xtype: 'numbercolumn',
-		            dataIndex: 'importeOferta',
-		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            flex: 1,                	
-			        decimalPrecision: 2,
+		        	//xtype: 'numbercolumn',
+					text: HreRem.i18n('header.oferta.importeOferta'),
+		            dataIndex: 'importeOfertaFormateado',
+		            flex: 1             	
+			       /* decimalPrecision: 2,
 			        decimalSeparation: ',',
 			        thousandSeparation: '.',
-			        hidden: enConcurrencia
+			        hidden: enConcurrencia*/
 		        },
 		        {
 		        	xtype: 'numbercolumn',

@@ -40,9 +40,19 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name : 'precioPublicado'
     	},
     	{
-    		name : 'importeOferta',
-			type: 'number'
-    	},
+    		name : 'importeOferta'
+    	},	{
+			name:'importeOfertaFormateado',
+			convert: function(value, record) {
+				//if (Ext.isEmpty(record.get('importeOferta'))) {
+					if (record.get('importeOferta') === undefined) {
+					return "*****";
+				} else {
+					return  record.get('importeOferta');
+				}
+			},
+			depends: 'importeOferta'
+		},
     	{
     		name : 'importeContraOferta',
 			type: 'number'

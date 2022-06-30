@@ -326,7 +326,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 										xtype: "textfield",
 										fieldLabel: HreRem.i18n('header.oferta.importeOferta'),
 										bind: {
-											value: '{detalleOfertaModel.importeOferta}'
+											value: '{detalleOfertaModel.importeOfertaFormateado}'
 										},
 									    readOnly: true,
 					    				width: 410

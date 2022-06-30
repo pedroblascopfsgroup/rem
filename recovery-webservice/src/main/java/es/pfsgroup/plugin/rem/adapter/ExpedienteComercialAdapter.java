@@ -33,6 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.ws.rs.ProcessingException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -190,6 +191,8 @@ public class ExpedienteComercialAdapter {
 				} else {
 					throw gex;
 				}
+			} catch (ProcessingException pex){
+				pex.printStackTrace();
 			}
 		} else {
 			listaAdjuntos = getAdjuntos(id, listaAdjuntos);

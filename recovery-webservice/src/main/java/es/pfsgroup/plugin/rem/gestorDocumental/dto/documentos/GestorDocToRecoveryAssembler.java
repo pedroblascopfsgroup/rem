@@ -1,26 +1,8 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.IdentificacionDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
@@ -28,6 +10,15 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.*;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GestorDocToRecoveryAssembler {
 	
@@ -89,7 +80,7 @@ public class GestorDocToRecoveryAssembler {
 			for (IdentificacionDocumento idnDoc : documentosExp.getDocumentos()) {
 				DtoAdjunto dtoAdj = new DtoAdjunto();
 				dtoAdj.setId(new Long(idnDoc.getIdentificadorNodo()));
-				if(GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA.equals(idnDoc.getClaseExpediente())){
+				if(!GestorDocumentalConstants.CODIGO_CLASE_DOCUMENTOS_PERSONA.equals(idnDoc.getClaseExpediente())){
 					dtoAdj.setIdEntidad(new Long(idnDoc.getId_activo()));
 				}
 				dtoAdj.setNombre(idnDoc.getNombreNodo());

@@ -13,8 +13,8 @@ Ext.define('HreRem.view.activos.detalle.OrganismosGrid', {
     initComponent: function () {
     	
      	var me = this;
-     	me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
-        me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+     	me.topBar = ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+        me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION'])  || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 
 
 		me.columns = [

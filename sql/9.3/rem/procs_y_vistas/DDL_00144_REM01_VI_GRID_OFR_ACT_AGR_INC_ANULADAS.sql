@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220427
+--## FECHA_CREACION=20220627
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17697
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial Lara Pablo 20210928 HREOS-15400
 --##        0.2 Agregar estado depósito
+--##        0.3 REMVIP-11950 Cambio al mostrar datos ofertante
 --##########################################
 --*/
 
@@ -58,7 +59,9 @@ BEGIN
 		    TOF.DD_TOF_DESCRIPCION,
 				TOF.DD_TOF_CODIGO,
 				NVL2(AGR.AGR_NUM_AGRUP_REM, AGR.AGR_NUM_AGRUP_REM, ACT.ACT_NUM_ACTIVO) AS NUM_ACTIVO_AGRUPACION,
-		    NVL2(CLC.CLC_RAZON_SOCIAL,CLC.CLC_RAZON_SOCIAL, CLC.CLC_NOMBRE || NVL2(CLC.CLC_APELLIDOS, '' '' || CLC.CLC_APELLIDOS, '''')) AS OFERTANTE,
+        CASE WHEN CLC.DD_TPE_ID = 2 THEN CLC.CLC_RAZON_SOCIAL
+				ELSE CLC.CLC_NOMBRE || NVL2(CLC.CLC_APELLIDOS, '' '' || CLC.CLC_APELLIDOS, '''')
+				END AS OFERTANTE,
 		    OFR.OFR_IMPORTE,
 				OFR.OFR_IMPORTE_CONTRAOFERTA,
 		    EOF.DD_EOF_DESCRIPCION,

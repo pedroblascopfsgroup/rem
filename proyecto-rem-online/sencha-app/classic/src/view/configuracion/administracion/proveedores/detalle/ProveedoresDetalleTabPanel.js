@@ -85,8 +85,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 
     initComponent: function () {
         var me = this;
-
         var items = [];
+      
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isSociedadTasadora}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
 
@@ -100,12 +100,32 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
-
+		var editionDisabled = function() {
+            me.down("[itemId=botoneditar]").setVisible(false);
+        }
 		// Si la pestaña recibida no tiene asignados roles de edicion 
 		if(Ext.isEmpty(tab.funPermEdition)) {
     		editionEnabled();
+    	} else if (me.permiteProveedorNoHomologable()) {
+    		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
+    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+    		} else {
+    			$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+    		}
     	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}
+    },
+    permiteProveedorNoHomologable: function () {
+    	 var me = this;
+    	 var subTipoProveedor =  me.lookupController().getViewModel().get('proveedor.subtipoProveedorCodigo');
+    	 if((subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMUNIDAD_DE_PROPIETARIOS'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['COMPLEJO_INMOBILIARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['ENTIDAD_DE_CONSERVACION'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['JUNTA_DE_COMPENSACION'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AGRUPACION_DE_INTERES_URBANISTICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['AYUNTAMIENTO_MUNICIPAL'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['DIPUTACION_PROVINCIAL'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['CONSEJERIA_AUTONOMICO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['HACIENDA_ESTATAL'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['OTRA_ADMINISTRACION_PUBLICA'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['NOTARIO'] || subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['REGISTRO'] ||
+    				subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['PROCURADORES'] ||  subTipoProveedor == CONST.SUBTIPOS_PROVEEDOR['SUMINISTRO'])) {
+    		 return true;
+    	 }
+    	 return false;
     }
 });

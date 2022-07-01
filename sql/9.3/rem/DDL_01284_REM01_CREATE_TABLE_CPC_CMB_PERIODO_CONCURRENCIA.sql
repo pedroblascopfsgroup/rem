@@ -35,7 +35,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TABLA VARCHAR2(2400 CHAR) := 'CPC_CMB_PERIODO_CONCURRENCIA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla con los datos de cambio de periodo de concurrencia'; -- Vble. para los comentarios de las tablas
-    V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     /* -- ARRAY CON NUEVAS FOREIGN KEYS */
     TYPE T_FK IS TABLE OF VARCHAR2(4000);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbrí
---## FECHA_CREACION=20211202
+--## FECHA_CREACION=20220628
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-13272
@@ -14,6 +14,7 @@
 --##        0.1 [REMVIP-7883] Versión inicial (Creación de la vista)
 --##        0.2 [HREOS-14529] Añadir nuevo campo para filtro (FECHA_OFERTA_PENDIENTE)
 --##        0.3 [REMVIP-10875] Añadir nuevo campo para filtro (FECHA_ENT_CRM_SF)
+--##        0.4 REMVIP-11950 Cambio al mostrar datos ofertante
 --#########################################
 --*/
 
@@ -56,7 +57,9 @@ BEGIN
 				TOF.DD_TOF_CODIGO AS TIPO_OFERTA_CODIGO,
 		    	TOF.DD_TOF_DESCRIPCION AS TIPO_OFERTA_DESCRIPCION,
 				NVL(AGR.AGR_NUM_AGRUP_REM, ACT.ACT_NUM_ACTIVO) AS NUM_ACTIVO_AGRUPACION,
-		    	NVL(CLC.CLC_RAZON_SOCIAL, CLC.CLC_NOMBRE || NVL2(CLC.CLC_APELLIDOS, '' '' || CLC.CLC_APELLIDOS, '''')) AS OFERTANTE_NOMBRE,
+				CASE WHEN CLC.DD_TPE_ID = 2 THEN CLC.CLC_RAZON_SOCIAL
+				ELSE CLC.CLC_NOMBRE || NVL2(CLC.CLC_APELLIDOS, '' '' || CLC.CLC_APELLIDOS, '''')
+				END AS OFERTANTE_NOMBRE,
 				CLC.CLC_TELEFONO1 ||'' ''|| CLC.CLC_TELEFONO2 AS OFERTANTE_TELEFONO,
 				CLC.CLC_EMAIL AS OFERTANTE_EMAIL,
 				CLC.CLC_DOCUMENTO AS OFERTANTE_DOC,

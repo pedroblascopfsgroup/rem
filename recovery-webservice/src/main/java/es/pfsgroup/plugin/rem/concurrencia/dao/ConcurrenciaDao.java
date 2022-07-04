@@ -5,6 +5,7 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
+import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 
@@ -21,6 +22,8 @@ public interface ConcurrenciaDao extends AbstractDao<Concurrencia, Long>{
 	boolean isOfertaEnPlazoEntrega(Long idOferta);
 
 	String getPeriodoConcurrencia(Long idConcurrencia);
+
+	List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia);
 	
 
 }

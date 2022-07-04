@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
+import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -391,5 +392,10 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 			}
 		}
 		return listaHistorico;
+	}
+
+	@Override
+	public List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia) {
+		return concurrenciaDao.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia);
 	}
 }

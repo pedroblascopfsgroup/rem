@@ -35,6 +35,17 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialActivo', {
 		    				xtype: 'pujascomercialactivolist'
 		    			}
     			]
+        	},
+        	{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('title.lista.cambios.periodo.concurrencia'),
+				collapsible: true,
+				items :
+					[
+		    			{	
+		    				xtype: 'cambiosconcurrenciacomercialactivolist'
+		    			}
+    			]
         	}
         	
         ];

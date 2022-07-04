@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.activos.detalle.PujasComercialActivoList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'pujascomercialactivolist',
-    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle'],
+    requires	: ['HreRem.model.PujasActivo', 'HreRem.view.activos.detalle.PujasComercialDetalle'
+    ,'HreRem.view.activos.detalle.CambiosConcurrenciaComercialActivoList'],
     reference	: 'pujascomercialactivolistref',
     
         

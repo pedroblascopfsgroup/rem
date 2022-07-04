@@ -514,6 +514,7 @@ public class ExpedienteComercialAdapter {
 				if(DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(dtoAdjunto.getCodigoTipo())){
 					throw new JsonViewerException("No se puede borrar este tipo de documentos");
 				}
+				if(1==2){
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				try {
 					borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
@@ -521,6 +522,7 @@ public class ExpedienteComercialAdapter {
 						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
 				} catch (Exception e) {
 					logger.error(e.getMessage(),e);
+				}
 				}
 			} else {
 				borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);

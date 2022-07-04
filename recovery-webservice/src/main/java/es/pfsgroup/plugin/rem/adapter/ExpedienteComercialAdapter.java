@@ -23,7 +23,10 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.thread.EnvioDocumentoGestorDocBulk;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -511,10 +514,9 @@ public class ExpedienteComercialAdapter {
 		boolean borrado = false;
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				dtoAdjunto = adjuntoExpedienteComercialDao.getAdjuntoByIdDocRest(dtoAdjunto);
-				if(DDTipoDocumentoExpediente.CODIGO_DOCUMENTOS_PERSONA.equals(dtoAdjunto.getCodigoTipo())){
+				if(dtoAdjunto.getCodigoTipo() == null){
 					throw new JsonViewerException("No se puede borrar este tipo de documentos");
 				}
-				if(1==2){
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				try {
 					borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
@@ -522,7 +524,6 @@ public class ExpedienteComercialAdapter {
 						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
 				} catch (Exception e) {
 					logger.error(e.getMessage(),e);
-				}
 				}
 			} else {
 				borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);

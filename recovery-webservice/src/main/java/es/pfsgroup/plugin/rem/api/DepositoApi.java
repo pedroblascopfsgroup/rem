@@ -50,4 +50,6 @@ public interface DepositoApi {
 	boolean incautaODevuelveDeposito(Deposito dep, String codDeposito);
 
 	boolean isDepositoDecidido(Deposito deposito);
+
+	CuentasVirtualesAlquiler vincularCuentaVirtualAlquiler(String codigoSubTipoOferta);
 }

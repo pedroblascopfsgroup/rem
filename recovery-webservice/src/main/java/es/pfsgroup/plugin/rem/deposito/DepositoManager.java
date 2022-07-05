@@ -339,4 +339,24 @@ public class DepositoManager extends BusinessOperationOverrider<DepositoApi> imp
 		dep.setFechaDevolucion(new Date());
 		return cambiaEstadoDeposito(dep, codDeposito);
 	}
+	
+	@Override
+	@Transactional
+	public synchronized CuentasVirtualesAlquiler vincularCuentaVirtualAlquiler(String codigoSubTipoOferta) {
+		CuentasVirtualesAlquiler cuentaVirtualAlquiler = null;
+		List<CuentasVirtualesAlquiler> cuentasVirtualesAlquiler = null;
+		Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codigoSubTipoOferta);
+		Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaInicio");
+		cuentasVirtualesAlquiler = genericDao.getList(CuentasVirtualesAlquiler.class, filtroSubCartera,filtroFechaFin);
+			
+		if(cuentasVirtualesAlquiler != null && !cuentasVirtualesAlquiler.isEmpty()) {
+			cuentaVirtualAlquiler = cuentasVirtualesAlquiler.get(0);
+			cuentaVirtualAlquiler.setFechaInicio(new Date());
+			cuentaVirtualAlquiler.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			cuentaVirtualAlquiler.getAuditoria().setFechaModificar(new Date());
+
+			genericDao.update(CuentasVirtualesAlquiler.class, cuentaVirtualAlquiler);
+		}
+		return cuentaVirtualAlquiler;
+	}
 }

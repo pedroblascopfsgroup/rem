@@ -2331,13 +2331,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if(agrupacionConcurrencia != null && (concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia)
 					|| (!concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia)
-					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta())
-					&& ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()))){
+					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaDto.getCodEstadoOferta())))){
 				errorsList.put("errorDesc", "No se puede tramitar. La agrupación "+agrupacionConcurrencia.getNumAgrupRem()+" sigue en periodo de concurrencia.");
 			}else if(activoConcurrencia != null && (concurrenciaApi.isActivoEnConcurrencia(activoConcurrencia)
 					|| (!concurrenciaApi.isAgrupacionEnConcurrencia(agrupacionConcurrencia)
-					&& ofertaDto.getEnConcurrencia() != null && !ofertaDto.getEnConcurrencia()
-					&& ofrConcurrencia.entraEnTiempoDocumentacion() && ofrConcurrencia.entraEnTiempoDeposito()))){
+					&& ofertaDto.getEnConcurrencia() != null && !ofertaDto.getEnConcurrencia()))){
 				errorsList.put("errorDesc", "No se puede tramitar. El activo "+activoConcurrencia.getNumActivo()+" sigue en periodo de concurrencia.");
 			}
 

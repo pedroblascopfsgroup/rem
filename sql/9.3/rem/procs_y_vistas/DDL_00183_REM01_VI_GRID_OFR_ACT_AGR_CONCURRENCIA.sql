@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Javier Esbri
---## FECHA_CREACION=20220428
+--## FECHA_CREACION=20220705
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-17405
+--## INCIDENCIA_LINK=HREOS-18320
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        HREOS-HREOS-17405: Vista para sacar las ofertas de una agrupación o activo, en concurrencia y ordenadas.
 --##        HREOS-17698: Añadir deposito para sacar su estado, y concurrencia.
+--##        HREOS-18320: Cambior de donde se aprovisionan los campos de FECHA_INGRESO_DEPOSITO y FECHA_INGRESO_DOCUMENTACION.
 --##########################################
 --*/
 
@@ -115,8 +116,8 @@ BEGIN
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
 				DECODE(GEN.ACT_ID,NULL,0,1)  AS GENCAT,
 		  	C4C.DD_ECC_CODIGO AS EST_CODIGO_C4C,
-        	OCO.ofc_fecha_deposito as FECHA_INGRESO_DEPOSITO,
-        	OCO.ofc_fecha_doc AS FECHA_INGRESO_DOCUMENTACION,
+        	DEP.DEP_FECHA_INGRESO as FECHA_INGRESO_DEPOSITO,
+        	OFR.OFR_FECHA_OFERTA_PENDIENTE AS FECHA_INGRESO_DOCUMENTACION,
 			EDP.DD_EDP_DESCRIPCION,
 				EDP.DD_EDP_CODIGO,
 			CON.CON_ID,

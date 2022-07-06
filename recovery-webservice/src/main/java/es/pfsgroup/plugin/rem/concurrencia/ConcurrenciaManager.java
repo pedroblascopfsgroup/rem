@@ -95,7 +95,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
 			for (Oferta oferta : listOfertas) {
 				Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-				if(oferta != null && this.entraEnTiempoDocumentacion(oferta) && deposito != null && this.entraEnTiempoDeposito(deposito)) {
+				if(oferta != null && this.entraEnTiempoDocumentacion(oferta) && (deposito != null && this.entraEnTiempoDeposito(deposito))) {
 					bloquear =  true;
 					break;
 				}
@@ -287,7 +287,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		if(ofr != null && !ofr.esOfertaAnulada()){
 			OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
 			Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
-			if(ofc != null && (deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito))){
+			if(ofc != null && (deposito != null && deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito))){
 				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofc));
 				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
@@ -410,14 +410,16 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	}
 
 	public boolean entraEnTiempoDeposito(Deposito deposito){
-		Oferta oferta = deposito.getOferta();
-		if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia()){
-			Date fechaTopeOferta = this.sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 96);
-			Date fechaHoy = new Date();
-
-			int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
-
-			return fecha >= 0;
+		if (deposito != null) {
+			Oferta oferta = deposito.getOferta();
+			if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia()){
+				Date fechaTopeOferta = this.sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 96);
+				Date fechaHoy = new Date();
+	
+				int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
+	
+				return fecha >= 0;
+			}
 		}
 		return true;
 	}

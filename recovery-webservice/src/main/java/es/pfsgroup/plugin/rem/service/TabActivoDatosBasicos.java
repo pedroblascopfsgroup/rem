@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPrinexActivos;
 import es.pfsgroup.plugin.rem.model.ActivoSareb;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -1366,8 +1367,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setEnConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo));
-		
-		activoDto.setActivoOfertasConcurrencia(concurrenciaApi.isConcurrenciaOfertasEnProgresoActivo(activo));
+		Boolean activoTieneConcurrencia = false;
+		Concurrencia concurrencia = concurrenciaApi.getUltimaConcurrenciaByActivo(activo);
+		if(concurrencia != null) {
+			activoTieneConcurrencia = true;
+		}
+		activoDto.setActivoOfertasConcurrencia(activoTieneConcurrencia);
 		
 		activoDto.setIsConcurrencia(concurrenciaApi.isActivoEnConcurrencia(activo) || concurrenciaApi.tieneActivoOfertasDeConcurrencia(activo));
 		

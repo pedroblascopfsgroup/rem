@@ -33,14 +33,6 @@ Ext.define('HreRem.view.activos.detalle.HistoricoConcurrenciaGrid', {
 		        	},
 		            flex: 0.5
 		        },
-		        {
-		            dataIndex: 'importeDeposito',
-		            text: HreRem.i18n('header.importe.deposito'),
-		            renderer: function(value) {
-		        		return Ext.util.Format.currency(value);
-		        	},
-		            flex: 0.5
-		        },
 		        {   
 			    	text	 : HreRem.i18n('header.fecha.inicio'), 
 		        	dataIndex: 'fechaInicio',

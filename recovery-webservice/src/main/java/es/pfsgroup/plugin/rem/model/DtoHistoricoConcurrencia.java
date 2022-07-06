@@ -18,7 +18,6 @@ public class DtoHistoricoConcurrencia extends WebDto {
 	private Long numAgrupacion;
 	private Long numActivoAgrupacion;
 	private Double importeMinOferta;
-	private Double importeDeposito;
 	private Date fechaInicio;
 	private Date fechaFin;
 	private Boolean concurrencia;
@@ -70,12 +69,6 @@ public class DtoHistoricoConcurrencia extends WebDto {
 	}
 	public void setImporteMinOferta(Double importeMinOferta) {
 		this.importeMinOferta = importeMinOferta;
-	}
-	public Double getImporteDeposito() {
-		return importeDeposito;
-	}
-	public void setImporteDeposito(Double importeDeposito) {
-		this.importeDeposito = importeDeposito;
 	}
 	public Long getNumActivoAgrupacion() {
 		return numActivoAgrupacion;

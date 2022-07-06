@@ -38,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 
@@ -50,9 +49,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	
 	@Autowired
 	private ConcurrenciaDao concurrenciaDao;
-
-	@Autowired
-	private OfertaManager ofertaManager;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -99,7 +95,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
 			for (Oferta oferta : listOfertas) {
 				Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-				if(oferta != null && this.entraEnTiempoDocumentacion(oferta) && this.entraEnTiempoDeposito(deposito)) {
+				if(oferta != null && this.entraEnTiempoDocumentacion(oferta) && deposito != null && this.entraEnTiempoDeposito(deposito)) {
 					bloquear =  true;
 					break;
 				}
@@ -387,7 +383,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					dto.setIdAgrupacion(concurrencia.getAgrupacion() != null ? concurrencia.getAgrupacion().getId() : null);
 					dto.setNumAgrupacion(concurrencia.getAgrupacion() != null ? concurrencia.getAgrupacion().getNumAgrupRem() : null);
 					dto.setImporteMinOferta(concurrencia.getImporteMinOferta());
-					dto.setImporteDeposito(concurrencia.getImporteDeposito());
 					dto.setFechaInicio(concurrencia.getFechaInicio());
 					dto.setFechaFin(concurrencia.getFechaFin());
 					listaHistorico.add(dto);

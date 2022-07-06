@@ -24,9 +24,6 @@ Ext.define('HreRem.model.HistoricoConcurrenciaGridModel', {
 	    {
 	    	name: 'importeMinOferta'
 	    },
-	    {
-	    	name: 'importeDeposito'
-	    },
    		{
    			name: 'fechaInicio',
 			type: 'date',

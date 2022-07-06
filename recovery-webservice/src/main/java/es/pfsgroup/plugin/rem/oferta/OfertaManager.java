@@ -9714,11 +9714,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
             for (ActivoOferta activoOferta : activoOfertaList) {
                 if(!activoOferta.getOferta().equals(idOfertaVendida)) {
                     Oferta ofertaRechazar = getOfertaById(activoOferta.getOferta());
-                    Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
-					ofertaRechazar.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, filtroMotivo));
-                    
-					rechazoOfertaNew(ofertaRechazar, DDEstadosExpedienteComercial.ANULADO);
-                    ofertaEstadoHash.put(ofertaRechazar.getId(),ofertaRechazar.getEstadoOferta().getCodigo());
+                    if (!DDEstadoOferta.isRechazada(ofertaRechazar.getEstadoOferta())) {
+	                    Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_ACTIVO_VENDIDO);
+						ofertaRechazar.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, filtroMotivo));
+	                    
+						rechazoOfertaNew(ofertaRechazar, DDEstadosExpedienteComercial.ANULADO);
+	                    ofertaEstadoHash.put(ofertaRechazar.getId(),ofertaRechazar.getEstadoOferta().getCodigo());
+                    }
                 }
             }
 

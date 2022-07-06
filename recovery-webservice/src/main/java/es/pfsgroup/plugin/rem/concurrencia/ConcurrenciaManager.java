@@ -31,7 +31,6 @@ import es.pfsgroup.plugin.rem.model.Deposito;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.Puja;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
@@ -258,15 +257,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
 							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
 						Oferta ofr = actOfr.getPrimaryKey().getOferta();
-						OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getOferta()));
 						Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
-						if(ofc != null && (deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito))){
-							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+						if(deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito)){
+							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
 							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
 						}
-						if(ofc != null && (ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr))){
-							noEntraDocumentacion.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofc));
+						if(ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr)){
+							noEntraDocumentacion.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
 							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
 						}
@@ -285,15 +283,14 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		HashMap<Long, String> noEntraDeposito = new HashMap<Long, String>();
 
 		if(ofr != null && !ofr.esOfertaAnulada()){
-			OfertaConcurrencia ofc = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
 			Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
-			if(ofc != null && (deposito != null && deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito))){
-				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofc));
+			if(deposito != null && deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito)){
+				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
 				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
 			}
-			if(ofc != null && (ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr))){
-				noEntraDocumentacion.put(ofr.getId(), rellenaMapOfertaCorreos(ofc));
+			if(ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr)){
+				noEntraDocumentacion.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
 				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
 			}
@@ -302,15 +299,15 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 
 	}
 
-	private String rellenaMapOfertaCorreos(OfertaConcurrencia ofc) {
+	private String rellenaMapOfertaCorreos(Oferta ofr) {
 		String correos = null;
 
-		if(ofc.getOferta() != null){
-			if(ofc.getOferta().getCliente() != null && ofc.getOferta().getCliente().getEmail() != null){
-				correos = ofc.getOferta().getCliente().getEmail();
+		if(ofr != null){
+			if(ofr.getCliente() != null && ofr.getCliente().getEmail() != null){
+				correos = ofr.getCliente().getEmail();
 			}
 
-			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofc.getOferta().getId()));
+			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
 
 			if(titularesAdicionales != null && !titularesAdicionales.isEmpty()){
 				for(TitularesAdicionalesOferta tit: titularesAdicionales){

@@ -186,7 +186,6 @@ import es.pfsgroup.plugin.rem.model.InfoAdicionalPersona;
 import es.pfsgroup.plugin.rem.model.LlamadaPbcDto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaCaixa;
-import es.pfsgroup.plugin.rem.model.OfertaConcurrencia;
 import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertaTestigos;
@@ -1967,18 +1966,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			errorsList.put("replicar", "true");
 
-			createOfertaConcurrencia(oferta);
-
 			crearPuja(ofertaDto, oferta, agrup, activo);
 		}
 
 		return errorsList;
-	}
-
-	private void createOfertaConcurrencia(Oferta oferta) {
-		OfertaConcurrencia ofrConcurrencia = new OfertaConcurrencia();
-		ofrConcurrencia.setOferta(oferta);
-		genericDao.save(OfertaConcurrencia.class, ofrConcurrencia);
 	}
 
 	private void crearPuja(OfertaDto ofertaDto, Oferta oferta, ActivoAgrupacion agrup, Activo activo) {
@@ -2321,8 +2312,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			//CONCURRENCIA
 			Activo activoConcurrencia = activoDao.getActivoByNumActivo(ofertaDto.getIdActivoHaya());
 			ActivoAgrupacion agrupacionConcurrencia = null;
-
-			OfertaConcurrencia ofrConcurrencia = genericDao.get(OfertaConcurrencia.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 
 			if(ofertaDto.getCodigoAgrupacionComercialRem() != null) {
 				agrupacionConcurrencia = genericDao.get(ActivoAgrupacion.class,

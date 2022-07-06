@@ -18,12 +18,12 @@ if [ $? -ne 0 ] ; then
    exit 1
 fi
 
-if test ! -f ${INPUT_PATH}/STOCK_APIS_????????.xlsx ; then
-   echo "$(basename $0) Error ${INPUT_PATH}/STOCK_APIS_????????.xlsx inexistente"
+if test ! -f ${INPUT_PATH}/STOCK_APIS_????????.csv ; then
+   echo "$(basename $0) Error ${INPUT_PATH}/STOCK_APIS_????????.csv inexistente"
    exit 1
 fi
 
-mv $INPUT_PATH/STOCK_APIS_????????.xlsx $INPUT_PATH/STOCK_APIS.xlsx
+mv $INPUT_PATH/STOCK_APIS_????????.csv $INPUT_PATH/STOCK_APIS.csv
 
 if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20220406
+--## FECHA_CREACION=20220729
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-17599
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Jose Sanjuan - HREOS-18333 - cambio de PK y asignacion de la FK en el DD
 --##########################################
 --*/
 
@@ -74,9 +75,9 @@ BEGIN
                 COI_DELEGACION          	NUMBER(16,0),
                 COI_COMENTARIOS 			VARCHAR2(250 CHAR), 
                 COI_ADJUNTO                 NUMBER(16,0),
-                VERSION 			        NUMBER(16,0) 		    DEFAULT 0 NOT NULL ENABLE, 
-                USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
-                FECHACREAR 			        TIMESTAMP (6) 		    NOT NULL ENABLE, 
+                VERSION 			        NUMBER(16,0) 		        DEFAULT 0 NOT NULL ENABLE, 
+                USUARIOCREAR 			    VARCHAR2(50 CHAR) 	        NOT NULL ENABLE, 
+                FECHACREAR 			        TIMESTAMP (6) 		        NOT NULL ENABLE, 
                 USUARIOMODIFICAR 		    VARCHAR2(50 CHAR), 
                 FECHAMODIFICAR 			    TIMESTAMP (6), 
                 USUARIOBORRAR 			    VARCHAR2(50 CHAR), 
@@ -93,7 +94,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
             
             -- Creamos primary key
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (DD_CCI_ID) USING INDEX)';
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (COI_ID) USING INDEX)';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
@@ -108,7 +109,6 @@ BEGIN
                 EXECUTE IMMEDIATE V_MSQL;		
                 DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
             END IF;
-
             -- Creamos comentario
             V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS '''||V_COMMENT_TABLE||'''';
 		    EXECUTE IMMEDIATE V_MSQL;	

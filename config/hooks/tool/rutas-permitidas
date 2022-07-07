@@ -327,6 +327,7 @@ func-rem-desvincularCierreEconomico|R-Navelate
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-deposito
 func-rem-deposito|R-Baal
+rem_mirror|version-@-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
 rem_mirror|func-rem-formalizacionAlquileres

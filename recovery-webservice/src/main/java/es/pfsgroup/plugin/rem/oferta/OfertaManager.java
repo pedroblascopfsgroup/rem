@@ -5404,7 +5404,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		for (ActivoAgrupacion agr : agrupaciones) {
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agr.getTipoAgrupacion().getCodigo())) {
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agr.getTipoAgrupacion().getCodigo()) 
+					&& Checks.esNulo(agr.getFechaBaja())) {
 				for (Oferta oferta : agr.getOfertas()) {
 					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
 							|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())
@@ -9617,7 +9618,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		for (ActivoOferta activoOferta : activoOfertaList) {
 			if(!activoOferta.getOferta().equals(oferta.getId())) {
 				Oferta ofr = this.getOfertaById(activoOferta.getOferta());
-				if(!DDEstadoOferta.isRechazada(ofr.getEstadoOferta()) && !DDEstadoOferta.isCaducada(ofr.getEstadoOferta())) {
+				if(!DDEstadoOferta.isRechazada(ofr.getEstadoOferta()) && !DDEstadoOferta.isCaducada(ofr.getEstadoOferta())
+					&& !DDEstadoOferta.isPteDoc(ofr.getEstadoOferta()) && !DDEstadoOferta.isPteTit(ofr.getEstadoOferta())) {
 					idOfertaList.add(activoOferta.getOferta());
 				}
 			}
@@ -9647,7 +9649,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				deposito.setEstadoDeposito(genericDao.get(DDEstadoDeposito.class, genericDao.createFilter(FilterType.EQUALS, "codigo",DDEstadoDeposito.CODIGO_PDTE_DECISION_DEVOLUCION_INCAUTACION)));
 				genericDao.save(Deposito.class, deposito);
 				//oferta.setMotivoRechazo(genericDao.get(DDMotivoRechazoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.COD_CAIXA_OTRA_OFR)));
-			}else if(!DDEstadoOferta.isPteDoc(oferta.getEstadoOferta()) && !DDEstadoOferta.isPteTit(oferta.getEstadoOferta())){
+			}else{
 				estadoOferta = DDEstadoOferta.CODIGO_CONGELADA;
 			}
 			

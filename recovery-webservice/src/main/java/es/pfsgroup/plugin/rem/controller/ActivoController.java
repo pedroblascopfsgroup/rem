@@ -4495,4 +4495,11 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, concurrenciaApi.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia));
+
+		return createModelAndViewJson(model);
+	}
 }

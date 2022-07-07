@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.Concurrencia;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoConcurrencia;
 import es.pfsgroup.plugin.rem.model.DtoPujaDetalle;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
@@ -55,4 +56,6 @@ public interface ConcurrenciaApi {
 	List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta);
 
 	List<DtoHistoricoConcurrencia> getHistoricoConcurrencia(Long idActivo);
+
+	List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia);
 }

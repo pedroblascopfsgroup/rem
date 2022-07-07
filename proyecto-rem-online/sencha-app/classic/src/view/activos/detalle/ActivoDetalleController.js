@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.WizardAdjuntarDocumentoModel','HreRem.view.common.WizardBase',
     		'HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard1','HreRem.view.common.adjuntos.formularioTipoDocumento.AdjuntarDocumentoWizard2',
     		'HreRem.view.trabajos.detalle.CrearPeticionTrabajo','HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.TramitarOfertaActivoWindow',
-			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
+			'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq','HreRem.model.CambioPeriodoConcurrenciaActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -9014,7 +9014,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (!Ext.isEmpty(grid.selection)) {
 			idConcurrencia = record.get("id");
 		}
-		var fieldset = me.lookupReference('pujascomercialactivolistref');
 		var storeListaOfertasConcurrencia = Ext.create('Ext.data.Store',{
 			model: 'HreRem.model.PujasActivo',
 		     proxy: {
@@ -9030,6 +9029,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				me.lookupReference('pujascomercialactivolistref').refresh();
 			}
 		});
+		
+		if (!Ext.isEmpty(idConcurrencia)){
+		
+			var storeCambiosPeriodoConcurrencia = Ext.create('Ext.data.Store',{
+				model: 'HreRem.model.CambioPeriodoConcurrenciaActivoModel',
+			     proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'activo/getListCambiosPeriodoConcurenciaByIdConcurrencia'
+		    	 }
+	    	});
+			me.lookupReference('cambiosconcurrenciacomercialactivolistref').setStore(storeCambiosPeriodoConcurrencia);
+			storeCambiosPeriodoConcurrencia.getProxy().getExtraParams().idConcurrencia = idConcurrencia;
+			storeCambiosPeriodoConcurrencia.load({
+				success : function(record) {
+					me.lookupReference('cambiosconcurrenciacomercialactivolistref').refresh();
+				}
+			});
+		
+		}
+		
     }
 
 });

@@ -6,17 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.concurrencia.dao.ConcurrenciaDao;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Concurrencia;
-import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
+import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 
 @Repository("concurrenciaDao")
@@ -24,9 +18,6 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		
 	@Autowired
 	private MSVRawSQLDao rawDao;
-	
-	@Autowired
-	private GenericABMDao genericDao;
 	
 	@Override
 	public boolean isAgrupacionEnConcurrencia (Long agrId) {
@@ -105,8 +96,21 @@ public class ConcurrenciaDaoImpl extends AbstractEntityDao<Concurrencia, Long> i
 		
 		return resultados;
 	}
-	
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia) {
+
+		String hql = " from VGridCambiosPeriodoConcurrencia vcmb ";
+
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if(idConcurrencia != null) {
+			hb.appendWhere(" vcmb.idConcurrencia = "+ idConcurrencia);
+		}
+		
+		return (List<VGridCambiosPeriodoConcurrencia>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+	}
 	
 }

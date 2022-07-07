@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20220705
+--## FECHA_CREACION=20220707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18262
+--## INCIDENCIA_LINK=HREOS-18335
 --## PRODUCTO=NO
 --## Finalidad: Creacion tabla FIA_FIANZAS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial HREOS-18262
+--##        0.2 Eliminar campo fecha reagendación ingreso
 --##########################################
 --*/
 
@@ -66,7 +67,6 @@ BEGIN
                 FIA_ID          		    NUMBER(16)                  NOT NULL,
 				OFR_ID          			NUMBER(16),
 				FIA_FECHA_AGENDACION_INGRESO	DATE,
-                FIA_FECHA_REAGENDACION_INGRESO	DATE,
                 FIA_IMPORTE					NUMBER(16,2), 
                 FIA_FECHA_INGRESO			DATE,
 				CVA_ID          			NUMBER(16),
@@ -116,8 +116,6 @@ BEGIN
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.CVA_ID IS ''Id de la cuenta virtual alquiler''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_FECHA_AGENDACION_INGRESO IS ''Fecha agendación ingreso''';
-            EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_FECHA_REAGENDACION_INGRESO IS ''Fecha reagendación ingreso''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_FECHA_INGRESO IS ''Fecha ingreso fianza''';
             EXECUTE IMMEDIATE V_SQL;

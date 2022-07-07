@@ -51,9 +51,6 @@ public class Fianzas implements Serializable, Auditable {
 	@Column(name = "FIA_FECHA_AGENDACION_INGRESO")
 	private Date fechaAgendacionIngreso;
 	
-	@Column(name = "FIA_FECHA_REAGENDACION_INGRESO")
-	private Date fechaReagendacionIngreso;
-	
 	@Column(name = "FIA_IMPORTE")
 	private Long importe;
 	
@@ -95,14 +92,6 @@ public class Fianzas implements Serializable, Auditable {
 
 	public void setFechaAgendacionIngreso(Date fechaAgendacionIngreso) {
 		this.fechaAgendacionIngreso = fechaAgendacionIngreso;
-	}
-
-	public Date getFechaReagendacionIngreso() {
-		return fechaReagendacionIngreso;
-	}
-
-	public void setFechaReagendacionIngreso(Date fechaReagendacionIngreso) {
-		this.fechaReagendacionIngreso = fechaReagendacionIngreso;
 	}
 
 	public Long getImporte() {

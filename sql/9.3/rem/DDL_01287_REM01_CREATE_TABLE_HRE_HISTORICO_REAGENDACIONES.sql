@@ -4,14 +4,13 @@
 --## FECHA_CREACION=20220707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-18335
+--## INCIDENCIA_LINK=HREOS-18336
 --## PRODUCTO=NO
---## Finalidad: Creacion tabla FIA_FIANZAS
+--## Finalidad: Crear tabla HRE_HISTORICO_REAGENDACIONES
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial HREOS-18262
---##        0.2 Eliminar campo fecha reagendación ingreso
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -34,7 +33,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TABLA VARCHAR2(2400 CHAR) := 'FIA_FIANZAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(2400 CHAR) := 'HRE_HISTORICO_REAGENDACIONES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla de fianzas'; -- Vble. para los comentarios de las tablas
     V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
@@ -43,8 +42,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
                 --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                                 CAMPO DESTINO FK
-        T_FK(   'FK_CVA_OFR_ID',                   'OFR_ID',             V_ESQUEMA||'.OFR_OFERTAS',                'OFR_ID'),
-        T_FK(   'FK_CVA_CVA_ID',                   'CVA_ID',             V_ESQUEMA||'.CVA_CUENTAS_VIRTUALES_ALQUILER',                'CVA_ID')
+        T_FK(   'FK_HRE_FIA_ID',                   'FIA_ID',             V_ESQUEMA||'.FIA_FIANZAS',                'FIA_ID')
     );
     V_T_FK T_FK;
 
@@ -64,13 +62,9 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
             (
-                FIA_ID          		    NUMBER(16)                  NOT NULL,
-				OFR_ID          			NUMBER(16),
-				FIA_FECHA_AGENDACION_INGRESO	DATE,
-                FIA_IMPORTE					NUMBER(16,2), 
-                FIA_FECHA_INGRESO			DATE,
-				CVA_ID          			NUMBER(16),
-				FIA_IBAN_DEVOLUCION 		VARCHAR2(200 CHAR),
+                HRE_ID          		    NUMBER(16)                  NOT NULL,
+				FIA_ID          			NUMBER(16),
+				HRE_FECHA_REAGENDACION_INGRESO	DATE,
                 VERSION 			        NUMBER(38,0) 		    DEFAULT 0 NOT NULL ENABLE, 
                 USUARIOCREAR 			    VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
                 FECHACREAR 			        TIMESTAMP (6) 		    NOT NULL ENABLE, 
@@ -90,7 +84,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
             
             -- Creamos primary key
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (FIA_ID) USING INDEX)';
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (HRE_ID) USING INDEX)';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'_PK... PK creada.');
 
@@ -107,21 +101,13 @@ BEGIN
             END IF;
 
             -- Creamos comentario
-            V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla de fechas de arras''';
+            V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS ''Tabla de histórico de reagendaciones''';
 		    EXECUTE IMMEDIATE V_MSQL;	
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_ID IS ''Id de la tabla''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.HRE_ID IS ''Id de la tabla''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.OFR_ID IS ''Id de la oferta''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_ID IS ''Id de la fianza''';
             EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.CVA_ID IS ''Id de la cuenta virtual alquiler''';
-            EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_FECHA_AGENDACION_INGRESO IS ''Fecha agendación ingreso''';
-            EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_FECHA_INGRESO IS ''Fecha ingreso fianza''';
-            EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_IBAN_DEVOLUCION IS ''IBAN devolución''';
-            EXECUTE IMMEDIATE V_SQL;
-            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.FIA_IMPORTE IS ''Importe fianza''';
+            V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.HRE_FECHA_REAGENDACION_INGRESO IS ''Fecha reagendación ingreso''';
             EXECUTE IMMEDIATE V_SQL;
             V_SQL := 'COMMENT ON COLUMN ' ||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Versión del registro''';
             EXECUTE IMMEDIATE V_SQL;

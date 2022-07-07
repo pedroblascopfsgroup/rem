@@ -22,7 +22,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 /**
  * Modelo que gestiona la tabla de cuentas virtuales 

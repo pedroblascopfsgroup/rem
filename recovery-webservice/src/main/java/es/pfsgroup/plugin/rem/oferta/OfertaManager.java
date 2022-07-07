@@ -9478,7 +9478,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		this.rechazoOfertaNew(oferta, codEstadoExp);
 	
-		if(activo != null) {
+		if(activo != null && !DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(codEstadoExp) && !DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(codEstadoExp)) {
 			List<ActivoOferta> activoOfertaList = activo.getOfertas();
 			for (ActivoOferta activoOferta : activoOfertaList) {
 				idOfertaList.add(activoOferta.getOferta());
@@ -9496,6 +9496,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private void rechazoOfertaNew(Oferta oferta, String codEstadoExp) {
 
 		ExpedienteComercial eco = oferta.getExpedienteComercial();
+		boolean pdteDevolucion = !DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(codEstadoExp) && !DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(codEstadoExp);
 		
 		Deposito deposito = genericDao.get(Deposito.class,genericDao.createFilter(FilterType.EQUALS, "oferta.id",oferta.getId()));
 		if(depositoApi.isDepositoIngresado(deposito) && !depositoApi.isDepositoDecidido(deposito)) {
@@ -9504,13 +9505,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			deposito.setEstadoDeposito(estadoDeposito);
 			genericDao.save(Deposito.class, deposito);
 		}
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
-		DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
-		oferta.setEstadoOferta(estado);
-		this.setEstadoOfertaBC(oferta, null);
-		updateStateDispComercialActivosByOferta(oferta);
+		if (pdteDevolucion) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			this.setEstadoOfertaBC(oferta, null);
+			updateStateDispComercialActivosByOferta(oferta);
 		
-		genericDao.save(Oferta.class, oferta);
+			genericDao.save(Oferta.class, oferta);
+		}
 		
 		
 		if(eco != null) {
@@ -9522,7 +9525,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			recalculoVisibilidadComercialApi.recalcularVisibilidadComercial(eco.getOferta(), ecoEstado);
 				
-			if(eco.getTrabajo() != null) {
+			if(eco.getTrabajo() != null && pdteDevolucion) {
 				Trabajo trabajo = eco.getTrabajo();
 				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 				ActivoTramite tramite = tramites.get(0);

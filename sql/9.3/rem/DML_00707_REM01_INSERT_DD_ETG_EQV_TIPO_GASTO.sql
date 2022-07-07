@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Alejandra García
---## FECHA_CREACION=20220610
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20220629
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-11869
+--## INCIDENCIA_LINK=REMVIP-11899
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Actualizacion registros 
@@ -38,6 +38,8 @@
 --##		0.25 Añadir PEPs Comunidad de propietarios - CCPP Suministros, Servicios profesionales Independendientes / Legal-Procedimientos Desahucios y Gestorías/Honorarios Ventas - [REMVIP-11829] - Alejandra García
 --##		0.26 Cambiar código Actuación post-venta de 314 a 84 - [REMVIP-11869] - Alejandra García
 --##		0.27 DD_ETG_CODIGO = 1022 porque es lo mismo que el 198  - [REMVIP-11869] - Alejandra García
+--##		0.28 Añadir PEPs Impuesto - IBI rústica - [REMVIP-11962] - Juan Bautista Alfonso
+--##		0.29 Añadir nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales  - [REMVIP-11899] - Juan Bautista Alfonso
 --#########################################
 --*/
 
@@ -53,7 +55,7 @@ DECLARE
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
 	V_SQL VARCHAR2(4000 CHAR);
 	PL_OUTPUT VARCHAR2(32000 CHAR);
-	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11829';
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-11899';
 	V_NUM_REGISTROS NUMBER; -- Cuenta registros 
 	V_NUM NUMBER;
 	V_FLAG_VACIADO NUMBER := 0;
@@ -494,7 +496,19 @@ DECLARE
 		T_TABLA('1101','XXXX-22-2-A-COM','22','00','3','05','132','03','','','null','','','','2022'),
 		T_TABLA('1102','XXXX-22-3-A-DES','22','01','1','11','162','01','','','null','','','','2022'),
 		T_TABLA('1103','XXXX-22-2-COM VT GS','22','01','59','12','54','01','','','null','','','','2022'),
-		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022')
+		T_TABLA('1104','XXXX-22-2-A-CM VT GS','22','01','60','12','54','03','','','null','','','','2022'),
+
+		--Añadir PEPs Impuesto - IBI rústica
+		T_TABLA('1105','XXXX-22-2-IBI','22','00','7','01','02','01','','','null','','','','2022'),
+		T_TABLA('1106','XXXX-22-2-A-IBI','22','00','9','01','02','03','','','null','','','','2022'),
+
+		--Nuevas PEPs Otras entidades en que se integra el activo Otros/Gastos generales - Junta de compensación / EUC Gastos generales- REMVIP-11899
+		T_TABLA('1107','XXXX-22-2-COM','22','00','2','08','34','01','','','null','','','','2022'),
+		T_TABLA('1108','XXXX-22-2-A-COM','22','00','3','08','34','03','','','null','','','','2022'),
+		T_TABLA('1109','XXXX-22-2-COM','22','00','2','08','32','01','','','null','','','','2022'),
+		T_TABLA('1110','XXXX-22-2-A-COM','22','00','3','08','32','03','','','null','','','','2022'),
+		T_TABLA('1111','XXXX-22-2-COM','22','00','2','07','30','01','','','null','','','','2022'),
+		T_TABLA('1112','XXXX-22-2-A-COM','22','00','3','07','30','03','','','null','','','','2022')
 
     ); 
     V_TMP_TABLA T_TABLA;

@@ -1171,8 +1171,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
 		}
 
-		List<VGridOfertasActivosAgrupacionIncAnuladas> listOfertasActivo = (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString())
-		.list();
+		List<VGridOfertasActivosAgrupacionIncAnuladas> listOfertasActivo = (List<VGridOfertasActivosAgrupacionIncAnuladas>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		Usuario usuPef=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		boolean isHayaSuper =  genericAdapter.isSuper(usuPef);
 		boolean isConcurrencia = concurrenciaDao.isActivoEnConcurrencia(idActivo);

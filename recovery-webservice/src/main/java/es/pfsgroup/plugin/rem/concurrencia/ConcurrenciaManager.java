@@ -326,7 +326,6 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	@Transactional
 	public List<DtoPujaDetalle> getPujasDetalleByIdOferta(Long idActivo, Long idOferta) {
-		//String importeOculto = "*****";
 		List<DtoPujaDetalle> dtoLista = new ArrayList<DtoPujaDetalle>();
 		List<Puja> listaPujas = new ArrayList<Puja>();		
 		Activo activo = activoAdapter.getActivoById(idActivo);

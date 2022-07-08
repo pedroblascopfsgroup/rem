@@ -37,6 +37,8 @@ import es.pfsgroup.plugin.rem.model.VGridCambiosPeriodoConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosAgrupacionConcurrencia;
 import es.pfsgroup.plugin.rem.model.VGridOfertasActivosConcurrencia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.thread.CaducaOfertasAsync;
+import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 
@@ -68,7 +70,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				return true;
 			}else {
 				List<Oferta> listOfr = ofertaApi.getListaOfertasByActivo(activo);
-				bloquear = isOfertaEnPlazoDoc(bloquear, listOfr);
+				bloquear = isOfertaEnPlazoConcu(bloquear, listOfr);
 			}	
 		}
 		
@@ -84,17 +86,16 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				List<Oferta> listOfertas = genericDao.getList(Oferta.class,
 						genericDao.createFilter(FilterType.EQUALS,"agrupacion.id",agr.getId())
 						,genericDao.createFilter(FilterType.EQUALS,"concurrencia",true));
-				bloquear = isOfertaEnPlazoDoc(bloquear, listOfertas);
+				bloquear = isOfertaEnPlazoConcu(bloquear, listOfertas);
 			}
 		}
 		return bloquear;
 	}
 
-	private boolean isOfertaEnPlazoDoc(boolean bloquear, List<Oferta> listOfertas) {
+	private boolean isOfertaEnPlazoConcu(boolean bloquear, List<Oferta> listOfertas) {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
 			for (Oferta oferta : listOfertas) {
-				Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-				if(oferta != null && this.entraEnTiempoDocumentacion(oferta) && (deposito != null && this.entraEnTiempoDeposito(deposito))) {
+				if(this.entraEnTiempoDeposito(oferta)) {
 					bloquear =  true;
 					break;
 				}
@@ -249,25 +250,18 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
 		if(act != null){
 			List<ActivoOferta> ofertas = act.getOfertas();
-			HashMap<Long, String> noEntraDocumentacion = new HashMap<Long, String>();
-			HashMap<Long, String> noEntraDeposito = new HashMap<Long, String>();
+			HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 
 			if(ofertas != null && !ofertas.isEmpty()) {
 				for(ActivoOferta actOfr: ofertas){
 					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
 							&& !actOfr.getPrimaryKey().getOferta().esOfertaAnulada()){
 						Oferta ofr = actOfr.getPrimaryKey().getOferta();
-						Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
-						if(deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito)){
+						if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)){
 							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
-
+							ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
 						}
-						if(ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr)){
-							noEntraDocumentacion.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-							ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
 
-						}
 						genericDao.save(Oferta.class, ofr);
 					}
 				}
@@ -278,49 +272,51 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	@Transactional
 	public void caducaOfertaConcurrencia(Long idActivo, Long idOferta){
+		HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
+		
+		noEntraDeposito = this.caducaOfertaPrincipal(idOferta);
+
+		Thread hilo = new Thread(new CaducaOfertasAsync(idActivo, idOferta,genericAdapter.getUsuarioLogado().getUsername()));
+		hilo.start();
+		
+	}
+	
+	@Transactional
+	private HashMap<Long, List<Long>> caducaOfertaPrincipal(Long idOferta){
 		Oferta ofr = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", idOferta));
-		HashMap<Long, String> noEntraDocumentacion = new HashMap<Long, String>();
-		HashMap<Long, String> noEntraDeposito = new HashMap<Long, String>();
+		HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 
 		if(ofr != null && !ofr.esOfertaAnulada()){
-			Deposito deposito = genericDao.get(Deposito.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
-			if(deposito != null && deposito.getFechaIngreso() != null || !this.entraEnTiempoDeposito(deposito)){
+			
+			if(!this.entraEnTiempoDeposito(ofr)){
 				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
-				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
-
+				ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
 			}
-			if(ofr.getFechaOfertaPendiente() != null || !this.entraEnTiempoDocumentacion(ofr)){
-				noEntraDocumentacion.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
-				ofr.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA)));
-
-			}
+		
 			genericDao.save(Oferta.class, ofr);
 		}
-
+		
+		return noEntraDeposito;
 	}
 
-	private String rellenaMapOfertaCorreos(Oferta ofr) {
-		String correos = null;
+	private List<Long> rellenaMapOfertaCorreos(Oferta ofr) {
+		List<Long> ids = new ArrayList<Long>();
 
 		if(ofr != null){
 			if(ofr.getCliente() != null && ofr.getCliente().getEmail() != null){
-				correos = ofr.getCliente().getEmail();
+				ids.add(ofr.getCliente().getId());
 			}
 
 			List<TitularesAdicionalesOferta> titularesAdicionales = genericDao.getList(TitularesAdicionalesOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofr.getId()));
 
 			if(titularesAdicionales != null && !titularesAdicionales.isEmpty()){
 				for(TitularesAdicionalesOferta tit: titularesAdicionales){
-					if(correos == null){
-						correos = tit.getEmail();
-					}else{
-						correos = correos + "," + tit.getEmail();
-					}
+					ids.add(tit.getId());
 				}
 			}
 
 		}
-		return correos;
+		return ids;
 	}
 	
 	@Override
@@ -393,23 +389,23 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		return concurrenciaDao.getListCambiosPeriodoConcurenciaByIdConcurrencia(idConcurrencia);
 	}
 	
-	public boolean entraEnTiempoDocumentacion(Oferta oferta){
-		if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia()){
-			Date fechaTopeOferta = this.sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 72);
-			Date fechaHoy = new Date();
+//	public boolean entraEnTiempoDocumentacion(Oferta oferta){
+//		if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia()){
+//			Date fechaTopeOferta = this.sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 72);
+//			Date fechaHoy = new Date();
+//
+//			int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
+//
+//			return fecha >= 0;
+//		}
+//		return true;
+//	}
 
-			int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);
-
-			return fecha >= 0;
-		}
-		return true;
-	}
-
-	public boolean entraEnTiempoDeposito(Deposito deposito){
-		if (deposito != null) {
-			Oferta oferta = deposito.getOferta();
-			if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia()){
-				Date fechaTopeOferta = this.sumarRestarHorasFecha(oferta.getAuditoria().getFechaCrear(), 96);
+	public boolean entraEnTiempoDeposito(Oferta oferta){
+		if (oferta != null) {
+			Deposito deposito = oferta.getDeposito();
+			if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia() && deposito != null){
+				Date fechaTopeOferta = this.sumarRestarHorasFecha(deposito.getFechaInicio(), 96);
 				Date fechaHoy = new Date();
 	
 				int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);

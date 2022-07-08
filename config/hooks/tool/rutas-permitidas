@@ -320,5 +320,6 @@ func-rem-NNRRActualizacionCCPP|R-Annie
 rem_mirror|func-rem-formalizacionAlquileres
 rem_mirror|func-rem-deposito
 func-rem-deposito|R-Baal
+rem_mirror|version-@-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami

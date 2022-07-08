@@ -720,6 +720,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			throws Exception {
 		HashMap<String, String> errorsList = null;
 		Oferta oferta = null;
+		Activo activo = null;
+		ActivoAgrupacion agr = null;
 
 		DDSistemaOrigen sistemaOrigen = null;
 		if(ofertaDto != null && ofertaDto.getEntidadOrigen() != null) {
@@ -863,7 +865,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (sistemaOrigen != null && !DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())
 					&& !Checks.esNulo(numActivos) && !numActivos.isEmpty()) {
 				for (int i=0; i<numActivos.size(); i++) {
-					Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
+					activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
 
 					if (Checks.esNulo(activo)) {
 						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOW_KEY);
@@ -884,7 +886,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			} else if (sistemaOrigen != null && DDSistemaOrigen.CODIGO_HAYA_HOME.equals(sistemaOrigen.getCodigo())
 					&& ofertaDto.getCodigoAgrupacionComercialRem() != null) {
-				ActivoAgrupacion agr = genericDao.get(ActivoAgrupacion.class,
+				agr = genericDao.get(ActivoAgrupacion.class,
 						genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", ofertaDto.getCodigoAgrupacionComercialRem()));
 				if (agr == null)
 					errorsList.put("codigoAgrupacionComercialRem", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -895,7 +897,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("activosLote", RestApi.REST_MSG_UNKNOW_KEY);
 			}
 		} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
-			Activo activo = genericDao.get(Activo.class,
+				activo = genericDao.get(Activo.class,
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
 			if (Checks.esNulo(activo)) {
 				errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOW_KEY);
@@ -1083,17 +1085,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			errorsList.put("recomendacionRC||recomendacionDC", RestApi.REST_MSG_MISSING_REQUIRED);
 		}
 		
-		if(ofertaDto.getIdOfertaRem() != null) {
-			oferta = getOfertaByIdOfertaWebcomNumOfertaRem(ofertaDto.getIdOfertaWebcom(), ofertaDto.getIdOfertaRem());
-			if(oferta != null && ofertaDto.getImporte() != null) {
-				if(oferta.getImporteOferta() != null && ofertaDto.getImporte() < oferta.getImporteOferta()) {
-					errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_PUJA);
-				}
-				
-				Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(oferta.getActivoPrincipal(), DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-				if(precioVentaActivo != null && ofertaDto.getImporte() < precioVentaActivo) {
-					errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_MINIMO);
-				}
+		oferta = this.getOfertaByTipoId(ofertaDto);
+		if(oferta != null && ofertaDto.getImporte() != null && oferta.getImporteOferta() != null && ofertaDto.getImporte() < oferta.getImporteOferta()) {
+			errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_PUJA);
+		}
+		
+		if(agr != null) {
+			if(agr.getActivoPrincipal() != null) {
+				activo = agr.getActivoPrincipal();
+			}else if(!Checks.estaVacio(agr.getActivos()) && agr.getActivos().get(0) != null) {
+				activo = agr.getActivos().get(0).getActivo();
+			}
+		}
+		if(activo != null) {
+			Double precioVentaActivo = activoApi.getImporteValoracionActivoByCodigo(activo, DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+			if(precioVentaActivo != null && ofertaDto.getImporte() < precioVentaActivo) {
+				errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_MINIMO);
 			}
 		}
 
@@ -2377,6 +2384,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.getCodTipoProveedorOrigenCliente().equals(oferta.getCodTipoProveedorOrigenCliente())) {
 				oferta.setCodTipoProveedorOrigenCliente(ofertaDto.getCodTipoProveedorOrigenCliente());
 				modificado = true;
+			}
+			
+			if(ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getConcurrencia() != null && oferta.getConcurrencia()) {
+				ActivoAgrupacion agrConc = null;
+				Activo activoConc  = null;
+				boolean isOfertaConActivoEnConcurrenciaViva = false;
+				if(oferta.getAgrupacion() != null) {
+					agrConc = oferta.getAgrupacion();
+					isOfertaConActivoEnConcurrenciaViva = concurrenciaApi.isAgrupacionEnConcurrencia(agrConc);
+				}else {
+					isOfertaConActivoEnConcurrenciaViva = concurrenciaApi.isActivoEnConcurrencia(oferta.getActivoPrincipal());
+					activoConc = oferta.getActivoPrincipal();
+					
+				}
+				if(isOfertaConActivoEnConcurrenciaViva) {
+					oferta.setImporteOferta(ofertaDto.getImporte());
+					crearPuja(ofertaDto, oferta, agrConc, activoConc);
+				}
 			}
 
 			if (modificado) {
@@ -9834,6 +9859,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			errorsList.put("enConcurrencia", MSJ_ERROR_NO_CONCURRENCIA);
 		}
 	}
+	
+	private Oferta getOfertaByTipoId(OfertaDto ofertaDto) {
+		Oferta oferta = null;
+		
+		if(ofertaDto.getIdOfertaRem() != null) {
+			oferta = this.getOfertaById(ofertaDto.getIdOfertaRem());
+		}else if(ofertaDto.getIdOfertaWebcom() != null) {
+			oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "idWebCom", ofertaDto.getIdOfertaWebcom()));
+		}else if(ofertaDto.getIdOfertaHayaHome() != null) {
+			oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "idOfertaHayaHome", ofertaDto.getIdOfertaHayaHome()));
+		}else if(ofertaDto.getIdOfertaSalesforce() != null) {
+			oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "idOfertaSalesforce", ofertaDto.getIdOfertaSalesforce()));
+		} 
+		
+		return oferta;
+	}
+	
 		
 }
 

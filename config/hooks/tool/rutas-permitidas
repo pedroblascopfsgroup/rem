@@ -314,6 +314,8 @@ func-rem-desvincularCierreEconomico|R-Navelate
 rem_mirror|func-rem-desligarDisponibilidadJuridicaBankia
 rem_mirror|func-rem-agendaIdentificarEstado
 rem_mirror|func-rem-NNRRActualizacionCCPP
+rem_mirror|func-rem-deposito
+func-rem-deposito|R-Baal
 func-rem-viviendaVaciaVPO|R-Annie
 func-rem-agendaIdentificarEstado|R-Annie
 func-rem-NNRRActualizacionCCPP|R-Annie
@@ -323,3 +325,4 @@ func-rem-deposito|R-Baal
 rem_mirror|version-@-rem
 func-rem-proveedoresNoHomologables|R-Nagami
 func-rem-datosProveedores|R-Nagami
+rem_mirror|func-rem-formalizacionAlquileres

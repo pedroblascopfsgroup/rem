@@ -214,13 +214,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							}
 						},	
 						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.aplica.ofrecimiento.aqluiler.social'),
+							reference: 'aplicaAlquilerSocialRef',
+							colspan: 1,
+							bind: {
+								readOnly: '{patrimonio.isCarteraBBVA}',
+								hidden: '{!patrimonio.isCarteraBBVA}',
+								store: '{comboSinSino}',
+								value: '{patrimonio.aplicaAlquilerSocial}'
+							}
+						},
+						{
 							xtype: 'displayfieldbase',
 							colspan: 3,
 							readOnly:true,
 							bind: {
 								hidden: '{patrimonio.isCarteraCerberusDivarian}'
 							}
-						},			
+						},
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.adecuaciones'),

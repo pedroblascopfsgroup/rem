@@ -24,6 +24,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
@@ -94,6 +95,10 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	
 	@Column(name="ACTIVO_PROMO_ESTRATEG")
 	private Boolean activoPromoEstrategico;
+	
+	@ManyToOne
+	@JoinColumn(name = "APLICA_ALQUILER_SOCIAL")
+	private DDSinSiNo aplicaAlquilerSocial;
 	
 	@Version
 	private Long version;
@@ -228,6 +233,13 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	public void setActivoPromoEstrategico(Boolean activoPromoEstrategico) {
 		this.activoPromoEstrategico = activoPromoEstrategico;
 	}
-	
+
+	public DDSinSiNo getAplicaAlquilerSocial() {
+		return aplicaAlquilerSocial;
+	}
+
+	public void setAplicaAlquilerSocial(DDSinSiNo aplicaAlquilerSocial) {
+		this.aplicaAlquilerSocial = aplicaAlquilerSocial;
+	}	
 	
 }

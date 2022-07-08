@@ -996,9 +996,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	public Set<TareaExterna> getTareasActivasByExpediente(ExpedienteComercial eco){
 		Trabajo trabajo = eco.getTrabajo();
 		ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
-		Set<TareaExterna> tareasActivas = tramite.getTareasExternasActivas();
+		if (!Checks.esNulo(tramite))
+			return tramite.getTareasExternasActivas();
 		
-		return tareasActivas;
+		return null;
 	}
 	
 	@Override

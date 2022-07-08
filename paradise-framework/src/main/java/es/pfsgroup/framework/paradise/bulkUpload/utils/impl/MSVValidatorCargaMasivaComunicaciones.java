@@ -40,7 +40,6 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 	private static final String ACTIVO_SIN_COMUNICACION_VIVA = "msg.error.masivo.activo.sin.comunicacion.viva";
 	private static final String ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO = "msg.error.masivo.activo.con.comunicacion.comunicada";
 	private static final String ACTIVO_CON_COMUNICACION_NO_GENERADA = "msg.error.masivo.comunicacion.no.generada";
-	private static final String ACTIVO_CON_ADECUACION_NO_FINALIZADA = "msg.error.masivo.comunicacion.adecuacion.no.finalizada";
 	private static final String ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS = "msg.error.masivo.comunicacion.multiples.comunicaciones.vivas";
 	
 	private static final int POSICION_COLUMNA_NUMERO_ACTIVO  = 0;
@@ -106,7 +105,6 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA), esActivoSinComunicacionViva(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO), esActivoConComunicacionComunicada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionGenerada(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA), esActivoConAdecuacionFinalizada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS), esActivoConMultiplesComunicacionesVivas(exc));
 			// Validar NIF
 			// Activo sin comunicación viva
@@ -115,7 +113,6 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -130,29 +127,6 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		exc.cerrar();
 		
 		return dtoValidacionContenido;
-	}
-
-	//No ha finalizado la tarea de adecuacion 
-	private List<Integer> esActivoConAdecuacionFinalizada(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		int i = 0;
-		try{
-			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoConAdecuacionFinalizada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
-					listaFilas.add(i);
-				}
-					
-			}
-		} catch (Exception e) {
-			if (i != 0) {
-				listaFilas.add(i);
-			}
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return listaFilas;
 	}
 
 	//No ha generado la comunicación

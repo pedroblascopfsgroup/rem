@@ -342,7 +342,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaGeneral respuesta = null;
 
 		try {
-			respuesta = gestorDocumentalApi.bajaDocumento(login, idDocumento.intValue());
+			AdjuntoExpedienteComercial ade = genericDao.get(AdjuntoExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idDocumento));
+			if(ade != null && ade.getIdDocRestClient() != null) {
+				respuesta = gestorDocumentalApi.bajaDocumento(login, ade.getIdDocRestClient().intValue());
+			}else {
+				logger.debug("No existe el documento en BBDD o no tiene id de GD");		
+			}
 			
 			if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getCodigoError())) {
 				logger.debug(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());				

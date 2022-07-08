@@ -49,9 +49,6 @@ public class VGridHistoricoOfertasConcurrencia implements Serializable {
 	@Column(name = "CON_IMPORTE_MIN_OFR")
 	private Double importeMinOferta;
 	
-	@Column(name = "CON_IMPORTE_DEPOSITO")
-	private Double importeDeposito;
-	
 	@Column(name = "OFR_CONCURRENCIA")
 	private Boolean concurrencia;
 
@@ -141,14 +138,6 @@ public class VGridHistoricoOfertasConcurrencia implements Serializable {
 
 	public void setImporteMinOferta(Double importeMinOferta) {
 		this.importeMinOferta = importeMinOferta;
-	}
-
-	public Double getImporteDeposito() {
-		return importeDeposito;
-	}
-
-	public void setImporteDeposito(Double importeDeposito) {
-		this.importeDeposito = importeDeposito;
 	}
 
 	public Boolean getConcurrencia() {

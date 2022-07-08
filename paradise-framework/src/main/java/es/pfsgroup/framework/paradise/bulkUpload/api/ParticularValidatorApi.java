@@ -590,8 +590,6 @@ public interface ParticularValidatorApi {
 	boolean esActivoConComunicacionReclamada(Long numActivoHaya);
 	
 	Boolean esActivoConComunicacionGenerada(Long numActivoHaya);
-	
-	boolean esActivoConAdecuacionFinalizada(Long numActivoHaya);
 
 	/**
 	 * Devuelve true si un activo tiene ofertas vivas de tipo venta

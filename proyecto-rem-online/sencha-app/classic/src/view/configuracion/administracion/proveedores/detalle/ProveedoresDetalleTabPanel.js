@@ -117,12 +117,12 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		// Si la pestaña recibida no tiene asignados roles de edicion 
 		if(Ext.isEmpty(tab.funPermEdition)) {
     		editionEnabled();
-    	} else if (me.permiteProveedorNoHomologable()) {
-    		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
-    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-    		} else {
-    			$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
-    		}
+		} else if ($AU.userIsRol(CONST.PERFILES['DESINMOBILIARIO'])) {
+			if(me.permiteProveedorNoHomologable()) {
+				editionEnabled();
+			} else {
+				editionDisabled();
+			}
     	} else {
     		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
     	}

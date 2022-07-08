@@ -58,4 +58,6 @@ public interface ConcurrenciaApi {
 	List<DtoHistoricoConcurrencia> getHistoricoConcurrencia(Long idActivo);
 
 	List<VGridCambiosPeriodoConcurrencia> getListCambiosPeriodoConcurenciaByIdConcurrencia(Long idConcurrencia);
+
+	boolean isOfertaEnPlazoConcu(boolean bloquear, List<Oferta> listOfertas);
 }

@@ -92,7 +92,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		return bloquear;
 	}
 
-	private boolean isOfertaEnPlazoConcu(boolean bloquear, List<Oferta> listOfertas) {
+	@Override
+	public boolean isOfertaEnPlazoConcu(boolean bloquear, List<Oferta> listOfertas) {
 		if(listOfertas != null && !listOfertas.isEmpty()) {
 			for (Oferta oferta : listOfertas) {
 				if(this.entraEnTiempoDeposito(oferta)) {

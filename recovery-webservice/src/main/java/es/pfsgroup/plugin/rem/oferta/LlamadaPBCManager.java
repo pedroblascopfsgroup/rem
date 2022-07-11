@@ -68,9 +68,6 @@ public class LlamadaPBCManager extends BusinessOperationOverrider<LlamadaPBCApi>
     	codigos.add(this.calcularLlamadaPBCT015GarantiasAdicionales(codTarea, codEstado));
         codigos.add(this.calcularLlamadaPBCT015SancionBC(codTarea, codEstado));
         codigos.add(this.calcularLlamadaPBCT018TrasladarOfertaCliente(codTarea, codEstado));
-        codigos.add(this.calculaLlamadaPBCT017ConfirmarFechaEscritura(codTarea, codEstado));
-        codigos.add(this.calculaLlamadaPBCT017AgendarPosicionamiento(codTarea, codEstado));
-        codigos.add(this.calculaLlamadaPBCT017FirmaContrato(codTarea, codEstado));
         
         return codigos;
     }

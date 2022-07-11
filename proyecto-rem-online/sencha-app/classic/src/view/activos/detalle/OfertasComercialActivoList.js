@@ -265,13 +265,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
             if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) && estado == '08') {
             	allowEdit = true;
             }
-            
-			var bloqueoEditarOferta = me.lookupController().getViewModel().get('activo').get("bloquearEdicionEstadoOfertas"); 
-			if(bloqueoEditarOferta){
-				allowEdit = false;
-			}else{
-				allowEdit = true;
-			}
 			
             this.editOnSelect = allowEdit;
             
@@ -440,8 +433,14 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
         var codigoTipoOferta = context.record.get('codigoTipoOferta');
         var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
+        
+        if(enConcurrencia && CONST.ESTADOS_OFERTA['RECHAZADA'] != estado && CONST.TIPOS_OFERTA["VENTA"] === codigoTipoOferta){
+        	me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia.cambio.estado"));
+			me.up('activosdetalle').lookupController().refrescarActivo(true);
+			return false;
+        }
 
-		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+        if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			if(CONST.ESTADOS_OFERTA['PDTE_TITULARES'] == estado){
 				me.fireEvent("errorToast", HreRem.i18n("msg.estado.oferta.disponible"));
 				me.up('activosdetalle').lookupController().refrescarActivo(true);
@@ -456,7 +455,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.activo"));
 						me.up('activosdetalle').lookupController().refrescarActivo(true);
 						return false;
-					}
+					} 
 				}
 				if(activo.get('cambioEstadoPrecio')){
 					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
@@ -502,7 +501,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 						return;
 					}
 				}
-			}
+			} 
 			
 			if(enConcurrencia && context.rowIdx != 0) {
 				Ext.Msg.show({
@@ -595,6 +594,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var codigoEstadoAnterior;
 		var codigoTipoOfertaAnterior;
         var activo = me.lookupController().getViewModel().get('activo');
+        var enConcurrencia = me.lookupController().getViewModel().getData().activo.get('enConcurrencia');
 
 		for (i=0; !hayOfertaAceptada && i<me.getStore().getData().items.length;i++){
 			
@@ -608,11 +608,18 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					|| CONST.ESTADOS_EXPEDIENTE['AP_CES_PTE_MAN'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['CONT_CES'] == codigoEstadoExpediente;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}else{
-			    codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
+				if(!Ext.isEmpty(me.getStore().getData().items[i].modified)){
+					codigoEstadoAnterior = me.getStore().getData().items[i].modified.codigoEstadoOferta;
+				}
 			    codigoTipoOfertaAnterior = me.getStore().getData().items[i].data.codigoTipoOferta;
 			}
 		}
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
+	
+		if(enConcurrencia && CONST.TIPOS_OFERTA['VENTA'] == codigoTipoOfertaAnterior && (CONST.ESTADOS_OFERTA['PDTE_DOCUMENTACION'] != codigoEstadoAnterior || CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.error.periodo.concurrencia.cambio.estado"));
+            return false;
+		}
         if(hayOfertaAceptada
             && CONST.ESTADOS_OFERTA['CONGELADA'] == codigoEstadoAnterior
             && CONST.ESTADOS_OFERTA['PENDIENTE'] == codigoEstadoNuevo){

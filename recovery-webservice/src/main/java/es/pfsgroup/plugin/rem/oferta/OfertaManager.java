@@ -9645,8 +9645,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	
+	@Override
 	@Transactional(readOnly = false)
-	private void rechazoOfertaNew(Oferta oferta, String codEstadoExp) {
+	public void rechazoOfertaNew(Oferta oferta, String codEstadoExp) {
 
 		ExpedienteComercial eco = oferta.getExpedienteComercial();
 		
@@ -9840,8 +9841,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	}
 
-
-	private void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado){
+	@Override
+	public void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado){
 		Oferta oferta = getOfertaById(idOferta);
 		if(oferta != null){
 			if (cumpleCondicionesReplicarPorEstadoYOferta(oferta, codigoEstado)) {

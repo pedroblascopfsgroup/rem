@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -250,7 +251,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		if(act != null){
 			List<ActivoOferta> ofertas = act.getOfertas();
 			HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
-
+			List<Long> idOfertasRechazadas = new ArrayList<Long>();
 			if(ofertas != null && !ofertas.isEmpty()) {
 				for(ActivoOferta actOfr: ofertas){
 					if(actOfr != null && actOfr.getOferta() != null && !idOferta.toString().equals(actOfr.getOferta().toString())
@@ -258,13 +259,17 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 						Oferta ofr = actOfr.getPrimaryKey().getOferta();
 						if(!ofr.esOfertaAnulada() && !this.entraEnTiempoDeposito(ofr)){
 							noEntraDeposito.put(actOfr.getOferta(), rellenaMapOfertaCorreos(ofr));
-							ofertaApi.inicioRechazoDeOfertaSinLlamadaBC(ofr, null);
+							ofertaApi.rechazoOfertaNew(ofr, null);
 						}
-
 						genericDao.save(Oferta.class, ofr);
 					}
 				}
 			}
+			
+			
+			for(Long id:idOfertasRechazadas){
+                ofertaApi.llamarCambioEstadoReplicarNoSession(id, DDEstadoOferta.CODIGO_RECHAZADA);
+            }
 		}
 		
 		

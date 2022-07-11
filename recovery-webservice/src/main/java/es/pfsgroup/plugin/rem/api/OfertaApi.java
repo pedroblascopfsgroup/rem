@@ -866,4 +866,8 @@ public interface OfertaApi {
 	void congelarOfertasAndReplicate(Activo activo, Oferta oferta);
 
 	void rechazoOfertasMotivoVendido(Oferta oferta);
+
+	void rechazoOfertaNew(Oferta oferta, String codEstadoExp);
+
+	void llamarCambioEstadoReplicarNoSession(Long idOferta, String codigoEstado);
 }

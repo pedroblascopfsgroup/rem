@@ -1,10 +1,15 @@
 package es.pfsgroup.plugin.rem.tramite.alquiler;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.IBANValidator;
+import org.apache.commons.validator.routines.checkdigit.IBANCheckDigit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +21,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -26,6 +33,8 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Fianzas;
+import es.pfsgroup.plugin.rem.model.HistoricoReagendacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpedienteBc;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -36,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 @Service("tramiteAlquilerManager")
 public class TramiteAlquilerManager implements TramiteAlquilerApi {
 	
+	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
 	private static final String T015_VerificarScoring = "T015_VerificarScoring";
 	private static final String T015_ElevarASancion = "T015_ElevarASancion";
 	private static final String T015_ScoringBC = "T015_ScoringBC";
@@ -320,6 +330,75 @@ public class TramiteAlquilerManager implements TramiteAlquilerApi {
 		if(funcionApi.elUsuarioTieneFuncion(FUNCION_FUN_AVANZAR_PBC, usuario)) {
 			resultado = true;
 		}
+		return resultado;
+	}
+	
+	
+	@Override
+	public boolean getValorFianzaExonerada(TareaExterna tareaExterna){
+		boolean campo = false;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "expediente.id", eco.getId());
+			CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class, filterEco);
+			if(coe != null && coe.getFianzaExonerada() != null) {
+				campo = coe.getFianzaExonerada();
+			}
+		}
+		
+		return campo;
+	}
+	
+	@Override
+	public Date getValorFechaAgendacion(TareaExterna tareaExterna){
+		Date fechaAgendacion = null;
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null && !Checks.isFechaNula(fia.getFechaAgendacionIngreso())) {
+				fechaAgendacion = fia.getFechaAgendacionIngreso();
+			}
+		}
+		
+		return fechaAgendacion;
+	}
+	
+	@Override
+	public String getFianzaExoneradaAndHistReagendacion(TareaExterna tareaExterna){
+		String resultado = "";
+		//IBANValidator.DEFAULT_IBAN_VALIDATOR.equals(obj);
+		ExpedienteComercial eco = expedienteComercialApi.tareaExternaToExpedienteComercial(tareaExterna);
+		if (eco != null && eco.getOferta() != null) {
+			Filter filterEco =  genericDao.createFilter(FilterType.EQUALS, "oferta.id", eco.getOferta().getId());
+			Fianzas fia = genericDao.get(Fianzas.class, filterEco);
+			if(fia != null) {
+				Filter filterFia =  genericDao.createFilter(FilterType.EQUALS, "fianza.id", fia.getId());
+				List <HistoricoReagendacion> histReag = genericDao.getList(HistoricoReagendacion.class, filterFia);
+				if (histReag != null && !histReag.isEmpty()) {
+					if (histReag.size() >= 3) {
+						resultado = "EsMayorA3";
+					} else if (histReag.size() < 3) {
+						resultado = "EsMenorA3";
+					}
+				}
+			}
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public boolean checkIBANValido(TareaExterna tareaExterna, String numIban) {
+		boolean resultado = false;
+		IBANCheckDigit iban = new IBANCheckDigit();
+		
+		try {
+			resultado = iban.isValid(numIban);
+		} catch (Exception e) {
+			logger.error("error en TramiteAlquilerManager", e);
+		}
+			
 		return resultado;
 	}
 	

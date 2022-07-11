@@ -260,9 +260,15 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T015_CierreContrato" name="avanzaBPM"></transition>
+		<transition to="T015_FirmaDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
+	
+	<decision name ="T015_FirmaDecision" expression="#{T015_FirmaDecision}">
+		<transition to="Fin" name="Anulada"></transition>
+		<transition to="Fin" name="Firmado"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </decision>
 
 	<state name="T015_CierreContrato">
 		<event type="node-enter">
@@ -404,6 +410,7 @@
     <decision name ="T015_PBCDecision" expression="#{T015_PBCDecision}">
 		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_EnvioContrato" name="OK"></transition>
+		<transition to="T015_AprobacionOfertaAlquilerComercial" name="Aprueba"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
     
@@ -457,6 +464,8 @@
 		<transition to="Fin" name="Anulada"></transition>
 		<transition to="T015_EnvioContrato" name="NoAplica"></transition>
 		<transition to="T015_PBC" name="RiesgoAltoMedioBajo"></transition>
+		<transition to="T015_AprobacionOfertaAlquilerComercial" name="RiesgoMedioBajo"></transition>
+		<transition to="T015_PBC" name="RiesgoAlto"></transition>
 		<transition to="Fin" name="Fin"></transition>
     </decision>
 
@@ -540,13 +549,12 @@
 			</action>
 		</event>
 		<transition to="T015_AgendarFechaFirmaDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
     </state>
     
     <decision name ="T015_AgendarFechaFirmaDecision" expression="#{T015_AgendarFechaFirmaDecision}">
-		<transition to="Fin" name="Anulada"></transition>
+        <transition to="T015_Firma" name="AceptaFirma"></transition>
+        <transition to="T015_EntregaFianzas" name="AceptaFianza"></transition>
         <transition to="T015_CierreContrato" name="OK"></transition>
-		<transition to="Fin" name="Fin"></transition>
     </decision>
     
     <state name="T015_BloqueoScreening">
@@ -593,6 +601,145 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 	
+	<state name="T015_AprobacionOfertaAlquilerComercial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_AprobacionOfertaAlquilerComercialDecision" name="avanzaBPM"></transition>
+    </state>
+    
+    <decision name ="T015_AprobacionOfertaAlquilerComercialDecision" expression="#{T015_AprobacionOfertaAlquilerComercialDecision}">
+        <transition to="T015_AprobacionClienteClausulas" name="OK"></transition>
+    </decision>
+    
+   	<state name="T015_AprobacionClienteClausulas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_AprobacionClienteClausulasDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <decision name ="T015_AprobacionClienteClausulasDecision" expression="#{T015_AprobacionClienteClausulasDecision}">
+		<transition to="Fin" name="Anula"></transition>
+        <transition to="T015_AgendarFechaFirma" name="Acepta"></transition>
+        <transition to="T015_NegociacionClausulasAlquiler" name="AceptaNeg"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </decision>
+    
+    <state name="T015_NegociacionClausulasAlquiler">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_NegociacionClausulasAlquilerDecision" name="avanzaBPM"></transition>
+    </state>
+    
+    <decision name ="T015_NegociacionClausulasAlquilerDecision" expression="#{T015_NegociacionClausulasAlquilerDecision}">
+        <transition to="T015_AprobacionOfertaAlquilerComercial" name="Acepta"></transition>
+        <transition to="T015_AprobacionClienteClausulas" name="NoAcepta"></transition>
+    </decision>
+    
+    <state name="T015_RespuestaBcReagendacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_RespuestaBcReagendacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <decision name ="T015_RespuestaBcReagendacionDecision" expression="#{T015_RespuestaBcReagendacionDecision}">
+		<transition to="Fin" name="Anulada"></transition>
+        <transition to="T015_AgendarFechaFirma" name="OK"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </decision>
+    
+    <state name="T015_EntregaFianzas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T015_EntregaFianzasDecision" name="avanzaBPM"></transition>
+    </state>
+    
+    <decision name ="T015_EntregaFianzasDecision" expression="#{T015_EntregaFianzasDecision}">
+        <transition to="T015_Firma" name="FianzaOK"></transition>
+        <transition to="T015_AgendarFechaFirma" name="ExoneradaMenor"></transition>
+        <transition to="T015_RespuestaBcReagendacion" name="ExoneradaMayor"></transition>
+    </decision>
 
 	<end-state name="Fin">
 		<event type="node-enter">

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -40,6 +41,14 @@ public interface TramiteAlquilerApi {
 	boolean expedienteTieneRiesgo(Long idExpediente);
 
 	boolean siUsuarioTieneFuncionAvanzarPBC();
+
+	boolean getValorFianzaExonerada(TareaExterna tareaExterna);
+
+	Date getValorFechaAgendacion(TareaExterna tareaExterna);
+
+	String getFianzaExoneradaAndHistReagendacion(TareaExterna tareaExterna);
+
+	boolean checkIBANValido(TareaExterna tareaExterna, String numIban);
 	
 }
 

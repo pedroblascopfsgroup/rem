@@ -53,7 +53,7 @@ Ext.define('HreRem.view.activos.detalle.PujasComercialDetalle', {
 			}
     	];
 
-    	var title= "Número del activo/agrupación: "+detallepuja.numActivoAgrupacion+"<br/>" +" Número de la oferta: "+detallepuja.numOferta;
+    	var title= "Número de la oferta: "+detallepuja.numOferta;
     	me.callParent();
     	me.setTitle(title);
     },

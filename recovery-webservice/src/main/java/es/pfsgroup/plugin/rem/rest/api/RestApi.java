@@ -82,6 +82,8 @@ public interface RestApi {
 	public static final String REST_NO_EXIST_CUENTA_VIRTUAL = "NO_HAY_CUENTAS_VIRTUALES_LIBRES";
 	public static final String MSJ_ERROR_IMPORTE_MENOR_PUJA = "El importe de la puja no puede ser menor que la primera.";
 	public static final String MSJ_ERROR_IMPORTE_MENOR_MINIMO = "El importe de la oferta debe ser mayor al importe mínimo de la concurrencia.";
+	public static final String MSJ_CONCURRENCIA_TERMINADA = "La concurrencia ha terminado";
+	
 	/**
 	 * Valida la firma
 	 * 

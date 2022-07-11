@@ -235,7 +235,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						
 					}
 				}
-				if(esOfertaAceptada) {
+				if(esOfertaAceptada && ofertaAceptada.getIsEnConcurrencia() != null && ofertaAceptada.getIsEnConcurrencia()) {
 					concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId());	
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);

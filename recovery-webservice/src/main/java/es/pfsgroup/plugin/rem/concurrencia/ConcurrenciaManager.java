@@ -148,7 +148,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		
 		for (Oferta oferta : ofertasList) {
 			DDEstadoOferta eof = oferta.getEstadoOferta();
-			if(oferta.getConcurrencia() != null && oferta.getConcurrencia() && DDEstadoOferta.isOfertaActiva(eof)) {
+			if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia() && DDEstadoOferta.isOfertaActiva(eof)) {
 				tieneOfertasDeConcurrencia = true;
 				break;
 			}
@@ -182,7 +182,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	@Override
 	public boolean isOfertaEnConcurrencia(Oferta ofr){
 
-		if(ofr != null && ofr.getConcurrencia()){
+		if(ofr != null && ofr.getIsEnConcurrencia()){
 			return true;
 		}
 
@@ -266,17 +266,25 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 				}
 			}
 		}
+		
+		
 	}
 
 	@Override
 	@Transactional
-	public void caducaOfertaConcurrencia(Long idActivo, Long idOferta){
+	public boolean caducaOfertaConcurrencia(Long idActivo, Long idOferta){
 		HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
+		boolean principalCaducada = false;
 		
 		noEntraDeposito = this.caducaOfertaPrincipal(idOferta);
+		if(noEntraDeposito.isEmpty()) {
+			principalCaducada = true;
+		}
 
 		Thread hilo = new Thread(new CaducaOfertasAsync(idActivo, idOferta,genericAdapter.getUsuarioLogado().getUsername()));
 		hilo.start();
+		
+		return principalCaducada;
 		
 	}
 	
@@ -285,7 +293,7 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 		Oferta ofr = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", idOferta));
 		HashMap<Long, List<Long>> noEntraDeposito = new HashMap<Long, List<Long>>();
 
-		if(ofr != null && !ofr.esOfertaAnulada()){
+		if(ofr != null){
 			
 			if(!this.entraEnTiempoDeposito(ofr)){
 				noEntraDeposito.put(ofr.getId(), rellenaMapOfertaCorreos(ofr));
@@ -403,8 +411,8 @@ public class ConcurrenciaManager  implements ConcurrenciaApi {
 	public boolean entraEnTiempoDeposito(Oferta oferta){
 		if (oferta != null) {
 			Deposito deposito = oferta.getDeposito();
-			if(oferta != null && oferta.getConcurrencia() != null && oferta.getConcurrencia() && deposito != null){
-				Date fechaTopeOferta = this.sumarRestarHorasFecha(deposito.getFechaInicio(), 96);
+			if(oferta != null && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia() && deposito != null){
+				Date fechaTopeOferta = this.sumarRestarHorasFecha(deposito.getFechaInicio(), 120);
 				Date fechaHoy = new Date();
 	
 				int fecha = (int) ((fechaTopeOferta.getTime()-fechaHoy.getTime())/86400000);

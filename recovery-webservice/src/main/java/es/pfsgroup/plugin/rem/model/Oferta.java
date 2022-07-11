@@ -476,7 +476,7 @@ public class Oferta implements Serializable, Auditable {
     private OfertaCaixa ofertaCaixa;
     
     @Column(name = "OFR_CONCURRENCIA")
-	private Boolean concurrencia;
+	private Boolean isEnConcurrencia;
 	
     @Column(name = "CHECK_FORM_CAJAMAR")
     private Boolean checkFormCajamar;
@@ -501,6 +501,12 @@ public class Oferta implements Serializable, Auditable {
 	@OneToOne(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Deposito deposito;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CON_ID")
+	private Concurrencia concurrencia;
+
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -1571,12 +1577,12 @@ public class Oferta implements Serializable, Auditable {
 		this.cuentaVirtual = cuentaVirtual;
 	}
 
-	public Boolean getConcurrencia() {
-		return concurrencia;
+	public Boolean getIsEnConcurrencia() {
+		return isEnConcurrencia;
 	}
 
-	public void setConcurrencia(Boolean concurrencia) {
-		this.concurrencia = concurrencia;
+	public void setIsEnConcurrencia(Boolean concurrencia) {
+		this.isEnConcurrencia = concurrencia;
 	}
 
 	public boolean esOfertaAnulada(){
@@ -1621,6 +1627,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setDeposito(Deposito deposito) {
 		this.deposito = deposito;
+	}
+
+	public Concurrencia getConcurrencia() {
+		return concurrencia;
+	}
+
+	public void setConcurrencia(Concurrencia concurrencia) {
+		this.concurrencia = concurrencia;
 	}
 	
 }

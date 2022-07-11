@@ -237,10 +237,8 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 				if(ofertaExclusionBulkNew != null) {
 					genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
 				}
-				//CADUCAR OFERTAS
-				if(esOfertaAceptada) {
-					concurrenciaApi.caducaOfertasRelacionadasConcurrencia(activo.getId(), ofertaAceptada.getId());	
-				}
+
+				
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 				

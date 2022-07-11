@@ -829,11 +829,18 @@ public class AccionesCaixaManager extends BusinessOperationOverrider<AccionesCai
     @Transactional
     public void accionIngresoDeposito(Long numOferta){
     	Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
-    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+    	boolean principalCaducada = false;
+		if(oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
+			principalCaducada = concurrenciaApi.caducaOfertaConcurrencia(oferta.getActivoPrincipal().getId(),oferta.getId());
+	    }
     	
-        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
-        depositoApi.ingresarDeposito(deposito);
-        concurrenciaApi.caducaOfertasRelacionadasConcurrencia(oferta.getActivoPrincipal().getId(),oferta.getId());
+		if(!principalCaducada) {
+	    	ofertaApi.actualizaEstadoOfertaRemAndBC(oferta);
+	    	
+	        Deposito deposito = depositoApi.getDepositoByNumOferta(numOferta);
+	        depositoApi.ingresarDeposito(deposito);
+		}
+      
     }
 
     @Override

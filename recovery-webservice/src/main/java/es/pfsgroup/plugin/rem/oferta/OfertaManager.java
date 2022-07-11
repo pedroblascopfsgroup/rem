@@ -1097,6 +1097,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			errorsList.put("importe", RestApi.MSJ_ERROR_IMPORTE_MENOR_PUJA);
 		}
 		
+		if(oferta != null && oferta.getConcurrencia() != null) {
+			Concurrencia concu = oferta.getConcurrencia();
+			if(concu.getFechaFin().after(new Date())) {
+				errorsList.put("concurrencia", RestApi.MSJ_CONCURRENCIA_TERMINADA);
+			}
+		}
+		
 		if(agr != null) {
 			if(agr.getActivoPrincipal() != null) {
 				activo = agr.getActivoPrincipal();
@@ -1687,7 +1694,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			oferta.setConcurrencia(ofertaDto.getEnConcurrencia());
+			oferta.setIsEnConcurrencia(ofertaDto.getEnConcurrencia());
+			oferta.getActivoPrincipal();
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId());
+			Concurrencia concurrencia = genericDao.get(Concurrencia.class, filtro);
+			oferta.setConcurrencia(concurrencia);
 			
 			Long idOferta = this.saveOferta(oferta);
 
@@ -2393,7 +2405,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				modificado = true;
 			}
 			
-			if(ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getConcurrencia() != null && oferta.getConcurrencia()) {
+			if(ofertaDto.getImporte() != oferta.getImporteOferta() && oferta.getIsEnConcurrencia() != null && oferta.getIsEnConcurrencia()) {
 				ActivoAgrupacion agrConc = null;
 				Activo activoConc  = null;
 				boolean isOfertaConActivoEnConcurrenciaViva = false;
